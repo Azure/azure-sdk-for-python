@@ -5,31 +5,26 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-import os
+import os.path
+
+try:
+    import unittest.mock as mock
+except ImportError:
+    import mock
 
 from devtools_testutils import EnvironmentVariableLoader, EnvironmentVariableOptions
 from devtools_testutils.fake_credentials import STORAGE_ACCOUNT_FAKE_KEY
 
 try:
+    from cStringIO import StringIO  # Python 2
+except ImportError:
+    from io import StringIO
+try:
     # Running locally - use configuration in settings_real.py
-    from .settings_real import (
-        ACCOUNT_URL_SUFFIX,
-        PROTOCOL,
-        RUN_IN_LIVE,
-        SKIP_LIVE_RECORDING,
-        STORAGE_ACCOUNT_KEY,
-        STORAGE_ACCOUNT_NAME,
-    )
+    from .settings_real import *
 except ImportError:
     # Running on the pipeline - use fake values in order to create rg, etc.
-    from .settings_fake import (
-        ACCOUNT_URL_SUFFIX,
-        PROTOCOL,
-        RUN_IN_LIVE,
-        SKIP_LIVE_RECORDING,
-        STORAGE_ACCOUNT_KEY,
-        STORAGE_ACCOUNT_NAME,
-    )
+    from .settings_fake import *
 
 
 LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"

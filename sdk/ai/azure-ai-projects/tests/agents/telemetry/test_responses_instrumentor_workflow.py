@@ -9,13 +9,6 @@ Tests for ResponsesInstrumentor with workflow agents.
 
 import os
 import pytest
-from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
-from devtools_testutils import recorded_by_proxy, RecordedTransport
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (  # pylint: disable=import-error
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_INVOKE_AGENT,
@@ -23,14 +16,22 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
+from azure.core.settings import settings
+from gen_ai_trace_verifier import GenAiTraceVerifier
+from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     WorkflowAgentDefinition,
 )
-from azure.core.settings import settings
+
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
+_utils._span_impl_type = settings.tracing_implementation()
 
 
 def checkWorkflowEventContents(content, content_recording_enabled):
@@ -190,9 +191,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_workflow_non_streaming_with_content_recording(
-        self, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-statements
+    def test_sync_workflow_non_streaming_with_content_recording(self, **kwargs):
         """Test synchronous workflow agent with non-streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -206,8 +205,8 @@ trigger:
         assert AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        project_client = self.create_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -218,8 +217,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -229,7 +228,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher.
+                    instructions="""You are a student who answers questions from the teacher. 
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -315,7 +314,7 @@ trigger:
 
                         try:
                             data = json.loads(event_content)
-                        except Exception:  # pylint: disable=broad-exception-caught
+                        except Exception:
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, True)
@@ -357,9 +356,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_workflow_non_streaming_without_content_recording(
-        self, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-statements
+    def test_sync_workflow_non_streaming_without_content_recording(self, **kwargs):
         """Test synchronous workflow agent with non-streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -373,8 +370,8 @@ trigger:
         assert not AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        project_client = self.create_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -385,8 +382,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -396,7 +393,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher.
+                    instructions="""You are a student who answers questions from the teacher. 
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -479,7 +476,7 @@ trigger:
 
                         try:
                             data = json.loads(event_content)
-                        except Exception:  # pylint: disable=broad-exception-caught
+                        except Exception:
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, False)
@@ -526,9 +523,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_workflow_streaming_with_content_recording(
-        self, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-statements
+    def test_sync_workflow_streaming_with_content_recording(self, **kwargs):
         """Test synchronous workflow agent with streaming and content recording enabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -542,8 +537,8 @@ trigger:
         assert AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        project_client = self.create_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -554,8 +549,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -565,7 +560,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher.
+                    instructions="""You are a student who answers questions from the teacher. 
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -653,7 +648,7 @@ trigger:
 
                         try:
                             data = json.loads(event_content)
-                        except Exception:  # pylint: disable=broad-exception-caught
+                        except Exception:
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, True)
@@ -696,9 +691,7 @@ trigger:
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_sync_workflow_streaming_without_content_recording(
-        self, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-statements
+    def test_sync_workflow_streaming_without_content_recording(self, **kwargs):
         """Test synchronous workflow agent with streaming and content recording disabled."""
         self.cleanup()
         _set_use_message_events(True)
@@ -712,8 +705,8 @@ trigger:
         assert not AIProjectInstrumentor().is_content_recording_enabled()
         assert AIProjectInstrumentor().is_instrumented()
 
-        project_client = self.create_client(operation_group="tracing", allow_preview=True, **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        project_client = self.create_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -724,8 +717,8 @@ trigger:
                 agent_name="teacher-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers.
-                                    If the answer is correct, you stop the conversation by saying [COMPLETE].
+                    instructions="""You are a teacher that creates pre-school math questions for students and checks answers. 
+                                    If the answer is correct, you stop the conversation by saying [COMPLETE]. 
                                     If the answer is wrong, you ask student to fix it.""",
                 ),
             )
@@ -735,7 +728,7 @@ trigger:
                 agent_name="student-agent",
                 definition=PromptAgentDefinition(
                     model=deployment_name,
-                    instructions="""You are a student who answers questions from the teacher.
+                    instructions="""You are a student who answers questions from the teacher. 
                                     When the teacher gives you a question, you answer it.""",
                 ),
             )
@@ -823,7 +816,7 @@ trigger:
 
                         try:
                             data = json.loads(event_content)
-                        except Exception:  # pylint: disable=broad-exception-caught
+                        except Exception:
                             continue
                         if isinstance(data, list) and any(entry.get("role") == "workflow" for entry in data):
                             checkWorkflowEventContents(event_content, False)

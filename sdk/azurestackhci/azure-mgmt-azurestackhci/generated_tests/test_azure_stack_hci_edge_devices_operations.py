@@ -57,10 +57,6 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                     },
                     "provisioningState": "str",
                     "reportedProperties": {
-                        "confidentialVmProfile": {
-                            "igvmStatus": "str",
-                            "statusDetails": [{"code": "str", "message": "str"}],
-                        },
                         "deviceState": "str",
                         "extensionProfile": {
                             "extensions": [
@@ -75,7 +71,6 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                             ]
                         },
                         "hardwareProfile": {"processorType": "str"},
-                        "lastSyncTimestamp": "2020-02-20 00:00:00",
                         "networkProfile": {
                             "hostNetwork": {
                                 "enableStorageAutoIp": bool,
@@ -143,7 +138,6 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                                     "vlanId": "str",
                                 }
                             ],
-                            "sdnProperties": {"sdnApiAddress": "str", "sdnDomainName": "str", "sdnStatus": "str"},
                             "switchDetails": [
                                 {
                                     "extensions": [
@@ -156,10 +150,7 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                         },
                         "osProfile": {"assemblyVersion": "str", "bootType": "str"},
                         "sbeDeploymentPackageInfo": {"code": "str", "message": "str", "sbeManifest": "str"},
-                        "storageProfile": {
-                            "disks": [{"id": "str", "sizeInBytes": "str", "type": "str"}],
-                            "poolableDisksCount": 0,
-                        },
+                        "storageProfile": {"poolableDisksCount": 0},
                     },
                 },
                 "systemData": {

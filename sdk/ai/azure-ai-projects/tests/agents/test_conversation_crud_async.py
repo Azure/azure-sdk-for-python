@@ -8,6 +8,7 @@
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
+import pytest
 
 # from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
 
@@ -65,7 +66,7 @@ class TestConversationCrudAsync(TestBase):
             metadata = {"key1": "value1", "key2": "value2"}
             conversation = await client.conversations.update(conversation_id=conversation1.id, metadata=metadata)
             TestBase._validate_conversation(conversation, expected_id=conversation1.id, expected_metadata=metadata)
-            print("Conversation updated")
+            print(f"Conversation updated")
 
             conversation = await client.conversations.retrieve(conversation_id=conversation1.id)
             TestBase._validate_conversation(conversation)

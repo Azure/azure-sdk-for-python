@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, get_credential
@@ -23,6 +25,10 @@ from azure.search.documents.indexes.models import (
     SemanticField,
     SemanticPrioritizedFields,
     SemanticSearch,
+)
+from azure.search.documents.knowledgebases.models import (
+    KnowledgeRetrievalMediumReasoningEffort,
+    KnowledgeRetrievalMinimalReasoningEffort,
 )
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -102,6 +108,8 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
             name=base_name,
             description="configurable knowledge base",
             knowledge_sources=[KnowledgeSourceReference(name=source_name)],
+            retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+            output_mode="extractiveData",
         )
 
         try:
@@ -149,28 +157,40 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
         ctx = await self._create_context(endpoint)
         try:
             created = ctx.created_base
-            assert created.name == ctx.base_name
-            assert created.description == "configurable knowledge base"
-            assert len(created.knowledge_sources) == 1
-            assert created.knowledge_sources[0].name == ctx.source_name
-            assert created.e_tag is not None
+            assert isinstance(
+                created.retrieval_reasoning_effort,
+                KnowledgeRetrievalMinimalReasoningEffort,
+            )
+            assert created.output_mode == "extractiveData"
+            assert created.retrieval_instructions is None
+            assert created.answer_instructions is None
 
             update_model = KnowledgeBase(
                 name=ctx.base_name,
                 description="config updated",
                 knowledge_sources=[KnowledgeSourceReference(name=ctx.source_name)],
+                retrieval_reasoning_effort=KnowledgeRetrievalMediumReasoningEffort(),
+                output_mode="answerSynthesis",
+                retrieval_instructions="summarize with details",
+                answer_instructions="include citations and summaries",
             )
             update_model.e_tag = created.e_tag
 
-            updated = await ctx.index_client.create_or_update_knowledge_base(
-                update_model,
-                match_condition=MatchConditions.IfNotModified,
-            )
-            assert updated.description == "config updated"
-            assert updated.e_tag != created.e_tag
+            with pytest.raises(HttpResponseError) as ex:
+                await ctx.index_client.create_or_update_knowledge_base(
+                    update_model,
+                    match_condition=MatchConditions.IfNotModified,
+                )
+
+            assert "Retrieval instructions cannot be specified" in str(ex.value)
 
             fetched = await ctx.index_client.get_knowledge_base(ctx.base_name)
-            assert fetched.description == "config updated"
-            assert len(fetched.knowledge_sources) == 1
+            assert isinstance(
+                fetched.retrieval_reasoning_effort,
+                KnowledgeRetrievalMinimalReasoningEffort,
+            )
+            assert fetched.output_mode == "extractiveData"
+            assert fetched.retrieval_instructions is None
+            assert fetched.answer_instructions is None
         finally:
             await self._cleanup(ctx)

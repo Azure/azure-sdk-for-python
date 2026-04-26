@@ -3,18 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-public-methods, locally-disabled, multiple-statements, too-many-lines
 
+import jwt
 import unittest
 from datetime import date, datetime, timedelta
 
-import jwt
 import pytest
-
-from devtools_testutils import FakeTokenCredential, recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import QueuePreparer
-
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -22,7 +16,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
 )
-from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.queue import (
     AccessPolicy,
     AccountSasPermissions,
@@ -34,12 +28,18 @@ from azure.storage.queue import (
     ResourceTypes,
 )
 
+from devtools_testutils import FakeTokenCredential, recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "pyqueuesync"
+
+
 # ------------------------------------------------------------------------------
 
 
+# pylint: disable=locally-disabled, multiple-statements, fixme, too-many-lines
 class TestStorageQueue(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
@@ -145,7 +145,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue_client = self._get_queue_reference(qsc)
 
-        queue_client.create_queue()
+        created = queue_client.create_queue()
         deleted = queue_client.delete_queue()
 
         # Asserts
@@ -866,6 +866,7 @@ class TestStorageQueue(StorageRecordedTestCase):
     @QueuePreparer()
     def test_account_sas_raises_if_sas_already_in_uri(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
 
         with pytest.raises(ValueError):
             QueueServiceClient(
@@ -877,6 +878,7 @@ class TestStorageQueue(StorageRecordedTestCase):
     @QueuePreparer()
     def test_token_credential(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
 
         token_credential = self.get_credential(QueueServiceClient)
 
@@ -1052,7 +1054,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue_client = self._get_queue_reference(qsc)
         queue_client.create_queue()
-        queue_client.set_queue_access_policy(identifiers)
+        resp = queue_client.set_queue_access_policy(identifiers)
 
         queue_client.send_message("message1")
 
@@ -1112,6 +1114,8 @@ class TestStorageQueue(StorageRecordedTestCase):
 
         # Act
         acl = queue_client.get_queue_access_policy()
+        for signed_identifier in acl:
+            pass
 
         # Assert
         assert acl is not None
@@ -1145,7 +1149,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         queue_client.create_queue()
 
         # Act
-        resp = queue_client.set_queue_access_policy(signed_identifiers={})
+        resp = queue_client.set_queue_access_policy(signed_identifiers=dict())
 
         # Assert
         assert resp is None
@@ -1259,7 +1263,7 @@ class TestStorageQueue(StorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceNotFoundError):
-            queue_client.set_queue_access_policy(signed_identifiers={})
+            queue_client.set_queue_access_policy(signed_identifiers=dict())
 
             # Assert
 
@@ -1347,7 +1351,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         ) as qsc:
             qsc.get_service_properties()
             assert transport.session is not None
-            with qsc.get_queue_client(queue_name):
+            with qsc.get_queue_client(queue_name) as qc:
                 assert transport.session is not None
             qsc.get_service_properties()
             assert transport.session is not None
@@ -1389,7 +1393,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             credential=token_credential,
-            audience="https://badaudience.queue.core.windows.net",
+            audience=f"https://badaudience.queue.core.windows.net",
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
@@ -1442,7 +1446,7 @@ class TestStorageQueue(StorageRecordedTestCase):
             self.account_url(storage_account_name, "queue"),
             "testqueue2",
             credential=token_credential,
-            audience="https://badaudience.queue.core.windows.net",
+            audience=f"https://badaudience.queue.core.windows.net",
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge

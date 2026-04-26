@@ -1,9 +1,0 @@
-{
-    "ignoreWords": [
-        "perfdb",
-        "perfresults",
-        "ppcb",
-        "hdrh",
-        "hdrhistogram"
-    ]
-}

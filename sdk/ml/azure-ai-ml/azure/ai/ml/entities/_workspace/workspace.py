@@ -198,7 +198,7 @@ class Workspace(Resource):
         """
         return self._discovery_url
 
-    # Exists to appease mypy rules.
+    # Exists to appease tox's mypy rules.
     @property
     def _hub_id(self) -> Optional[str]:
         """The UID of the hub parent of the project. This is an internal property
@@ -210,7 +210,7 @@ class Workspace(Resource):
         """
         return self.__hub_id
 
-    # Exists to appease mypy rules.
+    # Exists to appease tox's mypy rules.
     @_hub_id.setter
     def _hub_id(self, value: str):
         """Set the hub of the project. This is an internal property

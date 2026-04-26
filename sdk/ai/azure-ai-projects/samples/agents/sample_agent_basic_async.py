@@ -6,8 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to run basic Prompt Agent operations
-    using the asynchronous AIProjectClient. It uses Entra ID authentication to
-    connect to the Microsoft Foundry service.
+    using the asynchronous AIProjectClient.
 
     The OpenAI compatible Responses and Conversation calls in this sample are made using
     the OpenAI client from the `openai` package. See https://platform.openai.com/docs/api-reference
@@ -21,9 +20,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -36,7 +35,7 @@ from azure.ai.projects.models import PromptAgentDefinition
 
 load_dotenv()
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 
 async def main() -> None:
@@ -49,7 +48,7 @@ async def main() -> None:
         agent = await project_client.agents.create_version(
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="You are a helpful assistant that answers general questions.",
             ),
         )
@@ -70,7 +69,7 @@ async def main() -> None:
             conversation_id=conversation.id,
             items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
         )
-        print("Added a second user message to the conversation")
+        print(f"Added a second user message to the conversation")
 
         response = await openai_client.responses.create(
             conversation=conversation.id,

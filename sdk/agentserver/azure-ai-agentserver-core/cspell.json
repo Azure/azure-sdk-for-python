@@ -14,8 +14,7 @@
         "starlette",
         "traceparent",
         "tracestate",
-        "tracecontext",
-        "isnotempty"
+        "tracecontext"
     ],
     "ignorePaths": [
         "*.csv",

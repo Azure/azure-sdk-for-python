@@ -4,26 +4,24 @@
 # ------------------------------------
 """Tests for the trace_function decorator with asynchronous functions."""
 
-# pylint: disable=unused-argument
-
 import pytest
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
-from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-error
 from azure.ai.projects.telemetry._trace_function import trace_function
+from gen_ai_trace_verifier import GenAiTraceVerifier
+from memory_trace_exporter import MemoryTraceExporter
 
 
 class TestTraceFunctionDecoratorAsync:
     """Tests for trace_function decorator with asynchronous functions."""
 
     @pytest.fixture(scope="function")
-    def setup_telemetry(self):  # pylint: disable=attribute-defined-outside-init
+    def setup_telemetry(self):
         """Setup telemetry for tests."""
         tracer_provider = TracerProvider()
         trace._TRACER_PROVIDER = tracer_provider
-        self.exporter = MemoryTraceExporter()  # pylint: disable=attribute-defined-outside-init
+        self.exporter = MemoryTraceExporter()
         span_processor = SimpleSpanProcessor(self.exporter)
         tracer_provider.add_span_processor(span_processor)
         yield
@@ -201,7 +199,7 @@ class TestTraceFunctionDecoratorAsync:
         async def check_status_async(is_active: bool, is_verified: bool) -> str:
             if is_active and is_verified:
                 return "approved"
-            if is_active:
+            elif is_active:
                 return "pending"
             return "inactive"
 
@@ -361,7 +359,7 @@ class TestTraceFunctionDecoratorAsync:
         assert attributes_match is True
 
     @pytest.mark.asyncio
-    async def test_async_function_with_default_parameters(self, setup_telemetry):  # pylint: disable=unused-argument
+    async def test_async_function_with_default_parameters(self, setup_telemetry):
         """Test decorator with async function using default parameters."""
 
         @trace_function()
@@ -388,7 +386,7 @@ class TestTraceFunctionDecoratorAsync:
         assert attributes_match is True
 
     @pytest.mark.asyncio
-    async def test_async_function_list_return_value(self, setup_telemetry):  # pylint: disable=unused-argument
+    async def test_async_function_list_return_value(self, setup_telemetry):
         """Test decorator with async function returning a list."""
 
         @trace_function()

@@ -5,6 +5,7 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
@@ -37,7 +38,7 @@ class TestAgentWebSearch(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

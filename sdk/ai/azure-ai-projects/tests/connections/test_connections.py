@@ -4,11 +4,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy
+import pytest
 from azure.ai.projects.models import ConnectionType, CredentialType, CustomCredential
 import azure.ai.projects.models as _models
 from azure.ai.projects._utils.model_base import _deserialize
+from test_base import TestBase, servicePreparer
+from devtools_testutils import recorded_by_proxy
 
 
 class TestConnections(TestBase):

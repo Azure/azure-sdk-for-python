@@ -57,7 +57,6 @@ class TestIoTOperationsMgmtBrokerAuthenticationOperationsAsync(AzureMgmtRecorded
                                 },
                                 "serviceAccountTokenSettings": {"audiences": ["str"]},
                                 "x509Settings": {
-                                    "additionalValidation": "str",
                                     "authorizationAttributes": {
                                         "str": {"attributes": {"str": "str"}, "subject": "str"}
                                     },
@@ -65,7 +64,6 @@ class TestIoTOperationsMgmtBrokerAuthenticationOperationsAsync(AzureMgmtRecorded
                                 },
                             }
                         ],
-                        "healthState": "str",
                         "provisioningState": "str",
                     },
                     "systemData": {

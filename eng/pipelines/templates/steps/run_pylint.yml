@@ -18,4 +18,6 @@ steps:
         --disable-compatibility-filter
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
+    env:
+      TOX_PIP_IMPL: "uv"
     condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))

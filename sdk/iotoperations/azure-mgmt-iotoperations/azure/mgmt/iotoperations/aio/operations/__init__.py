@@ -21,11 +21,6 @@ from ._operations import BrokerAuthorizationOperations  # type: ignore
 from ._operations import DataflowProfileOperations  # type: ignore
 from ._operations import DataflowOperations  # type: ignore
 from ._operations import DataflowEndpointOperations  # type: ignore
-from ._operations import DataflowGraphOperations  # type: ignore
-from ._operations import RegistryEndpointOperations  # type: ignore
-from ._operations import AkriConnectorTemplateOperations  # type: ignore
-from ._operations import AkriConnectorOperations  # type: ignore
-from ._operations import AkriServiceOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -41,11 +36,6 @@ __all__ = [
     "DataflowProfileOperations",
     "DataflowOperations",
     "DataflowEndpointOperations",
-    "DataflowGraphOperations",
-    "RegistryEndpointOperations",
-    "AkriConnectorTemplateOperations",
-    "AkriConnectorOperations",
-    "AkriServiceOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

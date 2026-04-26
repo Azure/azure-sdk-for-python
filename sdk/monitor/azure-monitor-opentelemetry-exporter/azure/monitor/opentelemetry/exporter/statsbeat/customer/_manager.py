@@ -128,14 +128,11 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
         """
         return self._status == CustomerSdkStatsStatus.SHUTDOWN  # type: ignore
 
-    def initialize(self, connection_string: str, credential: Optional[Any] = None) -> bool:
+    def initialize(self, connection_string: str) -> bool:
         """Initialize Customer SDKStats collection with the provided connection string.
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
-        :param credential: Token credential for AAD authentication. Defaults to None.
-        :type credential: ~azure.core.credentials.TokenCredential or None
-
         :return: True if initialization was successful, False otherwise
         :rtype: bool
         """
@@ -150,16 +147,13 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                 # Already initialized, return True
                 return True
 
-            return self._do_initialize(connection_string, credential=credential)
+            return self._do_initialize(connection_string)
 
-    def _do_initialize(self, connection_string: str, credential: Optional[Any] = None) -> bool:
+    def _do_initialize(self, connection_string: str) -> bool:
         """Internal initialization method.
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
-        :param credential: Token credential for AAD authentication. Defaults to None.
-        :type credential: ~azure.core.credentials.TokenCredential or None
-
         :return: True if initialization was successful, False otherwise
         :rtype: bool
         """
@@ -167,13 +161,10 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             # Use delayed import to avoid circular import
             from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 
-            exporter_kwargs: Dict[str, Any] = {
-                "connection_string": connection_string,
-                "is_customer_sdkstats": True,
-            }
-            if credential is not None:
-                exporter_kwargs["credential"] = credential
-            self._customer_sdkstats_exporter = AzureMonitorMetricExporter(**exporter_kwargs)
+            self._customer_sdkstats_exporter = AzureMonitorMetricExporter(
+                connection_string=connection_string,
+                is_customer_sdkstats=True,
+            )
             metric_reader_options = {
                 "exporter": self._customer_sdkstats_exporter,
                 "export_interval_millis": get_customer_sdkstats_export_interval() * 1000,  # Default 15m

@@ -24,16 +24,15 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp  pydantic
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
 import asyncio
 import os
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -41,10 +40,11 @@ from azure.ai.projects.models import (
     PromptAgentDefinitionTextOptions,
     TextResponseFormatJsonSchema,
 )
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 
 class CalendarEvent(BaseModel):
@@ -63,7 +63,7 @@ async def main() -> None:
         agent = await project_client.agents.create_version(
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
-                model=os.environ["FOUNDRY_MODEL_NAME"],
+                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),

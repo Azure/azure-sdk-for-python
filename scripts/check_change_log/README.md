@@ -3,8 +3,8 @@ This script will generate change_log by comparing latest two versions of mgmt pa
 
 
 
-# prerequisites
-- Python 3.9 or later is required
+# preprequisites
+- [Python 3.6](https://www.python.org/downloads/windows/) or later is required
 - [docker desktop](https://www.docker.com/get-started/)
 
 # How to use this script

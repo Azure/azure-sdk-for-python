@@ -8,6 +8,9 @@
 
 ### Breaking Changes
 
+- Built-in transports now reject unsupported per-request keyword arguments instead of forwarding them
+  to the underlying HTTP library. #46365
+
 ### Bugs Fixed
 
 ### Other Changes
@@ -345,7 +348,7 @@
 
 ## 1.25.0 (2022-08-04)
 
-Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
+Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ### Features Added
 

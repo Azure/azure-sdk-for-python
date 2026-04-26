@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import re
+import pytest
 from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async

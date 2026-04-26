@@ -29,7 +29,6 @@ class DeleteJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -104,7 +103,6 @@ class DisableJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -179,7 +177,6 @@ class EnableJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -254,7 +251,6 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_schedule_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -323,7 +319,6 @@ class DeletePoolPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -398,7 +393,6 @@ class DeallocateNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -477,7 +471,6 @@ class RebootNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -554,7 +547,6 @@ class ReimageNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -631,7 +623,6 @@ class RemoveNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -708,7 +699,6 @@ class ResizePoolPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -785,7 +775,6 @@ class StartNodePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         node_id: str,
         polling_interval: int = 5,
     ):
@@ -862,7 +851,6 @@ class StopPoolResizePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         pool_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -939,7 +927,6 @@ class TerminateJobPollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client
@@ -1014,7 +1001,6 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
         initial_response: PipelineResponse,
         deserialization_callback: Optional[Callable],
         job_schedule_id: str,
-        *,
         polling_interval: int = 5,
     ):
         self._client = client

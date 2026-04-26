@@ -1,4 +1,4 @@
-# Azure AI Agent Server Invocations client library for Python
+# Azure AI AgentServerHost Invocations for Python
 
 The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
 
@@ -66,7 +66,7 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 When tracing is enabled on the `AgentServerHost`, invocation spans are automatically created with GenAI semantic conventions:
 
 - **Span name**: `invoke_agent {FOUNDRY_AGENT_NAME}:{FOUNDRY_AGENT_VERSION}`
-- **Span attributes**: `gen_ai.system`, `gen_ai.operation.name`, `gen_ai.response.id`, `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`, `microsoft.session.id`
+- **Span attributes**: `gen_ai.system`, `gen_ai.operation.name`, `gen_ai.response.id`, `gen_ai.conversation.id`, `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`
 - **Error tags**: `azure.ai.agentserver.invocations.error.code`, `.error.message`
 - **Baggage keys**: `azure.ai.agentserver.invocation_id`, `.session_id`
 
@@ -75,6 +75,7 @@ When tracing is enabled on the `AgentServerHost`, invocation spans are automatic
 ### Simple synchronous agent
 
 ```python
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -96,6 +97,7 @@ app.run()
 import asyncio
 import json
 
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -136,6 +138,7 @@ async def cancel_invocation(request: Request) -> Response:
 ```python
 import json
 
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse

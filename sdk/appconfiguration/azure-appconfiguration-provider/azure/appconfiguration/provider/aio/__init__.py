@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from ._async_load import load
-from ._azureappconfigurationproviderasync import AzureAppConfigurationProvider
+
+from ._azureappconfigurationproviderasync import load, AzureAppConfigurationProvider
 
 __all__ = [
     "load",

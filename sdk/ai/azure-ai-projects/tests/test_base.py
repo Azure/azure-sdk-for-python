@@ -10,14 +10,13 @@ import json
 import os
 import tempfile
 from typing import Optional, Any, Dict, Final, IO, Union, overload, Literal, TextIO, BinaryIO
-from openai.types.responses import Response
-from openai.types.conversations import ConversationItem
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects.models import (
+    ApiKeyCredentials,
     AzureAISearchIndex,
     Connection,
     ConnectionType,
     CredentialType,
+    CustomCredential,
     DatasetCredential,
     DatasetType,
     DatasetVersion,
@@ -27,8 +26,11 @@ from azure.ai.projects.models import (
     IndexType,
     ModelDeployment,
 )
+from openai.types.responses import Response
+from openai.types.conversations import ConversationItem
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
-from azure.ai.projects import AIProjectClient
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from azure.ai.projects import AIProjectClient as AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
 # Store reference to built-in open before any mocking occurs
@@ -39,11 +41,11 @@ _BUILTIN_OPEN = open
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
-    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    foundry_project_api_key="sanitized-api-key",
-    foundry_model_name="sanitized-model-deployment-name",
-    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
     image_generation_model_deployment_name="sanitized-gpt-image",
+    container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
+    container_ingress_subdomain_suffix="00000",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
     ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
     bing_custom_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-custom-search-connection",
@@ -68,17 +70,15 @@ servicePreparer = functools.partial(
     fabric_user_input="List all customers!",
     a2a_user_input="What can the secondary agent do?",
     bing_custom_user_input="Tell me more about foundry agent service",
-    memory_store_chat_model_deployment_name="sanitized-model-deployment-name",
+    memory_store_chat_model_deployment_name="sanitized-gpt-memory",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
-    foundry_agent_container_image="sanitizedregistry.azurecr.io/sanitized/sessions-agent:latest",
 )
 
 fineTuningServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
-    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    foundry_model_name="sanitized-model-deployment-name",
-    llm_validation_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
     azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
     azure_ai_projects_azure_resource_group="sanitized-resource-group",
     azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
@@ -159,10 +159,11 @@ def patched_open_crlf_to_lf(*args, **kwargs):
                 if args:
                     # File path was passed as positional arg
                     return _BUILTIN_OPEN(temp_path, *args[1:], **kwargs)
-                # File path was passed as keyword arg
-                kwargs = kwargs.copy()
-                kwargs["file"] = temp_path
-                return _BUILTIN_OPEN(**kwargs)
+                else:
+                    # File path was passed as keyword arg
+                    kwargs = kwargs.copy()
+                    kwargs["file"] = temp_path
+                    return _BUILTIN_OPEN(**kwargs)
 
     return _BUILTIN_OPEN(*args, **kwargs)
 
@@ -188,7 +189,7 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_indexes_params = {
-        "index_name": "test-index-name",
+        "index_name": f"test-index-name",
         "index_version": "1",
         "ai_search_connection_name": "my-ai-search-connection",
         "ai_search_index_name": "my-ai-search-index",
@@ -296,10 +297,11 @@ class TestBase(AzureRecordedTestCase):
         return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
 
     # helper function: create projects client using environment variables
-    def create_client(self, *, allow_preview: bool = False, **kwargs) -> AIProjectClient:
+    def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:
         # fetch environment variables
-        endpoint = kwargs.pop("foundry_project_endpoint")
+        endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AIProjectClient, is_async=False)
+        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AIProjectClient with endpoint: {endpoint}")
 
@@ -313,10 +315,11 @@ class TestBase(AzureRecordedTestCase):
         return client
 
     # helper function: create async projects client using environment variables
-    def create_async_client(self, *, allow_preview: bool = False, **kwargs) -> AsyncAIProjectClient:
+    def create_async_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AsyncAIProjectClient:
         # fetch environment variables
-        endpoint = kwargs.pop("foundry_project_endpoint")
+        endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 
@@ -439,7 +442,7 @@ class TestBase(AzureRecordedTestCase):
         expected_model_deployment_name: Optional[str] = None,
         expected_model_publisher: Optional[str] = None,
     ):
-        assert isinstance(deployment, ModelDeployment)
+        assert type(deployment) == ModelDeployment
         assert deployment.type == DeploymentType.MODEL_DEPLOYMENT
         assert deployment.model_version is not None
         # Comment out the below, since I see that `Cohere-embed-v3-english` has an empty capabilities dict.
@@ -466,7 +469,7 @@ class TestBase(AzureRecordedTestCase):
         TestBase.assert_equal_or_not_none(index.version, expected_index_version)
 
         if expected_index_type == IndexType.AZURE_SEARCH:
-            assert isinstance(index, AzureAISearchIndex)
+            assert type(index) == AzureAISearchIndex
             assert index.type == IndexType.AZURE_SEARCH
             TestBase.assert_equal_or_not_none(index.connection_name, expected_ai_search_connection_name)
             TestBase.assert_equal_or_not_none(index.index_name, expected_ai_search_index_name)
@@ -486,7 +489,7 @@ class TestBase(AzureRecordedTestCase):
         if expected_dataset_type:
             assert dataset.type == expected_dataset_type
         else:
-            assert dataset.type in (DatasetType.URI_FILE, DatasetType.URI_FOLDER)
+            assert dataset.type == DatasetType.URI_FILE or dataset.type == DatasetType.URI_FOLDER
 
         TestBase.assert_equal_or_not_none(dataset.name, expected_dataset_name)
         TestBase.assert_equal_or_not_none(dataset.version, expected_dataset_version)
@@ -633,7 +636,7 @@ class TestBase(AzureRecordedTestCase):
         TestBase.assert_equal_or_not_none(job_obj.status, expected_status)
 
     def _request_callback(self, pipeline_request) -> None:
-        self.pipeline_request = pipeline_request  # pylint: disable=attribute-defined-outside-init
+        self.pipeline_request = pipeline_request
 
     @staticmethod
     def _are_json_equal(json_str1: str, json_str2: str) -> bool:

@@ -71,11 +71,8 @@ def _clean_up_indexes(endpoint, cred):
         client.delete_synonym_map(map.name)
 
     # wipe out any existing aliases
-    try:
-        for alias in client.list_aliases():
-            client.delete_alias(alias)
-    except HttpResponseError:
-        pass
+    for alias in client.list_aliases():
+        client.delete_alias(alias)
 
     # wipe any existing indexes
     for index in client.list_indexes():

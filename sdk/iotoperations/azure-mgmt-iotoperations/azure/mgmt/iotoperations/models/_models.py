@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,30 +9,16 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import (
-    AkriConnectorTemplateAllocationPolicy,
-    AkriConnectorTemplateManagedConfigurationType,
-    AkriConnectorTemplateRuntimeConfigurationType,
-    AkriConnectorsMqttAuthenticationMethod,
-    AkriConnectorsRegistrySettingsType,
-    AkriConnectorsTagDigestType,
-    BrokerPersistencePolicyMode,
-    DataflowGraphDestinationHeaderActionType,
-    DataflowGraphNodeType,
-    DataflowHeaderActionType,
-    DataflowOpenTelemetryAuthenticationMethod,
-    RegistryEndpointAuthenticationMethod,
-    RegistryEndpointTrustedSigningKeyType,
-)
+from .. import _model_base
+from .._model_base import rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdvancedSettings(_Model):
+class AdvancedSettings(_model_base.Model):
     """Broker Advanced Settings.
 
     :ivar clients: Configurations related to All Clients.
@@ -44,16 +30,14 @@ class AdvancedSettings(_Model):
     :vartype internal_certs: ~azure.mgmt.iotoperations.models.CertManagerCertOptions
     """
 
-    clients: Optional["_models.ClientConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    clients: Optional["_models.ClientConfig"] = rest_field()
     """Configurations related to All Clients."""
     encrypt_internal_traffic: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        name="encryptInternalTraffic", visibility=["read", "create", "update", "delete", "query"]
+        name="encryptInternalTraffic"
     )
     """The setting to enable or disable encryption of internal Traffic. Known values are: \"Enabled\"
      and \"Disabled\"."""
-    internal_certs: Optional["_models.CertManagerCertOptions"] = rest_field(
-        name="internalCerts", visibility=["read", "create", "update", "delete", "query"]
-    )
+    internal_certs: Optional["_models.CertManagerCertOptions"] = rest_field(name="internalCerts")
     """Certificate rotation and private key configuration."""
 
     @overload
@@ -76,1485 +60,7 @@ class AdvancedSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorAllocatedDevice(_Model):
-    """AkriConnector allocated device.
-
-    :ivar device_inbound_endpoint_name: The name of the inbound endpoint for the device. Required.
-    :vartype device_inbound_endpoint_name: str
-    :ivar device_name: The name of the device. Required.
-    :vartype device_name: str
-    """
-
-    device_inbound_endpoint_name: str = rest_field(name="deviceInboundEndpointName", visibility=["read"])
-    """The name of the inbound endpoint for the device. Required."""
-    device_name: str = rest_field(name="deviceName", visibility=["read"])
-    """The name of the device. Required."""
-
-
-class AkriConnectorProperties(_Model):
-    """AkriConnector properties.
-
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar allocated_devices: The allocated devices for the connector.
-    :vartype allocated_devices: list[~azure.mgmt.iotoperations.models.AkriConnectorAllocatedDevice]
-    :ivar status: The status for the connector.
-    :vartype status: ~azure.mgmt.iotoperations.models.AkriConnectorStatus
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
-    """
-
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    allocated_devices: Optional[list["_models.AkriConnectorAllocatedDevice"]] = rest_field(
-        name="allocatedDevices", visibility=["read"]
-    )
-    """The allocated devices for the connector."""
-    status: Optional["_models.AkriConnectorStatus"] = rest_field(visibility=["read"])
-    """The status for the connector."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
-
-
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
-    """
-
-
-class AkriConnectorResource(ProxyResource):
-    """AkriConnector resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.iotoperations.models.AkriConnectorProperties
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
-    """
-
-    properties: Optional["_models.AkriConnectorProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.AkriConnectorProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsRegistrySettings(_Model):
-    """AkriConnectorsRegistrySettings properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AkriConnectorsContainerRegistry, AkriConnectorsRegistryEndpointRef
-
-    :ivar registry_settings_type: Required. Known values are: "RegistryEndpointRef" and
-     "ContainerRegistry".
-    :vartype registry_settings_type: str or
-     ~azure.mgmt.iotoperations.models.AkriConnectorsRegistrySettingsType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    registry_settings_type: str = rest_discriminator(
-        name="registrySettingsType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required. Known values are: \"RegistryEndpointRef\" and \"ContainerRegistry\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        registry_settings_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsContainerRegistry(AkriConnectorsRegistrySettings, discriminator="ContainerRegistry"):
-    """AkriConnectorsContainerRegistry properties.
-
-    :ivar registry_settings_type: The registry settings type. Required. A Container Registry
-     reference.
-    :vartype registry_settings_type: str or ~azure.mgmt.iotoperations.models.CONTAINER_REGISTRY
-    :ivar container_registry_settings: The registry settings for the container registry. Required.
-    :vartype container_registry_settings:
-     ~azure.mgmt.iotoperations.models.AkriConnectorsContainerRegistrySettings
-    """
-
-    registry_settings_type: Literal[AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY] = rest_discriminator(name="registrySettingsType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The registry settings type. Required. A Container Registry reference."""
-    container_registry_settings: "_models.AkriConnectorsContainerRegistrySettings" = rest_field(
-        name="containerRegistrySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The registry settings for the container registry. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        container_registry_settings: "_models.AkriConnectorsContainerRegistrySettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.registry_settings_type = AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY  # type: ignore
-
-
-class AkriConnectorsContainerRegistrySettings(_Model):
-    """AkriConnectorsContainerRegistry properties.
-
-    :ivar registry: The container registry to use for the artifact. Required.
-    :vartype registry: str
-    :ivar image_pull_secrets: Optional list of references to secrets in the same namespace to use
-     for pulling the connector image.
-    :vartype image_pull_secrets:
-     list[~azure.mgmt.iotoperations.models.AkriConnectorsImagePullSecret]
-    """
-
-    registry: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The container registry to use for the artifact. Required."""
-    image_pull_secrets: Optional[list["_models.AkriConnectorsImagePullSecret"]] = rest_field(
-        name="imagePullSecrets", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional list of references to secrets in the same namespace to use for pulling the connector
-     image."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        registry: str,
-        image_pull_secrets: Optional[list["_models.AkriConnectorsImagePullSecret"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsDiagnosticsLogs(_Model):
-    """AkriConnectorsDiagnostic Log properties.
-
-    :ivar level: The log level. Examples - 'debug', 'info', 'warn', 'error', 'trace'.
-    :vartype level: str
-    """
-
-    level: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The log level. Examples - 'debug', 'info', 'warn', 'error', 'trace'."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        level: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsTagDigestSettings(_Model):
-    """AkriConnectorsTagDigestSettings properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AkriConnectorsDigest, AkriConnectorsTag
-
-    :ivar tag_digest_type: The tag or digest type. Required. Known values are: "Tag" and "Digest".
-    :vartype tag_digest_type: str or ~azure.mgmt.iotoperations.models.AkriConnectorsTagDigestType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    tag_digest_type: str = rest_discriminator(
-        name="tagDigestType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The tag or digest type. Required. Known values are: \"Tag\" and \"Digest\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tag_digest_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsDigest(AkriConnectorsTagDigestSettings, discriminator="Digest"):
-    """AkriConnectorsDigest properties.
-
-    :ivar tag_digest_type: The tag or digest type. Required. Indicates that a digest should be
-     specified.
-    :vartype tag_digest_type: str or ~azure.mgmt.iotoperations.models.DIGEST
-    :ivar digest: The digest of the image. Required.
-    :vartype digest: str
-    """
-
-    tag_digest_type: Literal[AkriConnectorsTagDigestType.DIGEST] = rest_discriminator(name="tagDigestType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The tag or digest type. Required. Indicates that a digest should be specified."""
-    digest: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The digest of the image. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        digest: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.tag_digest_type = AkriConnectorsTagDigestType.DIGEST  # type: ignore
-
-
-class AkriConnectorsImagePullSecret(_Model):
-    """AkriConnectorsImagePullSecret properties.
-
-    :ivar secret_ref: The name of the image pull secret. Required.
-    :vartype secret_ref: str
-    """
-
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the image pull secret. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        secret_ref: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsMqttAuthentication(_Model):
-    """AkriConnectorsMqttAuthentication properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AkriConnectorsServiceAccountAuthentication
-
-    :ivar method: The authentication method for the MQTT connection. Required.
-     "ServiceAccountToken"
-    :vartype method: str or ~azure.mgmt.iotoperations.models.AkriConnectorsMqttAuthenticationMethod
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    method: str = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])
-    """The authentication method for the MQTT connection. Required. \"ServiceAccountToken\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        method: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsMqttConnectionConfiguration(_Model):  # pylint: disable=name-too-long
-    """AkriConnectorsMqttConnectionConfiguration properties.
-
-    :ivar authentication: Authentication properties.
-    :vartype authentication: ~azure.mgmt.iotoperations.models.AkriConnectorsMqttAuthentication
-    :ivar host: Host of the Broker in the form of <hostname>:<port>.
-    :vartype host: str
-    :ivar protocol: The protocol to use for the connection. Currently only ``mqtt`` is supported.
-     "Mqtt"
-    :vartype protocol: str or ~azure.mgmt.iotoperations.models.AkriConnectorsMqttProtocolType
-    :ivar keep_alive_seconds: KeepAlive for connection in seconds.
-    :vartype keep_alive_seconds: int
-    :ivar max_inflight_messages: The max number of messages to keep in flight. For subscribe, this
-     is the receive maximum. For publish, this is the maximum number of messages to send before
-     waiting for an ack.
-    :vartype max_inflight_messages: int
-    :ivar session_expiry_seconds: Session expiry in seconds.
-    :vartype session_expiry_seconds: int
-    :ivar tls: TLS configuration.
-    :vartype tls: ~azure.mgmt.iotoperations.models.TlsProperties
-    """
-
-    authentication: Optional["_models.AkriConnectorsMqttAuthentication"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Authentication properties."""
-    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Broker in the form of <hostname>:<port>."""
-    protocol: Optional[Union[str, "_models.AkriConnectorsMqttProtocolType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The protocol to use for the connection. Currently only ``mqtt`` is supported. \"Mqtt\""""
-    keep_alive_seconds: Optional[int] = rest_field(
-        name="keepAliveSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """KeepAlive for connection in seconds."""
-    max_inflight_messages: Optional[int] = rest_field(
-        name="maxInflightMessages", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The max number of messages to keep in flight. For subscribe, this is the receive maximum. For
-     publish, this is the maximum number of messages to send before waiting for an ack."""
-    session_expiry_seconds: Optional[int] = rest_field(
-        name="sessionExpirySeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Session expiry in seconds."""
-    tls: Optional["_models.TlsProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """TLS configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        authentication: Optional["_models.AkriConnectorsMqttAuthentication"] = None,
-        host: Optional[str] = None,
-        protocol: Optional[Union[str, "_models.AkriConnectorsMqttProtocolType"]] = None,
-        keep_alive_seconds: Optional[int] = None,
-        max_inflight_messages: Optional[int] = None,
-        session_expiry_seconds: Optional[int] = None,
-        tls: Optional["_models.TlsProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsRegistryEndpointRef(AkriConnectorsRegistrySettings, discriminator="RegistryEndpointRef"):
-    """AkriConnectorsRegistryEndpointRef properties.
-
-    :ivar registry_settings_type: The registry endpoint reference. Required. A Registry Endpoint
-     reference.
-    :vartype registry_settings_type: str or ~azure.mgmt.iotoperations.models.REGISTRY_ENDPOINT_REF
-    :ivar registry_endpoint_ref: The name of the registry endpoint. Required.
-    :vartype registry_endpoint_ref: str
-    """
-
-    registry_settings_type: Literal[AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF] = rest_discriminator(name="registrySettingsType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The registry endpoint reference. Required. A Registry Endpoint reference."""
-    registry_endpoint_ref: str = rest_field(
-        name="registryEndpointRef", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the registry endpoint. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        registry_endpoint_ref: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.registry_settings_type = AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF  # type: ignore
-
-
-class AkriConnectorsSecret(_Model):
-    """AkriConnectorsSecret properties.
-
-    :ivar secret_key: The key in the secret to be mounted. Required.
-    :vartype secret_key: str
-    :ivar secret_alias: The application-defined alias for the secret. Required.
-    :vartype secret_alias: str
-    :ivar secret_ref: The name of the secret to be mounted. Required.
-    :vartype secret_ref: str
-    """
-
-    secret_key: str = rest_field(name="secretKey", visibility=["read", "create", "update", "delete", "query"])
-    """The key in the secret to be mounted. Required."""
-    secret_alias: str = rest_field(name="secretAlias", visibility=["read", "create", "update", "delete", "query"])
-    """The application-defined alias for the secret. Required."""
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the secret to be mounted. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        secret_key: str,
-        secret_alias: str,
-        secret_ref: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsServiceAccountAuthentication(
-    AkriConnectorsMqttAuthentication, discriminator="ServiceAccountToken"
-):  # pylint: disable=name-too-long
-    """AkriConnectorsServiceAccountAuthentication properties.
-
-    :ivar method: The authentication method for the MQTT connection. Required. Service Account
-     Token authentication.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.SERVICE_ACCOUNT_TOKEN
-    :ivar service_account_token_settings: The service account token for the MQTT connection.
-     Required.
-    :vartype service_account_token_settings:
-     ~azure.mgmt.iotoperations.models.AkriConnectorsServiceAccountTokenSettings
-    """
-
-    method: Literal[AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method for the MQTT connection. Required. Service Account Token
-     authentication."""
-    service_account_token_settings: "_models.AkriConnectorsServiceAccountTokenSettings" = rest_field(
-        name="serviceAccountTokenSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service account token for the MQTT connection. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_account_token_settings: "_models.AkriConnectorsServiceAccountTokenSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN  # type: ignore
-
-
-class AkriConnectorsServiceAccountTokenSettings(_Model):  # pylint: disable=name-too-long
-    """AkriConnectorsServiceAccountTokenSettings properties.
-
-    :ivar audience: The audience for the service account token. Required.
-    :vartype audience: str
-    """
-
-    audience: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The audience for the service account token. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        audience: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorsTag(AkriConnectorsTagDigestSettings, discriminator="Tag"):
-    """AkriConnectorsTag properties.
-
-    :ivar tag_digest_type: The tag or digest type. Required. Indicates that a tag should be
-     specified.
-    :vartype tag_digest_type: str or ~azure.mgmt.iotoperations.models.TAG
-    :ivar tag: The tag of the image. Required.
-    :vartype tag: str
-    """
-
-    tag_digest_type: Literal[AkriConnectorsTagDigestType.TAG] = rest_discriminator(name="tagDigestType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The tag or digest type. Required. Indicates that a tag should be specified."""
-    tag: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The tag of the image. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tag: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.tag_digest_type = AkriConnectorsTagDigestType.TAG  # type: ignore
-
-
-class AkriConnectorStatus(_Model):
-    """AkriConnector status.
-
-    :ivar health_state: The health state of the AkriConnector.
-    :vartype health_state: ~azure.mgmt.iotoperations.models.ResourceHealthStatus
-    """
-
-    health_state: Optional["_models.ResourceHealthStatus"] = rest_field(name="healthState", visibility=["read"])
-    """The health state of the AkriConnector."""
-
-
-class AkriConnectorTemplateAioMetadata(_Model):
-    """AkriConnectorTemplateAioMetadata properties.
-
-    :ivar aio_min_version: The minimum version of AIO required for the connector.
-    :vartype aio_min_version: str
-    :ivar aio_max_version: The maximum version of AIO required for the connector.
-    :vartype aio_max_version: str
-    """
-
-    aio_min_version: Optional[str] = rest_field(
-        name="aioMinVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The minimum version of AIO required for the connector."""
-    aio_max_version: Optional[str] = rest_field(
-        name="aioMaxVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum version of AIO required for the connector."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        aio_min_version: Optional[str] = None,
-        aio_max_version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateAllocation(_Model):
-    """AkriConnectorTemplateAllocation properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AkriConnectorTemplateBucketizedAllocation
-
-    :ivar policy: The allocation policy type. Required. "Bucketized"
-    :vartype policy: str or ~azure.mgmt.iotoperations.models.AkriConnectorTemplateAllocationPolicy
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    policy: str = rest_discriminator(name="policy", visibility=["read", "create", "update", "delete", "query"])
-    """The allocation policy type. Required. \"Bucketized\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        policy: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateBucketizedAllocation(
-    AkriConnectorTemplateAllocation, discriminator="Bucketized"
-):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateBucketizedAllocation properties.
-
-    :ivar policy: The allocation policy type. Required. Bucketized allocation policy.
-    :vartype policy: str or ~azure.mgmt.iotoperations.models.BUCKETIZED
-    :ivar bucket_size: The bucketized allocation of AEPs for connectors. Required.
-    :vartype bucket_size: int
-    """
-
-    policy: Literal[AkriConnectorTemplateAllocationPolicy.BUCKETIZED] = rest_discriminator(name="policy", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The allocation policy type. Required. Bucketized allocation policy."""
-    bucket_size: int = rest_field(name="bucketSize", visibility=["read", "create", "update", "delete", "query"])
-    """The bucketized allocation of AEPs for connectors. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        bucket_size: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.policy = AkriConnectorTemplateAllocationPolicy.BUCKETIZED  # type: ignore
-
-
-class AkriConnectorTemplateDeviceInboundEndpointType(_Model):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateDeviceInboundEndpointType properties.
-
-    :ivar display_name: The display name of the device inbound endpoint.
-    :vartype display_name: str
-    :ivar endpoint_type: The type of the device inbound endpoint. Required.
-    :vartype endpoint_type: str
-    :ivar version: The version of the device inbound endpoint.
-    :vartype version: str
-    """
-
-    display_name: Optional[str] = rest_field(
-        name="displayName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The display name of the device inbound endpoint."""
-    endpoint_type: str = rest_field(name="endpointType", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the device inbound endpoint. Required."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The version of the device inbound endpoint."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        endpoint_type: str,
-        display_name: Optional[str] = None,
-        version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateDiagnostics(_Model):
-    """AkriConnectorTemplateDiagnostics properties.
-
-    :ivar logs: The log settings for the Connector template. Required.
-    :vartype logs: ~azure.mgmt.iotoperations.models.AkriConnectorsDiagnosticsLogs
-    """
-
-    logs: "_models.AkriConnectorsDiagnosticsLogs" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The log settings for the Connector template. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        logs: "_models.AkriConnectorsDiagnosticsLogs",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateRuntimeConfiguration(_Model):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateRuntimeConfiguration properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AkriConnectorTemplateManagedConfiguration
-
-    :ivar runtime_configuration_type: Runtime configuration type for the Connector template.
-     Required. "ManagedConfiguration"
-    :vartype runtime_configuration_type: str or
-     ~azure.mgmt.iotoperations.models.AkriConnectorTemplateRuntimeConfigurationType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    runtime_configuration_type: str = rest_discriminator(
-        name="runtimeConfigurationType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Runtime configuration type for the Connector template. Required. \"ManagedConfiguration\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        runtime_configuration_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateManagedConfiguration(
-    AkriConnectorTemplateRuntimeConfiguration, discriminator="ManagedConfiguration"
-):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateManagedConfiguration properties.
-
-    :ivar runtime_configuration_type: The runtime configuration type for the Connector template.
-     Required. Managed Configuration Type.
-    :vartype runtime_configuration_type: str or
-     ~azure.mgmt.iotoperations.models.MANAGED_CONFIGURATION
-    :ivar managed_configuration_settings: The managed configuration settings. Required.
-    :vartype managed_configuration_settings:
-     ~azure.mgmt.iotoperations.models.AkriConnectorTemplateManagedConfigurationSettings
-    """
-
-    runtime_configuration_type: Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION] = rest_discriminator(name="runtimeConfigurationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The runtime configuration type for the Connector template. Required. Managed Configuration
-     Type."""
-    managed_configuration_settings: "_models.AkriConnectorTemplateManagedConfigurationSettings" = rest_field(
-        name="managedConfigurationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed configuration settings. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        managed_configuration_settings: "_models.AkriConnectorTemplateManagedConfigurationSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.runtime_configuration_type = AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION  # type: ignore
-
-
-class AkriConnectorTemplateManagedConfigurationSettings(_Model):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateManagedConfiguration properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AkriConnectorTemplateRuntimeImageConfiguration,
-    AkriConnectorTemplateRuntimeStatefulSetConfiguration
-
-    :ivar managed_configuration_type: The type of the managed configuration. Required. Known values
-     are: "ImageConfiguration" and "StatefulSetConfiguration".
-    :vartype managed_configuration_type: str or
-     ~azure.mgmt.iotoperations.models.AkriConnectorTemplateManagedConfigurationType
-    :ivar allocation: Allocation settings for the managed configuration.
-    :vartype allocation: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateAllocation
-    :ivar persistent_volume_claims: The persistent volume claims for the managed configuration.
-    :vartype persistent_volume_claims:
-     list[~azure.mgmt.iotoperations.models.AkriConnectorTemplatePersistentVolumeClaim]
-    :ivar additional_configuration: Additional configuration for the image of the managed
-     configuration.
-    :vartype additional_configuration: dict[str, str]
-    :ivar persistent_volume_claim_templates: The persistent volume claim templates for the managed
-     configuration. See
-     `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json
-     <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json>`_.
-    :vartype persistent_volume_claim_templates: list[dict[str, any]]
-    :ivar secrets: Connector secrets that will be mounted onto all connector instances.
-    :vartype secrets: list[~azure.mgmt.iotoperations.models.AkriConnectorsSecret]
-    :ivar trust_settings: Trust list for the connector. This is used to specify the certificates
-     that all connector instances should trust.
-    :vartype trust_settings: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateTrustList
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    managed_configuration_type: str = rest_discriminator(
-        name="managedConfigurationType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of the managed configuration. Required. Known values are: \"ImageConfiguration\" and
-     \"StatefulSetConfiguration\"."""
-    allocation: Optional["_models.AkriConnectorTemplateAllocation"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Allocation settings for the managed configuration."""
-    persistent_volume_claims: Optional[list["_models.AkriConnectorTemplatePersistentVolumeClaim"]] = rest_field(
-        name="persistentVolumeClaims", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The persistent volume claims for the managed configuration."""
-    additional_configuration: Optional[dict[str, str]] = rest_field(
-        name="additionalConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Additional configuration for the image of the managed configuration."""
-    persistent_volume_claim_templates: Optional[list[dict[str, Any]]] = rest_field(
-        name="persistentVolumeClaimTemplates", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The persistent volume claim templates for the managed configuration. See
-     `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json
-     <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json>`_."""
-    secrets: Optional[list["_models.AkriConnectorsSecret"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Connector secrets that will be mounted onto all connector instances."""
-    trust_settings: Optional["_models.AkriConnectorTemplateTrustList"] = rest_field(
-        name="trustSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Trust list for the connector. This is used to specify the certificates that all connector
-     instances should trust."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        managed_configuration_type: str,
-        allocation: Optional["_models.AkriConnectorTemplateAllocation"] = None,
-        persistent_volume_claims: Optional[list["_models.AkriConnectorTemplatePersistentVolumeClaim"]] = None,
-        additional_configuration: Optional[dict[str, str]] = None,
-        persistent_volume_claim_templates: Optional[list[dict[str, Any]]] = None,
-        secrets: Optional[list["_models.AkriConnectorsSecret"]] = None,
-        trust_settings: Optional["_models.AkriConnectorTemplateTrustList"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplatePersistentVolumeClaim(_Model):  # pylint: disable=name-too-long
-    """AkriConnectorTemplatePersistentVolumeClaim properties.
-
-    :ivar claim_name: The name of the persistent volume claim. Required.
-    :vartype claim_name: str
-    :ivar mount_path: The mount path for the persistent volume claim. Required.
-    :vartype mount_path: str
-    """
-
-    claim_name: str = rest_field(name="claimName", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the persistent volume claim. Required."""
-    mount_path: str = rest_field(name="mountPath", visibility=["read", "create", "update", "delete", "query"])
-    """The mount path for the persistent volume claim. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        claim_name: str,
-        mount_path: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateProperties(_Model):
-    """AkriConnectorTemplate properties.
-
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar aio_metadata: Metadata about AIO.
-    :vartype aio_metadata: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateAioMetadata
-    :ivar runtime_configuration: The runtime configuration for the Connector template. Required.
-    :vartype runtime_configuration:
-     ~azure.mgmt.iotoperations.models.AkriConnectorTemplateRuntimeConfiguration
-    :ivar diagnostics: Diagnostics settings for the Connector template.
-    :vartype diagnostics: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateDiagnostics
-    :ivar device_inbound_endpoint_types: Device inbound endpoint types. Required.
-    :vartype device_inbound_endpoint_types:
-     list[~azure.mgmt.iotoperations.models.AkriConnectorTemplateDeviceInboundEndpointType]
-    :ivar mqtt_connection_configuration: Mqtt connection configuration settings.
-    :vartype mqtt_connection_configuration:
-     ~azure.mgmt.iotoperations.models.AkriConnectorsMqttConnectionConfiguration
-    :ivar connector_metadata_ref: A reference to a connector metadata document reference in a
-     container registry.
-    :vartype connector_metadata_ref: str
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
-    """
-
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    aio_metadata: Optional["_models.AkriConnectorTemplateAioMetadata"] = rest_field(
-        name="aioMetadata", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metadata about AIO."""
-    runtime_configuration: "_models.AkriConnectorTemplateRuntimeConfiguration" = rest_field(
-        name="runtimeConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The runtime configuration for the Connector template. Required."""
-    diagnostics: Optional["_models.AkriConnectorTemplateDiagnostics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Diagnostics settings for the Connector template."""
-    device_inbound_endpoint_types: list["_models.AkriConnectorTemplateDeviceInboundEndpointType"] = rest_field(
-        name="deviceInboundEndpointTypes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Device inbound endpoint types. Required."""
-    mqtt_connection_configuration: Optional["_models.AkriConnectorsMqttConnectionConfiguration"] = rest_field(
-        name="mqttConnectionConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Mqtt connection configuration settings."""
-    connector_metadata_ref: Optional[str] = rest_field(
-        name="connectorMetadataRef", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A reference to a connector metadata document reference in a container registry."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        runtime_configuration: "_models.AkriConnectorTemplateRuntimeConfiguration",
-        device_inbound_endpoint_types: list["_models.AkriConnectorTemplateDeviceInboundEndpointType"],
-        aio_metadata: Optional["_models.AkriConnectorTemplateAioMetadata"] = None,
-        diagnostics: Optional["_models.AkriConnectorTemplateDiagnostics"] = None,
-        mqtt_connection_configuration: Optional["_models.AkriConnectorsMqttConnectionConfiguration"] = None,
-        connector_metadata_ref: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateResource(ProxyResource):
-    """AkriConnectorTemplate resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateProperties
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
-    """
-
-    properties: Optional["_models.AkriConnectorTemplateProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.AkriConnectorTemplateProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateRuntimeImageConfiguration(
-    AkriConnectorTemplateManagedConfigurationSettings, discriminator="ImageConfiguration"
-):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateRuntimeImageConfiguration properties.
-
-    :ivar allocation: Allocation settings for the managed configuration.
-    :vartype allocation: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateAllocation
-    :ivar persistent_volume_claims: The persistent volume claims for the managed configuration.
-    :vartype persistent_volume_claims:
-     list[~azure.mgmt.iotoperations.models.AkriConnectorTemplatePersistentVolumeClaim]
-    :ivar additional_configuration: Additional configuration for the image of the managed
-     configuration.
-    :vartype additional_configuration: dict[str, str]
-    :ivar persistent_volume_claim_templates: The persistent volume claim templates for the managed
-     configuration. See
-     `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json
-     <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json>`_.
-    :vartype persistent_volume_claim_templates: list[dict[str, any]]
-    :ivar secrets: Connector secrets that will be mounted onto all connector instances.
-    :vartype secrets: list[~azure.mgmt.iotoperations.models.AkriConnectorsSecret]
-    :ivar trust_settings: Trust list for the connector. This is used to specify the certificates
-     that all connector instances should trust.
-    :vartype trust_settings: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateTrustList
-    :ivar managed_configuration_type: The managed configuration type for the Connector template.
-     Required. Image Configuration Type.
-    :vartype managed_configuration_type: str or
-     ~azure.mgmt.iotoperations.models.IMAGE_CONFIGURATION
-    :ivar image_configuration_settings: The image configuration settings. Required.
-    :vartype image_configuration_settings:
-     ~azure.mgmt.iotoperations.models.AkriConnectorTemplateRuntimeImageConfigurationSettings
-    """
-
-    managed_configuration_type: Literal[AkriConnectorTemplateManagedConfigurationType.IMAGE_CONFIGURATION] = rest_discriminator(name="managedConfigurationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The managed configuration type for the Connector template. Required. Image Configuration Type."""
-    image_configuration_settings: "_models.AkriConnectorTemplateRuntimeImageConfigurationSettings" = rest_field(
-        name="imageConfigurationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The image configuration settings. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        image_configuration_settings: "_models.AkriConnectorTemplateRuntimeImageConfigurationSettings",
-        allocation: Optional["_models.AkriConnectorTemplateAllocation"] = None,
-        persistent_volume_claims: Optional[list["_models.AkriConnectorTemplatePersistentVolumeClaim"]] = None,
-        additional_configuration: Optional[dict[str, str]] = None,
-        persistent_volume_claim_templates: Optional[list[dict[str, Any]]] = None,
-        secrets: Optional[list["_models.AkriConnectorsSecret"]] = None,
-        trust_settings: Optional["_models.AkriConnectorTemplateTrustList"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.managed_configuration_type = AkriConnectorTemplateManagedConfigurationType.IMAGE_CONFIGURATION  # type: ignore
-
-
-class AkriConnectorTemplateRuntimeImageConfigurationSettings(_Model):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateRuntimeImageConfiguration properties.
-
-    :ivar image_name: The image name without any registry reference, tag or digest. Required.
-    :vartype image_name: str
-    :ivar image_pull_policy: The pull policy of the image. Known values are: "Always",
-     "IfNotPresent", and "Never".
-    :vartype image_pull_policy: str or
-     ~azure.mgmt.iotoperations.models.AkriConnectorsImagePullPolicy
-    :ivar replicas: The number of replicas to be set up.
-    :vartype replicas: int
-    :ivar registry_settings: The registry settings for the image. You can omit this field if using
-     the default docker hub repository or using a local image.
-    :vartype registry_settings: ~azure.mgmt.iotoperations.models.AkriConnectorsRegistrySettings
-    :ivar tag_digest_settings: Optional image tag or digest. If not specified, the default tag is
-     ``latest``.
-    :vartype tag_digest_settings: ~azure.mgmt.iotoperations.models.AkriConnectorsTagDigestSettings
-    """
-
-    image_name: str = rest_field(name="imageName", visibility=["read", "create", "update", "delete", "query"])
-    """The image name without any registry reference, tag or digest. Required."""
-    image_pull_policy: Optional[Union[str, "_models.AkriConnectorsImagePullPolicy"]] = rest_field(
-        name="imagePullPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The pull policy of the image. Known values are: \"Always\", \"IfNotPresent\", and \"Never\"."""
-    replicas: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of replicas to be set up."""
-    registry_settings: Optional["_models.AkriConnectorsRegistrySettings"] = rest_field(
-        name="registrySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The registry settings for the image. You can omit this field if using the default docker hub
-     repository or using a local image."""
-    tag_digest_settings: Optional["_models.AkriConnectorsTagDigestSettings"] = rest_field(
-        name="tagDigestSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional image tag or digest. If not specified, the default tag is ``latest``."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        image_name: str,
-        image_pull_policy: Optional[Union[str, "_models.AkriConnectorsImagePullPolicy"]] = None,
-        replicas: Optional[int] = None,
-        registry_settings: Optional["_models.AkriConnectorsRegistrySettings"] = None,
-        tag_digest_settings: Optional["_models.AkriConnectorsTagDigestSettings"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriConnectorTemplateRuntimeStatefulSetConfiguration(
-    AkriConnectorTemplateManagedConfigurationSettings, discriminator="StatefulSetConfiguration"
-):  # pylint: disable=name-too-long
-    """AkriConnectorTemplateRuntimeStatefulSetConfiguration properties.
-
-    :ivar allocation: Allocation settings for the managed configuration.
-    :vartype allocation: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateAllocation
-    :ivar persistent_volume_claims: The persistent volume claims for the managed configuration.
-    :vartype persistent_volume_claims:
-     list[~azure.mgmt.iotoperations.models.AkriConnectorTemplatePersistentVolumeClaim]
-    :ivar additional_configuration: Additional configuration for the image of the managed
-     configuration.
-    :vartype additional_configuration: dict[str, str]
-    :ivar persistent_volume_claim_templates: The persistent volume claim templates for the managed
-     configuration. See
-     `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json
-     <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json>`_.
-    :vartype persistent_volume_claim_templates: list[dict[str, any]]
-    :ivar secrets: Connector secrets that will be mounted onto all connector instances.
-    :vartype secrets: list[~azure.mgmt.iotoperations.models.AkriConnectorsSecret]
-    :ivar trust_settings: Trust list for the connector. This is used to specify the certificates
-     that all connector instances should trust.
-    :vartype trust_settings: ~azure.mgmt.iotoperations.models.AkriConnectorTemplateTrustList
-    :ivar managed_configuration_type: The managed configuration type for the Connector template.
-     Required. StatefulSet Configuration Type.
-    :vartype managed_configuration_type: str or
-     ~azure.mgmt.iotoperations.models.STATEFUL_SET_CONFIGURATION
-    :ivar stateful_set_configuration_settings: The stateful set configuration settings. This
-     corresponds to the Kubernetes StatefulSet resource. See
-     `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json#/components/schemas/io.k8s.api.apps.v1.StatefulSetSpec
-     <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json#/components/schemas/io.k8s.api.apps.v1.StatefulSetSpec>`_.
-     Required.
-    :vartype stateful_set_configuration_settings: dict[str, any]
-    """
-
-    managed_configuration_type: Literal[AkriConnectorTemplateManagedConfigurationType.STATEFUL_SET_CONFIGURATION] = rest_discriminator(name="managedConfigurationType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The managed configuration type for the Connector template. Required. StatefulSet Configuration
-     Type."""
-    stateful_set_configuration_settings: dict[str, Any] = rest_field(
-        name="statefulSetConfigurationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The stateful set configuration settings. This corresponds to the Kubernetes StatefulSet
-     resource. See
-     `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json#/components/schemas/io.k8s.api.apps.v1.StatefulSetSpec
-     <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json#/components/schemas/io.k8s.api.apps.v1.StatefulSetSpec>`_.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        stateful_set_configuration_settings: dict[str, Any],
-        allocation: Optional["_models.AkriConnectorTemplateAllocation"] = None,
-        persistent_volume_claims: Optional[list["_models.AkriConnectorTemplatePersistentVolumeClaim"]] = None,
-        additional_configuration: Optional[dict[str, str]] = None,
-        persistent_volume_claim_templates: Optional[list[dict[str, Any]]] = None,
-        secrets: Optional[list["_models.AkriConnectorsSecret"]] = None,
-        trust_settings: Optional["_models.AkriConnectorTemplateTrustList"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.managed_configuration_type = AkriConnectorTemplateManagedConfigurationType.STATEFUL_SET_CONFIGURATION  # type: ignore
-
-
-class AkriConnectorTemplateTrustList(_Model):
-    """AkriConnectorTemplateTrustList properties.
-
-    :ivar trust_list_secret_ref: The secret reference for certificates to trust. Required.
-    :vartype trust_list_secret_ref: str
-    """
-
-    trust_list_secret_ref: str = rest_field(
-        name="trustListSecretRef", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The secret reference for certificates to trust. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        trust_list_secret_ref: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriServiceProperties(_Model):
-    """AkriService properties.
-
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar status: The status for the service.
-    :vartype status: ~azure.mgmt.iotoperations.models.AkriServiceStatus
-    """
-
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    status: Optional["_models.AkriServiceStatus"] = rest_field(visibility=["read"])
-    """The status for the service."""
-
-
-class AkriServiceResource(ProxyResource):
-    """AkriService resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.iotoperations.models.AkriServiceProperties
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
-    """
-
-    properties: Optional["_models.AkriServiceProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.AkriServiceProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AkriServiceStatus(_Model):
-    """AkriService status.
-
-    :ivar health_state: The health state of the AkriService.
-    :vartype health_state: ~azure.mgmt.iotoperations.models.ResourceHealthStatus
-    """
-
-    health_state: Optional["_models.ResourceHealthStatus"] = rest_field(name="healthState", visibility=["read"])
-    """The health state of the AkriService."""
-
-
-class AuthorizationConfig(_Model):
+class AuthorizationConfig(_model_base.Model):
     """Broker AuthorizationConfig properties.
 
     :ivar cache: Enable caching of the authorization rules. Known values are: "Enabled" and
@@ -1565,13 +71,9 @@ class AuthorizationConfig(_Model):
     :vartype rules: list[~azure.mgmt.iotoperations.models.AuthorizationRule]
     """
 
-    cache: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    cache: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """Enable caching of the authorization rules. Known values are: \"Enabled\" and \"Disabled\"."""
-    rules: Optional[list["_models.AuthorizationRule"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    rules: Optional[List["_models.AuthorizationRule"]] = rest_field()
     """The authorization rules to follow. If no rule is set, but Authorization Resource is used that
      would mean DenyAll."""
 
@@ -1580,7 +82,7 @@ class AuthorizationConfig(_Model):
         self,
         *,
         cache: Optional[Union[str, "_models.OperationalMode"]] = None,
-        rules: Optional[list["_models.AuthorizationRule"]] = None,
+        rules: Optional[List["_models.AuthorizationRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -1594,8 +96,9 @@ class AuthorizationConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationRule(_Model):
+class AuthorizationRule(_model_base.Model):
     """AuthorizationConfig Rule Properties.
+
 
     :ivar broker_resources: Give access to Broker methods and topics. Required.
     :vartype broker_resources: list[~azure.mgmt.iotoperations.models.BrokerResourceRule]
@@ -1605,24 +108,20 @@ class AuthorizationRule(_Model):
     :vartype state_store_resources: list[~azure.mgmt.iotoperations.models.StateStoreResourceRule]
     """
 
-    broker_resources: list["_models.BrokerResourceRule"] = rest_field(
-        name="brokerResources", visibility=["read", "create", "update", "delete", "query"]
-    )
+    broker_resources: List["_models.BrokerResourceRule"] = rest_field(name="brokerResources")
     """Give access to Broker methods and topics. Required."""
-    principals: "_models.PrincipalDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    principals: "_models.PrincipalDefinition" = rest_field()
     """Give access to clients based on the following properties. Required."""
-    state_store_resources: Optional[list["_models.StateStoreResourceRule"]] = rest_field(
-        name="stateStoreResources", visibility=["read", "create", "update", "delete", "query"]
-    )
+    state_store_resources: Optional[List["_models.StateStoreResourceRule"]] = rest_field(name="stateStoreResources")
     """Give access to state store resources."""
 
     @overload
     def __init__(
         self,
         *,
-        broker_resources: list["_models.BrokerResourceRule"],
+        broker_resources: List["_models.BrokerResourceRule"],
         principals: "_models.PrincipalDefinition",
-        state_store_resources: Optional[list["_models.StateStoreResourceRule"]] = None,
+        state_store_resources: Optional[List["_models.StateStoreResourceRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -1636,36 +135,9 @@ class AuthorizationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureDeviceRegistryNamespaceRef(_Model):
-    """Azure Device Registry Namespace reference.
-
-    :ivar resource_id: The resource ID of the Azure Device Registry Namespace. Required.
-    :vartype resource_id: str
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The resource ID of the Azure Device Registry Namespace. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BackendChain(_Model):
+class BackendChain(_model_base.Model):
     """Desired properties of the backend instances of the broker.
+
 
     :ivar partitions: The desired number of physical backend partitions. Required.
     :vartype partitions: int
@@ -1676,13 +148,11 @@ class BackendChain(_Model):
     :vartype workers: int
     """
 
-    partitions: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    partitions: int = rest_field()
     """The desired number of physical backend partitions. Required."""
-    redundancy_factor: int = rest_field(
-        name="redundancyFactor", visibility=["read", "create", "update", "delete", "query"]
-    )
+    redundancy_factor: int = rest_field(name="redundancyFactor")
     """The desired numbers of backend replicas (pods) in a physical partition. Required."""
-    workers: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    workers: Optional[int] = rest_field()
     """Number of logical backend workers per replica (pod)."""
 
     @overload
@@ -1705,7 +175,7 @@ class BackendChain(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchingConfiguration(_Model):
+class BatchingConfiguration(_model_base.Model):
     """Batching configuration.
 
     :ivar latency_seconds: Batching latency in seconds.
@@ -1714,13 +184,9 @@ class BatchingConfiguration(_Model):
     :vartype max_messages: int
     """
 
-    latency_seconds: Optional[int] = rest_field(
-        name="latencySeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    latency_seconds: Optional[int] = rest_field(name="latencySeconds")
     """Batching latency in seconds."""
-    max_messages: Optional[int] = rest_field(
-        name="maxMessages", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_messages: Optional[int] = rest_field(name="maxMessages")
     """Maximum number of messages in a batch."""
 
     @overload
@@ -1742,8 +208,11 @@ class BatchingConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticationProperties(_Model):
+class BrokerAuthenticationProperties(_model_base.Model):
     """BrokerAuthentication Resource properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar authentication_methods: Defines a set of Broker authentication methods to be used on
      ``BrokerListeners``. For each array element one authenticator type supported. Required.
@@ -1752,14 +221,9 @@ class BrokerAuthenticationProperties(_Model):
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
-    authentication_methods: list["_models.BrokerAuthenticatorMethods"] = rest_field(
-        name="authenticationMethods", visibility=["read", "create", "update", "delete", "query"]
-    )
+    authentication_methods: List["_models.BrokerAuthenticatorMethods"] = rest_field(name="authenticationMethods")
     """Defines a set of Broker authentication methods to be used on ``BrokerListeners``. For each
      array element one authenticator type supported. Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -1767,17 +231,12 @@ class BrokerAuthenticationProperties(_Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
         self,
         *,
-        authentication_methods: list["_models.BrokerAuthenticatorMethods"],
+        authentication_methods: List["_models.BrokerAuthenticatorMethods"],
     ) -> None: ...
 
     @overload
@@ -1791,11 +250,64 @@ class BrokerAuthenticationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Resource(_model_base.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long"""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
+    """
+
+
 class BrokerAuthenticationResource(ProxyResource):
     """Instance broker authentication resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1807,25 +319,21 @@ class BrokerAuthenticationResource(ProxyResource):
     :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.iotoperations.models.BrokerAuthenticationProperties
-    :ivar extended_location: Edge location of the resource.
+    :ivar extended_location: Edge location of the resource. Required.
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerAuthenticationProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.BrokerAuthenticationProperties"] = rest_field()
     """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """Edge location of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        extended_location: "_models.ExtendedLocation",
         properties: Optional["_models.BrokerAuthenticationProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -1839,14 +347,15 @@ class BrokerAuthenticationResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorCustomAuth(_Model):
+class BrokerAuthenticatorCustomAuth(_model_base.Model):
     """Custom Authentication properties.
+
 
     :ivar x509: X509 Custom Auth type details. Required.
     :vartype x509: ~azure.mgmt.iotoperations.models.X509ManualCertificate
     """
 
-    x509: "_models.X509ManualCertificate" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    x509: "_models.X509ManualCertificate" = rest_field()
     """X509 Custom Auth type details. Required."""
 
     @overload
@@ -1867,8 +376,9 @@ class BrokerAuthenticatorCustomAuth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodCustom(_Model):
+class BrokerAuthenticatorMethodCustom(_model_base.Model):
     """Custom method for BrokerAuthentication.
+
 
     :ivar auth: Optional authentication needed for authenticating with the custom authentication
      server.
@@ -1883,17 +393,13 @@ class BrokerAuthenticatorMethodCustom(_Model):
     :vartype headers: dict[str, str]
     """
 
-    auth: Optional["_models.BrokerAuthenticatorCustomAuth"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    auth: Optional["_models.BrokerAuthenticatorCustomAuth"] = rest_field()
     """Optional authentication needed for authenticating with the custom authentication server."""
-    ca_cert_config_map: Optional[str] = rest_field(
-        name="caCertConfigMap", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ca_cert_config_map: Optional[str] = rest_field(name="caCertConfigMap")
     """Optional CA certificate for validating the custom authentication server's certificate."""
-    endpoint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    endpoint: str = rest_field()
     """Endpoint of the custom authentication server. Must be an HTTPS endpoint. Required."""
-    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    headers: Optional[Dict[str, str]] = rest_field()
     """Additional HTTP headers to pass to the custom authentication server."""
 
     @overload
@@ -1903,7 +409,7 @@ class BrokerAuthenticatorMethodCustom(_Model):
         endpoint: str,
         auth: Optional["_models.BrokerAuthenticatorCustomAuth"] = None,
         ca_cert_config_map: Optional[str] = None,
-        headers: Optional[dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1917,8 +423,9 @@ class BrokerAuthenticatorMethodCustom(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethods(_Model):
+class BrokerAuthenticatorMethods(_model_base.Model):
     """Set of broker authentication policies. Only one method is supported for each entry.
+
 
     :ivar method: Custom authentication configuration. Required. Known values are: "Custom",
      "ServiceAccountToken", and "X509".
@@ -1932,22 +439,16 @@ class BrokerAuthenticatorMethods(_Model):
     :vartype x509_settings: ~azure.mgmt.iotoperations.models.BrokerAuthenticatorMethodX509
     """
 
-    method: Union[str, "_models.BrokerAuthenticationMethod"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    method: Union[str, "_models.BrokerAuthenticationMethod"] = rest_field()
     """Custom authentication configuration. Required. Known values are: \"Custom\",
      \"ServiceAccountToken\", and \"X509\"."""
-    custom_settings: Optional["_models.BrokerAuthenticatorMethodCustom"] = rest_field(
-        name="customSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    custom_settings: Optional["_models.BrokerAuthenticatorMethodCustom"] = rest_field(name="customSettings")
     """Custom authentication configuration."""
     service_account_token_settings: Optional["_models.BrokerAuthenticatorMethodSat"] = rest_field(
-        name="serviceAccountTokenSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="serviceAccountTokenSettings"
     )
     """ServiceAccountToken authentication configuration."""
-    x509_settings: Optional["_models.BrokerAuthenticatorMethodX509"] = rest_field(
-        name="x509Settings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    x509_settings: Optional["_models.BrokerAuthenticatorMethodX509"] = rest_field(name="x509Settings")
     """X.509 authentication configuration."""
 
     @overload
@@ -1971,21 +472,22 @@ class BrokerAuthenticatorMethods(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodSat(_Model):
+class BrokerAuthenticatorMethodSat(_model_base.Model):
     """Service Account Token for BrokerAuthentication.
+
 
     :ivar audiences: List of allowed audience. Required.
     :vartype audiences: list[str]
     """
 
-    audiences: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    audiences: List[str] = rest_field()
     """List of allowed audience. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        audiences: list[str],
+        audiences: List[str],
     ) -> None: ...
 
     @overload
@@ -1999,7 +501,7 @@ class BrokerAuthenticatorMethodSat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodX509(_Model):
+class BrokerAuthenticatorMethodX509(_model_base.Model):
     """X509 for BrokerAuthentication.
 
     :ivar authorization_attributes: X509 authorization attributes properties.
@@ -2007,33 +509,21 @@ class BrokerAuthenticatorMethodX509(_Model):
      ~azure.mgmt.iotoperations.models.BrokerAuthenticatorMethodX509Attributes]
     :ivar trusted_client_ca_cert: Name of the trusted client ca cert resource.
     :vartype trusted_client_ca_cert: str
-    :ivar additional_validation: X509 authentication attributes properties. Known values are:
-     "None" and "AzureDeviceRegistry".
-    :vartype additional_validation: str or
-     ~azure.mgmt.iotoperations.models.BrokerAuthenticatorValidationMethods
     """
 
-    authorization_attributes: Optional[dict[str, "_models.BrokerAuthenticatorMethodX509Attributes"]] = rest_field(
-        name="authorizationAttributes", visibility=["read", "create", "update", "delete", "query"]
+    authorization_attributes: Optional[Dict[str, "_models.BrokerAuthenticatorMethodX509Attributes"]] = rest_field(
+        name="authorizationAttributes"
     )
     """X509 authorization attributes properties."""
-    trusted_client_ca_cert: Optional[str] = rest_field(
-        name="trustedClientCaCert", visibility=["read", "create", "update", "delete", "query"]
-    )
+    trusted_client_ca_cert: Optional[str] = rest_field(name="trustedClientCaCert")
     """Name of the trusted client ca cert resource."""
-    additional_validation: Optional[Union[str, "_models.BrokerAuthenticatorValidationMethods"]] = rest_field(
-        name="additionalValidation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """X509 authentication attributes properties. Known values are: \"None\" and
-     \"AzureDeviceRegistry\"."""
 
     @overload
     def __init__(
         self,
         *,
-        authorization_attributes: Optional[dict[str, "_models.BrokerAuthenticatorMethodX509Attributes"]] = None,
+        authorization_attributes: Optional[Dict[str, "_models.BrokerAuthenticatorMethodX509Attributes"]] = None,
         trusted_client_ca_cert: Optional[str] = None,
-        additional_validation: Optional[Union[str, "_models.BrokerAuthenticatorValidationMethods"]] = None,
     ) -> None: ...
 
     @overload
@@ -2047,8 +537,9 @@ class BrokerAuthenticatorMethodX509(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodX509Attributes(_Model):
+class BrokerAuthenticatorMethodX509Attributes(_model_base.Model):
     """BrokerAuthenticatorMethodX509Attributes properties.
+
 
     :ivar attributes: Attributes object. Required.
     :vartype attributes: dict[str, str]
@@ -2056,16 +547,16 @@ class BrokerAuthenticatorMethodX509Attributes(_Model):
     :vartype subject: str
     """
 
-    attributes: dict[str, str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    attributes: Dict[str, str] = rest_field()
     """Attributes object. Required."""
-    subject: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    subject: str = rest_field()
     """Subject of the X509 attribute. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        attributes: dict[str, str],
+        attributes: Dict[str, str],
         subject: str,
     ) -> None: ...
 
@@ -2080,8 +571,11 @@ class BrokerAuthenticatorMethodX509Attributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthorizationProperties(_Model):
+class BrokerAuthorizationProperties(_model_base.Model):
     """BrokerAuthorization Resource properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar authorization_policies: The list of authorization policies supported by the Authorization
      Resource. Required.
@@ -2089,25 +583,15 @@ class BrokerAuthorizationProperties(_Model):
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
-    authorization_policies: "_models.AuthorizationConfig" = rest_field(
-        name="authorizationPolicies", visibility=["read", "create", "update", "delete", "query"]
-    )
+    authorization_policies: "_models.AuthorizationConfig" = rest_field(name="authorizationPolicies")
     """The list of authorization policies supported by the Authorization Resource. Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
@@ -2130,8 +614,11 @@ class BrokerAuthorizationProperties(_Model):
 class BrokerAuthorizationResource(ProxyResource):
     """Instance broker authorizations resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2143,25 +630,21 @@ class BrokerAuthorizationResource(ProxyResource):
     :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.iotoperations.models.BrokerAuthorizationProperties
-    :ivar extended_location: Edge location of the resource.
+    :ivar extended_location: Edge location of the resource. Required.
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerAuthorizationProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.BrokerAuthorizationProperties"] = rest_field()
     """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """Edge location of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        extended_location: "_models.ExtendedLocation",
         properties: Optional["_models.BrokerAuthorizationProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -2175,7 +658,7 @@ class BrokerAuthorizationResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerDiagnostics(_Model):
+class BrokerDiagnostics(_model_base.Model):
     """Broker Diagnostic Setting properties.
 
     :ivar logs: Diagnostic log settings for the resource.
@@ -2188,15 +671,13 @@ class BrokerDiagnostics(_Model):
     :vartype traces: ~azure.mgmt.iotoperations.models.Traces
     """
 
-    logs: Optional["_models.DiagnosticsLogs"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    logs: Optional["_models.DiagnosticsLogs"] = rest_field()
     """Diagnostic log settings for the resource."""
-    metrics: Optional["_models.Metrics"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metrics: Optional["_models.Metrics"] = rest_field()
     """The metrics settings for the resource."""
-    self_check: Optional["_models.SelfCheck"] = rest_field(
-        name="selfCheck", visibility=["read", "create", "update", "delete", "query"]
-    )
+    self_check: Optional["_models.SelfCheck"] = rest_field(name="selfCheck")
     """The self check properties."""
-    traces: Optional["_models.Traces"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    traces: Optional["_models.Traces"] = rest_field()
     """The trace properties."""
 
     @overload
@@ -2220,9 +701,12 @@ class BrokerDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerListenerProperties(_Model):
+class BrokerListenerProperties(_model_base.Model):
     """Defines a Broker listener. A listener is a collection of ports on which the broker accepts
     connections from clients.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar service_name: Kubernetes Service name of this listener.
     :vartype service_name: str
@@ -2234,20 +718,13 @@ class BrokerListenerProperties(_Model):
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
-    service_name: Optional[str] = rest_field(
-        name="serviceName", visibility=["read", "create", "update", "delete", "query"]
-    )
+    service_name: Optional[str] = rest_field(name="serviceName")
     """Kubernetes Service name of this listener."""
-    ports: list["_models.ListenerPort"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    ports: List["_models.ListenerPort"] = rest_field()
     """Ports on which this listener accepts client connections. Required."""
-    service_type: Optional[Union[str, "_models.ServiceType"]] = rest_field(
-        name="serviceType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    service_type: Optional[Union[str, "_models.ServiceType"]] = rest_field(name="serviceType")
     """Kubernetes Service type of this listener. Known values are: \"ClusterIp\", \"LoadBalancer\",
      and \"NodePort\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -2255,17 +732,12 @@ class BrokerListenerProperties(_Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
         self,
         *,
-        ports: list["_models.ListenerPort"],
+        ports: List["_models.ListenerPort"],
         service_name: Optional[str] = None,
         service_type: Optional[Union[str, "_models.ServiceType"]] = None,
     ) -> None: ...
@@ -2284,8 +756,11 @@ class BrokerListenerProperties(_Model):
 class BrokerListenerResource(ProxyResource):
     """Instance broker resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2297,25 +772,21 @@ class BrokerListenerResource(ProxyResource):
     :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.iotoperations.models.BrokerListenerProperties
-    :ivar extended_location: Edge location of the resource.
+    :ivar extended_location: Edge location of the resource. Required.
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerListenerProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.BrokerListenerProperties"] = rest_field()
     """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """Edge location of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        extended_location: "_models.ExtendedLocation",
         properties: Optional["_models.BrokerListenerProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -2329,139 +800,10 @@ class BrokerListenerResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerPersistence(_Model):
-    """Disk persistence configuration.
-
-    When persistence is enabled, certain items (non-performance-critical data) selected for
-    persistence will reside only on disk. Below are the affected items:
-
-
-
-    * Retained messages will be stored on disk only.
-    * WILL messages will be stored on disk only.
-    * DSS key/value pairs will be stored on disk only, except for performance-critical items like
-    timed locks, which remain in both disk and memory for improved performance.
-
-    Optional. Everything is in-memory if not set.
-    Note: if configured, all MQTT session states are written to disk.
-
-    :ivar max_size: The max size of the message buffer on disk. If a PVC template is specified
-     using persistentVolumeClaimSpec Then this size is used as the request and limit sizes of that
-     template. If a PVC template isn't specified Then local-path provisioner is requested with this
-     size limit. Required. Required.
-    :vartype max_size: str
-    :ivar persistent_volume_claim_spec: Use the specified persistent volume claim template to mount
-     a persistent volume. Same object as in diskBackedMessageBuffer, but with a limitation that
-     access modes field must be set to ``ReadWriteOncePod``.
-
-     If unset, a default PVC with default properties will be used. Among other things this PVC will
-     use the cluster default storage class, which may or may not be using a local path provisioner.
-     User is opting in to sub-optimal behavior if they leave this unset or set it without the
-     storage class field, and their cluster default is not a local path class.
-    :vartype persistent_volume_claim_spec: ~azure.mgmt.iotoperations.models.VolumeClaimSpec
-    :ivar retain: Controls which topic's retained messages should be persisted to disk.
-    :vartype retain: ~azure.mgmt.iotoperations.models.BrokerRetainMessagesPolicy
-    :ivar state_store: Controls which keys should be persisted to disk for the state store.
-    :vartype state_store: ~azure.mgmt.iotoperations.models.BrokerStateStorePolicy
-    :ivar subscriber_queue: Controls which subscriber message queues should be persisted to disk.
-     Important: to facilitate reconnection, session state metadata are ALWAYS written to disk if any
-     persistence setting is specified, even if this section isn't set.
-    :vartype subscriber_queue: ~azure.mgmt.iotoperations.models.BrokerSubscriberQueuePolicy
-    :ivar encryption: Controls settings related to encryption of the persistence database.
-     Optional, defaults to enabling encryption.
-    :vartype encryption: ~azure.mgmt.iotoperations.models.BrokerPersistenceEncryption
-    """
-
-    max_size: str = rest_field(name="maxSize", visibility=["read", "create"])
-    """The max size of the message buffer on disk. If a PVC template is specified using
-     persistentVolumeClaimSpec Then this size is used as the request and limit sizes of that
-     template. If a PVC template isn't specified Then local-path provisioner is requested with this
-     size limit. Required. Required."""
-    persistent_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(
-        name="persistentVolumeClaimSpec", visibility=["read", "create"]
-    )
-    """Use the specified persistent volume claim template to mount a persistent volume. Same object as
-     in diskBackedMessageBuffer, but with a limitation that access modes field must be set to
-     ``ReadWriteOncePod``.
-     
-     If unset, a default PVC with default properties will be used. Among other things this PVC will
-     use the cluster default storage class, which may or may not be using a local path provisioner.
-     User is opting in to sub-optimal behavior if they leave this unset or set it without the
-     storage class field, and their cluster default is not a local path class."""
-    retain: Optional["_models.BrokerRetainMessagesPolicy"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls which topic's retained messages should be persisted to disk."""
-    state_store: Optional["_models.BrokerStateStorePolicy"] = rest_field(
-        name="stateStore", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls which keys should be persisted to disk for the state store."""
-    subscriber_queue: Optional["_models.BrokerSubscriberQueuePolicy"] = rest_field(
-        name="subscriberQueue", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls which subscriber message queues should be persisted to disk. Important: to facilitate
-     reconnection, session state metadata are ALWAYS written to disk if any persistence setting is
-     specified, even if this section isn't set."""
-    encryption: Optional["_models.BrokerPersistenceEncryption"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls settings related to encryption of the persistence database. Optional, defaults to
-     enabling encryption."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_size: str,
-        persistent_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = None,
-        retain: Optional["_models.BrokerRetainMessagesPolicy"] = None,
-        state_store: Optional["_models.BrokerStateStorePolicy"] = None,
-        subscriber_queue: Optional["_models.BrokerSubscriberQueuePolicy"] = None,
-        encryption: Optional["_models.BrokerPersistenceEncryption"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerPersistenceEncryption(_Model):
-    """Broker Persistence Encryption properties.
-
-    :ivar mode: Determines if encryption is enabled. Required. Known values are: "Enabled" and
-     "Disabled".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.OperationalMode
-    """
-
-    mode: Union[str, "_models.OperationalMode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Determines if encryption is enabled. Required. Known values are: \"Enabled\" and \"Disabled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: Union[str, "_models.OperationalMode"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerProperties(_Model):
+class BrokerProperties(_model_base.Model):
     """Broker Resource properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar advanced: Advanced settings of Broker.
     :vartype advanced: ~azure.mgmt.iotoperations.models.AdvancedSettings
@@ -2479,25 +821,16 @@ class BrokerProperties(_Model):
     :ivar memory_profile: Memory profile of Broker. Known values are: "Tiny", "Low", "Medium", and
      "High".
     :vartype memory_profile: str or ~azure.mgmt.iotoperations.models.BrokerMemoryProfile
-    :ivar persistence: The persistence settings of the Broker.
-    :vartype persistence: ~azure.mgmt.iotoperations.models.BrokerPersistence
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar status: The status for the broker.
-    :vartype status: ~azure.mgmt.iotoperations.models.BrokerStatus
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
     advanced: Optional["_models.AdvancedSettings"] = rest_field(visibility=["read", "create"])
     """Advanced settings of Broker."""
     cardinality: Optional["_models.Cardinality"] = rest_field(visibility=["read", "create"])
     """The cardinality details of the broker."""
-    diagnostics: Optional["_models.BrokerDiagnostics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    diagnostics: Optional["_models.BrokerDiagnostics"] = rest_field()
     """Spec defines the desired identities of Broker diagnostics settings."""
     disk_backed_message_buffer: Optional["_models.DiskBackedMessageBuffer"] = rest_field(
         name="diskBackedMessageBuffer", visibility=["read", "create"]
@@ -2513,22 +846,11 @@ class BrokerProperties(_Model):
         name="memoryProfile", visibility=["read", "create"]
     )
     """Memory profile of Broker. Known values are: \"Tiny\", \"Low\", \"Medium\", and \"High\"."""
-    persistence: Optional["_models.BrokerPersistence"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The persistence settings of the Broker."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    status: Optional["_models.BrokerStatus"] = rest_field(visibility=["read"])
-    """The status for the broker."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
@@ -2540,7 +862,6 @@ class BrokerProperties(_Model):
         disk_backed_message_buffer: Optional["_models.DiskBackedMessageBuffer"] = None,
         generate_resource_limits: Optional["_models.GenerateResourceLimits"] = None,
         memory_profile: Optional[Union[str, "_models.BrokerMemoryProfile"]] = None,
-        persistence: Optional["_models.BrokerPersistence"] = None,
     ) -> None: ...
 
     @overload
@@ -2557,8 +878,11 @@ class BrokerProperties(_Model):
 class BrokerResource(ProxyResource):
     """Instance broker resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2570,25 +894,21 @@ class BrokerResource(ProxyResource):
     :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.iotoperations.models.BrokerProperties
-    :ivar extended_location: Edge location of the resource.
+    :ivar extended_location: Edge location of the resource. Required.
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.BrokerProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.BrokerProperties"] = rest_field()
     """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """Edge location of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        extended_location: "_models.ExtendedLocation",
         properties: Optional["_models.BrokerProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -2602,9 +922,10 @@ class BrokerResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerResourceRule(_Model):
+class BrokerResourceRule(_model_base.Model):
     """Broker Resource Rule properties. This defines the objects that represent the actions or topics,
     such as - method.Connect, method.Publish, etc.
+
 
     :ivar method: Give access for a Broker method (i.e., Connect, Subscribe, or Publish). Required.
      Known values are: "Connect", "Publish", and "Subscribe".
@@ -2618,18 +939,14 @@ class BrokerResourceRule(_Model):
     :vartype topics: list[str]
     """
 
-    method: Union[str, "_models.BrokerResourceDefinitionMethods"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    method: Union[str, "_models.BrokerResourceDefinitionMethods"] = rest_field()
     """Give access for a Broker method (i.e., Connect, Subscribe, or Publish). Required. Known values
      are: \"Connect\", \"Publish\", and \"Subscribe\"."""
-    client_ids: Optional[list[str]] = rest_field(
-        name="clientIds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    client_ids: Optional[List[str]] = rest_field(name="clientIds")
     """A list of client IDs that match the clients. The client IDs are case-sensitive and must match
      the client IDs provided by the clients during connection. This subfield may be set if the
      method is Connect."""
-    topics: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    topics: Optional[List[str]] = rest_field()
     """A list of topics or topic patterns that match the topics that the clients can publish or
      subscribe to. This subfield is required if the method is Publish or Subscribe."""
 
@@ -2638,8 +955,8 @@ class BrokerResourceRule(_Model):
         self,
         *,
         method: Union[str, "_models.BrokerResourceDefinitionMethods"],
-        client_ids: Optional[list[str]] = None,
-        topics: Optional[list[str]] = None,
+        client_ids: Optional[List[str]] = None,
+        topics: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2653,476 +970,9 @@ class BrokerResourceRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerRetainMessagesPolicy(_Model):
-    """Broker Retain policy properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    BrokerRetainMessagesCustomPolicy
-
-    :ivar mode: 'All' to persist all retain messages, 'None' to not persist any, 'Custom' to
-     persist only the specified topics. Required. Known values are: "All", "None", and "Custom".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.BrokerPersistencePolicyMode
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    mode: str = rest_discriminator(name="mode", visibility=["read", "create", "update", "delete", "query"])
-    """'All' to persist all retain messages, 'None' to not persist any, 'Custom' to persist only the
-     specified topics. Required. Known values are: \"All\", \"None\", and \"Custom\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerRetainMessagesCustomPolicy(BrokerRetainMessagesPolicy, discriminator="Custom"):
-    """Custom Broker Retain Message Policy.
-
-    :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.CUSTOM
-    :ivar retain_settings: Settings for the policy. Required.
-    :vartype retain_settings: ~azure.mgmt.iotoperations.models.BrokerRetainMessagesSettings
-    """
-
-    mode: Literal[BrokerPersistencePolicyMode.CUSTOM] = rest_discriminator(name="mode", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The mode of the policy. Required. Indicates that the policy is a custom policy."""
-    retain_settings: "_models.BrokerRetainMessagesSettings" = rest_field(
-        name="retainSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Settings for the policy. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        retain_settings: "_models.BrokerRetainMessagesSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.mode = BrokerPersistencePolicyMode.CUSTOM  # type: ignore
-
-
-class BrokerRetainMessagesDynamic(_Model):
-    """Dynamic settings of BrokerRetainMessagesCustomPolicy.
-
-    :ivar mode: Mode of the BrokerRetainMessagesCustomPolicy. Required. Known values are: "Enabled"
-     and "Disabled".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.OperationalMode
-    """
-
-    mode: Union[str, "_models.OperationalMode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Mode of the BrokerRetainMessagesCustomPolicy. Required. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: Union[str, "_models.OperationalMode"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerRetainMessagesSettings(_Model):
-    """Broker Retain Messages properties.
-
-    :ivar topics: List of topics under which retained messages would be persisted to disk.
-     Wildcards # and + supported.
-    :vartype topics: list[str]
-    :ivar dynamic: Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user
-     property. Works in addition to other groups (logical OR).
-    :vartype dynamic: ~azure.mgmt.iotoperations.models.BrokerRetainMessagesDynamic
-    """
-
-    topics: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """List of topics under which retained messages would be persisted to disk. Wildcards # and +
-     supported."""
-    dynamic: Optional["_models.BrokerRetainMessagesDynamic"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user property. Works
-     in addition to other groups (logical OR)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        topics: Optional[list[str]] = None,
-        dynamic: Optional["_models.BrokerRetainMessagesDynamic"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerStateStorePolicy(_Model):
-    """Broker State Store Policy.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    BrokerStateStoreCustomPolicy
-
-    :ivar mode: 'All' to persist all keys, 'None' to not persist any, 'Custom' to persist only the
-     specified keys. Required. Known values are: "All", "None", and "Custom".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.BrokerPersistencePolicyMode
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    mode: str = rest_discriminator(name="mode", visibility=["read", "create", "update", "delete", "query"])
-    """'All' to persist all keys, 'None' to not persist any, 'Custom' to persist only the specified
-     keys. Required. Known values are: \"All\", \"None\", and \"Custom\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerStateStoreCustomPolicy(BrokerStateStorePolicy, discriminator="Custom"):
-    """Broker State Store Custom Policy.
-
-    :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.CUSTOM
-    :ivar state_store_settings: Settings for the policy. Required.
-    :vartype state_store_settings: ~azure.mgmt.iotoperations.models.BrokerStateStorePolicySettings
-    """
-
-    mode: Literal[BrokerPersistencePolicyMode.CUSTOM] = rest_discriminator(name="mode", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The mode of the policy. Required. Indicates that the policy is a custom policy."""
-    state_store_settings: "_models.BrokerStateStorePolicySettings" = rest_field(
-        name="stateStoreSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Settings for the policy. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        state_store_settings: "_models.BrokerStateStorePolicySettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.mode = BrokerPersistencePolicyMode.CUSTOM  # type: ignore
-
-
-class BrokerStateStoreDynamic(_Model):
-    """Dynamic settings of BrokerStateStoreCustomPolicy.
-
-    :ivar mode: Mode of the BrokerStateStoreCustomPolicy. Required. Known values are: "Enabled" and
-     "Disabled".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.OperationalMode
-    """
-
-    mode: Union[str, "_models.OperationalMode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Mode of the BrokerStateStoreCustomPolicy. Required. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: Union[str, "_models.OperationalMode"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerStateStorePolicyResources(_Model):
-    """Broker State Store Policy Resources properties.
-
-    :ivar key_type: The key to persist to disk. Required. Known values are: "Pattern", "String",
-     and "Binary".
-    :vartype key_type: str or ~azure.mgmt.iotoperations.models.BrokerStateStoreKeyType
-    :ivar keys_property: List of keys to persist to disk, required. Required.
-    :vartype keys_property: list[str]
-    """
-
-    key_type: Union[str, "_models.BrokerStateStoreKeyType"] = rest_field(
-        name="keyType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The key to persist to disk. Required. Known values are: \"Pattern\", \"String\", and
-     \"Binary\"."""
-    keys_property: list[str] = rest_field(
-        name="keys", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="keys"
-    )
-    """List of keys to persist to disk, required. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key_type: Union[str, "_models.BrokerStateStoreKeyType"],
-        keys_property: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerStateStorePolicySettings(_Model):
-    """Broker State Store Custom Policy Settings.
-
-    :ivar state_store_resources: List of key and key type to persist to disk.
-    :vartype state_store_resources:
-     list[~azure.mgmt.iotoperations.models.BrokerStateStorePolicyResources]
-    :ivar dynamic: Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user
-     property. Works in addition to other groups (logical OR).
-    :vartype dynamic: ~azure.mgmt.iotoperations.models.BrokerStateStoreDynamic
-    """
-
-    state_store_resources: Optional[list["_models.BrokerStateStorePolicyResources"]] = rest_field(
-        name="stateStoreResources", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of key and key type to persist to disk."""
-    dynamic: Optional["_models.BrokerStateStoreDynamic"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user property. Works
-     in addition to other groups (logical OR)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        state_store_resources: Optional[list["_models.BrokerStateStorePolicyResources"]] = None,
-        dynamic: Optional["_models.BrokerStateStoreDynamic"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerStatus(_Model):
-    """BrokerStatus status.
-
-    :ivar health_state: The health state of the Broker.
-    :vartype health_state: ~azure.mgmt.iotoperations.models.ResourceHealthStatus
-    """
-
-    health_state: Optional["_models.ResourceHealthStatus"] = rest_field(name="healthState", visibility=["read"])
-    """The health state of the Broker."""
-
-
-class BrokerSubscriberQueuePolicy(_Model):
-    """Broker Subscriber Queue Policy properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    BrokerSubscriberQueueCustomPolicy
-
-    :ivar mode: 'All' to persist all subscriber queues, 'None' to not persist any, 'Custom' to
-     persist only the specified queues. Required. Known values are: "All", "None", and "Custom".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.BrokerPersistencePolicyMode
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    mode: str = rest_discriminator(name="mode", visibility=["read", "create", "update", "delete", "query"])
-    """'All' to persist all subscriber queues, 'None' to not persist any, 'Custom' to persist only the
-     specified queues. Required. Known values are: \"All\", \"None\", and \"Custom\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerSubscriberQueueCustomPolicy(BrokerSubscriberQueuePolicy, discriminator="Custom"):
-    """Custom Subscriber Queue Policy Properties.
-
-    :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.CUSTOM
-    :ivar subscriber_queue_settings: Custom policy, required if mode is Custom. Subscriber queues
-     from all groups are persisted to disk (logical OR). Required.
-    :vartype subscriber_queue_settings:
-     ~azure.mgmt.iotoperations.models.BrokerSubscriberQueueCustomPolicySettings
-    """
-
-    mode: Literal[BrokerPersistencePolicyMode.CUSTOM] = rest_discriminator(name="mode", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The mode of the policy. Required. Indicates that the policy is a custom policy."""
-    subscriber_queue_settings: "_models.BrokerSubscriberQueueCustomPolicySettings" = rest_field(
-        name="subscriberQueueSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Custom policy, required if mode is Custom. Subscriber queues from all groups are persisted to
-     disk (logical OR). Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        subscriber_queue_settings: "_models.BrokerSubscriberQueueCustomPolicySettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.mode = BrokerPersistencePolicyMode.CUSTOM  # type: ignore
-
-
-class BrokerSubscriberQueueCustomPolicySettings(_Model):  # pylint: disable=name-too-long
-    """Broker Subscriber Queue Custom Policy properties.
-
-    :ivar subscriber_client_ids: List of client IDs of the subscribers, wildcard * supported.
-    :vartype subscriber_client_ids: list[str]
-    :ivar dynamic: Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user
-     property. Works in addition to other groups (logical OR).
-    :vartype dynamic: ~azure.mgmt.iotoperations.models.BrokerSubscriberQueueDynamic
-    """
-
-    subscriber_client_ids: Optional[list[str]] = rest_field(
-        name="subscriberClientIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of client IDs of the subscribers, wildcard * supported."""
-    dynamic: Optional["_models.BrokerSubscriberQueueDynamic"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user property. Works
-     in addition to other groups (logical OR)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        subscriber_client_ids: Optional[list[str]] = None,
-        dynamic: Optional["_models.BrokerSubscriberQueueDynamic"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BrokerSubscriberQueueDynamic(_Model):
-    """Dynamic settings of BrokerSubscriberQueueCustomPolicy.
-
-    :ivar mode: Mode of the BrokerSubscriberQueueCustomPolicy. Required. Known values are:
-     "Enabled" and "Disabled".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.OperationalMode
-    """
-
-    mode: Union[str, "_models.OperationalMode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Mode of the BrokerSubscriberQueueCustomPolicy. Required. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: Union[str, "_models.OperationalMode"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Cardinality(_Model):
+class Cardinality(_model_base.Model):
     """Cardinality properties.
+
 
     :ivar backend_chain: The backend broker desired properties. Required.
     :vartype backend_chain: ~azure.mgmt.iotoperations.models.BackendChain
@@ -3130,11 +980,9 @@ class Cardinality(_Model):
     :vartype frontend: ~azure.mgmt.iotoperations.models.Frontend
     """
 
-    backend_chain: "_models.BackendChain" = rest_field(
-        name="backendChain", visibility=["read", "create", "update", "delete", "query"]
-    )
+    backend_chain: "_models.BackendChain" = rest_field(name="backendChain")
     """The backend broker desired properties. Required."""
-    frontend: "_models.Frontend" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    frontend: "_models.Frontend" = rest_field()
     """The frontend desired properties. Required."""
 
     @overload
@@ -3156,8 +1004,9 @@ class Cardinality(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerCertificateSpec(_Model):
+class CertManagerCertificateSpec(_model_base.Model):
     """Automatic TLS server certificate management with cert-manager.
+
 
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
      (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes.
@@ -3177,28 +1026,20 @@ class CertManagerCertificateSpec(_Model):
     :vartype san: ~azure.mgmt.iotoperations.models.SanForCert
     """
 
-    duration: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    duration: Optional[str] = rest_field()
     """Lifetime of certificate. Must be specified using a Go time.Duration format (h|m|s). E.g. 240h
      for 240 hours and 45m for 45 minutes."""
-    secret_name: Optional[str] = rest_field(
-        name="secretName", visibility=["read", "create", "update", "delete", "query"]
-    )
+    secret_name: Optional[str] = rest_field(name="secretName")
     """Secret for storing server certificate. Any existing data will be overwritten. This is a
      reference to the secret through an identifying name, not the secret itself."""
-    renew_before: Optional[str] = rest_field(
-        name="renewBefore", visibility=["read", "create", "update", "delete", "query"]
-    )
+    renew_before: Optional[str] = rest_field(name="renewBefore")
     """When to begin renewing certificate. Must be specified using a Go time.Duration format (h|m|s).
      E.g. 240h for 240 hours and 45m for 45 minutes."""
-    issuer_ref: "_models.CertManagerIssuerRef" = rest_field(
-        name="issuerRef", visibility=["read", "create", "update", "delete", "query"]
-    )
+    issuer_ref: "_models.CertManagerIssuerRef" = rest_field(name="issuerRef")
     """cert-manager issuerRef. Required."""
-    private_key: Optional["_models.CertManagerPrivateKey"] = rest_field(
-        name="privateKey", visibility=["read", "create", "update", "delete", "query"]
-    )
+    private_key: Optional["_models.CertManagerPrivateKey"] = rest_field(name="privateKey")
     """Type of certificate private key."""
-    san: Optional["_models.SanForCert"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    san: Optional["_models.SanForCert"] = rest_field()
     """Additional Subject Alternative Names (SANs) to include in the certificate."""
 
     @overload
@@ -3224,8 +1065,9 @@ class CertManagerCertificateSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerCertOptions(_Model):
+class CertManagerCertOptions(_model_base.Model):
     """Cert Manager Cert properties.
+
 
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
      (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes. Required.
@@ -3237,15 +1079,13 @@ class CertManagerCertOptions(_Model):
     :vartype private_key: ~azure.mgmt.iotoperations.models.CertManagerPrivateKey
     """
 
-    duration: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    duration: str = rest_field()
     """Lifetime of certificate. Must be specified using a Go time.Duration format (h|m|s). E.g. 240h
      for 240 hours and 45m for 45 minutes. Required."""
-    renew_before: str = rest_field(name="renewBefore", visibility=["read", "create", "update", "delete", "query"])
+    renew_before: str = rest_field(name="renewBefore")
     """When to begin renewing certificate. Must be specified using a Go time.Duration format (h|m|s).
      E.g. 240h for 240 hours and 45m for 45 minutes. Required."""
-    private_key: "_models.CertManagerPrivateKey" = rest_field(
-        name="privateKey", visibility=["read", "create", "update", "delete", "query"]
-    )
+    private_key: "_models.CertManagerPrivateKey" = rest_field(name="privateKey")
     """Configuration of certificate private key. Required."""
 
     @overload
@@ -3268,8 +1108,9 @@ class CertManagerCertOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerIssuerRef(_Model):
+class CertManagerIssuerRef(_model_base.Model):
     """Cert-Manager issuerRef properties.
+
 
     :ivar group: group of issuer. Required.
     :vartype group: str
@@ -3280,14 +1121,12 @@ class CertManagerIssuerRef(_Model):
     :vartype name: str
     """
 
-    group: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    group: str = rest_field()
     """group of issuer. Required."""
-    kind: Union[str, "_models.CertManagerIssuerKind"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    kind: Union[str, "_models.CertManagerIssuerKind"] = rest_field()
     """kind of issuer (Issuer or ClusterIssuer). Required. Known values are: \"Issuer\" and
      \"ClusterIssuer\"."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: str = rest_field()
     """name of issuer. Required."""
 
     @overload
@@ -3310,8 +1149,9 @@ class CertManagerIssuerRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerPrivateKey(_Model):
+class CertManagerPrivateKey(_model_base.Model):
     """Cert Manager private key properties.
+
 
     :ivar algorithm: algorithm for private key. Required. Known values are: "Ec256", "Ec384",
      "Ec521", "Ed25519", "Rsa2048", "Rsa4096", and "Rsa8192".
@@ -3321,14 +1161,10 @@ class CertManagerPrivateKey(_Model):
     :vartype rotation_policy: str or ~azure.mgmt.iotoperations.models.PrivateKeyRotationPolicy
     """
 
-    algorithm: Union[str, "_models.PrivateKeyAlgorithm"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    algorithm: Union[str, "_models.PrivateKeyAlgorithm"] = rest_field()
     """algorithm for private key. Required. Known values are: \"Ec256\", \"Ec384\", \"Ec521\",
      \"Ed25519\", \"Rsa2048\", \"Rsa4096\", and \"Rsa8192\"."""
-    rotation_policy: Union[str, "_models.PrivateKeyRotationPolicy"] = rest_field(
-        name="rotationPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
+    rotation_policy: Union[str, "_models.PrivateKeyRotationPolicy"] = rest_field(name="rotationPolicy")
     """cert-manager private key rotationPolicy. Required. Known values are: \"Always\" and \"Never\"."""
 
     @overload
@@ -3350,7 +1186,7 @@ class CertManagerPrivateKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientConfig(_Model):
+class ClientConfig(_model_base.Model):
     """The settings of Client Config.
 
     :ivar max_session_expiry_seconds: Upper bound of Session Expiry Interval, in seconds.
@@ -3368,29 +1204,17 @@ class ClientConfig(_Model):
     :vartype max_keep_alive_seconds: int
     """
 
-    max_session_expiry_seconds: Optional[int] = rest_field(
-        name="maxSessionExpirySeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_session_expiry_seconds: Optional[int] = rest_field(name="maxSessionExpirySeconds")
     """Upper bound of Session Expiry Interval, in seconds."""
-    max_message_expiry_seconds: Optional[int] = rest_field(
-        name="maxMessageExpirySeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_message_expiry_seconds: Optional[int] = rest_field(name="maxMessageExpirySeconds")
     """Upper bound of Message Expiry Interval, in seconds."""
-    max_packet_size_bytes: Optional[int] = rest_field(
-        name="maxPacketSizeBytes", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_packet_size_bytes: Optional[int] = rest_field(name="maxPacketSizeBytes")
     """Max message size for a packet in Bytes."""
-    subscriber_queue_limit: Optional["_models.SubscriberQueueLimit"] = rest_field(
-        name="subscriberQueueLimit", visibility=["read", "create", "update", "delete", "query"]
-    )
+    subscriber_queue_limit: Optional["_models.SubscriberQueueLimit"] = rest_field(name="subscriberQueueLimit")
     """The limit on the number of queued messages for a subscriber."""
-    max_receive_maximum: Optional[int] = rest_field(
-        name="maxReceiveMaximum", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_receive_maximum: Optional[int] = rest_field(name="maxReceiveMaximum")
     """Upper bound of Receive Maximum that a client can request in the CONNECT packet."""
-    max_keep_alive_seconds: Optional[int] = rest_field(
-        name="maxKeepAliveSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_keep_alive_seconds: Optional[int] = rest_field(name="maxKeepAliveSeconds")
     """Upper bound of a client's Keep Alive, in seconds."""
 
     @overload
@@ -3416,8 +1240,9 @@ class ClientConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationDataset(_Model):
+class DataflowBuiltInTransformationDataset(_model_base.Model):
     """Dataflow BuiltIn Transformation dataset properties.
+
 
     :ivar key: The key of the dataset. Required.
     :vartype key: str
@@ -3433,15 +1258,15 @@ class DataflowBuiltInTransformationDataset(_Model):
     :vartype expression: str
     """
 
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    key: str = rest_field()
     """The key of the dataset. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field()
     """A user provided optional description of the dataset."""
-    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
+    schema_ref: Optional[str] = rest_field(name="schemaRef")
     """The reference to the schema that describes the dataset. Allowed: JSON Schema/draft-7."""
-    inputs: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    inputs: List[str] = rest_field()
     """List of fields for enriching from the Broker State Store. Required."""
-    expression: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    expression: Optional[str] = rest_field()
     """Condition to enrich data from Broker State Store. Example: $1 < 0 || $1 > $2 (Assuming inputs
      section $1 and $2 are provided)."""
 
@@ -3450,7 +1275,7 @@ class DataflowBuiltInTransformationDataset(_Model):
         self,
         *,
         key: str,
-        inputs: list[str],
+        inputs: List[str],
         description: Optional[str] = None,
         schema_ref: Optional[str] = None,
         expression: Optional[str] = None,
@@ -3467,8 +1292,9 @@ class DataflowBuiltInTransformationDataset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationFilter(_Model):
+class DataflowBuiltInTransformationFilter(_model_base.Model):
     """Dataflow BuiltIn Transformation filter properties.
+
 
     :ivar type: The type of dataflow operation. "Filter"
     :vartype type: str or ~azure.mgmt.iotoperations.models.FilterType
@@ -3482,15 +1308,13 @@ class DataflowBuiltInTransformationFilter(_Model):
     :vartype expression: str
     """
 
-    type: Optional[Union[str, "_models.FilterType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    type: Optional[Union[str, "_models.FilterType"]] = rest_field()
     """The type of dataflow operation. \"Filter\""""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field()
     """A user provided optional description of the filter."""
-    inputs: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    inputs: List[str] = rest_field()
     """List of fields for filtering in JSON path expression. Required."""
-    expression: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    expression: str = rest_field()
     """Condition to filter data. Can reference input fields with {n} where n is the index of the input
      field starting from 1. Example: $1 < 0 || $1 > $2 (Assuming inputs section $1 and $2 are
      provided). Required."""
@@ -3499,7 +1323,7 @@ class DataflowBuiltInTransformationFilter(_Model):
     def __init__(
         self,
         *,
-        inputs: list[str],
+        inputs: List[str],
         expression: str,
         type: Optional[Union[str, "_models.FilterType"]] = None,
         description: Optional[str] = None,
@@ -3516,8 +1340,9 @@ class DataflowBuiltInTransformationFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationMap(_Model):
+class DataflowBuiltInTransformationMap(_model_base.Model):
     """Dataflow BuiltIn Transformation map properties.
+
 
     :ivar type: Type of transformation. Known values are: "NewProperties", "Rename", "Compute",
      "PassThrough", and "BuiltInFunction".
@@ -3533,26 +1358,24 @@ class DataflowBuiltInTransformationMap(_Model):
     :vartype output: str
     """
 
-    type: Optional[Union[str, "_models.DataflowMappingType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    type: Optional[Union[str, "_models.DataflowMappingType"]] = rest_field()
     """Type of transformation. Known values are: \"NewProperties\", \"Rename\", \"Compute\",
      \"PassThrough\", and \"BuiltInFunction\"."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field()
     """A user provided optional description of the mapping function."""
-    inputs: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    inputs: List[str] = rest_field()
     """List of fields for mapping in JSON path expression. Required."""
-    expression: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    expression: Optional[str] = rest_field()
     """Modify the inputs field(s) to the final output field. Example: $1 * 2.2 (Assuming inputs
      section $1 is provided)."""
-    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    output: str = rest_field()
     """Where and how the input fields to be organized in the output record. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        inputs: list[str],
+        inputs: List[str],
         output: str,
         type: Optional[Union[str, "_models.DataflowMappingType"]] = None,
         description: Optional[str] = None,
@@ -3570,7 +1393,7 @@ class DataflowBuiltInTransformationMap(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationSettings(_Model):
+class DataflowBuiltInTransformationSettings(_model_base.Model):
     """Dataflow BuiltIn Transformation properties.
 
     :ivar serialization_format: Serialization format. Optional; defaults to JSON. Allowed value
@@ -3589,23 +1412,17 @@ class DataflowBuiltInTransformationSettings(_Model):
     """
 
     serialization_format: Optional[Union[str, "_models.TransformationSerializationFormat"]] = rest_field(
-        name="serializationFormat", visibility=["read", "create", "update", "delete", "query"]
+        name="serializationFormat"
     )
     """Serialization format. Optional; defaults to JSON. Allowed value JSON Schema/draft-7, Parquet.
      Default: Json. Known values are: \"Delta\", \"Json\", and \"Parquet\"."""
-    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
+    schema_ref: Optional[str] = rest_field(name="schemaRef")
     """Reference to the schema that describes the output of the transformation."""
-    datasets: Optional[list["_models.DataflowBuiltInTransformationDataset"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    datasets: Optional[List["_models.DataflowBuiltInTransformationDataset"]] = rest_field()
     """Enrich data from Broker State Store. Dataset references a key in Broker State Store."""
-    filter: Optional[list["_models.DataflowBuiltInTransformationFilter"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    filter: Optional[List["_models.DataflowBuiltInTransformationFilter"]] = rest_field()
     """Filters input record or datapoints based on condition."""
-    map: Optional[list["_models.DataflowBuiltInTransformationMap"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    map: Optional[List["_models.DataflowBuiltInTransformationMap"]] = rest_field()
     """Maps input to output message."""
 
     @overload
@@ -3614,11 +1431,11 @@ class DataflowBuiltInTransformationSettings(_Model):
         *,
         serialization_format: Optional[Union[str, "_models.TransformationSerializationFormat"]] = None,
         schema_ref: Optional[str] = None,
-        datasets: Optional[list["_models.DataflowBuiltInTransformationDataset"]] = None,
+        datasets: Optional[List["_models.DataflowBuiltInTransformationDataset"]] = None,
         filter: Optional[
-            list["_models.DataflowBuiltInTransformationFilter"]
+            List["_models.DataflowBuiltInTransformationFilter"]
         ] = None,  # pylint: disable=redefined-builtin
-        map: Optional[list["_models.DataflowBuiltInTransformationMap"]] = None,
+        map: Optional[List["_models.DataflowBuiltInTransformationMap"]] = None,
     ) -> None: ...
 
     @overload
@@ -3632,123 +1449,9 @@ class DataflowBuiltInTransformationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowDestinationHeaderAction(_Model):
-    """Dataflow Destination Header Action properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DataflowDestinationAddIfNotPresentHeaderAction, DataflowDestinationAddOrReplaceHeaderAction,
-    DataflowDestinationRemoveHeaderAction
-
-    :ivar action_type: The type of header operation to perform. Required. Known values are:
-     "AddIfNotPresent", "Remove", and "AddOrReplace".
-    :vartype action_type: str or ~azure.mgmt.iotoperations.models.DataflowHeaderActionType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    action_type: str = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])
-    """The type of header operation to perform. Required. Known values are: \"AddIfNotPresent\",
-     \"Remove\", and \"AddOrReplace\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        action_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowDestinationAddIfNotPresentHeaderAction(
-    DataflowDestinationHeaderAction, discriminator="AddIfNotPresent"
-):  # pylint: disable=name-too-long
-    """Dataflow Destination Add if not present HeaderAction properties.
-
-    :ivar action_type: The type of header operation to perform. Required. Add if not present type.
-    :vartype action_type: str or ~azure.mgmt.iotoperations.models.ADD_IF_NOT_PRESENT
-    :ivar key: The name of the header to add. Required.
-    :vartype key: str
-    :ivar value: The value of the header to add. Required.
-    :vartype value: str
-    """
-
-    action_type: Literal[DataflowHeaderActionType.ADD_IF_NOT_PRESENT] = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of header operation to perform. Required. Add if not present type."""
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the header to add. Required."""
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The value of the header to add. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-        value: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.action_type = DataflowHeaderActionType.ADD_IF_NOT_PRESENT  # type: ignore
-
-
-class DataflowDestinationAddOrReplaceHeaderAction(
-    DataflowDestinationHeaderAction, discriminator="AddOrReplace"
-):  # pylint: disable=name-too-long
-    """Dataflow Destination Add or Replace HeaderAction properties.
-
-    :ivar action_type: The type of header operation to perform. Required. Add or Replace type.
-    :vartype action_type: str or ~azure.mgmt.iotoperations.models.ADD_OR_REPLACE
-    :ivar key: The name of the header to add or replace. Required.
-    :vartype key: str
-    :ivar value: The value of the header to add or replace. Required.
-    :vartype value: str
-    """
-
-    action_type: Literal[DataflowHeaderActionType.ADD_OR_REPLACE] = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of header operation to perform. Required. Add or Replace type."""
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the header to add or replace. Required."""
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The value of the header to add or replace. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-        value: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.action_type = DataflowHeaderActionType.ADD_OR_REPLACE  # type: ignore
-
-
-class DataflowDestinationOperationSettings(_Model):
+class DataflowDestinationOperationSettings(_model_base.Model):
     """Dataflow Destination Operation properties.
+
 
     :ivar endpoint_ref: Reference to the Endpoint CR. Can be of Broker, Kafka, Fabric, ADLS, ADX
      type. Required.
@@ -3757,21 +1460,13 @@ class DataflowDestinationOperationSettings(_Model):
      values with $topic, $systemProperties, $userProperties, $payload, $context, and $subscription.
      Required.
     :vartype data_destination: str
-    :ivar headers: Headers for the output data.
-    :vartype headers: list[~azure.mgmt.iotoperations.models.DataflowDestinationHeaderAction]
     """
 
-    endpoint_ref: str = rest_field(name="endpointRef", visibility=["read", "create", "update", "delete", "query"])
+    endpoint_ref: str = rest_field(name="endpointRef")
     """Reference to the Endpoint CR. Can be of Broker, Kafka, Fabric, ADLS, ADX type. Required."""
-    data_destination: str = rest_field(
-        name="dataDestination", visibility=["read", "create", "update", "delete", "query"]
-    )
+    data_destination: str = rest_field(name="dataDestination")
     """Destination location, can be a topic or table name. Supports dynamic values with $topic,
      $systemProperties, $userProperties, $payload, $context, and $subscription. Required."""
-    headers: Optional[list["_models.DataflowDestinationHeaderAction"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Headers for the output data."""
 
     @overload
     def __init__(
@@ -3779,7 +1474,6 @@ class DataflowDestinationOperationSettings(_Model):
         *,
         endpoint_ref: str,
         data_destination: str,
-        headers: Optional[list["_models.DataflowDestinationHeaderAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -3793,47 +1487,15 @@ class DataflowDestinationOperationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowDestinationRemoveHeaderAction(DataflowDestinationHeaderAction, discriminator="Remove"):
-    """Dataflow Destination Remove HeaderAction properties.
-
-    :ivar action_type: The type of header operation to perform. Required. Remove type.
-    :vartype action_type: str or ~azure.mgmt.iotoperations.models.REMOVE
-    :ivar key: The name of the header to remove. Required.
-    :vartype key: str
-    """
-
-    action_type: Literal[DataflowHeaderActionType.REMOVE] = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of header operation to perform. Required. Remove type."""
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the header to remove. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.action_type = DataflowHeaderActionType.REMOVE  # type: ignore
-
-
-class DataflowEndpointAuthenticationAccessToken(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationAccessToken(_model_base.Model):  # pylint: disable=name-too-long
     """DataflowEndpoint Authentication Access Token properties.
+
 
     :ivar secret_ref: Token secret name. Required.
     :vartype secret_ref: str
     """
 
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
+    secret_ref: str = rest_field(name="secretRef")
     """Token secret name. Required."""
 
     @overload
@@ -3854,12 +1516,9 @@ class DataflowEndpointAuthenticationAccessToken(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationAnonymous(_Model):
-    """DataflowEndpoint Anonymous Authentication properties."""
-
-
-class DataflowEndpointAuthenticationSasl(_Model):
+class DataflowEndpointAuthenticationSasl(_model_base.Model):
     """DataflowEndpoint Authentication Sasl properties.
+
 
     :ivar sasl_type: Type of SASL authentication. Can be PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512.
      Required. Known values are: "Plain", "ScramSha256", and "ScramSha512".
@@ -3869,12 +1528,10 @@ class DataflowEndpointAuthenticationSasl(_Model):
     :vartype secret_ref: str
     """
 
-    sasl_type: Union[str, "_models.DataflowEndpointAuthenticationSaslType"] = rest_field(
-        name="saslType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    sasl_type: Union[str, "_models.DataflowEndpointAuthenticationSaslType"] = rest_field(name="saslType")
     """Type of SASL authentication. Can be PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512. Required. Known
      values are: \"Plain\", \"ScramSha256\", and \"ScramSha512\"."""
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
+    secret_ref: str = rest_field(name="secretRef")
     """Token secret name. Required."""
 
     @overload
@@ -3896,15 +1553,16 @@ class DataflowEndpointAuthenticationSasl(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationServiceAccountToken(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationServiceAccountToken(_model_base.Model):  # pylint: disable=name-too-long
     """Service Account Token for BrokerAuthentication.
+
 
     :ivar audience: Audience of the service account. Optional, defaults to the broker internal
      service account audience. Required.
     :vartype audience: str
     """
 
-    audience: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    audience: str = rest_field()
     """Audience of the service account. Optional, defaults to the broker internal service account
      audience. Required."""
 
@@ -3926,7 +1584,7 @@ class DataflowEndpointAuthenticationServiceAccountToken(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_model_base.Model):  # pylint: disable=name-too-long
     """DataflowEndpoint Authentication SystemAssignedManagedIdentity properties.
 
     :ivar audience: Audience of the service to authenticate against. Optional; defaults to the
@@ -3934,7 +1592,7 @@ class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_Model):  # py
     :vartype audience: str
     """
 
-    audience: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    audience: Optional[str] = rest_field()
     """Audience of the service to authenticate against. Optional; defaults to the audience for Service
      host configuration."""
 
@@ -3956,8 +1614,9 @@ class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_model_base.Model):  # pylint: disable=name-too-long
     """DataflowEndpoint Authentication UserAssignedManagedIdentity properties.
+
 
     :ivar client_id: Client ID for the user-assigned managed identity. Required.
     :vartype client_id: str
@@ -3968,11 +1627,11 @@ class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_Model):  # pyli
     :vartype tenant_id: str
     """
 
-    client_id: str = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    client_id: str = rest_field(name="clientId")
     """Client ID for the user-assigned managed identity. Required."""
-    scope: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    scope: Optional[str] = rest_field()
     """Resource identifier (application ID URI) of the resource, affixed with the .default suffix."""
-    tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    tenant_id: str = rest_field(name="tenantId")
     """Tenant ID. Required."""
 
     @overload
@@ -3995,14 +1654,15 @@ class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationX509(_Model):
+class DataflowEndpointAuthenticationX509(_model_base.Model):
     """DataflowEndpoint Authentication X509 properties.
+
 
     :ivar secret_ref: Secret reference of the X.509 certificate. Required.
     :vartype secret_ref: str
     """
 
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
+    secret_ref: str = rest_field(name="secretRef")
     """Secret reference of the X.509 certificate. Required."""
 
     @overload
@@ -4023,8 +1683,9 @@ class DataflowEndpointAuthenticationX509(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataExplorer(_Model):
+class DataflowEndpointDataExplorer(_model_base.Model):
     """Azure Data Explorer endpoint properties.
+
 
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
@@ -4032,25 +1693,22 @@ class DataflowEndpointDataExplorer(_Model):
      ~azure.mgmt.iotoperations.models.DataflowEndpointDataExplorerAuthentication
     :ivar database: Database name. Required.
     :vartype database: str
-    :ivar host: Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net
-     . Required.
+    :ivar host: Host of the Azure Data Explorer in the form of
+     :code:`<cluster>`.:code:`<region>`.kusto.windows.net . Required.
     :vartype host: str
     :ivar batching: Azure Data Explorer endpoint batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
     """
 
-    authentication: "_models.DataflowEndpointDataExplorerAuthentication" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    authentication: "_models.DataflowEndpointDataExplorerAuthentication" = rest_field()
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
-    database: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    database: str = rest_field()
     """Database name. Required."""
-    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net . Required."""
-    batching: Optional["_models.BatchingConfiguration"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    host: str = rest_field()
+    """Host of the Azure Data Explorer in the form of
+     :code:`<cluster>`.:code:`<region>`.kusto.windows.net . Required."""
+    batching: Optional["_models.BatchingConfiguration"] = rest_field()
     """Azure Data Explorer endpoint batching configuration."""
 
     @overload
@@ -4074,9 +1732,10 @@ class DataflowEndpointDataExplorer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataExplorerAuthentication(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointDataExplorerAuthentication(_model_base.Model):  # pylint: disable=name-too-long
     """Azure Data Explorer Authentication properties. NOTE - only authentication property is allowed
     per entry.
+
 
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity" and "UserAssignedManagedIdentity".
@@ -4090,22 +1749,16 @@ class DataflowEndpointDataExplorerAuthentication(_Model):  # pylint: disable=nam
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationUserAssignedManagedIdentity
     """
 
-    method: Union[str, "_models.DataExplorerAuthMethod"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    method: Union[str, "_models.DataExplorerAuthMethod"] = rest_field()
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\" and
      \"UserAssignedManagedIdentity\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(
-        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="systemAssignedManagedIdentitySettings")
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(
-        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="userAssignedManagedIdentitySettings")
     """User-assigned managed identity authentication."""
 
     @overload
@@ -4132,30 +1785,27 @@ class DataflowEndpointDataExplorerAuthentication(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataLakeStorage(_Model):
+class DataflowEndpointDataLakeStorage(_model_base.Model):
     """Azure Data Lake endpoint properties.
+
 
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
     :vartype authentication:
      ~azure.mgmt.iotoperations.models.DataflowEndpointDataLakeStorageAuthentication
-    :ivar host: Host of the Azure Data Lake in the form of <account>.blob.core.windows.net .
-     Required.
+    :ivar host: Host of the Azure Data Lake in the form of :code:`<account>`.blob.core.windows.net
+     . Required.
     :vartype host: str
     :ivar batching: Azure Data Lake endpoint batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
     """
 
-    authentication: "_models.DataflowEndpointDataLakeStorageAuthentication" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    authentication: "_models.DataflowEndpointDataLakeStorageAuthentication" = rest_field()
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
-    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Azure Data Lake in the form of <account>.blob.core.windows.net . Required."""
-    batching: Optional["_models.BatchingConfiguration"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    host: str = rest_field()
+    """Host of the Azure Data Lake in the form of :code:`<account>`.blob.core.windows.net . Required."""
+    batching: Optional["_models.BatchingConfiguration"] = rest_field()
     """Azure Data Lake endpoint batching configuration."""
 
     @overload
@@ -4178,9 +1828,10 @@ class DataflowEndpointDataLakeStorage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataLakeStorageAuthentication(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointDataLakeStorageAuthentication(_model_base.Model):  # pylint: disable=name-too-long
     """Azure Data Lake endpoint Authentication properties.  NOTE Enum - Only one method is supported
     for one entry.
+
 
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", and "AccessToken".
@@ -4197,26 +1848,20 @@ class DataflowEndpointDataLakeStorageAuthentication(_Model):  # pylint: disable=
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationUserAssignedManagedIdentity
     """
 
-    method: Union[str, "_models.DataLakeStorageAuthMethod"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    method: Union[str, "_models.DataLakeStorageAuthMethod"] = rest_field()
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\",
      \"UserAssignedManagedIdentity\", and \"AccessToken\"."""
     access_token_settings: Optional["_models.DataflowEndpointAuthenticationAccessToken"] = rest_field(
-        name="accessTokenSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="accessTokenSettings"
     )
     """SAS token authentication."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(
-        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="systemAssignedManagedIdentitySettings")
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(
-        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="userAssignedManagedIdentitySettings")
     """User-assigned managed identity authentication."""
 
     @overload
@@ -4244,8 +1889,9 @@ class DataflowEndpointDataLakeStorageAuthentication(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointFabricOneLake(_Model):
+class DataflowEndpointFabricOneLake(_model_base.Model):
     """Microsoft Fabric endpoint properties.
+
 
     :ivar authentication: Authentication configuration. NOTE - only one authentication property is
      allowed per entry. Required.
@@ -4257,32 +1903,25 @@ class DataflowEndpointFabricOneLake(_Model):
      or files. Required. Known values are: "Files" and "Tables".
     :vartype one_lake_path_type: str or
      ~azure.mgmt.iotoperations.models.DataflowEndpointFabricPathType
-    :ivar host: Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com.
-     Required.
+    :ivar host: Host of the Microsoft Fabric in the form of
+     https://:code:`<host>`.fabric.microsoft.com. Required.
     :vartype host: str
     :ivar batching: Batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
     """
 
-    authentication: "_models.DataflowEndpointFabricOneLakeAuthentication" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    authentication: "_models.DataflowEndpointFabricOneLakeAuthentication" = rest_field()
     """Authentication configuration. NOTE - only one authentication property is allowed per entry.
      Required."""
-    names: "_models.DataflowEndpointFabricOneLakeNames" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    names: "_models.DataflowEndpointFabricOneLakeNames" = rest_field()
     """Names of the workspace and lakehouse. Required."""
-    one_lake_path_type: Union[str, "_models.DataflowEndpointFabricPathType"] = rest_field(
-        name="oneLakePathType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    one_lake_path_type: Union[str, "_models.DataflowEndpointFabricPathType"] = rest_field(name="oneLakePathType")
     """Type of location of the data in the workspace. Can be either tables or files. Required. Known
      values are: \"Files\" and \"Tables\"."""
-    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com. Required."""
-    batching: Optional["_models.BatchingConfiguration"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    host: str = rest_field()
+    """Host of the Microsoft Fabric in the form of https://:code:`<host>`.fabric.microsoft.com.
+     Required."""
+    batching: Optional["_models.BatchingConfiguration"] = rest_field()
     """Batching configuration."""
 
     @overload
@@ -4307,9 +1946,10 @@ class DataflowEndpointFabricOneLake(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointFabricOneLakeAuthentication(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointFabricOneLakeAuthentication(_model_base.Model):  # pylint: disable=name-too-long
     """Microsoft Fabric endpoint. Authentication properties. NOTE - Only one method is supported for
     one entry.
+
 
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity" and "UserAssignedManagedIdentity".
@@ -4323,22 +1963,16 @@ class DataflowEndpointFabricOneLakeAuthentication(_Model):  # pylint: disable=na
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationUserAssignedManagedIdentity
     """
 
-    method: Union[str, "_models.FabricOneLakeAuthMethod"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    method: Union[str, "_models.FabricOneLakeAuthMethod"] = rest_field()
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\" and
      \"UserAssignedManagedIdentity\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(
-        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="systemAssignedManagedIdentitySettings")
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(
-        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="userAssignedManagedIdentitySettings")
     """User-assigned managed identity authentication."""
 
     @overload
@@ -4365,8 +1999,9 @@ class DataflowEndpointFabricOneLakeAuthentication(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointFabricOneLakeNames(_Model):
+class DataflowEndpointFabricOneLakeNames(_model_base.Model):
     """Microsoft Fabric endpoint Names properties.
+
 
     :ivar lakehouse_name: Lakehouse name. Required.
     :vartype lakehouse_name: str
@@ -4374,9 +2009,9 @@ class DataflowEndpointFabricOneLakeNames(_Model):
     :vartype workspace_name: str
     """
 
-    lakehouse_name: str = rest_field(name="lakehouseName", visibility=["read", "create", "update", "delete", "query"])
+    lakehouse_name: str = rest_field(name="lakehouseName")
     """Lakehouse name. Required."""
-    workspace_name: str = rest_field(name="workspaceName", visibility=["read", "create", "update", "delete", "query"])
+    workspace_name: str = rest_field(name="workspaceName")
     """Workspace name. Required."""
 
     @overload
@@ -4398,8 +2033,9 @@ class DataflowEndpointFabricOneLakeNames(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointKafka(_Model):
+class DataflowEndpointKafka(_model_base.Model):
     """Kafka endpoint properties.
+
 
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
@@ -4433,45 +2069,33 @@ class DataflowEndpointKafka(_Model):
      ~azure.mgmt.iotoperations.models.CloudEventAttributeType
     """
 
-    authentication: "_models.DataflowEndpointKafkaAuthentication" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    authentication: "_models.DataflowEndpointKafkaAuthentication" = rest_field()
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
-    consumer_group_id: Optional[str] = rest_field(
-        name="consumerGroupId", visibility=["read", "create", "update", "delete", "query"]
-    )
+    consumer_group_id: Optional[str] = rest_field(name="consumerGroupId")
     """Consumer group ID."""
-    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    host: str = rest_field()
     """Kafka endpoint host. Required."""
-    batching: Optional["_models.DataflowEndpointKafkaBatching"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    batching: Optional["_models.DataflowEndpointKafkaBatching"] = rest_field()
     """Batching configuration."""
-    copy_mqtt_properties: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        name="copyMqttProperties", visibility=["read", "create", "update", "delete", "query"]
-    )
+    copy_mqtt_properties: Optional[Union[str, "_models.OperationalMode"]] = rest_field(name="copyMqttProperties")
     """Copy Broker properties. No effect if the endpoint is used as a source or if the dataflow
      doesn't have an Broker source. Known values are: \"Enabled\" and \"Disabled\"."""
-    compression: Optional[Union[str, "_models.DataflowEndpointKafkaCompression"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    compression: Optional[Union[str, "_models.DataflowEndpointKafkaCompression"]] = rest_field()
     """Compression. Can be none, gzip, lz4, or snappy. No effect if the endpoint is used as a source.
      Known values are: \"None\", \"Gzip\", \"Snappy\", and \"Lz4\"."""
-    kafka_acks: Optional[Union[str, "_models.DataflowEndpointKafkaAcks"]] = rest_field(
-        name="kafkaAcks", visibility=["read", "create", "update", "delete", "query"]
-    )
+    kafka_acks: Optional[Union[str, "_models.DataflowEndpointKafkaAcks"]] = rest_field(name="kafkaAcks")
     """Kafka acks. Can be all, one, or zero. No effect if the endpoint is used as a source. Known
      values are: \"Zero\", \"One\", and \"All\"."""
     partition_strategy: Optional[Union[str, "_models.DataflowEndpointKafkaPartitionStrategy"]] = rest_field(
-        name="partitionStrategy", visibility=["read", "create", "update", "delete", "query"]
+        name="partitionStrategy"
     )
     """Partition handling strategy. Can be default or static. No effect if the endpoint is used as a
      source. Known values are: \"Default\", \"Static\", \"Topic\", and \"Property\"."""
-    tls: Optional["_models.TlsProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tls: Optional["_models.TlsProperties"] = rest_field()
     """TLS configuration."""
     cloud_event_attributes: Optional[Union[str, "_models.CloudEventAttributeType"]] = rest_field(
-        name="cloudEventAttributes", visibility=["read", "create", "update", "delete", "query"]
+        name="cloudEventAttributes"
     )
     """Cloud event mapping config. Known values are: \"Propagate\" and \"CreateOrRemap\"."""
 
@@ -4502,9 +2126,10 @@ class DataflowEndpointKafka(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointKafkaAuthentication(_Model):
+class DataflowEndpointKafkaAuthentication(_model_base.Model):
     """Kafka endpoint Authentication properties. NOTE - only authentication property is allowed per
     entry.
+
 
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", "Sasl", "X509Certificate", and
@@ -4524,29 +2149,21 @@ class DataflowEndpointKafkaAuthentication(_Model):
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationX509
     """
 
-    method: Union[str, "_models.KafkaAuthMethod"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    method: Union[str, "_models.KafkaAuthMethod"] = rest_field()
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\",
      \"UserAssignedManagedIdentity\", \"Sasl\", \"X509Certificate\", and \"Anonymous\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(
-        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="systemAssignedManagedIdentitySettings")
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(
-        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="userAssignedManagedIdentitySettings")
     """User-assigned managed identity authentication."""
-    sasl_settings: Optional["_models.DataflowEndpointAuthenticationSasl"] = rest_field(
-        name="saslSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    sasl_settings: Optional["_models.DataflowEndpointAuthenticationSasl"] = rest_field(name="saslSettings")
     """SASL authentication."""
     x509_certificate_settings: Optional["_models.DataflowEndpointAuthenticationX509"] = rest_field(
-        name="x509CertificateSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="x509CertificateSettings"
     )
     """X.509 certificate authentication."""
 
@@ -4576,7 +2193,7 @@ class DataflowEndpointKafkaAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointKafkaBatching(_Model):
+class DataflowEndpointKafkaBatching(_model_base.Model):
     """Kafka endpoint Batching properties.
 
     :ivar mode: Mode for batching. Known values are: "Enabled" and "Disabled".
@@ -4589,17 +2206,13 @@ class DataflowEndpointKafkaBatching(_Model):
     :vartype max_messages: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """Mode for batching. Known values are: \"Enabled\" and \"Disabled\"."""
-    latency_ms: Optional[int] = rest_field(name="latencyMs", visibility=["read", "create", "update", "delete", "query"])
+    latency_ms: Optional[int] = rest_field(name="latencyMs")
     """Batching latency in milliseconds."""
-    max_bytes: Optional[int] = rest_field(name="maxBytes", visibility=["read", "create", "update", "delete", "query"])
+    max_bytes: Optional[int] = rest_field(name="maxBytes")
     """Maximum number of bytes in a batch."""
-    max_messages: Optional[int] = rest_field(
-        name="maxMessages", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_messages: Optional[int] = rest_field(name="maxMessages")
     """Maximum number of messages in a batch."""
 
     @overload
@@ -4623,16 +2236,15 @@ class DataflowEndpointKafkaBatching(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointLocalStorage(_Model):
+class DataflowEndpointLocalStorage(_model_base.Model):
     """Local persistent volume endpoint properties.
+
 
     :ivar persistent_volume_claim_ref: Persistent volume claim name. Required.
     :vartype persistent_volume_claim_ref: str
     """
 
-    persistent_volume_claim_ref: str = rest_field(
-        name="persistentVolumeClaimRef", visibility=["read", "create", "update", "delete", "query"]
-    )
+    persistent_volume_claim_ref: str = rest_field(name="persistentVolumeClaimRef")
     """Persistent volume claim name. Required."""
 
     @overload
@@ -4653,17 +2265,18 @@ class DataflowEndpointLocalStorage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointMqtt(_Model):
+class DataflowEndpointMqtt(_model_base.Model):
     """Broker endpoint properties.
+
 
     :ivar authentication: authentication properties. DEFAULT: kubernetes.audience=aio-internal.
      NOTE - Enum field only property is allowed. Required.
     :vartype authentication: ~azure.mgmt.iotoperations.models.DataflowEndpointMqttAuthentication
-    :ivar client_id_prefix: Client ID prefix. Client ID generated by the dataflow is <prefix>-TBD.
-     Optional; no prefix if omitted.
+    :ivar client_id_prefix: Client ID prefix. Client ID generated by the dataflow is
+     :code:`<prefix>`-TBD. Optional; no prefix if omitted.
     :vartype client_id_prefix: str
-    :ivar host: Host of the Broker in the form of <hostname>:<port>. Optional; connects to Broker
-     if omitted.
+    :ivar host: Host of the Broker in the form of :code:`<hostname>`::code:`<port>`. Optional;
+     connects to Broker if omitted.
     :vartype host: str
     :ivar protocol: Enable or disable websockets. Known values are: "Mqtt" and "WebSockets".
     :vartype protocol: str or ~azure.mgmt.iotoperations.models.BrokerProtocolType
@@ -4687,45 +2300,32 @@ class DataflowEndpointMqtt(_Model):
      ~azure.mgmt.iotoperations.models.CloudEventAttributeType
     """
 
-    authentication: "_models.DataflowEndpointMqttAuthentication" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    authentication: "_models.DataflowEndpointMqttAuthentication" = rest_field()
     """authentication properties. DEFAULT: kubernetes.audience=aio-internal. NOTE - Enum field only
      property is allowed. Required."""
-    client_id_prefix: Optional[str] = rest_field(
-        name="clientIdPrefix", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Client ID prefix. Client ID generated by the dataflow is <prefix>-TBD. Optional; no prefix if
-     omitted."""
-    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Broker in the form of <hostname>:<port>. Optional; connects to Broker if omitted."""
-    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    client_id_prefix: Optional[str] = rest_field(name="clientIdPrefix")
+    """Client ID prefix. Client ID generated by the dataflow is :code:`<prefix>`-TBD. Optional; no
+     prefix if omitted."""
+    host: Optional[str] = rest_field()
+    """Host of the Broker in the form of :code:`<hostname>`::code:`<port>`. Optional; connects to
+     Broker if omitted."""
+    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field()
     """Enable or disable websockets. Known values are: \"Mqtt\" and \"WebSockets\"."""
-    keep_alive_seconds: Optional[int] = rest_field(
-        name="keepAliveSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    keep_alive_seconds: Optional[int] = rest_field(name="keepAliveSeconds")
     """Broker KeepAlive for connection in seconds."""
-    retain: Optional[Union[str, "_models.MqttRetainType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    retain: Optional[Union[str, "_models.MqttRetainType"]] = rest_field()
     """Whether or not to keep the retain setting. Known values are: \"Keep\" and \"Never\"."""
-    max_inflight_messages: Optional[int] = rest_field(
-        name="maxInflightMessages", visibility=["read", "create", "update", "delete", "query"]
-    )
+    max_inflight_messages: Optional[int] = rest_field(name="maxInflightMessages")
     """The max number of messages to keep in flight. For subscribe, this is the receive maximum. For
      publish, this is the maximum number of messages to send before waiting for an ack."""
-    qos: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    qos: Optional[int] = rest_field()
     """Qos for Broker connection."""
-    session_expiry_seconds: Optional[int] = rest_field(
-        name="sessionExpirySeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    session_expiry_seconds: Optional[int] = rest_field(name="sessionExpirySeconds")
     """Session expiry in seconds."""
-    tls: Optional["_models.TlsProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tls: Optional["_models.TlsProperties"] = rest_field()
     """TLS configuration."""
     cloud_event_attributes: Optional[Union[str, "_models.CloudEventAttributeType"]] = rest_field(
-        name="cloudEventAttributes", visibility=["read", "create", "update", "delete", "query"]
+        name="cloudEventAttributes"
     )
     """Cloud event mapping config. Known values are: \"Propagate\" and \"CreateOrRemap\"."""
 
@@ -4757,9 +2357,10 @@ class DataflowEndpointMqtt(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointMqttAuthentication(_Model):
+class DataflowEndpointMqttAuthentication(_model_base.Model):
     """Mqtt endpoint Authentication properties. NOTE - only authentication property is allowed per
     entry.
+
 
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", "ServiceAccountToken",
@@ -4781,30 +2382,24 @@ class DataflowEndpointMqttAuthentication(_Model):
      ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationX509
     """
 
-    method: Union[str, "_models.MqttAuthMethod"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    method: Union[str, "_models.MqttAuthMethod"] = rest_field()
     """Mode of Authentication. Required. Known values are: \"SystemAssignedManagedIdentity\",
      \"UserAssignedManagedIdentity\", \"ServiceAccountToken\", \"X509Certificate\", and
      \"Anonymous\"."""
     system_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    ] = rest_field(
-        name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="systemAssignedManagedIdentitySettings")
     """System-assigned managed identity authentication."""
     user_assigned_managed_identity_settings: Optional[
         "_models.DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    ] = rest_field(
-        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    ] = rest_field(name="userAssignedManagedIdentitySettings")
     """User-assigned managed identity authentication."""
     service_account_token_settings: Optional["_models.DataflowEndpointAuthenticationServiceAccountToken"] = rest_field(
-        name="serviceAccountTokenSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="serviceAccountTokenSettings"
     )
     """Kubernetes service account token authentication. Default audience if not set is aio-internal."""
     x509_certificate_settings: Optional["_models.DataflowEndpointAuthenticationX509"] = rest_field(
-        name="x509CertificateSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="x509CertificateSettings"
     )
     """X.509 certificate authentication."""
 
@@ -4834,63 +2429,16 @@ class DataflowEndpointMqttAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointOpenTelemetry(_Model):
-    """OpenTelemetry endpoint properties.
-
-    :ivar host: Host of the OpenTelemetry in the form of <host>:<port>. Required.
-    :vartype host: str
-    :ivar batching: Batching configuration.
-    :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
-    :ivar tls: TLS configuration.
-    :vartype tls: ~azure.mgmt.iotoperations.models.TlsProperties
-    :ivar authentication: Authentication properties for OpenTelemetry endpoints. Required.
-    :vartype authentication: ~azure.mgmt.iotoperations.models.DataflowOpenTelemetryAuthentication
-    """
-
-    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the OpenTelemetry in the form of <host>:<port>. Required."""
-    batching: Optional["_models.BatchingConfiguration"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Batching configuration."""
-    tls: Optional["_models.TlsProperties"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """TLS configuration."""
-    authentication: "_models.DataflowOpenTelemetryAuthentication" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Authentication properties for OpenTelemetry endpoints. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        host: str,
-        authentication: "_models.DataflowOpenTelemetryAuthentication",
-        batching: Optional["_models.BatchingConfiguration"] = None,
-        tls: Optional["_models.TlsProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowEndpointProperties(_Model):
+class DataflowEndpointProperties(_model_base.Model):
     """DataflowEndpoint Resource properties. NOTE - Only one type of endpoint is supported for one
     Resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar endpoint_type: Endpoint Type. Required. Known values are: "DataExplorer",
-     "DataLakeStorage", "FabricOneLake", "Kafka", "LocalStorage", "Mqtt", and "OpenTelemetry".
+     "DataLakeStorage", "FabricOneLake", "Kafka", "LocalStorage", and "Mqtt".
     :vartype endpoint_type: str or ~azure.mgmt.iotoperations.models.EndpointType
-    :ivar host_type: The type of the Kafka host. E.g FabricRT, EventGrid. Known values are:
-     "FabricRT", "EventGrid", "LocalBroker", "Eventhub", "CustomMqtt", and "CustomKafka".
-    :vartype host_type: str or ~azure.mgmt.iotoperations.models.DataflowEndpointHostType
     :ivar data_explorer_settings: Azure Data Explorer endpoint.
     :vartype data_explorer_settings: ~azure.mgmt.iotoperations.models.DataflowEndpointDataExplorer
     :ivar data_lake_storage_settings: Azure Data Lake endpoint.
@@ -4905,79 +2453,47 @@ class DataflowEndpointProperties(_Model):
     :vartype local_storage_settings: ~azure.mgmt.iotoperations.models.DataflowEndpointLocalStorage
     :ivar mqtt_settings: Broker endpoint.
     :vartype mqtt_settings: ~azure.mgmt.iotoperations.models.DataflowEndpointMqtt
-    :ivar open_telemetry_settings: OpenTelemetry endpoint.
-    :vartype open_telemetry_settings:
-     ~azure.mgmt.iotoperations.models.DataflowEndpointOpenTelemetry
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
-    endpoint_type: Union[str, "_models.EndpointType"] = rest_field(
-        name="endpointType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    endpoint_type: Union[str, "_models.EndpointType"] = rest_field(name="endpointType")
     """Endpoint Type. Required. Known values are: \"DataExplorer\", \"DataLakeStorage\",
-     \"FabricOneLake\", \"Kafka\", \"LocalStorage\", \"Mqtt\", and \"OpenTelemetry\"."""
-    host_type: Optional[Union[str, "_models.DataflowEndpointHostType"]] = rest_field(
-        name="hostType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of the Kafka host. E.g FabricRT, EventGrid. Known values are: \"FabricRT\",
-     \"EventGrid\", \"LocalBroker\", \"Eventhub\", \"CustomMqtt\", and \"CustomKafka\"."""
-    data_explorer_settings: Optional["_models.DataflowEndpointDataExplorer"] = rest_field(
-        name="dataExplorerSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+     \"FabricOneLake\", \"Kafka\", \"LocalStorage\", and \"Mqtt\"."""
+    data_explorer_settings: Optional["_models.DataflowEndpointDataExplorer"] = rest_field(name="dataExplorerSettings")
     """Azure Data Explorer endpoint."""
     data_lake_storage_settings: Optional["_models.DataflowEndpointDataLakeStorage"] = rest_field(
-        name="dataLakeStorageSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="dataLakeStorageSettings"
     )
     """Azure Data Lake endpoint."""
     fabric_one_lake_settings: Optional["_models.DataflowEndpointFabricOneLake"] = rest_field(
-        name="fabricOneLakeSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="fabricOneLakeSettings"
     )
     """Microsoft Fabric endpoint."""
-    kafka_settings: Optional["_models.DataflowEndpointKafka"] = rest_field(
-        name="kafkaSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    kafka_settings: Optional["_models.DataflowEndpointKafka"] = rest_field(name="kafkaSettings")
     """Kafka endpoint."""
-    local_storage_settings: Optional["_models.DataflowEndpointLocalStorage"] = rest_field(
-        name="localStorageSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    local_storage_settings: Optional["_models.DataflowEndpointLocalStorage"] = rest_field(name="localStorageSettings")
     """Local persistent volume endpoint."""
-    mqtt_settings: Optional["_models.DataflowEndpointMqtt"] = rest_field(
-        name="mqttSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    mqtt_settings: Optional["_models.DataflowEndpointMqtt"] = rest_field(name="mqttSettings")
     """Broker endpoint."""
-    open_telemetry_settings: Optional["_models.DataflowEndpointOpenTelemetry"] = rest_field(
-        name="openTelemetrySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """OpenTelemetry endpoint."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
         self,
         *,
         endpoint_type: Union[str, "_models.EndpointType"],
-        host_type: Optional[Union[str, "_models.DataflowEndpointHostType"]] = None,
         data_explorer_settings: Optional["_models.DataflowEndpointDataExplorer"] = None,
         data_lake_storage_settings: Optional["_models.DataflowEndpointDataLakeStorage"] = None,
         fabric_one_lake_settings: Optional["_models.DataflowEndpointFabricOneLake"] = None,
         kafka_settings: Optional["_models.DataflowEndpointKafka"] = None,
         local_storage_settings: Optional["_models.DataflowEndpointLocalStorage"] = None,
         mqtt_settings: Optional["_models.DataflowEndpointMqtt"] = None,
-        open_telemetry_settings: Optional["_models.DataflowEndpointOpenTelemetry"] = None,
     ) -> None: ...
 
     @overload
@@ -4994,8 +2510,11 @@ class DataflowEndpointProperties(_Model):
 class DataflowEndpointResource(ProxyResource):
     """Instance dataflowEndpoint resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5007,25 +2526,21 @@ class DataflowEndpointResource(ProxyResource):
     :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.iotoperations.models.DataflowEndpointProperties
-    :ivar extended_location: Edge location of the resource.
+    :ivar extended_location: Edge location of the resource. Required.
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.DataflowEndpointProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.DataflowEndpointProperties"] = rest_field()
     """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """Edge location of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        extended_location: "_models.ExtendedLocation",
         properties: Optional["_models.DataflowEndpointProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -5039,889 +2554,9 @@ class DataflowEndpointResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphConnectionInput(_Model):
-    """DataflowGraph DataflowGraphNode Connection Input.
-
-    :ivar name: Name of the input node. Required.
-    :vartype name: str
-    :ivar schema: Schema settings for the input node.
-    :vartype schema: ~azure.mgmt.iotoperations.models.DataflowGraphConnectionSchemaSettings
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the input node. Required."""
-    schema: Optional["_models.DataflowGraphConnectionSchemaSettings"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Schema settings for the input node."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        schema: Optional["_models.DataflowGraphConnectionSchemaSettings"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphConnectionOutput(_Model):
-    """DataflowGraph DataflowGraphNode Connection Output.
-
-    :ivar name: Name of the destination node. Required.
-    :vartype name: str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the destination node. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphConnectionSchemaSettings(_Model):
-    """DataflowGraph connection node output schema settings.
-
-    :ivar serialization_format: Output serialization format. Known values are: "Delta", "Json",
-     "Parquet", and "Avro".
-    :vartype serialization_format: str or
-     ~azure.mgmt.iotoperations.models.DataflowGraphConnectionSchemaSerializationFormat
-    :ivar schema_ref: Reference to the schema that describes the output of the transformation.
-    :vartype schema_ref: str
-    """
-
-    serialization_format: Optional[Union[str, "_models.DataflowGraphConnectionSchemaSerializationFormat"]] = rest_field(
-        name="serializationFormat", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Output serialization format. Known values are: \"Delta\", \"Json\", \"Parquet\", and \"Avro\"."""
-    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
-    """Reference to the schema that describes the output of the transformation."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        serialization_format: Optional[Union[str, "_models.DataflowGraphConnectionSchemaSerializationFormat"]] = None,
-        schema_ref: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphDestinationHeaderAction(_Model):
-    """DataflowGraph Destination Header Action.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DataflowGraphDestinationAddIfNotPresentHeaderAction,
-    DataflowGraphDestinationAddOrReplaceHeaderAction, DataflowGraphDestinationRemoveHeaderAction
-
-    :ivar action_type: The type of header operation to perform. Required. Known values are:
-     "AddIfNotPresent", "Remove", and "AddOrReplace".
-    :vartype action_type: str or
-     ~azure.mgmt.iotoperations.models.DataflowGraphDestinationHeaderActionType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    action_type: str = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])
-    """The type of header operation to perform. Required. Known values are: \"AddIfNotPresent\",
-     \"Remove\", and \"AddOrReplace\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        action_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphDestinationAddIfNotPresentHeaderAction(
-    DataflowGraphDestinationHeaderAction, discriminator="AddIfNotPresent"
-):  # pylint: disable=name-too-long
-    """DataflowGraph Destination Add if not present HeaderAction properties.
-
-    :ivar action_type: Required. Add if not present type.
-    :vartype action_type: str or ~azure.mgmt.iotoperations.models.ADD_IF_NOT_PRESENT
-    :ivar key: The name of the header to add. Required.
-    :vartype key: str
-    :ivar value: The value of the header to add. Required.
-    :vartype value: str
-    """
-
-    action_type: Literal[DataflowGraphDestinationHeaderActionType.ADD_IF_NOT_PRESENT] = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Add if not present type."""
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the header to add. Required."""
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The value of the header to add. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-        value: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.action_type = DataflowGraphDestinationHeaderActionType.ADD_IF_NOT_PRESENT  # type: ignore
-
-
-class DataflowGraphDestinationAddOrReplaceHeaderAction(
-    DataflowGraphDestinationHeaderAction, discriminator="AddOrReplace"
-):  # pylint: disable=name-too-long
-    """DataflowGraph Destination Add or Replace HeaderAction properties.
-
-    :ivar action_type: Required. Add or Replace type.
-    :vartype action_type: str or ~azure.mgmt.iotoperations.models.ADD_OR_REPLACE
-    :ivar key: The name of the header to add or replace. Required.
-    :vartype key: str
-    :ivar value: The value of the header to add or replace. Required.
-    :vartype value: str
-    """
-
-    action_type: Literal[DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE] = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Add or Replace type."""
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the header to add or replace. Required."""
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The value of the header to add or replace. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-        value: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.action_type = DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE  # type: ignore
-
-
-class DataflowGraphNode(_Model):
-    """DataflowGraph node properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DataflowGraphDestinationNode, DataflowGraphGraphNode, DataflowGraphSourceNode
-
-    :ivar name: Name of the node. Required.
-    :vartype name: str
-    :ivar node_type: Type of the node. Required. Known values are: "Source", "Graph", and
-     "Destination".
-    :vartype node_type: str or ~azure.mgmt.iotoperations.models.DataflowGraphNodeType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the node. Required."""
-    node_type: str = rest_discriminator(name="nodeType", visibility=["read", "create", "update", "delete", "query"])
-    """Type of the node. Required. Known values are: \"Source\", \"Graph\", and \"Destination\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        node_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphDestinationNode(DataflowGraphNode, discriminator="Destination"):
-    """DataflowGraph destination node properties.
-
-    :ivar name: Name of the node. Required.
-    :vartype name: str
-    :ivar node_type: Type of the destination node. Required. Dataflow destination node.
-    :vartype node_type: str or ~azure.mgmt.iotoperations.models.DESTINATION
-    :ivar destination_settings: Destination configuration. Required.
-    :vartype destination_settings:
-     ~azure.mgmt.iotoperations.models.DataflowGraphDestinationNodeSettings
-    """
-
-    node_type: Literal[DataflowGraphNodeType.DESTINATION] = rest_discriminator(name="nodeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of the destination node. Required. Dataflow destination node."""
-    destination_settings: "_models.DataflowGraphDestinationNodeSettings" = rest_field(
-        name="destinationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Destination configuration. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        destination_settings: "_models.DataflowGraphDestinationNodeSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.node_type = DataflowGraphNodeType.DESTINATION  # type: ignore
-
-
-class DataflowGraphDestinationNodeSettings(_Model):
-    """DataflowGraph destination node settings.
-
-    :ivar endpoint_ref: The name of the DataflowEndpoint resource . Required.
-    :vartype endpoint_ref: str
-    :ivar data_destination: Data destination at the endpoint. Required.
-    :vartype data_destination: str
-    :ivar headers: Headers for the output data.
-    :vartype headers: list[~azure.mgmt.iotoperations.models.DataflowGraphDestinationHeaderAction]
-    """
-
-    endpoint_ref: str = rest_field(name="endpointRef", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the DataflowEndpoint resource . Required."""
-    data_destination: str = rest_field(
-        name="dataDestination", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Data destination at the endpoint. Required."""
-    headers: Optional[list["_models.DataflowGraphDestinationHeaderAction"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Headers for the output data."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        endpoint_ref: str,
-        data_destination: str,
-        headers: Optional[list["_models.DataflowGraphDestinationHeaderAction"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphDestinationRemoveHeaderAction(
-    DataflowGraphDestinationHeaderAction, discriminator="Remove"
-):  # pylint: disable=name-too-long
-    """DataflowGraph Destination Remove HeaderAction properties.
-
-    :ivar action_type: Required. Remove type.
-    :vartype action_type: str or ~azure.mgmt.iotoperations.models.REMOVE
-    :ivar key: The name of the header to remove. Required.
-    :vartype key: str
-    """
-
-    action_type: Literal[DataflowGraphDestinationHeaderActionType.REMOVE] = rest_discriminator(name="actionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Remove type."""
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the header to remove. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.action_type = DataflowGraphDestinationHeaderActionType.REMOVE  # type: ignore
-
-
-class DataflowGraphGraphNode(DataflowGraphNode, discriminator="Graph"):
-    """DataflowGraph graph node properties.
-
-    :ivar name: Name of the node. Required.
-    :vartype name: str
-    :ivar node_type: Type of the graph node. Required. Dataflow graph node.
-    :vartype node_type: str or ~azure.mgmt.iotoperations.models.GRAPH
-    :ivar graph_settings: Graph configuration. Required.
-    :vartype graph_settings: ~azure.mgmt.iotoperations.models.DataflowGraphNodeGraphSettings
-    """
-
-    node_type: Literal[DataflowGraphNodeType.GRAPH] = rest_discriminator(name="nodeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of the graph node. Required. Dataflow graph node."""
-    graph_settings: "_models.DataflowGraphNodeGraphSettings" = rest_field(
-        name="graphSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Graph configuration. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        graph_settings: "_models.DataflowGraphNodeGraphSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.node_type = DataflowGraphNodeType.GRAPH  # type: ignore
-
-
-class DataflowGraphGraphNodeConfiguration(_Model):
-    """DataflowGraph graph node configuration.
-
-    :ivar key: Key of the configuration. Required.
-    :vartype key: str
-    :ivar value: Value of the configuration. Required.
-    :vartype value: str
-    """
-
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Key of the configuration. Required."""
-    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Value of the configuration. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-        value: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphNodeConnection(_Model):
-    """DataflowGraph DataflowGraphNode Connection.
-
-    :ivar from_property: Information about the source node. Required.
-    :vartype from_property: ~azure.mgmt.iotoperations.models.DataflowGraphConnectionInput
-    :ivar to: Information about the destination node. Required.
-    :vartype to: ~azure.mgmt.iotoperations.models.DataflowGraphConnectionOutput
-    """
-
-    from_property: "_models.DataflowGraphConnectionInput" = rest_field(
-        name="from", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Information about the source node. Required."""
-    to: "_models.DataflowGraphConnectionOutput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Information about the destination node. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        from_property: "_models.DataflowGraphConnectionInput",
-        to: "_models.DataflowGraphConnectionOutput",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphNodeGraphSettings(_Model):
-    """DataflowGraph graph node settings.
-
-    :ivar registry_endpoint_ref: Reference to the registry endpoint for pulling the artifact.
-     Required.
-    :vartype registry_endpoint_ref: str
-    :ivar artifact: The artifact name and version to pull. This should be in the format
-     ``<artifact-name>:<version>``. Required.
-    :vartype artifact: str
-    :ivar configuration: Configuration key-value pairs.
-    :vartype configuration:
-     list[~azure.mgmt.iotoperations.models.DataflowGraphGraphNodeConfiguration]
-    """
-
-    registry_endpoint_ref: str = rest_field(
-        name="registryEndpointRef", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Reference to the registry endpoint for pulling the artifact. Required."""
-    artifact: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The artifact name and version to pull. This should be in the format
-     ``<artifact-name>:<version>``. Required."""
-    configuration: Optional[list["_models.DataflowGraphGraphNodeConfiguration"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Configuration key-value pairs."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        registry_endpoint_ref: str,
-        artifact: str,
-        configuration: Optional[list["_models.DataflowGraphGraphNodeConfiguration"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphProperties(_Model):
-    """DataflowGraph properties.
-
-    :ivar mode: The mode of the dataflow graph. Known values are: "Enabled" and "Disabled".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.OperationalMode
-    :ivar request_disk_persistence: Disk persistence mode. Known values are: "Enabled" and
-     "Disabled".
-    :vartype request_disk_persistence: str or ~azure.mgmt.iotoperations.models.OperationalMode
-    :ivar nodes: List of nodes in the dataflow graph. Required.
-    :vartype nodes: list[~azure.mgmt.iotoperations.models.DataflowGraphNode]
-    :ivar node_connections: List of connections between nodes in the dataflow graph. Required.
-    :vartype node_connections: list[~azure.mgmt.iotoperations.models.DataflowGraphNodeConnection]
-    :ivar provisioning_state: The provisioning state of the dataflow graph. Known values are:
-     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar status: The status for the dataflow graph.
-    :vartype status: ~azure.mgmt.iotoperations.models.DataflowGraphStatus
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
-    """
-
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The mode of the dataflow graph. Known values are: \"Enabled\" and \"Disabled\"."""
-    request_disk_persistence: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        name="requestDiskPersistence", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Disk persistence mode. Known values are: \"Enabled\" and \"Disabled\"."""
-    nodes: list["_models.DataflowGraphNode"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """List of nodes in the dataflow graph. Required."""
-    node_connections: list["_models.DataflowGraphNodeConnection"] = rest_field(
-        name="nodeConnections", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of connections between nodes in the dataflow graph. Required."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The provisioning state of the dataflow graph. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    status: Optional["_models.DataflowGraphStatus"] = rest_field(visibility=["read"])
-    """The status for the dataflow graph."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        nodes: list["_models.DataflowGraphNode"],
-        node_connections: list["_models.DataflowGraphNodeConnection"],
-        mode: Optional[Union[str, "_models.OperationalMode"]] = None,
-        request_disk_persistence: Optional[Union[str, "_models.OperationalMode"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphResource(ProxyResource):
-    """Instance dataflowEndpoint resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.iotoperations.models.DataflowGraphProperties
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
-    """
-
-    properties: Optional["_models.DataflowGraphProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.DataflowGraphProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphSourceNode(DataflowGraphNode, discriminator="Source"):
-    """DataflowGraph source node properties.
-
-    :ivar name: Name of the node. Required.
-    :vartype name: str
-    :ivar node_type: Type of the source node. Required. Dataflow source node.
-    :vartype node_type: str or ~azure.mgmt.iotoperations.models.SOURCE
-    :ivar source_settings: Source configuration. Required.
-    :vartype source_settings: ~azure.mgmt.iotoperations.models.DataflowGraphSourceSettings
-    """
-
-    node_type: Literal[DataflowGraphNodeType.SOURCE] = rest_discriminator(name="nodeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Type of the source node. Required. Dataflow source node."""
-    source_settings: "_models.DataflowGraphSourceSettings" = rest_field(
-        name="sourceSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source configuration. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        source_settings: "_models.DataflowGraphSourceSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.node_type = DataflowGraphNodeType.SOURCE  # type: ignore
-
-
-class DataflowGraphSourceSettings(_Model):
-    """DataflowGraph source node settings.
-
-    :ivar endpoint_ref: The endpoint reference for the source. Required.
-    :vartype endpoint_ref: str
-    :ivar data_sources: List of data sources. Required.
-    :vartype data_sources: list[str]
-    :ivar asset_ref: Reference to the resource in Azure Device Registry where the data in the
-     endpoint originates from.
-    :vartype asset_ref: str
-    """
-
-    endpoint_ref: str = rest_field(name="endpointRef", visibility=["read", "create", "update", "delete", "query"])
-    """The endpoint reference for the source. Required."""
-    data_sources: list[str] = rest_field(name="dataSources", visibility=["read", "create", "update", "delete", "query"])
-    """List of data sources. Required."""
-    asset_ref: Optional[str] = rest_field(name="assetRef", visibility=["read", "create", "update", "delete", "query"])
-    """Reference to the resource in Azure Device Registry where the data in the endpoint originates
-     from."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        endpoint_ref: str,
-        data_sources: list[str],
-        asset_ref: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowGraphStatus(_Model):
-    """DataflowGraph status.
-
-    :ivar health_state: The health state of the DataflowGraph.
-    :vartype health_state: ~azure.mgmt.iotoperations.models.ResourceHealthStatus
-    """
-
-    health_state: Optional["_models.ResourceHealthStatus"] = rest_field(name="healthState", visibility=["read"])
-    """The health state of the DataflowGraph."""
-
-
-class DataflowOpenTelemetryAuthentication(_Model):
-    """Dataflow OpenTelemetry authentication properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DataflowOpenTelemetryAnonymousAuthentication,
-    DataflowOpenTelemetryServiceAccountAuthentication,
-    DataflowOpenTelemetryX509CertificateAuthentication
-
-    :ivar method: The authentication method. Required. Known values are: "ServiceAccountToken",
-     "X509Certificate", and "Anonymous".
-    :vartype method: str or
-     ~azure.mgmt.iotoperations.models.DataflowOpenTelemetryAuthenticationMethod
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    method: str = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])
-    """The authentication method. Required. Known values are: \"ServiceAccountToken\",
-     \"X509Certificate\", and \"Anonymous\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        method: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataflowOpenTelemetryAnonymousAuthentication(
-    DataflowOpenTelemetryAuthentication, discriminator="Anonymous"
-):  # pylint: disable=name-too-long
-    """DataflowOpenTelemetryAnonymousAuthentication properties.
-
-    :ivar method: The authentication method. Required. Connects anonymously.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.ANONYMOUS
-    :ivar anonymous_settings: Settings for the anonymous connection. Required.
-    :vartype anonymous_settings:
-     ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationAnonymous
-    """
-
-    method: Literal[DataflowOpenTelemetryAuthenticationMethod.ANONYMOUS] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method. Required. Connects anonymously."""
-    anonymous_settings: "_models.DataflowEndpointAuthenticationAnonymous" = rest_field(
-        name="anonymousSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Settings for the anonymous connection. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        anonymous_settings: "_models.DataflowEndpointAuthenticationAnonymous",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = DataflowOpenTelemetryAuthenticationMethod.ANONYMOUS  # type: ignore
-
-
-class DataflowOpenTelemetryServiceAccountAuthentication(
-    DataflowOpenTelemetryAuthentication, discriminator="ServiceAccountToken"
-):  # pylint: disable=name-too-long
-    """DataflowOpenTelemetryServiceAccountAuthentication properties.
-
-    :ivar method: The authentication method. Required. Uses serviceaccount token.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.SERVICE_ACCOUNT_TOKEN
-    :ivar service_account_token_settings: Kubernetes service account token authentication.
-     Required.
-    :vartype service_account_token_settings:
-     ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationServiceAccountToken
-    """
-
-    method: Literal[DataflowOpenTelemetryAuthenticationMethod.SERVICE_ACCOUNT_TOKEN] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method. Required. Uses serviceaccount token."""
-    service_account_token_settings: "_models.DataflowEndpointAuthenticationServiceAccountToken" = rest_field(
-        name="serviceAccountTokenSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Kubernetes service account token authentication. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_account_token_settings: "_models.DataflowEndpointAuthenticationServiceAccountToken",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = DataflowOpenTelemetryAuthenticationMethod.SERVICE_ACCOUNT_TOKEN  # type: ignore
-
-
-class DataflowOpenTelemetryX509CertificateAuthentication(
-    DataflowOpenTelemetryAuthentication, discriminator="X509Certificate"
-):  # pylint: disable=name-too-long
-    """DataflowOpenTelemetryX509CertificateAuthentication properties.
-
-    :ivar method: The authentication method. Required. Uses x509 certificate.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.X509_CERTIFICATE
-    :ivar x509_certificate_settings: X.509 certificate authentication settings. Required.
-    :vartype x509_certificate_settings:
-     ~azure.mgmt.iotoperations.models.DataflowEndpointAuthenticationX509
-    """
-
-    method: Literal[DataflowOpenTelemetryAuthenticationMethod.X509_CERTIFICATE] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method. Required. Uses x509 certificate."""
-    x509_certificate_settings: "_models.DataflowEndpointAuthenticationX509" = rest_field(
-        name="x509CertificateSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """X.509 certificate authentication settings. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        x509_certificate_settings: "_models.DataflowEndpointAuthenticationX509",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = DataflowOpenTelemetryAuthenticationMethod.X509_CERTIFICATE  # type: ignore
-
-
-class DataflowOperation(_Model):
+class DataflowOperation(_model_base.Model):
     """Dataflow Operation properties. NOTE - One only method is allowed to be used for one entry.
+
 
     :ivar operation_type: Type of operation. Required. Known values are: "Source", "Destination",
      and "BuiltInTransformation".
@@ -5938,23 +2573,19 @@ class DataflowOperation(_Model):
      ~azure.mgmt.iotoperations.models.DataflowDestinationOperationSettings
     """
 
-    operation_type: Union[str, "_models.OperationType"] = rest_field(
-        name="operationType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    operation_type: Union[str, "_models.OperationType"] = rest_field(name="operationType")
     """Type of operation. Required. Known values are: \"Source\", \"Destination\", and
      \"BuiltInTransformation\"."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: Optional[str] = rest_field()
     """Optional user provided name of the transformation."""
-    source_settings: Optional["_models.DataflowSourceOperationSettings"] = rest_field(
-        name="sourceSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
+    source_settings: Optional["_models.DataflowSourceOperationSettings"] = rest_field(name="sourceSettings")
     """Source configuration."""
     built_in_transformation_settings: Optional["_models.DataflowBuiltInTransformationSettings"] = rest_field(
-        name="builtInTransformationSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="builtInTransformationSettings"
     )
     """Built In Transformation configuration."""
     destination_settings: Optional["_models.DataflowDestinationOperationSettings"] = rest_field(
-        name="destinationSettings", visibility=["read", "create", "update", "delete", "query"]
+        name="destinationSettings"
     )
     """Destination configuration."""
 
@@ -5980,8 +2611,10 @@ class DataflowOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowProfileProperties(_Model):
+class DataflowProfileProperties(_model_base.Model):
     """DataflowProfile Resource properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar diagnostics: Spec defines the desired identities of NBC diagnostics settings.
     :vartype diagnostics: ~azure.mgmt.iotoperations.models.ProfileDiagnostics
@@ -5991,20 +2624,11 @@ class DataflowProfileProperties(_Model):
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar status: The status for the dataflow profile.
-    :vartype status: ~azure.mgmt.iotoperations.models.DataflowProfileStatus
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
-    diagnostics: Optional["_models.ProfileDiagnostics"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    diagnostics: Optional["_models.ProfileDiagnostics"] = rest_field()
     """Spec defines the desired identities of NBC diagnostics settings."""
-    instance_count: Optional[int] = rest_field(
-        name="instanceCount", visibility=["read", "create", "update", "delete", "query"]
-    )
+    instance_count: Optional[int] = rest_field(name="instanceCount")
     """To manually scale the dataflow profile, specify the maximum number of instances you want to
      run."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -6012,13 +2636,6 @@ class DataflowProfileProperties(_Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    status: Optional["_models.DataflowProfileStatus"] = rest_field(visibility=["read"])
-    """The status for the dataflow profile."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
@@ -6042,8 +2659,11 @@ class DataflowProfileProperties(_Model):
 class DataflowProfileResource(ProxyResource):
     """Instance dataflowProfile resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6055,25 +2675,21 @@ class DataflowProfileResource(ProxyResource):
     :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.iotoperations.models.DataflowProfileProperties
-    :ivar extended_location: Edge location of the resource.
+    :ivar extended_location: Edge location of the resource. Required.
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.DataflowProfileProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.DataflowProfileProperties"] = rest_field()
     """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """Edge location of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        extended_location: "_models.ExtendedLocation",
         properties: Optional["_models.DataflowProfileProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -6087,51 +2703,27 @@ class DataflowProfileResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataflowProfileStatus(_Model):
-    """DataflowProfile status.
-
-    :ivar health_state: The health state of the DataflowProfile.
-    :vartype health_state: ~azure.mgmt.iotoperations.models.ResourceHealthStatus
-    """
-
-    health_state: Optional["_models.ResourceHealthStatus"] = rest_field(name="healthState", visibility=["read"])
-    """The health state of the DataflowProfile."""
-
-
-class DataflowProperties(_Model):
+class DataflowProperties(_model_base.Model):
     """Dataflow Resource properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar mode: Mode for Dataflow. Optional; defaults to Enabled. Known values are: "Enabled" and
      "Disabled".
     :vartype mode: str or ~azure.mgmt.iotoperations.models.OperationalMode
-    :ivar request_disk_persistence: Disk persistence mode. Known values are: "Enabled" and
-     "Disabled".
-    :vartype request_disk_persistence: str or ~azure.mgmt.iotoperations.models.OperationalMode
     :ivar operations: List of operations including source and destination references as well as
      transformation. Required.
     :vartype operations: list[~azure.mgmt.iotoperations.models.DataflowOperation]
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar status: The status for the dataflow.
-    :vartype status: ~azure.mgmt.iotoperations.models.DataflowStatus
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """Mode for Dataflow. Optional; defaults to Enabled. Known values are: \"Enabled\" and
      \"Disabled\"."""
-    request_disk_persistence: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        name="requestDiskPersistence", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Disk persistence mode. Known values are: \"Enabled\" and \"Disabled\"."""
-    operations: list["_models.DataflowOperation"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    operations: List["_models.DataflowOperation"] = rest_field()
     """List of operations including source and destination references as well as transformation.
      Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -6139,21 +2731,13 @@ class DataflowProperties(_Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    status: Optional["_models.DataflowStatus"] = rest_field(visibility=["read"])
-    """The status for the dataflow."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
         self,
         *,
-        operations: list["_models.DataflowOperation"],
+        operations: List["_models.DataflowOperation"],
         mode: Optional[Union[str, "_models.OperationalMode"]] = None,
-        request_disk_persistence: Optional[Union[str, "_models.OperationalMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -6170,8 +2754,11 @@ class DataflowProperties(_Model):
 class DataflowResource(ProxyResource):
     """Instance dataflowProfile dataflow resource.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6183,25 +2770,21 @@ class DataflowResource(ProxyResource):
     :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.iotoperations.models.DataflowProperties
-    :ivar extended_location: Edge location of the resource.
+    :ivar extended_location: Edge location of the resource. Required.
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     """
 
-    properties: Optional["_models.DataflowProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.DataflowProperties"] = rest_field()
     """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """Edge location of the resource. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        extended_location: "_models.ExtendedLocation",
         properties: Optional["_models.DataflowProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -6215,8 +2798,9 @@ class DataflowResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataflowSourceOperationSettings(_Model):
+class DataflowSourceOperationSettings(_model_base.Model):
     """Dataflow Source Operation properties.
+
 
     :ivar endpoint_ref: Reference to the Dataflow Endpoint resource. Can only be of Broker and
      Kafka type. Required.
@@ -6235,19 +2819,19 @@ class DataflowSourceOperationSettings(_Model):
     :vartype data_sources: list[str]
     """
 
-    endpoint_ref: str = rest_field(name="endpointRef", visibility=["read", "create", "update", "delete", "query"])
+    endpoint_ref: str = rest_field(name="endpointRef")
     """Reference to the Dataflow Endpoint resource. Can only be of Broker and Kafka type. Required."""
-    asset_ref: Optional[str] = rest_field(name="assetRef", visibility=["read", "create", "update", "delete", "query"])
+    asset_ref: Optional[str] = rest_field(name="assetRef")
     """Reference to the resource in Azure Device Registry where the data in the endpoint originates
      from."""
     serialization_format: Optional[Union[str, "_models.SourceSerializationFormat"]] = rest_field(
-        name="serializationFormat", visibility=["read", "create", "update", "delete", "query"]
+        name="serializationFormat"
     )
     """Content is a JSON Schema. Allowed: JSON Schema/draft-7. \"Json\""""
-    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
+    schema_ref: Optional[str] = rest_field(name="schemaRef")
     """Schema CR reference. Data will be deserialized according to the schema, and dropped if it
      doesn't match."""
-    data_sources: list[str] = rest_field(name="dataSources", visibility=["read", "create", "update", "delete", "query"])
+    data_sources: List[str] = rest_field(name="dataSources")
     """List of source locations. Can be Broker or Kafka topics. Supports wildcards # and +. Required."""
 
     @overload
@@ -6255,7 +2839,7 @@ class DataflowSourceOperationSettings(_Model):
         self,
         *,
         endpoint_ref: str,
-        data_sources: list[str],
+        data_sources: List[str],
         asset_ref: Optional[str] = None,
         serialization_format: Optional[Union[str, "_models.SourceSerializationFormat"]] = None,
         schema_ref: Optional[str] = None,
@@ -6272,25 +2856,14 @@ class DataflowSourceOperationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowStatus(_Model):
-    """DataflowStatus status.
-
-    :ivar health_state: The health state of the Dataflow.
-    :vartype health_state: ~azure.mgmt.iotoperations.models.ResourceHealthStatus
-    """
-
-    health_state: Optional["_models.ResourceHealthStatus"] = rest_field(name="healthState", visibility=["read"])
-    """The health state of the Dataflow."""
-
-
-class DiagnosticsLogs(_Model):
+class DiagnosticsLogs(_model_base.Model):
     """Diagnostic Log properties.
 
     :ivar level: The log level. Examples - 'debug', 'info', 'warn', 'error', 'trace'.
     :vartype level: str
     """
 
-    level: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    level: Optional[str] = rest_field()
     """The log level. Examples - 'debug', 'info', 'warn', 'error', 'trace'."""
 
     @overload
@@ -6311,45 +2884,40 @@ class DiagnosticsLogs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskBackedMessageBuffer(_Model):
+class DiskBackedMessageBuffer(_model_base.Model):
     """DiskBackedMessageBuffer properties.
+
 
     :ivar max_size: The max size of the message buffer on disk. If a PVC template is specified
      using one of ephemeralVolumeClaimSpec or persistentVolumeClaimSpec, then this size is used as
      the request and limit sizes of that template. If neither ephemeralVolumeClaimSpec nor
      persistentVolumeClaimSpec are specified, then an emptyDir volume is mounted with this size as
-     its limit. See `https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
-     <https://kubernetes.io/docs/concepts/storage/volumes/#emptydir>`_ for details. Required.
+     its limit. See https://kubernetes.io/docs/concepts/storage/volumes/#emptydir for details.
+     Required.
     :vartype max_size: str
     :ivar ephemeral_volume_claim_spec: Use the specified persistent volume claim template to mount
      a "generic ephemeral volume" for the message buffer. See
-     `https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
-     <https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes>`_
-     for details.
+     https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes for
+     details.
     :vartype ephemeral_volume_claim_spec: ~azure.mgmt.iotoperations.models.VolumeClaimSpec
     :ivar persistent_volume_claim_spec: Use the specified persistent volume claim template to mount
      a persistent volume for the message buffer.
     :vartype persistent_volume_claim_spec: ~azure.mgmt.iotoperations.models.VolumeClaimSpec
     """
 
-    max_size: str = rest_field(name="maxSize", visibility=["read", "create", "update", "delete", "query"])
+    max_size: str = rest_field(name="maxSize")
     """The max size of the message buffer on disk. If a PVC template is specified using one of
      ephemeralVolumeClaimSpec or persistentVolumeClaimSpec, then this size is used as the request
      and limit sizes of that template. If neither ephemeralVolumeClaimSpec nor
      persistentVolumeClaimSpec are specified, then an emptyDir volume is mounted with this size as
-     its limit. See `https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
-     <https://kubernetes.io/docs/concepts/storage/volumes/#emptydir>`_ for details. Required."""
-    ephemeral_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(
-        name="ephemeralVolumeClaimSpec", visibility=["read", "create", "update", "delete", "query"]
-    )
+     its limit. See https://kubernetes.io/docs/concepts/storage/volumes/#emptydir for details.
+     Required."""
+    ephemeral_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(name="ephemeralVolumeClaimSpec")
     """Use the specified persistent volume claim template to mount a \"generic ephemeral volume\" for
      the message buffer. See
-     `https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
-     <https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes>`_
-     for details."""
-    persistent_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(
-        name="persistentVolumeClaimSpec", visibility=["read", "create", "update", "delete", "query"]
-    )
+     https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes for
+     details."""
+    persistent_volume_claim_spec: Optional["_models.VolumeClaimSpec"] = rest_field(name="persistentVolumeClaimSpec")
     """Use the specified persistent volume claim template to mount a persistent volume for the message
      buffer."""
 
@@ -6373,8 +2941,10 @@ class DiskBackedMessageBuffer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_Model):
+class ErrorAdditionalInfo(_model_base.Model):
     """The resource management error additional info.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The additional info type.
     :vartype type: str
@@ -6388,8 +2958,10 @@ class ErrorAdditionalInfo(_Model):
     """The additional info."""
 
 
-class ErrorDetail(_Model):
+class ErrorDetail(_model_base.Model):
     """The error detail.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -6409,22 +2981,23 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
-    """Error response.
+class ErrorResponse(_model_base.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.iotoperations.models.ErrorDetail
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models.ErrorDetail"] = rest_field()
     """The error object."""
 
     @overload
@@ -6445,9 +3018,10 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_model_base.Model):
     """Extended location is an extension of Azure locations. They provide a way to use their Azure ARC
     enabled Kubernetes clusters as target locations for deploying Azure services instances.
+
 
     :ivar name: The name of the extended location. Required.
     :vartype name: str
@@ -6455,11 +3029,9 @@ class ExtendedLocation(_Model):
     :vartype type: str or ~azure.mgmt.iotoperations.models.ExtendedLocationType
     """
 
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: str = rest_field()
     """The name of the extended location. Required."""
-    type: Union[str, "_models.ExtendedLocationType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    type: Union[str, "_models.ExtendedLocationType"] = rest_field()
     """Type of ExtendedLocation. Required. \"CustomLocation\""""
 
     @overload
@@ -6481,8 +3053,9 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Frontend(_Model):
+class Frontend(_model_base.Model):
     """The desired properties of the frontend instances of the Broker.
+
 
     :ivar replicas: The desired number of frontend instances (pods). Required.
     :vartype replicas: int
@@ -6490,9 +3063,9 @@ class Frontend(_Model):
     :vartype workers: int
     """
 
-    replicas: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    replicas: int = rest_field()
     """The desired number of frontend instances (pods). Required."""
-    workers: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    workers: Optional[int] = rest_field()
     """Number of logical frontend workers per instance (pod)."""
 
     @overload
@@ -6514,7 +3087,7 @@ class Frontend(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateResourceLimits(_Model):
+class GenerateResourceLimits(_model_base.Model):
     """GenerateResourceLimits properties.
 
     :ivar cpu: The toggle to enable/disable cpu resource limits. Known values are: "Enabled" and
@@ -6522,9 +3095,7 @@ class GenerateResourceLimits(_Model):
     :vartype cpu: str or ~azure.mgmt.iotoperations.models.OperationalMode
     """
 
-    cpu: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    cpu: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """The toggle to enable/disable cpu resource limits. Known values are: \"Enabled\" and
      \"Disabled\"."""
 
@@ -6546,44 +3117,7 @@ class GenerateResourceLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceFeature(_Model):
-    """The features of the AIO Instance.
-
-    :ivar mode: The state of the feature. Known values are: "Stable", "Preview", and "Disabled".
-    :vartype mode: str or ~azure.mgmt.iotoperations.models.InstanceFeatureMode
-    :ivar settings: The settings of the feature.
-    :vartype settings: dict[str, str or ~azure.mgmt.iotoperations.models.OperationalMode]
-    """
-
-    mode: Optional[Union[str, "_models.InstanceFeatureMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The state of the feature. Known values are: \"Stable\", \"Preview\", and \"Disabled\"."""
-    settings: Optional[dict[str, Union[str, "_models.OperationalMode"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The settings of the feature."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: Optional[Union[str, "_models.InstanceFeatureMode"]] = None,
-        settings: Optional[dict[str, Union[str, "_models.OperationalMode"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class InstancePatchModel(_Model):
+class InstancePatchModel(_model_base.Model):
     """The Instance update model.
 
     :ivar tags: Resource tags.
@@ -6592,18 +3126,16 @@ class InstancePatchModel(_Model):
     :vartype identity: ~azure.mgmt.iotoperations.models.ManagedServiceIdentity
     """
 
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field()
     """Resource tags."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
     """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -6618,8 +3150,11 @@ class InstancePatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceProperties(_Model):
+class InstanceProperties(_model_base.Model):
     """The properties of the Instance resource.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar description: Detailed description of the Instance.
     :vartype description: str
@@ -6631,20 +3166,9 @@ class InstanceProperties(_Model):
     :ivar schema_registry_ref: The reference to the Schema Registry for this AIO Instance.
      Required.
     :vartype schema_registry_ref: ~azure.mgmt.iotoperations.models.SchemaRegistryRef
-    :ivar default_secret_provider_class_ref: The reference to the AIO Secret provider class.
-    :vartype default_secret_provider_class_ref:
-     ~azure.mgmt.iotoperations.models.SecretProviderClassRef
-    :ivar features: The features of the AIO Instance.
-    :vartype features: dict[str, ~azure.mgmt.iotoperations.models.InstanceFeature]
-    :ivar adr_namespace_ref: The Azure Device Registry Namespace used by Assets, Discovered Assets
-     and devices.
-    :vartype adr_namespace_ref: ~azure.mgmt.iotoperations.models.AzureDeviceRegistryNamespaceRef
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
     """
 
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field()
     """Detailed description of the Instance."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -6653,27 +3177,8 @@ class InstanceProperties(_Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
     version: Optional[str] = rest_field(visibility=["read"])
     """The Azure IoT Operations version."""
-    schema_registry_ref: "_models.SchemaRegistryRef" = rest_field(
-        name="schemaRegistryRef", visibility=["read", "create", "update", "delete", "query"]
-    )
+    schema_registry_ref: "_models.SchemaRegistryRef" = rest_field(name="schemaRegistryRef")
     """The reference to the Schema Registry for this AIO Instance. Required."""
-    default_secret_provider_class_ref: Optional["_models.SecretProviderClassRef"] = rest_field(
-        name="defaultSecretProviderClassRef", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The reference to the AIO Secret provider class."""
-    features: Optional[dict[str, "_models.InstanceFeature"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The features of the AIO Instance."""
-    adr_namespace_ref: Optional["_models.AzureDeviceRegistryNamespaceRef"] = rest_field(
-        name="adrNamespaceRef", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Azure Device Registry Namespace used by Assets, Discovered Assets and devices."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
 
     @overload
     def __init__(
@@ -6681,9 +3186,6 @@ class InstanceProperties(_Model):
         *,
         schema_registry_ref: "_models.SchemaRegistryRef",
         description: Optional[str] = None,
-        default_secret_provider_class_ref: Optional["_models.SecretProviderClassRef"] = None,
-        features: Optional[dict[str, "_models.InstanceFeature"]] = None,
-        adr_namespace_ref: Optional["_models.AzureDeviceRegistryNamespaceRef"] = None,
     ) -> None: ...
 
     @overload
@@ -6698,10 +3200,14 @@ class InstanceProperties(_Model):
 
 
 class TrackedResource(Resource):
-    """Tracked Resource.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6717,7 +3223,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[Dict[str, str]] = rest_field()
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -6727,7 +3233,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -6744,8 +3250,11 @@ class TrackedResource(Resource):
 class InstanceResource(TrackedResource):
     """A Instance resource is a logical container for a set of child resources.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -6767,15 +3276,11 @@ class InstanceResource(TrackedResource):
     :vartype identity: ~azure.mgmt.iotoperations.models.ManagedServiceIdentity
     """
 
-    properties: Optional["_models.InstanceProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    properties: Optional["_models.InstanceProperties"] = rest_field()
     """The resource-specific properties for this resource."""
     extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
     """Edge location of the resource. Required."""
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field()
     """The managed service identities assigned to this resource."""
 
     @overload
@@ -6784,7 +3289,7 @@ class InstanceResource(TrackedResource):
         *,
         location: str,
         extended_location: "_models.ExtendedLocation",
-        tags: Optional[dict[str, str]] = None,
+        tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.InstanceProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -6800,8 +3305,9 @@ class InstanceResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesReference(_Model):
+class KubernetesReference(_model_base.Model):
     """Kubernetes reference.
+
 
     :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
      specified, the specified Kind must be in the core API group. For any other third-party types,
@@ -6816,15 +3322,15 @@ class KubernetesReference(_Model):
     :vartype namespace: str
     """
 
-    api_group: Optional[str] = rest_field(name="apiGroup", visibility=["read", "create", "update", "delete", "query"])
+    api_group: Optional[str] = rest_field(name="apiGroup")
     """APIGroup is the group for the resource being referenced. If APIGroup is not specified, the
      specified Kind must be in the core API group. For any other third-party types, APIGroup is
      required."""
-    kind: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_field()
     """Kind is the type of resource being referenced. Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: str = rest_field()
     """Name is the name of resource being referenced. Required."""
-    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    namespace: Optional[str] = rest_field()
     """Namespace is the namespace of the resource being referenced. This field is required when the
      resource has a namespace."""
 
@@ -6849,8 +3355,9 @@ class KubernetesReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListenerPort(_Model):
+class ListenerPort(_model_base.Model):
     """Defines a TCP port on which a ``BrokerListener`` listens.
+
 
     :ivar authentication_ref: Reference to client authentication settings. Omit to disable
      authentication.
@@ -6870,23 +3377,17 @@ class ListenerPort(_Model):
     :vartype tls: ~azure.mgmt.iotoperations.models.TlsCertMethod
     """
 
-    authentication_ref: Optional[str] = rest_field(
-        name="authenticationRef", visibility=["read", "create", "update", "delete", "query"]
-    )
+    authentication_ref: Optional[str] = rest_field(name="authenticationRef")
     """Reference to client authentication settings. Omit to disable authentication."""
-    authorization_ref: Optional[str] = rest_field(
-        name="authorizationRef", visibility=["read", "create", "update", "delete", "query"]
-    )
+    authorization_ref: Optional[str] = rest_field(name="authorizationRef")
     """Reference to client authorization settings. Omit to disable authorization."""
-    node_port: Optional[int] = rest_field(name="nodePort", visibility=["read", "create", "update", "delete", "query"])
+    node_port: Optional[int] = rest_field(name="nodePort")
     """Kubernetes node port. Only relevant when this port is associated with a ``NodePort`` listener."""
-    port: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    port: int = rest_field()
     """TCP port for accepting client connections. Required."""
-    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    protocol: Optional[Union[str, "_models.BrokerProtocolType"]] = rest_field()
     """Protocol to use for client connections. Known values are: \"Mqtt\" and \"WebSockets\"."""
-    tls: Optional["_models.TlsCertMethod"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tls: Optional["_models.TlsCertMethod"] = rest_field()
     """TLS server certificate settings for this port. Omit to disable TLS."""
 
     @overload
@@ -6912,8 +3413,9 @@ class ListenerPort(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalKubernetesReference(_Model):
+class LocalKubernetesReference(_model_base.Model):
     """Kubernetes reference.
+
 
     :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
      specified, the specified Kind must be in the core API group. For any other third-party types,
@@ -6925,13 +3427,13 @@ class LocalKubernetesReference(_Model):
     :vartype name: str
     """
 
-    api_group: Optional[str] = rest_field(name="apiGroup", visibility=["read", "create", "update", "delete", "query"])
+    api_group: Optional[str] = rest_field(name="apiGroup")
     """APIGroup is the group for the resource being referenced. If APIGroup is not specified, the
      specified Kind must be in the core API group. For any other third-party types, APIGroup is
      required."""
-    kind: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_field()
     """Kind is the type of resource being referenced. Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: str = rest_field()
     """Name is the name of resource being referenced. Required."""
 
     @overload
@@ -6954,8 +3456,11 @@ class LocalKubernetesReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_model_base.Model):
     """Managed service identity (system assigned and/or user assigned identities).
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -6977,13 +3482,11 @@ class ManagedServiceIdentity(_Model):
     tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
     """The tenant ID of the system assigned identity. This property will only be provided for a system
      assigned identity."""
-    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field()
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
-        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities"
     )
     """The identities assigned to this resource by the user."""
 
@@ -6992,7 +3495,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -7006,16 +3509,14 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Metrics(_Model):
+class Metrics(_model_base.Model):
     """Diagnostic Metrics properties.
 
     :ivar prometheus_port: The prometheus port to expose the metrics.
     :vartype prometheus_port: int
     """
 
-    prometheus_port: Optional[int] = rest_field(
-        name="prometheusPort", visibility=["read", "create", "update", "delete", "query"]
-    )
+    prometheus_port: Optional[int] = rest_field(name="prometheusPort")
     """The prometheus port to expose the metrics."""
 
     @overload
@@ -7036,8 +3537,10 @@ class Metrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
-    """REST API Operation.
+class Operation(_model_base.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -7063,15 +3566,13 @@ class Operation(_Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
      logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
      \"user,system\"."""
-    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType")
     """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
      internal only APIs. \"Internal\""""
 
@@ -7079,7 +3580,7 @@ class Operation(_Model):
     def __init__(
         self,
         *,
-        display: Optional["_models.OperationDisplay"] = None,
+        action_type: Optional[Union[str, "_models.ActionType"]] = None,
     ) -> None: ...
 
     @overload
@@ -7093,8 +3594,10 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
-    """Localized display information for an operation.
+class OperationDisplay(_model_base.Model):
+    """Localized display information for and operation.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -7124,7 +3627,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrincipalDefinition(_Model):
+class PrincipalDefinition(_model_base.Model):
     """PrincipalDefinition properties of Rule.
 
     :ivar attributes: A list of key-value pairs that match the attributes of the clients. The
@@ -7139,15 +3642,13 @@ class PrincipalDefinition(_Model):
     :vartype usernames: list[str]
     """
 
-    attributes: Optional[list[dict[str, str]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    attributes: Optional[List[Dict[str, str]]] = rest_field()
     """A list of key-value pairs that match the attributes of the clients. The attributes are
      case-sensitive and must match the attributes provided by the clients during authentication."""
-    client_ids: Optional[list[str]] = rest_field(
-        name="clientIds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    client_ids: Optional[List[str]] = rest_field(name="clientIds")
     """A list of client IDs that match the clients. The client IDs are case-sensitive and must match
      the client IDs provided by the clients during connection."""
-    usernames: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usernames: Optional[List[str]] = rest_field()
     """A list of usernames that match the clients. The usernames are case-sensitive and must match the
      usernames provided by the clients during authentication."""
 
@@ -7155,9 +3656,9 @@ class PrincipalDefinition(_Model):
     def __init__(
         self,
         *,
-        attributes: Optional[list[dict[str, str]]] = None,
-        client_ids: Optional[list[str]] = None,
-        usernames: Optional[list[str]] = None,
+        attributes: Optional[List[Dict[str, str]]] = None,
+        client_ids: Optional[List[str]] = None,
+        usernames: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -7171,7 +3672,7 @@ class PrincipalDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileDiagnostics(_Model):
+class ProfileDiagnostics(_model_base.Model):
     """DataflowProfile Diagnostics properties.
 
     :ivar logs: Diagnostic log settings for the resource.
@@ -7180,9 +3681,9 @@ class ProfileDiagnostics(_Model):
     :vartype metrics: ~azure.mgmt.iotoperations.models.Metrics
     """
 
-    logs: Optional["_models.DiagnosticsLogs"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    logs: Optional["_models.DiagnosticsLogs"] = rest_field()
     """Diagnostic log settings for the resource."""
-    metrics: Optional["_models.Metrics"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metrics: Optional["_models.Metrics"] = rest_field()
     """The metrics settings for the resource."""
 
     @overload
@@ -7204,546 +3705,9 @@ class ProfileDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryEndpointAuthentication(_Model):
-    """Model for RegistryEndpointAuthentication.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RegistryEndpointAnonymousAuthentication, RegistryEndpointArtifactPullSecretAuthentication,
-    RegistryEndpointSystemAssignedIdentityAuthentication,
-    RegistryEndpointUserAssignedIdentityAuthentication
-
-    :ivar method: The authentication method. Required. Known values are:
-     "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", "Anonymous", and
-     "ArtifactPullSecret".
-    :vartype method: str or ~azure.mgmt.iotoperations.models.RegistryEndpointAuthenticationMethod
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    method: str = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])
-    """The authentication method. Required. Known values are: \"SystemAssignedManagedIdentity\",
-     \"UserAssignedManagedIdentity\", \"Anonymous\", and \"ArtifactPullSecret\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        method: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RegistryEndpointAnonymousAuthentication(RegistryEndpointAuthentication, discriminator="Anonymous"):
-    """Anonymous authentication.
-
-    :ivar method: The authentication method. Required. Anonymous Option.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.ANONYMOUS
-    :ivar anonymous_settings: Anonymous authentication properties. Required.
-    :vartype anonymous_settings: ~azure.mgmt.iotoperations.models.RegistryEndpointAnonymousSettings
-    """
-
-    method: Literal[RegistryEndpointAuthenticationMethod.ANONYMOUS] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method. Required. Anonymous Option."""
-    anonymous_settings: "_models.RegistryEndpointAnonymousSettings" = rest_field(
-        name="anonymousSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Anonymous authentication properties. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        anonymous_settings: "_models.RegistryEndpointAnonymousSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = RegistryEndpointAuthenticationMethod.ANONYMOUS  # type: ignore
-
-
-class RegistryEndpointAnonymousSettings(_Model):
-    """RegistryEndpoint Anonymous authentication properties."""
-
-
-class RegistryEndpointArtifactPullSecretAuthentication(
-    RegistryEndpointAuthentication, discriminator="ArtifactPullSecret"
-):  # pylint: disable=name-too-long
-    """Artifact Pull Secret authentication.
-
-    :ivar method: The authentication method. Required. Artifact Pull Secret authentication.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.ARTIFACT_PULL_SECRET
-    :ivar artifact_pull_secret_settings: Artifact Pull Secret authentication properties. Required.
-    :vartype artifact_pull_secret_settings:
-     ~azure.mgmt.iotoperations.models.RegistryEndpointArtifactPullSecretSettings
-    """
-
-    method: Literal[RegistryEndpointAuthenticationMethod.ARTIFACT_PULL_SECRET] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method. Required. Artifact Pull Secret authentication."""
-    artifact_pull_secret_settings: "_models.RegistryEndpointArtifactPullSecretSettings" = rest_field(
-        name="artifactPullSecretSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Artifact Pull Secret authentication properties. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        artifact_pull_secret_settings: "_models.RegistryEndpointArtifactPullSecretSettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = RegistryEndpointAuthenticationMethod.ARTIFACT_PULL_SECRET  # type: ignore
-
-
-class RegistryEndpointArtifactPullSecretSettings(_Model):  # pylint: disable=name-too-long
-    """RegistryEndpoint Artifact Pull Secret authentication properties.
-
-    :ivar secret_ref: The name of the kubernetes secret that contains the artifact pull secret.
-     Required.
-    :vartype secret_ref: str
-    """
-
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the kubernetes secret that contains the artifact pull secret. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        secret_ref: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RegistryEndpointProperties(_Model):
-    """RegistryEndpoint properties.
-
-    :ivar host: The Container Registry endpoint hostname. Required.
-    :vartype host: str
-    :ivar authentication: The authentication settings for the Azure Container Registry. Required.
-    :vartype authentication: ~azure.mgmt.iotoperations.models.RegistryEndpointAuthentication
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
-     "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: str or ~azure.mgmt.iotoperations.models.ProvisioningState
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
-    :ivar code_signing_cas: The signing certificate authorities used by artifacts in the registry
-     endpoint.
-    :vartype code_signing_cas:
-     list[~azure.mgmt.iotoperations.models.RegistryEndpointTrustedSigningKey]
-    """
-
-    host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Container Registry endpoint hostname. Required."""
-    authentication: "_models.RegistryEndpointAuthentication" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authentication settings for the Azure Container Registry. Required."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    health_state: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(
-        name="healthState", visibility=["read"]
-    )
-    """The health state of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
-    code_signing_cas: Optional[list["_models.RegistryEndpointTrustedSigningKey"]] = rest_field(
-        name="codeSigningCas", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The signing certificate authorities used by artifacts in the registry endpoint."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        host: str,
-        authentication: "_models.RegistryEndpointAuthentication",
-        code_signing_cas: Optional[list["_models.RegistryEndpointTrustedSigningKey"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RegistryEndpointResource(ProxyResource):
-    """RegistryEndpoint resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.iotoperations.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.iotoperations.models.RegistryEndpointProperties
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
-    """
-
-    properties: Optional["_models.RegistryEndpointProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
-        name="extendedLocation", visibility=["read", "create"]
-    )
-    """Edge location of the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.RegistryEndpointProperties"] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RegistryEndpointSystemAssignedIdentityAuthentication(
-    RegistryEndpointAuthentication, discriminator="SystemAssignedManagedIdentity"
-):  # pylint: disable=name-too-long
-    """System assigned identity authentication.
-
-    :ivar method: The authentication method. Required. SystemAssignedManagedIdentity type.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.SYSTEM_ASSIGNED_MANAGED_IDENTITY
-    :ivar system_assigned_managed_identity_settings: System assigned managed identity properties.
-     Required.
-    :vartype system_assigned_managed_identity_settings:
-     ~azure.mgmt.iotoperations.models.RegistryEndpointSystemAssignedManagedIdentitySettings
-    """
-
-    method: Literal[RegistryEndpointAuthenticationMethod.SYSTEM_ASSIGNED_MANAGED_IDENTITY] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method. Required. SystemAssignedManagedIdentity type."""
-    system_assigned_managed_identity_settings: "_models.RegistryEndpointSystemAssignedManagedIdentitySettings" = (
-        rest_field(
-            name="systemAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-        )
-    )
-    """System assigned managed identity properties. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        system_assigned_managed_identity_settings: "_models.RegistryEndpointSystemAssignedManagedIdentitySettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = RegistryEndpointAuthenticationMethod.SYSTEM_ASSIGNED_MANAGED_IDENTITY  # type: ignore
-
-
-class RegistryEndpointSystemAssignedManagedIdentitySettings(_Model):  # pylint: disable=name-too-long
-    """System assigned managed identity properties.
-
-    :ivar audience: Audience of the service to authenticate against. Optional; defaults to the
-     audience for Service host configuration.
-    :vartype audience: str
-    """
-
-    audience: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Audience of the service to authenticate against. Optional; defaults to the audience for Service
-     host configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        audience: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RegistryEndpointTrustedSigningKey(_Model):
-    """RegistryEndpoint Trust properties.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RegistryEndpointTrustedSigningKeyConfigMap, RegistryEndpointTrustedSigningKeySecret
-
-    :ivar type: The trust type for the registry endpoint. Required. Known values are: "Secret" and
-     "ConfigMap".
-    :vartype type: str or ~azure.mgmt.iotoperations.models.RegistryEndpointTrustedSigningKeyType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The trust type for the registry endpoint. Required. Known values are: \"Secret\" and
-     \"ConfigMap\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RegistryEndpointTrustedSigningKeyConfigMap(
-    RegistryEndpointTrustedSigningKey, discriminator="ConfigMap"
-):  # pylint: disable=name-too-long
-    """Settings for RegistryEndpoint trust provided through a configmap.
-
-    :ivar type: The trust type for the registry endpoint. Required. Trust settings stored in a
-     Kubernetes ConfigMap.
-    :vartype type: str or ~azure.mgmt.iotoperations.models.CONFIG_MAP
-    :ivar config_map_ref: The name of the configmap. Required.
-    :vartype config_map_ref: str
-    """
-
-    type: Literal[RegistryEndpointTrustedSigningKeyType.CONFIG_MAP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The trust type for the registry endpoint. Required. Trust settings stored in a Kubernetes
-     ConfigMap."""
-    config_map_ref: str = rest_field(name="configMapRef", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the configmap. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        config_map_ref: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = RegistryEndpointTrustedSigningKeyType.CONFIG_MAP  # type: ignore
-
-
-class RegistryEndpointTrustedSigningKeySecret(RegistryEndpointTrustedSigningKey, discriminator="Secret"):
-    """Settings for RegistryEndpoint trust provided through a secret.
-
-    :ivar type: The trust type for the registry endpoint. Required. Trust settings stored in a
-     Kubernetes Secret.
-    :vartype type: str or ~azure.mgmt.iotoperations.models.SECRET
-    :ivar secret_ref: The name of the secret. Required.
-    :vartype secret_ref: str
-    """
-
-    type: Literal[RegistryEndpointTrustedSigningKeyType.SECRET] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The trust type for the registry endpoint. Required. Trust settings stored in a Kubernetes
-     Secret."""
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the secret. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        secret_ref: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = RegistryEndpointTrustedSigningKeyType.SECRET  # type: ignore
-
-
-class RegistryEndpointUserAssignedIdentityAuthentication(
-    RegistryEndpointAuthentication, discriminator="UserAssignedManagedIdentity"
-):  # pylint: disable=name-too-long
-    """User assigned identity authentication.
-
-    :ivar method: The authentication method. Required. UserAssignedManagedIdentity type.
-    :vartype method: str or ~azure.mgmt.iotoperations.models.USER_ASSIGNED_MANAGED_IDENTITY
-    :ivar user_assigned_managed_identity_settings: User assigned managed identity properties.
-     Required.
-    :vartype user_assigned_managed_identity_settings:
-     ~azure.mgmt.iotoperations.models.RegistryEndpointUserAssignedManagedIdentitySettings
-    """
-
-    method: Literal[RegistryEndpointAuthenticationMethod.USER_ASSIGNED_MANAGED_IDENTITY] = rest_discriminator(name="method", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The authentication method. Required. UserAssignedManagedIdentity type."""
-    user_assigned_managed_identity_settings: "_models.RegistryEndpointUserAssignedManagedIdentitySettings" = rest_field(
-        name="userAssignedManagedIdentitySettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """User assigned managed identity properties. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        user_assigned_managed_identity_settings: "_models.RegistryEndpointUserAssignedManagedIdentitySettings",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.method = RegistryEndpointAuthenticationMethod.USER_ASSIGNED_MANAGED_IDENTITY  # type: ignore
-
-
-class RegistryEndpointUserAssignedManagedIdentitySettings(_Model):  # pylint: disable=name-too-long
-    """User assigned managed identity properties.
-
-    :ivar client_id: Client ID for the user-assigned managed identity. Required.
-    :vartype client_id: str
-    :ivar scope: Resource identifier (application ID URI) of the resource, affixed with the
-     .default suffix.
-    :vartype scope: str
-    :ivar tenant_id: Tenant ID. Required.
-    :vartype tenant_id: str
-    """
-
-    client_id: str = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
-    """Client ID for the user-assigned managed identity. Required."""
-    scope: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource identifier (application ID URI) of the resource, affixed with the .default suffix."""
-    tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
-    """Tenant ID. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        client_id: str,
-        tenant_id: str,
-        scope: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceHealthStatus(_Model):
-    """Represents the health state of a resource.
-
-    :ivar status: The high-level health status of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype status: str or ~azure.mgmt.iotoperations.models.ResourceHealthState
-    :ivar last_transition_time: The timestamp (RFC3339) when the health status last changed.
-    :vartype last_transition_time: str
-    :ivar last_update_time: The timestamp (RFC3339) when the health status was last updated, even
-     if the status did not change.
-    :vartype last_update_time: str
-    :ivar message: A human-readable message describing the last transition.
-    :vartype message: str
-    :ivar reason_code: Unique, CamelCase reason code describing the cause of the last health state
-     transition.
-    :vartype reason_code: str
-    """
-
-    status: Optional[Union[str, "_models.ResourceHealthState"]] = rest_field(visibility=["read"])
-    """The high-level health status of the resource. Known values are: \"Available\", \"Degraded\",
-     \"Unavailable\", and \"Unknown\"."""
-    last_transition_time: Optional[str] = rest_field(name="lastTransitionTime", visibility=["read"])
-    """The timestamp (RFC3339) when the health status last changed."""
-    last_update_time: Optional[str] = rest_field(name="lastUpdateTime", visibility=["read"])
-    """The timestamp (RFC3339) when the health status was last updated, even if the status did not
-     change."""
-    message: Optional[str] = rest_field(visibility=["read"])
-    """A human-readable message describing the last transition."""
-    reason_code: Optional[str] = rest_field(name="reasonCode", visibility=["read"])
-    """Unique, CamelCase reason code describing the cause of the last health state transition."""
-
-
-class SanForCert(_Model):
+class SanForCert(_model_base.Model):
     """Subject Alternative Names (SANs) for certificate.
+
 
     :ivar dns: DNS SANs. Required.
     :vartype dns: list[str]
@@ -7751,17 +3715,17 @@ class SanForCert(_Model):
     :vartype ip: list[str]
     """
 
-    dns: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    dns: List[str] = rest_field()
     """DNS SANs. Required."""
-    ip: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    ip: List[str] = rest_field()
     """IP address SANs. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        dns: list[str],
-        ip: list[str],
+        dns: List[str],
+        ip: List[str],
     ) -> None: ...
 
     @overload
@@ -7775,14 +3739,15 @@ class SanForCert(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaRegistryRef(_Model):
+class SchemaRegistryRef(_model_base.Model):
     """The reference to the Schema Registry for this AIO Instance.
+
 
     :ivar resource_id: The resource ID of the Schema Registry. Required.
     :vartype resource_id: str
     """
 
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    resource_id: str = rest_field(name="resourceId")
     """The resource ID of the Schema Registry. Required."""
 
     @overload
@@ -7803,35 +3768,7 @@ class SchemaRegistryRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretProviderClassRef(_Model):
-    """The reference to the AIO Secret provider class.
-
-    :ivar resource_id: The resource ID of the AIO Secret provider class. Required.
-    :vartype resource_id: str
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The resource ID of the AIO Secret provider class. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SelfCheck(_Model):
+class SelfCheck(_model_base.Model):
     """Broker Diagnostic Self check properties.
 
     :ivar mode: The toggle to enable/disable self check. Known values are: "Enabled" and
@@ -7843,17 +3780,11 @@ class SelfCheck(_Model):
     :vartype timeout_seconds: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """The toggle to enable/disable self check. Known values are: \"Enabled\" and \"Disabled\"."""
-    interval_seconds: Optional[int] = rest_field(
-        name="intervalSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    interval_seconds: Optional[int] = rest_field(name="intervalSeconds")
     """The self check interval."""
-    timeout_seconds: Optional[int] = rest_field(
-        name="timeoutSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    timeout_seconds: Optional[int] = rest_field(name="timeoutSeconds")
     """The timeout for self check."""
 
     @overload
@@ -7876,7 +3807,7 @@ class SelfCheck(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelfTracing(_Model):
+class SelfTracing(_model_base.Model):
     """Diagnostic Self tracing properties.
 
     :ivar mode: The toggle to enable/disable self tracing. Known values are: "Enabled" and
@@ -7886,13 +3817,9 @@ class SelfTracing(_Model):
     :vartype interval_seconds: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """The toggle to enable/disable self tracing. Known values are: \"Enabled\" and \"Disabled\"."""
-    interval_seconds: Optional[int] = rest_field(
-        name="intervalSeconds", visibility=["read", "create", "update", "delete", "query"]
-    )
+    interval_seconds: Optional[int] = rest_field(name="intervalSeconds")
     """The self tracing interval."""
 
     @overload
@@ -7914,44 +3841,39 @@ class SelfTracing(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StateStoreResourceRule(_Model):
+class StateStoreResourceRule(_model_base.Model):
     """State Store Resource Rule properties.
+
 
     :ivar key_type: Allowed keyTypes pattern, string, binary. The key type used for matching, for
      example pattern tries to match the key to a glob-style pattern and string checks key is equal
      to value provided in keys. Required. Known values are: "Pattern", "String", and "Binary".
     :vartype key_type: str or ~azure.mgmt.iotoperations.models.StateStoreResourceKeyTypes
     :ivar keys_property: Give access to state store keys for the corresponding principals defined.
-     When key type is pattern set glob-style pattern (e.g., '*', 'clients/*'). Required.
+     When key type is pattern set glob-style pattern (e.g., '\\ *', 'clients/*\\ '). Required.
     :vartype keys_property: list[str]
-    :ivar method: Give access for ``Read``, ``Write`` and ``ReadWrite`` access level. Required.
+    :ivar method: Give access for ``Read``\\ , ``Write`` and ``ReadWrite`` access level. Required.
      Known values are: "Read", "Write", and "ReadWrite".
     :vartype method: str or ~azure.mgmt.iotoperations.models.StateStoreResourceDefinitionMethods
     """
 
-    key_type: Union[str, "_models.StateStoreResourceKeyTypes"] = rest_field(
-        name="keyType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    key_type: Union[str, "_models.StateStoreResourceKeyTypes"] = rest_field(name="keyType")
     """Allowed keyTypes pattern, string, binary. The key type used for matching, for example pattern
      tries to match the key to a glob-style pattern and string checks key is equal to value provided
      in keys. Required. Known values are: \"Pattern\", \"String\", and \"Binary\"."""
-    keys_property: list[str] = rest_field(
-        name="keys", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="keys"
-    )
+    keys_property: List[str] = rest_field(name="keys")
     """Give access to state store keys for the corresponding principals defined. When key type is
-     pattern set glob-style pattern (e.g., '*', 'clients/*'). Required."""
-    method: Union[str, "_models.StateStoreResourceDefinitionMethods"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Give access for ``Read``, ``Write`` and ``ReadWrite`` access level. Required. Known values are:
-     \"Read\", \"Write\", and \"ReadWrite\"."""
+     pattern set glob-style pattern (e.g., '\ *', 'clients/*\ '). Required."""
+    method: Union[str, "_models.StateStoreResourceDefinitionMethods"] = rest_field()
+    """Give access for ``Read``\ , ``Write`` and ``ReadWrite`` access level. Required. Known values
+     are: \"Read\", \"Write\", and \"ReadWrite\"."""
 
     @overload
     def __init__(
         self,
         *,
         key_type: Union[str, "_models.StateStoreResourceKeyTypes"],
-        keys_property: list[str],
+        keys_property: List[str],
         method: Union[str, "_models.StateStoreResourceDefinitionMethods"],
     ) -> None: ...
 
@@ -7966,7 +3888,7 @@ class StateStoreResourceRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriberQueueLimit(_Model):
+class SubscriberQueueLimit(_model_base.Model):
     """The settings of Subscriber Queue Limit.
 
     :ivar length: The maximum length of the queue before messages start getting dropped.
@@ -7976,11 +3898,9 @@ class SubscriberQueueLimit(_Model):
     :vartype strategy: str or ~azure.mgmt.iotoperations.models.SubscriberMessageDropStrategy
     """
 
-    length: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    length: Optional[int] = rest_field()
     """The maximum length of the queue before messages start getting dropped."""
-    strategy: Optional[Union[str, "_models.SubscriberMessageDropStrategy"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    strategy: Optional[Union[str, "_models.SubscriberMessageDropStrategy"]] = rest_field()
     """The strategy to use for dropping messages from the queue. Known values are: \"None\" and
      \"DropOldest\"."""
 
@@ -8003,7 +3923,7 @@ class SubscriberQueueLimit(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_model_base.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -8022,29 +3942,19 @@ class SystemData(_Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
+    created_by: Optional[str] = rest_field(name="createdBy")
     """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="createdByType")
     """The type of identity that created the resource. Known values are: \"User\", \"Application\",
      \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", format="rfc3339")
     """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(
-        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
-    )
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy")
     """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
-    )
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(name="lastModifiedByType")
     """The type of identity that last modified the resource. Known values are: \"User\",
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
+    last_modified_at: Optional[datetime.datetime] = rest_field(name="lastModifiedAt", format="rfc3339")
     """The timestamp of resource last modification (UTC)."""
 
     @overload
@@ -8070,8 +3980,9 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TlsCertMethod(_Model):
+class TlsCertMethod(_model_base.Model):
     """Collection of different TLS types, NOTE- Enum at a time only one of them needs to be supported.
+
 
     :ivar mode: Mode of TLS server certificate management. Required. Known values are: "Automatic"
      and "Manual".
@@ -8084,18 +3995,14 @@ class TlsCertMethod(_Model):
     :vartype manual: ~azure.mgmt.iotoperations.models.X509ManualCertificate
     """
 
-    mode: Union[str, "_models.TlsCertMethodMode"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    mode: Union[str, "_models.TlsCertMethodMode"] = rest_field()
     """Mode of TLS server certificate management. Required. Known values are: \"Automatic\" and
      \"Manual\"."""
     cert_manager_certificate_spec: Optional["_models.CertManagerCertificateSpec"] = rest_field(
-        name="certManagerCertificateSpec", visibility=["read", "create", "update", "delete", "query"]
+        name="certManagerCertificateSpec"
     )
     """Option 1 - Automatic TLS server certificate management with cert-manager."""
-    manual: Optional["_models.X509ManualCertificate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    manual: Optional["_models.X509ManualCertificate"] = rest_field()
     """Option 2 - Manual TLS server certificate management through a defined secret."""
 
     @overload
@@ -8118,7 +4025,7 @@ class TlsCertMethod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TlsProperties(_Model):
+class TlsProperties(_model_base.Model):
     """Tls properties.
 
     :ivar mode: Mode for TLS. Known values are: "Enabled" and "Disabled".
@@ -8127,13 +4034,9 @@ class TlsProperties(_Model):
     :vartype trusted_ca_certificate_config_map_ref: str
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """Mode for TLS. Known values are: \"Enabled\" and \"Disabled\"."""
-    trusted_ca_certificate_config_map_ref: Optional[str] = rest_field(
-        name="trustedCaCertificateConfigMapRef", visibility=["read", "create", "update", "delete", "query"]
-    )
+    trusted_ca_certificate_config_map_ref: Optional[str] = rest_field(name="trustedCaCertificateConfigMapRef")
     """Trusted CA certificate config map."""
 
     @overload
@@ -8155,7 +4058,7 @@ class TlsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Traces(_Model):
+class Traces(_model_base.Model):
     """Broker Diagnostic Trace properties.
 
     :ivar mode: The toggle to enable/disable traces. Known values are: "Enabled" and "Disabled".
@@ -8168,21 +4071,13 @@ class Traces(_Model):
     :vartype span_channel_capacity: int
     """
 
-    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    mode: Optional[Union[str, "_models.OperationalMode"]] = rest_field()
     """The toggle to enable/disable traces. Known values are: \"Enabled\" and \"Disabled\"."""
-    cache_size_megabytes: Optional[int] = rest_field(
-        name="cacheSizeMegabytes", visibility=["read", "create", "update", "delete", "query"]
-    )
+    cache_size_megabytes: Optional[int] = rest_field(name="cacheSizeMegabytes")
     """The cache size in megabytes."""
-    self_tracing: Optional["_models.SelfTracing"] = rest_field(
-        name="selfTracing", visibility=["read", "create", "update", "delete", "query"]
-    )
+    self_tracing: Optional["_models.SelfTracing"] = rest_field(name="selfTracing")
     """The self tracing properties."""
-    span_channel_capacity: Optional[int] = rest_field(
-        name="spanChannelCapacity", visibility=["read", "create", "update", "delete", "query"]
-    )
+    span_channel_capacity: Optional[int] = rest_field(name="spanChannelCapacity")
     """The span channel capacity."""
 
     @overload
@@ -8206,8 +4101,10 @@ class Traces(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_Model):
+class UserAssignedIdentity(_model_base.Model):
     """User assigned identity properties.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
@@ -8221,55 +4118,34 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VolumeClaimResourceRequirements(_Model):
+class VolumeClaimResourceRequirements(_model_base.Model):
     """VolumeClaimResourceRequirements properties.
 
     :ivar limits: Limits describes the maximum amount of compute resources allowed. More info:
-     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_.
+     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
     :vartype limits: dict[str, str]
     :ivar requests: Requests describes the minimum amount of compute resources required. If
      Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
      otherwise to an implementation-defined value. More info:
-     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_.
+     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/.
     :vartype requests: dict[str, str]
-    :ivar claims: Claims lists the names of resources, defined in spec.resourceClaims, that are
-     used by this container.
-
-     This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
-
-     This field is immutable. It can only be set for containers.
-    :vartype claims: list[~azure.mgmt.iotoperations.models.VolumeClaimResourceRequirementsClaims]
     """
 
-    limits: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    limits: Optional[Dict[str, str]] = rest_field()
     """Limits describes the maximum amount of compute resources allowed. More info:
-     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_."""
-    requests: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/."""
+    requests: Optional[Dict[str, str]] = rest_field()
     """Requests describes the minimum amount of compute resources required. If Requests is omitted for
      a container, it defaults to Limits if that is explicitly specified, otherwise to an
      implementation-defined value. More info:
-     `https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
-     <https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/>`_."""
-    claims: Optional[list["_models.VolumeClaimResourceRequirementsClaims"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Claims lists the names of resources, defined in spec.resourceClaims, that are used by this
-     container.
-     
-     This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
-     
-     This field is immutable. It can only be set for containers."""
+     https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/."""
 
     @overload
     def __init__(
         self,
         *,
-        limits: Optional[dict[str, str]] = None,
-        requests: Optional[dict[str, str]] = None,
-        claims: Optional[list["_models.VolumeClaimResourceRequirementsClaims"]] = None,
+        limits: Optional[Dict[str, str]] = None,
+        requests: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -8283,36 +4159,7 @@ class VolumeClaimResourceRequirements(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeClaimResourceRequirementsClaims(_Model):
-    """VolumeClaimResourceRequirementsClaims properties.
-
-    :ivar name: Name of the resource. This must match the name of a resource in
-     spec.resourceClaims. Required.
-    :vartype name: str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the resource. This must match the name of a resource in spec.resourceClaims. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VolumeClaimSpec(_Model):
+class VolumeClaimSpec(_model_base.Model):
     """VolumeClaimSpec properties.
 
     :ivar volume_name: VolumeName is the binding reference to the PersistentVolume backing this
@@ -8322,12 +4169,10 @@ class VolumeClaimSpec(_Model):
      Filesystem is implied when not included in claim spec. This is a beta feature.
     :vartype volume_mode: str
     :ivar storage_class_name: Name of the StorageClass required by the claim. More info:
-     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
-     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1>`_.
+     https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1.
     :vartype storage_class_name: str
     :ivar access_modes: AccessModes contains the desired access modes the volume should have. More
-     info: `https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
-     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1>`_.
+     info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1.
     :vartype access_modes: list[str]
     :ivar data_source: This field can be used to specify either: * An existing VolumeSnapshot
      object (snapshot.storage.k8s.io/VolumeSnapshot) * An existing PVC (PersistentVolumeClaim) If
@@ -8354,46 +4199,31 @@ class VolumeClaimSpec(_Model):
      RecoverVolumeExpansionFailure feature is enabled users are allowed to specify resource
      requirements that are lower than previous value but must still be higher than capacity recorded
      in the status field of the claim. More info:
-     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
-     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources>`_.
+     https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources.
     :vartype resources: ~azure.mgmt.iotoperations.models.VolumeClaimResourceRequirements
     :ivar selector: A label query over volumes to consider for binding.
     :vartype selector: ~azure.mgmt.iotoperations.models.VolumeClaimSpecSelector
     """
 
-    volume_name: Optional[str] = rest_field(
-        name="volumeName", visibility=["read", "create", "update", "delete", "query"]
-    )
+    volume_name: Optional[str] = rest_field(name="volumeName")
     """VolumeName is the binding reference to the PersistentVolume backing this claim."""
-    volume_mode: Optional[str] = rest_field(
-        name="volumeMode", visibility=["read", "create", "update", "delete", "query"]
-    )
+    volume_mode: Optional[str] = rest_field(name="volumeMode")
     """volumeMode defines what type of volume is required by the claim. Value of Filesystem is implied
      when not included in claim spec. This is a beta feature."""
-    storage_class_name: Optional[str] = rest_field(
-        name="storageClassName", visibility=["read", "create", "update", "delete", "query"]
-    )
+    storage_class_name: Optional[str] = rest_field(name="storageClassName")
     """Name of the StorageClass required by the claim. More info:
-     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
-     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1>`_."""
-    access_modes: Optional[list[str]] = rest_field(
-        name="accessModes", visibility=["read", "create", "update", "delete", "query"]
-    )
+     https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1."""
+    access_modes: Optional[List[str]] = rest_field(name="accessModes")
     """AccessModes contains the desired access modes the volume should have. More info:
-     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
-     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1>`_."""
-    data_source: Optional["_models.LocalKubernetesReference"] = rest_field(
-        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
-    )
+     https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1."""
+    data_source: Optional["_models.LocalKubernetesReference"] = rest_field(name="dataSource")
     """This field can be used to specify either: * An existing VolumeSnapshot object
      (snapshot.storage.k8s.io/VolumeSnapshot) * An existing PVC (PersistentVolumeClaim) If the
      provisioner or an external controller can support the specified data source, it will create a
      new volume based on the contents of the specified data source. If the AnyVolumeDataSource
      feature gate is enabled, this field will always have the same contents as the DataSourceRef
      field."""
-    data_source_ref: Optional["_models.KubernetesReference"] = rest_field(
-        name="dataSourceRef", visibility=["read", "create", "update", "delete", "query"]
-    )
+    data_source_ref: Optional["_models.KubernetesReference"] = rest_field(name="dataSourceRef")
     """Specifies the object from which to populate the volume with data, if a non-empty volume is
      desired. This may be any local object from a non-empty API group (non core object) or a
      PersistentVolumeClaim object. When this field is specified, volume binding will only succeed if
@@ -8407,18 +4237,13 @@ class VolumeClaimSpec(_Model):
      DataSource ignores disallowed values (dropping them), DataSourceRef preserves all values, and
      generates an error if a disallowed value is specified. (Beta) Using this field requires the
      AnyVolumeDataSource feature gate to be enabled."""
-    resources: Optional["_models.VolumeClaimResourceRequirements"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    resources: Optional["_models.VolumeClaimResourceRequirements"] = rest_field()
     """Resources represents the minimum resources the volume should have. If
      RecoverVolumeExpansionFailure feature is enabled users are allowed to specify resource
      requirements that are lower than previous value but must still be higher than capacity recorded
      in the status field of the claim. More info:
-     `https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources
-     <https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources>`_."""
-    selector: Optional["_models.VolumeClaimSpecSelector"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+     https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources."""
+    selector: Optional["_models.VolumeClaimSpecSelector"] = rest_field()
     """A label query over volumes to consider for binding."""
 
     @overload
@@ -8428,7 +4253,7 @@ class VolumeClaimSpec(_Model):
         volume_name: Optional[str] = None,
         volume_mode: Optional[str] = None,
         storage_class_name: Optional[str] = None,
-        access_modes: Optional[list[str]] = None,
+        access_modes: Optional[List[str]] = None,
         data_source: Optional["_models.LocalKubernetesReference"] = None,
         data_source_ref: Optional["_models.KubernetesReference"] = None,
         resources: Optional["_models.VolumeClaimResourceRequirements"] = None,
@@ -8446,7 +4271,7 @@ class VolumeClaimSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeClaimSpecSelector(_Model):
+class VolumeClaimSpecSelector(_model_base.Model):
     """VolumeClaimSpecSelector properties.
 
     :ivar match_expressions: MatchExpressions is a list of label selector requirements. The
@@ -8459,13 +4284,11 @@ class VolumeClaimSpecSelector(_Model):
     :vartype match_labels: dict[str, str]
     """
 
-    match_expressions: Optional[list["_models.VolumeClaimSpecSelectorMatchExpressions"]] = rest_field(
-        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
+    match_expressions: Optional[List["_models.VolumeClaimSpecSelectorMatchExpressions"]] = rest_field(
+        name="matchExpressions"
     )
     """MatchExpressions is a list of label selector requirements. The requirements are ANDed."""
-    match_labels: Optional[dict[str, str]] = rest_field(
-        name="matchLabels", visibility=["read", "create", "update", "delete", "query"]
-    )
+    match_labels: Optional[Dict[str, str]] = rest_field(name="matchLabels")
     """MatchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is
      equivalent to an element of matchExpressions, whose key field is \"key\", the operator is
      \"In\", and the values array contains only \"value\". The requirements are ANDed."""
@@ -8474,8 +4297,8 @@ class VolumeClaimSpecSelector(_Model):
     def __init__(
         self,
         *,
-        match_expressions: Optional[list["_models.VolumeClaimSpecSelectorMatchExpressions"]] = None,
-        match_labels: Optional[dict[str, str]] = None,
+        match_expressions: Optional[List["_models.VolumeClaimSpecSelectorMatchExpressions"]] = None,
+        match_labels: Optional[Dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -8489,8 +4312,9 @@ class VolumeClaimSpecSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeClaimSpecSelectorMatchExpressions(_Model):
+class VolumeClaimSpecSelectorMatchExpressions(_model_base.Model):
     """VolumeClaimSpecSelectorMatchExpressions properties.
+
 
     :ivar key: key is the label key that the selector applies to. Required.
     :vartype key: str
@@ -8504,17 +4328,13 @@ class VolumeClaimSpecSelectorMatchExpressions(_Model):
     :vartype values_property: list[str]
     """
 
-    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    key: str = rest_field()
     """key is the label key that the selector applies to. Required."""
-    operator: Union[str, "_models.OperatorValues"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    operator: Union[str, "_models.OperatorValues"] = rest_field()
     """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
      Exists and DoesNotExist. Required. Known values are: \"In\", \"NotIn\", \"Exists\", and
      \"DoesNotExist\"."""
-    values_property: Optional[list[str]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
-    )
+    values_property: Optional[List[str]] = rest_field(name="values")
     """values is an array of string values. If the operator is In or NotIn, the values array must be
      non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
      array is replaced during a strategic merge patch."""
@@ -8525,7 +4345,7 @@ class VolumeClaimSpecSelectorMatchExpressions(_Model):
         *,
         key: str,
         operator: Union[str, "_models.OperatorValues"],
-        values_property: Optional[list[str]] = None,
+        values_property: Optional[List[str]] = None,
     ) -> None: ...
 
     @overload
@@ -8539,15 +4359,16 @@ class VolumeClaimSpecSelectorMatchExpressions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class X509ManualCertificate(_Model):
+class X509ManualCertificate(_model_base.Model):
     """X509 Certificate Authentication properties.
+
 
     :ivar secret_ref: Kubernetes secret containing an X.509 client certificate. This is a reference
      to the secret through an identifying name, not the secret itself. Required.
     :vartype secret_ref: str
     """
 
-    secret_ref: str = rest_field(name="secretRef", visibility=["read", "create", "update", "delete", "query"])
+    secret_ref: str = rest_field(name="secretRef")
     """Kubernetes secret containing an X.509 client certificate. This is a reference to the secret
      through an identifying name, not the secret itself. Required."""
 

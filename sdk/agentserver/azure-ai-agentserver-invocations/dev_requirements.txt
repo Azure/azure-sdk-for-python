@@ -1,11 +1,7 @@
-# keep in sync with pyproject.toml#dependency-groups.dev
 -e ../../../eng/tools/azure-sdk-tools
--e ../azure-ai-agentserver-core
-../../monitor/azure-monitor-opentelemetry-exporter
-../../monitor/azure-monitor-query
-../../identity/azure-identity
+../azure-ai-agentserver-core
 pytest
 httpx
 pytest-asyncio
-opentelemetry-api>=1.40.0
-opentelemetry-sdk>=1.40.0
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0

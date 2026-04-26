@@ -1,22 +1,14 @@
 # Release History
 
-## 1.0.0b52 (Unreleased)
+## 1.0.0b51 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
-- Fix `success` field on HTTP request telemetry resolving to an integer instead of a boolean when no status code is present
-  ([#46311](https://github.com/Azure/azure-sdk-for-python/pull/46311))
 
 ### Other Changes
-
-## 1.0.0b51 (2026-04-07)
-
-### Bugs Fixed
-- Added credential authentication support for customer sdkstats
-  ([#46143](https://github.com/Azure/azure-sdk-for-python/pull/46143))
 
 ## 1.0.0b50 (2026-04-03)
 

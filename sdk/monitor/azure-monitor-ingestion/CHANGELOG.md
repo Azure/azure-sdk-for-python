@@ -10,8 +10,6 @@
 
 ### Other Changes
 
-- Bump minimum dependency on `azure-core` to `>=1.37.0`.
-
 ## 1.1.0 (2025-07-18)
 
 ### Bugs Fixed

@@ -8,7 +8,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,7 +30,7 @@ from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -44,6 +44,8 @@ def build_logs_ingestion_upload_request(
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/dataCollectionRules/{ruleId}/streams/{stream}"
     path_format_arguments = {
@@ -61,11 +63,12 @@ def build_logs_ingestion_upload_request(
         _headers["Content-Encoding"] = _SERIALIZER.header("content_encoding", content_encoding, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class _LogsIngestionClientOperationsMixin(
+class LogsIngestionClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], LogsIngestionClientConfiguration]
 ):
 
@@ -74,7 +77,7 @@ class _LogsIngestionClientOperationsMixin(
         self,
         rule_id: str,
         stream_name: str,
-        body: list[dict[str, Any]],
+        body: List[Dict[str, Any]],
         *,
         content_encoding: Optional[str] = None,
         content_type: str = "application/json",
@@ -97,7 +100,7 @@ class _LogsIngestionClientOperationsMixin(
         self,
         rule_id: str,
         stream_name: str,
-        body: Union[list[dict[str, Any]], IO[bytes]],
+        body: Union[List[Dict[str, Any]], IO[bytes]],
         *,
         content_encoding: Optional[str] = None,
         **kwargs: Any

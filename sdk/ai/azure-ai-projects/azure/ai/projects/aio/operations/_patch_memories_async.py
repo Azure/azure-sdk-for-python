@@ -20,12 +20,9 @@ from ...models import (
     ResponseUsageOutputTokensDetails,
     MemoryStoreUpdateCompletedResult,
     AsyncUpdateMemoriesLROPoller,
+    AsyncUpdateMemoriesLROPollingMethod,
 )
-from ...models._patch import (
-    _AsyncUpdateMemoriesLROPollingMethod,
-    _FOUNDRY_FEATURES_HEADER_NAME,
-    _BETA_OPERATION_FEATURE_HEADERS,
-)
+from ...models._enums import _FoundryFeaturesOptInKeys
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from ...operations._patch_memories import _serialize_memory_input_items
 from ..._validation import api_version_validation
@@ -299,9 +296,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
-        polling = kwargs.pop("polling", True)
-        if not isinstance(polling, bool):
-            raise TypeError("polling must be of type bool.")
+        polling: Union[bool, AsyncUpdateMemoriesLROPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
@@ -353,16 +348,17 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling:
-            polling_method: _AsyncUpdateMemoriesLROPollingMethod = _AsyncUpdateMemoriesLROPollingMethod(
+        if polling is True:
+            polling_method: AsyncUpdateMemoriesLROPollingMethod = AsyncUpdateMemoriesLROPollingMethod(
                 lro_delay,
                 path_format_arguments=path_format_arguments,
-                headers={_FOUNDRY_FEATURES_HEADER_NAME: _BETA_OPERATION_FEATURE_HEADERS["memory_stores"]},
+                headers={"Foundry-Features": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value},
                 **kwargs,
             )
+        elif polling is False:
+            polling_method = cast(AsyncUpdateMemoriesLROPollingMethod, AsyncNoPolling())
         else:
-            polling_method = cast(_AsyncUpdateMemoriesLROPollingMethod, AsyncNoPolling())
-
+            polling_method = polling
         if cont_token:
             return AsyncUpdateMemoriesLROPoller.from_continuation_token(
                 polling_method=polling_method,
@@ -370,7 +366,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-
         return AsyncUpdateMemoriesLROPoller(
             self._client,
             raw_result,  # type: ignore[possibly-undefined]

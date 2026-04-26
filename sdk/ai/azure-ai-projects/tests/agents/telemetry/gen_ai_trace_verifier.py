@@ -60,7 +60,7 @@ class GenAiTraceVerifier:
                         )
                     if span.attributes[attribute_name] < 0:
                         raise AssertionError("Attribute value " + str(span.attributes[attribute_name]) + " is negative")
-                elif attribute_value not in ("", span.attributes[attribute_name]):
+                elif attribute_value != "" and span.attributes[attribute_name] != attribute_value:
                     raise AssertionError(
                         "Attribute value "
                         + str(span.attributes[attribute_name])
@@ -109,7 +109,7 @@ class GenAiTraceVerifier:
                         raise AssertionError("Attribute value " + str(span_value) + " is not a number")
                     if span_value < 0:
                         raise AssertionError("Attribute value " + str(span_value) + " is negative")
-                elif attribute_value not in ("", span_value):
+                elif attribute_value != "" and span_value != attribute_value:
                     raise AssertionError(
                         "Attribute value " + str(span_value) + " does not match with " + str(attribute_value)
                     )
@@ -122,9 +122,9 @@ class GenAiTraceVerifier:
     def is_valid_json(self, my_string):
         try:
             json.loads(my_string)
-        except ValueError:
+        except ValueError as e1:
             return False
-        except TypeError:
+        except TypeError as e2:
             return False
         return True
 
@@ -136,11 +136,12 @@ class GenAiTraceVerifier:
         # Handle both dict and list (array) formats
         if isinstance(expected_obj, list) and isinstance(actual_obj, list):
             return self.check_event_lists(expected_obj, actual_obj)
-        if isinstance(expected_obj, dict) and isinstance(actual_obj, dict):
+        elif isinstance(expected_obj, dict) and isinstance(actual_obj, dict):
             return self.check_event_attributes(expected_obj, actual_obj)
-        raise AssertionError(
-            f"check_json_string: type mismatch - expected {type(expected_obj).__name__}, got {type(actual_obj).__name__}"
-        )
+        else:
+            raise AssertionError(
+                f"check_json_string: type mismatch - expected {type(expected_obj).__name__}, got {type(actual_obj).__name__}"
+            )
 
     def check_event_lists(self, expected_list, actual_list):
         """Check if two lists match, handling nested dicts/lists."""

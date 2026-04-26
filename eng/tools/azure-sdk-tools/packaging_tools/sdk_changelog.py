@@ -39,22 +39,8 @@ def is_arm_sdk(package_name: str) -> bool:
 
 
 def execute_func_with_timeout(func, timeout: int = 900) -> Any:
-    """Execute function with timeout.
-
-    On timeout, the worker pool is forcefully terminated to prevent orphaned
-    child processes from continuing to run.
-    """
-    pool = multiprocessing.Pool(processes=1)
-    try:
-        result = pool.apply_async(func)
-        return result.get(timeout)
-    except multiprocessing.TimeoutError:
-        pool.terminate()
-        pool.join()
-        raise
-    finally:
-        pool.terminate()
-        pool.join()
+    """Execute function with timeout"""
+    return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
 def get_changelog_content(

@@ -22,8 +22,6 @@ USAGE:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
-# pylint: disable=unused-variable
-
 from datetime import datetime, timedelta
 import asyncio
 import os

@@ -16,13 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import LogsIngestionClientConfiguration
-from ._operations import _LogsIngestionClientOperationsMixin
+from ._operations import LogsIngestionClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LogsIngestionClient(_LogsIngestionClientOperationsMixin):
+class LogsIngestionClient(LogsIngestionClientOperationsMixin):
     """Azure Monitor data collection client.
 
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule. For example,
@@ -31,9 +31,8 @@ class LogsIngestionClient(_LogsIngestionClientOperationsMixin):
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "2023-01-01".
-     Default value is "2023-01-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Default value is "2023-01-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

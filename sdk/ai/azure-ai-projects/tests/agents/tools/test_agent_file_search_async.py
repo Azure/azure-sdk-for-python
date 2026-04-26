@@ -6,6 +6,7 @@
 # cSpell:disable
 
 import os
+import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -19,7 +20,7 @@ class TestAgentFileSearchAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_file_search_async(self, **kwargs):
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -105,7 +106,7 @@ class TestAgentFileSearchAsync(TestBase):
         while using File Search to answer follow-up questions.
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,

@@ -85,7 +85,7 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
-  - name: CheckEnv
+  - name: ToxTestEnv
     type: string
     default: 'whl'
   - name: Packages
@@ -137,7 +137,7 @@ extends:
                       BuildDocs: ${{ parameters.BuildDocs }}
                       TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
                       TestProxy: ${{ parameters.TestProxy }}
-                      CheckEnv: ${{ parameters.CheckEnv }}
+                      ToxTestEnv: ${{ parameters.ToxTestEnv }}
                       UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
                       PersistOidcToken: ${{ parameters.PersistOidcToken }}
                     MatrixConfigs:

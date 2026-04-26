@@ -1,4 +1,3 @@
-# pylint: disable=name-too-long
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -15,7 +14,10 @@ from contextlib import contextmanager, asynccontextmanager
 from typing import Generator, AsyncGenerator
 
 from azure.ai.projects.models import PromptAgentDefinition
+
+from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 
 

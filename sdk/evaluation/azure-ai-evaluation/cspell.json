@@ -30,8 +30,7 @@
         "e2etests",
         "etests",
         "redteam",
-        "redef",
-        "smode"
+        "redef"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",

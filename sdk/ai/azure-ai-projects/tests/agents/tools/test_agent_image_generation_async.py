@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression,broad-exception-caught
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -21,7 +21,7 @@ class TestAgentImageGenerationAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_image_generation_async(self, **kwargs):
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
         image_model = kwargs.get("image_generation_model_deployment_name")
         agent_name = "image-gen-agent"
 

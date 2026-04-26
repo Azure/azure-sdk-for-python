@@ -25,8 +25,6 @@ USAGE:
     4) STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-# pylint: disable=unused-variable, name-too-long
-
 from datetime import datetime, timedelta
 import os
 import sys

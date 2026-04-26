@@ -16,9 +16,7 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     AddToGroupsRequest,
     ClientTokenResponse,
-    ErrorDetail,
     GroupMember,
-    InnerError,
     RemoveFromGroupsRequest,
 )
 
@@ -35,9 +33,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AddToGroupsRequest",
     "ClientTokenResponse",
-    "ErrorDetail",
     "GroupMember",
-    "InnerError",
     "RemoveFromGroupsRequest",
     "MessageContentType",
     "ResponseContentType",

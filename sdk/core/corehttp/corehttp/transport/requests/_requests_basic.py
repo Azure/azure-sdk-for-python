@@ -42,7 +42,12 @@ from ...exceptions import (
     HttpResponseError,
 )
 
-from .._base import HttpTransport, _create_connection_config, _handle_non_stream_rest_response
+from .._base import (
+    HttpTransport,
+    _create_connection_config,
+    _handle_non_stream_rest_response,
+    _raise_for_unexpected_kwargs,
+)
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from ...rest._requests_basic import RestRequestsTransportResponse
 
@@ -149,29 +154,32 @@ class RequestsTransport(HttpTransport):
         response = None
         error: Optional[BaseErrorUnion] = None
 
-        try:
-            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
+        connection_verify = kwargs.pop("connection_verify", self.connection_config.get("connection_verify"))
+        connection_cert = kwargs.pop("connection_cert", self.connection_config.get("connection_cert"))
+        connection_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
 
-            if isinstance(connection_timeout, tuple):
-                if "read_timeout" in kwargs:
-                    raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
-                timeout = connection_timeout
-            else:
-                read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
-                timeout = (connection_timeout, read_timeout)
+        if isinstance(connection_timeout, tuple):
+            if "read_timeout" in kwargs:
+                raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
+            timeout = connection_timeout
+        else:
+            read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
+            timeout = (connection_timeout, read_timeout)
+        _raise_for_unexpected_kwargs("RequestsTransport", kwargs)
+
+        try:
             response = self.session.request(  # type: ignore
                 request.method,
                 request.url,
                 headers=request.headers,
                 data=request._data,  # pylint: disable=protected-access
                 files=request._files,  # pylint: disable=protected-access
-                verify=kwargs.pop("connection_verify", self.connection_config.get("connection_verify")),
+                verify=connection_verify,
                 timeout=timeout,
-                cert=kwargs.pop("connection_cert", self.connection_config.get("connection_cert")),
+                cert=connection_cert,
                 allow_redirects=False,
                 stream=stream,
                 proxies=proxies,
-                **kwargs
             )
             response.raw.enforce_content_length = True
 

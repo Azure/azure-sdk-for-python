@@ -3,21 +3,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from dotenv import load_dotenv
 import os
 import time
 from pprint import pprint
 
-from dotenv import load_dotenv
-
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -30,7 +28,7 @@ def run_evaluator(
     data_mapping: dict[str, str],
 ) -> None:
     endpoint = os.environ[
-        "FOUNDRY_PROJECT_ENDPOINT"
+        "AZURE_AI_PROJECT_ENDPOINT"
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 
     with (
@@ -41,13 +39,13 @@ def run_evaluator(
         print("Creating an OpenAI client from the AI Project client")
 
         testing_criteria = [
-            TestingCriterionAzureAIEvaluator(
-                type="azure_ai_evaluator",
-                name=f"{evaluator_name}",
-                evaluator_name=f"builtin.{evaluator_name}",
-                initialization_parameters=initialization_parameters,
-                data_mapping=data_mapping,
-            )
+            {
+                "type": "azure_ai_evaluator",
+                "name": f"{evaluator_name}",
+                "evaluator_name": f"builtin.{evaluator_name}",
+                "initialization_parameters": initialization_parameters,
+                "data_mapping": data_mapping,
+            }
         ]
 
         print("Creating Evaluation")
@@ -56,7 +54,7 @@ def run_evaluator(
             data_source_config=data_source_config,
             testing_criteria=testing_criteria,  # type: ignore
         )
-        print("Evaluation created")
+        print(f"Evaluation created")
 
         print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
@@ -73,7 +71,7 @@ def run_evaluator(
             ),
         )
 
-        print("Eval Run created")
+        print(f"Eval Run created")
         pprint(eval_run_object)
 
         print("Get Eval Run by Id")
@@ -85,7 +83,7 @@ def run_evaluator(
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status in ("completed", "failed"):
+            if run.status == "completed" or run.status == "failed":
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Status: {run.status}")

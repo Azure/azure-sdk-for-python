@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,16 +35,13 @@ def main():
         instance_name="resource-name123",
         broker_name="resource-name123",
         resource={
-            "extendedLocation": {
-                "name": "/subscriptions/F8C729F9-DF9C-4743-848F-96EE433D8E53/resourceGroups/rgiotoperations/providers/Microsoft.ExtendedLocation/customLocations/resource-123",
-                "type": "CustomLocation",
-            },
+            "extendedLocation": {"name": "qmbrfwcpwwhggszhrdjv", "type": "CustomLocation"},
             "properties": {"memoryProfile": "Tiny"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/Broker_CreateOrUpdate_Minimal.json
+# x-ms-original-file: 2024-11-01/Broker_CreateOrUpdate_Minimal.json
 if __name__ == "__main__":
     main()

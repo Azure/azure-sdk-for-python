@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -27,12 +26,7 @@ from ._error import (
     _validate_tablename_error,
     _validate_key_values,
 )
-from ._generated.models import (
-    AccessPolicy as _AccessPolicy,
-    SignedIdentifier,
-    SignedIdentifiers as _SignedIdentifiers,
-    TableProperties,
-)
+from ._generated.models import SignedIdentifier, TableProperties
 from ._serialize import (
     serialize_iso,
     _parameter_filter_substitution,
@@ -210,7 +204,7 @@ class TableClient(TablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
         output: Dict[str, Optional[TableAccessPolicy]] = {}
-        for identifier in identifiers.identifiers or []:
+        for identifier in cast(List[SignedIdentifier], identifiers):
             if identifier.access_policy:
                 output[identifier.id] = TableAccessPolicy(
                     start=deserialize_iso(identifier.access_policy.start),
@@ -232,21 +226,16 @@ class TableClient(TablesBaseClient):
         """
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value is not None:
-                payload = _AccessPolicy(
-                    start=serialize_iso(value.start),  # type: ignore[arg-type]
-                    expiry=serialize_iso(value.expiry),  # type: ignore[arg-type]
-                    permission=value.permission,  # type: ignore[arg-type]
+            payload = None
+            if value:
+                payload = TableAccessPolicy(
+                    start=serialize_iso(value.start),
+                    expiry=serialize_iso(value.expiry),
+                    permission=value.permission,
                 )
-            else:
-                payload = None
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
-            self._client.table.set_access_policy(
-                table=self.table_name,
-                table_acl=_SignedIdentifiers(identifiers=identifiers),
-                **kwargs,
-            )
+            self._client.table.set_access_policy(table=self.table_name, table_acl=identifiers or None, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
@@ -539,12 +528,6 @@ class TableClient(TablesBaseClient):
         :rtype: An iterator of custom entity type.
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        if "query_filter" in kwargs or "parameters" in kwargs:
-            raise ValueError(
-                "'query_filter' and 'parameters' are not supported for 'list_entities'. "
-                "Use 'query_entities' for server-side filtering."
-            )
-
         if select and not isinstance(select, str):
             select = ",".join(select)
 

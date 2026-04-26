@@ -1,3 +1,0 @@
-azure-ai-agentserver-responses
-azure-ai-agentserver-invocations
-openai

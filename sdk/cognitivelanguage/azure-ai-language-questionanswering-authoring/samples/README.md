@@ -66,9 +66,9 @@ Run corresponding async sample:
 python async_samples/sample_create_and_deploy_project_async.py
 ```
 
-Optionally run all samples with `azpysdk` (from package root):
+Optionally run all samples with tox (from package root):
 ```powershell
-azpysdk samples .
+tox run -e samples -c ../../../eng/tox/tox.ini --root .
 ```
 
 If you see authentication errors:

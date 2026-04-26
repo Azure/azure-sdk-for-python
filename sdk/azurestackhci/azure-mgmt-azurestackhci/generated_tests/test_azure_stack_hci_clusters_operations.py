@@ -44,7 +44,6 @@ class TestAzureStackHCIClustersOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "kind": "str",
                 "name": "str",
                 "properties": {
                     "aadApplicationObjectId": "str",
@@ -52,21 +51,9 @@ class TestAzureStackHCIClustersOperations(AzureMgmtRecordedTestCase):
                     "aadServicePrincipalObjectId": "str",
                     "aadTenantId": "str",
                     "billingModel": "str",
-                    "billingProperties": {
-                        "nextBillingModel": {
-                            "billingModel": "str",
-                            "capabilitiesEnabled": ["str"],
-                            "trialDaysRemaining": 0.0,
-                        }
-                    },
                     "cloudId": "str",
                     "cloudManagementEndpoint": "str",
                     "clusterPattern": "str",
-                    "confidentialVmProperties": {
-                        "confidentialVmIntent": "str",
-                        "confidentialVmStatus": "str",
-                        "confidentialVmStatusSummary": "str",
-                    },
                     "connectivityStatus": "str",
                     "desiredProperties": {"diagnosticLevel": "str", "windowsServerSubscription": "str"},
                     "identityProvider": "str",
@@ -113,7 +100,6 @@ class TestAzureStackHCIClustersOperations(AzureMgmtRecordedTestCase):
                                 "updatedAt": "2020-02-20 00:00:00",
                             }
                         ],
-                        "remoteSupportProvisioningState": "str",
                         "remoteSupportSessionDetails": [
                             {
                                 "accessLevel": "str",
@@ -121,7 +107,6 @@ class TestAzureStackHCIClustersOperations(AzureMgmtRecordedTestCase):
                                 "nodeName": "str",
                                 "sessionEndTime": "2020-02-20 00:00:00",
                                 "sessionStartTime": "2020-02-20 00:00:00",
-                                "transcriptLocation": "str",
                             }
                         ],
                         "remoteSupportType": "str",
@@ -160,13 +145,6 @@ class TestAzureStackHCIClustersOperations(AzureMgmtRecordedTestCase):
                         "supportedCapabilities": ["str"],
                     },
                     "resourceProviderObjectId": "str",
-                    "ring": "str",
-                    "sdnProperties": {
-                        "sdnApiAddress": "str",
-                        "sdnDomainName": "str",
-                        "sdnIntegrationIntent": "str",
-                        "sdnStatus": "str",
-                    },
                     "secretsLocations": [{"secretsLocation": "str", "secretsType": "str"}],
                     "serviceEndpoint": "str",
                     "softwareAssuranceProperties": {
@@ -175,7 +153,6 @@ class TestAzureStackHCIClustersOperations(AzureMgmtRecordedTestCase):
                         "softwareAssuranceStatus": "str",
                     },
                     "status": "str",
-                    "storageType": "str",
                     "trialDaysRemaining": 0.0,
                 },
                 "systemData": {
@@ -291,18 +268,6 @@ class TestAzureStackHCIClustersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             software_assurance_change_request={"properties": {"softwareAssuranceIntent": "str"}},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_clusters_begin_change_ring(self, resource_group):
-        response = self.client.clusters.begin_change_ring(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            change_ring_request={"properties": {"targetRing": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

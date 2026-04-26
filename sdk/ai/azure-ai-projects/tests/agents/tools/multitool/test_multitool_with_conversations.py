@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+import pytest
+
 """
 Test agents using multiple tools within conversations.
 
@@ -11,7 +14,6 @@ within the context of conversations, testing conversation state management with 
 
 import json
 from io import BytesIO
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
@@ -19,13 +21,14 @@ from azure.ai.projects.models import (
     FileSearchTool,
     PromptAgentDefinition,
 )
+from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestMultiToolWithConversations(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_file_search_and_function_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
+    def test_file_search_and_function_with_conversation(self, **kwargs):
         """
         Test using multiple tools (FileSearch + Function) within one conversation.
 
@@ -36,7 +39,7 @@ class TestMultiToolWithConversations(TestBase):
         - Verifying conversation state preserves all tool interactions
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

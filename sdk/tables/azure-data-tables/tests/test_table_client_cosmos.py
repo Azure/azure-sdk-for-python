@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -134,18 +133,20 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 # Delete table returns a MethodNotAllowed for tablename == "\"
                 if error.error_code != "MethodNotAllowed":
                     raise
-            with pytest.raises((ValueError, ResourceNotFoundError)):
+            with pytest.raises(ValueError) as error:
                 client.create_entity({"PartitionKey": "foo", "RowKey": "foo"})
-            with pytest.raises((ValueError, ResourceNotFoundError)):
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            with pytest.raises(ValueError) as error:
                 client.upsert_entity({"PartitionKey": "foo", "RowKey": "foo"})
-            try:
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            with pytest.raises(ValueError) as error:
                 client.delete_entity("PK", "RK")
-            except ValueError:
-                pass
-            with pytest.raises((ValueError, TableTransactionError)):
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            with pytest.raises(ValueError) as error:
                 batch = []
                 batch.append(("upsert", {"PartitionKey": "A", "RowKey": "B"}))
                 client.submit_transaction(batch)
+            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
 
     @pytest.mark.live_test_only
     @cosmos_decorator

@@ -187,6 +187,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                     "applicationSecurityGroups": ["str"],
                                     "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
                                 },
+                                "nodeCustomizationProfile": {"nodeCustomizationId": "str"},
                                 "nodeImageVersion": "str",
                                 "nodeInitializationTaints": ["str"],
                                 "nodeLabels": {"str": "str"},
@@ -200,7 +201,6 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "podIPAllocationMode": "str",
                                 "podSubnetID": "str",
                                 "powerState": {"code": "str"},
-                                "preparedImageSpecificationProfile": {"preparedImageSpecificationId": "str"},
                                 "provisioningState": "str",
                                 "proximityPlacementGroupID": "str",
                                 "scaleDownMode": "str",
@@ -237,7 +237,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                                 "virtualMachineNodesStatus": [{"count": 0, "size": "str"}],
                                 "virtualMachinesProfile": {
                                     "scale": {
-                                        "autoscale": [{"maxCount": 0, "minCount": 0, "size": "str"}],
+                                        "autoscale": {"maxCount": 0, "minCount": 0, "size": "str"},
                                         "manual": [{"count": 0, "size": "str"}],
                                     }
                                 },
@@ -283,8 +283,8 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "azureMonitorProfile": {
                             "appMonitoring": {
                                 "autoInstrumentation": {"enabled": bool},
-                                "openTelemetryLogsAndTraces": {"enabled": bool, "grpcPort": 0, "httpPort": 0},
-                                "openTelemetryMetrics": {"enabled": bool, "grpcPort": 0, "httpPort": 0},
+                                "openTelemetryLogs": {"enabled": bool, "port": 0},
+                                "openTelemetryMetrics": {"enabled": bool, "port": 0},
                             },
                             "containerInsights": {
                                 "containerNetworkLogs": "str",
@@ -296,7 +296,6 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             },
                             "metrics": {
                                 "enabled": bool,
-                                "controlPlane": {"enabled": bool},
                                 "kubeStateMetrics": {
                                     "metricAnnotationsAllowList": "str",
                                     "metricLabelsAllowlist": "str",
@@ -305,7 +304,6 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         },
                         "azurePortalFQDN": "str",
                         "bootstrapProfile": {"artifactSource": "str", "containerRegistryId": "str"},
-                        "controlPlaneScalingProfile": {"scalingSize": "str"},
                         "creationData": {"sourceResourceId": "str"},
                         "currentKubernetesVersion": "str",
                         "disableLocalAccounts": bool,
@@ -319,7 +317,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                             "enableContinuousControlPlaneAndAddonMonitor": bool,
                             "enableOnDemandMonitor": bool,
                         },
-                        "hostedSystemProfile": {"enabled": bool, "nodeSubnetID": "str", "systemNodeSubnetID": "str"},
+                        "hostedSystemProfile": {"enabled": bool},
                         "httpProxyConfig": {
                             "effectiveNoProxy": ["str"],
                             "enabled": bool,

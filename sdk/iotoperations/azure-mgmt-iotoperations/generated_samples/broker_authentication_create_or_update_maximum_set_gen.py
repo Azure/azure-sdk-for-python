@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,10 +36,7 @@ def main():
         broker_name="resource-name123",
         authentication_name="resource-name123",
         resource={
-            "extendedLocation": {
-                "name": "/subscriptions/F8C729F9-DF9C-4743-848F-96EE433D8E53/resourceGroups/rgiotoperations/providers/Microsoft.ExtendedLocation/customLocations/resource-123",
-                "type": "CustomLocation",
-            },
+            "extendedLocation": {"name": "qmbrfwcpwwhggszhrdjv", "type": "CustomLocation"},
             "properties": {
                 "authenticationMethods": [
                     {
@@ -66,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/BrokerAuthentication_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2024-11-01/BrokerAuthentication_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

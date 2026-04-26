@@ -606,11 +606,10 @@ def main(
         packages = [f"{package_name}=={version}", "jsondiff==1.2.0"]
         with create_venv_with_package(packages) as venv:
             subprocess.check_call(
-                [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(pkg_dir, "dev_requirements.txt")],
-                cwd=pkg_dir,
+                [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(pkg_dir, "dev_requirements.txt")]
             )
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
-            args = [venv.env_exe, __file__, "-t", pkg_dir, "-m", target_module, "--in-venv", "true", "-s", version]
+            args = [venv.env_exe, __file__, "-t", package_name, "-m", target_module, "--in-venv", "true", "-s", version]
             try:
                 subprocess.check_call(args)
             except subprocess.CalledProcessError:
@@ -620,12 +619,12 @@ def main(
         public_api = build_library_report(target_module)
 
         if in_venv:
-            with open(os.path.join(pkg_dir, "stable.json"), "w") as fd:
+            with open("stable.json", "w") as fd:
                 json.dump(public_api, fd, indent=2)
             _LOGGER.info("stable.json is written.")
             return
 
-        with open(os.path.join(pkg_dir, "current.json"), "w") as fd:
+        with open("current.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("current.json is written.")
 

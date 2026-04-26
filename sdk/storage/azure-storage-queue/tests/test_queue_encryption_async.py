@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-public-methods, unnecessary-lambda-assignment
 
 import os
 import unittest
@@ -12,19 +11,6 @@ from json import dumps, loads
 from unittest import mock
 
 import pytest
-
-from cryptography.hazmat import backends
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
-from cryptography.hazmat.primitives.padding import PKCS7
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
-from settings.testcase import QueuePreparer
-
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.queue import (
     BinaryBase64DecodePolicy,
@@ -42,7 +28,17 @@ from azure.storage.queue._encryption import (
     _validate_and_unwrap_cek,
     _WrappedContentKey,
 )
+from cryptography.hazmat import backends
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives.padding import PKCS7
 
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
+from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
@@ -66,7 +62,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
     async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
         queue = self._get_queue_reference(qsc, prefix, **kwargs)
         try:
-            await queue.create_queue()
+            created = await queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
@@ -197,7 +193,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         list_result1.content = "Updated"
 
         # Act
-        await queue.update_message(list_result1)
+        message = await queue.update_message(list_result1)
         async for m in queue.receive_messages():
             messages.append(m)
         list_result2 = messages[0]
@@ -315,7 +311,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError) as e:
             await queue.send_message("message")
 
-        assert str(e.value.args[0]) == _ERROR_OBJECT_INVALID.format("key encryption key", "get_kid")
+        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key" == "get_kid")
 
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None

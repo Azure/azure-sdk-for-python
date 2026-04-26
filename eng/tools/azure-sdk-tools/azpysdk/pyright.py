@@ -14,8 +14,7 @@ from ci_tools.scenario.generation import create_package_and_install
 
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.407"
-NEXT_PYRIGHT_VERSION = "1.1.407"
+PYRIGHT_VERSION = "1.1.405"
 REPO_ROOT = discover_repo_root()
 
 
@@ -79,19 +78,13 @@ class pyright(Check):
             package_dir = parsed.folder
             package_name = parsed.name
 
-            executable, staging_directory = self.get_executable(
-                args.isolate,
-                args.command,
-                sys.executable,
-                package_dir,
-                python_version=getattr(args, "python_version", None),
-            )
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pyright check")
 
             try:
                 if args.next:
                     # use latest version of pyright
-                    install_into_venv(executable, [f"pyright=={NEXT_PYRIGHT_VERSION}"], package_dir)
+                    install_into_venv(executable, ["pyright"], package_dir)
                 else:
                     install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
             except CalledProcessError as e:

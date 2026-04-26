@@ -259,6 +259,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
 
         self._inference_service: Optional[_InferenceService] = None
+        if self.aad_credentials:
+            self._inference_service = _InferenceService(self)
 
         self._setup_kwargs: dict[str, Any] = kwargs
         self.session: Optional[_session.Session] = None
@@ -293,16 +295,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.__container_properties_cache[container_link] = {}
 
     def _get_inference_service(self) -> Optional[_InferenceService]:
-        """Get async inference service instance, lazily initializing on first access."""
-        if self._inference_service is None and self.aad_credentials:
-            try:
-                self._inference_service = _InferenceService(self)
-            except ValueError as e:
-                raise exceptions.CosmosHttpResponseError(
-                    message=f"Failed to initialize inference service: {e}",
-                    response=None,
-                    status_code=http_constants.StatusCodes.BAD_REQUEST
-                ) from e
+        """Get async inference service instance"""
         return self._inference_service
 
     @property

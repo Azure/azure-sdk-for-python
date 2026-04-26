@@ -13,6 +13,7 @@ from azure.ai.projects.models import (
     TextResponseFormatJsonSchema,
     PromptAgentDefinitionTextOptions,
 )
+import pytest
 
 
 class TestAgentResponsesCrud(TestBase):
@@ -47,7 +48,7 @@ class TestAgentResponsesCrud(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -74,7 +75,7 @@ class TestAgentResponsesCrud(TestBase):
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "5280" in response.output_text or "5,280" in response.output_text
 
-        _ = openai_client.conversations.items.create(
+        items = openai_client.conversations.items.create(
             conversation.id,
             items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
         )
@@ -157,7 +158,7 @@ class TestAgentResponsesCrud(TestBase):
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_responses_with_structured_output(self, **kwargs):
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

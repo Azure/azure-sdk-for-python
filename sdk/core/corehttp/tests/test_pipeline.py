@@ -53,6 +53,42 @@ def test_sans_io_exception():
         pipeline.run(req)
 
 
+def test_custom_transport_receives_unknown_kwargs():
+    class CustomTransport(HttpTransport):
+        def __init__(self):
+            self.kwargs = None
+
+        def send(self, request, **kwargs):
+            self.kwargs = kwargs
+            return object()
+
+        def open(self):
+            pass
+
+        def close(self):
+            pass
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            pass
+
+    transport = CustomTransport()
+    pipeline = Pipeline(transport)
+    pipeline.run(HttpRequest("GET", "/"), custom_option="allowed")
+
+    assert transport.kwargs == {"custom_option": "allowed"}
+
+
+def test_pipeline_builtin_transport_rejects_unknown_kwargs():
+    session = Mock()
+    transport = RequestsTransport(session=session, session_owner=False)
+    pipeline = Pipeline(transport)
+
+    with pytest.raises(TypeError, match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+        pipeline.run(HttpRequest("GET", "http://localhost"), query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_called()
+
+
 def test_invalid_policy_error():
     # non-HTTPPolicy/non-SansIOHTTPPolicy should raise an error
     class FooPolicy:

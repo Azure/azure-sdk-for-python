@@ -9,14 +9,6 @@ Tests for ResponsesInstrumentor with MCP agents.
 
 import os
 import pytest
-from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
-from devtools_testutils import recorded_by_proxy, RecordedTransport
-from openai.types.responses.response_input_param import McpApprovalResponse
-from test_base import servicePreparer
-from test_ai_instrumentor_base import (  # pylint: disable=import-error
-    TestAiAgentsInstrumentorBase,
-    CONTENT_TRACING_ENV_VARIABLE,
-)
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_INVOKE_AGENT,
@@ -24,25 +16,30 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool
 from azure.core.settings import settings
+from gen_ai_trace_verifier import GenAiTraceVerifier
+from devtools_testutils import recorded_by_proxy, RecordedTransport
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool
+from openai.types.responses.response_input_param import McpApprovalResponse
+
+from test_base import servicePreparer
+from test_ai_instrumentor_base import (
+    TestAiAgentsInstrumentorBase,
+    CONTENT_TRACING_ENV_VARIABLE,
+)
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
+_utils._span_impl_type = settings.tracing_implementation()
 
 
 class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with MCP agents."""
 
-    # pylint: disable=too-many-nested-blocks
-
     # ========================================
     # Sync MCP Agent Tests - Non-Streaming
     # ========================================
 
-    def _test_sync_mcp_non_streaming_with_content_recording_impl(
-        self, use_events, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_non_streaming_with_content_recording_impl(self, use_events, **kwargs):
         """Implementation for testing synchronous MCP agent with non-streaming and content recording enabled.
 
         Args:
@@ -62,7 +59,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -120,7 +117,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _ in items:
+                for item in items:
                     pass  # Iterate to consume items
 
                 # Check spans
@@ -372,9 +369,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         """Test synchronous MCP agent with non-streaming and content recording enabled (attribute-based messages)."""
         self._test_sync_mcp_non_streaming_with_content_recording_impl(False, **kwargs)
 
-    def _test_sync_mcp_non_streaming_without_content_recording_impl(
-        self, use_events, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_non_streaming_without_content_recording_impl(self, use_events, **kwargs):
         """Implementation for testing synchronous MCP agent with non-streaming and content recording disabled.
 
         Args:
@@ -394,7 +389,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -452,7 +447,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _ in items:
+                for item in items:
                     pass  # Just iterate to consume items
 
                 # Check spans
@@ -691,9 +686,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
     # Sync MCP Agent Tests - Streaming
     # ========================================
 
-    def _test_sync_mcp_streaming_with_content_recording_impl(
-        self, use_events, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_streaming_with_content_recording_impl(self, use_events, **kwargs):
         """Implementation for testing synchronous MCP agent with streaming and content recording enabled.
 
         Args:
@@ -713,7 +706,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -776,7 +769,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _ in items:
+                for item in items:
                     pass
 
                 # Check spans
@@ -969,9 +962,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         """Test synchronous MCP agent with streaming and content recording enabled (attribute-based messages)."""
         self._test_sync_mcp_streaming_with_content_recording_impl(False, **kwargs)
 
-    def _test_sync_mcp_streaming_without_content_recording_impl(
-        self, use_events, **kwargs
-    ):  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+    def _test_sync_mcp_streaming_without_content_recording_impl(self, use_events, **kwargs):
         """Implementation for testing synchronous MCP agent with streaming and content recording disabled.
 
         Args:
@@ -991,7 +982,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
         assert AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("foundry_model_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
         assert deployment_name is not None
 
         with project_client:
@@ -1054,7 +1045,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
                 # Explicitly call and iterate through conversation items
                 items = openai_client.conversations.items.list(conversation_id=conversation.id)
-                for _ in items:
+                for item in items:
                     pass
 
                 # Check spans

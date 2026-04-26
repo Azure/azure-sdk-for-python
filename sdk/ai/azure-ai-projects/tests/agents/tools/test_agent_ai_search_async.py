@@ -148,7 +148,7 @@ class TestAgentAISearchAsync(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)

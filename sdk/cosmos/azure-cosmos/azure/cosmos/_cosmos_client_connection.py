@@ -25,7 +25,6 @@
 """
 import logging
 import os
-import threading
 import urllib.parse
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -263,7 +262,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
 
         self._inference_service: Optional[_InferenceService] = None
-        self._inference_service_lock = threading.Lock()
+        if self.aad_credentials:
+            self._inference_service = _InferenceService(self)
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
@@ -332,18 +332,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.session = None
 
     def _get_inference_service(self) -> Optional[_InferenceService]:
-        """Get inference service instance, lazily initializing on first access."""
-        if self._inference_service is None and self.aad_credentials:
-            with self._inference_service_lock:
-                if self._inference_service is None:
-                    try:
-                        self._inference_service = _InferenceService(self)
-                    except ValueError as e:
-                        raise exceptions.CosmosHttpResponseError(
-                            message=f"Failed to initialize inference service: {e}",
-                            response=None,
-                            status_code=http_constants.StatusCodes.BAD_REQUEST
-                        ) from e
+        """Get inference service instance"""
         return self._inference_service
 
     @property

@@ -21,9 +21,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -31,12 +31,6 @@ import os
 import time
 from pprint import pprint
 from dotenv import load_dotenv
-from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
-from openai.types.evals.create_eval_jsonl_run_data_source_param import (
-    CreateEvalJSONLRunDataSourceParam,
-    SourceFileContent,
-)
-from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.ai.projects.models import (
     OperationState,
     EvaluationComparisonInsightRequest,
@@ -44,10 +38,16 @@ from azure.ai.projects.models import (
 )
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
+from openai.types.evals.create_eval_jsonl_run_data_source_param import (
+    CreateEvalJSONLRunDataSourceParam,
+    SourceFileContent,
+)
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -64,7 +64,7 @@ with (
         TestingCriterionLabelModel(
             type="label_model",
             name="sentiment_analysis",
-            model=os.environ["FOUNDRY_MODEL_NAME"],
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
             input=[
                 {
                     "role": "developer",

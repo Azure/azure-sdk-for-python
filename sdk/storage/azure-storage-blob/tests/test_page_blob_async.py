@@ -160,7 +160,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         assert resp.get('last_modified') is not None
         assert await blob.get_blob_properties()
 
-    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_create_blob_with_immutability_policy(self, **kwargs):

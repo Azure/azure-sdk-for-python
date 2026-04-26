@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding: utf-8
 
 # -------------------------------------------------------------------------

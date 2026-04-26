@@ -2,10 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from unittest.mock import Mock, patch
-
 import pytest
-
+from unittest.mock import Mock, patch
 from azure.ai.ml.entities._deployment.deployment_template import DeploymentTemplate
 
 
@@ -33,7 +31,7 @@ class TestDeploymentTemplate:
             instance_type="Standard_DS3_v2",
             type="deployment_template",
             deployment_template_type="model_deployment",
-            allowed_instance_types=["Standard_DS2_v2", "Standard_DS3_v2"],
+            allowed_instance_types="Standard_DS2_v2,Standard_DS3_v2",
         )
 
         assert template.name == "test-template"
@@ -46,7 +44,7 @@ class TestDeploymentTemplate:
         assert template.instance_type == "Standard_DS3_v2"
         assert template.type == "deployment_template"
         assert template.deployment_template_type == "model_deployment"
-        assert template.allowed_instance_types == ["Standard_DS2_v2", "Standard_DS3_v2"]
+        assert template.allowed_instance_types == "Standard_DS2_v2,Standard_DS3_v2"
 
     def test_deployment_template_type_fields(self):
         """Test handling of 'type' and 'deployment_template_type' fields."""
@@ -231,15 +229,6 @@ class TestDeploymentTemplate:
         assert template.tags == {}
         assert template.properties == {}
         assert template.environment_variables == {}
-
-    def test_deployment_template_allowed_instance_types_rejects_string(self):
-        """Test that allowed_instance_types raises TypeError when given a string."""
-        with pytest.raises(TypeError, match="allowed_instance_types must be a list of strings"):
-            DeploymentTemplate(
-                name="test-template",
-                version="1.0",
-                allowed_instance_types="Standard_DS2_v2,Standard_DS3_v2",
-            )
 
     def test_deployment_template_from_rest_object_none(self):
         """Test _from_rest_object with None input."""

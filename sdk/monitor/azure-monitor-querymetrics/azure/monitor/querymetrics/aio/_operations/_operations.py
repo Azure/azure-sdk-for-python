@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-locals,protected-access
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -35,7 +35,7 @@ from .._configuration import MetricsClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class _MetricsClientOperationsMixin(
@@ -49,7 +49,7 @@ class _MetricsClientOperationsMixin(
         batch_request: _models._models.ResourceIdList,
         *,
         metric_namespace: str,
-        metric_names: list[str],
+        metric_names: List[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -68,7 +68,7 @@ class _MetricsClientOperationsMixin(
         batch_request: JSON,
         *,
         metric_namespace: str,
-        metric_names: list[str],
+        metric_names: List[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -87,7 +87,7 @@ class _MetricsClientOperationsMixin(
         batch_request: IO[bytes],
         *,
         metric_namespace: str,
-        metric_names: list[str],
+        metric_names: List[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -101,13 +101,13 @@ class _MetricsClientOperationsMixin(
     ) -> _models._models.MetricResultsResponse: ...
 
     @distributed_trace_async
-    async def _query_resources(  # pylint: disable=too-many-locals
+    async def _query_resources(
         self,
         subscription_id: str,
         batch_request: Union[_models._models.ResourceIdList, JSON, IO[bytes]],
         *,
         metric_namespace: str,
-        metric_names: list[str],
+        metric_names: List[str],
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         interval: Optional[str] = None,
@@ -219,7 +219,6 @@ class _MetricsClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -234,14 +233,11 @@ class _MetricsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models._models.ErrorResponse,  # pylint: disable=protected-access
-                response,
-            )
+            error = _failsafe_deserialize(_models._models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
                 _models._models.MetricResultsResponse, response.json()  # pylint: disable=protected-access

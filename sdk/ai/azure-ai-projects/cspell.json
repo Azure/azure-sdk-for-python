@@ -12,7 +12,6 @@
     "closefd",
     "cogsvc",
     "CSDL",
-    "dedup",
     "evals",
     "FineTuning",
     "fspath",
@@ -20,19 +19,17 @@
     "ftchkpt",
     "ftjob",
     "GENAI",
-    "genexpr",
     "getconnectionwithcredentials",
     "GLEU",
     "inpainting",
     "Ministral",
     "mpkjc",
     "quantitive",
-    "reraises",
     "Tadmaq",
     "Udbk",
     "UPIA",
     "xhigh",
-    "Vnext"
+    "genexpr"
   ],
   "ignorePaths": [
     "*.csv",

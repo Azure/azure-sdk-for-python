@@ -1,6 +1,6 @@
 # Release History
 
-## 3.1.0 (2026-04-06)
+## 3.1.0 (2026-03-25)
 
 ### Features Added
 
@@ -18,7 +18,6 @@
   - Model `JobDefinitionProperties` added property `preserve_permissions`
   - Model `JobDefinitionUpdateProperties` added property `connections`
   - Model `JobDefinitionUpdateProperties` added property `data_integrity_validation`
-  - Model `JobDefinitionUpdateProperties` added property `schedule`
   - Model `JobRunProperties` added property `trigger_type`
   - Model `JobRunProperties` added property `scheduled_execution_time`
   - Model `JobRunProperties` added property `warnings`
@@ -36,7 +35,6 @@
   - Added model `S3WithHmacEndpointUpdateProperties`
   - Added enum `S3WithHmacSourceType`
   - Added model `ScheduleInfo`
-  - Added model `SchedulerTime`
   - Added enum `TriggerType`
   - Added operation group `ConnectionsOperations`
 

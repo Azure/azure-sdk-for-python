@@ -5,6 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
+
 """
 Multi-Tool Tests: File Search + Function Tool
 
@@ -16,8 +18,8 @@ import json
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
+from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentFileSearchAndFunction(TestBase):
@@ -30,7 +32,7 @@ class TestAgentFileSearchAndFunction(TestBase):
         Test data analysis workflow: upload data, search, save results.
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -161,7 +163,7 @@ Overall Total Revenue: $129,000
         Test how agent handles empty vector store (no files uploaded).
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -240,7 +242,7 @@ Overall Total Revenue: $129,000
         2. Function Tool: Agent saves the code review findings
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -360,7 +362,7 @@ print(f"Sum: {result}")
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_multi_turn_search_and_save_workflow(self, **kwargs):  # pylint: disable=too-many-statements,too-many-locals
+    def test_multi_turn_search_and_save_workflow(self, **kwargs):
         """
         Test multi-turn workflow: search documents, ask follow-ups, save findings.
 
@@ -370,7 +372,7 @@ print(f"Sum: {result}")
         - Context retention across searches and function calls
         """
 
-        model = kwargs.get("foundry_model_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

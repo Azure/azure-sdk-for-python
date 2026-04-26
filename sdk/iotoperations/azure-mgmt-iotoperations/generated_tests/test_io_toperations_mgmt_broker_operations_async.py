@@ -81,11 +81,7 @@ class TestIoTOperationsMgmtBrokerOperationsAsync(AzureMgmtRecordedTestCase):
                                 "accessModes": ["str"],
                                 "dataSource": {"kind": "str", "name": "str", "apiGroup": "str"},
                                 "dataSourceRef": {"kind": "str", "name": "str", "apiGroup": "str", "namespace": "str"},
-                                "resources": {
-                                    "claims": [{"name": "str"}],
-                                    "limits": {"str": "str"},
-                                    "requests": {"str": "str"},
-                                },
+                                "resources": {"limits": {"str": "str"}, "requests": {"str": "str"}},
                                 "selector": {
                                     "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
                                     "matchLabels": {"str": "str"},
@@ -98,11 +94,7 @@ class TestIoTOperationsMgmtBrokerOperationsAsync(AzureMgmtRecordedTestCase):
                                 "accessModes": ["str"],
                                 "dataSource": {"kind": "str", "name": "str", "apiGroup": "str"},
                                 "dataSourceRef": {"kind": "str", "name": "str", "apiGroup": "str", "namespace": "str"},
-                                "resources": {
-                                    "claims": [{"name": "str"}],
-                                    "limits": {"str": "str"},
-                                    "requests": {"str": "str"},
-                                },
+                                "resources": {"limits": {"str": "str"}, "requests": {"str": "str"}},
                                 "selector": {
                                     "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
                                     "matchLabels": {"str": "str"},
@@ -113,42 +105,8 @@ class TestIoTOperationsMgmtBrokerOperationsAsync(AzureMgmtRecordedTestCase):
                             },
                         },
                         "generateResourceLimits": {"cpu": "str"},
-                        "healthState": "str",
                         "memoryProfile": "str",
-                        "persistence": {
-                            "maxSize": "str",
-                            "encryption": {"mode": "str"},
-                            "persistentVolumeClaimSpec": {
-                                "accessModes": ["str"],
-                                "dataSource": {"kind": "str", "name": "str", "apiGroup": "str"},
-                                "dataSourceRef": {"kind": "str", "name": "str", "apiGroup": "str", "namespace": "str"},
-                                "resources": {
-                                    "claims": [{"name": "str"}],
-                                    "limits": {"str": "str"},
-                                    "requests": {"str": "str"},
-                                },
-                                "selector": {
-                                    "matchExpressions": [{"key": "str", "operator": "str", "values": ["str"]}],
-                                    "matchLabels": {"str": "str"},
-                                },
-                                "storageClassName": "str",
-                                "volumeMode": "str",
-                                "volumeName": "str",
-                            },
-                            "retain": "broker_retain_messages_policy",
-                            "stateStore": "broker_state_store_policy",
-                            "subscriberQueue": "broker_subscriber_queue_policy",
-                        },
                         "provisioningState": "str",
-                        "status": {
-                            "healthState": {
-                                "lastTransitionTime": "str",
-                                "lastUpdateTime": "str",
-                                "message": "str",
-                                "reasonCode": "str",
-                                "status": "str",
-                            }
-                        },
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
