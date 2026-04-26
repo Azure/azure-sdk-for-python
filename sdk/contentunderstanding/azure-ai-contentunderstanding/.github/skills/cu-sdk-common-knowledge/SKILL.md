@@ -30,7 +30,7 @@ Always read the relevant page (via `fetch_webpage`) before answering if the refe
 | **Service limits** | https://learn.microsoft.com/azure/ai-services/content-understanding/service-limits |
 | **Region & language support** | https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support |
 | **Prebuilt analyzers** | https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/prebuilt-analyzers |
-| **Create custom analyzer** | https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer?tabs=portal%2Cdocument&pivots=programming-language-rest |
+| **Create custom analyzer** | https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer?tabs=portal%2Cdocument&pivots=programming-language-python |
 | **Document markdown** | https://learn.microsoft.com/azure/ai-services/content-understanding/document/markdown |
 | **Document elements** | https://learn.microsoft.com/azure/ai-services/content-understanding/document/elements |
 | **Video overview** | https://learn.microsoft.com/azure/ai-services/content-understanding/video/overview |
