@@ -209,6 +209,28 @@ python sample_analyze_url_async.py
 .github/skills/cu-sdk-sample-run/scripts/run_sample.sh --list
 ```
 
+## Scripts
+
+This skill includes a single helper script in the `scripts/` directory.
+
+### `run_sample.sh` — Run a sample (activates `.venv` and loads `.env` automatically)
+
+A convenience wrapper that activates the virtual environment, sources `.env`, and runs the sample. Detects sync and async variants automatically.
+
+```bash
+# Run a sync sample by name (with or without .py extension)
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_url
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_invoice.py
+
+# Run an async sample
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_url_async
+
+# List all available samples (sync and async)
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh --list
+```
+
+For environment setup (creating `.venv`, installing the SDK, writing `.env`), use the `cu-sdk-setup` skill's `setup_user_env.sh` / `setup_user_env.ps1` script.
+
 ## Troubleshooting
 
 | Error | Solution |

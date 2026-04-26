@@ -41,6 +41,14 @@ Always read the relevant page (via `fetch_webpage`) before answering if the refe
 
 > **Search tip:** If the above pages don't cover the user's question, search the doc tree at `https://learn.microsoft.com/azure/ai-services/content-understanding/`.
 
+### Python SDK Resources
+
+| Resource | Link |
+|----------|------|
+| **Python package on PyPI** | https://pypi.org/project/azure-ai-contentunderstanding/ |
+| **Python SDK README** | https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md |
+| **Python SDK Samples** | https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples |
+
 ## Related Skills
 
 - `cu-sdk-setup` — Set up Python environment and run samples
