@@ -30,6 +30,8 @@ class TestTaskNavigationEfficiencyEvaluator:
 
         result = evaluator(response=response, ground_truth=ground_truth)
         assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_result"] == "pass"
+        assert result["task_navigation_efficiency_threshold"] == 1.0
         assert "task_navigation_efficiency_properties" in result
         assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
         assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
