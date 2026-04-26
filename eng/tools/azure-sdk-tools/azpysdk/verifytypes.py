@@ -18,7 +18,7 @@ from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.functions import get_pip_command
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.287"
+PYRIGHT_VERSION = "1.1.407"
 REPO_ROOT = discover_repo_root()
 
 
@@ -199,7 +199,21 @@ class verifytypes(Check):
                     f"Running verifytypes failed: {e.stderr}. See https://aka.ms/python/typing-guide for information."
                 )
                 return -1.0
-            report = json.loads(e.output)
+            try:
+                report = json.loads(e.output)
+            except (json.JSONDecodeError, TypeError):
+                logger.error(
+                    f"pyright --verifytypes exited with code 1 but did not produce valid JSON output.\n"
+                    f"stdout: {e.output}\n"
+                    f"stderr: {e.stderr}\n"
+                    f"Re-running without --outputjson for diagnostic output..."
+                )
+                non_json_commands = [c for c in commands[1:] if c != "--outputjson"] + ["--verbose"]
+                diag = self.run_venv_command(executable, non_json_commands, cwd, check=False)
+                logger.error(f"Diagnostic pyright stdout:\n{diag.stdout}")
+                if diag.stderr:
+                    logger.error(f"Diagnostic pyright stderr:\n{diag.stderr}")
+                return -1.0
             if check_pytyped:
                 pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
                 if not pytyped_present:
@@ -208,5 +222,19 @@ class verifytypes(Check):
             return report["typeCompleteness"]["completenessScore"]
 
         # library scores 100%
-        report = json.loads(response.stdout)
+        try:
+            report = json.loads(response.stdout)
+        except (json.JSONDecodeError, TypeError):
+            logger.error(
+                f"pyright --verifytypes exited successfully but did not produce valid JSON output.\n"
+                f"stdout: {response.stdout}\n"
+                f"stderr: {response.stderr}\n"
+                f"Re-running without --outputjson for diagnostic output..."
+            )
+            non_json_commands = [c for c in commands[1:] if c != "--outputjson"] + ["--verbose"]
+            diag = self.run_venv_command(executable, non_json_commands, cwd, check=False)
+            logger.error(f"Diagnostic pyright stdout:\n{diag.stdout}")
+            if diag.stderr:
+                logger.error(f"Diagnostic pyright stderr:\n{diag.stderr}")
+            return -1.0
         return report["typeCompleteness"]["completenessScore"]
