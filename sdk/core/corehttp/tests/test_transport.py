@@ -16,7 +16,11 @@ from corehttp.rest import HttpRequest
 from corehttp.transport.requests import RequestsTransport
 from corehttp.transport.httpx import HttpXTransport
 from corehttp.runtime.pipeline import Pipeline
-from corehttp.exceptions import ServiceResponseError, ServiceResponseTimeoutError, ServiceRequestTimeoutError
+from corehttp.exceptions import (
+    ServiceResponseError,
+    ServiceResponseTimeoutError,
+    ServiceRequestTimeoutError,
+)
 
 
 class MockRequestsSession:
@@ -38,7 +42,10 @@ def test_requests_transport_rejects_unknown_kwargs():
     transport = RequestsTransport(session=session, session_owner=False)
     request = HttpRequest("GET", "http://localhost")
 
-    with pytest.raises(TypeError, match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+    with pytest.raises(
+        TypeError,
+        match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
         transport.send(request, query_filter="PartitionKey eq 'pk001'")
 
     session.request.assert_not_called()
@@ -75,7 +82,10 @@ def test_httpx_transport_rejects_unknown_kwargs():
     transport = HttpXTransport(client=client, client_owner=False)
     request = HttpRequest("GET", "http://localhost")
 
-    with pytest.raises(TypeError, match=r"HttpXTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+    with pytest.raises(
+        TypeError,
+        match=r"HttpXTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
         transport.send(request, query_filter="PartitionKey eq 'pk001'")
 
     client.request.assert_not_called()
@@ -87,7 +97,10 @@ def test_httpx_transport_rejects_per_request_tls_kwargs(tls_kwarg):
     transport = HttpXTransport(client=client, client_owner=False)
     request = HttpRequest("GET", "http://localhost")
 
-    with pytest.raises(TypeError, match=f"HttpXTransport.send\\(\\) got an unexpected keyword argument '{tls_kwarg}'"):
+    with pytest.raises(
+        TypeError,
+        match=f"HttpXTransport.send\\(\\) got an unexpected keyword argument '{tls_kwarg}'",
+    ):
         transport.send(request, **{tls_kwarg: "cert.pem"})
 
     client.request.assert_not_called()

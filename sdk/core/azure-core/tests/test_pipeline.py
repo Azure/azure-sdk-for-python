@@ -161,8 +161,14 @@ def test_pipeline_builtin_transport_rejects_unknown_kwargs(http_request):
     transport = RequestsTransport(session=session, session_owner=False)
     pipeline = Pipeline(transport)
 
-    with pytest.raises(TypeError, match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
-        pipeline.run(http_request("GET", "http://localhost"), query_filter="PartitionKey eq 'pk001'")
+    with pytest.raises(
+        TypeError,
+        match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        pipeline.run(
+            http_request("GET", "http://localhost"),
+            query_filter="PartitionKey eq 'pk001'",
+        )
 
     session.request.assert_not_called()
 
@@ -268,7 +274,10 @@ def test_format_url_trailing_slash_preserved_with_query_only():
     # Test that trailing slash in base URL is preserved when url_template is query-string only
     # https://github.com/Azure/azure-sdk-for-python/issues/45365
     client = PipelineClientBase("{url}")
-    formatted = client.format_url("?versionid=2026-02-25", url="https://storage.blob.core.windows.net/sample//a/a/")
+    formatted = client.format_url(
+        "?versionid=2026-02-25",
+        url="https://storage.blob.core.windows.net/sample//a/a/",
+    )
     assert formatted == "https://storage.blob.core.windows.net/sample//a/a/?versionid=2026-02-25"
 
 
@@ -447,7 +456,12 @@ def test_add_custom_policy():
     pos_retry = policies.index(retry_policy)
     assert pos_boo > pos_retry
 
-    client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy)
+    client = PipelineClient(
+        base_url="test",
+        config=config,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
@@ -458,7 +472,10 @@ def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     client = PipelineClient(
-        base_url="test", config=config, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        config=config,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
@@ -485,13 +502,19 @@ def test_add_custom_policy():
     assert foo_policy == actual_policies[2]
 
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=foo_policy
+        base_url="test",
+        policies=policies,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
     client = PipelineClient(
-        base_url="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        policies=policies,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]

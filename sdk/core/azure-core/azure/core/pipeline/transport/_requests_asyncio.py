@@ -52,7 +52,7 @@ from azure.core.exceptions import (
     HttpResponseError,
 )
 from azure.core.pipeline import Pipeline
-from ._base import HttpRequest, _raise_for_unexpected_kwargs
+from ._base import HttpRequest
 from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
@@ -62,6 +62,7 @@ from ._requests_basic import (
     RequestsTransportResponse,
     _read_raw_stream,
     AzureErrorUnion,
+    _pop_requests_send_options,
 )
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import is_rest as _is_rest
@@ -155,22 +156,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
-        stream = kwargs.pop("stream", False)
         loop = kwargs.pop("loop", None)
         if loop is None:
             loop = _get_running_loop()
-        connection_verify = kwargs.pop("connection_verify", self.connection_config.verify)
-        connection_cert = kwargs.pop("connection_cert", self.connection_config.cert)
-        connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
-        if isinstance(connection_timeout, tuple):
-            if "read_timeout" in kwargs:
-                raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
-            _LOGGER.warning("Tuple timeout setting is deprecated")
-            timeout = connection_timeout
-        else:
-            read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
-            timeout = (connection_timeout, read_timeout)
-        _raise_for_unexpected_kwargs("AsyncioRequestsTransport", kwargs)
+        stream, connection_verify, connection_cert, timeout = _pop_requests_send_options(
+            "AsyncioRequestsTransport", self.connection_config, kwargs
+        )
 
         response = None
         error: Optional[AzureErrorUnion] = None

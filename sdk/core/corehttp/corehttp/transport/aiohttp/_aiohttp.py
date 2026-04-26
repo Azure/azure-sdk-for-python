@@ -75,7 +75,13 @@ class AioHttpTransport(AsyncHttpTransport):
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
     """
 
-    def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, session_owner: bool = True, **kwargs):
+    def __init__(
+        self,
+        *,
+        session: Optional[aiohttp.ClientSession] = None,
+        session_owner: bool = True,
+        **kwargs,
+    ):
         self._session_owner = session_owner
         self.session = session
         if not self._session_owner and not self.session:
@@ -193,12 +199,7 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
-        proxy = config.pop("proxy", None)
-        connection_cert = config.pop("connection_cert", self.connection_config.get("connection_cert"))
-        connection_verify = config.pop("connection_verify", self.connection_config.get("connection_verify"))
-        connection_timeout = config.pop("connection_timeout", self.connection_config.get("connection_timeout"))
-        read_timeout = config.pop("read_timeout", self.connection_config.get("read_timeout"))
-        _raise_for_unexpected_kwargs("AioHttpTransport", config)
+        proxy, connection_timeout, read_timeout, ssl, server_hostname = self._pop_send_options(config)
 
         if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
@@ -210,15 +211,13 @@ class AioHttpTransport(AsyncHttpTransport):
                     break
 
         response: Optional[RestAsyncHttpResponse] = None
-        ssl = self._build_ssl_config(
-            cert=connection_cert,
-            verify=connection_verify,
-        )
 
         # If "ssl" is True, then we don't set the "ssl" config as aiohttp will use ssl.create_default_context
         # to create the SSL context by default.
         if ssl is not True:
             config["ssl"] = ssl
+        if server_hostname is not None:
+            config["server_hostname"] = server_hostname
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
@@ -258,3 +257,15 @@ class AioHttpTransport(AsyncHttpTransport):
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         return response
+
+    def _pop_send_options(self, config):
+        proxy = config.pop("proxy", None)
+        connection_cert = config.pop("connection_cert", self.connection_config.get("connection_cert"))
+        connection_verify = config.pop("connection_verify", self.connection_config.get("connection_verify"))
+        connection_timeout = config.pop("connection_timeout", self.connection_config.get("connection_timeout"))
+        read_timeout = config.pop("read_timeout", self.connection_config.get("read_timeout"))
+        caller_ssl = config.pop("ssl", None)
+        server_hostname = config.pop("server_hostname", None)
+        _raise_for_unexpected_kwargs("AioHttpTransport", config)
+        ssl = caller_ssl if caller_ssl is not None else self._build_ssl_config(connection_cert, connection_verify)
+        return proxy, connection_timeout, read_timeout, ssl, server_hostname

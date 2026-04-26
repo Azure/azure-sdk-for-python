@@ -48,7 +48,10 @@ async def test_aiohttp_transport_rejects_unknown_kwargs():
     transport = AioHttpTransport(session=session, session_owner=False)
     request = HttpRequest("GET", "http://localhost")
 
-    with pytest.raises(TypeError, match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+    with pytest.raises(
+        TypeError,
+        match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
         await transport.send(request, query_filter="PartitionKey eq 'pk001'")
 
     session.request.assert_not_awaited()
@@ -61,7 +64,10 @@ async def test_async_pipeline_aiohttp_transport_rejects_unknown_kwargs():
     pipeline = AsyncPipeline(transport)
     request = HttpRequest("GET", "http://localhost")
 
-    with pytest.raises(TypeError, match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+    with pytest.raises(
+        TypeError,
+        match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
         await pipeline.run(request, query_filter="PartitionKey eq 'pk001'")
 
     session.request.assert_not_awaited()
@@ -95,13 +101,35 @@ async def test_aiohttp_transport_consumes_supported_kwargs():
 
 
 @pytest.mark.asyncio
+async def test_aiohttp_transport_forwards_aiohttp_ssl_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+    ssl_context = object()
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            connection_verify=False,
+            server_hostname="token.proxy.local",
+            ssl=ssl_context,
+        )
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["server_hostname"] == "token.proxy.local"
+    assert kwargs["ssl"] is ssl_context
+    assert "connection_verify" not in kwargs
+
+
+@pytest.mark.asyncio
 async def test_httpx_transport_rejects_unknown_kwargs():
     client = _make_async_httpx_client_mock()
     transport = AsyncHttpXTransport(client=client, client_owner=False)
     request = HttpRequest("GET", "http://localhost")
 
     with pytest.raises(
-        TypeError, match=r"AsyncHttpXTransport\.send\(\) got an unexpected keyword argument 'query_filter'"
+        TypeError,
+        match=r"AsyncHttpXTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
     ):
         await transport.send(request, query_filter="PartitionKey eq 'pk001'")
 
@@ -116,7 +144,8 @@ async def test_httpx_transport_rejects_per_request_tls_kwargs(tls_kwarg):
     request = HttpRequest("GET", "http://localhost")
 
     with pytest.raises(
-        TypeError, match=f"AsyncHttpXTransport.send\\(\\) got an unexpected keyword argument '{tls_kwarg}'"
+        TypeError,
+        match=f"AsyncHttpXTransport.send\\(\\) got an unexpected keyword argument '{tls_kwarg}'",
     ):
         await transport.send(request, **{tls_kwarg: "cert.pem"})
 
@@ -192,7 +221,9 @@ async def test_aiohttp_timeout_response(port):
         request = HttpRequest("GET", f"http://localhost:{port}/basic/string")
 
         with mock.patch.object(
-            aiohttp.ClientResponse, "start", side_effect=asyncio.TimeoutError("Too slow!")
+            aiohttp.ClientResponse,
+            "start",
+            side_effect=asyncio.TimeoutError("Too slow!"),
         ) as mock_method:
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 await transport.send(request)
@@ -206,7 +237,9 @@ async def test_aiohttp_timeout_response(port):
 
         stream_resp = await transport.send(stream_resp, stream=True)
         with mock.patch.object(
-            aiohttp.streams.StreamReader, "read", side_effect=asyncio.TimeoutError("Too slow!")
+            aiohttp.streams.StreamReader,
+            "read",
+            side_effect=asyncio.TimeoutError("Too slow!"),
         ) as mock_method:
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 await stream_resp.read()

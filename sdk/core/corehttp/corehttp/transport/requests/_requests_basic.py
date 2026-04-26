@@ -75,7 +75,8 @@ class RequestsTransport(HttpTransport):
 
     In this simple implementation:
     - You provide the configured session if you want to, or a basic session is created.
-    - All kwargs received by "send" are sent to session.request directly
+    - Supported per-request kwargs received by "send" are validated and translated to requests parameters.
+    - Unsupported per-request kwargs raise TypeError before reaching session.request.
 
     :keyword requests.Session session: Request session to use instead of the default one.
     :keyword bool session_owner: Decide if the session provided by user is owned by this transport. Default to True.

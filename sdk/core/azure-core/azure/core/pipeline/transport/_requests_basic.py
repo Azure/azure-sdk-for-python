@@ -25,8 +25,10 @@
 # --------------------------------------------------------------------------
 import logging
 from typing import (
+    Any,
     Iterator,
     Optional,
+    Tuple,
     Union,
     TypeVar,
     overload,
@@ -55,7 +57,12 @@ from azure.core.exceptions import (
 )
 from . import HttpRequest
 
-from ._base import HttpTransport, HttpResponse, _HttpResponseBase, _raise_for_unexpected_kwargs
+from ._base import (
+    HttpTransport,
+    HttpResponse,
+    _HttpResponseBase,
+    _raise_for_unexpected_kwargs,
+)
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from .._tools import (
     is_rest as _is_rest,
@@ -75,6 +82,26 @@ AzureErrorUnion = Union[
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _pop_requests_send_options(
+    class_name: str, connection_config, kwargs: MutableMapping[str, Any]
+) -> Tuple[bool, Any, Any, Any]:
+    stream = kwargs.pop("stream", False)
+    connection_verify = kwargs.pop("connection_verify", connection_config.verify)
+    connection_cert = kwargs.pop("connection_cert", connection_config.cert)
+    connection_timeout = kwargs.pop("connection_timeout", connection_config.timeout)
+
+    if isinstance(connection_timeout, tuple):
+        if "read_timeout" in kwargs:
+            raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
+        _LOGGER.warning("Tuple timeout setting is deprecated")
+        timeout = connection_timeout
+    else:
+        read_timeout = kwargs.pop("read_timeout", connection_config.read_timeout)
+        timeout = (connection_timeout, read_timeout)
+    _raise_for_unexpected_kwargs(class_name, kwargs)
+    return stream, connection_verify, connection_cert, timeout
 
 
 def _read_raw_stream(response, chunk_size=1):
@@ -243,7 +270,8 @@ class RequestsTransport(HttpTransport):
 
     In this simple implementation:
     - You provide the configured session if you want to, or a basic session is created.
-    - All kwargs received by "send" are sent to session.request directly
+    - Supported per-request kwargs received by "send" are validated and translated to requests parameters.
+    - Unsupported per-request kwargs raise TypeError before reaching session.request.
 
     :keyword requests.Session session: Request session to use instead of the default one.
     :keyword bool session_owner: Decide if the session provided by user is owned by this transport. Default to True.
@@ -367,20 +395,9 @@ class RequestsTransport(HttpTransport):
         response = None
         error: Optional[AzureErrorUnion] = None
 
-        stream = kwargs.pop("stream", False)
-        connection_verify = kwargs.pop("connection_verify", self.connection_config.verify)
-        connection_cert = kwargs.pop("connection_cert", self.connection_config.cert)
-        connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
-
-        if isinstance(connection_timeout, tuple):
-            if "read_timeout" in kwargs:
-                raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
-            _LOGGER.warning("Tuple timeout setting is deprecated")
-            timeout = connection_timeout
-        else:
-            read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
-            timeout = (connection_timeout, read_timeout)
-        _raise_for_unexpected_kwargs("RequestsTransport", kwargs)
+        stream, connection_verify, connection_cert, timeout = _pop_requests_send_options(
+            "RequestsTransport", self.connection_config, kwargs
+        )
 
         try:
             response = self.session.request(  # type: ignore
