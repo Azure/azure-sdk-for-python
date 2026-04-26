@@ -19,12 +19,13 @@ same ``routing_range.Range`` type the rest of the routing code uses.
 
 import base64
 import binascii
-import hashlib
 import json
 from collections import deque
-from typing import Any, Deque, List, MutableMapping, Optional, Tuple
+from typing import Any, Deque, Iterable, List, MutableMapping, Optional, Tuple
 
 from .. import http_constants
+from .._cosmos_integers import _UInt128
+from .._cosmos_murmurhash3 import murmurhash3_128
 from .._query_aggregate_utils import _AggregatePartialClassification, _classify_aggregate_partial
 from . import routing_range
 
@@ -44,7 +45,13 @@ _FIELD_FEEDRANGE_HASH = "frh"
 _FIELD_CURRENT_FEEDRANGE = "cf"
 # Feedranges that still remain after current feedrange is drained.
 _FIELD_REMAINING_FEEDRANGES = "rf"
-# Backend continuation for the current feedrange only (may be null).
+# Backend continuation for ONE feedrange. Lives INSIDE each feedrange
+# entry (``cf`` and each ``rf`` element), not at the envelope level.
+# Carrying ``bc`` per-feedrange means the wire shape is identical for
+# the sequential loop (only ``cf.bc`` is ever non-null) and a future
+# parallel-fetch loop (any subset of ``rf[i].bc`` may also be non-null),
+# so adding parallel fetch later does not require a wire-format version
+# bump.
 _FIELD_BACKEND_CONTINUATION = "bc"
 # Safety guard for repeated empty pages with no continuation/feedrange movement.
 _MAX_CONSECUTIVE_NO_PROGRESS_PAGES = 1000
@@ -52,36 +59,22 @@ _MAX_CONSECUTIVE_NO_PROGRESS_PAGES = 1000
 
 # ----- Hash helpers ------------------------------------------------------
 def _stable_hash_128(payload: bytes) -> str:
-    """Stable 128-bit hex digest.
+    """Stable 128-bit hex digest of ``payload``.
 
-    SHA-256 truncated to 32 hex characters. We deliberately use the
-    stdlib ``hashlib`` here instead of the vendored MurmurHash3-128 in
-    ``_cosmos_murmurhash3.py`` (which ``partition_key.py`` uses for
-    EPK routing). Reasons:
-
-      * The fingerprint is only ever compared by ``_decode_token`` on
-        the same machine in the same SDK version that produced it;
-        cross-SDK byte-equality with Java/.NET buys nothing observable
-        because the envelope shape (``frh`` / ``cf`` / ``rf``) already
-        differs from Java's by design.
-      * ``hashlib.sha256`` is one stdlib import with no review surface;
-        reusing the Murmur module would couple this fingerprint to a
-        helper whose hard correctness contract today is "byte-match
-        Java for partition routing", forcing every future change there
-        to be reviewed against two unrelated contracts.
-      * Both algorithms produce 128 bits, so collision risk is the
-        same (~2^64 birthday bound).
-
-    If cross-SDK token portability ever becomes a real requirement,
-    swap this for ``murmurhash3_128`` and bump ``_TOKEN_VERSION`` so
-    old tokens are rejected instead of silently misinterpreted.
+    Uses ``MurmurHash3_128`` (the same helper ``partition_key.py`` uses
+    for EPK routing). The fingerprint is non-cryptographic and used
+    only for an equality check inside ``_decode_token``: on resume the
+    SDK recomputes the same hash from the live call's inputs and
+    raises if it does not match the value baked into the saved token.
+    A cryptographic hash buys nothing here because the field is never
+    sent to the service and is never used as proof of input.
 
     :param payload: Bytes to hash.
     :type payload: bytes
     :returns: A 32-character hexadecimal digest.
     :rtype: str
     """
-    return hashlib.sha256(payload).hexdigest()[:32]
+    return murmurhash3_128(bytearray(payload), _UInt128(0, 0)).as_hex()
 
 
 def _hash_query_spec(query: Any) -> str:
@@ -201,6 +194,14 @@ def _validate_v1_token_structure(decoded: dict) -> None:
         raise ValueError("Malformed feed_range continuation token: 'qh' is required.")
     if not isinstance(decoded.get(_FIELD_FEEDRANGE_HASH), str):
         raise ValueError("Malformed feed_range continuation token: 'frh' is required.")
+    # Reject pre-fix shape that carried ``bc`` at the envelope level.
+    # ``bc`` now lives INSIDE each feedrange entry; accepting an
+    # envelope-level ``bc`` here would silently drop it on the floor.
+    if _FIELD_BACKEND_CONTINUATION in decoded:
+        raise ValueError(
+            "Malformed feed_range continuation token: top-level 'bc' is not "
+            "supported; 'bc' must live inside each feedrange entry."
+        )
 
     current = decoded.get(_FIELD_CURRENT_FEEDRANGE)
     if not isinstance(current, dict):
@@ -217,13 +218,9 @@ def _validate_v1_token_structure(decoded: dict) -> None:
             )
         _validate_range_dict(entry, "rf[{}]".format(idx))
 
-    backend_continuation = decoded.get(_FIELD_BACKEND_CONTINUATION)
-    if backend_continuation is not None and not isinstance(backend_continuation, str):
-        raise ValueError("Malformed feed_range continuation token: 'bc' must be a string or null.")
-
 
 def _validate_range_dict(range_dict: dict, field_name: str) -> None:
-    """Each persisted feedrange is a {'min': str, 'max': str} dict.
+    """Each persisted feedrange is a {'min': str, 'max': str, 'bc': str|null} dict.
 
     :param range_dict: Serialized feed range dictionary.
     :type range_dict: dict
@@ -234,6 +231,19 @@ def _validate_range_dict(range_dict: dict, field_name: str) -> None:
         raise ValueError(
             "Malformed feed_range continuation token: '{}' and '{}' are required.".format(
                 f"{field_name}.min", f"{field_name}.max"
+            )
+        )
+    if _FIELD_BACKEND_CONTINUATION not in range_dict:
+        raise ValueError(
+            "Malformed feed_range continuation token: '{}.bc' is required (use null when absent).".format(
+                field_name
+            )
+        )
+    bc_value = range_dict[_FIELD_BACKEND_CONTINUATION]
+    if bc_value is not None and not isinstance(bc_value, str):
+        raise ValueError(
+            "Malformed feed_range continuation token: '{}.bc' must be a string or null.".format(
+                field_name
             )
         )
 
@@ -297,47 +307,73 @@ def _validate_token_identity(
 
 def _extract_resume_state(
     inbound: dict,
-) -> Tuple[routing_range.Range, List[routing_range.Range], Optional[str]]:
-    """Pull the current feedrange, the remaining feedranges, and the
-    backend continuation out of a v1 token.
+) -> Tuple[routing_range.Range, Optional[str], List[routing_range.Range], List[Optional[str]]]:
+    """Pull the current feedrange, its backend continuation, the
+    remaining feedranges, and each remaining feedrange's backend
+    continuation out of a v1 token.
+
+    Each persisted feedrange entry (``cf`` and each ``rf[i]``) carries
+    its own ``bc`` field. Today's sequential loop only ever sets
+    ``cf.bc`` non-null and leaves every ``rf[i].bc`` null, but a
+    future parallel loop can fill any subset of the ``rf[i].bc`` slots
+    without requiring a new wire-format version.
 
     :param inbound: Decoded inbound token payload.
     :type inbound: dict
-    :returns: Current feedrange, remaining feedranges, and backend continuation.
-    :rtype: tuple[~azure.cosmos._routing.routing_range.Range,
-        list[~azure.cosmos._routing.routing_range.Range], Optional[str]]
+    :returns: Current feedrange, current backend continuation,
+        remaining feedranges, and remaining backend continuations
+        (parallel to ``remaining_feedranges``).
+    :rtype: tuple[~azure.cosmos._routing.routing_range.Range, Optional[str],
+        list[~azure.cosmos._routing.routing_range.Range], list[Optional[str]]]
     """
     current_feedrange = _dict_to_range(inbound[_FIELD_CURRENT_FEEDRANGE])
-    remaining_feedranges = [_dict_to_range(r) for r in inbound[_FIELD_REMAINING_FEEDRANGES]]
-    return current_feedrange, remaining_feedranges, inbound.get(_FIELD_BACKEND_CONTINUATION)
+    current_bc = inbound[_FIELD_CURRENT_FEEDRANGE].get(_FIELD_BACKEND_CONTINUATION)
+    remaining_feedranges: List[routing_range.Range] = []
+    remaining_bcs: List[Optional[str]] = []
+    for entry in inbound[_FIELD_REMAINING_FEEDRANGES]:
+        remaining_feedranges.append(_dict_to_range(entry))
+        remaining_bcs.append(entry.get(_FIELD_BACKEND_CONTINUATION))
+    return current_feedrange, current_bc, remaining_feedranges, remaining_bcs
 
 
 def _explode_feedrange_on_multi_overlap(
     current_feedrange: routing_range.Range,
     overlapping: List[dict],
     remaining_feedranges: Deque[routing_range.Range],
-) -> Tuple[routing_range.Range, Deque[routing_range.Range], bool]:
+    remaining_backend_continuations: Deque[Optional[str]],
+) -> Tuple[routing_range.Range, Deque[routing_range.Range], Deque[Optional[str]], bool]:
     """If a saved feedrange now spans more than one physical partition
     (Cosmos split it), slice it into one sub-feedrange per child.
+
+    The split children all start with ``bc = None`` (their parent's
+    backend continuation referenced the old partition id and would be
+    rejected by the new children).
 
     :param current_feedrange: Feed range currently being resumed.
     :type current_feedrange: ~azure.cosmos._routing.routing_range.Range
     :param overlapping: Partition ranges overlapping ``current_feedrange``.
     :type overlapping: list[dict]
     :param remaining_feedranges: Not-yet-visited feed ranges.
-    :type remaining_feedranges: list[~azure.cosmos._routing.routing_range.Range]
-    :returns: New current feedrange, updated remaining feedranges, and split indicator.
+    :type remaining_feedranges: Deque[~azure.cosmos._routing.routing_range.Range]
+    :param remaining_backend_continuations: Per-feedrange backend continuation
+        tokens, parallel to ``remaining_feedranges``.
+    :type remaining_backend_continuations: Deque[Optional[str]]
+    :returns: New current feedrange, updated remaining feedranges,
+        updated parallel backend continuations, and split indicator.
     :rtype: tuple[~azure.cosmos._routing.routing_range.Range,
-        list[~azure.cosmos._routing.routing_range.Range], bool]
+        Deque[~azure.cosmos._routing.routing_range.Range],
+        Deque[Optional[str]], bool]
     """
     if len(overlapping) <= 1:
-        return current_feedrange, remaining_feedranges, False
+        return current_feedrange, remaining_feedranges, remaining_backend_continuations, False
     sub_feedranges = _derive_initial_feedranges(current_feedrange, overlapping)
     if not sub_feedranges:
-        return current_feedrange, remaining_feedranges, False
+        return current_feedrange, remaining_feedranges, remaining_backend_continuations, False
     queued_remaining = deque(sub_feedranges[1:])
     queued_remaining.extend(remaining_feedranges)
-    return sub_feedranges[0], queued_remaining, True
+    queued_bcs: Deque[Optional[str]] = deque(None for _ in sub_feedranges[1:])
+    queued_bcs.extend(remaining_backend_continuations)
+    return sub_feedranges[0], queued_remaining, queued_bcs, True
 
 
 def _build_scope_from_overlaps(
@@ -411,19 +447,48 @@ def _derive_initial_feedranges(
 
 
 class _FeedRangePaginationState:
-    """Mutable state machine shared by sync and async feed-range loops."""
+    """Tracks where a feed_range query is up to between page calls.
+
+    One of these is created per ``query_items`` call and used by both
+    the sync and async pagination loops. It remembers:
+
+      * which slice of the input feed_range we are reading right now,
+      * the slices we still have to read after that,
+      * the backend continuation token for each slice (one for the
+        slice in progress, optionally one per remaining slice for a
+        future parallel-fetch loop), and
+      * how many items we are still allowed to return on this page.
+
+    Today's loop reads one slice at a time and only ever fills in the
+    backend continuation for the slice it is on. Storing one slot per
+    slice lets a future parallel-fetch loop fill in more of them
+    without changing the saved-token wire format.
+    """
 
     def __init__(
         self,
         current_feedrange: Optional[routing_range.Range],
-        remaining_feedranges: List[routing_range.Range],
+        remaining_feedranges: Iterable[routing_range.Range],
         backend_continuation: Optional[str],
         remaining_page_item_count: Optional[int],
+        remaining_backend_continuations: Optional[Iterable[Optional[str]]] = None,
     ) -> None:
         self.current_feedrange = current_feedrange
         self.remaining_feedranges: Deque[routing_range.Range] = deque(remaining_feedranges)
         self.backend_continuation = backend_continuation
         self.remaining_page_item_count = remaining_page_item_count
+        if remaining_backend_continuations is None:
+            # Sequential loop default: every not-yet-visited slice has no
+            # backend continuation of its own.
+            self.remaining_backend_continuations: Deque[Optional[str]] = deque(
+                None for _ in self.remaining_feedranges
+            )
+        else:
+            self.remaining_backend_continuations = deque(remaining_backend_continuations)
+            if len(self.remaining_backend_continuations) != len(self.remaining_feedranges):
+                raise ValueError(
+                    "remaining_backend_continuations must be parallel to remaining_feedranges."
+                )
 
     @classmethod
     def from_inbound(
@@ -440,12 +505,18 @@ class _FeedRangePaginationState:
         :returns: Pagination state initialized for resume.
         :rtype: _FeedRangePaginationState
         """
-        current_feedrange, remaining_feedranges, backend_continuation = _extract_resume_state(inbound)
+        (
+            current_feedrange,
+            current_bc,
+            remaining_feedranges,
+            remaining_bcs,
+        ) = _extract_resume_state(inbound)
         return cls(
             current_feedrange,
             remaining_feedranges,
-            backend_continuation,
+            current_bc,
             remaining_page_item_count,
+            remaining_backend_continuations=remaining_bcs,
         )
 
     @classmethod
@@ -489,10 +560,16 @@ class _FeedRangePaginationState:
         """
         if self.current_feedrange is None:
             return False
-        self.current_feedrange, self.remaining_feedranges, did_explode = _explode_feedrange_on_multi_overlap(
+        (
+            self.current_feedrange,
+            self.remaining_feedranges,
+            self.remaining_backend_continuations,
+            did_explode,
+        ) = _explode_feedrange_on_multi_overlap(
             self.current_feedrange,
             overlapping,
             self.remaining_feedranges,
+            self.remaining_backend_continuations,
         )
         if did_explode:
             self.backend_continuation = None
@@ -515,7 +592,15 @@ class _FeedRangePaginationState:
         if not self.remaining_feedranges:
             self.current_feedrange = None
             return
+        # Pop the next slice into ``current_feedrange`` along with whatever
+        # backend continuation was saved for it (None for the sequential
+        # loop; a real bc for the future parallel-loop case).
         self.current_feedrange = self.remaining_feedranges.popleft()
+        self.backend_continuation = (
+            self.remaining_backend_continuations.popleft()
+            if self.remaining_backend_continuations
+            else None
+        )
 
     def write_outbound_continuation(
         self,
@@ -543,6 +628,7 @@ class _FeedRangePaginationState:
             self.current_feedrange,
             self.remaining_feedranges,
             self.backend_continuation,
+            remaining_backend_continuations=self.remaining_backend_continuations,
         )
 
 
@@ -551,10 +637,15 @@ def _build_outbound_token(
     query: Any,
     feed_range_epk: routing_range.Range,
     current_feedrange: routing_range.Range,
-    remaining_feedranges: List[routing_range.Range],
+    remaining_feedranges: Iterable[routing_range.Range],
     backend_continuation: Optional[str],
+    remaining_backend_continuations: Optional[Iterable[Optional[str]]] = None,
 ) -> str:
     """Build and base64-encode the outbound continuation token.
+
+    Each persisted feedrange entry (``cf`` and each ``rf[i]``) carries
+    its own ``bc`` field so that a future parallel-fetch loop can
+    record per-slice progress without a wire-format version bump.
 
     :param resource_id: Collection resource ID.
     :type resource_id: str
@@ -568,19 +659,35 @@ def _build_outbound_token(
     :type remaining_feedranges: list[~azure.cosmos._routing.routing_range.Range]
     :param backend_continuation: Service continuation for current range.
     :type backend_continuation: Optional[str]
+    :param remaining_backend_continuations: Per-slice backend continuations parallel
+        to ``remaining_feedranges`` (sequential loop default: all ``None``).
+    :type remaining_backend_continuations: Optional[list[Optional[str]]]
     :returns: Encoded continuation token.
     :rtype: str
     """
+    remaining_list = list(remaining_feedranges)
+    if remaining_backend_continuations is None:
+        remaining_bcs: List[Optional[str]] = [None] * len(remaining_list)
+    else:
+        remaining_bcs = list(remaining_backend_continuations)
+        if len(remaining_bcs) != len(remaining_list):
+            raise ValueError(
+                "remaining_backend_continuations must be parallel to remaining_feedranges."
+            )
     payload = {
         _FIELD_VERSION: _TOKEN_VERSION,
         _FIELD_COLLECTION_RID: resource_id,
         _FIELD_QUERY_HASH: _hash_query_spec(query),
         _FIELD_FEEDRANGE_HASH: _hash_feed_range(feed_range_epk),
-        _FIELD_CURRENT_FEEDRANGE: {"min": current_feedrange.min, "max": current_feedrange.max},
+        _FIELD_CURRENT_FEEDRANGE: {
+            "min": current_feedrange.min,
+            "max": current_feedrange.max,
+            _FIELD_BACKEND_CONTINUATION: backend_continuation,
+        },
         _FIELD_REMAINING_FEEDRANGES: [
-            {"min": r.min, "max": r.max} for r in remaining_feedranges
+            {"min": r.min, "max": r.max, _FIELD_BACKEND_CONTINUATION: bc}
+            for r, bc in zip(remaining_list, remaining_bcs)
         ],
-        _FIELD_BACKEND_CONTINUATION: backend_continuation,
     }
     return _encode_token(payload)
 
@@ -752,8 +859,9 @@ def _set_outbound_continuation(
     query: Any,
     feed_range_epk: routing_range.Range,
     current_feedrange: Optional[routing_range.Range],
-    remaining_feedranges: List[routing_range.Range],
+    remaining_feedranges: Iterable[routing_range.Range],
     backend_continuation: Optional[str],
+    remaining_backend_continuations: Optional[Iterable[Optional[str]]] = None,
 ) -> None:
     """Either clear the outbound continuation header (when the whole
     feed_range is drained) or stamp a fresh v=1 envelope onto it.
@@ -776,6 +884,9 @@ def _set_outbound_continuation(
     :type remaining_feedranges: list[~azure.cosmos._routing.routing_range.Range]
     :param backend_continuation: Service continuation for current feed range.
     :type backend_continuation: Optional[str]
+    :param remaining_backend_continuations: Per-slice backend continuations parallel
+        to ``remaining_feedranges`` (sequential loop default: all ``None``).
+    :type remaining_backend_continuations: Optional[list[Optional[str]]]
     """
     if current_feedrange is None:
         last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
@@ -788,5 +899,6 @@ def _set_outbound_continuation(
             current_feedrange,
             remaining_feedranges,
             backend_continuation,
+            remaining_backend_continuations=remaining_backend_continuations,
         )
     )

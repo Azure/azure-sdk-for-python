@@ -3185,62 +3185,32 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 all_feedranges = _derive_initial_feedranges(feed_range_epk, first_overlaps)
                 if not all_feedranges:
-                    empty_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-                    self.last_response_headers = empty_headers
-                    return []
-                pagination_state = _FeedRangePaginationState.from_derived_feedranges(
-                    all_feedranges,
-                    items_left_in_page,
-                )
+                    # The input feed_range overlaps no current physical
+                    # partition. Fall through to the regular __Post path
+                    # below so cross-partition gating can still surface
+                    # (e.g. an empty ``partition_key=[]`` prefix with
+                    # ``enableCrossPartitionQuery=False`` must raise
+                    # ``BAD_REQUEST``).
+                    pagination_state = None
+                else:
+                    pagination_state = _FeedRangePaginationState.from_derived_feedranges(
+                        all_feedranges,
+                        items_left_in_page,
+                        )
 
-            results: dict[str, Any] = {}
-            feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-            consecutive_no_progress_pages = 0
+            if pagination_state is not None:
+                results: dict[str, Any] = {}
+                feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+                consecutive_no_progress_pages = 0
 
-            while pagination_state.can_issue_request():
-                current_feedrange = pagination_state.current_feedrange
-                if current_feedrange is None:
-                    break
-
-                # Look up the live routing map for the current feedrange.
-                # Doing this every iteration is what makes the token
-                # split-safe.
-                overlapping = await self._routing_map_provider.get_overlapping_ranges(
-                    id_, [current_feedrange], dict(options)
-                )
-                overlapping, partition_scope = _build_scope_from_overlaps(
-                    overlapping, current_feedrange
-                )
-
-                # Handle the case where Cosmos split a partition between the
-                # previous run and this one. Example: the saved
-                # current_feedrange used to live inside one partition X, but X
-                # has since been split into children X1 and X2. The routing
-                # map now returns two partitions for the same feedrange. If
-                # we sent one POST to X1 with X's full range as the EPK
-                # filter, the backend would filter in-partition only and
-                # silently drop every row living on X2 (that is how a resume
-                # after a split came back 19 ids short of ground truth in
-                # test_post_split_resume_async).
-                #
-                # So when the lookup returns more than one partition, slice
-                # the saved feedrange into one sub-feedrange per child
-                # (intersection with the saved feedrange, ordered by EPK
-                # min), make the first sub-feedrange the new current one,
-                # put the rest in front of the remaining list, and clear the
-                # saved backend continuation - it was issued by the old
-                # parent partition and the children won't accept it. The next
-                # loop iteration sees a single overlap and falls through to
-                # the normal single-partition POST below.
-                #
-                # One edge case remains by design: if some rows were already
-                # read from parent X before it split, those rows can show up
-                # once more after resume when children X1/X2 restart from the
-                # start of their slices.
-                while pagination_state.explode_on_multi_overlap(overlapping):
+                while pagination_state.can_issue_request():
                     current_feedrange = pagination_state.current_feedrange
                     if current_feedrange is None:
                         break
+
+                    # Look up the live routing map for the current feedrange.
+                    # Doing this every iteration is what makes the token
+                    # split-safe.
                     overlapping = await self._routing_map_provider.get_overlapping_ranges(
                         id_, [current_feedrange], dict(options)
                     )
@@ -3248,43 +3218,135 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         overlapping, current_feedrange
                     )
 
-                backend_request_options = dict(options)
-                if pagination_state.remaining_page_item_count is not None:
-                    backend_request_options["maxItemCount"] = pagination_state.remaining_page_item_count
-                if pagination_state.backend_continuation is not None:
-                    backend_request_options["continuation"] = pagination_state.backend_continuation
-                else:
-                    backend_request_options.pop("continuation", None)
+                    # Handle the case where Cosmos split a partition between the
+                    # previous run and this one. Example: the saved
+                    # current_feedrange used to live inside one partition X, but X
+                    # has since been split into children X1 and X2. The routing
+                    # map now returns two partitions for the same feedrange. If
+                    # we sent one POST to X1 with X's full range as the EPK
+                    # filter, the backend would filter in-partition only and
+                    # silently drop every row living on X2 (resume after a
+                    # split would then come back short of ground truth).
+                    #
+                    # So when the lookup returns more than one partition, slice
+                    # the saved feedrange into one sub-feedrange per child
+                    # (intersection with the saved feedrange, ordered by EPK
+                    # min), make the first sub-feedrange the new current one,
+                    # put the rest in front of the remaining list, and clear the
+                    # saved backend continuation - it was issued by the old
+                    # parent partition and the children won't accept it. The next
+                    # loop iteration sees a single overlap and falls through to
+                    # the normal single-partition POST below.
+                    #
+                    # One edge case remains by design: if some rows were already
+                    # read from parent X before it split, those rows can show up
+                    # once more after resume when children X1/X2 restart from the
+                    # start of their slices.
+                    while pagination_state.explode_on_multi_overlap(overlapping):
+                        current_feedrange = pagination_state.current_feedrange
+                        if current_feedrange is None:
+                            break
+                        overlapping = await self._routing_map_provider.get_overlapping_ranges(
+                            id_, [current_feedrange], dict(options)
+                        )
+                        overlapping, partition_scope = _build_scope_from_overlaps(
+                            overlapping, current_feedrange
+                        )
 
-                # Populate request headers for this single backend POST.
-                # The shared helper handles partition routing (PKR id +
-                # optional EPK filter), page-size cap, and continuation
-                # set/clear so the same rules apply to sync and async.
-                _apply_feedrange_request_headers(
-                    req_headers,
-                    overlapping,
-                    partition_scope,
-                    current_feedrange,
-                    pagination_state.remaining_page_item_count,
-                    backend_request_options.get("continuation"),
-                )
-                # Use the session token for this specific partition so we don't
-                # send a compound token covering all partitions.
-                await base.set_session_token_header_async(
-                    self, req_headers, path, request_params, backend_request_options, overlapping[0]["id"]
-                )
+                    backend_request_options = dict(options)
+                    if pagination_state.remaining_page_item_count is not None:
+                        backend_request_options["maxItemCount"] = pagination_state.remaining_page_item_count
+                    if pagination_state.backend_continuation is not None:
+                        backend_request_options["continuation"] = pagination_state.backend_continuation
+                    else:
+                        backend_request_options.pop("continuation", None)
 
-                try:
-                    backend_query_result, backend_response_headers = await self.__Post(
-                        path,
-                        request_params,
-                        query,
+                    # Populate request headers for this single backend POST.
+                    # The shared helper handles partition routing (PKR id +
+                    # optional EPK filter), page-size cap, and continuation
+                    # set/clear so the same rules apply to sync and async.
+                    assert current_feedrange is not None  # narrowed by the loop guards above
+                    _apply_feedrange_request_headers(
                         req_headers,
-                        **kwargs
+                        overlapping,
+                        partition_scope,
+                        current_feedrange,
+                        pagination_state.remaining_page_item_count,
+                        backend_request_options.get("continuation"),
                     )
-                except Exception:  # pylint: disable=broad-exception-caught
-                    # Preserve resume progress if a later POST fails mid-page.
+                    # Use the session token for this specific partition so we don't
+                    # send a compound token covering all partitions.
+                    await base.set_session_token_header_async(
+                        self, req_headers, path, request_params, backend_request_options, overlapping[0]["id"]
+                    )
+
                     try:
+                        backend_query_result, backend_response_headers = await self.__Post(
+                            path,
+                            request_params,
+                            query,
+                            req_headers,
+                            **kwargs
+                        )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        # Preserve resume progress if a later POST fails mid-page.
+                        try:
+                            pagination_state.write_outbound_continuation(
+                                feedrange_response_headers,
+                                resource_id_str,
+                                query,
+                                feed_range_epk,
+                            )
+                            self.last_response_headers = feedrange_response_headers
+                        except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
+                            _LOGGER.warning(
+                                "Failed to write continuation while handling query POST failure: %s",
+                                continuation_write_error,
+                            )
+                        raise
+                    feedrange_response_headers = backend_response_headers
+                    self.last_response_headers = feedrange_response_headers
+                    if internal_headers_capture is not None:
+                        _capture_internal_headers(backend_response_headers)
+                    self._UpdateSessionIfRequired(req_headers, backend_query_result, backend_response_headers)
+
+                    # Merge results, falling back to a plain extend if the
+                    # aggregating merge raises (it can on aggregated queries
+                    # during splits).
+                    try:
+                        results = base._merge_query_results(results, backend_query_result, query)
+                    except (TypeError, KeyError) as merge_error:
+                        _LOGGER.warning(
+                            "Falling back to non-aggregate merge after aggregate merge failure: %s",
+                            merge_error,
+                        )
+                        results_docs = results.get("Documents") if results else None
+                        partial_docs = backend_query_result.get("Documents") if backend_query_result else None
+                        if isinstance(results_docs, list) and isinstance(partial_docs, list):
+                            results_docs.extend(partial_docs)
+                        elif backend_query_result:
+                            results = backend_query_result
+
+                    previous_feedrange = pagination_state.current_feedrange
+                    previous_backend_continuation = pagination_state.backend_continuation
+                    page_items_returned = _count_page_items_from_partial_result(backend_query_result, query)
+                    if response_headers_list is not None:
+                        response_headers_list.append(backend_response_headers.copy())
+                    if response_hook:
+                        response_hook(self.last_response_headers, backend_query_result)
+                    pagination_state.apply_post_result(
+                        page_items_returned,
+                        backend_response_headers.get(http_constants.HttpHeaders.Continuation),
+                    )
+                    consecutive_no_progress_pages = _update_no_progress_page_count(
+                        consecutive_no_progress_pages,
+                        page_items_returned,
+                        previous_feedrange,
+                        previous_backend_continuation,
+                        pagination_state.current_feedrange,
+                        pagination_state.backend_continuation,
+                    )
+                    if consecutive_no_progress_pages >= _MAX_CONSECUTIVE_NO_PROGRESS_PAGES:
                         pagination_state.write_outbound_continuation(
                             feedrange_response_headers,
                             resource_id_str,
@@ -3292,91 +3354,35 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             feed_range_epk,
                         )
                         self.last_response_headers = feedrange_response_headers
-                    except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
-                        _LOGGER.warning(
-                            "Failed to write continuation while handling query POST failure: %s",
-                            continuation_write_error,
+                        raise RuntimeError(
+                            "Feed-range query made no progress across {} consecutive "
+                            "continuation pages (0 items returned).".format(
+                                _MAX_CONSECUTIVE_NO_PROGRESS_PAGES
+                            )
                         )
-                    raise
-                feedrange_response_headers = backend_response_headers
+
+                # (c) Build the outbound token. Clear the continuation header if
+                # there is no work left at all.
+                pagination_state.write_outbound_continuation(
+                    feedrange_response_headers,
+                    resource_id_str,
+                    query,
+                    feed_range_epk,
+                )
                 self.last_response_headers = feedrange_response_headers
-                if internal_headers_capture is not None:
-                    _capture_internal_headers(backend_response_headers)
-                self._UpdateSessionIfRequired(req_headers, backend_query_result, backend_response_headers)
 
-                # Merge results, falling back to a plain extend if the
-                # aggregating merge raises (it can on aggregated queries
-                # during splits).
-                try:
-                    results = base._merge_query_results(results, backend_query_result, query)
-                except (TypeError, KeyError) as merge_error:
-                    _LOGGER.warning(
-                        "Falling back to non-aggregate merge after aggregate merge failure: %s",
-                        merge_error,
-                    )
-                    results_docs = results.get("Documents") if results else None
-                    partial_docs = backend_query_result.get("Documents") if backend_query_result else None
-                    if isinstance(results_docs, list) and isinstance(partial_docs, list):
-                        results_docs.extend(partial_docs)
-                    elif backend_query_result:
-                        results = backend_query_result
-
-                previous_feedrange = pagination_state.current_feedrange
-                previous_backend_continuation = pagination_state.backend_continuation
-                page_items_returned = _count_page_items_from_partial_result(backend_query_result, query)
-                if response_headers_list is not None:
-                    response_headers_list.append(backend_response_headers.copy())
-                if response_hook:
-                    response_hook(self.last_response_headers, backend_query_result)
-                pagination_state.apply_post_result(
-                    page_items_returned,
-                    backend_response_headers.get(http_constants.HttpHeaders.Continuation),
-                )
-                consecutive_no_progress_pages = _update_no_progress_page_count(
-                    consecutive_no_progress_pages,
-                    page_items_returned,
-                    previous_feedrange,
-                    previous_backend_continuation,
-                    pagination_state.current_feedrange,
-                    pagination_state.backend_continuation,
-                )
-                if consecutive_no_progress_pages >= _MAX_CONSECUTIVE_NO_PROGRESS_PAGES:
-                    pagination_state.write_outbound_continuation(
-                        feedrange_response_headers,
-                        resource_id_str,
-                        query,
-                        feed_range_epk,
-                    )
-                    self.last_response_headers = feedrange_response_headers
-                    raise RuntimeError(
-                        "Feed-range query made no progress across {} consecutive "
-                        "continuation pages (0 items returned).".format(
-                            _MAX_CONSECUTIVE_NO_PROGRESS_PAGES
-                        )
-                    )
-
-            # (c) Build the outbound token. Clear the continuation header if
-            # there is no work left at all.
-            pagination_state.write_outbound_continuation(
-                feedrange_response_headers,
-                resource_id_str,
-                query,
-                feed_range_epk,
-            )
-            self.last_response_headers = feedrange_response_headers
-
-            # if the prefix partition query has results lets return it
-            if results:
-                if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
-                    index_metrics_raw = self.last_response_headers[http_constants.HttpHeaders.IndexUtilization]
-                    self.last_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
-                        _utils.get_index_metrics_info(index_metrics_raw))
-                if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
-                    query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
-                    self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
-                        get_query_advice_info(query_advice_raw))
-                return __GetBodiesFromQueryResult(results)
-            return []
+                # if the prefix partition query has results lets return it
+                if results:
+                    if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+                        index_metrics_raw = self.last_response_headers[http_constants.HttpHeaders.IndexUtilization]
+                        self.last_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
+                            _utils.get_index_metrics_info(index_metrics_raw))
+                    if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+                        query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+                        self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
+                            get_query_advice_info(query_advice_raw))
+                    return __GetBodiesFromQueryResult(results)
+                return []
 
         result, post_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
         self.last_response_headers = post_response_headers

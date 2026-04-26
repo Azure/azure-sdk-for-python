@@ -5,7 +5,9 @@
 
 * ``TestTokenRoundTrip`` - ``_decode_token(_encode_token(p))`` returns
   a structurally-equivalent dict; the wire form is valid base64 of
-  valid JSON; the JSON contains the seven required keys.
+  valid JSON; the JSON contains the six envelope keys (``v`` / ``cr`` /
+  ``qh`` / ``frh`` / ``cf`` / ``rf``) and a per-slice ``bc`` inside
+  ``cf`` and inside each ``rf[i]``.
 * ``TestVersionMismatchRejected`` - a token whose ``v`` field is set
   but is not the SDK's current version raises ``ValueError`` with a
   message naming both the offending and the supported version.
@@ -42,6 +44,7 @@ from azure.cosmos._routing.feed_range_continuation import (
     _encode_token,
     _hash_feed_range,
     _hash_query_spec,
+    _stable_hash_128,
     _normalize_max_item_count,
     _update_no_progress_page_count,
     _validate_token_identity,
@@ -88,18 +91,43 @@ def _mk_range(mn: str, mx: str) -> routing_range.Range:
 
 
 def _make_valid_token_payload() -> dict:
-    """Build a structurally-complete v=1 token payload over the fixtures."""
+    """Build a structurally-complete v=1 token payload over the fixtures.
+
+    ``bc`` lives INSIDE each feedrange entry (``cf`` and each
+    ``rf[i]``) — not at the envelope level. The sequential loop only
+    ever sets a non-null ``bc`` for the slice currently in ``cf``;
+    remaining slices carry ``bc=null``.
+    """
     return {
         _FIELD_VERSION: _TOKEN_VERSION,
         _FIELD_COLLECTION_RID: _RID,
         _FIELD_QUERY_HASH: _hash_query_spec(_QUERY),
         _FIELD_FEEDRANGE_HASH: _hash_feed_range(_FEED_RANGE),
-        _FIELD_CURRENT_FEEDRANGE: {"min": _CURRENT_FEEDRANGE.min, "max": _CURRENT_FEEDRANGE.max},
+        _FIELD_CURRENT_FEEDRANGE: {
+            "min": _CURRENT_FEEDRANGE.min,
+            "max": _CURRENT_FEEDRANGE.max,
+            _FIELD_BACKEND_CONTINUATION: _BACKEND_CONT,
+        },
         _FIELD_REMAINING_FEEDRANGES: [
-            {"min": _REMAINING_FEEDRANGE.min, "max": _REMAINING_FEEDRANGE.max}
+            {
+                "min": _REMAINING_FEEDRANGE.min,
+                "max": _REMAINING_FEEDRANGE.max,
+                _FIELD_BACKEND_CONTINUATION: None,
+            }
         ],
-        _FIELD_BACKEND_CONTINUATION: _BACKEND_CONT,
     }
+
+
+class TestStableHash128MurmurRegression:
+    """Pin one MurmurHash3-128 output as a regression guard against
+    accidental algorithm drift. The other hash tests only assert
+    determinism / inequality between distinct inputs; this one pins
+    exact bytes for one fixed input."""
+
+    def test_known_input_produces_known_murmur_digest(self):
+        assert _stable_hash_128(b"feed_range_continuation_token_regression") == (
+            "ce0130ea460342256309b38dfdbc9c50"
+        )
 
 
 # ---------------------------------------------------------------------- #
@@ -125,20 +153,29 @@ class TestTokenRoundTrip:
         as_json = json.loads(raw.decode("utf-8"))
         assert isinstance(as_json, dict)
 
-    def test_wire_form_contains_seven_required_keys(self):
+    def test_wire_form_contains_six_envelope_keys_and_per_slice_bc(self):
+        # The envelope itself has SIX top-level keys (no top-level
+        # ``bc``); ``bc`` lives inside ``cf`` and inside each ``rf[i]``
+        # so a future parallel loop can record one backend continuation
+        # per slice without a wire-format bump.
         payload = _make_valid_token_payload()
         wire = _encode_token(payload)
         decoded_json = json.loads(base64.b64decode(wire, validate=True).decode("utf-8"))
-        required = {
+        envelope_required = {
             _FIELD_VERSION,
             _FIELD_COLLECTION_RID,
             _FIELD_QUERY_HASH,
             _FIELD_FEEDRANGE_HASH,
             _FIELD_CURRENT_FEEDRANGE,
             _FIELD_REMAINING_FEEDRANGES,
-            _FIELD_BACKEND_CONTINUATION,
         }
-        assert required.issubset(decoded_json.keys())
+        assert envelope_required == set(decoded_json.keys())
+        assert _FIELD_BACKEND_CONTINUATION not in decoded_json, (
+            "envelope must NOT carry a top-level 'bc'; bc is per-slice"
+        )
+        assert _FIELD_BACKEND_CONTINUATION in decoded_json[_FIELD_CURRENT_FEEDRANGE]
+        for entry in decoded_json[_FIELD_REMAINING_FEEDRANGES]:
+            assert _FIELD_BACKEND_CONTINUATION in entry
 
     def test_build_outbound_token_emits_valid_token(self):
         wire = _build_outbound_token(
@@ -156,12 +193,39 @@ class TestTokenRoundTrip:
         assert decoded[_FIELD_QUERY_HASH] == _hash_query_spec(_QUERY)
         assert decoded[_FIELD_FEEDRANGE_HASH] == _hash_feed_range(_FEED_RANGE)
         assert decoded[_FIELD_CURRENT_FEEDRANGE] == {
-            "min": _CURRENT_FEEDRANGE.min, "max": _CURRENT_FEEDRANGE.max,
+            "min": _CURRENT_FEEDRANGE.min,
+            "max": _CURRENT_FEEDRANGE.max,
+            _FIELD_BACKEND_CONTINUATION: _BACKEND_CONT,
         }
         assert decoded[_FIELD_REMAINING_FEEDRANGES] == [
-            {"min": _REMAINING_FEEDRANGE.min, "max": _REMAINING_FEEDRANGE.max}
+            {
+                "min": _REMAINING_FEEDRANGE.min,
+                "max": _REMAINING_FEEDRANGE.max,
+                _FIELD_BACKEND_CONTINUATION: None,
+            }
         ]
-        assert decoded[_FIELD_BACKEND_CONTINUATION] == _BACKEND_CONT
+        assert _FIELD_BACKEND_CONTINUATION not in decoded
+
+    def test_per_slice_backend_continuations_coexist(self):
+        # The shape that motivated per-slice ``bc``: a future
+        # parallel-fetch loop emits a token where slice A (in rf) and
+        # slice B (in cf) each carry their own non-null backend
+        # continuation. Today's sequential loop never produces this
+        # state, but the wire shape must already support it so when
+        # parallel fetch lands no version bump is needed.
+        wire = _build_outbound_token(
+            resource_id=_RID,
+            query=_QUERY,
+            feed_range_epk=_FEED_RANGE,
+            current_feedrange=_CURRENT_FEEDRANGE,
+            remaining_feedranges=[_REMAINING_FEEDRANGE],
+            backend_continuation="B-cont-5",
+            remaining_backend_continuations=["A-cont-5"],
+        )
+        decoded = _decode_token(wire)
+        assert decoded is not None
+        assert decoded[_FIELD_CURRENT_FEEDRANGE][_FIELD_BACKEND_CONTINUATION] == "B-cont-5"
+        assert decoded[_FIELD_REMAINING_FEEDRANGES][0][_FIELD_BACKEND_CONTINUATION] == "A-cont-5"
 
     def test_none_and_empty_inputs_decode_to_none(self):
         # An empty / missing continuation must NOT raise - the call site
@@ -254,11 +318,31 @@ class TestMalformedV1TokenRejected:
         assert "rf[0]" in str(excinfo.value)
 
     def test_non_string_backend_continuation_raises(self):
+        # ``bc`` now lives inside each feedrange entry; a non-string
+        # value in ``cf.bc`` must raise.
         payload = _make_valid_token_payload()
-        payload[_FIELD_BACKEND_CONTINUATION] = 123
+        payload[_FIELD_CURRENT_FEEDRANGE][_FIELD_BACKEND_CONTINUATION] = 123
         with pytest.raises(ValueError) as excinfo:
             _decode_token(_encode_token(payload))
         assert "bc" in str(excinfo.value)
+
+    def test_envelope_level_backend_continuation_is_rejected(self):
+        # An older shape carried ``bc`` at the envelope root. The
+        # current shape moves ``bc`` inside each feedrange entry; a
+        # top-level ``bc`` must be rejected so a token from any earlier
+        # build fails loudly instead of being silently dropped.
+        payload = _make_valid_token_payload()
+        payload[_FIELD_BACKEND_CONTINUATION] = "envelope-level-bc"
+        with pytest.raises(ValueError) as excinfo:
+            _decode_token(_encode_token(payload))
+        assert "bc" in str(excinfo.value)
+
+    def test_missing_per_slice_backend_continuation_raises(self):
+        payload = _make_valid_token_payload()
+        del payload[_FIELD_CURRENT_FEEDRANGE][_FIELD_BACKEND_CONTINUATION]
+        with pytest.raises(ValueError) as excinfo:
+            _decode_token(_encode_token(payload))
+        assert "cf.bc" in str(excinfo.value)
 
 
 # ---------------------------------------------------------------------- #
@@ -891,16 +975,44 @@ class TestFeedRangePaginationState:
         assert state.can_issue_request() is expected
 
     def test_from_inbound_parses_current_remaining_and_continuation(self):
+        # ``bc`` lives inside each feedrange entry, not at the envelope
+        # level. ``from_inbound`` reads ``cf.bc`` for the in-flight
+        # slice and (for parallel-loop scenarios) any non-null
+        # ``rf[i].bc`` for slices waiting their turn.
         inbound = {
-            _FIELD_CURRENT_FEEDRANGE: {"min": "00", "max": "40"},
-            _FIELD_REMAINING_FEEDRANGES: [{"min": "40", "max": "80"}],
-            _FIELD_BACKEND_CONTINUATION: "token-1",
+            _FIELD_CURRENT_FEEDRANGE: {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "token-1"},
+            _FIELD_REMAINING_FEEDRANGES: [
+                {"min": "40", "max": "80", _FIELD_BACKEND_CONTINUATION: None},
+            ],
         }
         state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=9)
         assert self._bounds(state.current_feedrange) == ("00", "40")
         assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80")]
         assert state.backend_continuation == "token-1"
+        assert list(state.remaining_backend_continuations) == [None]
         assert state.remaining_page_item_count == 9
+
+    def test_from_inbound_preserves_per_slice_backend_continuations(self):
+        # Future parallel-loop case: a saved token where slice in cf and
+        # the slice in rf each carry their own non-null backend
+        # continuation. Both must round-trip into the state machine
+        # untouched.
+        inbound = {
+            _FIELD_CURRENT_FEEDRANGE: {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "B-cont-5"},
+            _FIELD_REMAINING_FEEDRANGES: [
+                {"min": "40", "max": "80", _FIELD_BACKEND_CONTINUATION: "A-cont-5"},
+            ],
+        }
+        state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=None)
+        assert state.backend_continuation == "B-cont-5"
+        assert list(state.remaining_backend_continuations) == ["A-cont-5"]
+
+        # When the loop drains the current slice, the next slice's saved
+        # backend continuation becomes the new live one.
+        state.apply_post_result(items_returned=0, backend_continuation=None)
+        assert self._bounds(state.current_feedrange) == ("40", "80")
+        assert state.backend_continuation == "A-cont-5"
+        assert list(state.remaining_backend_continuations) == []
 
     def test_apply_post_result_with_continuation_does_not_advance_feedrange(self):
         current = _mk_range("00", "40")
