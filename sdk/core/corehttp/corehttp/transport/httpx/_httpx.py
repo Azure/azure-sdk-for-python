@@ -26,7 +26,7 @@
 from typing import Any, Optional, cast
 
 import httpx
-from .._base import _create_connection_config, _handle_non_stream_rest_response
+from .._base import _create_connection_config, _handle_non_stream_rest_response, _raise_for_unexpected_kwargs
 from .._base_async import _handle_non_stream_rest_response as _handle_non_stream_rest_response_async
 from ...exceptions import ServiceRequestError, ServiceResponseError
 from ...rest._httpx import HttpXTransportResponse, AsyncHttpXTransportResponse
@@ -92,8 +92,7 @@ class HttpXTransport(HttpTransport):
         self.open()
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
-        # not needed here as its already handled during init
-        kwargs.pop("connection_verify", None)
+        _raise_for_unexpected_kwargs("HttpXTransport", kwargs)
 
         timeout = httpx.Timeout(connect_timeout, read=read_timeout)
         parameters = {
@@ -103,7 +102,6 @@ class HttpXTransport(HttpTransport):
             "data": request._data,  # pylint: disable=protected-access
             "files": request._files,  # pylint: disable=protected-access
             "timeout": timeout,
-            **kwargs,
         }
 
         response = None
@@ -180,8 +178,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         await self.open()
         connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
-        # not needed here as its already handled during init
-        kwargs.pop("connection_verify", None)
+        _raise_for_unexpected_kwargs("AsyncHttpXTransport", kwargs)
         timeout = httpx.Timeout(connect_timeout, read=read_timeout)
         parameters = {
             "method": request.method,
@@ -190,7 +187,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             "data": request._data,  # pylint: disable=protected-access
             "files": request._files,  # pylint: disable=protected-access
             "timeout": timeout,
-            **kwargs,
         }
 
         response = None

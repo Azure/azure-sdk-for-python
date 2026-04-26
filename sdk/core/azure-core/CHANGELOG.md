@@ -1,5 +1,18 @@
 # Release History
 
+## 1.42.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- Built-in transports now reject unsupported per-request keyword arguments instead of forwarding them
+  to the underlying HTTP library. #46365
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added

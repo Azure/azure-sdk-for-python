@@ -60,7 +60,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import AsyncPipeline
 
-from ._base import HttpRequest
+from ._base import HttpRequest, _raise_for_unexpected_kwargs
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
 from ...utils._pipeline_transport_rest_shared import (
     _aiohttp_body_helper,
@@ -322,6 +322,12 @@ class AioHttpTransport(AsyncHttpTransport):
             auto_decompress = False
 
         proxy = config.pop("proxy", None)
+        connection_cert = config.pop("connection_cert", self.connection_config.cert)
+        connection_verify = config.pop("connection_verify", self.connection_config.verify)
+        connection_timeout = config.pop("connection_timeout", self.connection_config.timeout)
+        read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
+        _raise_for_unexpected_kwargs("AioHttpTransport", config)
+
         if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
 
@@ -333,8 +339,8 @@ class AioHttpTransport(AsyncHttpTransport):
 
         response: Optional[Union[AsyncHttpResponse, RestAsyncHttpResponse]] = None
         ssl = self._build_ssl_config(
-            cert=config.pop("connection_cert", self.connection_config.cert),
-            verify=config.pop("connection_verify", self.connection_config.verify),
+            cert=connection_cert,
+            verify=connection_verify,
         )
         # If ssl=True, we just use default ssl context from aiohttp
         if ssl is not True:
@@ -346,9 +352,7 @@ class AioHttpTransport(AsyncHttpTransport):
             config["skip_auto_headers"] = ["Content-Type"]
         try:
             stream_response = stream
-            timeout = config.pop("connection_timeout", self.connection_config.timeout)
-            read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
-            socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
+            socket_timeout = aiohttp.ClientTimeout(sock_connect=connection_timeout, sock_read=read_timeout)
             result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,

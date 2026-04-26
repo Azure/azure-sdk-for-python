@@ -52,7 +52,7 @@ from azure.core.exceptions import (
     HttpResponseError,
 )
 from azure.core.pipeline import Pipeline
-from ._base import HttpRequest
+from ._base import HttpRequest, _raise_for_unexpected_kwargs
 from ._base_async import (
     AsyncHttpResponse,
     _ResponseStopIteration,
@@ -155,7 +155,23 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
-        loop = kwargs.get("loop", _get_running_loop())
+        stream = kwargs.pop("stream", False)
+        loop = kwargs.pop("loop", None)
+        if loop is None:
+            loop = _get_running_loop()
+        connection_verify = kwargs.pop("connection_verify", self.connection_config.verify)
+        connection_cert = kwargs.pop("connection_cert", self.connection_config.cert)
+        connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
+        if isinstance(connection_timeout, tuple):
+            if "read_timeout" in kwargs:
+                raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
+            _LOGGER.warning("Tuple timeout setting is deprecated")
+            timeout = connection_timeout
+        else:
+            read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
+            timeout = (connection_timeout, read_timeout)
+        _raise_for_unexpected_kwargs("AsyncioRequestsTransport", kwargs)
+
         response = None
         error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)
@@ -169,12 +185,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     headers=request.headers,
                     data=data_to_send,
                     files=request.files,
-                    verify=kwargs.pop("connection_verify", self.connection_config.verify),
-                    timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
-                    cert=kwargs.pop("connection_cert", self.connection_config.cert),
+                    verify=connection_verify,
+                    timeout=timeout,
+                    cert=connection_cert,
                     allow_redirects=False,
                     proxies=proxies,
-                    **kwargs
+                    stream=stream,
                 ),
             )
             response.raw.enforce_content_length = True
@@ -214,7 +230,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,
             )
-            if not kwargs.get("stream"):
+            if not stream:
                 await _handle_no_stream_rest_response(retval)
             return retval
 

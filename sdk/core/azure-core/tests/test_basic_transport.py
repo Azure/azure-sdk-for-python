@@ -16,7 +16,7 @@ from urllib3.connection import HTTPConnection as UrllibConnection
 
 from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
 from azure.core.pipeline._tools import is_rest
-from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
+from azure.core.pipeline.transport import HttpRequest, HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
@@ -1257,6 +1257,43 @@ def test_recursive_multipart_receive(http_request, mock_response):
 def test_close_unopened_transport():
     transport = RequestsTransport()
     transport.close()
+
+
+def test_requests_transport_rejects_unknown_kwargs():
+    transport = RequestsTransport(session=mock.Mock(), session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(TypeError, match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+        transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    transport.session.request.assert_not_called()
+
+
+def test_requests_transport_consumes_supported_kwargs():
+    session = mock.Mock()
+    session.request.side_effect = RuntimeError("request sent")
+    transport = RequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        transport.send(
+            request,
+            stream=True,
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert="cert.pem",
+        )
+
+    kwargs = session.request.call_args.kwargs
+    assert kwargs["stream"] is True
+    assert kwargs["timeout"] == (1, 2)
+    assert kwargs["verify"] is False
+    assert kwargs["cert"] == "cert.pem"
+    assert "read_timeout" not in kwargs
+    assert "connection_timeout" not in kwargs
+    assert "connection_verify" not in kwargs
+    assert "connection_cert" not in kwargs
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

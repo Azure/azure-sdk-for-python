@@ -16,8 +16,10 @@ from azure.core.pipeline.transport import (
     AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
     AsyncHttpTransport,
     AioHttpTransport,
+    AsyncioRequestsTransport,
     HttpRequest,
     AioHttpTransportResponse,
+    TrioRequestsTransport,
 )
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
@@ -976,6 +978,168 @@ def test_aiohttp_loop():
     loop = asyncio.get_event_loop()
     with pytest.raises(ValueError):
         transport = AioHttpTransport(loop=loop)
+
+
+class MockAioHttpSession:
+    auto_decompress = False
+
+    def __init__(self):
+        self.request = mock.AsyncMock(side_effect=RuntimeError("request sent"))
+
+    async def __aenter__(self):
+        return self
+
+    async def close(self):
+        pass
+
+
+class MockRequestsSession:
+    def __init__(self):
+        self.kwargs = None
+
+    def request(self, *args, **kwargs):
+        self.kwargs = kwargs
+        raise RuntimeError("request sent")
+
+    def close(self):
+        pass
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_rejects_unknown_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(TypeError, match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_async_pipeline_aiohttp_transport_rejects_unknown_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    pipeline = AsyncPipeline(transport)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(TypeError, match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+        await pipeline.run(request, query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_consumes_supported_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            stream=True,
+            proxy="http://proxy",
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert=None,
+        )
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["proxy"] == "http://proxy"
+    assert kwargs["timeout"].sock_connect == 1
+    assert kwargs["timeout"].sock_read == 2
+    assert "query_filter" not in kwargs
+    assert "connection_timeout" not in kwargs
+    assert "read_timeout" not in kwargs
+    assert "connection_verify" not in kwargs
+    assert "connection_cert" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_asyncio_requests_transport_rejects_unknown_kwargs():
+    session = MockRequestsSession()
+    transport = AsyncioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError, match=r"AsyncioRequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"
+    ):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    assert session.kwargs is None
+
+
+@pytest.mark.asyncio
+async def test_asyncio_requests_transport_consumes_supported_kwargs():
+    session = MockRequestsSession()
+    transport = AsyncioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            stream=True,
+            loop=asyncio.get_running_loop(),
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert="cert.pem",
+        )
+
+    assert session.kwargs["stream"] is True
+    assert session.kwargs["timeout"] == (1, 2)
+    assert session.kwargs["verify"] is False
+    assert session.kwargs["cert"] == "cert.pem"
+    assert "loop" not in session.kwargs
+    assert "read_timeout" not in session.kwargs
+    assert "connection_timeout" not in session.kwargs
+    assert "connection_verify" not in session.kwargs
+    assert "connection_cert" not in session.kwargs
+
+
+@pytest.mark.trio
+async def test_trio_requests_transport_rejects_unknown_kwargs():
+    session = MockRequestsSession()
+    transport = TrioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError, match=r"TrioRequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"
+    ):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    assert session.kwargs is None
+
+
+@pytest.mark.trio
+async def test_trio_requests_transport_consumes_supported_kwargs():
+    session = MockRequestsSession()
+    transport = TrioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            stream=True,
+            trio_limiter=None,
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert="cert.pem",
+        )
+
+    assert session.kwargs["stream"] is True
+    assert session.kwargs["timeout"] == (1, 2)
+    assert session.kwargs["verify"] is False
+    assert session.kwargs["cert"] == "cert.pem"
+    assert "trio_limiter" not in session.kwargs
+    assert "read_timeout" not in session.kwargs
+    assert "connection_timeout" not in session.kwargs
+    assert "connection_verify" not in session.kwargs
+    assert "connection_cert" not in session.kwargs
 
 
 class MockAiohttpResponse:

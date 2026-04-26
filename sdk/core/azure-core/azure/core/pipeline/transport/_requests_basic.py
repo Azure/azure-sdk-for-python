@@ -55,7 +55,7 @@ from azure.core.exceptions import (
 )
 from . import HttpRequest
 
-from ._base import HttpTransport, HttpResponse, _HttpResponseBase
+from ._base import HttpTransport, HttpResponse, _HttpResponseBase, _raise_for_unexpected_kwargs
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from .._tools import (
     is_rest as _is_rest,
@@ -367,29 +367,34 @@ class RequestsTransport(HttpTransport):
         response = None
         error: Optional[AzureErrorUnion] = None
 
-        try:
-            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
+        stream = kwargs.pop("stream", False)
+        connection_verify = kwargs.pop("connection_verify", self.connection_config.verify)
+        connection_cert = kwargs.pop("connection_cert", self.connection_config.cert)
+        connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
 
-            if isinstance(connection_timeout, tuple):
-                if "read_timeout" in kwargs:
-                    raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
-                _LOGGER.warning("Tuple timeout setting is deprecated")
-                timeout = connection_timeout
-            else:
-                read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
-                timeout = (connection_timeout, read_timeout)
+        if isinstance(connection_timeout, tuple):
+            if "read_timeout" in kwargs:
+                raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
+            _LOGGER.warning("Tuple timeout setting is deprecated")
+            timeout = connection_timeout
+        else:
+            read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
+            timeout = (connection_timeout, read_timeout)
+        _raise_for_unexpected_kwargs("RequestsTransport", kwargs)
+
+        try:
             response = self.session.request(  # type: ignore
                 request.method,
                 request.url,
                 headers=request.headers,
                 data=request.data,
                 files=request.files,
-                verify=kwargs.pop("connection_verify", self.connection_config.verify),
+                verify=connection_verify,
                 timeout=timeout,
-                cert=kwargs.pop("connection_cert", self.connection_config.cert),
+                cert=connection_cert,
                 allow_redirects=False,
                 proxies=proxies,
-                **kwargs
+                stream=stream,
             )
             response.raw.enforce_content_length = True
 
@@ -434,7 +439,7 @@ class RequestsTransport(HttpTransport):
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,
             )
-            if not kwargs.get("stream"):
+            if not stream:
                 _handle_non_stream_rest_response(retval)
             return retval
         return RequestsTransportResponse(request, response, self.connection_config.data_block_size)
