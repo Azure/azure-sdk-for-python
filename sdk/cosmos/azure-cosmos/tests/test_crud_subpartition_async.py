@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -44,6 +44,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
@@ -78,15 +79,18 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # Key-auth client is used for container lifecycle (control-plane) in this test.
+        self.key_client, self.key_database, self.client, self.database_for_test = (
+            test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
         await self.client.__aenter__()
-        self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
 
     async def test_collection_crud_subpartition_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database  # Control-plane ops for container CRUD.
         collections = [collection async for collection in created_db.list_containers()]
         # create a collection
         before_create_collections_count = len(collections)
@@ -139,7 +143,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection.id)
 
     async def test_partitioned_collection_subpartition_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database  # Control-plane ops for container CRUD + throughput.
 
         collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
                                  'partitionKey':
@@ -206,7 +210,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection.id)
 
     async def test_partitioned_collection_partition_key_extraction_subpartition_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database  # Control-plane container create/delete.
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
         created_collection = await created_db.create_container(
@@ -256,7 +260,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection1.id)
 
     async def test_partitioned_collection_partition_key_extraction_special_chars_subpartition_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database  # Control-plane container create/delete.
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
 
@@ -313,12 +317,12 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection2.id)
 
     async def test_partitioned_collection_document_crud_and_query_subpartition_async(self):
-        created_db = self.database_for_test
-        collection_id = 'test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4())
-        created_collection = await created_db.create_container(
-            id=collection_id,
+        # Container create/delete uses key_database (control-plane).
+        created_collection_ref = await self.key_database.create_container(
+            id='test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path=['/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
         )
+        created_collection = self.database_for_test.get_container_client(created_collection_ref.id)
 
         document_definition = {'id': 'document',
                                'key': 'value',
@@ -429,15 +433,16 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         created_mixed_type_doc = await created_collection.create_item(body=doc_mixed_types)
         assert doc_mixed_types.get('city') == created_mixed_type_doc.get('city')
         assert doc_mixed_types.get('zipcode') == created_mixed_type_doc.get('zipcode')
-        await created_db.delete_container(created_collection.id)
+        await self.key_database.delete_container(created_collection_ref.id)
 
     async def test_partitioned_collection_prefix_partition_query_subpartition_async(self):
-        created_db = self.database_for_test
+        # Container create/delete uses key_database (control-plane).
         collection_id = 'test_partitioned_collection_partition_key_prefix_query_async ' + str(uuid.uuid4())
-        created_collection = await created_db.create_container(
+        created_collection_ref = await self.key_database.create_container(
             id=collection_id,
             partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
         )
+        created_collection = self.database_for_test.get_container_client(created_collection_ref.id)
         item_values = [
             ["CA", "Newbury Park", "91319"],
             ["CA", "Oxnard", "93033"],
@@ -549,7 +554,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert "Cross partition query is required but disabled" in error.message
 
-        await created_db.delete_container(created_collection.id)
+        await self.key_database.delete_container(created_collection_ref.id)
 
     async def test_partition_key_range_subpartition_overlap(self):
         Id = 'id'
@@ -649,13 +654,13 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         assert EPK_range_4.max < olr_4_c.max
 
     async def test_partitioned_collection_query_with_tuples_subpartition_async(self):
-        created_db = self.database_for_test
-
+        # Container create/delete uses key_database (control-plane).
         collection_id = 'test_partitioned_collection_query_with_tuples_MH ' + str(uuid.uuid4())
-        created_collection = await created_db.create_container(
+        created_collection_ref = await self.key_database.create_container(
             id=collection_id,
             partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
         )
+        created_collection = self.database_for_test.get_container_client(created_collection_ref.id)
 
         document_definition = {'id': 'document1',
                                'state': 'CA',
@@ -670,7 +675,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
             query='Select * from c', partition_key=('CA', 'Oxnard', '93033'))]
         assert 1 == len(document_list)
 
-        await created_db.delete_container(created_collection.id)
+        await self.key_database.delete_container(created_collection_ref.id)
 
     # Commenting out delete all items by pk until pipelines support it
     # async def test_delete_all_items_by_partition_key_subpartition_async(self):

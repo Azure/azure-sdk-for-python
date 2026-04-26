@@ -14,6 +14,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestTimeToLive(unittest.TestCase):
     """TTL Unit Tests.
     """
@@ -46,25 +47,30 @@ class TestTimeToLive(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        # key-auth client for container lifecycle (control-plane)
+        cls.key_client, cls.key_db, cls.client, cls.created_db = (
+            test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID))
 
     def test_collection_and_document_ttl_values(self):
         ttl = 10
-        created_collection = self.created_db.create_container(
+        # container create/delete is control-plane
+        created_collection_ref = self.key_db.create_container(
             id='test_ttl_values1' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id'),
             default_ttl=ttl)
-        created_collection_properties = created_collection.read()
+        created_collection_properties = created_collection_ref.read()
         self.assertEqual(created_collection_properties['defaultTtl'], ttl)
+
+        # Data-plane proxy for create_item error tests
+        created_collection = self.created_db.get_container_client(created_collection_ref.id)
 
         collection_id = 'test_ttl_values4' + str(uuid.uuid4())
         ttl = -10
 
-        # -10 is an unsupported value for defaultTtl. Valid values are -1 or a non-zero positive 32-bit integer value
+        # -10 is an unsupported value for defaultTtl.
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
-            self.created_db.create_container,
+            self.key_db.create_container,  # control-plane
             collection_id,
             PartitionKey(path='/id'),
             None,
@@ -75,7 +81,7 @@ class TestTimeToLive(unittest.TestCase):
                                'key': 'value',
                                'ttl': 0}
 
-        # 0 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
+        # 0 is an unsupported value for ttl.
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
             created_collection.create_item,
@@ -84,7 +90,6 @@ class TestTimeToLive(unittest.TestCase):
         document_definition['id'] = 'doc2' + str(uuid.uuid4())
         document_definition['ttl'] = None
 
-        # None is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
             created_collection.create_item,
@@ -93,13 +98,12 @@ class TestTimeToLive(unittest.TestCase):
         document_definition['id'] = 'doc3' + str(uuid.uuid4())
         document_definition['ttl'] = -10
 
-        # -10 is an unsupported value for ttl. Valid values are -1 or a non-zero positive 32-bit integer value
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
             created_collection.create_item,
             document_definition)
 
-        self.created_db.delete_container(container=created_collection)
+        self.key_db.delete_container(container=created_collection_ref)  # control-plane
 
 
 if __name__ == '__main__':

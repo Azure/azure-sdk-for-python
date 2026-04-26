@@ -23,6 +23,7 @@ from test_per_partition_circuit_breaker_sm_mrr import validate_unhealthy_partiti
 COLLECTION = "created_collection"
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionCircuitBreakerSmMrrAsync:
     host = test_config.TestConfig.host
@@ -31,13 +32,22 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    async def setup_method_with_custom_transport(self, custom_transport: Union[AioHttpTransport, Any], default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport: Union[AioHttpTransport, Any], default_endpoint=None, **kwargs):
+        endpoint = default_endpoint or self.host
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
-        client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=[REGION_1, REGION_2],
-                              transport=custom_transport, **kwargs)
+        client_kwargs = {
+            "consistency_level": "Session",
+            "preferred_locations": [REGION_1, REGION_2],
+            "transport": custom_transport,
+            **kwargs,
+        }
+        if endpoint != self.host:
+            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
+        else:
+            client = test_config.TestConfig.create_data_client_async(**client_kwargs)
+        await client.__aenter__()
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
@@ -237,10 +247,13 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
     async def test_circuit_breaker_user_agent_feature_flag_sm_async(self):
         # Simple test to verify the user agent suffix is being updated with the relevant feature flags
         custom_setup = await self.setup_method_with_custom_transport(None)
-        container = custom_setup['col']
-        # Create a document to check the response headers
-        await container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
-                                              raw_response_hook=user_agent_hook)
+        try:
+            container = custom_setup['col']
+            # Create a document to check the response headers
+            await container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                                  raw_response_hook=user_agent_hook)
+        finally:
+            await self.cleanup_method(custom_setup)
 
     # test cosmos client timeout
 

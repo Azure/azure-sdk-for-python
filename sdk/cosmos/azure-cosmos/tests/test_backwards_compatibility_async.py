@@ -13,6 +13,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -33,11 +34,16 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
+        # Key-auth client is used for control-plane operations in this test.
         self.client = CosmosClient(self.host, self.masterKey)
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        # AAD (or key) client for data-plane operations
+        self.data_client = test_config.TestConfig.create_data_client_async()
+        self.data_database = self.data_client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.data_client.close()
 
     async def test_session_token_compatibility_async(self):
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods
@@ -121,15 +127,16 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
-        # Item
-        item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        # Item — data-plane operations use AAD client
+        data_container = self.data_database.get_container_client(container.id)
+        item = await data_container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert item is not None
-        item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
+        item2 = await data_container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
                                      match_condition=MatchConditions.IfNotModified)
         assert item2 is not None
-        item = await container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
+        item = await data_container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
         assert item is not None
-        item2 = await container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None,
+        item2 = await data_container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None,
                                             match_condition=None)
         assert item2 is not None
         batch_operations = [
@@ -138,7 +145,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
             ("read", (item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 0},)),
         ]
-        batch_results = await container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        batch_results = await data_container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert len(batch_results) == 4
         for result in batch_results:
             assert result['statusCode'] in (200, 201)

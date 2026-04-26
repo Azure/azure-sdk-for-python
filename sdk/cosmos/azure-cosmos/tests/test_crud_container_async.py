@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -48,17 +48,21 @@ class TimeoutTransport(AsyncioRequestsTransport):
         return response
 
 
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosLong
 class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
     client: CosmosClient = None
+    key_client: CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     database_for_test: DatabaseProxy = None
+    key_databaseForTest: DatabaseProxy = None
+    data_databaseForTest: DatabaseProxy = None
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -83,11 +87,28 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
+        # Dual-client AAD scaffolding (prep state, mirrors Batch 2 sync `test_crud_container.py`):
+        # - `key_client`/`key_databaseForTest` (key-auth) for control-plane operations.
+        # - `client`/`data_databaseForTest` (AAD) â€” staged for per-test data-plane migration.
+        # Tests currently keep `database_for_test = key_databaseForTest` for stability;
+        # this file is control-plane heavy (trigger/udf/sproc/indexing-policy), so per-test
+        # AAD migration is deferred until those control-plane ops can run under AAD.
+        self.key_client, self.key_databaseForTest, self.client, self.data_databaseForTest = (
+            test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
+        self.database_for_test = self.key_databaseForTest
+
+    async def _create_container_for_test(self, *args, **kwargs):
+        # Container create routes through key-auth key_databaseForTest.
+        container_ref = await self.key_databaseForTest.create_container(*args, **kwargs)
+        return self.database_for_test.get_container_client(container_ref.id)
+
+    async def _delete_container_for_test(self, *args, **kwargs):
+        # Container delete routes through key-auth key_databaseForTest.
+        return await self.key_databaseForTest.delete_container(*args, **kwargs)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
 
     async def test_collection_crud_async(self):
         created_db = self.database_for_test
@@ -170,13 +191,15 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert created_db.client_connection.last_response_headers.get("x-ms-resource-usage") is not None
 
     async def test_partitioned_collection_partition_key_extraction_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_databaseForTest
+        data_db = self.data_databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
-        created_collection = await created_db.create_container(
+        created_collection_ref = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address/state', kind=documents.PartitionKind.Hash)
         )
+        created_collection = data_db.get_container_client(created_collection_ref.id)
 
         document_definition = {'id': 'document1',
                                'address': {'street': '1 Microsoft Way',
@@ -198,10 +221,11 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert created_document.get('address').get('state') == document_definition.get('address').get('state')
 
         collection_id = 'test_partitioned_collection_partition_key_extraction1 ' + str(uuid.uuid4())
-        created_collection1 = await created_db.create_container(
+        created_collection1_ref = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address', kind=documents.PartitionKind.Hash)
         )
+        created_collection1 = data_db.get_container_client(created_collection1_ref.id)
 
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
         _retry_utility_async.ExecuteFunctionAsync = self._mock_execute_function
@@ -212,10 +236,11 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         del self.last_headers[:]
 
         collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
-        created_collection2 = await created_db.create_container(
+        created_collection2_ref = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/address/state/city', kind=documents.PartitionKind.Hash)
         )
+        created_collection2 = data_db.get_container_client(created_collection2_ref.id)
 
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
         _retry_utility_async.ExecuteFunctionAsync = self._mock_execute_function
@@ -230,14 +255,16 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(created_collection2.id)
 
     async def test_partitioned_collection_partition_key_extraction_special_chars_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_databaseForTest
+        data_db = self.data_databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
 
-        created_collection1 = await created_db.create_container(
+        created_collection1_ref = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/\"level\' 1*()\"/\"le/vel2\"', kind=documents.PartitionKind.Hash)
         )
+        created_collection1 = data_db.get_container_client(created_collection1_ref.id)
         document_definition = {'id': 'document1',
                                "level' 1*()": {"le/vel2": 'val1'}
                                }
@@ -251,10 +278,11 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
 
-        created_collection2 = await created_db.create_container(
+        created_collection2_ref = await created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path='/\'level\" 1*()\'/\'le/vel2\'', kind=documents.PartitionKind.Hash)
         )
+        created_collection2 = data_db.get_container_client(created_collection2_ref.id)
 
         document_definition = {'id': 'document2',
                                'level\" 1*()': {'le/vel2': 'val2'}
@@ -288,7 +316,10 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert parts == base.ParsePaths(paths)
 
     async def test_partitioned_collection_document_crud_and_query_async(self):
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_collection_ref = await self.key_databaseForTest.create_container(
+            str(uuid.uuid4()), PartitionKey(path="/id")
+        )
+        created_collection = self.data_databaseForTest.get_container_client(created_collection_ref.id)
 
         document_definition = {'id': 'document',
                                'key': 'value'}
@@ -355,7 +386,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         )]
 
         assert len(document_list) == 1
-        await self.database_for_test.delete_container(created_collection.id)
+        await self.key_databaseForTest.delete_container(created_collection.id)
 
     async def test_partitioned_collection_permissions_async(self):
         created_db = self.database_for_test

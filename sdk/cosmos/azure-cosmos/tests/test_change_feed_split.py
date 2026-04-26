@@ -1,7 +1,6 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import time
 import unittest
 import uuid
 
@@ -12,10 +11,12 @@ import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey
 
 
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosSplit
 class TestPartitionSplitChangeFeed(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
+    key_database: DatabaseProxy = None
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
@@ -23,13 +24,14 @@ class TestPartitionSplitChangeFeed(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.key_client, cls.key_database, cls.client, cls.database = (
+            test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
 
     def test_query_change_feed_with_split(self):
-        created_collection = self.database.create_container("change_feed_split_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"),
-                                                              offer_throughput=400)
+        created_collection_ref = self.key_database.create_container("change_feed_split_test_" + str(uuid.uuid4()),
+                                                                      PartitionKey(path="/pk"),
+                                                                      offer_throughput=400)
+        created_collection = self.database.get_container_client(created_collection_ref.id)
 
         # initial change feed query returns empty result
         query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
@@ -46,7 +48,8 @@ class TestPartitionSplitChangeFeed(unittest.TestCase):
         assert len(iter_list) == 1
         continuation = created_collection.client_connection.last_response_headers['etag']
 
-        test_config.TestConfig.trigger_split(created_collection, 11000)
+        test_config.TestConfig.trigger_split(
+            self.key_database.get_container_client(created_collection_ref.id), 11000)
 
         print("creating few more documents")
         new_documents = [{'pk': 'pk2', 'id': 'doc2'}, {'pk': 'pk3', 'id': 'doc3'}, {'pk': 'pk4', 'id': 'doc4'}]
@@ -61,7 +64,7 @@ class TestPartitionSplitChangeFeed(unittest.TestCase):
             actual_ids.append(item['id'])
 
         assert actual_ids == expected_ids
-        self.database.delete_container(created_collection.id)
+        self.key_database.delete_container(created_collection.id)
 
 if __name__ == "__main__":
     unittest.main()

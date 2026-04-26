@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -97,11 +97,16 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestPartitionKey.host, TestPartitionKey.masterKey),
-    created_db = test_client[0].get_database_client(TestPartitionKey.TEST_DATABASE_ID)
+    # Key-auth client is used for control-plane operations in this module.
+    key_client = cosmos_client.CosmosClient(TestPartitionKey.host, TestPartitionKey.masterKey)
+    key_db = key_client.get_database_client(TestPartitionKey.TEST_DATABASE_ID)
+    # AAD (or key) client for data-plane operations
+    data_client = test_config.TestConfig.create_data_client()
+    data_db = data_client.get_database_client(TestPartitionKey.TEST_DATABASE_ID)
     return {
-        DATABASE: created_db,
-        COLLECTION: created_db.get_container_client(TestPartitionKey.TEST_CONTAINER_ID)
+        "key_db": key_db,
+        DATABASE: data_db,
+        COLLECTION: data_db.get_container_client(TestPartitionKey.TEST_CONTAINER_ID)
     }
 
 
@@ -174,6 +179,7 @@ def _perform_operations_on_pk(created_container, pk_field, pk_value):
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestPartitionKey:
@@ -192,41 +198,53 @@ class TestPartitionKey:
     @pytest.mark.parametrize("version", VERSIONS)
     def test_multi_partition_collection_read_document_with_no_pk(self, setup, version) -> None:
         pk_val: PkField = partition_key.NonePartitionKeyValue  # type: ignore[assignment]
-        created_container = setup[DATABASE].create_container_if_not_exists(
-            id="container_with_no_pk" + str(uuid.uuid4()),
+        # Control-plane container creation.
+        container_id = "container_with_no_pk" + str(uuid.uuid4())
+        setup["key_db"].create_container_if_not_exists(
+            id=container_id,
             partition_key=PartitionKey(path="/pk", kind='Hash', version=version)
         )
+        # Data-plane proxy for data operations
+        created_container = setup[DATABASE].get_container_client(container_id)
         try:
            _perform_operations_on_pk(created_container, None, pk_val)
         finally:
-            setup[DATABASE].delete_container(created_container)
+            setup["key_db"].delete_container(container_id)
 
     @pytest.mark.parametrize("version", VERSIONS)
     def test_with_null_pk(self, setup, version) -> None:
         pk_field = 'pk'
         pk_vals = [None, partition_key.NullPartitionKeyValue]
-        created_container = setup[DATABASE].create_container_if_not_exists(
-            id="container_with_nul_pk" + str(uuid.uuid4()),
+        # Control-plane container creation.
+        container_id = "container_with_nul_pk" + str(uuid.uuid4())
+        setup["key_db"].create_container_if_not_exists(
+            id=container_id,
             partition_key=PartitionKey(path="/pk", kind='Hash', version=version)
         )
+        # Data-plane proxy for data operations
+        created_container = setup[DATABASE].get_container_client(container_id)
         try:
             for pk_value in pk_vals:
                 _perform_operations_on_pk(created_container, pk_field, pk_value)
         finally:
-            setup[DATABASE].delete_container(created_container)
+            setup["key_db"].delete_container(container_id)
 
     def test_hash_v2_partition_key_definition(self, setup) -> None:
         created_container_properties = setup[COLLECTION].read()
         assert created_container_properties['partitionKey']['version'] == 2
 
     def test_hash_v1_partition_key_definition(self, setup) -> None:
-        created_container = setup[DATABASE].create_container(
-            id='container_with_pkd_v2' + str(uuid.uuid4()),
+        # Control-plane container creation.
+        container_id = 'container_with_pkd_v2' + str(uuid.uuid4())
+        setup["key_db"].create_container(
+            id=container_id,
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1)
         )
+        # Data-plane proxy for reading container properties
+        created_container = setup[DATABASE].get_container_client(container_id)
         created_container_properties = created_container.read()
         assert created_container_properties['partitionKey']['version'] == 1
-        setup[DATABASE].delete_container(created_container)
+        setup["key_db"].delete_container(container_id)
 
 
 if __name__ == '__main__':

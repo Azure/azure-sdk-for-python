@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -26,7 +26,15 @@ def get_test_item():
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestUserConfigs(unittest.TestCase):
+    key_client = None
+    data_client = None
+
+    @classmethod
+    def setUpClass(cls):
+        cls.key_client = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey)
+        cls.data_client = TestConfig.create_data_client()
 
     def test_invalid_connection_retry_configuration(self):
         try:
@@ -56,14 +64,14 @@ class TestUserConfigs(unittest.TestCase):
     def test_default_account_consistency(self):
         database_id = "PythonSDKUserConfigTesters-" + str(uuid.uuid4())
         container_id = "PythonSDKTestContainer-" + str(uuid.uuid4())
-        client = cosmos_client.CosmosClient(url=TestConfig.host, credential=TestConfig.masterKey)
-        database_account = client.get_database_account()
+        database_account = self.key_client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
         self.assertEqual(account_consistency_level, "Session")
 
         # Testing the session token logic works without user passing in Session explicitly
-        database = client.create_database(database_id)
-        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/id"))
+        database = self.key_client.create_database(database_id)
+        database.create_container(id=container_id, partition_key=PartitionKey(path="/id"))
+        container = self.data_client.get_database_client(database_id).get_container_client(container_id)
         create_response = container.create_item(body=get_test_item())
         session_token = create_response.get_response_headers()[http_constants.CookieHeaders.SessionToken]
         item2 = get_test_item()
@@ -78,7 +86,7 @@ class TestUserConfigs(unittest.TestCase):
 
         # Check Session token remains the same for read operation as with previous create item operation
         self.assertEqual(session_token2, read_session_token)
-        client.delete_database(database_id)
+        self.key_client.delete_database(database_id)
 
         # Now testing a user-defined consistency level as opposed to using the account one
         custom_level = "Eventual"

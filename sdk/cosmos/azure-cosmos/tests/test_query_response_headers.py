@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import os
@@ -17,11 +17,14 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 class TestQueryResponseHeaders(unittest.TestCase):
     """Tests for query response headers functionality."""
 
     created_db: DatabaseProxy = None
+    key_db: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
@@ -32,16 +35,24 @@ class TestQueryResponseHeaders(unittest.TestCase):
         use_multiple_write_locations = False
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
-        cls.client = cosmos_client.CosmosClient(
-            cls.host, cls.masterKey, multiple_write_locations=use_multiple_write_locations
-        )
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        # Key-auth client for control-plane operations (create/delete containers)
+        cls.key_client, cls.key_db, cls.client, cls.created_db = (
+            test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
+
+    def _create_container_for_test(self, container_id, partition_key, **kwargs):
+        """Create container via key-auth setup client (control-plane), return data-plane proxy."""
+        # Container creation is a control-plane operation routed through key_client (key-auth).
+        self.key_db.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        return self.created_db.get_container_client(container_id)
+
+    def _delete_container_for_test(self, container_id):
+        """Delete container via key-auth setup client (control-plane)."""
+        self.key_db.delete_container(container_id)
 
     def test_query_response_headers_single_page(self):
         """Test that response headers are captured for a single page query."""
-        created_collection = self.created_db.create_container(
-            "test_headers_single_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_single_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             # Create a few items
             for i in range(5):
@@ -78,13 +89,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertIn("x-ms-request-charge", last_headers)
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
     def test_query_response_headers_multiple_pages(self):
         """Test that response headers are captured for each page in a paginated query."""
-        created_collection = self.created_db.create_container(
-            "test_headers_multi_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_multi_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             # Create enough items to span multiple pages
             num_items = 15
@@ -125,13 +135,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertEqual(len(activity_ids), len(response_headers))
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
     def test_query_response_headers_empty_result(self):
         """Test that response headers are captured even when query returns no results."""
-        created_collection = self.created_db.create_container(
-            "test_headers_empty_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_empty_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             # Create an item with different pk
             created_collection.create_item(body={"pk": "other", "id": "item_1"})
@@ -162,13 +171,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
             # Both are valid behaviors
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
     def test_query_response_headers_with_query_metrics(self):
         """Test that query metrics are included in response headers when enabled."""
-        created_collection = self.created_db.create_container(
-            "test_headers_metrics_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_metrics_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             # Create items
             for i in range(5):
@@ -205,13 +213,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertTrue(all("=" in x for x in metrics))
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
     def test_query_response_headers_by_page_iteration(self):
         """Test response headers when using by_page() iteration."""
-        created_collection = self.created_db.create_container(
-            "test_headers_by_page_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_by_page_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             # Create items
             num_items = 10
@@ -247,13 +254,12 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertGreaterEqual(len(response_headers), page_count)
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
     def test_query_response_headers_returns_copies(self):
         """Test that get_response_headers returns copies, not references."""
-        created_collection = self.created_db.create_container(
-            "test_headers_copies_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_copies_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             created_collection.create_item(body={"pk": "test", "id": "item_1"})
 
@@ -279,7 +285,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                 self.assertNotIn("test-key", headers2[0])
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
     def test_query_response_headers_thread_safety(self):
         """Test that response headers are captured correctly when multiple queries run concurrently.
@@ -287,9 +293,8 @@ class TestQueryResponseHeaders(unittest.TestCase):
         This test verifies that each query operation captures its own headers independently,
         without interference from concurrent queries. This is the key thread-safety guarantee.
         """
-        created_collection = self.created_db.create_container(
-            "test_headers_thread_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_thread_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             # Create items with different partition keys to ensure different queries
             num_partitions = 5
@@ -375,7 +380,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                     self.assertIsNot(headers_0[0], headers_1[0])
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
     def test_query_response_headers_concurrent_same_container(self):
         """Test concurrent queries on the same container with overlapping execution.
@@ -383,9 +388,8 @@ class TestQueryResponseHeaders(unittest.TestCase):
         This test specifically targets the race condition that would occur if headers
         were captured from a shared client.last_response_headers after fetch_next_block().
         """
-        created_collection = self.created_db.create_container(
-            "test_headers_concurrent_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        container_id = "test_headers_concurrent_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         try:
             # Create enough items to ensure multiple pages
             for i in range(50):
@@ -443,7 +447,7 @@ class TestQueryResponseHeaders(unittest.TestCase):
                         f"Thread {thread_id} should have positive request charges")
 
         finally:
-            self.created_db.delete_container(created_collection.id)
+            self._delete_container_for_test(container_id)
 
 
 if __name__ == "__main__":

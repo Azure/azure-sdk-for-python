@@ -15,6 +15,7 @@ from azure.cosmos.http_constants import HttpHeaders
 # TODO: add query tests once those changes are available
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestCosmosResponses(unittest.TestCase):
     """Python Cosmos Responses Tests.
     """
@@ -23,7 +24,9 @@ class TestCosmosResponses(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     client: CosmosClient = None
+    data_client: CosmosClient = None
     test_database: DatabaseProxy = None
+    data_test_database: DatabaseProxy = None
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
 
     @classmethod
@@ -34,12 +37,23 @@ class TestCosmosResponses(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        # Dual-client pattern (partial migration — most tests in this file are
+        # control-plane response-shape tests that fundamentally exercise
+        # `client.create_database` / `create_container` / `replace_throughput`,
+        # which cannot run under an AAD data-plane token).
+        # - `client` / `test_database` (key-auth) → 11 control-plane tests.
+        # - `data_client` / `data_test_database` (AAD) → only `test_point_operation_headers`.
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.data_client = test_config.TestConfig.create_data_client()
+        cls.data_test_database = cls.data_client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_point_operation_headers(self):
-        container = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        # Container create stays on key-auth (control-plane); data ops route through AAD.
+        container_id = "responses_test" + str(uuid.uuid4())
+        self.test_database.create_container(id=container_id,
+                                            partition_key=PartitionKey(path="/company"))
+        container = self.data_test_database.get_container_client(container_id)
         first_response = container.upsert_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
         lsn = first_response.get_response_headers()['lsn']
 

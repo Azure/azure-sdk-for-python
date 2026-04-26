@@ -37,14 +37,16 @@ def create_threshold_errors():
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
 @pytest.mark.cosmosPerPartitionAutomaticFailover
+@pytest.mark.cosmosAAD
 class TestPerPartitionAutomaticFailover:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
+    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, **kwargs):
         regions = [REGION_1, REGION_2]
+        endpoint = default_endpoint or self.host
         container_id = kwargs.pop("container_id", None)
         exclude_client_regions = kwargs.pop("exclude_client_regions", False)
         excluded_regions = []
@@ -52,10 +54,17 @@ class TestPerPartitionAutomaticFailover:
             excluded_regions = [REGION_2]
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
-        client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=regions,
-                              excluded_locations=excluded_regions,
-                              transport=custom_transport, **kwargs)
+        client_kwargs = {
+            "consistency_level": "Session",
+            "preferred_locations": regions,
+            "excluded_locations": excluded_regions,
+            "transport": custom_transport,
+            **kwargs,
+        }
+        if endpoint != self.host:
+            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
+        else:
+            client = test_config.TestConfig.create_data_client(**client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}

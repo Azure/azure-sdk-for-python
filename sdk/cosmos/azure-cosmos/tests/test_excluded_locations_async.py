@@ -9,7 +9,6 @@ import test_config
 import pytest
 import pytest_asyncio
 
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.http_constants import ResourceType
 from test_excluded_locations import (TestDataType, set_test_data_type,
@@ -65,7 +64,7 @@ async def setup_and_teardown_async():
     logger.addHandler(MOCK_HANDLER)
     logger.setLevel(logging.DEBUG)
 
-    test_client = CosmosClient(HOST, KEY)
+    test_client = test_config.TestConfig.create_data_client_async()
     container = test_client.get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
     await container.upsert_item(body=TEST_ITEM)
     # Waiting some time for the new items to be replicated to other regions
@@ -76,6 +75,7 @@ async def setup_and_teardown_async():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestExcludedLocationsAsync:
@@ -85,7 +85,7 @@ class TestExcludedLocationsAsync:
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
         # Client setup
-        async with CosmosClient(HOST, KEY,
+        async with test_config.TestConfig.create_data_client_async(
                               preferred_locations=preferred_locations,
                               excluded_locations=client_excluded_locations,
                               multiple_write_locations=True) as client:
@@ -106,7 +106,7 @@ class TestExcludedLocationsAsync:
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
         # Client setup
-        async with CosmosClient(HOST, KEY,
+        async with test_config.TestConfig.create_data_client_async(
                                 preferred_locations=preferred_locations,
                                 excluded_locations=client_excluded_locations,
                                 multiple_write_locations=True) as client:
@@ -127,7 +127,7 @@ class TestExcludedLocationsAsync:
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
         # Client setup
-        async with CosmosClient(HOST, KEY,
+        async with test_config.TestConfig.create_data_client_async(
                                 preferred_locations=preferred_locations,
                                 excluded_locations=client_excluded_locations,
                                 multiple_write_locations=True) as client:
@@ -149,7 +149,7 @@ class TestExcludedLocationsAsync:
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
 
         # Client setup
-        async with CosmosClient(HOST, KEY,
+        async with test_config.TestConfig.create_data_client_async(
                                 preferred_locations=preferred_locations,
                                 excluded_locations=client_excluded_locations,
                                 multiple_write_locations=True) as client:
@@ -172,7 +172,7 @@ class TestExcludedLocationsAsync:
 
 
         # Client setup
-        async with CosmosClient(HOST, KEY,
+        async with test_config.TestConfig.create_data_client_async(
                                 preferred_locations=preferred_locations,
                                 excluded_locations=client_excluded_locations,
                                 multiple_write_locations=True) as client:
@@ -194,7 +194,7 @@ class TestExcludedLocationsAsync:
 
         for multiple_write_locations in [True, False]:
             # Client setup
-            async with CosmosClient(HOST, KEY,
+            async with test_config.TestConfig.create_data_client_async(
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
@@ -216,7 +216,7 @@ class TestExcludedLocationsAsync:
 
         for multiple_write_locations in [True, False]:
             # Client setup
-            async with CosmosClient(HOST, KEY,
+            async with test_config.TestConfig.create_data_client_async(
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
@@ -240,7 +240,7 @@ class TestExcludedLocationsAsync:
 
         for multiple_write_locations in [True, False]:
             # Client setup
-            async with CosmosClient(HOST, KEY,
+            async with test_config.TestConfig.create_data_client_async(
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
@@ -261,7 +261,7 @@ class TestExcludedLocationsAsync:
 
         for multiple_write_locations in [True, False]:
             # Client setup
-            async with CosmosClient(HOST, KEY,
+            async with test_config.TestConfig.create_data_client_async(
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
@@ -289,7 +289,7 @@ class TestExcludedLocationsAsync:
 
         for multiple_write_locations in [True, False]:
             # Client setup
-            async with CosmosClient(HOST, KEY,
+            async with test_config.TestConfig.create_data_client_async(
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:
@@ -322,7 +322,7 @@ class TestExcludedLocationsAsync:
 
         for multiple_write_locations in [True, False]:
             # Client setup
-            async with CosmosClient(HOST, KEY,
+            async with test_config.TestConfig.create_data_client_async(
                                     preferred_locations=preferred_locations,
                                     excluded_locations=client_excluded_locations,
                                     multiple_write_locations=multiple_write_locations) as client:

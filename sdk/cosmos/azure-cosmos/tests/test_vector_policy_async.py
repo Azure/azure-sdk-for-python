@@ -20,6 +20,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
     client: CosmosClient = None
+    data_client: CosmosClient = None
     cosmos_sync_client: CosmosSyncClient = None
 
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
@@ -40,11 +41,19 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         cls.cosmos_sync_client.delete_database(cls.test_db.id)
 
     async def asyncSetUp(self):
+        # Control-plane (key-auth): used for all create_container / replace_container /
+        # delete_container / read calls in this file. AAD data-plane tokens cannot
+        # authorize control-plane operations.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_db = self.client.get_database_client(self.test_db.id)
+        # Data-plane (AAD): added for parity with the dual-client convention. Not
+        # exercised here because every runnable test is control-plane (vector policy
+        # validation). Route per-test data-plane ops through self.data_client when added.
+        self.data_client = test_config.TestConfig.create_data_client_async()
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.data_client.close()
 
     @unittest.skip
     async def test_create_valid_vector_indexing_policy_async(self):

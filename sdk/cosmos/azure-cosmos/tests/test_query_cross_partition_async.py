@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import os
@@ -19,12 +19,16 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     created_db: DatabaseProxy = None
+    key_db: DatabaseProxy = None
     created_container: ContainerProxy = None
+    key_container: ContainerProxy = None
     client: CosmosClient = None
+    key_client: CosmosClient = None
     config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
@@ -45,20 +49,28 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         use_multiple_write_locations = False
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
-        self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=use_multiple_write_locations)
-        self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.created_container = await self.created_db.create_container(
+        # Key-auth client for control-plane operations (create/delete containers)
+        self.key_client, self.key_db, self.client, self.created_db = (
+            test_config.TestConfig.create_test_clients_async(self.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
+        # Create container via key-auth (control-plane), get data container via data client
+        created_container_ref = await self.key_db.create_container(
             self.TEST_CONTAINER_ID,
             PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
+        self.created_container = self.created_db.get_container_client(created_container_ref.id)
+        # Master-key container for write operations in tests: avoids AAD session tokens from writes
+        # routing subsequent change feed reads to secondary replicas that may not have RBAC cached yet.
+        self.key_container = self.key_db.get_container_client(created_container_ref.id)
 
     async def asyncTearDown(self):
         try:
-            await self.created_db.delete_container(self.TEST_CONTAINER_ID)
+            await self.key_db.delete_container(self.TEST_CONTAINER_ID)
         except CosmosHttpResponseError:
             pass
         finally:
             await self.client.close()
+            await self.key_client.close()
+
 
     async def test_first_and_last_slashes_trimmed_for_query_string_async(self):
         doc_id = 'myId' + str(uuid.uuid4())
@@ -426,7 +438,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         pk_field = "pk"
         different_field = "different_field"
 
-        created_collection = await created_database.create_container(
+        created_collection_ref = await self.key_db.create_container(
             id='collection with composite index ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
@@ -438,6 +450,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
                 ]
             }
         )
+        created_collection = created_database.get_container_client(created_collection_ref.id)
         documents = []
         for i in range(5):
             j = i
@@ -480,7 +493,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
                                              is_select=True,
                                              fields=[different_field])
 
-        await created_database.delete_container(created_collection.id)
+        await self.key_db.delete_container(created_collection_ref.id)
 
     async def test_distinct_on_different_types_and_field_orders_async(self):
         payloads = [
@@ -620,11 +633,12 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         print("Test done")
 
     async def test_cross_partition_query_response_hook_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists(
+        created_collection_ref = await self.key_db.create_container_if_not_exists(
             id="query_response_hook_test" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=12000
         )
+        created_collection = self.created_db.get_container_client(created_collection_ref.id)
         items = [
             {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
             {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
@@ -641,14 +655,15 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         item_list = [item async for item in created_collection.query_items("select * from c", response_hook=response_hook)]
         assert len(item_list) == 6
         assert response_hook.count == 2
-        await self.created_db.delete_container(created_collection.id)
+        await self.key_db.delete_container(created_collection_ref.id)
 
     async def test_cross_partition_query_pagination_with_max_item_count_async(self):
         """Test cross-partition pagination showing per-page limits and total results."""
-        created_collection = await self.created_db.create_container(
+        created_collection_ref = await self.key_db.create_container(
             "cross_partition_pagination_test_" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
+        created_collection = self.created_db.get_container_client(created_collection_ref.id)
         
         # Create 30 items across 3 different partitions
         total_items = 30
@@ -693,14 +708,15 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         # Verify we got multiple pages
         assert page_count > 1
         
-        await self.created_db.delete_container(created_collection.id)
+        await self.key_db.delete_container(created_collection_ref.id)
     
     async def test_cross_partition_query_pagination_counting_results_async(self):
         """Test counting total results while paginating across partitions."""
-        created_collection = await self.created_db.create_container(
+        created_collection_ref = await self.key_db.create_container(
             "cross_partition_count_test_" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
+        created_collection = self.created_db.get_container_client(created_collection_ref.id)
         
         # Create items across multiple partitions with different counts
         partitions_config = [
@@ -752,7 +768,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         # Verify we processed multiple pages
         assert page_count > 1
         
-        await self.created_db.delete_container(created_collection.id)
+        await self.key_db.delete_container(created_collection_ref.id)
 
 if __name__ == '__main__':
     unittest.main()

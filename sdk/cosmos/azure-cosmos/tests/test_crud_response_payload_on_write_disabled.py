@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -29,6 +29,25 @@ from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
+# Tests that exercise Cosmos endpoints unsupported under AAD/RBAC
+# (server-side scripts: sprocs/triggers/UDFs; users; permissions) are skipped
+# automatically when the data-plane lane is configured for AAD. The remaining
+# scenarios still exercise the SDK's `no_response_on_write=True` feature on
+# both auth paths via the dual-client (`client` / `key_client`) layout.
+# Server-side scripts CRUD (sproc/trigger/UDF create/list/get/replace/delete),
+# users, and permissions are not in the AAD/RBAC data-plane action set today.
+# Empirically the service returns: "Request blocked by Auth ... cannot be
+# authorized by AAD token in data plane. Learn more: https://aka.ms/cosmos-native-rbac."
+# Sproc EXECUTE does work under AAD (see test_partitioned_collection_execute_stored_procedure
+# in test_crud.py for the routing pattern: create via setup client, execute via AAD client).
+# TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
+_skip_under_aad = pytest.mark.skipif(
+    test_config.TestConfig.data_auth_mode == 'aad',
+    reason="server-side scripts CRUD / users / permissions are not authorized via AAD/RBAC "
+           "data plane today (403). See https://aka.ms/cosmos-native-rbac.",
+)
+
+
 class CosmosResponseHeaderEnvelope:
     def __init__(self):
         self.headers: Optional[Dict[str, Any]] = None
@@ -56,6 +75,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -65,7 +85,17 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
+    # Dual-client AAD migration (Batch 24):
+    #   `client` â†’ AAD data-plane client (constructed via TestConfig.create_data_client),
+    #              also carries `no_response_on_write=True` for behavioral parity with the
+    #              original test scope.
+    #   `key_client` â†’ key-auth client used for every control-plane operation
+    #              (database/container CRUD, throughput / offer ops, account metadata).
+    # Tests routed through both clients still exercise the SDK's no_response_on_write
+    # behavior on each path while gaining real AAD data-plane coverage.
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
+    key_databaseForTest = None
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -88,17 +118,26 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, no_response_on_write=True)
+        # Key-auth client for all control-plane operations (DB / container CRUD,
+        # throughput, account metadata). `no_response_on_write=True` is preserved on
+        # both clients so the SDK feature under test (response-payload suppression on
+        # write) is validated on both auth paths.
+        cls.key_client = cosmos_client.CosmosClient(
+            cls.host, cls.masterKey, no_response_on_write=True)
+        cls.key_databaseForTest = cls.key_client.get_database_client(
+            cls.configs.TEST_DATABASE_ID)
+        # Data-plane client honoring COSMOS_TEST_DATA_AUTH_MODE (AAD when set).
+        cls.client = test_config.TestConfig.create_data_client(no_response_on_write=True)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.logger = logging.getLogger("DisableResponseOnWriteTestLogger")
         cls.logger.setLevel(logging.DEBUG)
 
     def test_database_crud(self):
         database_id = str(uuid.uuid4())
-        created_db = self.client.create_database(database_id)
+        created_db = self.key_client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
-        databases = list(self.client.query_databases({
+        databases = list(self.key_client.query_databases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
                 {'name': '@id', 'value': database_id}
@@ -107,30 +146,30 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertTrue(databases, 'number of results for the query should be > 0')
 
         # read database.
-        self.client.get_database_client(created_db.id).read()
+        self.key_client.get_database_client(created_db.id).read()
 
         # delete database.
-        self.client.delete_database(created_db.id)
+        self.key_client.delete_database(created_db.id)
         # read database after deletion
-        read_db = self.client.get_database_client(created_db.id)
+        read_db = self.key_client.get_database_client(created_db.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
+        database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
+        database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
-        self.client.delete_database(database_id)
+        self.key_client.delete_database(database_id)
 
     def test_database_level_offer_throughput(self):
         # Create a database with throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())
-        created_db = self.client.create_database(
+        created_db = self.key_client.create_database(
             id=database_id,
             offer_throughput=offer_throughput
         )
@@ -144,15 +183,15 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         new_offer_throughput = 2000
         offer = created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
-        self.client.delete_database(created_db.id)
+        self.key_client.delete_database(created_db.id)
 
     def test_sql_query_crud(self):
         # create two databases.
-        db1 = self.client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = self.client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = self.key_client.create_database('database 1' + str(uuid.uuid4()))
+        db2 = self.key_client.create_database('database 2' + str(uuid.uuid4()))
 
         # query with parameters.
-        databases = list(self.client.query_databases({
+        databases = list(self.key_client.query_databases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
                 {'name': '@id', 'value': db1.id}
@@ -161,19 +200,19 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
         # query without parameters.
-        databases = list(self.client.query_databases({
+        databases = list(self.key_client.query_databases({
             'query': 'SELECT * FROM root r WHERE r.id="database non-existing"'
         }))
         self.assertEqual(0, len(databases), 'Unexpected number of query results.')
 
         # query with a string.
-        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))  # nosec
+        databases = list(self.key_client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))  # nosec
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
-        self.client.delete_database(db1.id)
-        self.client.delete_database(db2.id)
+        self.key_client.delete_database(db1.id)
+        self.key_client.delete_database(db2.id)
 
     def test_collection_crud(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
         collections = list(created_db.list_containers())
         # create a collection
         before_create_collections_count = len(collections)
@@ -211,7 +250,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                            created_container.read)
 
     def test_partitioned_collection(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
                                  'partitionKey':
@@ -247,7 +286,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection_partition_key_extraction(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
         created_collection = created_db.create_container(
@@ -311,7 +350,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         created_db.delete_container(created_collection2.id)
 
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
 
@@ -378,7 +417,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertEqual(parts, base.ParsePaths(paths))
 
     def test_partitioned_collection_document_crud_and_query(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         created_collection = created_db.create_container("crud-query-container", partition_key=PartitionKey("/pk"))
 
@@ -483,7 +522,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection_permissions(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
 
@@ -567,8 +606,10 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         created_db.delete_container(all_collection)
         created_db.delete_container(read_collection)
 
+    @_skip_under_aad
+
     def test_partitioned_collection_execute_stored_procedure(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         document_id = str(uuid.uuid4())
@@ -601,7 +642,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             3)
 
     def test_partitioned_collection_partition_key_value_types(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         created_collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -658,7 +699,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         )
 
     def test_partitioned_collection_conflict_crud_and_query(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -717,7 +758,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_document_crud_response_payload_enabled_via_override(self):
         # create database
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
         # create collection
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read documents
@@ -881,7 +922,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_document_crud(self):
         # create database
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
         # create collection
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read documents
@@ -1050,7 +1091,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_document_upsert(self):
         # create database
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
 
         # create collection
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -1164,7 +1205,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             'number of documents should remain same')
 
     def test_geospatial_index(self):
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # partial policy specified
         collection = db.create_container(
             id='collection with spatial index ' + str(uuid.uuid4()),
@@ -1214,10 +1255,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         db.delete_container(container=collection)
 
     # CRUD test for User resource
+    @_skip_under_aad
     def test_user_crud(self):
         # Should do User CRUD operations successfully.
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # list users
         users = list(db.list_users())
         before_create_count = len(users)
@@ -1258,9 +1300,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            deleted_user.read)
 
+    @_skip_under_aad
+
     def test_user_upsert(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
 
         # read users and check count
         users = list(db.list_users())
@@ -1312,10 +1356,12 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         users = list(db.list_users())
         self.assertEqual(len(users), before_create_count)
 
+    @_skip_under_aad
+
     def test_permission_crud(self):
         # Should do Permission CRUD operations successfully
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # create user
         user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
         # list permissions
@@ -1364,9 +1410,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                            user.get_permission,
                                            permission.id)
 
+    @_skip_under_aad
+
     def test_permission_upsert(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
 
         # create user
         user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
@@ -1444,7 +1492,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertEqual(len(permissions), before_create_count)
 
     def test_authorization(self):
-        def __SetupEntities(client):
+        def __SetupEntities():
             """
             Sets up entities for this test.
 
@@ -1456,22 +1504,24 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
             """
             # create database
-            db = self.databaseForTest
+            db = self.key_databaseForTest
+            data_db = self.databaseForTest
             # create collection
             collection = db.create_container(
                 id='test_authorization' + str(uuid.uuid4()),
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
+            data_collection = data_db.get_container_client(collection.id)
             # create document1
             id = 'doc1'
-            document = collection.create_item(
+            document = data_collection.create_item(
                 body={'id': id,
                       'spam': 'eggs',
                       'key': 'value'},
             )
 
             self.assertDictEqual(document, {})
-            document = collection.read_item(item = id, partition_key = id)
+            document = data_collection.read_item(item = id, partition_key = id)
 
             # create user
             user = db.create_user(body={'id': 'user' + str(uuid.uuid4())})
@@ -1515,12 +1565,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             self.assertEqual(error.status_code, StatusCodes.UNAUTHORIZED)
 
         # Client with master key.
-        client = cosmos_client.CosmosClient(self.host,
-                                            self.masterKey,
-                                            "Session",
-                                            connection_policy=self.connectionPolicy)
         # setup entities
-        entities = __SetupEntities(client)
+        entities = __SetupEntities()
         resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
                                entities['permissionOnColl'].properties['_token']}
         col_client = cosmos_client.CosmosClient(
@@ -1577,9 +1623,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         db.client_connection = old_client_connection
         db.delete_container(entities['coll'])
 
+    @_skip_under_aad
+
     def test_trigger_crud(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # create collection
         collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read triggers
@@ -1642,9 +1690,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                            collection.scripts.delete_trigger,
                                            replaced_trigger['id'])
 
+    @_skip_under_aad
+
     def test_udf_crud(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # create collection
         collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read udfs
@@ -1694,9 +1744,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                            collection.scripts.get_user_defined_function,
                                            replaced_udf['id'])
 
+    @_skip_under_aad
+
     def test_sproc_crud(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # create collection
         collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # read sprocs
@@ -1754,6 +1806,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                            collection.scripts.get_stored_procedure,
                                            replaced_sproc['id'])
 
+    @_skip_under_aad
+
     def test_script_logging_execute_stored_procedure(self):
         created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         stored_proc_id = 'storedProcedure-1-' + str(uuid.uuid4())
@@ -1808,7 +1862,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_collection_indexing_policy(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # create collection
         collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -1854,7 +1908,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_create_default_indexing_policy(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
 
         # no indexing policy specified
         collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -1928,7 +1982,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_create_indexing_policy_with_composite_and_spatial_indexes(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
 
         indexing_policy = {
             "spatialIndexes": [
@@ -2038,7 +2092,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                 container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
     def test_query_iterable_functionality(self):
-        collection = self.databaseForTest.create_container("query-iterable-container",
+        collection = self.key_databaseForTest.create_container("query-iterable-container",
                                                            partition_key=PartitionKey("/pk"))
 
         doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'}, no_response=False)
@@ -2093,7 +2147,9 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         with self.assertRaises(StopIteration):
             next(page_iter)
 
-        self.databaseForTest.delete_container(collection.id)
+        self.key_databaseForTest.delete_container(collection.id)
+
+    @_skip_under_aad
 
     def test_trigger_functionality(self):
         triggers_in_collection1 = [
@@ -2180,7 +2236,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                         'property {property} should match'.format(property=property))
 
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # create collections
         pkd = PartitionKey(path='/id', kind='Hash')
         collection1 = db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()),
@@ -2253,9 +2309,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         db.delete_container(collection2)
         db.delete_container(collection3)
 
+    @_skip_under_aad
+
     def test_stored_procedure_functionality(self):
         # create database
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # create collection
         collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -2326,7 +2384,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_offer_read_and_query(self):
         # Create database.
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read the offer.
         expected_offer = collection.get_throughput()
@@ -2335,7 +2393,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_offer_replace(self):
         # Create database.
-        db = self.databaseForTest
+        db = self.key_databaseForTest
         # Create collection.
         collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read Offer
@@ -2354,7 +2412,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
     def test_database_account_functionality(self):
         # Validate database account functionality.
-        database_account = self.client.get_database_account()
+        database_account = self.key_client.get_database_account()
         self.assertEqual(database_account.DatabasesLink, '/dbs/')
         self.assertEqual(database_account.MediaLink, '/media/')
         if (HttpHeaders.MaxMediaStorageUsageInMB in
@@ -2372,7 +2430,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
     def test_index_progress_headers(self):
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
         created_container = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         created_container.read(populate_quota_info=True)
         self.assertFalse(HttpHeaders.LazyIndexingProgress in created_db.client_connection.last_response_headers)
@@ -2396,47 +2454,48 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     def test_id_validation(self):
         # Id shouldn't end with space.
         try:
-            self.client.create_database(id='id_with_space ')
+            self.key_client.create_database(id='id_with_space ')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id ends with a space or newline.', e.args[0])
         # Id shouldn't contain '/'.
 
         try:
-            self.client.create_database(id='id_with_illegal/_char')
+            self.key_client.create_database(id='id_with_illegal/_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '\\'.
 
         try:
-            self.client.create_database(id='id_with_illegal\\_char')
+            self.key_client.create_database(id='id_with_illegal\\_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '?'.
 
         try:
-            self.client.create_database(id='id_with_illegal?_char')
+            self.key_client.create_database(id='id_with_illegal?_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '#'.
 
         try:
-            self.client.create_database(id='id_with_illegal#_char')
+            self.key_client.create_database(id='id_with_illegal#_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
 
         # Id can begin with space
-        db = self.client.create_database(id=' id_begin_space' + str(uuid.uuid4()))
+        db = self.key_client.create_database(id=' id_begin_space' + str(uuid.uuid4()))
         self.assertTrue(True)
 
-        self.client.delete_database(db.id)
+        self.key_client.delete_database(db.id)
 
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
+        key_db = self.key_databaseForTest
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
@@ -2451,6 +2510,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertEqual(read_db.id, created_db.id)
 
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        key_container = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -2475,20 +2535,21 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         read_item = created_container.read_item(item=created_item, partition_key=created_item['pk'])
         self.assertEqual(read_item['id'], created_item['id'])
 
-        created_sproc = created_container.scripts.create_stored_procedure({
+        # Sproc/trigger/UDF operations are control-plane; route through setup container.
+        created_sproc = key_container.scripts.create_stored_procedure({
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': 'function () { }'
         })
 
         # read sproc with id
-        read_sproc = created_container.scripts.get_stored_procedure(created_sproc['id'])
+        read_sproc = key_container.scripts.get_stored_procedure(created_sproc['id'])
         self.assertEqual(read_sproc['id'], created_sproc['id'])
 
         # read sproc with properties
-        read_sproc = created_container.scripts.get_stored_procedure(created_sproc)
+        read_sproc = key_container.scripts.get_stored_procedure(created_sproc)
         self.assertEqual(read_sproc['id'], created_sproc['id'])
 
-        created_trigger = created_container.scripts.create_trigger({
+        created_trigger = key_container.scripts.create_trigger({
             'id': 'sample trigger' + str(uuid.uuid4()),
             'serverScript': 'function() {var x = 10;}',
             'triggerType': documents.TriggerType.Pre,
@@ -2496,41 +2557,42 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         })
 
         # read trigger with id
-        read_trigger = created_container.scripts.get_trigger(created_trigger['id'])
+        read_trigger = key_container.scripts.get_trigger(created_trigger['id'])
         self.assertEqual(read_trigger['id'], created_trigger['id'])
 
         # read trigger with properties
-        read_trigger = created_container.scripts.get_trigger(created_trigger)
+        read_trigger = key_container.scripts.get_trigger(created_trigger)
         self.assertEqual(read_trigger['id'], created_trigger['id'])
 
-        created_udf = created_container.scripts.create_user_defined_function({
+        created_udf = key_container.scripts.create_user_defined_function({
             'id': 'sample udf' + str(uuid.uuid4()),
             'body': 'function() {var x = 10;}'
         })
 
         # read udf with id
-        read_udf = created_container.scripts.get_user_defined_function(created_udf['id'])
+        read_udf = key_container.scripts.get_user_defined_function(created_udf['id'])
         self.assertEqual(created_udf['id'], read_udf['id'])
 
         # read udf with properties
-        read_udf = created_container.scripts.get_user_defined_function(created_udf)
+        read_udf = key_container.scripts.get_user_defined_function(created_udf)
         self.assertEqual(created_udf['id'], read_udf['id'])
 
-        created_user = created_db.create_user({
+        # User/permission operations are control-plane; route through setup database.
+        created_user = key_db.create_user({
             'id': 'user' + str(uuid.uuid4())
         })
 
         # read user with id
-        read_user = created_db.get_user_client(created_user.id)
+        read_user = key_db.get_user_client(created_user.id)
         self.assertEqual(read_user.id, created_user.id)
 
         # read user with instance
-        read_user = created_db.get_user_client(created_user)
+        read_user = key_db.get_user_client(created_user)
         self.assertEqual(read_user.id, created_user.id)
 
         # read user with properties
         created_user_properties = created_user.read()
-        read_user = created_db.get_user_client(created_user_properties)
+        read_user = key_db.get_user_client(created_user_properties)
         self.assertEqual(read_user.id, created_user.id)
 
         created_permission = created_user.create_permission({
@@ -2556,48 +2618,49 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         # enable the test only for the emulator
         if "localhost" not in self.host and "127.0.0.1" not in self.host:
             return
-        # create database
-        created_db = self.databaseForTest
+        key_db = self.key_databaseForTest
+        data_db = self.databaseForTest
 
-        # create container
-        created_collection = created_db.create_container(
+        # create container via setup client (control-plane)
+        created_collection = key_db.create_container(
             id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash')
         )
+        data_collection = data_db.get_container_client(created_collection.id)
         # Create two partition keys
         partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
         partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
 
         # add items for partition key 1
         for i in range(1, 3):
-            created_collection.upsert_item(
+            data_collection.upsert_item(
                 dict(id="item{}".format(i), pk=partition_key1)
             )
 
         # add items for partition key 2
 
-        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
+        pk2_item = data_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
 
         # delete all items for partition key 1
-        created_collection.delete_all_items_by_partition_key(partition_key1)
+        data_collection.delete_all_items_by_partition_key(partition_key1)
 
         # check that only items from partition key 1 have been deleted
-        items = list(created_collection.read_all_items())
+        items = list(data_collection.read_all_items())
 
         # items should only have 1 item, and it should equal pk2_item
         self.assertDictEqual(pk2_item, items[0])
 
         # attempting to delete a non-existent partition key or passing none should not delete
         # anything and leave things unchanged
-        created_collection.delete_all_items_by_partition_key(None)
+        data_collection.delete_all_items_by_partition_key(None)
 
         # check that no changes were made by checking if the only item is still there
-        items = list(created_collection.read_all_items())
+        items = list(data_collection.read_all_items())
 
         # items should only have 1 item, and it should equal pk2_item
         self.assertDictEqual(pk2_item, items[0])
 
-        created_db.delete_container(created_collection)
+        key_db.delete_container(created_collection.id)
 
     def test_patch_operations(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -2726,7 +2789,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     #     if 'localhost' in self.host or '127.0.0.1' in self.host:
     #         return
 
-    #     created_db = self.databaseForTest
+    #     created_db = self.key_databaseForTest
     #     collection_id = 'test_create_container_with_analytical_store_off_' + str(uuid.uuid4())
     #     collection_indexing_policy = {'indexingMode': 'consistent'}
     #     created_recorder = RecordDiagnostics()
@@ -2743,7 +2806,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     #     if 'localhost' in self.host or '127.0.0.1' in self.host:
     #         return
 
-    #     created_db = self.databaseForTest
+    #     created_db = self.key_databaseForTest
     #     collection_id = 'test_create_container_with_analytical_store_on_' + str(uuid.uuid4())
     #     collection_indexing_policy = {'indexingMode': 'consistent'}
     #     created_recorder = RecordDiagnostics()
@@ -2762,7 +2825,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     #         return
 
     #     # first, try when we know the container doesn't exist.
-    #     created_db = self.databaseForTest
+    #     created_db = self.key_databaseForTest
     #     collection_id = 'test_create_container_if_not_exists_with_analytical_store_on_' + str(uuid.uuid4())
     #     collection_indexing_policy = {'indexingMode': 'consistent'}
     #     created_recorder = RecordDiagnostics()

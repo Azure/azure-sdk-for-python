@@ -25,6 +25,7 @@ def verify_ordering(item_list, distance_function):
         for i in range(len(item_list) - 1):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosSearchQuery
 class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check vector similarity queries behavior."""
@@ -92,7 +93,9 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
             pass
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # AAD data-plane client; control-plane (DB / container create + seeding +
+        # delete) stays on the key-auth `sync_client` configured in setUpClass.
+        self.client = test_config.TestConfig.create_data_client_async()
         self.test_db = self.client.get_database_client(self.test_db.id)
         self.created_flat_euclidean_container = self.test_db.get_container_client(self.created_flat_euclidean_container.id)
         self.created_quantized_cosine_container = self.test_db.get_container_client(self.created_quantized_cosine_container.id)

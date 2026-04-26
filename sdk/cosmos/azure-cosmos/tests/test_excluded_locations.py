@@ -9,7 +9,6 @@ import test_config
 import pytest
 import time
 
-from azure.cosmos import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.http_constants import ResourceType
 
@@ -158,10 +157,11 @@ def create_item_with_excluded_locations(container, body, excluded_locations):
         container.create_item(body=body, excluded_locations=excluded_locations)
 
 def init_container(preferred_locations, client_excluded_locations, multiple_write_locations=True):
-    client = CosmosClient(HOST, KEY,
-                          preferred_locations=preferred_locations,
-                          excluded_locations=client_excluded_locations,
-                          multiple_write_locations=multiple_write_locations)
+    client = test_config.TestConfig.create_data_client(
+        preferred_locations=preferred_locations,
+        excluded_locations=client_excluded_locations,
+        multiple_write_locations=multiple_write_locations,
+    )
     db = client.get_database_client(DATABASE_ID)
     container = db.get_container_client(CONTAINER_ID)
     MOCK_HANDLER.reset()
@@ -215,7 +215,7 @@ def setup_and_teardown():
     logger.addHandler(MOCK_HANDLER)
     logger.setLevel(logging.DEBUG)
 
-    container = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
+    container = test_config.TestConfig.create_data_client().get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
     container.upsert_item(body=TEST_ITEM)
     # Waiting some time for the new items to be replicated to other regions
     time.sleep(3)
@@ -225,6 +225,7 @@ def setup_and_teardown():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAAD
 class TestExcludedLocations:
     @pytest.mark.parametrize('test_data', read_item_test_data())
     def test_read_item(self, test_data):

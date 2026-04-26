@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -26,6 +26,16 @@ import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+
+# Tests that exercise Cosmos endpoints unsupported under AAD/RBAC
+# (server-side scripts: sprocs/triggers/UDFs; users; permissions) are skipped
+# automatically when the data-plane lane is configured for AAD. The remaining
+# scenarios still exercise the SDK's `no_response_on_write=True` feature on
+# both auth paths via the dual-client (`client` / `key_client`) layout.
+_skip_under_aad = pytest.mark.skipif(
+    test_config.TestConfig.data_auth_mode == 'aad',
+    reason="Cosmos users/permissions/server-side scripts are not supported under AAD/RBAC.",
+)
 
 class CosmosResponseHeaderEnvelope:
     def __init__(self):
@@ -55,16 +65,27 @@ class TimeoutTransport(AsyncioRequestsTransport):
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
+    # Dual-client AAD migration (Batch 24):
+    #   `client` â†’ AAD data-plane client (created via TestConfig.create_data_client_async),
+    #              also carries `no_response_on_write=True` for behavioral parity with the
+    #              original test scope.
+    #   `key_client` â†’ key-auth client used for every control-plane operation
+    #              (database/container CRUD, throughput / offer ops, account metadata).
+    # Tests routed through both clients still exercise the SDK's no_response_on_write
+    # behavior on each path while gaining real AAD data-plane coverage.
     client: CosmosClient = None
+    key_client: CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     database_for_test: DatabaseProxy = None
+    key_database_for_test: DatabaseProxy = None
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -89,7 +110,15 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey, no_response_on_write=True)
+        # Key-auth client for control-plane operations. `no_response_on_write=True` is
+        # preserved on both clients so the SDK feature under test is validated on each
+        # auth path.
+        self.key_client = CosmosClient(self.host, self.masterKey, no_response_on_write=True)
+        await self.key_client.__aenter__()
+        self.key_database_for_test = self.key_client.get_database_client(
+            self.configs.TEST_DATABASE_ID)
+        # Data-plane client honoring COSMOS_TEST_DATA_AUTH_MODE (AAD when set).
+        self.client = test_config.TestConfig.create_data_client_async(no_response_on_write=True)
         await self.client.__aenter__()
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.logger = logging.getLogger("TestCRUDOperationsAsyncResponsePayloadOnWriteDisabledLogger")
@@ -97,13 +126,14 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
 
     async def test_database_crud_async(self):
         database_id = str(uuid.uuid4())
-        created_db = await self.client.create_database(database_id)
+        created_db = await self.key_client.create_database(database_id)
         assert created_db.id == database_id
         # query databases.
-        databases = [database async for database in self.client.query_databases(
+        databases = [database async for database in self.key_client.query_databases(
             query='SELECT * FROM root r WHERE r.id=@id',
             parameters=[
                 {'name': '@id', 'value': database_id}
@@ -113,33 +143,33 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         assert len(databases) > 0
 
         # read database.
-        self.client.get_database_client(created_db.id)
+        self.key_client.get_database_client(created_db.id)
         await created_db.read()
 
         # delete database.
-        await self.client.delete_database(created_db.id)
+        await self.key_client.delete_database(created_db.id)
         # read database after deletion
-        read_db = self.client.get_database_client(created_db.id)
+        read_db = self.key_client.get_database_client(created_db.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, read_db.read)
 
-        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
+        database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
         assert 5000 == db_throughput.offer_throughput
 
-        database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
+        database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
         assert 5000 == db_throughput.offer_throughput
 
         # delete database.
-        await self.client.delete_database(database_id)
+        await self.key_client.delete_database(database_id)
 
     async def test_database_level_offer_throughput_async(self):
         # Create a database with throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())
-        created_db = await self.client.create_database(
+        created_db = await self.key_client.create_database(
             id=database_id,
             offer_throughput=offer_throughput
         )
@@ -154,15 +184,15 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         offer = await created_db.replace_throughput(new_offer_throughput)
         assert offer.offer_throughput == new_offer_throughput
 
-        await self.client.delete_database(database_id)
+        await self.key_client.delete_database(database_id)
 
     async def test_sql_query_crud_async(self):
         # create two databases.
-        db1 = await self.client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = await self.client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = await self.key_client.create_database('database 1' + str(uuid.uuid4()))
+        db2 = await self.key_client.create_database('database 2' + str(uuid.uuid4()))
 
         # query with parameters.
-        databases = [database async for database in self.client.query_databases(
+        databases = [database async for database in self.key_client.query_databases(
             query='SELECT * FROM root r WHERE r.id=@id',
             parameters=[
                 {'name': '@id', 'value': db1.id}
@@ -171,7 +201,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         assert 1 == len(databases)
 
         # query without parameters.
-        databases = [database async for database in self.client.query_databases(
+        databases = [database async for database in self.key_client.query_databases(
             query='SELECT * FROM root r WHERE r.id="database non-existing"'
         )]
         assert 0 == len(databases)
@@ -179,14 +209,14 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         # query with a string.
         query_string = 'SELECT * FROM root r WHERE r.id="' + db2.id + '"'
         databases = [database async for database in
-                     self.client.query_databases(query=query_string)]
+                     self.key_client.query_databases(query=query_string)]
         assert 1 == len(databases)
 
-        await self.client.delete_database(db1.id)
-        await self.client.delete_database(db2.id)
+        await self.key_client.delete_database(db1.id)
+        await self.key_client.delete_database(db2.id)
 
     async def test_collection_crud_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database_for_test
         collections = [collection async for collection in created_db.list_containers()]
         # create a collection
         before_create_collections_count = len(collections)
@@ -222,7 +252,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                                                      created_container.read)
 
     async def test_partitioned_collection_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database_for_test
 
         collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
                                  'partitionKey':
@@ -254,6 +284,9 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         await created_db.delete_container(created_collection.id)
 
     async def test_partitioned_collection_quota_async(self):
+        # The header-presence assertion below reads `last_response_headers` off the same
+        # client_connection that issued the read, so both handles must come from the
+        # same client. The read itself is data-plane and works under AAD.
         created_db = self.database_for_test
 
         created_collection = self.database_for_test.get_container_client(
@@ -266,7 +299,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         assert created_db.client_connection.last_response_headers.get("x-ms-resource-usage") is not None
 
     async def test_partitioned_collection_partition_key_extraction_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
         created_collection = await created_db.create_container(
@@ -329,7 +362,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         await created_db.delete_container(created_collection2.id)
 
     async def test_partitioned_collection_partition_key_extraction_special_chars_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
 
@@ -387,7 +420,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         assert parts == base.ParsePaths(paths)
 
     async def test_partitioned_collection_document_crud_and_query_async(self):
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_collection = await self.key_database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         document_definition = {'id': 'document',
                                'key': 'value'}
@@ -474,10 +507,10 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         )]
 
         assert len(document_list) == 1
-        await self.database_for_test.delete_container(created_collection.id)
+        await self.key_database_for_test.delete_container(created_collection.id)
 
     async def test_partitioned_collection_permissions_async(self):
-        created_db = self.database_for_test
+        created_db = self.key_database_for_test
 
         collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
 
@@ -558,8 +591,10 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                 document_definition['id']
             )
 
-            await self.database_for_test.delete_container(all_collection.id)
-            await self.database_for_test.delete_container(read_collection.id)
+            await self.key_database_for_test.delete_container(all_collection.id)
+            await self.key_database_for_test.delete_container(read_collection.id)
+
+    @_skip_under_aad
 
     async def test_partitioned_collection_execute_stored_procedure_async(self):
 
@@ -594,7 +629,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def test_partitioned_collection_partition_key_value_types_async(self):
 
-        created_db = self.database_for_test
+        created_db = self.key_database_for_test
 
         created_collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -959,7 +994,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         assert len(document_list) == before_create_documents_count
 
     async def test_geospatial_index_async(self):
-        db = self.database_for_test
+        db = self.key_database_for_test
         # partial policy specified
         collection = await db.create_container(
             id='collection with spatial index ' + str(uuid.uuid4()),
@@ -1006,11 +1041,13 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     # CRUD test for User resource
 
+    @_skip_under_aad
+
     async def test_user_crud_async(self):
 
         # Should do User CRUD operations successfully.
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
         # list users
         users = [user async for user in db.list_users()]
         before_create_count = len(users)
@@ -1050,10 +1087,12 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      deleted_user.read)
 
+    @_skip_under_aad
+
     async def test_user_upsert_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
 
         # read users and check count
         users = [user async for user in db.list_users()]
@@ -1103,10 +1142,12 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         users = [user async for user in db.list_users()]
         assert len(users) == before_create_count
 
+    @_skip_under_aad
+
     async def test_permission_crud_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
         # create user
         user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
         # list permissions
@@ -1149,10 +1190,12 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                                                      user.get_permission,
                                                      permission.id)
 
+    @_skip_under_aad
+
     async def test_permission_upsert_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
 
         # create user
         user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
@@ -1233,14 +1276,16 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
             """
             # create database
-            db = self.database_for_test
+            db = self.key_database_for_test
+            data_db = self.database_for_test
             # create collection
             collection = await db.create_container(
                 id='test_authorization' + str(uuid.uuid4()),
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
+            data_collection = data_db.get_container_client(collection.id)
             # create document1
-            document = await collection.create_item(
+            document = await data_collection.create_item(
                 body={'id': 'doc1',
                       'spam': 'eggs',
                       'key': 'value'},
@@ -1279,11 +1324,17 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             return entities
 
         # Client without any authorization will fail.
+        unauthorized_client = None
         try:
-            async with CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host, {}) as client:
-                [db async for db in client.list_databases()]
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.UNAUTHORIZED
+            unauthorized_client = CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host, {})
+            try:
+                [db async for db in unauthorized_client.list_databases()]
+                self.fail("Test did not fail as expected.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == StatusCodes.UNAUTHORIZED
+        finally:
+            if unauthorized_client:
+                await unauthorized_client.close()
 
         # Client with master key.
         async with CosmosClient(TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.host,
@@ -1343,6 +1394,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             db.client_connection = old_client_connection
             await db.delete_container(entities['coll'])
 
+    @_skip_under_aad
+
     async def test_trigger_crud_async(self):
 
         # create collection
@@ -1396,6 +1449,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                                                      collection.scripts.delete_trigger,
                                                      replaced_trigger['id'])
 
+    @_skip_under_aad
+
     async def test_udf_crud_async(self):
 
         # create collection
@@ -1437,6 +1492,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.get_user_defined_function,
                                                      replaced_udf['id'])
+
+    @_skip_under_aad
 
     async def test_sproc_crud_async(self):
 
@@ -1486,6 +1543,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.get_stored_procedure,
                                                      replaced_sproc['id'])
+
+    @_skip_under_aad
 
     async def test_script_logging_execute_stored_procedure_async(self):
 
@@ -1539,7 +1598,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
     async def test_collection_indexing_policy_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
         # create collection
         collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -1581,7 +1640,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
     async def test_create_default_indexing_policy_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
 
         # no indexing policy specified
         collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -1655,7 +1714,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
     async def test_create_indexing_policy_with_composite_and_spatial_indexes_async(self):
 
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
 
         indexing_policy = {
             "spatialIndexes": [
@@ -1788,7 +1847,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def test_query_iterable_functionality_async(self):
 
-        collection = await self.database_for_test.create_container("query-iterable-container-async",
+        collection = await self.key_database_for_test.create_container("query-iterable-container-async",
                                                                    PartitionKey(path="/pk"))
         doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
         self.assertDictEqual(doc1, {})
@@ -1838,7 +1897,9 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         with self.assertRaises(StopAsyncIteration):
             await page_iter.__anext__()
 
-        await self.database_for_test.delete_container(collection.id)
+        await self.key_database_for_test.delete_container(collection.id)
+
+    @_skip_under_aad
 
     async def test_trigger_functionality_async(self):
 
@@ -1923,7 +1984,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                     assert trigger[property] == trigger_i[property]
 
         # create database
-        db = self.database_for_test
+        db = self.key_database_for_test
         # create collections
         collection1 = await db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()),
                                                 partition_key=PartitionKey(path='/key', kind='Hash'))
@@ -1989,6 +2050,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         await db.delete_container(collection1)
         await db.delete_container(collection2)
         await db.delete_container(collection3)
+
+    @_skip_under_aad
 
     async def test_stored_procedure_functionality_async(self):
 
@@ -2058,7 +2121,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
     async def test_offer_read_and_query_async(self):
 
         # Create database.
-        db = self.database_for_test
+        db = self.key_database_for_test
 
         # Create collection.
         collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -2069,7 +2132,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def test_offer_replace_async(self):
 
-        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        # Throughput / offer ops are control-plane (POST /offers); route through key-auth.
+        collection = self.key_database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Read Offer
         expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
@@ -2101,7 +2165,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
     async def test_index_progress_headers_async(self):
 
-        created_db = self.database_for_test
+        created_db = self.key_database_for_test
         consistent_coll = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         created_container = created_db.get_container_client(container=consistent_coll)
         await created_container.read(populate_quota_info=True)
@@ -2126,6 +2190,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
     async def test_get_resource_with_dictionary_and_object_async(self):
 
         created_db = self.database_for_test
+        key_db = self.key_database_for_test
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
@@ -2140,6 +2205,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         assert read_db.id == created_db.id
 
         created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        key_container = self.key_database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -2162,22 +2228,23 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
         # read item with properties
         read_item = await created_container.read_item(item=created_item, partition_key=created_item['pk'])
-        assert read_item['id'], created_item['id']
+        assert read_item['id'] == created_item['id']
 
-        created_sproc = await created_container.scripts.create_stored_procedure({
+        # Sproc/trigger/UDF operations are control-plane; route through setup container.
+        created_sproc = await key_container.scripts.create_stored_procedure({
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': 'function () { }'
         })
 
         # read sproc with id
-        read_sproc = await created_container.scripts.get_stored_procedure(created_sproc['id'])
+        read_sproc = await key_container.scripts.get_stored_procedure(created_sproc['id'])
         assert read_sproc['id'] == created_sproc['id']
 
         # read sproc with properties
-        read_sproc = await created_container.scripts.get_stored_procedure(created_sproc)
+        read_sproc = await key_container.scripts.get_stored_procedure(created_sproc)
         assert read_sproc['id'] == created_sproc['id']
 
-        created_trigger = await created_container.scripts.create_trigger({
+        created_trigger = await key_container.scripts.create_trigger({
             'id': 'sample trigger' + str(uuid.uuid4()),
             'serverScript': 'function() {var x = 10;}',
             'triggerType': documents.TriggerType.Pre,
@@ -2185,40 +2252,41 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         })
 
         # read trigger with id
-        read_trigger = await created_container.scripts.get_trigger(created_trigger['id'])
+        read_trigger = await key_container.scripts.get_trigger(created_trigger['id'])
         assert read_trigger['id'] == created_trigger['id']
 
         # read trigger with properties
-        read_trigger = await created_container.scripts.get_trigger(created_trigger)
+        read_trigger = await key_container.scripts.get_trigger(created_trigger)
         assert read_trigger['id'] == created_trigger['id']
 
-        created_udf = await created_container.scripts.create_user_defined_function({
+        created_udf = await key_container.scripts.create_user_defined_function({
             'id': 'sample udf' + str(uuid.uuid4()),
             'body': 'function() {var x = 10;}'
         })
 
         # read udf with id
-        read_udf = await created_container.scripts.get_user_defined_function(created_udf['id'])
+        read_udf = await key_container.scripts.get_user_defined_function(created_udf['id'])
         assert created_udf['id'] == read_udf['id']
 
         # read udf with properties
-        read_udf = await created_container.scripts.get_user_defined_function(created_udf)
+        read_udf = await key_container.scripts.get_user_defined_function(created_udf)
         assert created_udf['id'] == read_udf['id']
 
-        created_user = await created_db.create_user({
+        # User/permission operations are control-plane; route through setup database.
+        created_user = await key_db.create_user({
             'id': 'user' + str(uuid.uuid4())})
 
         # read user with id
-        read_user = created_db.get_user_client(created_user.id)
+        read_user = key_db.get_user_client(created_user.id)
         assert read_user.id == created_user.id
 
         # read user with instance
-        read_user = created_db.get_user_client(created_user)
+        read_user = key_db.get_user_client(created_user)
         assert read_user.id == created_user.id
 
         # read user with properties
         created_user_properties = await created_user.read()
-        read_user = created_db.get_user_client(created_user_properties)
+        read_user = key_db.get_user_client(created_user_properties)
         assert read_user.id == created_user.id
 
         created_permission = await created_user.create_permission({
@@ -2245,48 +2313,49 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         # enable the test only for the emulator
         if "localhost" not in self.host and "127.0.0.1" not in self.host:
             return
-        # create database
-        created_db = self.database_for_test
+        key_db = self.key_database_for_test
+        data_db = self.database_for_test
 
-        # create container
-        created_collection = await created_db.create_container(
+        # create container via setup client (control-plane)
+        created_collection = await key_db.create_container(
             id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash')
         )
+        data_collection = data_db.get_container_client(created_collection.id)
         # Create two partition keys
         partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
         partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
 
         # add items for partition key 1
         for i in range(1, 3):
-            newDoc = await created_collection.upsert_item(
+            newDoc = await data_collection.upsert_item(
                 dict(id="item{}".format(i), pk=partition_key1)
             )
             self.assertDictEqual(newDoc, {})
 
         # add items for partition key 2
-        pk2_item = await created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
+        pk2_item = await data_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
        
         # delete all items for partition key 1
-        await created_collection.delete_all_items_by_partition_key(partition_key1)
+        await data_collection.delete_all_items_by_partition_key(partition_key1)
 
         # check that only items from partition key 1 have been deleted
-        items = [item async for item in created_collection.read_all_items()]
+        items = [item async for item in data_collection.read_all_items()]
 
         # items should only have 1 item, and it should equal pk2_item
         self.assertDictEqual(pk2_item, items[0])
 
         # attempting to delete a non-existent partition key or passing none should not delete
         # anything and leave things unchanged
-        await created_collection.delete_all_items_by_partition_key(None)
+        await data_collection.delete_all_items_by_partition_key(None)
 
         # check that no changes were made by checking if the only item is still there
-        items = [item async for item in created_collection.read_all_items()]
+        items = [item async for item in data_collection.read_all_items()]
 
         # items should only have 1 item, and it should equal pk2_item
         self.assertDictEqual(pk2_item, items[0])
 
-        await created_db.delete_container(created_collection)
+        await key_db.delete_container(created_collection.id)
 
     async def test_patch_operations_async(self):
 

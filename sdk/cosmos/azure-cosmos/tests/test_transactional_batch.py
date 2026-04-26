@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -20,6 +20,7 @@ def get_subpartition_item(item_id):
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestTransactionalBatch(unittest.TestCase):
     """Python Transactional Batch Tests.
     """
@@ -28,7 +29,9 @@ class TestTransactionalBatch(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     client: CosmosClient = None
+    key_client: CosmosClient = None
     test_database: DatabaseProxy = None
+    key_database: DatabaseProxy = None
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
 
     @classmethod
@@ -39,12 +42,23 @@ class TestTransactionalBatch(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        # Key-auth client for control-plane operations (create/delete containers)
+        cls.key_client, cls.key_database, cls.client, cls.test_database = (
+            test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
+
+    def _create_container_for_test(self, container_id, partition_key, **kwargs):
+        """Create container via key-auth setup client (control-plane), return data-plane proxy."""
+        # Container creation is a control-plane operation routed through key_client (key-auth).
+        self.key_database.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        return self.test_database.get_container_client(container_id)
+
+    def _delete_container_for_test(self, container_id):
+        """Delete container via key-auth setup client (control-plane)."""
+        self.key_database.delete_container(container_id)
 
     def test_invalid_batch_sizes(self):
-        container = self.test_database.create_container(id="invalid_batch_size" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("invalid_batch_size" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
 
         # empty batch
         try:
@@ -79,11 +93,11 @@ class TestTransactionalBatch(unittest.TestCase):
             assert e.status_code == StatusCodes.REQUEST_ENTITY_TOO_LARGE
             assert e.message.startswith("(RequestEntityTooLarge)")
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_create(self):
-        container = self.test_database.create_container(id="batch_create" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("batch_create" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
@@ -137,11 +151,11 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
             assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_read(self):
-        container = self.test_database.create_container(id="batch_read" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("batch_read" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             container.create_item({"id": "item" + str(i), "company": "Microsoft"})
@@ -167,11 +181,11 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_replace(self):
-        container = self.test_database.create_container(id="batch_replace" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("batch_replace" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
         batch = [("create", ({"id": "new-item", "company": "Microsoft"},)),
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
@@ -212,11 +226,11 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[1].get("statusCode") == StatusCodes.PRECONDITION_FAILED
             assert operation_results[2].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_upsert(self):
-        container = self.test_database.create_container(id="batch_upsert" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("batch_upsert" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id, "company": "Microsoft"},)),
                  ("upsert", ({"id": item_id, "company": "Microsoft", "message": "item was upsert"},)),
@@ -226,11 +240,11 @@ class TestTransactionalBatch(unittest.TestCase):
         assert len(batch_response) == 3
         assert batch_response[1].get("resourceBody").get("message") == "item was upsert"
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_patch(self):
-        container = self.test_database.create_container(id="batch_patch" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("batch_patch" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id,
                               "company": "Microsoft",
@@ -294,11 +308,11 @@ class TestTransactionalBatch(unittest.TestCase):
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 2
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_delete(self):
-        container = self.test_database.create_container(id="batch_delete" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("batch_delete" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
         create_batch = []
         delete_batch = []
         for i in range(10):
@@ -329,11 +343,11 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_lsn(self):
-        container = self.test_database.create_container(id="batch_lsn" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+        container = self._create_container_for_test("batch_lsn" + str(uuid.uuid4()),
+                                                    partition_key=PartitionKey(path="/company"))
         # create test items
         container.upsert_item({"id": "read_item", "company": "Microsoft"})
         container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0})
@@ -354,11 +368,11 @@ class TestTransactionalBatch(unittest.TestCase):
         assert len(batch_response) == 6
         assert int(lsn) == int(batch_response.get_response_headers().get(HttpHeaders.LSN)) - 1
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
     def test_batch_subpartition(self):
-        container = self.test_database.create_container(
-            id="batch_subpartition" + str(uuid.uuid4()),
+        container = self._create_container_for_test(
+            "batch_subpartition" + str(uuid.uuid4()),
             partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"))
         item_ids = [str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())]
         container.upsert_item({'id': item_ids[0],
@@ -401,7 +415,7 @@ class TestTransactionalBatch(unittest.TestCase):
                    "definition in the collection or doesn't match partition key " \
                    "field values specified in the document." in e.message
 
-        self.test_database.delete_container(container.id)
+        self._delete_container_for_test(container.id)
 
 
 if __name__ == '__main__':

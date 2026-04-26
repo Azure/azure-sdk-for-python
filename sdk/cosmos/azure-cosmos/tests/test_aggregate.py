@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import os
@@ -28,8 +28,10 @@ class _config:
 
 
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 class TestAggregateQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
 
     @classmethod
     def setUpClass(cls):
@@ -40,7 +42,7 @@ class TestAggregateQuery(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         try:
-            cls.created_db.delete_container(cls.created_collection.id)
+            cls.key_db.delete_container(cls.created_collection.id)
         except CosmosHttpResponseError:
             pass
 
@@ -52,9 +54,10 @@ class TestAggregateQuery(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(_config.host, _config.master_key)
-        cls.created_db = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-        cls.created_collection = cls._create_collection(cls.created_db)
+        cls.key_client, cls.key_db, cls.client, cls.created_db = (
+            test_config.TestConfig.create_test_clients(test_config.TestConfig.TEST_DATABASE_ID))
+        created_collection_ref = cls._create_collection(cls.key_db)
+        cls.created_collection = cls.created_db.get_container_client(created_collection_ref.id)
 
         # test documents
         document_definitions = []

@@ -15,6 +15,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
 
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check full text search and hybrid search queries behavior."""
@@ -57,7 +58,9 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
             pass
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # AAD data-plane client (sync key-auth client in setUpClass already created DB + container + items).
+        self.client = test_config.TestConfig.create_data_client_async()
+        await self.client.__aenter__()
         self.test_db = self.client.get_database_client(self.test_db.id)
         self.test_container = self.test_db.get_container_client(self.test_container.id)
 

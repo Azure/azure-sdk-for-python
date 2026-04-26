@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import time
@@ -13,13 +13,16 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
 @pytest.mark.cosmosSplit
+@pytest.mark.cosmosAAD
 class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
     client: CosmosClient = None
+    key_client: CosmosClient = None
     created_database: DatabaseProxy = None
+    key_database: DatabaseProxy = None
 
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
 
@@ -33,16 +36,20 @@ class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.key_client, self.key_database, self.client, self.created_database = (
+            test_config.TestConfig.create_test_clients_async(self.TEST_DATABASE_ID))
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
 
     async def test_query_change_feed_with_split_async(self):
-        created_collection = await self.created_database.create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                                        PartitionKey(path="/pk"),
-                                                                        offer_throughput=400)
+        # create_container is control-plane and uses key_database (key-auth).
+        created_collection_ref = await self.key_database.create_container(
+            "change_feed_test_" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=400)
+        created_collection = self.created_database.get_container_client(created_collection_ref.id)
 
         # initial change feed query returns empty result
         query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
@@ -74,7 +81,8 @@ class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
             actual_ids.append(item['id'])
 
         assert actual_ids == expected_ids
-        await self.created_database.delete_container(created_collection.id)
+        # Cleanup: control-plane â†’ key_database (key-auth)
+        await self.key_database.delete_container(created_collection.id)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -75,13 +75,19 @@ async def setup_async():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = CosmosClient(TestPartitionKeyAsync.host, TestPartitionKeyAsync.masterKey)
-    created_db = test_client.get_database_client(TestPartitionKeyAsync.TEST_DATABASE_ID)
+    # Key-auth client is used for control-plane operations in this fixture.
+    key_client = CosmosClient(TestPartitionKeyAsync.host, TestPartitionKeyAsync.masterKey)
+    key_db = key_client.get_database_client(TestPartitionKeyAsync.TEST_DATABASE_ID)
+    # AAD (or key) client for data-plane operations
+    data_client = test_config.TestConfig.create_data_client_async()
+    data_db = data_client.get_database_client(TestPartitionKeyAsync.TEST_DATABASE_ID)
     yield {
-        DATABASE: created_db,
-        COLLECTION: created_db.get_container_client(TestPartitionKeyAsync.TEST_CONTAINER_ID)
+        "key_db": key_db,
+        DATABASE: data_db,
+        COLLECTION: data_db.get_container_client(TestPartitionKeyAsync.TEST_CONTAINER_ID)
     }
-    await test_client.close()
+    await key_client.close()
+    await data_client.close()
 
 async def _assert_no_conflicts(container: ContainerProxy, pk_value: PkField) -> None:
     conflict_definition: ItemDict = {'id': 'new conflict', 'resourceId': 'doc1', 'operationType': 'create', 'resourceType': 'document'}
@@ -139,6 +145,7 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_async")
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestPartitionKeyAsync:
     """Tests to verify if non-partitioned collections are properly accessed on migration with version 2018-12-31.
     """
@@ -155,33 +162,51 @@ class TestPartitionKeyAsync:
     @pytest.mark.parametrize("version", VERSIONS)
     async def test_multi_partition_collection_read_document_with_no_pk_async(self, setup_async, version) -> None:
         pk_val = partition_key.NonePartitionKeyValue
-        created_container = await setup_async[DATABASE].create_container_if_not_exists(id="container_with_no_pk" + str(uuid.uuid4()), partition_key=PartitionKey(path="/pk", kind='Hash'))
+        # Control-plane container creation.
+        container_id = "container_with_no_pk" + str(uuid.uuid4())
+        await setup_async["key_db"].create_container_if_not_exists(
+            id=container_id,
+            partition_key=PartitionKey(path="/pk", kind='Hash'))
+        # Data-plane proxy for data operations
+        created_container = setup_async[DATABASE].get_container_client(container_id)
         try:
            await _perform_operations_on_pk(created_container, pk_field=None, pk_value=pk_val)
         finally:
-            await setup_async[DATABASE].delete_container(created_container)
+            await setup_async["key_db"].delete_container(container_id)
 
 
     @pytest.mark.parametrize("version", VERSIONS)
     async def test_with_null_pk_async(self, setup_async, version) -> None:
         pk_field = 'pk'
         pk_values = [None, partition_key.NullPartitionKeyValue]
-        created_container = await setup_async[DATABASE].create_container_if_not_exists(id="container_with_nul_pk" + str(uuid.uuid4()), partition_key=PartitionKey(path="/pk", kind='Hash'))
+        # Control-plane container creation.
+        container_id = "container_with_nul_pk" + str(uuid.uuid4())
+        await setup_async["key_db"].create_container_if_not_exists(
+            id=container_id,
+            partition_key=PartitionKey(path="/pk", kind='Hash'))
+        # Data-plane proxy for data operations
+        created_container = setup_async[DATABASE].get_container_client(container_id)
         try:
             for pk_value in pk_values:
                 await _perform_operations_on_pk(created_container, pk_field, pk_value)
         finally:
-            await setup_async[DATABASE].delete_container(created_container)
+            await setup_async["key_db"].delete_container(container_id)
 
     async def test_hash_v2_partition_key_definition_async(self, setup_async) -> None:
         created_container_properties = await setup_async[COLLECTION].read()
         assert created_container_properties['partitionKey']['version'] == 2
 
     async def test_hash_v1_partition_key_definition_async(self, setup_async) -> None:
-        created_container = await setup_async[DATABASE].create_container(id='container_with_pkd_v2' + str(uuid.uuid4()), partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1))
+        # Control-plane container creation.
+        container_id = 'container_with_pkd_v2' + str(uuid.uuid4())
+        await setup_async["key_db"].create_container(
+            id=container_id,
+            partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1))
+        # Data-plane proxy for reading container properties
+        created_container = setup_async[DATABASE].get_container_client(container_id)
         created_container_properties = await created_container.read()
         assert created_container_properties['partitionKey']['version'] == 1
-        await setup_async[DATABASE].delete_container(created_container)
+        await setup_async["key_db"].delete_container(container_id)
 
 
 if __name__ == '__main__':

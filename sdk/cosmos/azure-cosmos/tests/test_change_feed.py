@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import unittest
@@ -26,10 +26,16 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(config.host, config.masterKey,
-                                             multiple_write_locations=use_multiple_write_locations),
+    key_client = cosmos_client.CosmosClient(config.host, config.masterKey,
+                                              multiple_write_locations=use_multiple_write_locations)
+    data_client = test_config.TestConfig.create_data_client()
+    key_db = key_client.get_database_client(config.TEST_DATABASE_ID)
     return {
-        "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID),
+        "key_db": key_db,
+        "data_db": data_client.get_database_client(config.TEST_DATABASE_ID),
+        # Alias for tests skipped under AAD (see bug-tracked 403/5302 cases) so they
+        # can keep their original key-auth code unchanged.
+        "created_db": key_db,
         "is_emulator": config.is_emulator
     }
 
@@ -39,21 +45,25 @@ def round_time():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     def test_get_feed_ranges(self, setup):
-        created_collection = setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"))
+        created_collection_ref = setup["key_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
+                                                                     PartitionKey(path="/pk"))
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
         result = list(created_collection.read_feed_ranges())
         assert len(result) == 1
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
     def test_query_change_feed_with_different_filter(self, change_feed_filter_param, setup):
-        created_collection = setup["created_db"].create_container(f"change_feed_test_{change_feed_filter_param}_{str(uuid.uuid4())}",
-                                                              PartitionKey(path="/pk"))
+        created_collection_ref = setup["key_db"].create_container(
+            f"change_feed_test_{change_feed_filter_param}_{str(uuid.uuid4())}",
+            PartitionKey(path="/pk"))
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
         iter_list = list(query_iterable)
@@ -173,11 +183,13 @@ class TestChangeFeed:
         )
         iter_list = list(query_iterable)
         assert len(iter_list) == 0
-        setup["created_db"].delete_container(created_collection.id)
+        setup["key_db"].delete_container(created_collection.id)
 
     def test_query_change_feed_with_start_time(self, setup):
-        created_collection = setup["created_db"].create_container_if_not_exists("query_change_feed_start_time_test",
-                                                                            PartitionKey(path="/pk"))
+        created_collection_ref = setup["key_db"].create_container_if_not_exists(
+            "query_change_feed_start_time_test",
+            PartitionKey(path="/pk"))
+        created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
         batchSize = 50
 
         def create_random_items(container, batch_size):
@@ -230,8 +242,13 @@ class TestChangeFeed:
         # Should equal batch size
         assert totalCount == batchSize
 
-        setup["created_db"].delete_container(created_collection.id)
+        setup["key_db"].delete_container(created_collection.id)
 
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302) â€” migrate after service-side fix",
+    )
     def test_query_change_feed_with_multi_partition(self, setup):
         created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"),

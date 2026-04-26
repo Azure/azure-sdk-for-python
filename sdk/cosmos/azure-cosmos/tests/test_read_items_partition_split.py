@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import time
 import unittest
@@ -10,11 +10,13 @@ import azure.cosmos.cosmos_client as cosmos_client
 
 
 @pytest.mark.cosmosSplit
+@pytest.mark.cosmosAAD
 class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
     """Tests the behavior of read_items in scenarios involving partition splits (sync)."""
 
     created_db: DatabaseProxy = None
-    client: cosmos_client.CosmosClient = None
+    client: cosmos_client.CosmosClient = None  # AAD â€” data-plane (create_item / read_items)
+    key_client: cosmos_client.CosmosClient = None  # key-auth â€” control-plane (create/delete container, trigger_split)
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     configs = test_config.TestConfig
@@ -22,14 +24,20 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        # Control-plane: key-auth (container lifecycle + replace_throughput inside trigger_split)
+        cls.key_client, cls.key_database, cls.client, cls.database = (
+            test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
 
     def test_read_items_with_partition_split(self):
         """Tests that read_items works correctly after a partition split."""
-        container = self.database.create_container("read_items_split_test_" + str(uuid.uuid4()),
-                                                   PartitionKey(path="/pk"),
-                                                   offer_throughput=400)
+        container_id = "read_items_split_test_" + str(uuid.uuid4())
+        # Control-plane: create via key-auth setup database
+        key_container = self.key_database.create_container(
+            container_id,
+            PartitionKey(path="/pk"),
+            offer_throughput=400)
+        # Data-plane: re-bind the container to the AAD client for create_item / read_items
+        container = self.database.get_container_client(container_id)
         # 1. Create 5 items to read
         items_to_read = []
         item_ids = []
@@ -46,8 +54,8 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
         self.assertEqual(len(initial_read_items), len(items_to_read))
         print("Initial call successful.")
 
-        # 3. Trigger a partition split
-        test_config.TestConfig.trigger_split(container, 11000)
+        # 3. Trigger a partition split (control-plane: replace_throughput / get_throughput)
+        test_config.TestConfig.trigger_split(key_container, 11000)
 
         # 4. Call read_items again after the split
         print("Performing post-split read_items call...")
@@ -58,7 +66,8 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
         final_read_ids = {item['id'] for item in final_read_items}
         self.assertSetEqual(final_read_ids, set(item_ids))
         print("Post-split call successful.")
-        self.database.delete_container(container.id)
+        # Control-plane: delete via key-auth setup database
+        self.key_database.delete_container(container_id)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,8 +1,5 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import time
-from unittest import mock
-
 import pytest
 import pytest_asyncio
 import test_config
@@ -24,6 +21,10 @@ TEST_CONTAINERS_IDS = [SINGLE_PARTITION_CONTAINER_ID, MULTI_PARTITION_CONTAINER_
 TEST_OFFER_THROUGHPUTS = [CONFIG.THROUGHPUT_FOR_1_PARTITION, CONFIG.THROUGHPUT_FOR_5_PARTITIONS]
 PARTITION_KEY = CONFIG.TEST_CONTAINER_PARTITION_KEY
 PK_VALUES = ('pk1', 'pk2', 'pk3')
+
+# Module-level reference set by the function-scoped fixture.
+_data_db = None
+
 async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_value_set: Set[str]) -> None:
     if len(items) == 0:
         return
@@ -31,31 +32,42 @@ async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_valu
     pk_values = [item[PARTITION_KEY] for item in items if PARTITION_KEY in item]
     pk_value_set.update(pk_values)
 
-@pytest_asyncio.fixture(scope="class", autouse=True)
+@pytest_asyncio.fixture(scope="function", autouse=True)
 async def setup_and_teardown_async():
+    global _data_db
     print("Setup: This runs before any tests")
     document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4()), 'value': 100} for pk in PK_VALUES]
-    database = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID)
+
+    # Key-auth client for control-plane (container creation)
+    key_client = CosmosClient(HOST, KEY)
+    key_db = key_client.get_database_client(DATABASE_ID)
+
+    # AAD data client for data-plane operations
+    data_client = test_config.TestConfig.create_data_client_async()
+    _data_db = data_client.get_database_client(DATABASE_ID)
 
     for container_id, offer_throughput in zip(TEST_CONTAINERS_IDS, TEST_OFFER_THROUGHPUTS):
-        container = await database.create_container_if_not_exists(
+        await key_db.create_container_if_not_exists(
             id=container_id,
             partition_key=PartitionKey(path='/' + PARTITION_KEY, kind='Hash'),
             offer_throughput=offer_throughput)
+        container = _data_db.get_container_client(container_id)
         for document_definition in document_definitions:
             await container.upsert_item(body=document_definition)
 
     yield
     # Code to run after tests
     print("Teardown: This runs after all tests")
+    _data_db = None
+    await data_client.close()
+    await key_client.close()
 
 
 async def get_container(container_id: str):
-    client = CosmosClient(HOST, KEY)
-    db = client.get_database_client(DATABASE_ID)
-    return db.get_container_client(container_id)
+    return _data_db.get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestQueryFeedRangeAsync:
@@ -165,6 +177,7 @@ class TestQueryFeedRangeAsync:
         assert expected_pk_values == actual_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    @pytest.mark.cosmosSplit
     async def test_query_with_feed_range_async_during_partition_split_combined_async(self, container_id):
         container = await get_container(container_id)
 
@@ -212,11 +225,8 @@ class TestQueryFeedRangeAsync:
 
         print(f"Found {len(expected_pk_values)} unique partition keys before split")
 
-        # Trigger split
-        # await test_config.TestConfig.trigger_split_async(container, target_throughput)
-        container.replace_throughput(target_throughput)
-        # wait for the split to begin
-        time.sleep(20)
+        # Trigger and wait for split progression using shared helper.
+        await test_config.TestConfig.trigger_split_async(container, target_throughput)
 
         # Test 1: Basic query with stale feed ranges (SDK should handle split)
         actual_pk_values = set()

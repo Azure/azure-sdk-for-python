@@ -13,6 +13,7 @@ from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos import _base
 
 
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosEmulator
 class TestRoutingMapEndToEnd(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.
@@ -37,7 +38,7 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_COLLECTION_ID)
         cls.collection_link = cls.created_container.container_link

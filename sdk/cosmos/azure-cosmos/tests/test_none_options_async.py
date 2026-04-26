@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import unittest
 import uuid
@@ -11,6 +11,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host
@@ -18,13 +19,22 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     connectionPolicy = configs.connectionPolicy
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # Key-auth client for control-plane operations (get_throughput, list_conflicts, query_conflicts)
+        self.key_client = CosmosClient(self.host, self.masterKey)
+        await self.key_client.__aenter__()
+        key_database = self.key_client.get_database_client(self.configs.TEST_DATABASE_ID)
+        # get_throughput, list_conflicts, query_conflicts are routed here for control-plane validation.
+        self.key_container = key_database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        # AAD data client for data-plane operations
+        self.client = self.configs.create_data_client_async()
         await self.client.__aenter__()
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.container = self.database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
 
     async def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
@@ -120,16 +130,19 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
                                            throughput_bucket=None)
 
     async def test_get_throughput_none_options_async(self):
-        tp = await self.container.get_throughput(response_hook=None)
+        # get_throughput is a control-plane operation routed through key-auth key_container.
+        tp = await self.key_container.get_throughput(response_hook=None)
         assert tp.offer_throughput > 0
 
     async def test_list_conflicts_none_options_async(self):
-        pager = self.container.list_conflicts(max_item_count=None, response_hook=None)
+        # list_conflicts is routed through key-auth key_container.
+        pager = self.key_container.list_conflicts(max_item_count=None, response_hook=None)
         conflicts = [c async for c in pager]
         assert conflicts == conflicts  # simple sanity (may be empty)
 
     async def test_query_conflicts_none_options_async(self):
-        pager = self.container.query_conflicts("SELECT * FROM c", parameters=None, partition_key=None,
+        # query_conflicts is routed through key-auth key_container.
+        pager = self.key_container.query_conflicts("SELECT * FROM c", parameters=None, partition_key=None,
                                                max_item_count=None, response_hook=None)
         conflicts = [c async for c in pager]
         assert conflicts == conflicts

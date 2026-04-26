@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -16,6 +16,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 class TestCrossPartitionTopOrderBy(unittest.TestCase):
     """Orderby Tests.
     """
@@ -23,6 +24,8 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
     document_definitions = None
     created_container: ContainerProxy = None
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
+    key_db: DatabaseProxy = None
     created_db: DatabaseProxy = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -39,9 +42,9 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.created_container = cls.created_db.create_container(
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.key_db = cls.key_client.get_database_client(cls.TEST_DATABASE_ID)
+        created_container_ref = cls.key_db.create_container(
             id='orderby_tests collection ' + str(uuid.uuid4()),
             indexing_policy={
                 'includedPaths': [
@@ -63,6 +66,10 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
             partition_key=PartitionKey(path='/id'),
             offer_throughput=30000)
 
+        cls.client = test_config.TestConfig.create_data_client()
+        cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.created_container = cls.created_db.get_container_client(created_container_ref.id)
+
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_container)
 
         # create a document using the document definition
@@ -83,7 +90,7 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.created_db.delete_container(cls.created_container.id)
+            cls.key_db.delete_container(cls.created_container.id)
         except CosmosHttpResponseError:
             pass
 

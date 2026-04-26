@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -20,6 +20,7 @@ from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPo
 from azure.cosmos.aio._gone_retry_policy_async import PartitionKeyRangeGoneRetryPolicyAsync
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     """Test cases for the read_items API."""
 
@@ -40,24 +41,29 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
-        self.container = await self.database.create_container(
+        # key-auth client for container lifecycle (control-plane)
+        self.key_client, self.key_database, self.client, self.database = (
+            test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
+        # container creation is control-plane
+        container_ref = await self.key_database.create_container(
             id='read_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id")
         )
+        self.container = self.database.get_container_client(container_ref.id)
+        self._container_id = container_ref.id
 
     async def asyncTearDown(self):
         """Clean up async resources after each test."""
-        if self.container:
+        if self._container_id:
             try:
-                await self.database.delete_container(self.container)
+                await self.key_database.delete_container(self._container_id)  # control-plane
             except CosmosHttpResponseError as e:
-                # Container may have been deleted by the test itself
                 if e.status_code != 404:
                     raise
         if self.client:
             await self.client.close()
+        if self.key_client:
+            await self.key_client.close()
 
     @staticmethod
     async def _create_records_for_read_items(container, count, id_prefix="item"):
@@ -138,10 +144,12 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_items_different_partition_key_async(self):
         """Tests read_items with partition key different from id."""
-        container_pk = await self.database.create_container(
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
             id='read_pk_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk")
         )
+        container_pk = self.database.get_container_client(container_ref.id)
         try:
             items_to_read = []
             item_ids = []
@@ -158,14 +166,16 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            await self.database.delete_container(container_pk)
+            await self.key_database.delete_container(container_ref.id)  # control-plane
 
     async def test_read_items_fails_with_incomplete_hierarchical_pk_async(self):
         """Tests that read_items raises ValueError for an incomplete hierarchical partition key."""
-        container_hpk = await self.database.create_container(
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
             id='read_hpk_incomplete_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
         )
+        container_hpk = self.database.get_container_client(container_ref.id)
         try:
             items_to_read = []
             # Create a valid item
@@ -186,14 +196,16 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             self.assertIn("Number of components in partition key value (1) does not match definition (2)",
                           str(context.exception))
         finally:
-            await self.database.delete_container(container_hpk)
+            await self.key_database.delete_container(container_ref.id)  # control-plane
 
     async def test_read_items_hierarchical_partition_key_async(self):
         """Tests read_items with hierarchical partition key."""
-        container_hpk = await self.database.create_container(
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
             id='read_hpk_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
         )
+        container_hpk = self.database.get_container_client(container_ref.id)
         try:
             items_to_read = []
             item_ids = []
@@ -211,14 +223,16 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            await self.database.delete_container(container_hpk)
+            await self.key_database.delete_container(container_ref.id)  # control-plane
 
     async def test_read_items_preserves_input_order_async(self):
         """Tests that read_items preserves the original order of input items."""
-        container_pk = await self.database.create_container(
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
             id='read_order_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk")
         )
+        container_pk = self.database.get_container_client(container_ref.id)
 
         try:
             # Create items with varied partition keys to ensure cross-partition queries
@@ -269,14 +283,16 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
 
         finally:
             # Clean up
-            await self.database.delete_container(container_pk)
+            await self.key_database.delete_container(container_ref.id)  # control-plane
 
     async def test_read_items_order_using_zip_comparison_async(self):
         """Tests that read_items_async preserves the original order using zip and boolean comparison."""
-        container_pk = await self.database.create_container(
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
             id='read_order_zip_async_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk")
         )
+        container_pk = self.database.get_container_client(container_ref.id)
 
         try:
             # Create items with varied partition keys
@@ -306,7 +322,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
                             "Order was not preserved in async version. Input order doesn't match output order.")
 
         finally:
-            await self.database.delete_container(container_pk)
+            await self.key_database.delete_container(container_ref.id)  # control-plane
 
     async def test_read_failure_preserves_headers_async(self):
         """Tests that if a query fails, the exception contains the headers from the failed request."""
@@ -470,34 +486,36 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_read_after_container_recreation_async(self):
         """Tests read_items after a container is deleted and recreated with a different configuration."""
-        container_id = self.container.id
+        container_id = self._container_id
         initial_items_to_read, initial_item_ids = await self._create_records_for_read_items(self.container, 3,
                                                                                              "initial")
 
         read_items_before = await self.container.read_items(items=initial_items_to_read)
         self.assertEqual(len(read_items_before), len(initial_item_ids))
 
-        await self.database.delete_container(self.container)
+        await self.key_database.delete_container(container_id)  # control-plane
 
         # Recreate the container with a different partition key and throughput
-        self.container = await self.database.create_container(
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=10100
         )
+        self.container = self.database.get_container_client(container_ref.id)
+        # Force the AAD client to re-read container properties so it caches the
+        # new partition key path (/pk instead of /id) and the new RID.
+        await self.container.read()
 
         # Create new items with the new partition key structure
         new_items_to_read = []
         new_item_ids = []
-        creation_tasks = []
         for i in range(5):
             doc_id = f"new_item_{i}_{uuid.uuid4()}"
             pk_value = f"new_pk_{i}"
             new_item_ids.append(doc_id)
+            await self.container.create_item({'id': doc_id, 'pk': pk_value, 'data': i})
             new_items_to_read.append((doc_id, pk_value))
-            task = self.container.create_item({'id': doc_id, 'pk': pk_value, 'data': i})
-            creation_tasks.append(task)
-        await asyncio.gather(*creation_tasks)
 
         read_items_after = await self.container.read_items(items=new_items_to_read)
         self.assertEqual(len(read_items_after), len(new_item_ids))
@@ -538,11 +556,13 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_read_items_multiple_physical_partitions_and_hook_async(self):
         """Tests async read_items on a container with multiple physical partitions and verifies response_hook."""
         # Create a container with high throughput to force multiple physical partitions
-        multi_partition_container = await self.database.create_container(
+        # control-plane container creation
+        container_ref = await self.key_database.create_container(
             id='multi_partition_container_async_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=11000
         )
+        multi_partition_container = self.database.get_container_client(container_ref.id)
         try:
             # 1. Verify that we have more than one physical partition
             # We must consume the async iterator to get the list of partition key ranges.
@@ -621,7 +641,7 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             self.assertIs(read_items_result, hook_results)
 
         finally:
-            await self.database.delete_container(multi_partition_container)
+            await self.key_database.delete_container(container_ref.id)  # control-plane
 
 if __name__ == '__main__':
     unittest.main()

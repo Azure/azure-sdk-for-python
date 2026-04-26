@@ -18,6 +18,7 @@ def check_quota_info_request_headers(raw_response):
     assert raw_response.http_request.headers[http_constants.HttpHeaders.PopulateQuotaInfo] == 'True'
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestBackwardsCompatibility(unittest.TestCase):
     configs = test_config.TestConfig
     databaseForTest: DatabaseProxy = None
@@ -35,9 +36,13 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        # Key-auth client is used for control-plane operations in this test.
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.containerForTest = cls.databaseForTest.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+        # AAD (or key) client for data-plane operations
+        cls.data_client = test_config.TestConfig.create_data_client()
+        cls.data_database = cls.data_client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_offer_methods(self):
         database_offer = self.databaseForTest.get_throughput()
@@ -138,15 +143,16 @@ class TestBackwardsCompatibility(unittest.TestCase):
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
-        # Item
-        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        # Item — data-plane operations use AAD client
+        data_container = self.data_database.get_container_client(container.id)
+        item = data_container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert item is not None
-        item2 = container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
+        item2 = data_container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
                                      match_condition=MatchConditions.IfNotModified)
         assert item2 is not None
-        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
+        item = data_container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
         assert item is not None
-        item2 = container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
+        item2 = data_container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
         assert item2 is not None
         batch_operations = [
             ("create", ({"id": str(uuid.uuid4()), "pk": 0},)),
@@ -154,7 +160,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
             ("read", (item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 0},)),
         ]
-        batch_results = container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        batch_results = data_container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert len(batch_results) == 4
         for result in batch_results:
             assert result['statusCode'] in (200, 201)

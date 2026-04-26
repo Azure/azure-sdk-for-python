@@ -21,6 +21,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
     client: CosmosClient = None
+    data_client: CosmosClient = None
     sync_client: CosmosSyncClient = None
 
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
@@ -70,11 +71,24 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         cls.cosmos_sync_client.delete_database(cls.test_db.id)
 
     async def asyncSetUp(self):
+        # Control-plane (key-auth): used for all create_container / replace_container /
+        # delete_container / read calls in this file. AAD data-plane tokens cannot
+        # authorize control-plane operations.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_db = self.client.get_database_client(self.test_db.id)
+        # Data-plane (AAD): added for parity with the dual-client convention. Not
+        # exercised here because every runnable test in this file is control-plane.
+        # When the @pytest.mark.skip'd multi-language tests are unblocked, route their
+        # create_item / query_items calls through self.data_client.get_database_client(...).
+        self.data_client = test_config.TestConfig.create_data_client_async()
 
-    async def tearDown(self):
+    async def asyncTearDown(self):
+        # Renamed from tearDown — IsolatedAsyncioTestCase invokes asyncTearDown,
+        # so the original `async def tearDown` was never awaited (pre-existing bug
+        # surfaced as RuntimeWarning during Batch 16 validation). Both clients now
+        # close cleanly.
         await self.client.close()
+        await self.data_client.close()
 
     async def test_create_full_text_container_async(self):
         # Create a container with a valid full text policy and full text indexing policy
@@ -199,7 +213,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
         assert created_container_properties["indexingPolicy"] != properties["indexingPolicy"]
-        self.test_db.delete_container(created_container.id)
+        await self.test_db.delete_container(created_container.id)
 
     async def test_fail_create_full_text_policy_async(self):
         # Pass a full text policy with a wrongly formatted path

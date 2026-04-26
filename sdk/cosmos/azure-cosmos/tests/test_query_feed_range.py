@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import time
 
@@ -33,29 +33,39 @@ def add_all_pk_values_to_set(items: List[Mapping[str, str]], pk_value_set: Set[s
 def setup_and_teardown():
     print("Setup: This runs before any tests")
     document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4()), 'value': 100} for pk in PK_VALUES]
-    database = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID)
+    key_db = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID)
+    data_db = test_config.TestConfig.create_data_client().get_database_client(DATABASE_ID)
 
     for container_id, offer_throughput in zip(TEST_CONTAINERS_IDS, TEST_OFFER_THROUGHPUTS):
-        container = database.create_container_if_not_exists(
+        key_db.create_container_if_not_exists(
             id=container_id,
             partition_key=PartitionKey(path='/' + PARTITION_KEY, kind='Hash'),
             offer_throughput=offer_throughput)
+        container = data_db.get_container_client(container_id)
         for document_definition in document_definitions:
             container.upsert_item(body=document_definition)
-    yield
+    yield {
+        "key_db": key_db,
+        "data_db": data_db,
+    }
     # Code to run after tests
     print("Teardown: This runs after all tests")
 
-def get_container(container_id: str):
-    client = CosmosClient(HOST, KEY)
-    db = client.get_database_client(DATABASE_ID)
-    return db.get_container_client(container_id)
+
+@pytest.fixture(scope="class")
+def setup(setup_and_teardown):
+    """Backward-compatible alias expected by existing test signatures."""
+    return setup_and_teardown
+
+def get_container(setup, container_id: str):
+    return setup["data_db"].get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 class TestQueryFeedRange:
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_feed_range_for_all_partitions(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_feed_range_for_all_partitions(self, setup, container_id):
+        container = get_container(setup, container_id)
         query = 'SELECT * from c'
 
         expected_pk_values = set(PK_VALUES)
@@ -70,8 +80,8 @@ class TestQueryFeedRange:
         assert actual_pk_values == expected_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_feed_range_for_partition_key(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_feed_range_for_partition_key(self, setup, container_id):
+        container = get_container(setup, container_id)
         query = 'SELECT * from c'
 
         for pk_value in PK_VALUES:
@@ -87,8 +97,8 @@ class TestQueryFeedRange:
             assert actual_pk_values == expected_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_both_feed_range_and_partition_key(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_both_feed_range_and_partition_key(self, setup, container_id):
+        container = get_container(setup, container_id)
 
         expected_error_message = "'feed_range' and 'partition_key' are exclusive parameters, please only set one of them."
         query = 'SELECT * from c'
@@ -103,8 +113,8 @@ class TestQueryFeedRange:
         assert str(e.value) == expected_error_message
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_feed_range_for_a_full_range(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_feed_range_for_a_full_range(self, setup, container_id):
+        container = get_container(setup, container_id)
         query = 'SELECT * from c'
 
         expected_pk_values = set(PK_VALUES)
@@ -124,8 +134,9 @@ class TestQueryFeedRange:
         assert expected_pk_values.issubset(actual_pk_values)
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_feed_range_during_partition_split_combined(self, container_id):
-        container = get_container(container_id)
+    @pytest.mark.cosmosSplit
+    def test_query_with_feed_range_during_partition_split_combined(self, setup, container_id):
+        container = get_container(setup, container_id)
 
         # Differentiate behavior based on container type
         if container_id == SINGLE_PARTITION_CONTAINER_ID:
@@ -228,8 +239,8 @@ class TestQueryFeedRange:
 
     @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_feed_range_during_partition_split(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_feed_range_during_partition_split(self, setup, container_id):
+        container = get_container(setup, container_id)
         query = 'SELECT * from c'
 
         expected_pk_values = set(PK_VALUES)
@@ -247,8 +258,8 @@ class TestQueryFeedRange:
 
     @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_order_by_and_feed_range_during_partition_split(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_order_by_and_feed_range_during_partition_split(self, setup, container_id):
+        container = get_container(setup, container_id)
         query = 'SELECT * FROM c ORDER BY c.id'
 
         expected_pk_values = set(PK_VALUES)
@@ -268,8 +279,8 @@ class TestQueryFeedRange:
 
     @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_count_aggregate_and_feed_range_during_partition_split(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_count_aggregate_and_feed_range_during_partition_split(self, setup, container_id):
+        container = get_container(setup, container_id)
         # Get initial counts per feed range before split
         feed_ranges = list(container.read_feed_ranges())
         initial_total_count = 0
@@ -297,8 +308,8 @@ class TestQueryFeedRange:
 
     @pytest.mark.skip(reason="Covered by test_query_with_feed_range_during_partition_split_combined")
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    def test_query_with_sum_aggregate_and_feed_range_during_partition_split(self, container_id):
-        container = get_container(container_id)
+    def test_query_with_sum_aggregate_and_feed_range_during_partition_split(self, setup, container_id):
+        container = get_container(setup, container_id)
         # Get initial sums per feed range before split
         feed_ranges = list(container.read_feed_ranges())
         initial_total_sum = 0
@@ -327,8 +338,8 @@ class TestQueryFeedRange:
         assert initial_total_sum == post_split_total_sum
         assert post_split_total_sum == expected_total_sum
 
-    def test_query_with_static_continuation(self):
-        container = get_container(SINGLE_PARTITION_CONTAINER_ID)
+    def test_query_with_static_continuation(self, setup):
+        container = get_container(setup, SINGLE_PARTITION_CONTAINER_ID)
         query = 'SELECT * from c'
 
         # verify continuation token does not have any impact
@@ -345,8 +356,8 @@ class TestQueryFeedRange:
                 items = list(page)
                 assert len(items) > 0
 
-    def test_query_with_continuation(self):
-        container = get_container(SINGLE_PARTITION_CONTAINER_ID)
+    def test_query_with_continuation(self, setup):
+        container = get_container(setup, SINGLE_PARTITION_CONTAINER_ID)
         query = 'SELECT * from c'
 
         # go through all feed ranges using pagination

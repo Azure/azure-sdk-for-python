@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -12,8 +12,10 @@ from azure.cosmos import CosmosClient, cosmos_client
 from azure.cosmos import ThroughputProperties, PartitionKey
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestAutoScale(unittest.TestCase):
     client: CosmosClient = None
+    key_client: CosmosClient = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
@@ -27,8 +29,9 @@ class TestAutoScale(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = test_config.TestConfig.create_data_client()
+        cls.created_database = cls.key_client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):
         container_id = None
@@ -75,7 +78,7 @@ class TestAutoScale(unittest.TestCase):
         database_id = "db_auto_scale_" + str(uuid.uuid4())
         try:
             # Testing auto_scale_settings for the create_database method
-            created_database = self.client.create_database(database_id, offer_throughput=ThroughputProperties(
+            created_database = self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(
                 auto_scale_max_throughput=5000,
                 auto_scale_increment_percent=2))
             created_db_properties = created_database.get_throughput()
@@ -84,11 +87,11 @@ class TestAutoScale(unittest.TestCase):
             # Testing the input value of the increment_percentage
             assert created_db_properties.auto_scale_increment_percent == 2
 
-            self.client.delete_database(created_database.id)
+            self.key_client.delete_database(created_database.id)
 
             # Testing auto_scale_settings for the create_database_if_not_exists method
             database_id = "db_auto_scale_2_" + str(uuid.uuid4())
-            created_database = self.client.create_database_if_not_exists(database_id,
+            created_database = self.key_client.create_database_if_not_exists(database_id,
                                                                          offer_throughput=ThroughputProperties(
                                                                              auto_scale_max_throughput=9000,
                                                                              auto_scale_increment_percent=11))
@@ -98,13 +101,13 @@ class TestAutoScale(unittest.TestCase):
             # Testing the input value of the increment_percentage
             assert created_db_properties.auto_scale_increment_percent == 11
         finally:
-            self.client.delete_database(database_id)
+            self.key_client.delete_database(database_id)
 
     def test_autoscale_replace_throughput(self):
         database_id = "replace_db" + str(uuid.uuid4())
         container_id = None
         try:
-            created_database = self.client.create_database(database_id, offer_throughput=ThroughputProperties(
+            created_database = self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(
                 auto_scale_max_throughput=5000,
                 auto_scale_increment_percent=2))
             created_database.replace_throughput(
@@ -114,7 +117,7 @@ class TestAutoScale(unittest.TestCase):
             assert created_db_properties.auto_scale_max_throughput == 7000
             # Testing the input value of the increment_percentage
             assert created_db_properties.auto_scale_increment_percent == 20
-            self.client.delete_database(database_id)
+            self.key_client.delete_database(database_id)
 
             container_id = "container_with_auto_scale_settings" + str(uuid.uuid4())
             created_container = self.created_database.create_container(

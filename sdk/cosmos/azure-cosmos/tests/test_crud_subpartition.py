@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -42,6 +42,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestSubpartitionCrud(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -51,6 +52,7 @@ class TestSubpartitionCrud(unittest.TestCase):
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -73,11 +75,23 @@ class TestSubpartitionCrud(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        # Key-auth client for control-plane operations (create/delete containers)
+        cls.key_client, cls.key_databaseForTest, cls.client, cls.databaseForTest = (
+            test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID))
+
+    def _create_container_for_test(self, container_id, partition_key, **kwargs):
+        """Create container via key-auth setup client (control-plane), return data-plane proxy."""
+        self.key_databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        return self.databaseForTest.get_container_client(container_id)
+
+    def _delete_container_for_test(self, container_id_or_container):
+        """Delete container via key-auth setup client (control-plane)."""
+        cid = container_id_or_container if isinstance(container_id_or_container, str) else container_id_or_container.id
+        self.key_databaseForTest.delete_container(cid)
 
     def test_collection_crud_subpartition(self):
-        created_db = self.databaseForTest
+        # Container CRUD is all control-plane â€” route through setup
+        created_db = self.key_databaseForTest
         collections = list(created_db.list_containers())
         # create a collection
         before_create_collections_count = len(collections)
@@ -126,7 +140,8 @@ class TestSubpartitionCrud(unittest.TestCase):
         created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection_subpartition(self):
-        created_db = self.databaseForTest
+        # Container creation/throughput operations are control-plane
+        created_db = self.key_databaseForTest
 
         collection_definition = {'id': 'test_partitioned_collection_MH ' + str(uuid.uuid4()),
                                  'partitionKey':
@@ -195,8 +210,8 @@ class TestSubpartitionCrud(unittest.TestCase):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_MH ' + str(uuid.uuid4())
-        created_collection = created_db.create_container(
-            id=collection_id,
+        created_collection = self._create_container_for_test(
+            container_id=collection_id,
             partition_key=PartitionKey(path=['/address/state', '/address/city'], kind=documents.PartitionKind.MultiHash)
         )
 
@@ -220,8 +235,8 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_MH_2 ' + str(uuid.uuid4())
-        created_collection2 = created_db.create_container(
-            id=collection_id,
+        created_collection2 = self._create_container_for_test(
+            container_id=collection_id,
             partition_key=PartitionKey(path=['/address/state/city', '/address/city/state'],
                                        kind=documents.PartitionKind.MultiHash)
         )
@@ -239,16 +254,16 @@ class TestSubpartitionCrud(unittest.TestCase):
             self.assertEqual(error.sub_status, SubStatusCodes.PARTITION_KEY_MISMATCH)
             del self.last_headers[:]
 
-        created_db.delete_container(created_collection.id)
-        created_db.delete_container(created_collection2.id)
+        self._delete_container_for_test(created_collection.id)
+        self._delete_container_for_test(created_collection2.id)
 
     def test_partitioned_collection_partition_key_extraction_special_chars_subpartition(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars_MH_1 ' + str(uuid.uuid4())
 
-        created_collection1 = created_db.create_container(
-            id=collection_id,
+        created_collection1 = self._create_container_for_test(
+            container_id=collection_id,
             partition_key=PartitionKey(path=['/\"first level\' 1*()\"/\"le/vel2\"',
                                              '/\"second level\' 1*()\"/\"le/vel2\"'],
                                        kind=documents.PartitionKind.MultiHash)
@@ -274,8 +289,8 @@ class TestSubpartitionCrud(unittest.TestCase):
                 }
         }
 
-        created_collection2 = created_db.create_container(
-            id=collection_definition2['id'],
+        created_collection2 = self._create_container_for_test(
+            container_id=collection_definition2['id'],
             partition_key=PartitionKey(path=collection_definition2["partitionKey"]["paths"]
                                        , kind=collection_definition2["partitionKey"]["kind"])
         )
@@ -293,15 +308,15 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.assertEqual(self.last_headers[-1], '["val3","val4"]')
         del self.last_headers[:]
 
-        created_db.delete_container(created_collection1.id)
-        created_db.delete_container(created_collection2.id)
+        self._delete_container_for_test(created_collection1.id)
+        self._delete_container_for_test(created_collection2.id)
 
     def test_partitioned_collection_document_crud_and_query_subpartition(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4())
-        created_collection = created_db.create_container(
-            id=collection_id,
+        created_collection = self._create_container_for_test(
+            container_id=collection_id,
             partition_key=PartitionKey(path=['/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
         )
 
@@ -429,14 +444,14 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.assertEqual(doc_mixed_types.get('city'), created_mixed_type_doc.get('city'))
         self.assertEqual(doc_mixed_types.get('zipcode'), created_mixed_type_doc.get('zipcode'))
 
-        created_db.delete_container(collection_id)
+        self._delete_container_for_test(collection_id)
 
     def test_partitioned_collection_prefix_partition_query_subpartition(self):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_partition_key_prefix_query_MH ' + str(uuid.uuid4())
-        created_collection = created_db.create_container(
-            id=collection_id,
+        created_collection = self._create_container_for_test(
+            container_id=collection_id,
             partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
         )
 
@@ -654,8 +669,8 @@ class TestSubpartitionCrud(unittest.TestCase):
         created_db = self.databaseForTest
 
         collection_id = 'test_partitioned_collection_query_with_tuples_MH ' + str(uuid.uuid4())
-        created_collection = created_db.create_container(
-            id=collection_id,
+        created_collection = self._create_container_for_test(
+            container_id=collection_id,
             partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
         )
 
@@ -672,7 +687,7 @@ class TestSubpartitionCrud(unittest.TestCase):
             created_collection.query_items(query='Select * from c', partition_key=('CA', 'Oxnard', '93033')))
         self.assertEqual(1, len(document_list))
 
-        created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(created_collection.id)
 
     # Commenting out delete items by pk until test pipelines support it
     # def test_delete_all_items_by_partition_key_subpartition(self):

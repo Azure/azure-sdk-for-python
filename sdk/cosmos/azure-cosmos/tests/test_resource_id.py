@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -12,6 +12,7 @@ from azure.cosmos import PartitionKey, cosmos_client, exceptions, http_constants
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestResourceIds(unittest.TestCase):
     client: azure.cosmos.CosmosClient = None
     configs = test_config.TestConfig
@@ -28,29 +29,33 @@ class TestResourceIds(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = test_config.TestConfig.create_data_client()
 
     def test_id_unicode_validation(self):
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' + str(uuid.uuid4())  # cspell:disable-line
+        resource_id1 = u'à¤¹à¤¿à¤¨à¥à¤¦à¥€ à¤­à¤¾à¤°à¤¤ à¤•à¥€ à¤°à¤¾à¤·à¥à¤Ÿà¥à¤°à¥€à¤¯ à¤­à¤¾à¤·à¤¾ à¤¹à¥ˆ' + str(uuid.uuid4())  # cspell:disable-line
 
         # Special allowed chars for Id
         resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>" + str(uuid.uuid4())
 
         # verify that databases are created with specified IDs
-        created_db1 = self.client.create_database_if_not_exists(resource_id1)
-        created_db2 = self.client.create_database_if_not_exists(resource_id2)
+        created_db1 = self.key_client.create_database_if_not_exists(resource_id1)
+        created_db2 = self.key_client.create_database_if_not_exists(resource_id2)
 
         assert resource_id1 == created_db1.id
         assert resource_id2 == created_db2.id
 
         # verify that collections are created with specified IDs
-        created_collection1 = created_db1.create_container(
+        created_collection1_ref = created_db1.create_container(
             id=resource_id1,
             partition_key=PartitionKey(path='/id', kind='Hash'))
-        created_collection2 = created_db2.create_container(
+        created_collection2_ref = created_db2.create_container(
             id=resource_id2,
             partition_key=PartitionKey(path='/id', kind='Hash'))
+
+        created_collection1 = self.client.get_database_client(resource_id1).get_container_client(created_collection1_ref.id)
+        created_collection2 = self.client.get_database_client(resource_id2).get_container_client(created_collection2_ref.id)
 
         assert resource_id1 == created_collection1.id
         assert resource_id2 == created_collection2.id
@@ -62,16 +67,17 @@ class TestResourceIds(unittest.TestCase):
         assert resource_id1 == item1.get("id")
         assert resource_id2 == item2.get("id")
 
-        self.client.delete_database(resource_id1)
-        self.client.delete_database(resource_id2)
+        self.key_client.delete_database(resource_id1)
+        self.key_client.delete_database(resource_id2)
 
     def test_create_illegal_characters(self):
         database_id = str(uuid.uuid4())
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
 
-        created_database = self.client.create_database(id=database_id)
-        created_container = created_database.create_container(id=container_id, partition_key=partition_key)
+        created_database = self.key_client.create_database(id=database_id)
+        created_container_ref = created_database.create_container(id=container_id, partition_key=partition_key)
+        created_container = self.client.get_database_client(database_id).get_container_client(created_container_ref.id)
 
         # Define errors returned by checks
         error_strings = ['Id contains illegal chars.', 'Id ends with a space or newline.']
@@ -93,7 +99,7 @@ class TestResourceIds(unittest.TestCase):
         # test illegal resource id's for all resources
         for resource_id in illegal_strings:
             try:
-                self.client.create_database(resource_id)
+                self.key_client.create_database(resource_id)
                 self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
@@ -129,7 +135,7 @@ class TestResourceIds(unittest.TestCase):
                 assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
                 assert "Ensure to provide a unique non-empty string less than '1024' characters." in e.message
 
-        self.client.delete_database(database_id)
+        self.key_client.delete_database(database_id)
 
 
 if __name__ == '__main__':

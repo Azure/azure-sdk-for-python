@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -29,19 +29,36 @@ async def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = CosmosClient(config.host, config.masterKey)
-    created_db = await test_client.create_database_if_not_exists(config.TEST_DATABASE_ID)
-    created_db_data = {
-        "created_db": created_db,
+    # Key-auth client for control-plane (container create/delete)
+    key_client = CosmosClient(config.host, config.masterKey)
+    key_db = key_client.get_database_client(config.TEST_DATABASE_ID)
+    # AAD data client for data-plane operations
+    data_client = config.create_data_client_async()
+    data_db = data_client.get_database_client(config.TEST_DATABASE_ID)
+
+    yield {
+        "key_db": key_db,
+        "created_db": data_db,
         "is_emulator": config.is_emulator
     }
-
-    yield created_db_data
-    await test_client.close()
+    await data_client.close()
+    await key_client.close()
 
 def round_time():
     utc_now = datetime.now(timezone.utc)
     return utc_now - timedelta(microseconds=utc_now.microsecond)
+
+
+def _is_all_versions_and_deletes_not_enabled(error: Exception) -> bool:
+    if not isinstance(error, Exception):
+        return False
+    if getattr(error, "status_code", None) != 400:
+        return False
+    message = str(error)
+    return (
+        "All Versions and Deletes" in message
+        and "must be enabled" in message
+    )
 
 async def assert_change_feed(expected, actual):
     if len(actual) == 0:
@@ -66,6 +83,7 @@ async def assert_change_feed(expected, actual):
                 assert expected_data[key] == actual_data[key]
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestAllVersionsChangeFeedAsync:
@@ -75,18 +93,26 @@ class TestAllVersionsChangeFeedAsync:
         partition_key = 'pk'
         # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
         change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
-        created_collection = await setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path=f"/{partition_key}"),
-                                                              change_feed_policy=change_feed_policy)
+        cid = "change_feed_test_" + str(uuid.uuid4())
+        # Container creation is control-plane and uses key-auth key_db.
+        await setup["key_db"].create_container(cid,
+                                                  PartitionKey(path=f"/{partition_key}"),
+                                                  change_feed_policy=change_feed_policy)
+        created_collection = setup["created_db"].get_container_client(cid)
 
         mode = 'AllVersionsAndDeletes'
 
         ## Test Change Feed with empty collection(Save the continuation token)
-        query_iterable = created_collection.query_items_change_feed(
-            mode=mode,
-        )
-        expected_change_feeds = []
-        actual_change_feeds = [item async for item in query_iterable]
+        try:
+            query_iterable = created_collection.query_items_change_feed(
+                mode=mode,
+            )
+            expected_change_feeds = []
+            actual_change_feeds = [item async for item in query_iterable]
+        except Exception as e:
+            if _is_all_versions_and_deletes_not_enabled(e):
+                pytest.skip("Change Feed 'All Versions and Deletes' capability is not enabled on this account.")
+            raise
         cont_token1 = created_collection.client_connection.last_response_headers[E_TAG]
         await assert_change_feed(expected_change_feeds, actual_change_feeds)
 
@@ -151,8 +177,10 @@ class TestAllVersionsChangeFeedAsync:
         await assert_change_feed(expected_change_feeds, actual_change_feeds)
 
     async def test_query_change_feed_all_versions_and_deletes_errors_async(self, setup):
-        created_collection = await setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                                  PartitionKey(path="/pk"))
+        cid = "change_feed_test_" + str(uuid.uuid4())
+        # Container creation is control-plane and uses key-auth key_db.
+        await setup["key_db"].create_container(cid, PartitionKey(path="/pk"))
+        created_collection = setup["created_db"].get_container_client(cid)
         mode = 'AllVersionsAndDeletes'
 
         # Error if invalid mode was used

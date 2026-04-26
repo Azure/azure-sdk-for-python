@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -49,6 +49,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestCRUDDatabaseOperations(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -59,6 +60,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
     connectionPolicy = configs.connectionPolicy
     last_headers = []
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -81,15 +83,16 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = test_config.TestConfig.create_data_client()
+        cls.databaseForTest = cls.key_client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_database_crud(self):
         database_id = str(uuid.uuid4())
-        created_db = self.client.create_database(database_id)
+        created_db = self.key_client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
-        databases = list(self.client.query_databases({
+        databases = list(self.key_client.query_databases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
                 {'name': '@id', 'value': database_id}
@@ -98,30 +101,30 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertTrue(databases, 'number of results for the query should be > 0')
 
         # read database.
-        self.client.get_database_client(created_db.id).read()
+        self.key_client.get_database_client(created_db.id).read()
 
         # delete database.
-        self.client.delete_database(created_db.id)
+        self.key_client.delete_database(created_db.id)
         # read database after deletion
-        read_db = self.client.get_database_client(created_db.id)
+        read_db = self.key_client.get_database_client(created_db.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
+        database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
-        database_proxy = self.client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
+        database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
         self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
 
-        self.client.delete_database(database_id)
+        self.key_client.delete_database(database_id)
 
     def test_database_level_offer_throughput(self):
         # Create a database with throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())
-        created_db = self.client.create_database(
+        created_db = self.key_client.create_database(
             id=database_id,
             offer_throughput=offer_throughput
         )
@@ -135,15 +138,15 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         new_offer_throughput = 2000
         offer = created_db.replace_throughput(new_offer_throughput)
         self.assertEqual(offer.offer_throughput, new_offer_throughput)
-        self.client.delete_database(created_db.id)
+        self.key_client.delete_database(created_db.id)
 
     def test_sql_query_crud(self):
         # create two databases.
-        db1 = self.client.create_database('database 1' + str(uuid.uuid4()))
-        db2 = self.client.create_database('database 2' + str(uuid.uuid4()))
+        db1 = self.key_client.create_database('database 1' + str(uuid.uuid4()))
+        db2 = self.key_client.create_database('database 2' + str(uuid.uuid4()))
 
         # query with parameters.
-        databases = list(self.client.query_databases({
+        databases = list(self.key_client.query_databases({
             'query': 'SELECT * FROM root r WHERE r.id=@id',
             'parameters': [
                 {'name': '@id', 'value': db1.id}
@@ -152,77 +155,77 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
 
         # query without parameters.
-        databases = list(self.client.query_databases({
+        databases = list(self.key_client.query_databases({
             'query': 'SELECT * FROM root r WHERE r.id="database non-existing"'
         }))
         self.assertEqual(0, len(databases), 'Unexpected number of query results.')
 
         # query with a string.
-        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))  # nosec
+        databases = list(self.key_client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))  # nosec
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
-        self.client.delete_database(db1.id)
-        self.client.delete_database(db2.id)
+        self.key_client.delete_database(db1.id)
+        self.key_client.delete_database(db2.id)
 
     def test_database_account_functionality(self):
         # Validate database account functionality.
-        database_account = self.client.get_database_account()
+        database_account = self.key_client.get_database_account()
         self.assertEqual(database_account.DatabasesLink, '/dbs/')
         self.assertEqual(database_account.MediaLink, '/media/')
         if (HttpHeaders.MaxMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
+                self.key_client.client_connection.last_response_headers):
             self.assertEqual(
                 database_account.MaxMediaStorageUsageInMB,
-                self.client.client_connection.last_response_headers[
+                self.key_client.client_connection.last_response_headers[
                     HttpHeaders.MaxMediaStorageUsageInMB])
         if (HttpHeaders.CurrentMediaStorageUsageInMB in
-                self.client.client_connection.last_response_headers):
+                self.key_client.client_connection.last_response_headers):
             self.assertEqual(
                 database_account.CurrentMediaStorageUsageInMB,
-                self.client.client_connection.last_response_headers[
+                self.key_client.client_connection.last_response_headers[
                     HttpHeaders.CurrentMediaStorageUsageInMB])
         self.assertIsNotNone(database_account.ConsistencyPolicy['defaultConsistencyLevel'])
 
     def test_id_validation(self):
         # Id shouldn't end with space.
         try:
-            self.client.create_database(id='id_with_space ')
+            self.key_client.create_database(id='id_with_space ')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id ends with a space or newline.', e.args[0])
         # Id shouldn't contain '/'.
 
         try:
-            self.client.create_database(id='id_with_illegal/_char')
+            self.key_client.create_database(id='id_with_illegal/_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '\\'.
 
         try:
-            self.client.create_database(id='id_with_illegal\\_char')
+            self.key_client.create_database(id='id_with_illegal\\_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '?'.
 
         try:
-            self.client.create_database(id='id_with_illegal?_char')
+            self.key_client.create_database(id='id_with_illegal?_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
         # Id shouldn't contain '#'.
 
         try:
-            self.client.create_database(id='id_with_illegal#_char')
+            self.key_client.create_database(id='id_with_illegal#_char')
             self.assertFalse(True)
         except ValueError as e:
             self.assertEqual('Id contains illegal chars.', e.args[0])
 
         # Id can begin with space
-        db = self.client.create_database(id=' id_begin_space' + str(uuid.uuid4()))
+        db = self.key_client.create_database(id=' id_begin_space' + str(uuid.uuid4()))
         self.assertTrue(True)
 
-        self.client.delete_database(db.id)
+        self.key_client.delete_database(db.id)
 
 
 

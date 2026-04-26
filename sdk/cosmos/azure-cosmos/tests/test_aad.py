@@ -16,6 +16,8 @@ import test_config
 from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
 from azure.core.exceptions import HttpResponseError
 
+
+
 def _remove_padding(encoded_string):
     while encoded_string.endswith("="):
         encoded_string = encoded_string[0:len(encoded_string) - 1]
@@ -86,6 +88,7 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestAAD(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     database: DatabaseProxy = None
@@ -94,6 +97,10 @@ class TestAAD(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential
+    _skip_scope_tests_on_non_emulator = pytest.mark.skipif(
+        not configs.is_emulator,
+        reason="Scope capture tests are emulator-specific (localhost audience)."
+    )
 
     @classmethod
     def setUpClass(cls):
@@ -133,6 +140,7 @@ class TestAAD(unittest.TestCase):
             credential_cls.get_token = original_get_token
         return scopes_captured, result
 
+    @_skip_scope_tests_on_non_emulator
     def test_override_scope_no_fallback(self):
         """When override scope is provided, only that scope is used and no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
@@ -156,6 +164,7 @@ class TestAAD(unittest.TestCase):
             except Exception:
                 pass
 
+    @_skip_scope_tests_on_non_emulator
     def test_override_scope_auth_error_no_fallback(self):
         """When override scope is provided and auth fails, no fallback to other scopes occurs."""
         override_scope = "https://my.custom.scope/.default"
@@ -180,6 +189,7 @@ class TestAAD(unittest.TestCase):
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
 
+    @_skip_scope_tests_on_non_emulator
     def test_account_scope_only(self):
         """When account scope is provided, only that scope is used."""
         account_scope = "https://localhost/.default"
@@ -203,6 +213,7 @@ class TestAAD(unittest.TestCase):
             except Exception:
                 pass
 
+    @_skip_scope_tests_on_non_emulator
     def test_account_scope_fallback_on_error(self):
         """When account scope is provided and auth fails, fallback to default scope occurs."""
         account_scope = "https://localhost/.default"

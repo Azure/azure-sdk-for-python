@@ -49,6 +49,84 @@ class TestConfig(object):
     is_live._cache = True if not is_emulator else False
     credential = masterKey if is_emulator else get_credential()
     credential_async = masterKey if is_emulator else get_credential(is_async=True)
+    data_auth_mode = os.getenv('COSMOS_TEST_DATA_AUTH_MODE', 'key').strip().lower()
+
+    @classmethod
+    def create_data_client(cls, **kwargs):
+        """Return a data-plane Cosmos client using AAD when configured, else key auth.
+
+        Extra ``**kwargs`` are forwarded to the ``CosmosClient`` constructor so test
+        files that need client-construction options (e.g. ``no_response_on_write=True``)
+        can opt in without bypassing the AAD/key selector.
+        """
+        if cls.data_auth_mode == 'aad':
+            return CosmosClient(cls.host, cls.credential, **kwargs)
+        return CosmosClient(cls.host, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_async(cls, **kwargs):
+        """Return an async data-plane Cosmos client using AAD when configured, else key auth.
+
+        Lifecycle (important):
+            The returned ``azure.cosmos.aio.CosmosClient`` is **not entered**. The caller
+            owns its lifecycle and MUST either:
+              * use it as an async context manager
+                (``async with test_config.TestConfig.create_data_client_async() as c: ...``), or
+              * call ``await client.__aenter__()`` after construction and ``await client.close()``
+                in teardown (the pattern used by ``unittest.IsolatedAsyncioTestCase`` test
+                files such as ``test_query_async.py``).
+
+            Failing to close the client leaks the underlying ``aiohttp`` session and can
+            surface as ``Unclosed client session`` warnings or socket exhaustion in long
+            test runs.
+
+        Extra ``**kwargs`` are forwarded to the async ``CosmosClient`` constructor so test
+        files that need client-construction options (e.g. ``multiple_write_locations=True``)
+        can opt in without bypassing the AAD/key selector.
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        if cls.data_auth_mode == 'aad':
+            return AsyncCosmosClient(cls.host, cls.credential_async, **kwargs)
+        return AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_test_clients(cls, database_id, **kwargs):
+        """Return ``(key_client, key_db, data_client, data_db)`` for tests that need
+        both a control-plane (key-auth) and a data-plane (AAD-or-key) client.
+
+        Removes the 4-line dual-client setUp boilerplate. Typical use::
+
+            cls.key_client, cls.key_db, cls.client, cls.created_db = (
+                test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
+
+        Extra ``**kwargs`` are forwarded to BOTH client constructors (use-cases:
+        ``multiple_write_locations=True`` for circuit-breaker tests). For per-client
+        construction options (e.g. custom ``transport`` for fault injection), construct
+        the clients manually instead of using this factory.
+        """
+        key_client = CosmosClient(cls.host, cls.masterKey, **kwargs)
+        key_db = key_client.get_database_client(database_id)
+        data_client = cls.create_data_client(**kwargs)
+        data_db = data_client.get_database_client(database_id)
+        return key_client, key_db, data_client, data_db
+
+    @classmethod
+    def create_test_clients_async(cls, database_id, **kwargs):
+        """Async equivalent of :meth:`create_test_clients`.
+
+        Returns ``(key_client, key_db, data_client, data_db)`` where both clients
+        are async ``azure.cosmos.aio.CosmosClient`` instances. Callers own the
+        lifecycle of both clients and MUST close them in teardown
+        (see :meth:`create_data_client_async` for details).
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        key_client = AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+        key_db = key_client.get_database_client(database_id)
+        data_client = cls.create_data_client_async(**kwargs)
+        data_db = data_client.get_database_client(database_id)
+        return key_client, key_db, data_client, data_db
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
     write_location_host = os.getenv('WRITE_LOCATION_HOST', host)

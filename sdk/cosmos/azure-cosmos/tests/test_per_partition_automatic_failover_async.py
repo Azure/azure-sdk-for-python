@@ -24,6 +24,7 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
 @pytest.mark.cosmosPerPartitionAutomaticFailover
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionAutomaticFailoverAsync:
     host = test_config.TestConfig.host
@@ -32,8 +33,9 @@ class TestPerPartitionAutomaticFailoverAsync:
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     async def setup_method_with_custom_transport(self, custom_transport: Optional[AioHttpTransport],
-                                                 default_endpoint=host, read_first=False, **kwargs):
+                                                 default_endpoint=None, read_first=False, **kwargs):
         regions = [REGION_2, REGION_1] if read_first else [REGION_1, REGION_2]
+        endpoint = default_endpoint or self.host
         container_id = kwargs.pop("container_id", None)
         exclude_client_regions = kwargs.pop("exclude_client_regions", False)
         excluded_regions = []
@@ -41,10 +43,17 @@ class TestPerPartitionAutomaticFailoverAsync:
             excluded_regions = [REGION_2]
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
-        client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=regions,
-                              excluded_locations=excluded_regions,
-                              transport=custom_transport, **kwargs)
+        client_kwargs = {
+            "consistency_level": "Session",
+            "preferred_locations": regions,
+            "excluded_locations": excluded_regions,
+            "transport": custom_transport,
+            **kwargs,
+        }
+        if endpoint != self.host:
+            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
+        else:
+            client = test_config.TestConfig.create_data_client_async(**client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         await client.__aenter__()
@@ -104,42 +113,46 @@ class TestPerPartitionAutomaticFailoverAsync:
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, 1,
                                                                                                               write_operation == BATCH, exclude_client_regions=exclude_regions)
-        container = setup['col']
-        fault_injection_container = custom_setup['col']
-        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+        try:
+            container = setup['col']
+            fault_injection_container = custom_setup['col']
+            global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        # Create a document to populate the per-partition GEM partition range info cache
-        await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
-                                                    'name': 'sample document', 'key': 'value'})
-        pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
-        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
+            # Create a document to populate the per-partition GEM partition range info cache
+            await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
+                                                        'name': 'sample document', 'key': 'value'})
+            pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
+            initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
-        # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
-        await perform_write_operation(
-            write_operation,
-            container,
-            fault_injection_container,
-            doc_fail_id,
-            PK_VALUE)
-        partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
-        assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_region in partition_info.unavailable_regional_endpoints
-        assert initial_region != partition_info.current_region # west us 3 != west us
+            # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
+            await perform_write_operation(
+                write_operation,
+                container,
+                fault_injection_container,
+                doc_fail_id,
+                PK_VALUE)
+            partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
+            # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
+            assert len(partition_info.unavailable_regional_endpoints) == 1
+            assert initial_region in partition_info.unavailable_regional_endpoints
+            assert initial_region != partition_info.current_region # west us 3 != west us
 
-        # Now we run another request to see how the cache gets updated
-        await perform_write_operation(
-            write_operation,
-            container,
-            fault_injection_container,
-            doc_fail_id,
-            PK_VALUE)
-        partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the cache is empty, since the request going to the second regional endpoint failed
-        # Once we reach the point of all available regions being marked as unavailable, the cache is cleared
-        assert len(partition_info.unavailable_regional_endpoints) == 0
-        assert initial_region not in partition_info.unavailable_regional_endpoints
-        assert partition_info.current_region is None
+            # Now we run another request to see how the cache gets updated
+            await perform_write_operation(
+                write_operation,
+                container,
+                fault_injection_container,
+                doc_fail_id,
+                PK_VALUE)
+            partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
+            # Verify that the cache is empty, since the request going to the second regional endpoint failed
+            # Once we reach the point of all available regions being marked as unavailable, the cache is cleared
+            assert len(partition_info.unavailable_regional_endpoints) == 0
+            assert initial_region not in partition_info.unavailable_regional_endpoints
+            assert partition_info.current_region is None
+        finally:
+            await self.cleanup_method(custom_setup)
+            await self.cleanup_method(setup)
 
     @pytest.mark.parametrize("write_operation, error, exclude_regions", write_operations_errors_and_boolean(create_threshold_errors()))
     async def test_ppaf_partition_thresholds_and_routing_async(self, write_operation, error, exclude_regions):
@@ -150,62 +163,66 @@ class TestPerPartitionAutomaticFailoverAsync:
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda,
                                                                                                               exclude_client_regions=exclude_regions,)
-        container = setup['col']
-        fault_injection_container = custom_setup['col']
-        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+        try:
+            container = setup['col']
+            fault_injection_container = custom_setup['col']
+            global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        # Create a document to populate the per-partition GEM partition range info cache
-        await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
-                                                    'name': 'sample document', 'key': 'value'})
-        pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
-        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
+            # Create a document to populate the per-partition GEM partition range info cache
+            await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
+                                                        'name': 'sample document', 'key': 'value'})
+            pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
+            initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
-        consecutive_failures = 6
-        for i in range(consecutive_failures):
-            # We perform the write operation multiple times to check the consecutive failures logic
-            with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
-                await perform_write_operation(write_operation,
-                                              container,
-                                              fault_injection_container,
-                                              doc_fail_id,
-                                              PK_VALUE)
-            assert exc_info.value == error
+            consecutive_failures = 6
+            for i in range(consecutive_failures):
+                # We perform the write operation multiple times to check the consecutive failures logic
+                with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
+                    await perform_write_operation(write_operation,
+                                                  container,
+                                                  fault_injection_container,
+                                                  doc_fail_id,
+                                                  PK_VALUE)
+                assert exc_info.value == error
 
-        # Verify that the threshold for consecutive failures is updated
-        pk_range_wrappers = list(global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count.keys())
-        assert len(pk_range_wrappers) == 1
-        failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
-        assert failure_count == consecutive_failures
+            # Verify that the threshold for consecutive failures is updated
+            pk_range_wrappers = list(global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count.keys())
+            assert len(pk_range_wrappers) == 1
+            failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
+            assert failure_count == consecutive_failures
 
-        # Verify that a single success to the same partition resets the consecutive failures count
-        await perform_write_operation(write_operation,
-                                container,
-                                fault_injection_container,
-                                str(uuid.uuid4()),
-                                PK_VALUE)
+            # Verify that a single success to the same partition resets the consecutive failures count
+            await perform_write_operation(write_operation,
+                                    container,
+                                    fault_injection_container,
+                                    str(uuid.uuid4()),
+                                    PK_VALUE)
 
-        failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count.get(pk_range_wrappers[0], 0)
-        assert failure_count == 0
+            failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count.get(pk_range_wrappers[0], 0)
+            assert failure_count == 0
 
-        # Run enough failed requests to the partition to trigger the failover logic
-        for i in range(12):
-            with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
-                await perform_write_operation(write_operation,
-                                              container,
-                                              fault_injection_container,
-                                              doc_fail_id,
-                                              PK_VALUE)
-            assert exc_info.value == error
-        # We should have marked the previous endpoint as unavailable after 10 successive failures
-        partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
-        assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_region in partition_info.unavailable_regional_endpoints
-        assert initial_region != partition_info.current_region # west us 3 != west us
+            # Run enough failed requests to the partition to trigger the failover logic
+            for i in range(12):
+                with pytest.raises((CosmosHttpResponseError, ServiceResponseError)) as exc_info:
+                    await perform_write_operation(write_operation,
+                                                  container,
+                                                  fault_injection_container,
+                                                  doc_fail_id,
+                                                  PK_VALUE)
+                assert exc_info.value == error
+            # We should have marked the previous endpoint as unavailable after 10 successive failures
+            partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
+            # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
+            assert len(partition_info.unavailable_regional_endpoints) == 1
+            assert initial_region in partition_info.unavailable_regional_endpoints
+            assert initial_region != partition_info.current_region # west us 3 != west us
 
-        # 12 failures - 10 to trigger failover, 2 more to start counting again
-        failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
-        assert failure_count == 2
+            # 12 failures - 10 to trigger failover, 2 more to start counting again
+            failure_count = global_endpoint_manager.ppaf_thresholds_tracker.pk_range_wrapper_to_failure_count[pk_range_wrappers[0]]
+            assert failure_count == 2
+        finally:
+            await self.cleanup_method(custom_setup)
+            await self.cleanup_method(setup)
 
     @pytest.mark.parametrize("write_operation, error, exclude_regions", write_operations_errors_and_boolean(create_failover_errors()))
     async def test_ppaf_session_unavailable_retry_async(self, write_operation, error, exclude_regions):
@@ -218,46 +235,54 @@ class TestPerPartitionAutomaticFailoverAsync:
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, max_count=1,
                                                                                                         is_batch=write_operation==BATCH,
                                                                                                         session_error=True, exclude_client_regions=exclude_regions)
-        container = setup['col']
-        fault_injection_container = custom_setup['col']
-        global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
+        try:
+            container = setup['col']
+            fault_injection_container = custom_setup['col']
+            global_endpoint_manager = fault_injection_container.client_connection._global_endpoint_manager
 
-        # Create a document to populate the per-partition GEM partition range info cache
-        await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
-                                                    'name': 'sample document', 'key': 'value'})
-        pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
-        initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
+            # Create a document to populate the per-partition GEM partition range info cache
+            await fault_injection_container.create_item(body={'id': doc_success_id, 'pk': PK_VALUE,
+                                                        'name': 'sample document', 'key': 'value'})
+            pk_range_wrapper = list(global_endpoint_manager.partition_range_to_failover_info.keys())[0]
+            initial_region = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper].current_region
 
-        # Verify the region that is being used for the read requests
-        read_response = await fault_injection_container.read_item(doc_success_id, PK_VALUE)
-        uri = read_response.get_response_headers().get('Content-Location')
-        region = fault_injection_container.client_connection._global_endpoint_manager.location_cache.get_location_from_endpoint(uri)
-        assert region == REGION_1 # first preferred region
+            # Verify the region that is being used for the read requests
+            read_response = await fault_injection_container.read_item(doc_success_id, PK_VALUE)
+            uri = read_response.get_response_headers().get('Content-Location')
+            region = fault_injection_container.client_connection._global_endpoint_manager.location_cache.get_location_from_endpoint(uri)
+            assert region == REGION_1 # first preferred region
 
-        # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
-        await perform_write_operation(
-                write_operation,
-                container,
-                fault_injection_container,
-                doc_fail_id,
-                PK_VALUE)
-        partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
-        assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_region in partition_info.unavailable_regional_endpoints
-        assert initial_region != partition_info.current_region # west us 3 != west us
+            # Based on our configuration, we should have had one error followed by a success - marking only the previous endpoint as unavailable
+            await perform_write_operation(
+                    write_operation,
+                    container,
+                    fault_injection_container,
+                    doc_fail_id,
+                    PK_VALUE)
+            partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
+            # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
+            assert len(partition_info.unavailable_regional_endpoints) == 1
+            assert initial_region in partition_info.unavailable_regional_endpoints
+            assert initial_region != partition_info.current_region # west us 3 != west us
 
-        # Now we run a read request that runs into a 404.1002 error, which should retry to the read region
-        # We verify that the read request was going to the correct region by using the raw_response_hook
-        fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
+            # Now we run a read request that runs into a 404.1002 error, which should retry to the read region
+            # We verify that the read request was going to the correct region by using the raw_response_hook
+            await fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
+        finally:
+            await self.cleanup_method(custom_setup)
+            await self.cleanup_method(setup)
 
     async def test_ppaf_user_agent_feature_flag_async(self):
         # Simple test to verify the user agent suffix is being updated with the relevant feature flags
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info()
-        fault_injection_container = custom_setup['col']
-        # Create a document to check the response headers
-        await fault_injection_container.upsert_item(body={'id': doc_success_id, 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
-                                                    raw_response_hook=ppaf_user_agent_hook)
+        try:
+            fault_injection_container = custom_setup['col']
+            # Create a document to check the response headers
+            await fault_injection_container.upsert_item(body={'id': doc_success_id, 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                                        raw_response_hook=ppaf_user_agent_hook)
+        finally:
+            await self.cleanup_method(custom_setup)
+            await self.cleanup_method(setup)
 
 if __name__ == '__main__':
     unittest.main()

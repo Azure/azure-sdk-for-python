@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import json
@@ -16,11 +16,13 @@ import hybrid_search_data
 from azure.cosmos import http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQuery(unittest.TestCase):
     """Test to check full text search and hybrid search queries behavior."""
 
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
@@ -37,9 +39,11 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
-        cls.test_container = cls.test_db.create_container(
+        # DB + container create + item seeding go through key-auth setup client
+        # (control-plane). Tests query through the AAD data client below.
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.test_db = cls.key_client.create_database(str(uuid.uuid4()))
+        key_container = cls.test_db.create_container(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS,
@@ -49,15 +53,20 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
         for index, item in enumerate(data.get("items")):
             item['id'] = str(index)
             item['pk'] = str((index % 2) + 1)
-            cls.test_container.create_item(item)
+            key_container.create_item(item)
         # Need to give the container time to index all the recently added items - 10 minutes seems to work
         # time.sleep(5 * 60)
+
+        # AAD data-plane client for queries.
+        cls.client = test_config.TestConfig.create_data_client()
+        cls.test_container = cls.client.get_database_client(cls.test_db.id).get_container_client(
+            cls.TEST_CONTAINER_ID)
 
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.test_db.delete_container(cls.test_container.id)
-            cls.client.delete_database(cls.test_db.id)
+            cls.test_db.delete_container(cls.TEST_CONTAINER_ID)
+            cls.key_client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
 

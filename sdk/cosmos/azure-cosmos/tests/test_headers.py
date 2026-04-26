@@ -41,6 +41,7 @@ def partition_merge_support_response_hook(raw_response):
            http_constants.SDKSupportedCapabilities.PARTITION_MERGE
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestHeaders(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None
@@ -54,9 +55,14 @@ class TestHeaders(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Key-auth client is used for control-plane operations in this test class.
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        # AAD (or key) client for data-plane operations
+        cls.data_client = test_config.TestConfig.create_data_client()
+        cls.data_database = cls.data_client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.data_container = cls.data_database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
     def side_effect_dedicated_gateway_max_age_thousand(self, *args, **kwargs):
         # Extract request headers from args
@@ -81,24 +87,24 @@ class TestHeaders(unittest.TestCase):
     def test_correlated_activity_id(self):
         query = 'SELECT * from c ORDER BY c._ts'
 
-        cosmos_client_connection = self.container.client_connection
+        cosmos_client_connection = self.data_container.client_connection
         original_connection_post = cosmos_client_connection._CosmosClientConnection__Post
         cosmos_client_connection._CosmosClientConnection__Post = MagicMock(
             side_effect=self.side_effect_correlated_activity_id)
         try:
-            list(self.container.query_items(query=query, partition_key="pk-1"))
+            list(self.data_container.query_items(query=query, partition_key="pk-1"))
         except StopIteration:
             pass
         finally:
             cosmos_client_connection._CosmosClientConnection__Post = original_connection_post
 
     def test_max_integrated_cache_staleness(self):
-        cosmos_client_connection = self.container.client_connection
+        cosmos_client_connection = self.data_container.client_connection
         original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
             side_effect=self.side_effect_dedicated_gateway_max_age_thousand)
         try:
-            self.container.read_item(item="id-1", partition_key="pk-1",
+            self.data_container.read_item(item="id-1", partition_key="pk-1",
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_thousand)
         except StopIteration:
             pass
@@ -106,7 +112,7 @@ class TestHeaders(unittest.TestCase):
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
             side_effect=self.side_effect_dedicated_gateway_max_age_million)
         try:
-            self.container.read_item(item="id-1", partition_key="pk-1",
+            self.data_container.read_item(item="id-1", partition_key="pk-1",
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_million)
         except StopIteration:
             pass
@@ -115,19 +121,19 @@ class TestHeaders(unittest.TestCase):
 
     def test_negative_max_integrated_cache_staleness(self):
         try:
-            self.container.read_item(item="id-1", partition_key="pk-1",
+            self.data_container.read_item(item="id-1", partition_key="pk-1",
                                      max_integrated_cache_staleness_in_ms=self.dedicated_gateway_max_age_negative)
         except Exception as exception:
             assert isinstance(exception, ValueError)
 
     def test_client_id(self):
         # Client ID should be sent on every request, Verify it is sent on a read_item request
-        cosmos_client_connection = self.container.client_connection
+        cosmos_client_connection = self.data_container.client_connection
         original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
             side_effect=self.side_effect_client_id)
         try:
-            self.container.read_item(item="id-1", partition_key="pk-1")
+            self.data_container.read_item(item="id-1", partition_key="pk-1")
         except StopIteration:
             pass
         finally:
@@ -143,18 +149,21 @@ class TestHeaders(unittest.TestCase):
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
                                    throughput_bucket=client_throughput_bucket_number)
         created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
-        created_container = created_db.create_container(
+        # Control-plane container creation.
+        created_container_ref = created_db.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
-        created_container.create_item(
+        # Data ops through AAD container with throughput_bucket override
+        data_container = self.data_database.get_container_client(created_container_ref.id)
+        data_container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        created_db.delete_container(created_container.id)
+        created_db.delete_container(created_container_ref.id)
 
     def test_container_read_item_throughput_bucket(self):
-        created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        self.container.read_item(
+        created_document = self.data_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        self.data_container.read_item(
              item=created_document['id'],
              partition_key="mypk",
              throughput_bucket=request_throughput_bucket_number,
@@ -162,40 +171,40 @@ class TestHeaders(unittest.TestCase):
 
     def test_container_read_all_items_throughput_bucket(self):
         for i in range(10):
-            self.container.create_item(body={'id': ''.format(i) + str(uuid.uuid4()), 'pk': 'mypk'})
+            self.data_container.create_item(body={'id': ''.format(i) + str(uuid.uuid4()), 'pk': 'mypk'})
 
-        self.container.read_all_items(
+        self.data_container.read_all_items(
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
     def test_container_query_items_throughput_bucket(self):
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
-        self.container.create_item(body=document_definition)
+        self.data_container.create_item(body=document_definition)
 
         query = 'SELECT * from c'
-        self.container.query_items(
+        self.data_container.query_items(
             query=query,
             partition_key='pk',
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
     def test_container_replace_item_throughput_bucket(self):
-        created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        self.container.replace_item(
+        created_document = self.data_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        self.data_container.replace_item(
             item=created_document['id'],
             body={'id': '2' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
     def test_container_upsert_item_throughput_bucket(self):
-       self.container.upsert_item(
+       self.data_container.upsert_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
     def test_container_create_item_throughput_bucket(self):
-        self.container.create_item(
+        self.data_container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
@@ -212,7 +221,7 @@ class TestHeaders(unittest.TestCase):
             },
             "company": "Microsoft",
             "number": 3}
-        self.container.create_item(item)
+        self.data_container.create_item(item)
         # Define and run patch operations
         operations = [
             {"op": "add", "path": "/color", "value": "yellow"},
@@ -222,7 +231,7 @@ class TestHeaders(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        self.container.patch_item(
+        self.data_container.patch_item(
             item="patch_item",
             partition_key=pkValue,
             patch_operations=operations,
@@ -230,34 +239,38 @@ class TestHeaders(unittest.TestCase):
             raw_response_hook=request_raw_response_hook)
 
     def test_container_execute_item_batch_throughput_bucket(self):
-        created_collection = self.database.create_container(
+        # Control-plane container creation.
+        created_collection_ref = self.database.create_container(
             id='test_execute_item ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/company'))
+        data_collection = self.data_database.get_container_client(created_collection_ref.id)
         batch = []
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
 
-        created_collection.execute_item_batch(
+        data_collection.execute_item_batch(
             batch_operations=batch,
             partition_key="Microsoft",
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-        self.database.delete_container(created_collection)
+        self.database.delete_container(created_collection_ref.id)
 
     def test_container_delete_item_throughput_bucket(self):
-        created_item = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        created_item = self.data_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
 
-        self.container.delete_item(
+        self.data_container.delete_item(
             created_item['id'],
             partition_key='mypk',
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
     def test_container_delete_all_items_by_partition_key_throughput_bucket(self):
-        created_collection = self.database.create_container(
+        # Control-plane container creation.
+        created_collection_ref = self.database.create_container(
             id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash'))
+        data_collection = self.data_database.get_container_client(created_collection_ref.id)
 
         # Create two partition keys
         partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
@@ -265,19 +278,19 @@ class TestHeaders(unittest.TestCase):
 
         # add items for partition key 1
         for i in range(1, 3):
-            created_collection.upsert_item(
+            data_collection.upsert_item(
                 dict(id="item{}".format(i), pk=partition_key1))
 
         # add items for partition key 2
-        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
+        pk2_item = data_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
 
         # delete all items for partition key 1
-        created_collection.delete_all_items_by_partition_key(
+        data_collection.delete_all_items_by_partition_key(
             partition_key1,
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
 
-        self.database.delete_container(created_collection)
+        self.database.delete_container(created_collection_ref.id)
 
     # TODO Re-enable once Throughput Bucket Validation Changes are rolled out
     """
@@ -299,7 +312,7 @@ class TestHeaders(unittest.TestCase):
     def test_partition_merge_support_header(self):
         # This test only runs read API to verify if the header was set correctly, because all APIs are using the same
         # base method to set the header(GetHeaders).
-        self.container.read(raw_response_hook=partition_merge_support_response_hook)
+        self.data_container.read(raw_response_hook=partition_merge_support_response_hook)
 
     def test_client_level_priority(self):
         # Test that priority level set at client level is used for all requests

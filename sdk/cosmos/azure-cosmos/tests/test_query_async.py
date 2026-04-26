@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import os
@@ -10,6 +10,7 @@ import pytest
 
 import azure.cosmos.aio._retry_utility_async as retry_utility
 import azure.cosmos.exceptions as exceptions
+import azure.cosmos.cosmos_client as sync_cosmos_client
 import test_config
 from azure.cosmos import http_constants, _endpoint_discovery_retry_policy
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
@@ -20,12 +21,15 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
     created_db: DatabaseProxy = None
     created_container: ContainerProxy = None
     client: CosmosClient = None
+    key_client: sync_cosmos_client.CosmosClient = None
+    key_db = None
     config = test_config.TestConfig
     TEST_CONTAINER_ID = config.TEST_MULTI_PARTITION_CONTAINER_ID
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
@@ -44,18 +48,51 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        # key_client is a sync key-auth client used for control-plane operations
+        # (create/delete containers) inside async tests. This works but is not ideal â€” a future
+        # cleanup could use an async key-auth client instead once the project decides on async
+        # key-auth client handling.
+        # NOTE: pass ``multiple_write_locations`` so circuit-breaker runs route writes the same
+        # way the sync ``test_query.py`` does. Dropping this kwarg during the AAD dual-client
+        # migration silently disabled multi-write-region routing for this file (M3 audit).
+        cls.key_client = sync_cosmos_client.CosmosClient(
+            cls.host, cls.masterKey, multiple_write_locations=cls.use_multiple_write_locations
+        )
+        cls.key_db = cls.key_client.get_database_client(cls.TEST_DATABASE_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Close the sync key-auth setup client created in setUpClass to release its
+        # underlying requests.Session (otherwise it leaks until process exit).
+        if cls.key_client is not None:
+            cls.key_client.__exit__(None, None, None)
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey, multiple_write_locations=self.use_multiple_write_locations)
+        # AAD (or key, depending on env var) async client for data-plane operations
+        self.client = test_config.TestConfig.create_data_client_async()
         await self.client.__aenter__()
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
 
+    def _create_container_for_test(self, container_id, partition_key, **kwargs):
+        """Create container via sync key-auth setup client (control-plane), return async data-plane proxy."""
+        self.key_db.create_container(id=container_id, partition_key=partition_key, **kwargs)
+        return self.created_db.get_container_client(container_id)
+
+    def _create_container_if_not_exists_for_test(self, container_id, partition_key, **kwargs):
+        """Create container if not exists via sync key-auth setup client, return async data-plane proxy."""
+        self.key_db.create_container_if_not_exists(id=container_id, partition_key=partition_key, **kwargs)
+        return self.created_db.get_container_client(container_id)
+
+    def _delete_container_for_test(self, container_id):
+        """Delete container via sync key-auth setup client (control-plane)."""
+        self.key_db.delete_container(container_id)
+
     async def test_first_and_last_slashes_trimmed_for_query_string_async(self):
-        created_collection = await self.created_db.create_container(
-            str(uuid.uuid4()), PartitionKey(path="/pk"))
+        container_id = str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         doc_id = 'myId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         await created_collection.create_item(body=document_definition)
@@ -69,13 +106,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         iter_list = [item async for item in query_iterable]
         assert iter_list[0]['id'] == doc_id
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     @pytest.mark.asyncio
     async def test_populate_query_metrics_async(self):
-        created_collection = await self.created_db.create_container(
-            "query_metrics_test" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
+        container_id = "query_metrics_test" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         await created_collection.create_item(body=document_definition)
@@ -99,12 +135,11 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(metrics) > 1
         assert all(['=' in x for x in metrics])
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def test_populate_index_metrics_async(self):
-        created_collection = await self.created_db.create_container(
-            "index_metrics_test" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
+        container_id = "index_metrics_test" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         await created_collection.create_item(body=document_definition)
@@ -131,13 +166,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                                   'PotentialCompositeIndexes': []}
         assert expected_index_metrics == index_metrics
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     @pytest.mark.skip(reason="Emulator does not support query advisor yet")
     async def test_populate_query_advice_async(self):
-        created_collection = await self.created_db.create_container(
-            "query_advice_test" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
+        container_id = "query_advice_test" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {
             'pk': 'pk', 'id': doc_id, 'name': 'test document',
@@ -219,13 +253,13 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert query_advice is not None
         assert "QA1009" in query_advice
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     # TODO: Need to validate the query request count logic
     @pytest.mark.skip
     async def test_max_item_count_honored_in_order_by_query_async(self):
-        created_collection = await self.created_db.create_container(str(uuid.uuid4()),
-                                                                    PartitionKey(path="/pk"))
+        container_id = str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         docs = []
         for i in range(10):
             document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
@@ -245,7 +279,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.validate_query_requests_count(query_iterable, 5)
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def validate_query_requests_count(self, query_iterable, expected_count):
         self.count = 0
@@ -334,8 +368,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert [item async for item in query_iterable] == []
 
     async def test_offset_limit_async(self):
-        created_collection = await self.created_db.create_container("offset_limit_" + str(uuid.uuid4()),
-                                                                    PartitionKey(path="/pk"))
+        container_id = "offset_limit_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
@@ -373,16 +407,16 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                                                  query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
                                                  results=[])
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def test_distinct_async(self):
-        created_database = self.created_db
         distinct_field = 'distinct_field'
         pk_field = "pk"
         different_field = "different_field"
 
-        created_collection = await created_database.create_container(
-            id='collection with composite index ' + str(uuid.uuid4()),
+        container_id = 'collection with composite index ' + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(
+            container_id,
             partition_key=PartitionKey(path="/pk", kind="Hash"),
             indexing_policy={
                 "compositeIndexes": [
@@ -409,23 +443,20 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.config._validate_distinct(created_collection=created_collection,  # returns {} and is right number
                                              query='SELECT distinct c.%s from c' % distinct_field,  # nosec
-                                             results=self.config._get_distinct_docs(padded_docs, distinct_field, None,
-                                                                                    False),
+                                             results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
                                              is_select=True,
                                              fields=[distinct_field])
 
         await self.config._validate_distinct(created_collection=created_collection,
                                              query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),
                                              # nosec
-                                             results=self.config._get_distinct_docs(padded_docs, distinct_field,
-                                                                                    pk_field, False),
+                                             results=self.config._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
                                              is_select=True,
                                              fields=[distinct_field, pk_field])
 
         await self.config._validate_distinct(created_collection=created_collection,
                                              query='SELECT distinct value c.%s from c' % distinct_field,  # nosec
-                                             results=self.config._get_distinct_docs(padded_docs, distinct_field, None,
-                                                                                    True),
+                                             results=self.config._get_distinct_docs(padded_docs, distinct_field, None, True),
                                              is_select=True,
                                              fields=[distinct_field])
 
@@ -435,11 +466,17 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                                              is_select=True,
                                              fields=[different_field])
 
-        await created_database.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302) â€” migrate after service-side fix",
+    )
     async def test_distinct_on_different_types_and_field_orders_async(self):
-        created_collection = await self.created_db.create_container(
-            id="test-distinct-container-" + str(uuid.uuid4()),
+        container_id = "test-distinct-container-" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(
+            container_id,
             partition_key=PartitionKey("/pk"),
             offer_throughput=self.config.THROUGHPUT_FOR_5_PARTITIONS)
         payloads = [
@@ -503,7 +540,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                               {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
         )
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def test_paging_with_continuation_token_async(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -601,9 +638,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         async def query_items(database):
             # Tests to make sure 429 exception is surfaced when retries run out in the first page of a query.
             try:
-                container = await database.create_container(
+                # create_container here is control-plane. Using key_db (sync, key-auth).
+                # Container access for data is through the async AAD client.
+                self.key_db.create_container(
                     id="query_retryable_error_test", partition_key=PartitionKey(path="/pk"), offer_throughput=400
                 )
+                container = database.get_container_client("query_retryable_error_test")
             except exceptions.CosmosResourceExistsError:
                 container = database.get_container_client("query_retryable_error_test")
             query = "SELECT * FROM c"
@@ -616,14 +656,11 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                 # A retryable exception should be surfaced when retries run out
                 assert ex.status_code == 429
 
-        created_collection = await self.created_db.create_container_if_not_exists("query_retryable_error_test",
-                                                                                  PartitionKey(path="/pk"))
+        self._create_container_if_not_exists_for_test("query_retryable_error_test", PartitionKey(path="/pk"))
+        created_collection = self.created_db.get_container_client("query_retryable_error_test")
         # Created items to query
         for _ in range(150):
-            # Generate a Random partition key
             partition_key = 'pk' + str(uuid.uuid4())
-
-            # Generate a random item
             item = {
                 'id': 'item' + str(uuid.uuid4()),
                 'partitionKey': partition_key,
@@ -631,7 +668,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             }
 
             try:
-                # Create the item in the container
                 await created_collection.upsert_item(item)
             except exceptions.CosmosHttpResponseError as e:
                 pytest.fail(e)
@@ -640,20 +676,18 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                                      fixed_retry_interval_in_milliseconds=1, max_wait_time_in_seconds=1)
         old_retry = self.client.client_connection.connection_policy.RetryOptions
         self.client.client_connection.connection_policy.RetryOptions = retry_options
-        created_collection = await self.created_db.create_container_if_not_exists("query_retryable_error_test",
-                                                                                  PartitionKey(path="/pk"))
+        self._create_container_if_not_exists_for_test("query_retryable_error_test", PartitionKey(path="/pk"))
         # Force a 429 exception by having multiple concurrent queries.
         num_queries = 4
         await gather(*[query_items(self.created_db) for _ in range(num_queries)])
 
         self.client.client_connection.connection_policy.RetryOptions = old_retry
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test("query_retryable_error_test")
 
     async def test_query_request_params_none_retry_policy_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists(
-            id="query_request_params_none_retry_policy_" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
-        )
+        container_id = "query_request_params_none_retry_policy_" + str(uuid.uuid4())
+        created_collection = self._create_container_if_not_exists_for_test(
+            container_id, PartitionKey(path="/pk"))
         items = [
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
@@ -706,13 +740,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == http_constants.StatusCodes.REQUEST_TIMEOUT
         retry_utility.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def test_partitioned_query_response_hook_async(self):
-        created_collection = await self.created_db.create_container_if_not_exists(
-            id="query_response_hook_test" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
-        )
+        container_id = "query_response_hook_test" + str(uuid.uuid4())
+        created_collection = self._create_container_if_not_exists_for_test(
+            container_id, PartitionKey(path="/pk"))
         items = [
             {'id': str(uuid.uuid4()), 'pk': '0', 'val': 5},
             {'id': str(uuid.uuid4()), 'pk': '1', 'val': 10},
@@ -729,15 +762,13 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         item_list = [item async for item in created_collection.query_items("select * from c", partition_key="0", response_hook=response_hook)]
         assert len(item_list) == 3
         assert response_hook.count == 1
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def test_query_pagination_with_max_item_count_async(self):
         """Test pagination showing per-page limits and total results counting."""
-        created_collection = await self.created_db.create_container(
-            "pagination_test_" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
+        container_id = "pagination_test_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         
-        # Create 20 items in a single partition
         total_items = 20
         partition_key_value = "test_pk"
         for i in range(total_items):
@@ -748,7 +779,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             }
             await created_collection.create_item(body=document_definition)
         
-        # Test pagination with max_item_count limiting items per page
         max_items_per_page = 7
         query = "SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']"
         query_iterable = created_collection.query_items(
@@ -758,7 +788,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             max_item_count=max_items_per_page
         )
         
-        # Iterate through pages and verify per-page counts
         all_fetched_results = []
         page_count = 0
         item_pages = query_iterable.by_page()
@@ -767,31 +796,21 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             page_count += 1
             items_in_page = [item async for item in page]
             all_fetched_results.extend(items_in_page)
-            
-            # Each page should have at most max_item_count items
-            # (last page may have fewer)
             assert len(items_in_page) <= max_items_per_page
         
-        # Verify total results match expected count
         assert len(all_fetched_results) == total_items
-        
-        # Verify we got the expected number of pages
-        # 20 items with max 7 per page = 3 pages (7, 7, 6)
         assert page_count == 3
         
-        # Verify ordering is maintained
         for i, item in enumerate(all_fetched_results):
             assert item['value'] == i
         
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
     
     async def test_query_pagination_without_max_item_count_async(self):
         """Test pagination behavior without specifying max_item_count."""
-        created_collection = await self.created_db.create_container(
-            "pagination_no_max_test_" + str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
+        container_id = "pagination_no_max_test_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         
-        # Create 15 items in a single partition
         total_items = 15
         partition_key_value = "test_pk_2"
         for i in range(total_items):
@@ -802,7 +821,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             }
             await created_collection.create_item(body=document_definition)
         
-        # Query without specifying max_item_count
         query = "SELECT * FROM c WHERE c.pk = @pk"
         query_iterable = created_collection.query_items(
             query=query,
@@ -810,11 +828,10 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
             partition_key=partition_key_value
         )
         
-        # Count total results
         all_results = [item async for item in query_iterable]
         assert len(all_results) == total_items
         
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:
@@ -844,8 +861,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_query_items_with_parameters_none_async(self):
         """Test that query_items handles parameters=None correctly (issue #43662)."""
-        created_collection = await self.created_db.create_container(
-            "test_params_none_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        container_id = "test_params_none_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         
         # Create test documents
         doc1_id = 'doc1_' + str(uuid.uuid4())
@@ -889,12 +906,12 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         results = [item async for item in query_iterable]
         assert len(results) == 2
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
     async def test_query_items_parameters_none_with_options_async(self):
         """Test parameters=None works with various query options."""
-        created_collection = await self.created_db.create_container(
-            "test_params_none_opts_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        container_id = "test_params_none_opts_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
         
         # Create multiple test documents
         for i in range(5):
@@ -936,7 +953,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         metrics_header_name = 'x-ms-documentdb-query-metrics'
         assert metrics_header_name in created_collection.client_connection.last_response_headers
 
-        await self.created_db.delete_container(created_collection.id)
+        self._delete_container_for_test(container_id)
 
 
 if __name__ == '__main__':

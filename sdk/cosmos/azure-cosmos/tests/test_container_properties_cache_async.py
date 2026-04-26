@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -18,11 +18,13 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
         """
 
     client: CosmosClient = None
+    key_client: CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
@@ -39,12 +41,29 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # Key-auth client for control-plane (create/delete container, throughput).
+        self.key_client = CosmosClient(self.host, self.masterKey)
+        await self.key_client.__aenter__()
+        self.key_databaseForTest = await self.key_client.create_database_if_not_exists(
+            self.configs.TEST_DATABASE_ID)
+        # AAD data-plane client.
+        self.client = test_config.TestConfig.create_data_client_async()
         await self.client.__aenter__()
-        self.databaseForTest = await self.client.create_database_if_not_exists(self.configs.TEST_DATABASE_ID)
+        self.databaseForTest = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
+
+    async def _create_container_for_test_async(self, *args, **kwargs):
+        # Container create runs on key-auth setup client (control-plane).
+        # Returns an AAD-side container proxy so data-plane ops execute under AAD.
+        container_ref = await self.key_databaseForTest.create_container(*args, **kwargs)
+        return self.databaseForTest.get_container_client(container_ref.id)
+
+    async def _delete_container_for_test_async(self, *args, **kwargs):
+        # Container delete runs on key-auth setup client (control-plane).
+        return await self.key_databaseForTest.delete_container(*args, **kwargs)
 
     async def test_container_properties_cache_async(self):
         client = self.client
@@ -54,7 +73,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container_pk = "PK"
         # Create The Container
         try:
-            await client.get_database_client(database_name).create_container(id=container_name, partition_key=PartitionKey(
+            await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
@@ -79,7 +98,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         # Now we can compare the RID and Partition Key Definition
         assert cached_properties.get("_rid") == fresh_container_read.get("_rid")
         assert cached_properties.get("partitionKey") == fresh_container_read.get("partitionKey")
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_create_upsert_replace_item_async(self):
         client = self.client
@@ -89,7 +108,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container2_pk = "partkey"
         # Create The Container
         try:
-            await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
@@ -100,9 +119,9 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         # with a stale cache we end up extracting the wrong one so these will retry extracting
         # the partition key after refreshing the cache. Test to make sure a container recreate doesn't affect it.
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
         try:
-            await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container2_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
@@ -135,7 +154,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             await created_db.get_container_client(container_name).create_item(body={'id': 'item3', container_pk: 'val'})
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_create_upsert_replace_item_sub_partitioning_async(self):
         client = self.client
@@ -145,7 +164,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container2_pk = ["/county", "/city"]
         # Create The Container
         try:
-            await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path=container_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -156,9 +175,9 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         # with a stale cache we end up extracting the wrong one so these will retry extracting
         # the partition key after refreshing the cache. Test to make sure a container recreate doesn't affect it.
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
         try:
-            await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path=container2_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -195,11 +214,13 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
                 body={'id': 'item3', 'country': 'USA', 'state': 'CA'})
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400, "Expected status code 400"
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_offer_throughput_container_recreate_async(self):
+        # get_throughput / replace_throughput are control-plane offer ops.
+        # Container handle bound to key-auth key_db so these calls succeed.
         client = self.client
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
         container_name = str(uuid.uuid4())
         container_pk = "PK"
         container2_pk = "partkey"
@@ -239,8 +260,10 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         await created_db.delete_container(container_name)
 
     async def test_offer_throughput_container_recreate_sub_partition_async(self):
+        # get_throughput / replace_throughput are control-plane offer ops.
+        # Container handle bound to key-auth key_db so these calls succeed.
         client = self.client
-        created_db = self.databaseForTest
+        created_db = self.key_databaseForTest
         container_name = str(uuid.uuid4())
         container_pk = ["/country", "/state"]
         container2_pk = ["/county", "/city"]
@@ -287,7 +310,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container2_pk = "partkey"
         # Create The Container
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -300,9 +323,9 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         # Recreate container
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(created_container)
+        await self._delete_container_for_test_async(created_container)
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container2_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -329,7 +352,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             assert False, "Read should not succeed as item no longer exists."
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_read_item_sub_partition_async(self):
         client = self.client
@@ -339,22 +362,22 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container2_pk = ["/county", "/city"]
         # Create The Container
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path=container_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
         try:
             item_to_read = await created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             item_to_read2 = await created_container.create_item(
-                body={'id': 'item2', 'country': 'MEX', 'state': 'Michoacán'})  # cspell:disable-line
+                body={'id': 'item2', 'country': 'MEX', 'state': 'MichoacÃ¡n'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             assert False, "{}".format(e.http_error_message)
 
         # Recreate container
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(created_container)
+        await self._delete_container_for_test_async(created_container)
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path=container2_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -369,7 +392,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             assert False, "Read should not succeed as item no longer exists."
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_delete_item_async(self):
         client = self.client
@@ -379,7 +402,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container2_pk = "partkey"
         # Create The Container
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -392,9 +415,9 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         # Recreate container
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(created_container)
+        await self._delete_container_for_test_async(created_container)
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container2_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -409,7 +432,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             await created_container.delete_item(item_to_delete, partition_key='val')
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_delete_item_sub_partition_async(self):
         client = self.client
@@ -419,7 +442,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container2_pk = ["/county", "/city"]
         # Create The Container
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path=container_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -428,15 +451,15 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             item_to_del = await created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             await created_container.create_item(body={'id': 'item2',
                                                       'country': 'MEX',
-                                                      'state': 'Michoacán'})  # cspell:disable-line
+                                                      'state': 'MichoacÃ¡n'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             assert False, "{}".format(e.http_error_message)
 
         # Recreate container
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(created_container)
+        await self._delete_container_for_test_async(created_container)
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path=container2_pk))
         except exceptions.CosmosResourceExistsError:
             assert False, "Container Should not Already Exist."
@@ -452,7 +475,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             await created_container.delete_item(item_to_del, partition_key=['USA', 'CA'])
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 404
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_query_async(self):
         client = self.client
@@ -462,7 +485,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         container2_pk = "partkey"
         # Create The Container
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
@@ -475,9 +498,9 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         # Recreate container
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(created_container)
+        await self._delete_container_for_test_async(created_container)
         try:
-            created_container = await created_db.create_container(id=container_name, partition_key=PartitionKey(
+            created_container = await self._create_container_for_test_async(id=container_name, partition_key=PartitionKey(
                 path="/" + container2_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
@@ -514,7 +537,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             assert len(query_result) == 0
         except exceptions.CosmosHttpResponseError as e:
             self.fail("Query should still succeed if container is recreated.")
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_transactional_batch(self):
         client = self.client
@@ -525,7 +548,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         # Create The Container
         try:
-            created_container = await created_db.create_container(id=container_name,
+            created_container = await self._create_container_for_test_async(id=container_name,
                                                                   partition_key=PartitionKey(path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
@@ -543,9 +566,9 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         # Simulate a container recreate by saving the old cache and creating a new container with a different partition key definition
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(created_container)
+        await self._delete_container_for_test_async(created_container)
         try:
-            created_container = await created_db.create_container(id=container_name,
+            created_container = await self._create_container_for_test_async(id=container_name,
                                                                   partition_key=PartitionKey(path="/" + container2_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container Should not Already Exist.")
@@ -572,7 +595,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
 
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
     async def test_container_recreate_change_feed(self):
         client = self.client
@@ -582,7 +605,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         # Create the container
         try:
-            created_container = await created_db.create_container(id=container_name,
+            created_container = await self._create_container_for_test_async(id=container_name,
                                                                   partition_key=PartitionKey(path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container should not already exist.")
@@ -596,9 +619,9 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
         # Save old container cache and recreate container
         old_cache = copy.deepcopy(client.client_connection._CosmosClientConnection__container_properties_cache)
-        await created_db.delete_container(created_container)
+        await self._delete_container_for_test_async(created_container)
         try:
-            created_container = await created_db.create_container(id=container_name,
+            created_container = await self._create_container_for_test_async(id=container_name,
                                                                   partition_key=PartitionKey(path="/" + container_pk))
         except exceptions.CosmosResourceExistsError:
             self.fail("Container should not already exist.")
@@ -624,7 +647,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         assert not any(item['id'] == 'item1' and item[container_pk] == 'val' for item in change_feed)
         assert not any(item['id'] == 'item2' and item[container_pk] == 'OtherValue' for item in change_feed)
 
-        await created_db.delete_container(container_name)
+        await self._delete_container_for_test_async(container_name)
 
 
 if __name__ == '__main__':

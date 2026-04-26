@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 from azure.cosmos import DatabaseProxy
@@ -14,6 +14,7 @@ from azure.cosmos.documents import _OperationType, ConnectionPolicy
 
 
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAAD
 class TestServiceRequestRetryPolicies(unittest.TestCase):
     """Test cases for the read_items API."""
 
@@ -26,8 +27,9 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = test_config.TestConfig.create_data_client()
+        cls.database = cls.key_client.get_database_client(cls.TEST_DATABASE_ID)
 
 
     def test_write_failover_to_global_with_service_request_error(self):
@@ -59,9 +61,7 @@ class TestServiceRequestRetryPolicies(unittest.TestCase):
         policy.ExcludedLocations = [region_to_exclude]
         fault_injection_transport = FaultInjectionTransport()
 
-        client_with_faults = cosmos_client.CosmosClient(
-            self.host,
-            self.masterKey,
+        client_with_faults = test_config.TestConfig.create_data_client(
             connection_policy=policy,
             transport=fault_injection_transport,
 

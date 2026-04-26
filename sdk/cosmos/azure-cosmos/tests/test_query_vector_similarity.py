@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import unittest
@@ -24,11 +24,13 @@ def verify_ordering(item_list, distance_function):
         for i in range(len(item_list) - 1):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosSearchQuery
 class TestVectorSimilarityQuery(unittest.TestCase):
     """Test to check vector similarity queries behavior."""
 
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
     masterKey = config.masterKey
@@ -45,8 +47,9 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+        # control-plane (create_database / create_container / seeding / delete) on key-auth.
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.test_db = cls.key_client.create_database(str(uuid.uuid4()))
         cls.created_quantized_cosine_container = cls.test_db.create_container(
             id="quantized" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),
@@ -84,6 +87,19 @@ class TestVectorSimilarityQuery(unittest.TestCase):
             cls.created_flat_euclidean_container.create_item(item)
             cls.created_diskANN_dotproduct_container.create_item(item)
 
+        # AAD data-plane client: rebind the four container handles so all
+        # query_items / read_item calls in test bodies route through AAD.
+        cls.client = test_config.TestConfig.create_data_client()
+        data_db = cls.client.get_database_client(cls.test_db.id)
+        cls.created_quantized_cosine_container = data_db.get_container_client(
+            "quantized" + cls.TEST_CONTAINER_ID)
+        cls.created_flat_euclidean_container = data_db.get_container_client(
+            "flat" + cls.TEST_CONTAINER_ID)
+        cls.created_diskANN_dotproduct_container = data_db.get_container_client(
+            "diskANN" + cls.TEST_CONTAINER_ID)
+        cls.created_large_container = data_db.get_container_client(
+            "large_container" + cls.TEST_CONTAINER_ID)
+
     @classmethod
     def tearDownClass(cls):
         try:
@@ -91,7 +107,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
             cls.test_db.delete_container("flat" + cls.TEST_CONTAINER_ID)
             cls.test_db.delete_container("diskANN" + cls.TEST_CONTAINER_ID)
             cls.test_db.delete_container("large_container" + cls.TEST_CONTAINER_ID)
-            cls.client.delete_database(cls.test_db.id)
+            cls.key_client.delete_database(cls.test_db.id)
         except exceptions.CosmosHttpResponseError:
             pass
 

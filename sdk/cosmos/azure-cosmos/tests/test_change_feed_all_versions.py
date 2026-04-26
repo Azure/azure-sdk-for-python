@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -30,9 +30,13 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(config.host, config.masterKey),
+    # Key-auth client for control-plane (container create/delete)
+    key_client = cosmos_client.CosmosClient(config.host, config.masterKey)
+    # AAD data client for data-plane operations (create_item, delete_item, query_items_change_feed)
+    data_client = config.create_data_client()
     return {
-        "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID),
+        "key_db": key_client.get_database_client(config.TEST_DATABASE_ID),
+        "created_db": data_client.get_database_client(config.TEST_DATABASE_ID),
         "is_emulator": config.is_emulator
     }
 
@@ -62,8 +66,21 @@ def assert_change_feed(expected, actual):
                 assert key in actual_data
                 assert expected_data[key] == actual_data[key]
 
+
+def _is_all_versions_and_deletes_not_enabled(error: Exception) -> bool:
+    if not isinstance(error, Exception):
+        return False
+    if getattr(error, "status_code", None) != 400:
+        return False
+    message = str(error)
+    return (
+        "All Versions and Deletes" in message
+        and "must be enabled" in message
+    )
+
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
+@pytest.mark.cosmosAAD
 @pytest.mark.usefixtures("setup")
 class TestChangeAllVersionsFeed:
     """Test to verify All Versions And Delete change feed behavior"""
@@ -72,17 +89,25 @@ class TestChangeAllVersionsFeed:
         partition_key = 'pk'
         # 'retentionDuration' was required to enable `ALL_VERSIONS_AND_DELETES` for Emulator testing
         change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
-        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                                  PartitionKey(path=f"/{partition_key}"),
-                                                                  change_feed_policy=change_feed_policy)
+        cid = "change_feed_test_" + str(uuid.uuid4())
+        # Container creation is control-plane and uses key-auth key_db.
+        setup["key_db"].create_container(cid,
+                                           PartitionKey(path=f"/{partition_key}"),
+                                           change_feed_policy=change_feed_policy)
+        created_collection = setup["created_db"].get_container_client(cid)
         mode = 'AllVersionsAndDeletes'
 
         ## Test Change Feed with empty collection(Save the continuation token)
-        query_iterable = created_collection.query_items_change_feed(
-            mode=mode,
-        )
-        expected_change_feeds = []
-        actual_change_feeds = list(query_iterable)
+        try:
+            query_iterable = created_collection.query_items_change_feed(
+                mode=mode,
+            )
+            expected_change_feeds = []
+            actual_change_feeds = list(query_iterable)
+        except Exception as e:
+            if _is_all_versions_and_deletes_not_enabled(e):
+                pytest.skip("Change Feed 'All Versions and Deletes' capability is not enabled on this account.")
+            raise
         cont_token1 = created_collection.client_connection.last_response_headers[E_TAG]
         assert_change_feed(expected_change_feeds, actual_change_feeds)
 
@@ -145,8 +170,10 @@ class TestChangeAllVersionsFeed:
         assert_change_feed(expected_change_feeds, actual_change_feeds)
 
     def test_query_change_feed_all_versions_and_deletes_errors(self, setup):
-        created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                                  PartitionKey(path="/pk"))
+        cid = "change_feed_test_" + str(uuid.uuid4())
+        # Container creation is control-plane and uses key-auth key_db.
+        setup["key_db"].create_container(cid, PartitionKey(path="/pk"))
+        created_collection = setup["created_db"].get_container_client(cid)
         mode = 'AllVersionsAndDeletes'
 
         # Error if invalid mode was used

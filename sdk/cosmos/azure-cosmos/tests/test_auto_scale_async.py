@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -12,11 +12,13 @@ from azure.cosmos import ThroughputProperties, PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 @pytest.mark.cosmosLong
+@pytest.mark.cosmosAAD
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
 
+    key_client: CosmosClient = None
     client: CosmosClient = None
     created_database: DatabaseProxy = None
 
@@ -32,10 +34,12 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.key_client = CosmosClient(self.host, self.masterKey)
+        self.client = test_config.TestConfig.create_data_client_async()
+        self.created_database = self.key_client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
+        await self.key_client.close()
         await self.client.close()
 
     async def test_autoscale_create_container_async(self):
@@ -80,7 +84,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
         try:
             # Testing auto_scale_settings for the create_database method
             database_id = "db1_" + str(uuid.uuid4())
-            created_database = await self.client.create_database(database_id, offer_throughput=ThroughputProperties(
+            created_database = await self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(
                 auto_scale_max_throughput=5000,
                 auto_scale_increment_percent=0))
             created_db_properties = await created_database.get_throughput()
@@ -89,11 +93,11 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
             # Testing the input value of the increment_percentage
             assert created_db_properties.auto_scale_increment_percent == 0
 
-            await self.client.delete_database(created_database.id)
+            await self.key_client.delete_database(created_database.id)
 
             # Testing auto_scale_settings for the create_database_if_not_exists method
             database_id = "db2_" + str(uuid.uuid4())
-            created_database = await self.client.create_database_if_not_exists(database_id, offer_throughput=ThroughputProperties(
+            created_database = await self.key_client.create_database_if_not_exists(database_id, offer_throughput=ThroughputProperties(
                 auto_scale_max_throughput=9000,
                 auto_scale_increment_percent=11))
             created_db_properties = await created_database.get_throughput()
@@ -102,13 +106,13 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
             # Testing the input value of the increment_percentage
             assert created_db_properties.auto_scale_increment_percent == 11
         finally:
-            await self.client.delete_database(database_id)
+            await self.key_client.delete_database(database_id)
 
     async def test_replace_throughput_async(self):
         database_id = "replace_db" + str(uuid.uuid4())
         container_id = None
         try:
-            created_database = await self.client.create_database(database_id, offer_throughput=ThroughputProperties(
+            created_database = await self.key_client.create_database(database_id, offer_throughput=ThroughputProperties(
                 auto_scale_max_throughput=5000,
                 auto_scale_increment_percent=0))
             await created_database.replace_throughput(
@@ -118,7 +122,7 @@ class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
             assert created_db_properties.auto_scale_max_throughput == 7000
             # Testing the replaced value of the increment_percentage
             assert created_db_properties.auto_scale_increment_percent == 20
-            await self.client.delete_database(database_id)
+            await self.key_client.delete_database(database_id)
 
             container_id = "container_with_auto_scale_settings" + str(uuid.uuid4())
             created_container = await self.created_database.create_container(

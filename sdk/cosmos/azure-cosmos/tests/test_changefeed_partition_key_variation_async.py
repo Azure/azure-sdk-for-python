@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 import uuid
 import pytest
 from azure.cosmos.aio import CosmosClient
@@ -6,6 +6,7 @@ import test_config
 from azure.cosmos.partition_key import PartitionKey, _get_partition_key_from_partition_key_definition
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
     """Test change feed with different partition key variations (async version)."""
@@ -70,22 +71,26 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.db = await self.client.create_database_if_not_exists(self.configs.TEST_DATABASE_ID)
+        # Key-auth setup client is used for container lifecycle (control-plane) in this test.
+        self.key_client, self.key_db, self.client, self.db = (
+            test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
 
-    async def create_container(self, db, container_id, partition_key, version=None, throughput=None):
-        """Helper to create a container with a specific partition key definition."""
+    async def create_container(self, container_id, partition_key, version=None, throughput=None):
+        """Helper to create a container and return a data-plane proxy."""
+        # Container creation is control-plane and uses key_db.
         if isinstance(partition_key, list):
-            # Assume multihash (hierarchical partition key) for the container
             pk_definition = PartitionKey(path=partition_key, kind='MultiHash')
         else:
             pk_definition = PartitionKey(path=partition_key, kind='Hash', version=version)
         if throughput:
-            return await db.create_container(container_id, pk_definition, offer_throughput=throughput)
-        return await db.create_container(container_id, pk_definition)
+            await self.key_db.create_container(container_id, pk_definition, offer_throughput=throughput)
+        else:
+            await self.key_db.create_container(container_id, pk_definition)
+        return self.db.get_container_client(container_id)
 
     async def insert_items(self, container, items):
         """Helper to insert items into a container."""
@@ -150,83 +155,76 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_hash_v1_partition_key(self):
         """Test changefeed with Hash V1 partition key."""
-        db = self.db
-        container = await self.create_container(db, f"container_test_hash_V1_{uuid.uuid4()}", "/pk", version=1)
+        container_id = f"container_test_hash_V1_{uuid.uuid4()}"
+        container = await self.create_container(container_id, "/pk", version=1)
         items = self.single_hash_items
         await self.insert_items(container, items)
         await self.validate_changefeed(container)
-        await self.db.delete_container(container.id)
+        await self.key_db.delete_container(container_id)
 
     async def test_hash_v2_partition_key(self):
         """Test changefeed with Hash V2 partition key."""
-        db = self.db
-        container = await self.create_container(db, f"container_test_hash_V2_{uuid.uuid4()}", "/pk", version=2)
-        items = self.single_hash_items
-        await self.insert_items(container, items)
+        container_id = f"container_test_hash_V2_{uuid.uuid4()}"
+        container = await self.create_container(container_id, "/pk", version=2)
+        await self.insert_items(container, self.single_hash_items)
         await self.validate_changefeed(container)
-        await self.db.delete_container(container.id)
+        await self.key_db.delete_container(container_id)
 
     async def test_hpk_partition_key(self):
         """Test changefeed with hierarchical partition key."""
-        db = self.db
-        container = await self.create_container(db, f"container_test_hpk_{uuid.uuid4()}", ["/pk1", "/pk2"])
+        container_id = f"container_test_hpk_{uuid.uuid4()}"
+        container = await self.create_container(container_id, ["/pk1", "/pk2"])
         items = self.hpk_items
         await self.insert_items(container, items)
         await self.validate_changefeed_hpk(container)
-        await self.db.delete_container(container.id)
+        await self.key_db.delete_container(container_id)
 
     async def test_multiple_physical_partitions_async(self):
         """Test change feed with a container having multiple physical partitions."""
-        db = self.db
-
         # Test for Hash V1 partition key
         container_id_v1 = f"container_test_multiple_partitions_hash_v1_{uuid.uuid4()}"
-        throughput = 12000  # Ensure multiple physical partitions
-        container_v1 = await self.create_container(db, container_id_v1, "/pk", version=1, throughput=throughput)
+        throughput = 12000
+        container_v1 = await self.create_container(container_id_v1, "/pk", version=1, throughput=throughput)
 
-        # Verify the container has more than one physical partition
         feed_ranges_v1 = container_v1.read_feed_ranges()
         feed_ranges_v1 = [feed_range async for feed_range in feed_ranges_v1]
-        assert len(feed_ranges_v1) > 1, "Hash V1 container does not have multiple physical partitions."
+        assert len(feed_ranges_v1) > 1
 
-        # Insert items and validate change feed for Hash V1
         await self.insert_items(container_v1, self.single_hash_items)
         await self.validate_changefeed(container_v1)
-        await self.db.delete_container(container_v1.id)
+        await self.key_db.delete_container(container_id_v1)
 
         # Test for Hash V2 partition key
         container_id_v2 = f"container_test_multiple_partitions_hash_v2_{uuid.uuid4()}"
-        container_v2 = await self.create_container(db, container_id_v2, "/pk", version=2, throughput=throughput)
+        container_v2 = await self.create_container(container_id_v2, "/pk", version=2, throughput=throughput)
 
-        # Verify the container has more than one physical partition
         feed_ranges_v2 = container_v2.read_feed_ranges()
         feed_ranges_v2 = [feed_range async for feed_range in feed_ranges_v2]
-        assert len(feed_ranges_v2) > 1, "Hash V2 container does not have multiple physical partitions."
+        assert len(feed_ranges_v2) > 1
 
-        # Insert items and validate change feed for Hash V2
         await self.insert_items(container_v2, self.single_hash_items)
         await self.validate_changefeed(container_v2)
-        await self.db.delete_container(container_v2.id)
+        await self.key_db.delete_container(container_id_v2)
 
         # Test for Hierarchical Partition Keys (HPK)
         container_id_hpk = f"container_test_multiple_partitions_hpk_{uuid.uuid4()}"
-        container_hpk = await self.create_container(db, container_id_hpk, ["/pk1", "/pk2"], throughput=throughput)
+        container_hpk = await self.create_container(container_id_hpk, ["/pk1", "/pk2"], throughput=throughput)
 
-        # Verify the container has more than one physical partition
         feed_ranges_hpk = container_hpk.read_feed_ranges()
         feed_ranges_hpk = [feed_range async for feed_range in feed_ranges_hpk]
-        assert len(feed_ranges_hpk) > 1, "HPK container does not have multiple physical partitions."
+        assert len(feed_ranges_hpk) > 1
 
-        # Insert items and validate change feed for HPK
         await self.insert_items(container_hpk, self.hpk_items)
         await self.validate_changefeed_hpk(container_hpk)
-        await self.db.delete_container(container_hpk.id)
+        await self.key_db.delete_container(container_id_hpk)
 
     async def test_partition_key_version_1_properties_async(self):
         """Test container with version 1 partition key definition and validate properties (async)."""
         container_id = f"container_test_pk_version_1_properties_{uuid.uuid4()}"
         pk = PartitionKey(path="/pk", kind="Hash", version=1)
-        container = await self.db.create_container(id=container_id, partition_key=pk)
+        # Control-plane container creation uses key_db.
+        await self.key_db.create_container(id=container_id, partition_key=pk)
+        container = self.db.get_container_client(container_id)
         original_get_properties = container._get_properties
 
         # Simulate the version key not being in the definition
@@ -281,7 +279,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             # Clean up the container
             container._get_properties = original_get_properties
-            await self.db.delete_container(container.id)
+            await self.key_db.delete_container(container_id)
 
 
 if __name__ == '__main__':

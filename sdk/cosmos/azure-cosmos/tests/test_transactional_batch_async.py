@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -21,6 +21,7 @@ def get_subpartition_item(item_id):
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     """Python Transactional Batch Tests.
     """
@@ -40,16 +41,32 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # Key-auth client for control-plane (container create/delete)
+        self.key_client = CosmosClient(self.host, self.masterKey)
+        self.key_database = self.key_client.get_database_client(self.TEST_DATABASE_ID)
+
+        # AAD data client for data-plane operations (batch execute, create_item, read, etc.)
+        self.client = self.configs.create_data_client_async()
         self.test_database = self.client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
+
+    async def _create_container_for_test(self, container_id, partition_key):
+        """Create container via key-auth, return AAD data-plane proxy."""
+        # container creation is control-plane; uses key-auth key_database.
+        await self.key_database.create_container(id=container_id, partition_key=partition_key)
+        return self.test_database.get_container_client(container_id)
+
+    async def _delete_container_for_test(self, container_id):
+        """Delete container via key-auth."""
+        # container deletion is control-plane; uses key-auth key_database.
+        await self.key_database.delete_container(container_id)
 
     async def test_invalid_batch_sizes_async(self):
-        container = await self.test_database.create_container(
-            id="invalid_batch_size_async" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/company"))
+        cid = "invalid_batch_size_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
 
         # empty batch
         try:
@@ -84,11 +101,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == StatusCodes.REQUEST_ENTITY_TOO_LARGE
             assert e.message.startswith("(RequestEntityTooLarge)")
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_create_async(self):
-        container = await self.test_database.create_container(id="batch_create_async" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        cid = "batch_create_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
@@ -142,11 +159,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
             assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_read_async(self):
-        container = await self.test_database.create_container(id="batch_read_async" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        cid = "batch_read_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
         batch = []
         for i in range(100):
             await container.create_item({"id": "item" + str(i), "company": "Microsoft"})
@@ -172,11 +189,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_replace_async(self):
-        container = await self.test_database.create_container(id="batch_replace_async" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        cid = "batch_replace_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
         batch = [("create", ({"id": "new-item", "company": "Microsoft"},)),
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
@@ -217,11 +234,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[1].get("statusCode") == StatusCodes.PRECONDITION_FAILED
             assert operation_results[2].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_upsert_async(self):
-        container = await self.test_database.create_container(id="batch_upsert_async" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        cid = "batch_upsert_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id, "company": "Microsoft"},)),
                  ("upsert", ({"id": item_id, "company": "Microsoft", "message": "item was upsert"},)),
@@ -231,11 +248,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         assert len(batch_response) == 3
         assert batch_response[1].get("resourceBody").get("message") == "item was upsert"
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_patch_async(self):
-        container = await self.test_database.create_container(id="batch_patch_async" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        cid = "batch_patch_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id,
                               "company": "Microsoft",
@@ -300,11 +317,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
 
         assert len(operation_results) == 2
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_delete_async(self):
-        container = await self.test_database.create_container(id="batch_delete_async" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        cid = "batch_delete_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
         create_batch = []
         delete_batch = []
         for i in range(10):
@@ -337,11 +354,11 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_lsn_async(self):
-        container = await self.test_database.create_container(id="batch_lsn_async" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        cid = "batch_lsn_async" + str(uuid.uuid4())
+        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
         # Create test items
         await container.upsert_item({"id": "read_item", "company": "Microsoft"})
         await container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0})
@@ -362,12 +379,12 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         assert len(batch_response) == 6
         assert int(lsn) == int(batch_response.get_response_headers().get(HttpHeaders.LSN)) - 1
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
     async def test_batch_subpartition(self):
-        container = await self.test_database.create_container(
-            id="batch_subpartition" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"))
+        cid = "batch_subpartition" + str(uuid.uuid4())
+        container = await self._create_container_for_test(
+            cid, PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"))
         item_ids = [str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())]
         await container.upsert_item({'id': item_ids[0], 'key': 'value',
                                      'state': 'WA',
@@ -408,7 +425,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
                    "definition in the collection or doesn't match partition key " \
                    "field values specified in the document." in e.message
 
-        await self.test_database.delete_container(container.id)
+        await self._delete_container_for_test(cid)
 
 
 if __name__ == "__main__":

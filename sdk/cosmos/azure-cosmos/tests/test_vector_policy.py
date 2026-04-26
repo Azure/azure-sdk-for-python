@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -55,6 +55,8 @@ VectorPolicyTestData = {
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicy(unittest.TestCase):
     client: CosmosClient = None
+    key_client: CosmosClient = None
+    data_client: CosmosClient = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
@@ -69,6 +71,13 @@ class TestVectorPolicy(unittest.TestCase):
                 "tests.")
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.key_client = cls.client  # alias â€” control-plane operations stay on key-auth (Batch 17 prep)
+        # AAD data client added for parity with the dual-client convention. Not exercised
+        # here because every runnable test in this file is control-plane (vector indexing/
+        # embedding policy validation via create_container / replace_container / read).
+        # When per-test data-plane operations are added (e.g., vector similarity queries
+        # against a populated container), route those through cls.data_client.
+        cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
 

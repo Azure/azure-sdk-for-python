@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -22,6 +22,7 @@ from typing import Awaitable, Callable
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -42,13 +43,16 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                             "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # key-auth client for control-plane operations
+        self.key_client, self.key_db, self.client, self.created_db = (
+            test_config.TestConfig.create_test_clients_async(self.TEST_DATABASE_ID))
+        await self.key_client.__aenter__()
         await self.client.__aenter__()
-        self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.created_container = self.created_db.get_container_client(self.TEST_COLLECTION_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
 
     async def test_manual_session_token_takes_precedence_async(self):
         # Establish an initial session state for the primary async client.
@@ -93,11 +97,14 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         Verify that when querying with a feed range (single physical partition),
         only that partition's session token is sent, not the entire compound token.
         """
-        test_container = await self.created_db.create_container(
+        # control-plane container creation
+        test_container_ref = await self.key_db.create_container(
             "Container query test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             offer_throughput=11000
         )
+        # Data-plane proxy for item/query operations
+        test_container = self.created_db.get_container_client(test_container_ref.id)
 
         try:
             # Create items across multiple partition keys
@@ -131,7 +138,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                              f"Expected single partition token, got compound token: {token}")
 
         finally:
-            await self.created_db.delete_container(test_container)
+            await self.key_db.delete_container(test_container_ref)  # control-plane
 
     async def test_session_token_compound_not_sent_for_multi_partition_feed_range_query_async(self):
         """
@@ -139,11 +146,14 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         each individual request sends only the relevant partition's session token,
         not the entire compound token.
         """
-        test_container = await self.created_db.create_container(
+        # control-plane container creation
+        test_container_ref = await self.key_db.create_container(
             "Container multi partition test" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             offer_throughput=11000
         )
+        # Data-plane proxy for item/query operations
+        test_container = self.created_db.get_container_client(test_container_ref.id)
 
         try:
             # Create items across multiple partition keys
@@ -184,7 +194,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                                  f"Expected single partition token per request, got compound token: {token}")
 
         finally:
-            await self.created_db.delete_container(test_container)
+            await self.key_db.delete_container(test_container_ref)  # control-plane
 
     async def test_manual_session_token_override_async(self):
         # Create an item to get a valid session token from the response
@@ -218,9 +228,10 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_session_token_swr_for_ops_async(self):
         # Session token should not be sent for control plane operations
-        test_container = await self.created_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"), raw_response_hook=test_config.no_token_response_hook)
-        await self.created_db.get_container_client(container=self.created_container).read(raw_response_hook=test_config.no_token_response_hook)
-        await self.created_db.delete_container(test_container, raw_response_hook=test_config.no_token_response_hook)
+        # control-plane container create/read/delete via key_db
+        test_container = await self.key_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"), raw_response_hook=test_config.no_token_response_hook)
+        await self.key_db.get_container_client(container=self.created_container).read(raw_response_hook=test_config.no_token_response_hook)
+        await self.key_db.delete_container(test_container, raw_response_hook=test_config.no_token_response_hook)
 
         # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
         up_item = await self.created_container.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
@@ -258,11 +269,14 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
     async def test_session_token_with_space_in_container_name_async(self):
 
         # Session token should not be sent for control plane operations
-        test_container = await self.created_db.create_container(
+        # control-plane container creation
+        test_container_ref = await self.key_db.create_container(
             "Container with space" + str(uuid.uuid4()),
             PartitionKey(path="/pk"),
             raw_response_hook=test_config.no_token_response_hook
         )
+        # Data-plane proxy for data operations
+        test_container = self.created_db.get_container_client(test_container_ref.id)
         try:
             # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
             created_document = await test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
@@ -281,11 +295,12 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
             assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
                     response_session_token)
         finally:
-            await self.created_db.delete_container(test_container)
+            await self.key_db.delete_container(test_container_ref)  # control-plane
 
     async def test_session_token_mwr_for_ops_async(self):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs
+        # NOTE: This test stays entirely on key-auth since it uses a custom FaultInjection transport
         custom_transport = FaultInjectionTransportAsync()
 
         # Inject topology transformation that would make Emulator look like a multiple write region account

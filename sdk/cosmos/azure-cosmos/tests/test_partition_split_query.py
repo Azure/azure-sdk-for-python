@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import random
@@ -34,10 +34,18 @@ def run_queries(container, iterations):
 
 
 @pytest.mark.cosmosSplit
+@pytest.mark.cosmosAAD
 class TestPartitionSplitQuery(unittest.TestCase):
+    # AAD client/database â€” data-plane (create_item, query_items, _routing_map_provider introspection,
+    # patch.object on client_connection._ReadPartitionKeyRanges)
     database: DatabaseProxy = None
     container: ContainerProxy = None
     client: cosmos_client.CosmosClient = None
+    # Key-auth client/database â€” control-plane (create_container, delete_container, replace_throughput,
+    # get_throughput, read_offer)
+    key_database: DatabaseProxy = None
+    key_container: ContainerProxy = None
+    key_client: cosmos_client.CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
@@ -48,17 +56,22 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container(
+        # Control-plane: key-auth (container lifecycle + replace_throughput/get_throughput)
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.key_database = cls.key_client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.key_container = cls.key_database.create_container(
             id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"),
             offer_throughput=cls.throughput)
+        # Data-plane: AAD
+        cls.client = test_config.TestConfig.create_data_client()
+        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+        cls.container = cls.database.get_container_client(cls.TEST_CONTAINER_ID)
 
     @classmethod
     def tearDownClass(cls) -> None:
         try:
-            cls.database.delete_container(cls.container.id)
+            cls.key_database.delete_container(cls.TEST_CONTAINER_ID)
         except CosmosHttpResponseError:
             pass
 
@@ -69,7 +82,8 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
         start_time = time.time()
         print("created items, changing offer to 11k and starting queries")
-        self.container.replace_throughput(11000)
+        # Control-plane: replace_throughput via key-auth key_container
+        self.key_container.replace_throughput(11000)
         offer_time = time.time()
         print("changed offer to 11k")
         print("--------------------------------")
@@ -77,13 +91,14 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
         run_queries(self.container, 100)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
-        offer = self.container.get_throughput()
+        # Control-plane: get_throughput via key-auth key_container
+        offer = self.key_container.get_throughput()
         while True:
             if time.time() - start_time > self.MAX_TIME:  # timeout test at 10 minutes
                 self.skipTest("Partition split didn't complete in time")
             if offer.properties['content'].get('isOfferReplacePending', False):
                 time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
-                offer = self.container.get_throughput()
+                offer = self.key_container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
                 run_queries(self.container, 100)  # check queries work post partition split
@@ -102,11 +117,15 @@ class TestPartitionSplitQuery(unittest.TestCase):
         This test ensures that when ALL partitions split, the incremental merge
         correctly handles the transition without any stable partitions to preserve.
         """
-        container = self.database.create_container(
-            id='single_partition_split_test_' + str(uuid.uuid4()),
+        container_id = 'single_partition_split_test_' + str(uuid.uuid4())
+        # Control-plane: create via key-auth key_database
+        key_container = self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400  # Single physical partition
         )
+        # Data-plane: re-bind via AAD database
+        container = self.database.get_container_client(container_id)
 
         try:
             # Insert data
@@ -125,11 +144,11 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache by running a query
             run_queries(container, 1)
 
-            # Trigger split (1 -> 2 partitions)
-            container.replace_throughput(11000)
+            # Trigger split (1 -> 2 partitions) â€” control-plane
+            key_container.replace_throughput(11000)
             pending = True
             while pending:
-                offer = container.get_throughput()
+                offer = key_container.get_throughput()
                 pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
                 if pending:
                     time.sleep(5)
@@ -167,12 +186,12 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
             print(f"Validated: Single partition split into {len(child_partitions)} children")
 
-            # Verify final throughput
-            final_offer = container.get_throughput()
+            # Verify final throughput â€” control-plane
+            final_offer = key_container.get_throughput()
             assert final_offer.offer_throughput == 11000
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_incremental_merge_handles_split_partitions(self):
         """
@@ -189,11 +208,15 @@ class TestPartitionSplitQuery(unittest.TestCase):
         - Handles new child partitions (with parent references)
         - Preserves unchanged partitions (without parent references)
         """
-        container = self.database.create_container(
-            id='partial_split_test_' + str(uuid.uuid4()),
+        container_id = 'partial_split_test_' + str(uuid.uuid4())
+        # Control-plane: create via key-auth key_database
+        key_container = self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=11000  # 2 physical partitions
         )
+        # Data-plane: re-bind via AAD database
+        container = self.database.get_container_client(container_id)
 
         try:
             # Insert data
@@ -212,11 +235,11 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache
             run_queries(container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)
-            container.replace_throughput(25000)
+            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split) â€” control-plane
+            key_container.replace_throughput(25000)
             pending = True
             while pending:
-                offer = container.read_offer()
+                offer = key_container.read_offer()
                 pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
                 if pending:
                     time.sleep(5)
@@ -260,12 +283,12 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
             print(f"Validated: {len(stable_partitions)} stable + {len(child_partitions)} split partitions")
 
-            # Verify final throughput
-            final_offer = container.get_throughput()
+            # Verify final throughput â€” control-plane
+            final_offer = key_container.get_throughput()
             assert final_offer.offer_throughput == 25000
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_incremental_change_feed_only_affects_target_collection(self):
         """
@@ -275,23 +298,28 @@ class TestPartitionSplitQuery(unittest.TestCase):
         - Create 2 containers: container_A and container_B
         - Both start with 1 partition (400 RU/s)
         - Run queries on both to populate routing map cache
-        - Split ONLY container_A (400 → 11000 RU/s)
+        - Split ONLY container_A (400 â†’ 11000 RU/s)
         - Verify:
           1. container_A's routing map is refreshed (2 partitions)
           2. container_B's routing map is unchanged (1 partition)
           3. container_B's cache is NOT invalidated
         """
-        container_a = self.database.create_container(
-            id='container_a_' + str(uuid.uuid4()),
+        container_a_id = 'container_a_' + str(uuid.uuid4())
+        container_b_id = 'container_b_' + str(uuid.uuid4())
+        # Control-plane: create via key-auth key_database
+        key_container_a = self.key_database.create_container(
+            id=container_a_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
-
-        container_b = self.database.create_container(
-            id='container_b_' + str(uuid.uuid4()),
+        self.key_database.create_container(
+            id=container_b_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        # Data-plane: re-bind via AAD database
+        container_a = self.database.get_container_client(container_a_id)
+        container_b = self.database.get_container_client(container_b_id)
 
         try:
             # Insert data into both containers
@@ -327,11 +355,11 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # Split only Container A
-            container_a.replace_throughput(11000)
+            # Split only Container A â€” control-plane
+            key_container_a.replace_throughput(11000)
             pending = True
             while pending:
-                offer = container_a.get_throughput()
+                offer = key_container_a.get_throughput()
                 pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
                 if pending:
                     time.sleep(5)
@@ -408,19 +436,23 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Container B's routing map remained untouched (same object reference)")
 
         finally:
-            self.database.delete_container(container_a.id)
-            self.database.delete_container(container_b.id)
+            self.key_database.delete_container(container_a_id)
+            self.key_database.delete_container(container_b_id)
 
     def test_routing_map_provider_fallback_on_incomplete_merge(self):
         """
         Validates that routing_map_provider falls back to full refresh
         when incremental merge produces incomplete range coverage.
         """
-        container = self.database.create_container(
-            id='test_fallback_' + str(uuid.uuid4()),
+        container_id = 'test_fallback_' + str(uuid.uuid4())
+        # Control-plane: create via key-auth key_database
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        # Data-plane: re-bind via AAD database
+        container = self.database.get_container_client(container_id)
 
         try:
             # Insert data
@@ -496,7 +528,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert refreshed_ranges[0]['minInclusive'] == ''
             assert refreshed_ranges[0]['maxExclusive'] == 'FF'
 
-            print("✓ Validated: routing_map_provider successfully fell back to full refresh")
+            print("âœ“ Validated: routing_map_provider successfully fell back to full refresh")
 
             # Verify queries still work after fallback
             query_results = list(container.query_items(
@@ -510,11 +542,11 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: Queries work correctly after fallback")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_etag_staleness_detection_across_all_scenarios(self):
         """Verifies that the cache correctly detects whether a refresh is needed by
-        comparing ETags. The ETag is a version stamp from the change feed — when two
+        comparing ETags. The ETag is a version stamp from the change feed â€” when two
         maps have the same ETag, it means nobody has refreshed yet (stale). This test
         checks all four scenarios:
 
@@ -523,11 +555,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
         3. ETags differ -> not stale (another thread already refreshed)
         4. Cache is empty -> not stale (empty cache is handled separately as initial load)
         """
-        container = self.database.create_container(
-            id='test_stale_etag_' + str(uuid.uuid4()),
+        container_id = 'test_stale_etag_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -567,21 +601,23 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: _is_cache_stale ETag comparison logic works correctly")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_full_refresh_fallback_stops_infinite_recursion(self):
         """Verifies that the SDK does not recurse infinitely when a full refresh from
         the service returns an incomplete set of partition ranges.
 
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map must return None immediately —
+        returns gapped ranges, _fetch_routing_map must return None immediately â€”
         there is no incremental state to fall back from, and repeating the
         identical request would produce the same result."""
-        container = self.database.create_container(
-            id='test_fallback_guard_' + str(uuid.uuid4()),
+        container_id = 'test_fallback_guard_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -623,7 +659,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: full load with incomplete ranges returns None without recursion")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_pk_range_fetch_sets_recursion_prevention_flag(self):
         """Verifies that when the SDK fetches partition key ranges, it sets a special
@@ -631,13 +667,15 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
         This flag exists to break a specific infinite loop: if the PK range fetch itself
         gets a 410 (partition gone) error, the retry logic would normally try to refresh
-        the routing map — which would call the PK range fetch again — creating an endless
+        the routing map â€” which would call the PK range fetch again â€” creating an endless
         cycle. The flag tells the retry logic to skip the refresh and let the 410 propagate."""
-        container = self.database.create_container(
-            id='test_pk_flag_' + str(uuid.uuid4()),
+        container_id = 'test_pk_flag_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -674,7 +712,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: _internal_pk_range_fetch flag is correctly set")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_cached_map_returned_without_lock(self):
         """Verifies that when the routing map is already cached and no refresh is needed,
@@ -685,11 +723,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
         unnecessarily. The fast path (dict lookup without locking) avoids this. This test
         also confirms that force_refresh=True correctly bypasses the fast path and does
         acquire the lock."""
-        container = self.database.create_container(
-            id='test_fast_path_' + str(uuid.uuid4()),
+        container_id = 'test_fast_path_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -715,7 +755,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 return original_get_lock(*args, **kwargs)
 
             with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
-                # This should hit the fast path — no lock acquisition
+                # This should hit the fast path â€” no lock acquisition
                 result = provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={}
@@ -740,7 +780,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: Lock-free fast path works correctly")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_upstream_response_hook_preserved_during_routing_map_fetch(self):
         """Verifies that when a caller passes a response_hook callback, it is still
@@ -750,11 +790,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
         Without proper hook chaining, either the caller's hook would be silently dropped,
         or the SDK would crash with 'got multiple values for keyword argument'. This test
         confirms both hooks are called and both receive the response headers."""
-        container = self.database.create_container(
-            id='test_hook_chain_' + str(uuid.uuid4()),
+        container_id = 'test_hook_chain_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -792,7 +834,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: response_hook chaining works correctly")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_stale_etag_header_removed_on_full_refresh_fallback(self):
         """Verifies that when an incremental update fails and the SDK falls back to a
@@ -801,11 +843,13 @@ class TestPartitionSplitQuery(unittest.TestCase):
         Current behavior includes one incremental retry before full refresh.
         This test forces both incremental attempts to be incomplete, then verifies
         the final full-refresh call drops If-None-Match."""
-        container = self.database.create_container(
-            id='test_etag_cleanup_' + str(uuid.uuid4()),
+        container_id = 'test_etag_cleanup_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -883,7 +927,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
     def test_targeted_refresh_with_stale_map_keeps_queries_working(self):
         """Verifies the end-to-end targeted refresh path: the SDK caches a routing map,
@@ -891,13 +935,15 @@ class TestPartitionSplitQuery(unittest.TestCase):
         retry policy does after a partition split), and confirms that queries still return
         correct results afterward.
 
-        This is the most important refresh path in production — it's how the SDK recovers
+        This is the most important refresh path in production â€” it's how the SDK recovers
         from partition splits without disrupting the user's queries."""
-        container = self.database.create_container(
-            id='test_force_refresh_' + str(uuid.uuid4()),
+        container_id = 'test_force_refresh_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.database.get_container_client(container_id)
 
         try:
             for i in range(20):
@@ -915,7 +961,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert stale_map is not None
             original_etag = stale_map.change_feed_etag
 
-            # Force refresh with the stale map — simulates what the gone retry policy does
+            # Force refresh with the stale map â€” simulates what the gone retry policy does
             refreshed_map = provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={},
@@ -937,7 +983,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print("Validated: Force refresh with previous_routing_map works correctly")
 
         finally:
-            self.database.delete_container(container.id)
+            self.key_database.delete_container(container_id)
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
@@ -16,6 +16,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestReadItems(unittest.TestCase):
     """Test cases for the read_items API."""
 
@@ -36,18 +37,22 @@ class TestReadItems(unittest.TestCase):
                 "tests.")
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, self.masterKey)
-        self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
-        self.container = self.database.create_container(
+        # key-auth client for container lifecycle (control-plane)
+        self.key_client, self.key_database, self.client, self.database = (
+            test_config.TestConfig.create_test_clients(self.configs.TEST_DATABASE_ID))
+        # container creation is control-plane
+        container_ref = self.key_database.create_container(
             id='read_items_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id")
         )
+        self.container = self.database.get_container_client(container_ref.id)
+        self._container_id = container_ref.id
 
     def tearDown(self):
         """Clean up async resources after each test."""
-        if self.container:
+        if self._container_id:
             try:
-                self.database.delete_container(self.container)
+                self.key_database.delete_container(self._container_id)  # control-plane
             except exceptions.CosmosHttpResponseError as e:
                 # Container may have been deleted by the test itself
                 if e.status_code != 404:
@@ -74,10 +79,11 @@ class TestReadItems(unittest.TestCase):
 
     def _setup_fault_injection(self, error_to_inject, inject_once=False):
         """Helper to set up a client with fault injection for read_items queries."""
+        # Fault injection needs its own key-auth client with custom transport â€” stays as-is
         fault_injection_transport = FaultInjectionTransport()
         client_with_faults = cosmos_client.CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
         container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
-            self.container.id)
+            self._container_id)
 
         fault_has_been_injected = False
 
@@ -128,10 +134,13 @@ class TestReadItems(unittest.TestCase):
 
     def test_read_items_different_partition_key(self):
         """Tests read_items with partition key different from id."""
-        container_pk = self.database.create_container(
-            id='read_items_pk_container_' + str(uuid.uuid4()),
+        # control-plane container creation
+        container_id = 'read_items_pk_container_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk")
         )
+        container_pk = self.database.get_container_client(container_id)
         try:
             items_to_read = []
             item_ids = []
@@ -148,15 +157,16 @@ class TestReadItems(unittest.TestCase):
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            self.database.delete_container(container_pk)
-
+            self.key_database.delete_container(container_id)  # control-plane
 
     def test_read_items_fails_with_incomplete_hierarchical_pk(self):
         """Tests that read_items raises ValueError for an incomplete hierarchical partition key."""
-        container_hpk = self.database.create_container(
-            id='read_items_hpk_incomplete_container_' + str(uuid.uuid4()),
+        container_id = 'read_items_hpk_incomplete_container_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
         )
+        container_hpk = self.database.get_container_client(container_id)
         try:
             items_to_read = []
             # Create a valid item
@@ -177,14 +187,16 @@ class TestReadItems(unittest.TestCase):
             self.assertIn("Number of components in partition key value (1) does not match definition (2)",
                           str(context.exception))
         finally:
-            self.database.delete_container(container_hpk)
+            self.key_database.delete_container(container_id)  # control-plane
 
     def test_read_items_hierarchical_partition_key(self):
         """Tests read_items with hierarchical partition key."""
-        container_hpk = self.database.create_container(
-            id='read_hpk_container_' + str(uuid.uuid4()),
+        container_id = 'read_hpk_container_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
         )
+        container_hpk = self.database.get_container_client(container_id)
         try:
             items_to_read = []
             item_ids = []
@@ -202,7 +214,7 @@ class TestReadItems(unittest.TestCase):
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            self.database.delete_container(container_hpk)
+            self.key_database.delete_container(container_id)  # control-plane
 
     def test_read_items_with_no_results_preserve_headers(self):
         """Tests read_items with only non-existent items, expecting an empty result."""
@@ -348,20 +360,25 @@ class TestReadItems(unittest.TestCase):
 
     def test_read_after_container_recreation(self):
         """Tests read_items after a container is deleted and recreated with a different configuration."""
-        container_id = self.container.id
+        container_id = self._container_id
         initial_items_to_read, initial_item_ids = self._create_records_for_read_items(self.container, 3, "initial")
 
         read_items_before = self.container.read_items(items=initial_items_to_read)
         self.assertEqual(len(read_items_before), len(initial_item_ids))
 
-        self.database.delete_container(self.container)
+        self.key_database.delete_container(container_id)  # control-plane
 
         # Recreate the container with a different partition key and throughput
-        self.container = self.database.create_container(
+        # control-plane container creation
+        container_ref = self.key_database.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=10100
         )
+        self.container = self.database.get_container_client(container_ref.id)
+        # Force the AAD client to re-read container properties so it caches the
+        # new partition key path (/pk instead of /id) and the new RID.
+        self.container.read()
 
         # Create new items with the new partition key structure
         new_items_to_read = []
@@ -380,10 +397,12 @@ class TestReadItems(unittest.TestCase):
 
     def test_read_items_preserves_input_order(self):
         """Tests that read_items preserves the original order of input items."""
-        container_pk = self.database.create_container(
-            id='read_order_container_' + str(uuid.uuid4()),
+        container_id = 'read_order_container_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk")
         )
+        container_pk = self.database.get_container_client(container_id)
 
         try:
             # Create items with varied partition keys to ensure cross-partition queries
@@ -437,14 +456,16 @@ class TestReadItems(unittest.TestCase):
 
         finally:
             # Clean up
-            self.database.delete_container(container_pk)
+            self.key_database.delete_container(container_id)  # control-plane
 
     def test_read_items_order_using_zip_comparison(self):
         """Tests that read_items preserves the original order using zip and boolean comparison."""
-        container_pk = self.database.create_container(
-            id='read_order_zip_container_' + str(uuid.uuid4()),
+        container_id = 'read_order_zip_container_' + str(uuid.uuid4())
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk")
         )
+        container_pk = self.database.get_container_client(container_id)
 
         try:
             # Create items with varied partition keys
@@ -474,7 +495,7 @@ class TestReadItems(unittest.TestCase):
                             "Order was not preserved. Input order doesn't match output order.")
 
         finally:
-            self.database.delete_container(container_pk)
+            self.key_database.delete_container(container_id)  # control-plane
 
     def test_read_items_concurrency_internals(self):
         """Tests that read_items properly chunks large requests."""
@@ -501,12 +522,15 @@ class TestReadItems(unittest.TestCase):
 
     def test_read_items_multiple_physical_partitions_and_hook(self):
         """Tests read_items on a container with multiple physical partitions and verifies response_hook."""
+        container_id = 'multi_partition_container_' + str(uuid.uuid4())
         # Create a container with high throughput to force multiple physical partitions
-        multi_partition_container = self.database.create_container(
-            id='multi_partition_container_' + str(uuid.uuid4()),
+        # control-plane container creation
+        self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=11000
         )
+        multi_partition_container = self.database.get_container_client(container_id)
         try:
             # 1. Verify that we have more than one physical partition
             pk_ranges = list(multi_partition_container.client_connection._ReadPartitionKeyRanges(
@@ -573,5 +597,4 @@ class TestReadItems(unittest.TestCase):
             self.assertIs(read_items_result, hook_results)
 
         finally:
-            self.database.delete_container(multi_partition_container)
-
+            self.key_database.delete_container(container_id)  # control-plane

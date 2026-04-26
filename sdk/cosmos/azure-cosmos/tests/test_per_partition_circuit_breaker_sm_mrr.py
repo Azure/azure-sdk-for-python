@@ -38,6 +38,7 @@ def validate_unhealthy_partitions(global_endpoint_manager,
     assert unhealthy_partitions == expected_unhealthy_partitions
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
+@pytest.mark.cosmosAAD
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -45,13 +46,21 @@ class TestPerPartitionCircuitBreakerSmMrr:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
+    def setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, **kwargs):
+        endpoint = default_endpoint or self.host
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
-        client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
-                              preferred_locations=[REGION_1, REGION_2],
-                              transport=custom_transport, **kwargs)
+        client_kwargs = {
+            "consistency_level": "Session",
+            "preferred_locations": [REGION_1, REGION_2],
+            "transport": custom_transport,
+            **kwargs,
+        }
+        if endpoint != self.host:
+            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
+        else:
+            client = test_config.TestConfig.create_data_client(**client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}

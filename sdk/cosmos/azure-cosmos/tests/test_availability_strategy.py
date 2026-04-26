@@ -260,6 +260,7 @@ def _get_operation_type(test_operation_type: str) -> str:
     raise ValueError("invalid operationType")
 
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAAD
 class TestAvailabilityStrategy:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -278,7 +279,7 @@ class TestAvailabilityStrategy:
         logger.addHandler(cls.MOCK_HANDLER)
         logger.setLevel(logging.DEBUG)
 
-        cls.client_without_fault = CosmosClient(cls.host, cls.master_key)
+        cls.client_without_fault = test_config.TestConfig.create_data_client()
         database_account = cls.client_without_fault.get_database_account()
         cls.write_locations = [loc["name"] for loc in database_account._WritableLocations]
         cls.read_locations = [loc["name"] for loc in database_account._ReadableLocations]
@@ -292,8 +293,7 @@ class TestAvailabilityStrategy:
 
     def _setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, retry_write=False, **kwargs):
         """Initialize test client with optional custom transport and endpoint"""
-        if default_endpoint is None:
-            default_endpoint = self.host
+        endpoint = default_endpoint or self.host
 
         # Set preferred locations with write locations first
         preferred_locations = self.write_locations + [loc for loc in self.read_locations if loc not in self.write_locations]
@@ -302,14 +302,16 @@ class TestAvailabilityStrategy:
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
 
-        client = CosmosClient(
-            default_endpoint, 
-            self.master_key,
-            preferred_locations=preferred_locations,
-            transport=custom_transport,
-            retry_write=retry_write,
-            **kwargs
-        )
+        client_kwargs = {
+            "preferred_locations": preferred_locations,
+            "transport": custom_transport,
+            "retry_write": retry_write,
+            **kwargs,
+        }
+        if endpoint != self.host:
+            client = CosmosClient(endpoint, self.master_key, **client_kwargs)
+        else:
+            client = test_config.TestConfig.create_data_client(**client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}

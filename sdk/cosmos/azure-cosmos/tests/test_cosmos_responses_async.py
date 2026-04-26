@@ -16,6 +16,7 @@ from azure.cosmos.http_constants import HttpHeaders
 # TODO: add query tests once those changes are available
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
     """Python Cosmos Responses Tests.
     """
@@ -35,15 +36,27 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
+        # Dual-client pattern (partial migration — most tests in this file are
+        # control-plane response-shape tests that fundamentally exercise
+        # `client.create_database` / `create_container` / `replace_throughput`,
+        # which cannot run under an AAD data-plane token).
+        # - `client` / `test_database` (key-auth) → 11 control-plane tests.
+        # - `data_client` / `data_test_database` (AAD) → only `test_point_operation_headers_async`.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.data_client = test_config.TestConfig.create_data_client_async()
+        self.data_test_database = self.data_client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.data_client.close()
 
     async def test_point_operation_headers_async(self):
-        container = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        # Container create stays on key-auth (control-plane); data ops route through AAD.
+        container_id = "responses_test" + str(uuid.uuid4())
+        await self.test_database.create_container(id=container_id,
+                                                  partition_key=PartitionKey(path="/company"))
+        container = self.data_test_database.get_container_client(container_id)
         first_response = await container.upsert_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
         lsn = first_response.get_response_headers()['lsn']
 

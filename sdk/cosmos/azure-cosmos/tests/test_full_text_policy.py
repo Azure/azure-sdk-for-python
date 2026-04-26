@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import re
@@ -15,6 +15,8 @@ from azure.cosmos import CosmosClient, PartitionKey
 @pytest.mark.cosmosSearchQuery
 class TestFullTextPolicy(unittest.TestCase):
     client: CosmosClient = None
+    key_client: CosmosClient = None
+    data_client: CosmosClient = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
@@ -31,21 +33,21 @@ class TestFullTextPolicy(unittest.TestCase):
     }
     language_abstracts = {
         "en-US": "This is a test in English.",
-        "fr-FR": "Ceci est une démonstration en français.",  # cspell:ignore Ceci démonstration français
+        "fr-FR": "Ceci est une dÃ©monstration en franÃ§ais.",  # cspell:ignore Ceci dÃ©monstration franÃ§ais
         "de-DE": "Dies ist ein Beispiel auf Deutsch.",  # cspell:ignore Dies Beispiel Deutsch
-        "it-IT": "Questo è un esempio in italiano.",  # cspell:ignore Questo esempio italiano
-        "pt-BR": "Este é um exemplo em português do Brasil.",  # cspell:ignore Este exemplo português Brasil
-        "pt-PT": "Este é um exemplo em português de Portugal.",  # cspell:ignore Este exemplo português Portugal
-        "es-ES": "Esta es una demostración en español.",  # cspell:ignore Esta demostración español
+        "it-IT": "Questo Ã¨ un esempio in italiano.",  # cspell:ignore Questo esempio italiano
+        "pt-BR": "Este Ã© um exemplo em portuguÃªs do Brasil.",  # cspell:ignore Este exemplo portuguÃªs Brasil
+        "pt-PT": "Este Ã© um exemplo em portuguÃªs de Portugal.",  # cspell:ignore Este exemplo portuguÃªs Portugal
+        "es-ES": "Esta es una demostraciÃ³n en espaÃ±ol.",  # cspell:ignore Esta demostraciÃ³n espaÃ±ol
     }
     search_terms = {
         "en-US": "English",
-        "fr-FR": "démonstration",  # cspell:ignore démonstration
+        "fr-FR": "dÃ©monstration",  # cspell:ignore dÃ©monstration
         "de-DE": "Beispiel",  # cspell:ignore Beispiel
         "it-IT": "esempio",  # cspell:ignore esempio
         "pt-BR": "exemplo",  # cspell:ignore exemplo
         "pt-PT": "exemplo",  # cspell:ignore exemplo
-        "es-ES": "demostración",  # cspell:ignore demostración
+        "es-ES": "demostraciÃ³n",  # cspell:ignore demostraciÃ³n
     }
 
     @classmethod
@@ -58,8 +60,23 @@ class TestFullTextPolicy(unittest.TestCase):
                 "tests.")
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.key_client = cls.client  # alias â€” control-plane operations stay on key-auth (Batch 16 prep)
+        # AAD data client added for parity with the dual-client convention. Not exercised
+        # here because every runnable test in this file is control-plane (full-text policy
+        # validation via create_container / replace_container / read). The 4 data-plane
+        # tests in this file are all @pytest.mark.skip until the multi-language test
+        # pipeline is set up â€” when those are unblocked, route the create_item / query_items
+        # calls through cls.data_client.get_database_client(...).get_container_client(...).
+        cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(str(uuid.uuid4()))
+
+    @classmethod
+    def tearDownClass(cls):
+        try:
+            cls.client.delete_database(cls.test_db.id)
+        except exceptions.CosmosResourceNotFoundError:
+            pass
 
     def test_create_full_text_container(self):
         # Create a container with a valid full text policy and full text indexing policy

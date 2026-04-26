@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import random
@@ -14,6 +14,7 @@ from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAAD
 class TestMultiOrderBy(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """
@@ -37,12 +38,14 @@ class TestMultiOrderBy(unittest.TestCase):
     configs = test_config.TestConfig
 
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
+    key_database: DatabaseProxy = None
     database: DatabaseProxy = None
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.key_client, cls.key_database, cls.client, cls.database = (
+            test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID))
 
     def generate_multi_orderby_item(self):
         item = {'id': str(uuid.uuid4()), self.NUMBER_FIELD: random.randint(0, 5),
@@ -175,12 +178,13 @@ class TestMultiOrderBy(unittest.TestCase):
         }
 
         options = {'offerThroughput': 25100}
-        created_container = self.database.create_container(
+        created_container_ref = self.key_database.create_container(
             id='multi_orderby_container' + str(uuid.uuid4()),
             indexing_policy=indexingPolicy,
             partition_key=PartitionKey(path='/pk'),
             request_options=options
         )
+        created_container = self.database.get_container_client(created_container_ref.id)
 
         number_of_items = 5
         self.create_random_items(created_container, number_of_items, number_of_items)
@@ -235,7 +239,7 @@ class TestMultiOrderBy(unittest.TestCase):
 
                         self.validate_results(expected_ordered_list, result_ordered_list, composite_index)
 
-        self.database.delete_container(created_container.id)
+        self.key_database.delete_container(created_container.id)
 
     def top(self, items, has_top, top_count):
         return items[0:top_count] if has_top else items

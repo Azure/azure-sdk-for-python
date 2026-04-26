@@ -16,6 +16,8 @@ from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
 from azure.core.exceptions import HttpResponseError
 
+
+
 def _remove_padding(encoded_string):
     while encoded_string.endswith("="):
         encoded_string = encoded_string[0:len(encoded_string) - 1]
@@ -86,6 +88,7 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
     database: DatabaseProxy = None
@@ -94,6 +97,10 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     host = configs.host
     masterKey = configs.masterKey
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential_async
+    _skip_scope_tests_on_non_emulator = pytest.mark.skipif(
+        not configs.is_emulator,
+        reason="Scope capture tests are emulator-specific (localhost audience)."
+    )
 
     @classmethod
     def setUpClass(cls):
@@ -146,6 +153,7 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             credential_cls.get_token = orig_get_token
 
+    @_skip_scope_tests_on_non_emulator
     async def test_override_scope_no_fallback_async(self):
         """When override scope is provided, only that scope is used and no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
@@ -172,6 +180,7 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
             except Exception:
                 pass
 
+    @_skip_scope_tests_on_non_emulator
     async def test_override_scope_no_fallback_on_error_async(self):
         """When override scope is provided and auth fails, no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
@@ -205,6 +214,7 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
             except Exception:
                 pass
 
+    @_skip_scope_tests_on_non_emulator
     async def test_account_scope_only_async(self):
         """When account scope is provided, only that scope is used."""
         account_scope = "https://localhost/.default"
@@ -230,6 +240,7 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
             except Exception:
                 pass
 
+    @_skip_scope_tests_on_non_emulator
     async def test_account_scope_fallback_on_error_async(self):
         """When account scope is provided and auth fails, fallback to default scope occurs."""
         account_scope = "https://localhost/.default"

@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import asyncio
@@ -14,6 +14,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAAD
 @pytest.mark.cosmosQuery
 class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
     """Tests for async query response headers functionality."""
@@ -32,20 +33,38 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             cls.use_multiple_write_locations = True
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(
+        # Key-auth client for control-plane (container create/delete)
+        self.key_client = CosmosClient(
             self.host, self.masterKey, multiple_write_locations=self.use_multiple_write_locations
         )
+        await self.key_client.__aenter__()
+        self.key_db = self.key_client.get_database_client(self.TEST_DATABASE_ID)
+
+        # AAD data client for data-plane operations (queries, item create)
+        self.client = self.config.create_data_client_async()
         await self.client.__aenter__()
         self.created_db = self.client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.key_client.close()
+
+    async def _create_container_for_test(self, container_id, partition_key):
+        """Create container via key-auth, return AAD data-plane proxy."""
+        # container creation is control-plane; uses key-auth key_db.
+        await self.key_db.create_container(container_id, partition_key)
+        return self.created_db.get_container_client(container_id)
+
+    async def _delete_container_for_test(self, container_id):
+        """Delete container via key-auth."""
+        # container deletion is control-plane; uses key-auth key_db.
+        await self.key_db.delete_container(container_id)
 
     async def test_query_response_headers_single_page_async(self):
         """Test that response headers are captured for a single page query."""
-        created_collection = await self.created_db.create_container(
-            "test_headers_single_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_single_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             # Create a few items
             for i in range(5):
@@ -87,13 +106,13 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert last_headers.get("x-ms-request-charge") == first_page_headers.get("x-ms-request-charge")
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_multiple_pages_async(self):
         """Test that response headers are captured for each page in a paginated query."""
-        created_collection = await self.created_db.create_container(
-            "test_headers_multi_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_multi_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             # Create enough items to span multiple pages
             num_items = 15
@@ -133,13 +152,13 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert len(activity_ids) == len(response_headers)
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_empty_result_async(self):
         """Test that response headers are captured even when query returns no results."""
-        created_collection = await self.created_db.create_container(
-            "test_headers_empty_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_empty_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             # Create an item with different pk
             await created_collection.create_item(body={"pk": "other", "id": "item_1"})
@@ -169,13 +188,13 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             # This can be None if no request was made, or headers if at least one request was made
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_with_query_metrics_async(self):
         """Test that query metrics are included in response headers when enabled."""
-        created_collection = await self.created_db.create_container(
-            "test_headers_metrics_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_metrics_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             # Create items
             for i in range(5):
@@ -212,13 +231,13 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert all("=" in x for x in metrics)
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_by_page_iteration_async(self):
         """Test response headers when using by_page() iteration."""
-        created_collection = await self.created_db.create_container(
-            "test_headers_by_page_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_by_page_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             # Create items
             num_items = 10
@@ -254,13 +273,13 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert len(response_headers) >= page_count
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_returns_copies_async(self):
         """Test that get_response_headers returns copies, not references."""
-        created_collection = await self.created_db.create_container(
-            "test_headers_copies_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_copies_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             await created_collection.create_item(body={"pk": "test", "id": "item_1"})
 
@@ -286,7 +305,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 assert "test-key" not in headers2[0]
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_concurrent_async(self):
         """Test that response headers are captured correctly when multiple async queries run concurrently.
@@ -294,9 +313,9 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         This test verifies that each query operation captures its own headers independently,
         without interference from concurrent queries. This is the key thread-safety guarantee.
         """
-        created_collection = await self.created_db.create_container(
-            "test_headers_concurrent_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_concurrent_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             # Create items with different partition keys
             num_partitions = 5
@@ -365,7 +384,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                     assert headers_0[0] is not headers_1[0]
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
     async def test_query_response_headers_high_concurrency_async(self):
         """Test with high concurrency to stress-test the thread-safety.
@@ -373,9 +392,9 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
         This test specifically targets the race condition that would occur if headers
         were captured from a shared client.last_response_headers after fetch operations.
         """
-        created_collection = await self.created_db.create_container(
-            "test_headers_stress_async_" + str(uuid.uuid4()), PartitionKey(path="/pk")
-        )
+        cid = "test_headers_stress_async_" + str(uuid.uuid4())
+
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
         try:
             # Create enough items to ensure multiple pages
             for i in range(50):
@@ -441,7 +460,7 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
                         f"Query {result['query_id']} should have positive request charges"
 
         finally:
-            await self.created_db.delete_container(created_collection.id)
+            await self._delete_container_for_test(cid)
 
 
 if __name__ == "__main__":
