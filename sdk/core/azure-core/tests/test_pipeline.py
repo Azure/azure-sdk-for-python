@@ -26,6 +26,7 @@
 
 import json
 import requests
+from unittest import mock
 
 try:
     from io import BytesIO
@@ -126,6 +127,44 @@ def test_sans_io_exception(http_request):
     pipeline = Pipeline(BrokenSender(), [SwapExec()])
     with pytest.raises(NotImplementedError):
         pipeline.run(req)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_custom_transport_receives_unknown_kwargs(http_request):
+    class CustomTransport(HttpTransport):
+        def __init__(self):
+            self.kwargs = None
+
+        def send(self, request, **kwargs):
+            self.kwargs = kwargs
+            return object()
+
+        def open(self):
+            pass
+
+        def close(self):
+            pass
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            pass
+
+    transport = CustomTransport()
+    pipeline = Pipeline(transport)
+    pipeline.run(http_request("GET", "/"), custom_option="allowed")
+
+    assert transport.kwargs == {"custom_option": "allowed"}
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_pipeline_builtin_transport_rejects_unknown_kwargs(http_request):
+    session = mock.Mock()
+    transport = RequestsTransport(session=session, session_owner=False)
+    pipeline = Pipeline(transport)
+
+    with pytest.raises(TypeError, match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+        pipeline.run(http_request("GET", "http://localhost"), query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_called()
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
