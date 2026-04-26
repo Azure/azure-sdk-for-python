@@ -68,7 +68,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         The output field "details" has been renamed to "tool_call_accuracy_properties" for clarity.
 
-        The `gpt_` prefix is deprecated. Use `_score` suffix instead.
+        To align with our support of a diverse set of models,
+        an output key with "_score" suffix instead of the `gpt_` prefix has been added.
+        To maintain backwards compatibility, the old key with the `gpt_` prefix is still present in the output;
+        however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
 
     """
 
@@ -291,6 +294,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
             response_dict = {
                 self._result_key: score,
+                # The "gpt_" prefixed key is maintained for backwards compatibility but is deprecated.
+                f"gpt_{self._result_key}": score,
                 f"{self._result_key}_score": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_passed": score_result == "pass",
