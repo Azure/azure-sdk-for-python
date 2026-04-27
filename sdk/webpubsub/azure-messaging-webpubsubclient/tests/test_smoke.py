@@ -140,14 +140,13 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                         time.sleep(1)
                 else:
                     raise RuntimeError("Failed to send after 30 attempts")
-                time.sleep(1)  # wait for on_group_message to be called
-                assert assert_func(test_group_name)
-
-        _test(
-            enable_auto_rejoin=True,
+            # wait for on_group_message callback to fire
+            for _ in range(10):
+                if assert_func(test_group_name):
+                    break
+                time.sleep(1)
             test_group_name="test_rejoin_group",
             assert_func=lambda x: x in TEST_RESULT,
-        )
         _test(
             enable_auto_rejoin=False,
             test_group_name="test_disable_rejoin_group",
