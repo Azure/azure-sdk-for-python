@@ -68,6 +68,11 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
         last_stable_release = ""
+
+    # 0.0.0 is not valid version although it is in pypi
+    if last_version.startswith("0.0.0"):
+        return "", ""
+
     return last_version, str(last_stable_release)
 
 
