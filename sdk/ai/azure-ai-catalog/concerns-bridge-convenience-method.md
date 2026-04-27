@@ -89,3 +89,65 @@ The Foundry service resolves `base_model` → registry → allowed DTs → accel
 - No cross-package type coupling
 
 Until the server-side API exists, document the manual bridge (user calls `MLClient` directly) as the supported path rather than hiding it behind a leaky convenience method.
+
+---
+
+## Alternative considered: Call ML Registry REST API directly (no azure-ai-ml dependency)
+
+Eliminates the package dependency but introduces equivalent problems:
+
+- **Multi-step endpoint discovery** — registry URL requires a discovery call (`GET /registrymanagement/v1.0/registries/{name}/discovery`) that returns the actual service URL (`https://cert-{region}.experiments.azureml.net/...`). Deployment templates use a different endpoint resolution path via ARM.
+- **Cloud-specific endpoint mapping** — discovery URL differs per cloud (AzureCloud, China, USGov). Must detect and switch.
+- **Duplicated deserialization** — must reimplement `Model`, `DeploymentTemplate`, `AcceleratorMap` response parsing; schema changes require updating both packages.
+- **ARM coordinates still needed** — deployment template endpoint resolution in `azure-ai-ml` goes through ARM (`RegistryOperations.get()`), which requires subscription/RG. Same blocker as Concern 1.
+
+**Net:** trades package coupling for API contract coupling — ~200 lines of discovery/deserialization logic to reimplement and maintain in sync.
+
+---
+
+## Alternative considered: Back the helper with Catalog API instead of ML Registry
+
+If the Catalog API (`api.catalog.azureml.ms`) is extended to surface deployment templates for base models, the helper could be:
+
+```python
+custom_model = project_client.models.get(name="my-gpt-oss-120B")
+catalog = CatalogClient()
+templates = catalog.get_deployment_templates(asset_id=custom_model.base_model)
+```
+
+**Advantages over ML Registry approach:**
+
+- **No ARM coordinates needed** — Catalog endpoint is a static known URL, no subscription/RG required. Concern 1 goes away.
+- **No endpoint discovery** — unlike ML Registry's multi-step discovery flow, the Catalog is a single URL per cloud.
+- **Lightweight dependency** — `azure-ai-catalog` is tiny vs `azure-ai-ml` (~50MB). Concern 4 largely mitigated.
+- **Fewer network calls** — could batch all DTs into a single response (2 calls total vs N+2).
+
+**Limitations:**
+
+- **In progress model catalog/DT catalog APIs** - to check with Seokjin, Anthony. Contract not found, are these no-auth?
+- **Auth model conflict** — the Catalog API is currently **anonymous** (no credential). Deployment templates contain sensitive infrastructure details (container images, environment variables, probe endpoints, instance types). Exposing these on an unauthenticated endpoint is a security concern. The Catalog would need to add authentication for this endpoint, requiring a new token audience/scope and changing the `CatalogClient` from anonymous to credential-bearing.
+- **Entitlement enforcement** — template availability may depend on customer subscriptions or agreements. An anonymous API can't scope responses to what the caller is authorized to use.
+- **Still 2 services** — the custom model lives in Foundry (project-scoped), the Catalog only knows base/catalog models. Can't collapse into a single call.
+- **Cross-team dependency** — the convenience method on `AIProjectClient` depends on the Catalog team shipping and maintaining a new authenticated API.
+- **New API still required** — `GET /asset-gallery/v1.0/models/{assetId}/deploymentTemplates` doesn't exist today. Same "needs server work" caveat as the Foundry API recommendation, but with more moving parts (auth, ownership).
+
+**Verdict:** Strictly better than the ML Registry approach, but the auth gap makes it non-trivial. The Foundry server-side API (`GET /models/{name}/deploymentTemplates`) remains the cleanest option — it reuses the existing credential, runs resolution server-side, and keeps ownership within a single service.
+
+---
+
+## TL;DR
+
+| # | Concern | Severity |
+|---|---|---|
+| 1 | `AIProjectClient` has no `subscription_id`/`resource_group` — cannot construct `MLClient` internally | **Blocker** |
+| 2 | 5 sequential network calls across 2 services for 3 templates | High |
+| 3 | Registry errors surface through projects-client — confusing origin | Medium |
+| 4 | `azure-ai-ml` (~50MB) becomes a hard or lazy dependency | Medium |
+| 5 | Independent release cadences create fragile cross-package version coupling | Medium |
+
+| Alternative | Key limitation |
+|---|---|
+| Call ML Registry REST directly | Same ARM blocker + ~200 lines of discovery/deserialization to reimplement |
+| Back with Catalog API | Catalog is anonymous — DTs need auth, entitlement scoping, new API from a different team |
+
+**Recommendation:** Add a server-side Foundry API `GET /models/{name}/deploymentTemplates`. Single call, single service, single credential, no cross-SDK plumbing. Until then, document the manual bridge (user calls `MLClient` directly) as the supported path.
