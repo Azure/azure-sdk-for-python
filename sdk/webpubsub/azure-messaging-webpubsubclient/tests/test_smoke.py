@@ -119,7 +119,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 client.join_group(group_name)
 
             with client:
-                time.sleep(1)  # make sure rejoin group is called
+                time.sleep(3)  # make sure rejoin group is called
                 client.send_to_group(group_name, group_name, "text")
                 time.sleep(1)  # wait for on_group_message to be called
                 assert assert_func(test_group_name)
