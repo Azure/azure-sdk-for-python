@@ -59,7 +59,7 @@ The "packages" section MUST EXCLUDE the `azure` package. Example:
 
 Since the package is Python 3 only, you must notify it in the setup.py as well:
 ```python
-    python_requires=">=3.8",
+    python_requires=">=3.10",
 ```
 
 Example of a full setup.py
