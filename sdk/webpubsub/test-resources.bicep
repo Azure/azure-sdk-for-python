@@ -50,7 +50,8 @@ resource webPubSub 'Microsoft.SignalRService/webPubSub@2024-10-01-preview' = {
 }
 
 resource ownerRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('ownerRoleId', webPubSub.id)
+  name: guid('ownerRoleId', webPubSub.id, testApplicationOid)
+  scope: webPubSub
   properties: {
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', ownerRoleId)
     principalId: testApplicationOid
@@ -58,7 +59,8 @@ resource ownerRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01
 }
 
 resource socketIOOwnerRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid('ownerRoleId', webPubSubSocketIO.id)
+  name: guid('ownerRoleId', webPubSubSocketIO.id, testApplicationOid)
+  scope: webPubSubSocketIO
   properties: {
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', ownerRoleId)
     principalId: testApplicationOid
