@@ -41,11 +41,8 @@ from .samples import samples
 from .devtest import devtest
 from .optional import optional
 from .update_snippet import update_snippet
-<<<<<<< copilot/azpysdk-add-chronus-capabilities
 from .changelog import changelog
 
-=======
->>>>>>> main
 from ci_tools.logging import configure_logging, logger
 
 __all__ = ["main", "build_parser"]
