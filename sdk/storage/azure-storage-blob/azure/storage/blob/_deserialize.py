@@ -174,55 +174,107 @@ def service_properties_deserialize(generated: "StorageServiceProperties") -> Dic
 
 
 def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> BlobProperties:
+    # Hot path for list_blobs: bypass _RestField descriptors and read straight from the
+    # underlying ``_data`` dicts populated by ``_init_from_xml``. Each public attribute
+    # access on a generated _Model instance otherwise pays a _serialize+_deserialize
+    # round trip in _RestField.__get__, which dominates this loop.
     blob = BlobProperties()
-    if generated.name.encoded and generated.name.content is not None:
-        blob.name = unquote(generated.name.content)
+    gen_d = generated._data  # pylint: disable=protected-access
+
+    name_obj = gen_d.get("name")
+    if name_obj is not None:
+        # BlobName is itself a generated model; rest_names: 'encoded' (xml attribute),
+        # 'content' (xml text).
+        name_d = name_obj._data  # pylint: disable=protected-access
+        content = name_d.get("content")
+        if name_d.get("encoded") and content is not None:
+            blob.name = unquote(content)
+        else:
+            blob.name = content  # type: ignore [assignment]
+
+    props = gen_d.get("properties")
+    props_d: Dict[str, Any] = props._data if props is not None else {}  # pylint: disable=protected-access
+
+    blob_type = get_enum_value(props_d.get("blobType"))
+    blob.blob_type = BlobType(blob_type) if blob_type and blob_type != "None" else blob_type  # type: ignore
+    blob.etag = props_d.get("etag")
+    blob.deleted = gen_d.get("deleted")
+    blob.snapshot = gen_d.get("snapshot")
+    blob.is_append_blob_sealed = props_d.get("isSealed")
+
+    metadata_obj = gen_d.get("metadata")
+    if metadata_obj is not None:
+        # Preserve the existing semantics: drop the "Encrypted" key and surface the rest.
+        meta_d = metadata_obj._data  # pylint: disable=protected-access
+        blob.metadata = {k: v for k, v in meta_d.items() if k != "Encrypted"}  # type: ignore [assignment]
+        blob.encrypted_metadata = meta_d.get("encrypted")
     else:
-        blob.name = generated.name.content  # type: ignore
-    # Cache cross-cutting attribute reads to a single patched __getattribute__
-    # call each. ``generated.properties`` is hit ~22 times below; reading it
-    # once turns ~44 patched lookups into ~23 plus the cached locals.
-    props = generated.properties
-    metadata = generated.metadata
-    orm = generated.object_replication_metadata
-    blob_type = get_enum_value(props.blob_type)
-    blob.blob_type = BlobType(blob_type)
-    blob.etag = props.etag
-    blob.deleted = generated.deleted
-    blob.snapshot = generated.snapshot
-    blob.is_append_blob_sealed = props.is_sealed
-    blob.metadata = (  # type: ignore [assignment]
-        {k: v for k, v in metadata.items() if k != "Encrypted"} if metadata else {}
-    )
-    blob.encrypted_metadata = metadata.encrypted if metadata else None
-    blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
-    blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
-    blob.last_modified = props.last_modified
-    blob.creation_time = props.creation_time  # type: ignore [assignment]
-    blob.content_settings = ContentSettings._from_generated(generated)  # pylint: disable=protected-access
-    blob.size = props.content_length  # type: ignore [assignment]
-    blob.page_blob_sequence_number = props.blob_sequence_number
-    blob.server_encrypted = props.server_encrypted  # type: ignore [assignment]
-    blob.encryption_scope = props.encryption_scope
-    blob.deleted_time = props.deleted_time
-    blob.remaining_retention_days = props.remaining_retention_days
-    blob.blob_tier = props.access_tier  # type: ignore [assignment]
-    blob.smart_access_tier = props.smart_access_tier
-    blob.rehydrate_priority = props.rehydrate_priority
-    blob.blob_tier_inferred = props.access_tier_inferred
-    blob.archive_status = props.archive_status
-    blob.blob_tier_change_time = props.access_tier_change_time
-    blob.version_id = generated.version_id
-    blob.is_current_version = generated.is_current_version
-    blob.tag_count = props.tag_count
-    blob.tags = parse_tags(generated.blob_tags)
+        blob.metadata = {}  # type: ignore [assignment]
+        blob.encrypted_metadata = None
+
+    # Inline LeaseProperties._from_generated
+    lease = LeaseProperties()
+    lease.status = get_enum_value(props_d.get("leaseStatus"))
+    lease.state = get_enum_value(props_d.get("leaseState"))
+    lease.duration = get_enum_value(props_d.get("leaseDuration"))
+    blob.lease = lease
+
+    # Inline CopyProperties._from_generated
+    copy = CopyProperties()
+    copy.id = props_d.get("copyId") or None
+    copy.status = get_enum_value(props_d.get("copyStatus")) or None
+    copy.source = props_d.get("copySource") or None
+    copy.progress = props_d.get("copyProgress") or None
+    copy.completion_time = props_d.get("copyCompletionTime") or None
+    copy.status_description = props_d.get("copyStatusDescription") or None
+    copy.incremental_copy = props_d.get("incrementalCopy") or None
+    copy.destination_snapshot = props_d.get("destinationSnapshot") or None
+    blob.copy = copy
+
+    blob.last_modified = props_d.get("lastModified")
+    blob.creation_time = props_d.get("creationTime")  # type: ignore [assignment]
+
+    # Inline ContentSettings._from_generated
+    settings = ContentSettings()
+    settings.content_type = props_d.get("contentType") or None
+    settings.content_encoding = props_d.get("contentEncoding") or None
+    settings.content_language = props_d.get("contentLanguage") or None
+    settings.content_md5 = props_d.get("contentMd5") or None
+    settings.content_disposition = props_d.get("contentDisposition") or None
+    settings.cache_control = props_d.get("cacheControl") or None
+    blob.content_settings = settings
+
+    blob.size = props_d.get("contentLength")  # type: ignore [assignment]
+    blob.page_blob_sequence_number = props_d.get("blobSequenceNumber")
+    blob.server_encrypted = props_d.get("serverEncrypted")  # type: ignore [assignment]
+    blob.encryption_scope = props_d.get("encryptionScope")
+    blob.deleted_time = props_d.get("deletedTime")
+    blob.remaining_retention_days = props_d.get("remainingRetentionDays")
+    blob.blob_tier = props_d.get("accessTier")  # type: ignore [assignment]
+    blob.smart_access_tier = props_d.get("smartAccessTier")
+    blob.rehydrate_priority = props_d.get("rehydratePriority")
+    blob.blob_tier_inferred = props_d.get("accessTierInferred")
+    blob.archive_status = props_d.get("archiveStatus")
+    blob.blob_tier_change_time = props_d.get("accessTierChangeTime")
+    blob.version_id = gen_d.get("versionId")
+    blob.is_current_version = gen_d.get("isCurrentVersion")
+    blob.tag_count = props_d.get("tagCount")
+    blob.tags = parse_tags(gen_d.get("blobTags"))
+
+    or_metadata = gen_d.get("objectReplicationMetadata")
     blob.object_replication_source_properties = deserialize_ors_policies(
-        orm.as_dict() if orm else None
+        or_metadata._data if or_metadata is not None else None  # pylint: disable=protected-access
     )
-    blob.last_accessed_on = props.last_accessed_on
-    blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
-    blob.has_legal_hold = props.legal_hold
-    blob.has_versions_only = generated.has_versions_only
+    blob.last_accessed_on = props_d.get("lastAccessedOn")
+
+    # Inline ImmutabilityPolicy._from_generated
+    immutability = ImmutabilityPolicy()
+    immutability.expiry_time = props_d.get("immutabilityPolicyExpiresOn")
+    immutability.policy_mode = props_d.get("immutabilityPolicyMode")
+    blob.immutability_policy = immutability
+
+    blob.has_legal_hold = props_d.get("legalHold")
+    blob.has_versions_only = gen_d.get("hasVersionsOnly")
     return blob
 
 
@@ -235,8 +287,11 @@ def parse_tags(generated_tags: Optional["BlobTags"]) -> Optional[Dict[str, str]]
     :rtype: Optional[Dict[str, str]]
     """
     if generated_tags:
-        tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
-        return tag_dict
+        # Read straight from _data to avoid descriptor overhead. blob_tag_set's
+        # rest_name is "blobTagSet"; each BlobTag stores key/value under their
+        # rest_names (defaults to attribute names "key"/"value").
+        tag_set = generated_tags._data.get("blobTagSet") or []  # pylint: disable=protected-access
+        return {t._data.get("key"): t._data.get("value") for t in tag_set}  # pylint: disable=protected-access
     return None
 
 

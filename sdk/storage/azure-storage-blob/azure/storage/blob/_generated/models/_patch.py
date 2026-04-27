@@ -11,7 +11,128 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import xml.etree.ElementTree as ET
 from typing import Any, Callable, List, Optional
 
-from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, _deserialize, _UNSET
+from .._utils.model_base import (
+    Model as _Model,
+    _MyMutableMapping,
+    _RestField,
+    _UNSET,
+    _convert_element,
+    _deserialize,
+    _resolve_xml_ns,
+)
+
+
+# ---------------------------------------------------------------------------
+# Per-class XML field-spec cache.
+#
+# ``Model._init_from_xml`` is invoked once per generated model instance during
+# list_blobs / list_containers etc. It walks ``_attr_to_rest_field`` and on
+# every call recomputes per-field XML metadata (xml_name, namespace, kind),
+# performs ``getattr(rf, "_xml", {})``, dict ``.get`` lookups, namespace
+# resolution and string concatenation. Caching the resolved spec list on the
+# class collapses that work to a tight tuple-unpacking loop.
+# ---------------------------------------------------------------------------
+
+_K_ATTRIBUTE = 0
+_K_UNWRAPPED = 1
+_K_TEXT = 2
+_K_WRAPPED = 3
+
+
+def _build_xml_specs(cls) -> None:
+    """Precompute the XML deserialization plan for ``cls``.
+
+    Stores ``cls._xml_field_specs`` (a list of ``(kind, rest_name, xml_name,
+    type_callable, extra)`` tuples) and ``cls._xml_known_names`` (a set of
+    XML tags consumed by named lookups; used to filter the trailing
+    additional-properties pass).
+    """
+    model_meta = getattr(cls, "_xml", {}) or {}
+    specs: List[tuple] = []
+    known: set = set()
+    for rf in cls._attr_to_rest_field.values():
+        prop_meta = getattr(rf, "_xml", {}) or {}
+        xml_name = prop_meta.get("name", rf._rest_name)
+        xml_ns = _resolve_xml_ns(prop_meta, model_meta)
+        if xml_ns:
+            xml_name = "{" + xml_ns + "}" + xml_name
+
+        if prop_meta.get("attribute", False):
+            specs.append((_K_ATTRIBUTE, rf._rest_name, xml_name, rf._type, None))
+            known.add(xml_name)
+            continue
+
+        if prop_meta.get("unwrapped", False):
+            items_xml_name = xml_name
+            items_name = prop_meta.get("itemsName")
+            if items_name:
+                items_ns = prop_meta.get("itemsNs")
+                items_xml_name = items_name
+                effective_ns = items_ns if items_ns is not None else xml_ns
+                if effective_ns:
+                    items_xml_name = "{" + effective_ns + "}" + items_xml_name
+            specs.append(
+                (_K_UNWRAPPED, rf._rest_name, items_xml_name, rf._type, rf._is_optional)
+            )
+            known.add(items_xml_name)
+            continue
+
+        if prop_meta.get("text", False):
+            specs.append((_K_TEXT, rf._rest_name, None, rf._type, None))
+            continue
+
+        specs.append((_K_WRAPPED, rf._rest_name, xml_name, rf._type, None))
+        known.add(xml_name)
+
+    cls._xml_field_specs = specs
+    cls._xml_known_names = known
+
+
+def _fast_init_from_xml(self, element):
+    """Drop-in replacement for ``Model._init_from_xml`` using the cached specs.
+
+    Returns a dict of ``rest_name -> deserialized value`` matching the original
+    method's contract (Model.__init__ then merges this into ``_data`` via the
+    ``_MyMutableMapping`` base class).
+    """
+    cls = type(self)
+    specs = cls.__dict__.get("_xml_field_specs")
+    if specs is None:
+        # Class missed _patched_new (shouldn't happen for generated models, but be safe).
+        _build_xml_specs(cls)
+        specs = cls._xml_field_specs
+
+    result: dict = {}
+    el_get = element.get
+    el_find = element.find
+    el_findall = element.findall
+
+    for kind, rest_name, xml_name, type_cb, extra in specs:
+        if kind == _K_WRAPPED:
+            item = el_find(xml_name)
+            if item is not None:
+                result[rest_name] = _deserialize(type_cb, item)
+        elif kind == _K_ATTRIBUTE:
+            v = el_get(xml_name)
+            if v is not None:
+                result[rest_name] = _deserialize(type_cb, v)
+        elif kind == _K_UNWRAPPED:
+            items = el_findall(xml_name)
+            if items:
+                result[rest_name] = _deserialize(type_cb, items)
+            elif not extra:  # extra carries _is_optional
+                result[rest_name] = []
+        else:  # _K_TEXT
+            text = element.text
+            if text is not None:
+                result[rest_name] = _deserialize(type_cb, text)
+
+    known = cls._xml_known_names
+    for e in element:
+        if e.tag not in known:
+            result[e.tag] = _convert_element(e)
+
+    return result
 
 
 def _patched_getattr(self, name):
@@ -144,12 +265,17 @@ def _patched_new(cls, *args, **kwargs):
             cls.__setattr__ = _patched_setattr
             cls.__getattribute__ = _patched_getattribute
 
+        # Precompute the XML deserialization plan so _init_from_xml can walk a
+        # flat tuple list instead of recomputing namespace/xml_name per call.
+        _build_xml_specs(cls)
+
         cls._calculated_done = True
 
     return object.__new__(cls)
 
 
 _Model.__new__ = _patched_new
+_Model._init_from_xml = _fast_init_from_xml
 
 
 # ---------------------------------------------------------------------------
