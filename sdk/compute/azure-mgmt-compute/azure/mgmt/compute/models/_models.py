@@ -3033,6 +3033,10 @@ class DataDisk(_Model):
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.mgmt.compute.models.ManagedDiskParameters
     :ivar source_resource: The source resource identifier. It can be a snapshot, or disk restore
@@ -3102,6 +3106,11 @@ class DataDisk(_Model):
     """Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite
      the size of the disk in a virtual machine image. The property 'diskSizeGB' is the number of
      bytes x 1024^3 for the disk and the value cannot be larger than 1023."""
+    storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = rest_field(
+        name="storageFaultDomainAlignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the storage fault domain alignment type for the disk. Known values are: \"Aligned\"
+     and \"BestEffortAligned\"."""
     managed_disk: Optional["_models.ManagedDiskParameters"] = rest_field(
         name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3156,6 +3165,7 @@ class DataDisk(_Model):
         caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         source_resource: Optional["_models.ApiEntityReference"] = None,
         to_be_detached: Optional[bool] = None,
@@ -4124,6 +4134,9 @@ class DiffDiskSettings(_Model):
      exposes a cache disk. Minimum api-version for NvmeDisk: 2024-03-01. Known values are:
      "CacheDisk", "ResourceDisk", and "NvmeDisk".
     :vartype placement: str or ~azure.mgmt.compute.models.DiffDiskPlacement
+    :ivar enable_full_caching: Specifies whether or not to enable full caching for this VM which
+     will cache the OS disk locally on the host and make this VM more resilient to storage outages.
+    :vartype enable_full_caching: bool
     """
 
     option: Optional[Union[str, "_models.DiffDiskOptions"]] = rest_field(
@@ -4143,6 +4156,11 @@ class DiffDiskSettings(_Model):
      <https://docs.microsoft.com/azure/virtual-machines/linux/sizes>`_ to check which VM sizes
      exposes a cache disk. Minimum api-version for NvmeDisk: 2024-03-01. Known values are:
      \"CacheDisk\", \"ResourceDisk\", and \"NvmeDisk\"."""
+    enable_full_caching: Optional[bool] = rest_field(
+        name="enableFullCaching", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether or not to enable full caching for this VM which will cache the OS disk
+     locally on the host and make this VM more resilient to storage outages."""
 
     @overload
     def __init__(
@@ -4150,6 +4168,7 @@ class DiffDiskSettings(_Model):
         *,
         option: Optional[Union[str, "_models.DiffDiskOptions"]] = None,
         placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = None,
+        enable_full_caching: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4805,6 +4824,9 @@ class DiskInstanceView(_Model):
     :vartype encryption_settings: list[~azure.mgmt.compute.models.DiskEncryptionSettings]
     :ivar statuses: The resource status information.
     :vartype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
+    :ivar storage_alignment_status: Specifies the storage alignment status for the disk. Known
+     values are: "Unaligned" and "Aligned".
+    :vartype storage_alignment_status: str or ~azure.mgmt.compute.models.StorageAlignmentStatus
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4817,6 +4839,11 @@ class DiskInstanceView(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource status information."""
+    storage_alignment_status: Optional[Union[str, "_models.StorageAlignmentStatus"]] = rest_field(
+        name="storageAlignmentStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the storage alignment status for the disk. Known values are: \"Unaligned\" and
+     \"Aligned\"."""
 
     @overload
     def __init__(
@@ -4825,6 +4852,7 @@ class DiskInstanceView(_Model):
         name: Optional[str] = None,
         encryption_settings: Optional[list["_models.DiskEncryptionSettings"]] = None,
         statuses: Optional[list["_models.InstanceViewStatus"]] = None,
+        storage_alignment_status: Optional[Union[str, "_models.StorageAlignmentStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -6454,6 +6482,59 @@ class ExtendedLocation(_Model):
         *,
         name: Optional[str] = None,
         type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalHealthPolicy(_Model):
+    """Specifies the external health policy for the virtual machine scale set.
+
+    :ivar enabled: If true, external health is enabled for this scale set. Cannot be set to true on
+     instances where another health monitoring source is active (ApplicationHealth extension or
+     SLB). Defaults to false.
+    :vartype enabled: bool
+    :ivar expiry_duration: Defines how long the health status set by External Health API will last
+     on the VM. If a signal is not received/updated within this time, the VM Health will be marked
+     as "unknown". Uses the ISO 8601 format. Minimum: 5 minutes (PT5M), Maximum: 3 hours (PT3H).
+    :vartype expiry_duration: ~datetime.timedelta
+    :ivar grace_period: Grace period for newly created VMs or when the External Health policy is
+     first applied on VMSS. Uses the ISO 8601 format. Minimum: 5 minutes (PT5M), Maximum: 4 hours
+     (PT4H).
+    :vartype grace_period: ~datetime.timedelta
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If true, external health is enabled for this scale set. Cannot be set to true on instances
+     where another health monitoring source is active (ApplicationHealth extension or SLB). Defaults
+     to false."""
+    expiry_duration: Optional[datetime.timedelta] = rest_field(
+        name="expiryDuration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines how long the health status set by External Health API will last on the VM. If a signal
+     is not received/updated within this time, the VM Health will be marked as \"unknown\". Uses the
+     ISO 8601 format. Minimum: 5 minutes (PT5M), Maximum: 3 hours (PT3H)."""
+    grace_period: Optional[datetime.timedelta] = rest_field(
+        name="gracePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Grace period for newly created VMs or when the External Health policy is first applied on VMSS.
+     Uses the ISO 8601 format. Minimum: 5 minutes (PT5M), Maximum: 4 hours (PT4H)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        expiry_duration: Optional[datetime.timedelta] = None,
+        grace_period: Optional[datetime.timedelta] = None,
     ) -> None: ...
 
     @overload
@@ -11088,6 +11169,91 @@ class LastPatchInstallationSummary(_Model):
      the list of them."""
 
 
+class LifecycleHook(_Model):
+    """Describes a lifecycle hook.
+
+    :ivar type: Specifies the type of the lifecycle hook. Known values are:
+     "UpgradeAutoOSScheduling" and "UpgradeAutoOSRollingBatchStarting".
+    :vartype type: str or ~azure.mgmt.compute.models.VMScaleSetLifecycleHookEventType
+    :ivar wait_duration: Specifies the time duration a virtual machine scale set lifecycle hook
+     event sent to the customer waits for a response from the customer. It should be in ISO 8601
+     format.
+    :vartype wait_duration: ~datetime.timedelta
+    :ivar default_action: Specifies the action that will be applied to a target resource in the
+     virtual machine scale set lifecycle hook event if the platform does not receive a response from
+     the customer for the target resource before waitUntil. Known values are: "Approve" and
+     "Reject".
+    :vartype default_action: str or ~azure.mgmt.compute.models.LifecycleHookAction
+    """
+
+    type: Optional[Union[str, "_models.VMScaleSetLifecycleHookEventType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of the lifecycle hook. Known values are: \"UpgradeAutoOSScheduling\" and
+     \"UpgradeAutoOSRollingBatchStarting\"."""
+    wait_duration: Optional[datetime.timedelta] = rest_field(
+        name="waitDuration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the time duration a virtual machine scale set lifecycle hook event sent to the
+     customer waits for a response from the customer. It should be in ISO 8601 format."""
+    default_action: Optional[Union[str, "_models.LifecycleHookAction"]] = rest_field(
+        name="defaultAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the action that will be applied to a target resource in the virtual machine scale set
+     lifecycle hook event if the platform does not receive a response from the customer for the
+     target resource before waitUntil. Known values are: \"Approve\" and \"Reject\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.VMScaleSetLifecycleHookEventType"]] = None,
+        wait_duration: Optional[datetime.timedelta] = None,
+        default_action: Optional[Union[str, "_models.LifecycleHookAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LifecycleHooksProfile(_Model):
+    """Specifies the lifecycle hooks profile for the virtual machine scale set.
+
+    :ivar lifecycle_hooks: Specifies the lifecycle hooks configured for the virtual machine scale
+     set.
+    :vartype lifecycle_hooks: list[~azure.mgmt.compute.models.LifecycleHook]
+    """
+
+    lifecycle_hooks: Optional[list["_models.LifecycleHook"]] = rest_field(
+        name="lifecycleHooks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the lifecycle hooks configured for the virtual machine scale set."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lifecycle_hooks: Optional[list["_models.LifecycleHook"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LinuxConfiguration(_Model):
     """Specifies the Linux operating system settings on the virtual machine. For a list of supported
     Linux distributions, see `Linux on Azure-Endorsed Distributions
@@ -11901,6 +12067,51 @@ class OperationDisplay(_Model):
      views."""
 
 
+class OperationRecoverySettings(_Model):
+    """The configuration parameters used for operation recovery settings on a virtual machine scale
+    set.
+
+    :ivar restart_recovery_policy: The configuration parameters used for restart recovery policy.
+    :vartype restart_recovery_policy: ~azure.mgmt.compute.models.RestartRecoveryPolicy
+    :ivar start_recovery_policy: The configuration parameters used for start recovery policy.
+    :vartype start_recovery_policy: ~azure.mgmt.compute.models.StartRecoveryPolicy
+    :ivar reimage_recovery_policy: The configuration parameters used for reimage recovery policy.
+    :vartype reimage_recovery_policy: ~azure.mgmt.compute.models.ReimageRecoveryPolicy
+    """
+
+    restart_recovery_policy: Optional["_models.RestartRecoveryPolicy"] = rest_field(
+        name="restartRecoveryPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration parameters used for restart recovery policy."""
+    start_recovery_policy: Optional["_models.StartRecoveryPolicy"] = rest_field(
+        name="startRecoveryPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration parameters used for start recovery policy."""
+    reimage_recovery_policy: Optional["_models.ReimageRecoveryPolicy"] = rest_field(
+        name="reimageRecoveryPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration parameters used for reimage recovery policy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        restart_recovery_policy: Optional["_models.RestartRecoveryPolicy"] = None,
+        start_recovery_policy: Optional["_models.StartRecoveryPolicy"] = None,
+        reimage_recovery_policy: Optional["_models.ReimageRecoveryPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class OrchestrationServiceStateInput(_Model):
     """The input for OrchestrationServiceState.
 
@@ -12022,6 +12233,10 @@ class OSDisk(_Model):
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.mgmt.compute.models.ManagedDiskParameters
     :ivar delete_option: Specifies whether OS Disk should be deleted or detached upon VM deletion.
@@ -12082,6 +12297,11 @@ class OSDisk(_Model):
     """Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite
      the size of the disk in a virtual machine image. The property 'diskSizeGB' is the number of
      bytes x 1024^3 for the disk and the value cannot be larger than 1023."""
+    storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = rest_field(
+        name="storageFaultDomainAlignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the storage fault domain alignment type for the disk. Known values are: \"Aligned\"
+     and \"BestEffortAligned\"."""
     managed_disk: Optional["_models.ManagedDiskParameters"] = rest_field(
         name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12109,6 +12329,7 @@ class OSDisk(_Model):
         write_accelerator_enabled: Optional[bool] = None,
         diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         managed_disk: Optional["_models.ManagedDiskParameters"] = None,
         delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
     ) -> None: ...
@@ -13713,6 +13934,35 @@ class RegionalSharingStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ReimageRecoveryPolicy(_Model):
+    """The configuration parameters used while performing reimage recovery.
+
+    :ivar enabled: Specifies whether reimage recovery should be enabled. The default value is
+     false.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether reimage recovery should be enabled. The default value is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ReplicationStatus(_Model):
     """This is the replication status of the gallery image version.
 
@@ -13790,8 +14040,8 @@ class RequestRateByIntervalInput(LogAnalyticsInputBase):
 
 
 class ResiliencyPolicy(_Model):
-    """Describes an resiliency policy - AutomaticZoneRebalancingPolicy, ResilientVMCreationPolicy
-    and/or ResilientVMDeletionPolicy.
+    """Describes an resiliency policy - AutomaticZoneRebalancingPolicy, ResilientVMCreationPolicy,
+    ResilientVMDeletionPolicy and OperationRecoverySettings (version > 2025-11-01).
 
     :ivar resilient_vm_creation_policy: The configuration parameters used while performing
      resilient VM creation.
@@ -13806,6 +14056,9 @@ class ResiliencyPolicy(_Model):
     :ivar zone_allocation_policy: The configuration parameters used while performing zone
      allocation.
     :vartype zone_allocation_policy: ~azure.mgmt.compute.models.ZoneAllocationPolicy
+    :ivar operation_recovery_settings: The configuration parameters used for operation recovery
+     settings.
+    :vartype operation_recovery_settings: ~azure.mgmt.compute.models.OperationRecoverySettings
     """
 
     resilient_vm_creation_policy: Optional["_models.ResilientVMCreationPolicy"] = rest_field(
@@ -13824,6 +14077,10 @@ class ResiliencyPolicy(_Model):
         name="zoneAllocationPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The configuration parameters used while performing zone allocation."""
+    operation_recovery_settings: Optional["_models.OperationRecoverySettings"] = rest_field(
+        name="operationRecoverySettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration parameters used for operation recovery settings."""
 
     @overload
     def __init__(
@@ -13833,6 +14090,38 @@ class ResiliencyPolicy(_Model):
         resilient_vm_deletion_policy: Optional["_models.ResilientVMDeletionPolicy"] = None,
         automatic_zone_rebalancing_policy: Optional["_models.AutomaticZoneRebalancingPolicy"] = None,
         zone_allocation_policy: Optional["_models.ZoneAllocationPolicy"] = None,
+        operation_recovery_settings: Optional["_models.OperationRecoverySettings"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResiliencyProfile(_Model):
+    """Gets resiliency solutions enabled on the VM. This includes backup or disaster recovery
+    solutions.
+
+    :ivar zone_movement: Zone movement configuration.
+    :vartype zone_movement: ~azure.mgmt.compute.models.ZoneMovement
+    """
+
+    zone_movement: Optional["_models.ZoneMovement"] = rest_field(
+        name="zoneMovement", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Zone movement configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zone_movement: Optional["_models.ZoneMovement"] = None,
     ) -> None: ...
 
     @overload
@@ -14189,6 +14478,35 @@ class ResourceSkuZoneDetails(_Model):
     """The set of zones that the SKU is available in with the specified capabilities."""
     capabilities: Optional[list["_models.ResourceSkuCapabilities"]] = rest_field(visibility=["read"])
     """A list of capabilities that are available for the SKU in the specified list of zones."""
+
+
+class RestartRecoveryPolicy(_Model):
+    """The configuration parameters used while performing restart recovery.
+
+    :ivar enabled: Specifies whether restart recovery should be enabled. The default value is
+     false.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether restart recovery should be enabled. The default value is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RestorePoint(ProxyResource):
@@ -15895,7 +16213,9 @@ class SecurityProfile(_Model):
     :vartype encryption_at_host: bool
     :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
      specified value to enable UefiSettings. The default behavior is: UefiSettings will not be
-     enabled unless this property is set. Known values are: "TrustedLaunch" and "ConfidentialVM".
+     enabled unless this property is set and is not Standard. If not specified, Standard will be
+     returned starting api version 2025-11-01. Known values are: "Standard", "TrustedLaunch", and
+     "ConfidentialVM".
     :vartype security_type: str or ~azure.mgmt.compute.models.SecurityTypes
     :ivar encryption_identity: Specifies the Managed Identity used by ADE to get access token for
      keyvault operations.
@@ -15922,7 +16242,8 @@ class SecurityProfile(_Model):
     )
     """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
      enable UefiSettings. The default behavior is: UefiSettings will not be enabled unless this
-     property is set. Known values are: \"TrustedLaunch\" and \"ConfidentialVM\"."""
+     property is set and is not Standard. If not specified, Standard will be returned starting api
+     version 2025-11-01. Known values are: \"Standard\", \"TrustedLaunch\", and \"ConfidentialVM\"."""
     encryption_identity: Optional["_models.EncryptionIdentity"] = rest_field(
         name="encryptionIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17798,6 +18119,34 @@ class SshPublicKeyUpdateResource(UpdateResource):
             super().__setattr__(key, value)
 
 
+class StartRecoveryPolicy(_Model):
+    """The configuration parameters used while performing start recovery.
+
+    :ivar enabled: Specifies whether start recovery should be enabled. The default value is false.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether start recovery should be enabled. The default value is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class StorageProfile(_Model):
     """Specifies the storage settings for the virtual machine disks.
 
@@ -19041,6 +19390,7 @@ class VirtualMachine(TrackedResource):
         "capacity_reservation",
         "application_profile",
         "time_created",
+        "resiliency_profile",
     ]
 
     @overload
@@ -21062,6 +21412,8 @@ class VirtualMachineProperties(_Model):
     :ivar time_created: Specifies the time at which the Virtual Machine resource was created.
      Minimum api-version: 2021-11-01.
     :vartype time_created: ~datetime.datetime
+    :ivar resiliency_profile: Resiliency profile for the virtual machine.
+    :vartype resiliency_profile: ~azure.mgmt.compute.models.ResiliencyProfile
     """
 
     hardware_profile: Optional["_models.HardwareProfile"] = rest_field(
@@ -21207,6 +21559,10 @@ class VirtualMachineProperties(_Model):
     time_created: Optional[datetime.datetime] = rest_field(name="timeCreated", visibility=["read"], format="rfc3339")
     """Specifies the time at which the Virtual Machine resource was created. Minimum api-version:
      2021-11-01."""
+    resiliency_profile: Optional["_models.ResiliencyProfile"] = rest_field(
+        name="resiliencyProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resiliency profile for the virtual machine."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -21235,6 +21591,7 @@ class VirtualMachineProperties(_Model):
         user_data: Optional[str] = None,
         capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
         application_profile: Optional["_models.ApplicationProfile"] = None,
+        resiliency_profile: Optional["_models.ResiliencyProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -22030,8 +22387,7 @@ class VirtualMachineScaleSet(TrackedResource):
      customer can supply it in the header to ensure optimistic updates.
     :vartype etag: str
     :ivar placement: Placement section specifies the user-defined constraints for virtual machine
-     scale set hardware placement. This property cannot be changed once VMSS is provisioned. Minimum
-     api-version: 2025-04-01.
+     scale set hardware placement. Minimum api-version: 2025-04-01.
     :vartype placement: ~azure.mgmt.compute.models.Placement
     """
 
@@ -22062,8 +22418,7 @@ class VirtualMachineScaleSet(TrackedResource):
      supply it in the header to ensure optimistic updates."""
     placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Placement section specifies the user-defined constraints for virtual machine scale set hardware
-     placement. This property cannot be changed once VMSS is provisioned. Minimum api-version:
-     2025-04-01."""
+     placement. Minimum api-version: 2025-04-01."""
 
     __flattened_items = [
         "upgrade_policy",
@@ -22090,6 +22445,8 @@ class VirtualMachineScaleSet(TrackedResource):
         "zonal_platform_fault_domain_align_mode",
         "sku_profile",
         "high_speed_interconnect_placement",
+        "lifecycle_hooks_profile",
+        "external_health_policy",
     ]
 
     @overload
@@ -22159,6 +22516,10 @@ class VirtualMachineScaleSetDataDisk(_Model):
      used to overwrite the size of the disk in a virtual machine image. The property diskSizeGB is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.mgmt.compute.models.VirtualMachineScaleSetManagedDiskParameters
     :ivar disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk. Should be used
@@ -22204,6 +22565,11 @@ class VirtualMachineScaleSetDataDisk(_Model):
     """Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite
      the size of the disk in a virtual machine image. The property diskSizeGB is the number of bytes
      x 1024^3 for the disk and the value cannot be larger than 1023."""
+    storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = rest_field(
+        name="storageFaultDomainAlignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the storage fault domain alignment type for the disk. Known values are: \"Aligned\"
+     and \"BestEffortAligned\"."""
     managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = rest_field(
         name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -22239,6 +22605,7 @@ class VirtualMachineScaleSetDataDisk(_Model):
         caching: Optional[Union[str, "_models.CachingTypes"]] = None,
         write_accelerator_enabled: Optional[bool] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         disk_iops_read_write: Optional[int] = None,
         disk_m_bps_read_write: Optional[int] = None,
@@ -23282,6 +23649,10 @@ class VirtualMachineScaleSetOSDisk(_Model):
      used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
      the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. Possible values are: **Windows,**
      **Linux.**. Known values are: "Windows" and "Linux".
@@ -23335,6 +23706,11 @@ class VirtualMachineScaleSetOSDisk(_Model):
     """Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite
      the size of the disk in a virtual machine image. The property 'diskSizeGB' is the number of
      bytes x 1024^3 for the disk and the value cannot be larger than 1023."""
+    storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = rest_field(
+        name="storageFaultDomainAlignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the storage fault domain alignment type for the disk. Known values are: \"Aligned\"
+     and \"BestEffortAligned\"."""
     os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = rest_field(
         name="osType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -23372,6 +23748,7 @@ class VirtualMachineScaleSetOSDisk(_Model):
         write_accelerator_enabled: Optional[bool] = None,
         diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[list[str]] = None,
@@ -23606,7 +23983,8 @@ class VirtualMachineScaleSetProperties(_Model):
     :ivar resiliency_policy: Policy for Resiliency.
     :vartype resiliency_policy: ~azure.mgmt.compute.models.ResiliencyPolicy
     :ivar zonal_platform_fault_domain_align_mode: Specifies the align mode between Virtual Machine
-     Scale Set compute and storage Fault Domain count. Known values are: "Aligned" and "Unaligned".
+     Scale Set compute and storage Fault Domain count. Known values are: "Aligned", "Unaligned", and
+     "BestEffortAligned".
     :vartype zonal_platform_fault_domain_align_mode: str or
      ~azure.mgmt.compute.models.ZonalPlatformFaultDomainAlignMode
     :ivar sku_profile: Specifies the sku profile for the virtual machine scale set.
@@ -23615,6 +23993,12 @@ class VirtualMachineScaleSetProperties(_Model):
      the virtual machine scale set. Known values are: "None" and "Trunk".
     :vartype high_speed_interconnect_placement: str or
      ~azure.mgmt.compute.models.HighSpeedInterconnectPlacement
+    :ivar lifecycle_hooks_profile: Specifies the lifecycle hooks profile for the virtual machine
+     scale set.
+    :vartype lifecycle_hooks_profile: ~azure.mgmt.compute.models.LifecycleHooksProfile
+    :ivar external_health_policy: Specifies the external health policy for the virtual machine
+     scale set.
+    :vartype external_health_policy: ~azure.mgmt.compute.models.ExternalHealthPolicy
     """
 
     upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
@@ -23712,7 +24096,7 @@ class VirtualMachineScaleSetProperties(_Model):
         rest_field(name="zonalPlatformFaultDomainAlignMode", visibility=["read", "create", "update", "delete", "query"])
     )
     """Specifies the align mode between Virtual Machine Scale Set compute and storage Fault Domain
-     count. Known values are: \"Aligned\" and \"Unaligned\"."""
+     count. Known values are: \"Aligned\", \"Unaligned\", and \"BestEffortAligned\"."""
     sku_profile: Optional["_models.SkuProfile"] = rest_field(
         name="skuProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -23722,9 +24106,17 @@ class VirtualMachineScaleSetProperties(_Model):
     )
     """Specifies the high speed interconnect placement for the virtual machine scale set. Known values
      are: \"None\" and \"Trunk\"."""
+    lifecycle_hooks_profile: Optional["_models.LifecycleHooksProfile"] = rest_field(
+        name="lifecycleHooksProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the lifecycle hooks profile for the virtual machine scale set."""
+    external_health_policy: Optional["_models.ExternalHealthPolicy"] = rest_field(
+        name="externalHealthPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the external health policy for the virtual machine scale set."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
@@ -23750,6 +24142,8 @@ class VirtualMachineScaleSetProperties(_Model):
         ] = None,
         sku_profile: Optional["_models.SkuProfile"] = None,
         high_speed_interconnect_placement: Optional[Union[str, "_models.HighSpeedInterconnectPlacement"]] = None,
+        lifecycle_hooks_profile: Optional["_models.LifecycleHooksProfile"] = None,
+        external_health_policy: Optional["_models.ExternalHealthPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -24180,6 +24574,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :vartype identity: ~azure.mgmt.compute.models.VirtualMachineScaleSetIdentity
     :ivar zones: The virtual machine scale set zones.
     :vartype zones: list[str]
+    :ivar placement: User-defined constraints for virtual machine scale set hardware placement.
+    :vartype placement: ~azure.mgmt.compute.models.Placement
     """
 
     sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -24196,6 +24592,8 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     """The identity of the virtual machine scale set, if configured."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The virtual machine scale set zones."""
+    placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """User-defined constraints for virtual machine scale set hardware placement."""
 
     __flattened_items = [
         "upgrade_policy",
@@ -24212,6 +24610,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         "resiliency_policy",
         "zonal_platform_fault_domain_align_mode",
         "sku_profile",
+        "lifecycle_hooks_profile",
     ]
 
     @overload
@@ -24224,6 +24623,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         properties: Optional["_models.VirtualMachineScaleSetUpdateProperties"] = None,
         identity: Optional["_models.VirtualMachineScaleSetIdentity"] = None,
         zones: Optional[list[str]] = None,
+        placement: Optional["_models.Placement"] = None,
     ) -> None: ...
 
     @overload
@@ -24668,6 +25068,10 @@ class VirtualMachineScaleSetUpdateOSDisk(_Model):
      used to overwrite the size of the disk in a virtual machine image. <br><br> diskSizeGB is the
      number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
+    :ivar storage_fault_domain_alignment: Specifies the storage fault domain alignment type for the
+     disk. Known values are: "Aligned" and "BestEffortAligned".
+    :vartype storage_fault_domain_alignment: str or
+     ~azure.mgmt.compute.models.StorageFaultDomainAlignmentType
     :ivar image: The Source User Image VirtualHardDisk. This VirtualHardDisk will be copied before
      using it to attach to the Virtual Machine. If SourceImage is provided, the destination
      VirtualHardDisk should not exist.
@@ -24705,6 +25109,11 @@ class VirtualMachineScaleSetUpdateOSDisk(_Model):
     """Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite
      the size of the disk in a virtual machine image. <br><br> diskSizeGB is the number of bytes x
      1024^3 for the disk and the value cannot be larger than 1023."""
+    storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = rest_field(
+        name="storageFaultDomainAlignment", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the storage fault domain alignment type for the disk. Known values are: \"Aligned\"
+     and \"BestEffortAligned\"."""
     image: Optional["_models.VirtualHardDisk"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Source User Image VirtualHardDisk. This VirtualHardDisk will be copied before using it to
      attach to the Virtual Machine. If SourceImage is provided, the destination VirtualHardDisk
@@ -24736,6 +25145,7 @@ class VirtualMachineScaleSetUpdateOSDisk(_Model):
         write_accelerator_enabled: Optional[bool] = None,
         diff_disk_settings: Optional["_models.DiffDiskSettings"] = None,
         disk_size_gb: Optional[int] = None,
+        storage_fault_domain_alignment: Optional[Union[str, "_models.StorageFaultDomainAlignmentType"]] = None,
         image: Optional["_models.VirtualHardDisk"] = None,
         vhd_containers: Optional[list[str]] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
@@ -24844,11 +25254,15 @@ class VirtualMachineScaleSetUpdateProperties(_Model):
     :ivar resiliency_policy: Policy for Resiliency.
     :vartype resiliency_policy: ~azure.mgmt.compute.models.ResiliencyPolicy
     :ivar zonal_platform_fault_domain_align_mode: Specifies the align mode between Virtual Machine
-     Scale Set compute and storage Fault Domain count. Known values are: "Aligned" and "Unaligned".
+     Scale Set compute and storage Fault Domain count. Known values are: "Aligned", "Unaligned", and
+     "BestEffortAligned".
     :vartype zonal_platform_fault_domain_align_mode: str or
      ~azure.mgmt.compute.models.ZonalPlatformFaultDomainAlignMode
     :ivar sku_profile: Specifies the sku profile for the virtual machine scale set.
     :vartype sku_profile: ~azure.mgmt.compute.models.SkuProfile
+    :ivar lifecycle_hooks_profile: Specifies the lifecycle hooks profile for the virtual machine
+     scale set.
+    :vartype lifecycle_hooks_profile: ~azure.mgmt.compute.models.LifecycleHooksProfile
     """
 
     upgrade_policy: Optional["_models.UpgradePolicy"] = rest_field(
@@ -24910,11 +25324,15 @@ class VirtualMachineScaleSetUpdateProperties(_Model):
         rest_field(name="zonalPlatformFaultDomainAlignMode", visibility=["read", "create", "update", "delete", "query"])
     )
     """Specifies the align mode between Virtual Machine Scale Set compute and storage Fault Domain
-     count. Known values are: \"Aligned\" and \"Unaligned\"."""
+     count. Known values are: \"Aligned\", \"Unaligned\", and \"BestEffortAligned\"."""
     sku_profile: Optional["_models.SkuProfile"] = rest_field(
         name="skuProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the sku profile for the virtual machine scale set."""
+    lifecycle_hooks_profile: Optional["_models.LifecycleHooksProfile"] = rest_field(
+        name="lifecycleHooksProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the lifecycle hooks profile for the virtual machine scale set."""
 
     @overload
     def __init__(
@@ -24936,6 +25354,7 @@ class VirtualMachineScaleSetUpdateProperties(_Model):
             Union[str, "_models.ZonalPlatformFaultDomainAlignMode"]
         ] = None,
         sku_profile: Optional["_models.SkuProfile"] = None,
+        lifecycle_hooks_profile: Optional["_models.LifecycleHooksProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -25319,6 +25738,7 @@ class VirtualMachineScaleSetVM(TrackedResource):
         "protection_policy",
         "user_data",
         "time_created",
+        "virtual_machine_resource_id",
     ]
 
     @overload
@@ -26055,6 +26475,10 @@ class VirtualMachineScaleSetVMProperties(_Model):
     :ivar time_created: Specifies the time at which the Virtual Machine resource was created.
      Minimum api-version: 2021-11-01.
     :vartype time_created: ~datetime.datetime
+    :ivar virtual_machine_resource_id: Specifies the ARM resource ID of the standalone virtual
+     machine associated with this VMSS VM. This property is only applicable to Virtual Machine Scale
+     Sets with Flexible orchestration mode. Minimum api-version: 2025-11-01.
+    :vartype virtual_machine_resource_id: str
     """
 
     latest_model_applied: Optional[bool] = rest_field(name="latestModelApplied", visibility=["read"])
@@ -26143,6 +26567,10 @@ class VirtualMachineScaleSetVMProperties(_Model):
     time_created: Optional[datetime.datetime] = rest_field(name="timeCreated", visibility=["read"], format="rfc3339")
     """Specifies the time at which the Virtual Machine resource was created. Minimum api-version:
      2021-11-01."""
+    virtual_machine_resource_id: Optional[str] = rest_field(name="virtualMachineResourceId", visibility=["read"])
+    """Specifies the ARM resource ID of the standalone virtual machine associated with this VMSS VM.
+     This property is only applicable to Virtual Machine Scale Sets with Flexible orchestration
+     mode. Minimum api-version: 2025-11-01."""
 
     @overload
     def __init__(
@@ -26431,6 +26859,7 @@ class VirtualMachineUpdate(UpdateResource):
         "capacity_reservation",
         "application_profile",
         "time_created",
+        "resiliency_profile",
     ]
 
     @overload
@@ -26663,6 +27092,290 @@ class VMScaleSetConvertToSinglePlacementGroupInput(_Model):  # pylint: disable=n
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VMScaleSetLifecycleHookEvent(ProxyResource):
+    """Defines a virtual machine scale set lifecycle hook event.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.models.SystemData
+    :ivar properties: Defines the virtual machine scale set lifecycle hook event properties.
+    :vartype properties: ~azure.mgmt.compute.models.VMScaleSetLifecycleHookEventProperties
+    """
+
+    properties: Optional["_models.VMScaleSetLifecycleHookEventProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the virtual machine scale set lifecycle hook event properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VMScaleSetLifecycleHookEventProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VMScaleSetLifecycleHookEventAdditionalContext(_Model):  # pylint: disable=name-too-long
+    """Additional key-value pairs set on the lifecycle hook event that gives customer some useful
+    context/data. The keys in this dictionary are specific to the lifecycle hook type. Different
+    lifecycle hook events can have different sets of keys in the additional context depending on
+    the lifecycle hook type. For example, for a lifecycle hook event with UpgradeAutoOSScheduling
+    type, the additional context can contain the key "priority" that helps customer identify the
+    priority of the Auto OS Upgrade operation triggered on the virtual machine scale set.
+
+    :ivar priority: Can only be present for a lifecycle hook event of type
+     "UpgradeAutoOSScheduling". Denotes the priority of the virtual machine scale set lifecycle hook
+     event for the Auto OS Upgrade scheduled on the virtual machine scale set.
+    :vartype priority: str
+    """
+
+    priority: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Can only be present for a lifecycle hook event of type \"UpgradeAutoOSScheduling\". Denotes the
+     priority of the virtual machine scale set lifecycle hook event for the Auto OS Upgrade
+     scheduled on the virtual machine scale set."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        priority: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VMScaleSetLifecycleHookEventProperties(_Model):
+    """Defines the virtual machine scale set lifecycle hook event properties.
+
+    :ivar type: Defines the type or scenario for sending a virtual machine scale set lifecycle hook
+     event to the customer. Known values are: "UpgradeAutoOSScheduling" and
+     "UpgradeAutoOSRollingBatchStarting".
+    :vartype type: str or ~azure.mgmt.compute.models.VMScaleSetLifecycleHookEventType
+    :ivar wait_until: Specifies the exact UTC timestamp in ISO 8601 format till which the event
+     would remain in the current lifecycle state waiting for an action from the customer. Beyond
+     this timestamp, the platform will apply the defaultAction for the event.
+    :vartype wait_until: str
+    :ivar max_wait_until: Specifies the exact UTC timestamp in ISO 8601 format till when the
+     customer can delay the lifecycle hook event. The customer will not be allowed to delay the
+     event to a timestamp beyond this.
+    :vartype max_wait_until: str
+    :ivar time_created: The UTC timestamp in ISO 8601 format at which the platform creates the
+     virtual machine scale set lifecycle hook event entity.
+    :vartype time_created: str
+    :ivar default_action: Specify the action that will be applied on the a target resource in the
+     virtual machine scale set lifecycle hook event if the platform does not get a response from the
+     customer for the target resource before waitUntil. Known values are: "Approve" and "Reject".
+    :vartype default_action: str or ~azure.mgmt.compute.models.LifecycleHookAction
+    :ivar target_resources: List of target resources which are getting processed in the virtual
+     machine scale set lifecycle hook event.
+    :vartype target_resources:
+     list[~azure.mgmt.compute.models.VMScaleSetLifecycleHookEventTargetResource]
+    :ivar additional_context: Additional key-value pairs set on the lifecycle hook event that gives
+     customer some useful context/data. The keys in this dictionary are specific to the lifecycle
+     hook type. Different lifecycle hook events can have different sets of keys in the additional
+     context depending on the lifecycle hook type. For example, for a lifecycle hook event with
+     UpgradeAutoOSScheduling type, the additional context can contain the key "priority" that helps
+     customer identify the priority of the Auto OS Upgrade operation triggered on the virtual
+     machine scale set.
+    :vartype additional_context:
+     ~azure.mgmt.compute.models.VMScaleSetLifecycleHookEventAdditionalContext
+    :ivar state: Specifies the state of the virtual machine scale set lifecycle hook event. Known
+     values are: "Active" and "Completed".
+    :vartype state: str or ~azure.mgmt.compute.models.VMScaleSetLifecycleHookEventState
+    """
+
+    type: Optional[Union[str, "_models.VMScaleSetLifecycleHookEventType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the type or scenario for sending a virtual machine scale set lifecycle hook event to
+     the customer. Known values are: \"UpgradeAutoOSScheduling\" and
+     \"UpgradeAutoOSRollingBatchStarting\"."""
+    wait_until: Optional[str] = rest_field(name="waitUntil", visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the exact UTC timestamp in ISO 8601 format till which the event would remain in the
+     current lifecycle state waiting for an action from the customer. Beyond this timestamp, the
+     platform will apply the defaultAction for the event."""
+    max_wait_until: Optional[str] = rest_field(name="maxWaitUntil", visibility=["read"])
+    """Specifies the exact UTC timestamp in ISO 8601 format till when the customer can delay the
+     lifecycle hook event. The customer will not be allowed to delay the event to a timestamp beyond
+     this."""
+    time_created: Optional[str] = rest_field(name="timeCreated", visibility=["read"])
+    """The UTC timestamp in ISO 8601 format at which the platform creates the virtual machine scale
+     set lifecycle hook event entity."""
+    default_action: Optional[Union[str, "_models.LifecycleHookAction"]] = rest_field(
+        name="defaultAction", visibility=["read"]
+    )
+    """Specify the action that will be applied on the a target resource in the virtual machine scale
+     set lifecycle hook event if the platform does not get a response from the customer for the
+     target resource before waitUntil. Known values are: \"Approve\" and \"Reject\"."""
+    target_resources: Optional[list["_models.VMScaleSetLifecycleHookEventTargetResource"]] = rest_field(
+        name="targetResources", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of target resources which are getting processed in the virtual machine scale set lifecycle
+     hook event."""
+    additional_context: Optional["_models.VMScaleSetLifecycleHookEventAdditionalContext"] = rest_field(
+        name="additionalContext", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional key-value pairs set on the lifecycle hook event that gives customer some useful
+     context/data. The keys in this dictionary are specific to the lifecycle hook type. Different
+     lifecycle hook events can have different sets of keys in the additional context depending on
+     the lifecycle hook type. For example, for a lifecycle hook event with UpgradeAutoOSScheduling
+     type, the additional context can contain the key \"priority\" that helps customer identify the
+     priority of the Auto OS Upgrade operation triggered on the virtual machine scale set."""
+    state: Optional[Union[str, "_models.VMScaleSetLifecycleHookEventState"]] = rest_field(visibility=["read"])
+    """Specifies the state of the virtual machine scale set lifecycle hook event. Known values are:
+     \"Active\" and \"Completed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.VMScaleSetLifecycleHookEventType"]] = None,
+        wait_until: Optional[str] = None,
+        target_resources: Optional[list["_models.VMScaleSetLifecycleHookEventTargetResource"]] = None,
+        additional_context: Optional["_models.VMScaleSetLifecycleHookEventAdditionalContext"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VMScaleSetLifecycleHookEventTargetResource(_Model):  # pylint: disable=name-too-long
+    """Define a single target ARM resource in a virtual machine scale set lifecycle hook event.
+    Currently, this can be a virtual machine scale set resource or an individual virtual machine
+    resource within a VMScaleSet.
+
+    :ivar resource: Specifies the target ARM resource. Currently, this can be a virtual machine
+     scale set resource or an individual virtual machine resource within a VMScaleSet.
+    :vartype resource: ~azure.mgmt.compute.models.ApiEntityReference
+    :ivar action_state: State of the lifecycle hook for the target resource. The customer can patch
+     this property to move the lifecycle hook to a terminal state. Known values are: "Waiting",
+     "Approved", and "Rejected".
+    :vartype action_state: str or ~azure.mgmt.compute.models.LifecycleHookActionState
+    """
+
+    resource: Optional["_models.ApiEntityReference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the target ARM resource. Currently, this can be a virtual machine scale set resource
+     or an individual virtual machine resource within a VMScaleSet."""
+    action_state: Optional[Union[str, "_models.LifecycleHookActionState"]] = rest_field(
+        name="actionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """State of the lifecycle hook for the target resource. The customer can patch this property to
+     move the lifecycle hook to a terminal state. Known values are: \"Waiting\", \"Approved\", and
+     \"Rejected\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource: Optional["_models.ApiEntityReference"] = None,
+        action_state: Optional[Union[str, "_models.LifecycleHookActionState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VMScaleSetLifecycleHookEventUpdate(_Model):
+    """Specifies information about the virtual machine scale set lifecycle hook event.
+
+    :ivar properties: virtual machine scale set lifecycle hook event properties.
+    :vartype properties: ~azure.mgmt.compute.models.VMScaleSetLifecycleHookEventProperties
+    """
+
+    properties: Optional["_models.VMScaleSetLifecycleHookEventProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """virtual machine scale set lifecycle hook event properties."""
+
+    __flattened_items = [
+        "type",
+        "wait_until",
+        "max_wait_until",
+        "time_created",
+        "default_action",
+        "target_resources",
+        "additional_context",
+        "state",
+    ]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VMScaleSetLifecycleHookEventProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VMScaleSetScaleOutInput(_Model):
@@ -27117,6 +27830,39 @@ class ZoneAllocationPolicy(_Model):
         *,
         max_zone_count: Optional[int] = None,
         max_instance_percent_per_zone_policy: Optional["_models.MaxInstancePercentPerZonePolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ZoneMovement(_Model):
+    """Describes zone movement configuration. This allows VM to be moved across availability zones
+    during an outage.
+
+    :ivar is_enabled: Indicates if zone movement is enabled. By default isEnabled is set to false
+     i.e VM can't be moved from one zone to another.
+    :vartype is_enabled: bool
+    """
+
+    is_enabled: Optional[bool] = rest_field(
+        name="isEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates if zone movement is enabled. By default isEnabled is set to false i.e VM can't be
+     moved from one zone to another."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
