@@ -226,28 +226,24 @@ class TestStructuredMessageEncodeStream:
         with pytest.raises(UnsupportedOperation):
             sm_stream.seek(0)
 
-    def test_seek_whence(self):
+    def test_seek(self):
         data = os.urandom(10)
         inner_stream = BytesIO(data)
         sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
-        # Read so we can seek backwards
         sm_stream.read(25)
 
-        pos = sm_stream.seek(10, SEEK_SET)
-        assert pos == 10
-        pos = sm_stream.seek(-len(sm_stream) + 9, SEEK_END)
-        assert pos == 9
-        pos = sm_stream.seek(-5, SEEK_CUR)
-        assert pos == 4
-
-    def test_seek_forward(self):
-        data = os.urandom(10)
-        inner_stream = BytesIO(data)
-        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), StructuredMessageProperties.CRC64)
-
-        sm_stream.read(5)
         with pytest.raises(UnsupportedOperation):
-            sm_stream.seek(10)
+            sm_stream.seek(5)
+
+        with pytest.raises(UnsupportedOperation):
+            sm_stream.seek(0, SEEK_CUR)
+
+        with pytest.raises(UnsupportedOperation):
+            sm_stream.seek(0, SEEK_END)
+
+        # Only SEEK_SET to 0 is supported
+        pos = sm_stream.seek(0, SEEK_SET)
+        assert pos == 0
 
     @pytest.mark.parametrize("initial_read, segment_size, flags", [
         # Single segment
@@ -290,74 +286,6 @@ class TestStructuredMessageEncodeStream:
         result = sm_stream.read()
         assert result == expected
 
-    @pytest.mark.parametrize("initial_read, seek_offset, segment_size, flags", [
-        # Single segment
-        (10, 5, 2048, StructuredMessageProperties.NONE),  # Message header -> Message header
-        (10, 5, 2048, StructuredMessageProperties.CRC64),
-        (20, 15, 2048, StructuredMessageProperties.NONE),  # Segment header -> Segment header
-        (20, 15, 2048, StructuredMessageProperties.CRC64),
-        (100, 50, 2048, StructuredMessageProperties.NONE),  # First segment content -> First segment content
-        (100, 50, 2048, StructuredMessageProperties.CRC64),
-        (1000, 900, 2048, StructuredMessageProperties.NONE),  # Second segment content -> Second segment content
-        (1000, 900, 2048, StructuredMessageProperties.CRC64),
-        (530, 525, 2048, StructuredMessageProperties.CRC64),  # Segment footer -> Segment footer
-        (1060, 1050, 2048, StructuredMessageProperties.CRC64),  # Message footer -> Segment footer
-        (1000, 100, 2048, StructuredMessageProperties.NONE),  # Second segment content -> First segment content
-        (1000, 100, 2048, StructuredMessageProperties.CRC64),
-        (1000, 20, 2048, StructuredMessageProperties.NONE),  # Second segment content -> First segment header
-        (1000, 20, 2048, StructuredMessageProperties.CRC64),
-        (1000, 530, 2048, StructuredMessageProperties.CRC64),  # Second segment content -> First segment footer
-        (1097, 100, 2048, StructuredMessageProperties.CRC64),  # Message footer -> First segment content
-        # Multiple segments
-        (10, 5, 500, StructuredMessageProperties.NONE),  # Message header -> Message header
-        (10, 5, 500, StructuredMessageProperties.CRC64),
-        (20, 15, 500, StructuredMessageProperties.NONE),  # Segment header -> Segment header
-        (20, 15, 500, StructuredMessageProperties.CRC64),
-        (100, 50, 500, StructuredMessageProperties.NONE),  # First segment content -> First segment content
-        (100, 50, 500, StructuredMessageProperties.CRC64),
-        (1000, 900, 500, StructuredMessageProperties.NONE),  # Second segment content -> Second segment content
-        (1000, 900, 500, StructuredMessageProperties.CRC64),
-        (530, 525, 500, StructuredMessageProperties.CRC64),  # Segment footer -> Segment footer
-        (1097, 1090, 500, StructuredMessageProperties.CRC64),  # Message footer -> Segment footer
-        (1000, 100, 500, StructuredMessageProperties.NONE),  # Second segment content -> First segment content
-        (1000, 100, 500, StructuredMessageProperties.CRC64),
-        (1000, 20, 500, StructuredMessageProperties.NONE),  # Second segment content -> First segment header
-        (1000, 20, 500, StructuredMessageProperties.CRC64),
-        (1000, 530, 500, StructuredMessageProperties.CRC64),  # Second segment content -> First segment footer
-        (1097, 100, 500, StructuredMessageProperties.CRC64),  # Message footer -> First segment content
-    ])
-    def test_seek_reverse_middle(self, initial_read, seek_offset, segment_size, flags):
-        data = os.urandom(1024)
-        inner_stream = BytesIO(data)
-        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=segment_size)
-        expected = _build_structured_message(data, segment_size, flags)[0].getvalue()
-
-        initial = sm_stream.read(initial_read)
-        assert initial == expected[:initial_read]
-
-        sm_stream.seek(seek_offset)
-        result = sm_stream.read()
-        assert result == expected[seek_offset:]
-
-    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
-    def test_seek_reverse_random(self, flags):
-        data = os.urandom(1024)
-        expected = _build_structured_message(data, 500, flags)[0].getvalue()
-
-        for _ in range(10):
-            inner_stream = BytesIO(data)
-            sm_stream = StructuredMessageEncodeStream(inner_stream, len(data), flags, segment_size=500)
-
-            initial_read = random.randint(5, len(data))
-            seek_offset = random.randint(0, initial_read)
-
-            initial = sm_stream.read(initial_read)
-            assert initial == expected[:initial_read]
-
-            sm_stream.seek(seek_offset)
-            result = sm_stream.read()
-            assert result == expected[seek_offset:]
-
     @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
     def test_partial_stream_read(self, flags):
         data = os.urandom(1024)
@@ -390,26 +318,7 @@ class TestStructuredMessageEncodeStream:
         result = sm_stream.read()
         assert result == expected
 
-    @pytest.mark.parametrize("flags", [StructuredMessageProperties.NONE, StructuredMessageProperties.CRC64])
-    def test_partial_stream_seek_middle(self, flags):
-        data = os.urandom(1024)
-        partial_read = 100
 
-        inner_stream = BytesIO(data)
-        inner_stream.seek(partial_read)
-        expected = _build_structured_message(data[partial_read:], 500, flags)[0].getvalue()
-
-        sm_stream = StructuredMessageEncodeStream(inner_stream, len(data) - partial_read, flags, segment_size=500)
-        initial = sm_stream.read(501)
-        assert initial == expected[:501]
-
-        sm_stream.seek(100)
-        assert inner_stream.tell() == partial_read + (100 -
-                                                      StructuredMessageConstants.V1_HEADER_LENGTH -
-                                                      StructuredMessageConstants.V1_SEGMENT_HEADER_LENGTH)
-
-        result = sm_stream.read()
-        assert result == expected[100:]
 
 
 class TestStructuredMessageDecoder:

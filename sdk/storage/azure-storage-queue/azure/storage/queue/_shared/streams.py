@@ -88,9 +88,6 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
     _current_region_length: int
     _current_region_offset: int
 
-    _checksum_offset: int
-    """Tracks the offset the checksum has been calculated up to for seeking purposes"""
-
     _message_crc64: int
     _segment_crc64s: dict[int, int]
 
@@ -121,7 +118,6 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         self._current_region_length = self._message_header_length
         self._current_region_offset = 0
 
-        self._checksum_offset = 0
         self._message_crc64 = 0
         self._segment_crc64s = {}
 
@@ -171,9 +167,15 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
     def __len__(self):
         return self.message_length
 
+    @property
+    def closed(self) -> bool:
+        return self._inner_stream.closed
+
     def close(self) -> None:
-        self._inner_stream.close()
-        super().close()
+        # Do not close the inner stream or this stream.
+        # The inner stream is caller-owned and must survive for retries.
+        # This stream may be re-read after a seek(0) on retry.
+        pass
 
     def readable(self) -> bool:
         return True
@@ -224,66 +226,23 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         if not self.seekable():
             raise UnsupportedOperation("Inner stream is not seekable.")
 
-        if whence == SEEK_SET:
-            position = offset
-        elif whence == SEEK_CUR:
-            position = self.tell() + offset
-        elif whence == SEEK_END:
-            position = self.message_length + offset
-        else:
-            raise ValueError(f"Invalid value for whence: {whence}")
+        if whence != SEEK_SET:
+            raise UnsupportedOperation("This stream only supports SEEK_SET.")
 
-        if position < 0:
-            raise ValueError(f"Cannot seek to negative position: {position}")
-        if position > self.tell():
-            raise UnsupportedOperation("This stream only supports seeking backwards.")
+        if offset != 0:
+            raise UnsupportedOperation("This stream only supports seeking to position 0.")
 
-        # MESSAGE_HEADER
-        if position < self._message_header_length:
-            self._current_region = SMRegion.MESSAGE_HEADER
-            self._current_region_offset = position
-            self._content_offset = 0
-            self._current_segment_number = 0
-        # MESSAGE_FOOTER
-        elif position >= self.message_length - self._message_footer_length:
-            self._current_region = SMRegion.MESSAGE_FOOTER
-            self._current_region_offset = position - (self.message_length - self._message_footer_length)
-            self._content_offset = self.content_length
-            self._current_segment_number = self._num_segments
-        else:
-            # The size of a "full" segment. Fine to use for calculating new segment number and pos
-            full_segment_size = self._segment_header_length + self._segment_size + self._segment_footer_length
-            new_segment_num = 1 + (position - self._message_header_length) // full_segment_size
-            segment_pos = (position - self._message_header_length) % full_segment_size
-            previous_segments_total_content_size = (new_segment_num - 1) * self._segment_size
+        # Reset to initial state
+        self._content_offset = 0
+        self._current_segment_number = 0
+        self._current_region = SMRegion.MESSAGE_HEADER
+        self._current_region_length = self._message_header_length
+        self._current_region_offset = 0
+        self._message_crc64 = 0
+        self._segment_crc64s = {}
 
-            # We need the size of the segment we are seeking to for some of the calculations below
-            new_segment_size = self._segment_size
-            if new_segment_num == self._num_segments:
-                # The last segment size is the remaining content length
-                new_segment_size = self.content_length - previous_segments_total_content_size
-
-            # SEGMENT_HEADER
-            if segment_pos < self._segment_header_length:
-                self._current_region = SMRegion.SEGMENT_HEADER
-                self._current_region_offset = segment_pos
-                self._content_offset = previous_segments_total_content_size
-            # SEGMENT_CONTENT
-            elif segment_pos < self._segment_header_length + new_segment_size:
-                self._current_region = SMRegion.SEGMENT_CONTENT
-                self._current_region_offset = segment_pos - self._segment_header_length
-                self._content_offset = previous_segments_total_content_size + self._current_region_offset
-            # SEGMENT_FOOTER
-            else:
-                self._current_region = SMRegion.SEGMENT_FOOTER
-                self._current_region_offset = segment_pos - self._segment_header_length - new_segment_size
-                self._content_offset = previous_segments_total_content_size + new_segment_size
-
-            self._current_segment_number = new_segment_num
-
-        self._update_current_region_length()
-        self._inner_stream.seek((self._initial_content_position or 0) + self._content_offset)
-        return position
+        self._inner_stream.seek(self._initial_content_position or 0)
+        return 0
 
     def read(self, size: int = -1) -> bytes:
         if self.closed:  # pylint: disable=using-constant-test
@@ -386,14 +345,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         return read_size
 
     def _read_content(self, size: int, output: BytesIO) -> int:
-        # Will be non-zero if there is data to read that does not need to have checksum calculated.
-        # Will always be positive as stream can only seek backwards.
-        checksum_offset = self._checksum_offset - self._content_offset
-
         read_size = min(size, self._current_region_length - self._current_region_offset)
-        if checksum_offset != 0:
-            # Only read up to checksum offset this iteration
-            read_size = min(read_size, checksum_offset)
 
         content = self._inner_stream.read(read_size)
         if len(content) != read_size:
@@ -401,16 +353,12 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         output.write(content)
 
         if StructuredMessageProperties.CRC64 in self.flags:
-            if checksum_offset == 0:
-                self._segment_crc64s[self._current_segment_number] = calculate_crc64(
-                    content, self._segment_crc64s[self._current_segment_number]
-                )
-                self._message_crc64 = calculate_crc64(content, self._message_crc64)
+            self._segment_crc64s[self._current_segment_number] = calculate_crc64(
+                content, self._segment_crc64s[self._current_segment_number]
+            )
+            self._message_crc64 = calculate_crc64(content, self._message_crc64)
 
         self._content_offset += read_size
-        # Only update the checksum offset if we've read new data
-        if self._content_offset > self._checksum_offset:
-            self._checksum_offset += read_size
         self._current_region_offset += read_size
         if self._current_region_offset == self._current_region_length:
             self._advance_region(SMRegion.SEGMENT_CONTENT)
