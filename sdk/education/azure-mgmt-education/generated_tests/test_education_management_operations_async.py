@@ -6,24 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.education import EducationClient
+from azure.mgmt.education.aio import EducationManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestEducation(AzureMgmtRecordedTestCase):
+class TestEducationManagementOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(EducationClient)
+        self.client = self.create_mgmt_client(EducationManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_redeem_invitation_code(self, resource_group):
-        response = self.client.redeem_invitation_code(
-            parameters={"firstName": "str", "lastName": "str", "redeemCode": "str"},
-        )
+    @recorded_by_proxy_async
+    async def test_operations_list(self, resource_group):
+        response = await self.client.operations.list()
 
         # please add some check logic here by yourself
         # ...

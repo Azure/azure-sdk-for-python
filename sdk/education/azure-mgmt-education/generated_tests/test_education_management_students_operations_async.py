@@ -6,51 +6,55 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.education import EducationClient
+from azure.mgmt.education.aio import EducationManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestEducationLabsOperations(AzureMgmtRecordedTestCase):
+class TestEducationManagementStudentsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(EducationClient)
+        self.client = self.create_mgmt_client(EducationManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_labs_get(self, resource_group):
-        response = self.client.labs.get(
+    @recorded_by_proxy_async
+    async def test_students_get(self, resource_group):
+        response = await self.client.students.get(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
+            student_alias="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_labs_create_or_update(self, resource_group):
-        response = self.client.labs.create_or_update(
+    @recorded_by_proxy_async
+    async def test_students_create_or_update(self, resource_group):
+        response = await self.client.students.create_or_update(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
+            student_alias="str",
             parameters={
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "budgetPerStudent": {"currency": "str", "value": 0.0},
-                    "description": "str",
-                    "displayName": "str",
+                    "budget": {"currency": "str", "value": 0.0},
+                    "email": "str",
                     "expirationDate": "2020-02-20 00:00:00",
+                    "firstName": "str",
+                    "lastName": "str",
+                    "role": "str",
                     "effectiveDate": "2020-02-20 00:00:00",
-                    "invitationCode": "str",
-                    "maxStudentCount": 0.0,
                     "status": "str",
-                    "totalAllocatedBudget": {"currency": "str", "value": 0.0},
-                    "totalBudget": {"currency": "str", "value": 0.0},
+                    "subscriptionAlias": "str",
+                    "subscriptionId": "str",
+                    "subscriptionInviteLastSentDate": "2020-02-20 00:00:00",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -68,49 +72,26 @@ class TestEducationLabsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_labs_delete(self, resource_group):
-        response = self.client.labs.delete(
+    @recorded_by_proxy_async
+    async def test_students_delete(self, resource_group):
+        response = await self.client.students.delete(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
+            student_alias="str",
         )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_labs_list(self, resource_group):
-        response = self.client.labs.list(
+    @recorded_by_proxy_async
+    async def test_students_list(self, resource_group):
+        response = self.client.students.list(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
         )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_labs_list_all(self, resource_group):
-        response = self.client.labs.list_all(
-            billing_account_name="str",
-            billing_profile_name="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_labs_generate_invite_code(self, resource_group):
-        response = self.client.labs.generate_invite_code(
-            billing_account_name="str",
-            billing_profile_name="str",
-            invoice_section_name="str",
-            parameters={"maxStudentCount": 0.0},
-        )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

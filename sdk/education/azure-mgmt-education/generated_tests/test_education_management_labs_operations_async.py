@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.education.aio import EducationClient
+from azure.mgmt.education.aio import EducationManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,18 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestEducationStudentsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestEducationManagementLabsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(EducationClient, is_async=True)
+        self.client = self.create_mgmt_client(EducationManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_students_get(self, resource_group):
-        response = await self.client.students.get(
+    async def test_labs_get(self, resource_group):
+        response = await self.client.labs.get(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
-            student_alias="str",
         )
 
         # please add some check logic here by yourself
@@ -34,27 +33,25 @@ class TestEducationStudentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_students_create_or_update(self, resource_group):
-        response = await self.client.students.create_or_update(
+    async def test_labs_create_or_update(self, resource_group):
+        response = await self.client.labs.create_or_update(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
-            student_alias="str",
             parameters={
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "budget": {"currency": "str", "value": 0.0},
-                    "email": "str",
+                    "budgetPerStudent": {"currency": "str", "value": 0.0},
+                    "description": "str",
+                    "displayName": "str",
                     "expirationDate": "2020-02-20 00:00:00",
-                    "firstName": "str",
-                    "lastName": "str",
-                    "role": "str",
                     "effectiveDate": "2020-02-20 00:00:00",
+                    "invitationCode": "str",
+                    "maxStudentCount": 0.0,
                     "status": "str",
-                    "subscriptionAlias": "str",
-                    "subscriptionId": "str",
-                    "subscriptionInviteLastSentDate": "2020-02-20 00:00:00",
+                    "totalAllocatedBudget": {"currency": "str", "value": 0.0},
+                    "totalBudget": {"currency": "str", "value": 0.0},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -73,12 +70,11 @@ class TestEducationStudentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_students_delete(self, resource_group):
-        response = await self.client.students.delete(
+    async def test_labs_delete(self, resource_group):
+        response = await self.client.labs.delete(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
-            student_alias="str",
         )
 
         # please add some check logic here by yourself
@@ -86,12 +82,36 @@ class TestEducationStudentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_students_list(self, resource_group):
-        response = self.client.students.list(
+    async def test_labs_list(self, resource_group):
+        response = self.client.labs.list(
             billing_account_name="str",
             billing_profile_name="str",
             invoice_section_name="str",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_labs_list_all(self, resource_group):
+        response = self.client.labs.list_all(
+            billing_account_name="str",
+            billing_profile_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_labs_generate_invite_code(self, resource_group):
+        response = await self.client.labs.generate_invite_code(
+            billing_account_name="str",
+            billing_profile_name="str",
+            invoice_section_name="str",
+            parameters={"maxStudentCount": 0.0},
+        )
+
         # please add some check logic here by yourself
         # ...

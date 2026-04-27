@@ -71,7 +71,7 @@
         "azure.mgmt.education.aio.operations.StudentLabsOperations.get": "Microsoft.Education.StudentLabs.get",
         "azure.mgmt.education.operations.StudentLabsOperations.list_all": "Microsoft.Education.StudentLabs.listAll",
         "azure.mgmt.education.aio.operations.StudentLabsOperations.list_all": "Microsoft.Education.StudentLabs.listAll",
-        "azure.mgmt.education.EducationClient.redeem_invitation_code": "Microsoft.Education.redeemInvitationCode",
-        "azure.mgmt.education.aio.EducationClient.redeem_invitation_code": "Microsoft.Education.redeemInvitationCode"
+        "azure.mgmt.education.EducationManagementClient.redeem_invitation_code": "Microsoft.Education.redeemInvitationCode",
+        "azure.mgmt.education.aio.EducationManagementClient.redeem_invitation_code": "Microsoft.Education.redeemInvitationCode"
     }
 }

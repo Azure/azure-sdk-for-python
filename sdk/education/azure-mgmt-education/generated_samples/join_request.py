@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.education import EducationClient
+from azure.mgmt.education import EducationManagementClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.education import EducationClient
 
 
 def main():
-    client = EducationClient(
+    client = EducationManagementClient(
         credential=DefaultAzureCredential(),
     )
 

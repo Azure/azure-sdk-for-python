@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import EducationClientConfiguration
+from ._configuration import EducationManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     GrantsOperations,
@@ -26,7 +26,7 @@ from .operations import (
     Operations,
     StudentLabsOperations,
     StudentsOperations,
-    _EducationClientOperationsMixin,
+    _EducationManagementClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
@@ -34,7 +34,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EducationClient(_EducationClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class EducationManagementClient(
+    _EducationManagementClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes
     """Education client provides access to education resources for Azure subscriptions.
 
     :ivar operations: Operations operations
@@ -76,7 +78,7 @@ class EducationClient(_EducationClientOperationsMixin):  # pylint: disable=too-m
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = EducationClientConfiguration(
+        self._config = EducationManagementClientConfiguration(
             credential=credential,
             base_url=cast(str, base_url),
             cloud_setting=cloud_setting,

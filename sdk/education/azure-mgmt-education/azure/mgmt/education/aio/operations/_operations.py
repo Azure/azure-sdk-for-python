@@ -36,7 +36,7 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
 from ...operations._operations import (
-    build_education_redeem_invitation_code_request,
+    build_education_management_redeem_invitation_code_request,
     build_grants_get_request,
     build_grants_list_all_request,
     build_grants_list_request,
@@ -58,7 +58,7 @@ from ...operations._operations import (
     build_students_get_request,
     build_students_list_request,
 )
-from .._configuration import EducationClientConfiguration
+from .._configuration import EducationManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -72,14 +72,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.aio.EducationClient`'s
+        :class:`~azure.mgmt.education.aio.EducationManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -152,14 +152,14 @@ class GrantsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.aio.EducationClient`'s
+        :class:`~azure.mgmt.education.aio.EducationManagementClient`'s
         :attr:`grants` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -450,14 +450,14 @@ class LabsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.aio.EducationClient`'s
+        :class:`~azure.mgmt.education.aio.EducationManagementClient`'s
         :attr:`labs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1206,14 +1206,14 @@ class JoinRequestsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.aio.EducationClient`'s
+        :class:`~azure.mgmt.education.aio.EducationManagementClient`'s
         :attr:`join_requests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1551,14 +1551,14 @@ class StudentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.aio.EducationClient`'s
+        :class:`~azure.mgmt.education.aio.EducationManagementClient`'s
         :attr:`students` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2026,14 +2026,14 @@ class StudentLabsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.aio.EducationClient`'s
+        :class:`~azure.mgmt.education.aio.EducationManagementClient`'s
         :attr:`student_labs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2192,8 +2192,8 @@ class StudentLabsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class _EducationClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], EducationClientConfiguration]
+class _EducationManagementClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], EducationManagementClientConfiguration]
 ):
 
     @overload
@@ -2278,7 +2278,7 @@ class _EducationClientOperationsMixin(
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_education_redeem_invitation_code_request(
+        _request = build_education_management_redeem_invitation_code_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

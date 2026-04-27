@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.education.aio import EducationClient
+from azure.mgmt.education import EducationManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestEducationGrantsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestEducationManagementGrantsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(EducationClient, is_async=True)
+        self.client = self.create_mgmt_client(EducationManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_grants_get(self, resource_group):
-        response = await self.client.grants.get(
+    @recorded_by_proxy
+    def test_grants_get(self, resource_group):
+        response = self.client.grants.get(
             billing_account_name="str",
             billing_profile_name="str",
         )
@@ -31,20 +30,20 @@ class TestEducationGrantsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_grants_list(self, resource_group):
+    @recorded_by_proxy
+    def test_grants_list(self, resource_group):
         response = self.client.grants.list(
             billing_account_name="str",
             billing_profile_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_grants_list_all(self, resource_group):
+    @recorded_by_proxy
+    def test_grants_list_all(self, resource_group):
         response = self.client.grants.list_all()
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

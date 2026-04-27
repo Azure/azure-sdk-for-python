@@ -31,7 +31,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
-from .._configuration import EducationClientConfiguration
+from .._configuration import EducationManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
@@ -69,7 +69,7 @@ def build_grants_get_request(
     billing_profile_name: str,
     *,
     include_allocated_budget: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -104,7 +104,7 @@ def build_grants_list_request(
     billing_profile_name: str,
     *,
     include_allocated_budget: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -163,7 +163,7 @@ def build_labs_get_request(
     invoice_section_name: str,
     *,
     include_budget: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -251,7 +251,7 @@ def build_labs_list_request(
     invoice_section_name: str,
     *,
     include_budget: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -286,7 +286,7 @@ def build_labs_list_all_request(
     *,
     include_budget: Optional[bool] = None,
     include_deleted: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -322,7 +322,7 @@ def build_labs_generate_invite_code_request(
     invoice_section_name: str,
     *,
     only_update_student_count_parameter: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -361,7 +361,7 @@ def build_join_requests_get_request(
     billing_profile_name: str,
     invoice_section_name: str,
     join_request_name: str,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -395,7 +395,7 @@ def build_join_requests_list_request(
     invoice_section_name: str,
     *,
     include_denied: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -429,7 +429,7 @@ def build_join_requests_approve_request(
     billing_profile_name: str,
     invoice_section_name: str,
     join_request_name: str,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -456,7 +456,7 @@ def build_join_requests_deny_request(
     billing_profile_name: str,
     invoice_section_name: str,
     join_request_name: str,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -568,7 +568,7 @@ def build_students_list_request(
     invoice_section_name: str,
     *,
     include_deleted: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -640,7 +640,9 @@ def build_student_labs_list_all_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_education_redeem_invitation_code_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_education_management_redeem_invitation_code_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -665,14 +667,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.EducationClient`'s
+        :class:`~azure.mgmt.education.EducationManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -745,14 +747,14 @@ class GrantsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.EducationClient`'s
+        :class:`~azure.mgmt.education.EducationManagementClient`'s
         :attr:`grants` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -763,7 +765,7 @@ class GrantsOperations:
         billing_profile_name: str,
         *,
         include_allocated_budget: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.GrantDetails:
         """Get details for a specific grant linked to the provided billing account and billing profile.
 
@@ -842,7 +844,7 @@ class GrantsOperations:
         billing_profile_name: str,
         *,
         include_allocated_budget: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["_models.GrantDetails"]:
         """Get details for a specific grant linked to the provided billing account and billing profile.
 
@@ -1043,14 +1045,14 @@ class LabsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.EducationClient`'s
+        :class:`~azure.mgmt.education.EducationManagementClient`'s
         :attr:`labs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1062,7 +1064,7 @@ class LabsOperations:
         invoice_section_name: str,
         *,
         include_budget: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Get the details for a specific lab associated with the provided billing account name, billing
         profile name, and invoice section name.
@@ -1146,7 +1148,7 @@ class LabsOperations:
         parameters: _models.LabDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Create a new lab or update a previously created lab.
 
@@ -1175,7 +1177,7 @@ class LabsOperations:
         parameters: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Create a new lab or update a previously created lab.
 
@@ -1204,7 +1206,7 @@ class LabsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Create a new lab or update a previously created lab.
 
@@ -1231,7 +1233,7 @@ class LabsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         parameters: Union[_models.LabDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Create a new lab or update a previously created lab.
 
@@ -1385,7 +1387,7 @@ class LabsOperations:
         invoice_section_name: str,
         *,
         include_budget: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["_models.LabDetails"]:
         """Get the details for a specific lab associated with the provided billing account name, billing
         profile name, and invoice section name.
@@ -1495,7 +1497,7 @@ class LabsOperations:
         *,
         include_budget: Optional[bool] = None,
         include_deleted: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["_models.LabDetails"]:
         """Get a list of labs associated with the provided billing account name and billing profile name.
 
@@ -1606,7 +1608,7 @@ class LabsOperations:
         *,
         only_update_student_count_parameter: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Generate invite code for a lab.
 
@@ -1639,7 +1641,7 @@ class LabsOperations:
         *,
         only_update_student_count_parameter: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Generate invite code for a lab.
 
@@ -1672,7 +1674,7 @@ class LabsOperations:
         *,
         only_update_student_count_parameter: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Generate invite code for a lab.
 
@@ -1704,7 +1706,7 @@ class LabsOperations:
         parameters: Union[_models.InviteCodeGenerateRequest, JSON, IO[bytes]],
         *,
         only_update_student_count_parameter: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.LabDetails:
         """Generate invite code for a lab.
 
@@ -1799,14 +1801,14 @@ class JoinRequestsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.EducationClient`'s
+        :class:`~azure.mgmt.education.EducationManagementClient`'s
         :attr:`join_requests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1817,7 +1819,7 @@ class JoinRequestsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         join_request_name: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.JoinRequestDetails:
         """get student join requests.
 
@@ -1899,7 +1901,7 @@ class JoinRequestsOperations:
         invoice_section_name: str,
         *,
         include_denied: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["_models.JoinRequestDetails"]:
         """get student join requests.
 
@@ -2007,7 +2009,7 @@ class JoinRequestsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         join_request_name: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Approve student joining the redeemable lab.
 
@@ -2075,7 +2077,7 @@ class JoinRequestsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         join_request_name: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Deny student joining the redeemable lab.
 
@@ -2143,14 +2145,14 @@ class StudentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.EducationClient`'s
+        :class:`~azure.mgmt.education.EducationManagementClient`'s
         :attr:`students` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2161,7 +2163,7 @@ class StudentsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         student_alias: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StudentDetails:
         """Get the details for a specific student in the specified lab by student alias.
 
@@ -2245,7 +2247,7 @@ class StudentsOperations:
         parameters: _models.StudentDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StudentDetails:
         """Create and add a new student to the specified lab or update the details of an existing student
         in a lab. Note the student must have a valid tenant to accept the lab after they have been
@@ -2279,7 +2281,7 @@ class StudentsOperations:
         parameters: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StudentDetails:
         """Create and add a new student to the specified lab or update the details of an existing student
         in a lab. Note the student must have a valid tenant to accept the lab after they have been
@@ -2313,7 +2315,7 @@ class StudentsOperations:
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StudentDetails:
         """Create and add a new student to the specified lab or update the details of an existing student
         in a lab. Note the student must have a valid tenant to accept the lab after they have been
@@ -2345,7 +2347,7 @@ class StudentsOperations:
         invoice_section_name: str,
         student_alias: str,
         parameters: Union[_models.StudentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StudentDetails:
         """Create and add a new student to the specified lab or update the details of an existing student
         in a lab. Note the student must have a valid tenant to accept the lab after they have been
@@ -2441,7 +2443,7 @@ class StudentsOperations:
         billing_profile_name: str,
         invoice_section_name: str,
         student_alias: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete the specified student based on the student alias.
 
@@ -2510,7 +2512,7 @@ class StudentsOperations:
         invoice_section_name: str,
         *,
         include_deleted: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["_models.StudentDetails"]:
         """Get a list of details about students that are associated with the specified lab.
 
@@ -2618,14 +2620,14 @@ class StudentLabsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.education.EducationClient`'s
+        :class:`~azure.mgmt.education.EducationManagementClient`'s
         :attr:`student_labs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EducationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EducationManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2784,8 +2786,8 @@ class StudentLabsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class _EducationClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], EducationClientConfiguration]
+class _EducationManagementClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], EducationManagementClientConfiguration]
 ):
 
     @overload
@@ -2870,7 +2872,7 @@ class _EducationClientOperationsMixin(
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_education_redeem_invitation_code_request(
+        _request = build_education_management_redeem_invitation_code_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

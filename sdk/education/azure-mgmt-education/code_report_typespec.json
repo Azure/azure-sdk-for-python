@@ -1,7 +1,7 @@
 {
   "azure.mgmt.education": {
     "class_nodes": {
-      "EducationClient": {
+      "EducationManagementClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -6059,7 +6059,7 @@
   },
   "azure.mgmt.education.aio": {
     "class_nodes": {
-      "EducationClient": {
+      "EducationManagementClient": {
         "type": null,
         "methods": {
           "__init__": {

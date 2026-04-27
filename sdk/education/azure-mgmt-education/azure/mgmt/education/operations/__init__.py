@@ -18,7 +18,7 @@ from ._operations import LabsOperations  # type: ignore
 from ._operations import JoinRequestsOperations  # type: ignore
 from ._operations import StudentsOperations  # type: ignore
 from ._operations import StudentLabsOperations  # type: ignore
-from ._operations import _EducationClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._operations import _EducationManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
