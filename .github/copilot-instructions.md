@@ -66,7 +66,7 @@ azpysdk pylint .
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
-- Use Python 3.9 compatible environment
+- Use Python 3.10 compatible environment
 - Follow official fixing guidelines
 - Run `azpysdk mypy .` from the package directory
 

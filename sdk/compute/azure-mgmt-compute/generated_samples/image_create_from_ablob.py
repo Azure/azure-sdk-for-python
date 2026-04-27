@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/imageExamples/Image_CreateFromABlob.json
+# x-ms-original-file: 2025-11-01/imageExamples/Image_CreateFromABlob.json
 if __name__ == "__main__":
     main()
