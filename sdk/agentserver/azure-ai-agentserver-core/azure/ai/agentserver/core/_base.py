@@ -6,8 +6,15 @@ import contextlib
 import logging
 import os
 import signal
-from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
-from typing import Any, Optional, Union
+import urllib.parse
+from collections.abc import (  # pylint: disable=import-error
+    AsyncGenerator,
+    AsyncIterable,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+)
+from typing import Any, MutableMapping, Optional, Union
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -17,6 +24,8 @@ from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
+from ._middleware import InboundRequestLoggingMiddleware
+from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
 from ._version import VERSION as _CORE_VERSION
 
@@ -25,9 +34,34 @@ logger = logging.getLogger("azure.ai.agentserver")
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
 
-# Sentinel attribute name set on the console handler to prevent adding duplicates
-# across multiple AgentServerHost instantiations.
-_CONSOLE_HANDLER_ATTR = "_agentserver_console"
+_NOT_SET = "(not set)"
+
+
+def _mask_uri(uri: str) -> str:
+    """Return only the scheme and host of a URI, hiding path/query/credentials.
+
+    Returns ``"(not set)"`` for empty or whitespace-only values, or
+    ``"(redacted)"`` when the URI cannot be parsed into scheme + host.
+
+    :param uri: The URI to mask.
+    :type uri: str
+    :return: ``"scheme://host[:port]"``, ``"(not set)"``, or ``"(redacted)"``.
+    :rtype: str
+    """
+    stripped = uri.strip() if uri else ""
+    if not stripped:
+        return _NOT_SET
+    try:
+        parsed = urllib.parse.urlparse(stripped)
+        scheme = parsed.scheme or ""
+        host = parsed.hostname or ""
+        if scheme and host:
+            port_suffix = f":{parsed.port}" if parsed.port else ""
+            return f"{scheme}://{host}{port_suffix}"
+        # Best-effort: if parsing fails to extract components, redact entirely
+        return "(redacted)"
+    except Exception:  # pylint: disable=broad-exception-caught
+        return "(redacted)"
 
 
 class _PlatformHeaderMiddleware:
@@ -47,7 +81,7 @@ class _PlatformHeaderMiddleware:
             await self.app(scope, receive, send)
             return
 
-        async def _send_with_header(message: dict[str, Any]) -> None:
+        async def _send_with_header(message: MutableMapping[str, Any]) -> None:
             if message["type"] == "http.response.start":
                 headers = list(message.get("headers", []))
                 headers.append(
@@ -115,6 +149,13 @@ class AgentServerHost(Starlette):
         ``%({header}i)s`` (request header), ``%({header}o)s`` (response header).
         Defaults to ``%(h)s "%(r)s" %(s)s %(b)s %(D)sμs``.
     :type access_log_format: Optional[str]
+    :param configure_observability: Callable that sets up console logging,
+        tracing, and OTel export.  Defaults to
+        :func:`~._tracing.configure_observability` which attaches a console
+        handler to the root logger and configures Azure Monitor / OTLP
+        export.  Pass a custom callable to override the setup, or ``None``
+        to skip all SDK-managed observability configuration.
+    :type configure_observability: Optional[Callable[..., None]]
     """
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
@@ -127,7 +168,7 @@ class AgentServerHost(Starlette):
         log_level: Optional[str] = None,
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
-        configure_tracing: Optional[Callable[..., None]] = _tracing.configure_tracing,
+        configure_observability: Optional[Callable[..., None]] = _tracing.configure_observability,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -142,37 +183,27 @@ class AgentServerHost(Starlette):
             build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
         )
 
-        # Logging ----------------------------------------------------------
-        resolved_level = _config.resolve_log_level(log_level)
-        logger.setLevel(resolved_level)
-        if not any(getattr(h, _CONSOLE_HANDLER_ATTR, False) for h in logger.handlers):
-            _console = logging.StreamHandler()
-            _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
-            setattr(_console, _CONSOLE_HANDLER_ATTR, True)
-            logger.addHandler(_console)
+        # Resolved configuration (accessible as self.config)
+        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
 
-        # Suppress noisy Azure SDK and OTel exporter logs
-        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
-        logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+        # Observability (logging + tracing) --------------------------------
+        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        if configure_observability is not None:
+            try:
+                configure_observability(
+                    connection_string=_conn_str,
+                    log_level=log_level,
+                )
+            except ValueError:
+                raise  # invalid log_level etc. — user should fix their config
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
 
         # Access logging ---------------------------------------------------
         self._access_log: Optional[logging.Logger] = (
             logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         )
         self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
-
-        # Resolved configuration (accessible as self.config)
-        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
-
-        # Tracing — overridable setup function
-        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
-        if configure_tracing is not None:
-            _tracing_on = bool(_conn_str or self.config.otlp_endpoint)
-            if _tracing_on:
-                try:
-                    configure_tracing(connection_string=_conn_str)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
@@ -183,6 +214,32 @@ class AgentServerHost(Starlette):
         @contextlib.asynccontextmanager
         async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
             logger.info("AgentServerHost started")
+
+            # --- Startup configuration logging ---
+            cfg = self.config
+            logger.info(
+                "Platform environment: is_hosted=%s, agent_name=%s, agent_version=%s, "
+                "port=%s, session_id=%s, sse_keepalive_interval=%s",
+                cfg.is_hosted,
+                cfg.agent_name or _NOT_SET,
+                cfg.agent_version or _NOT_SET,
+                cfg.port,
+                cfg.session_id or _NOT_SET,
+                cfg.sse_keepalive_interval if cfg.sse_keepalive_interval > 0 else "disabled",
+            )
+            logger.info(
+                "Connectivity: project_endpoint=%s, otlp_endpoint=%s, appinsights_configured=%s",
+                _mask_uri(cfg.project_endpoint),
+                _mask_uri(cfg.otlp_endpoint),
+                bool(cfg.appinsights_connection_string),
+            )
+            protocols = ", ".join(self._server_version_segments) if self._server_version_segments else _NOT_SET
+            logger.info(
+                "Host options: shutdown_timeout=%ss, protocols=%s",
+                self._graceful_shutdown_timeout,
+                protocols,
+            )
+
             yield
 
             # --- SHUTDOWN: runs once when the server is stopping ---
@@ -204,7 +261,7 @@ class AgentServerHost(Starlette):
                         self._graceful_shutdown_timeout,
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
-                    logger.exception("Error in on_shutdown")
+                    logger.warning("Error in on_shutdown", exc_info=True)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])
@@ -217,7 +274,12 @@ class AgentServerHost(Starlette):
             routes=all_routes,
             lifespan=_lifespan,
             middleware=[
-                Middleware(_PlatformHeaderMiddleware, get_server_version=self._build_server_version),
+                Middleware(InboundRequestLoggingMiddleware),  # type: ignore[arg-type]
+                Middleware(  # type: ignore[arg-type]
+                    _PlatformHeaderMiddleware,
+                    get_server_version=self._build_server_version,
+                ),
+                Middleware(_RequestIdMiddleware),  # type: ignore[arg-type]
             ],
             **kwargs,
         )

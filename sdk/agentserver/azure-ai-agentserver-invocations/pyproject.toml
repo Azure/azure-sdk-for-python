@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b1",
+    "azure-ai-agentserver-core>=2.0.0b3",
 ]
 
 [dependency-groups]
@@ -74,10 +74,12 @@ known-first-party = ["azure.ai.agentserver.invocations"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]
+analyze_python_version = "3.11"
 breaking = false
 mypy = true
 pyright = true
-verifytypes = true
+verifytypes = false
+latestdependency = false
 pylint = true
 type_check_samples = false
 

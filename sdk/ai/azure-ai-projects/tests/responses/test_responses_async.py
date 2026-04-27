@@ -5,16 +5,16 @@
 # ------------------------------------
 # cSpell:disable
 
+from typing import Any, Dict, Optional
 import pytest
 import httpx
-from typing import Any, Dict, Optional
 from openai import AsyncOpenAI
-from azure.core.credentials import AccessToken
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.ai.projects.aio import AIProjectClient
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
+from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.ai.projects.aio import AIProjectClient
 
 BASE_OPENAI_UA = AsyncOpenAI(api_key="dummy").user_agent
 
@@ -45,7 +45,7 @@ class TestResponsesAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_responses_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         client = self.create_async_client(operation_group="agents", **kwargs).get_openai_client()
 
@@ -99,7 +99,7 @@ class TestResponsesAsync(TestBase):
 
         calls = []
 
-        async def fake_send(request: httpx.Request, *args: Any, **kwargs: Any):
+        async def fake_send(request: httpx.Request, *_args: Any, **kwargs: Any):
             # Capture headers that would be sent over the wire.
             calls.append(dict(request.headers))
             return httpx.Response(
