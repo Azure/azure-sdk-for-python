@@ -727,7 +727,7 @@ async def main():
     client = AsyncFunctionCallingClient(
         endpoint=endpoint,
         credential=credential,
-        model="gpt-4o-realtime-preview",
+        model="gpt-realtime",
         voice="en-US-AvaNeural",
         instructions="You are a helpful AI assistant with access to functions. "
         "Use the functions when appropriate to provide accurate, real-time information. "

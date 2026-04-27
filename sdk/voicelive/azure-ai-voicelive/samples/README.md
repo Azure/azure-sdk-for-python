@@ -44,7 +44,7 @@ This directory contains sample applications demonstrating various capabilities o
    ```ini
    AZURE_VOICELIVE_API_KEY=your-voicelive-api-key
    AZURE_VOICELIVE_ENDPOINT=wss://api.voicelive.com/v1
-   AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
+   AZURE_VOICELIVE_MODEL=gpt-realtime
    AZURE_VOICELIVE_VOICE=alloy
    AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful assistant. Keep your responses concise.
    ```
@@ -93,7 +93,7 @@ python basic_voice_assistant_async.py
 Most samples support additional command-line arguments. For example:
 
 ```bash
-python basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy
+python basic_voice_assistant_async.py --model gpt-realtime --voice alloy
 
 # With telemetry tracing
 python basic_voice_assistant_async.py --enable-tracing
@@ -117,6 +117,7 @@ These samples are in the `telemetry/` folder and demonstrate OpenTelemetry-based
 
 | Sample | Description |
 |---|---|
+| `sample_voicelive_with_telemetry_enablement.py` | Minimal telemetry setup on top of existing VoiceLive code. Shows the smallest practical code delta to emit spans to console. |
 | `sample_voicelive_with_console_tracing.py` | Basic tracing with console output. All connection, send, and receive operations produce OpenTelemetry spans printed to stdout. |
 | `sample_voicelive_with_azure_monitor_tracing.py` | Traces exported to Azure Monitor / Application Insights. View results in the "Tracing" tab. |
 | `sample_voicelive_with_console_tracing_custom_attributes.py` | Adds custom `SpanProcessor` to inject application-specific attributes (session ID, etc.) into every span. |
