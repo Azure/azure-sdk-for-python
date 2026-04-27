@@ -1,5 +1,17 @@
 # Release History
 
+## 12.0.1 (2026-05-01)
+
+### Features Added
+
+- Added `KnowledgeBaseModelWebSummarizationActivityRecord` to `azure.search.documents.knowledgebases.models`
+- Added `MODEL_WEB_SUMMARIZATION` value to `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType` enum
+
+### Breaking Changes
+
+- Removed `KnowledgeSourceIngestionPermissionOption` enum from `azure.search.documents.indexes.models`
+- Removed `ingestion_permission_options` property from `azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters`
+
 ## 12.0.0 (2026-04-01)
 
 ### Features Added
