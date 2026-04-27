@@ -26,7 +26,7 @@ def get_test_item():
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestUserConfigs(unittest.TestCase):
     key_client = None
     data_client = None

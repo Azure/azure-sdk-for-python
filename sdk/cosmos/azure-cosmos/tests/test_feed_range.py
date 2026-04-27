@@ -85,7 +85,7 @@ test_overlaps_ranges = [(Range("", "FF", True, False),
                        False)]
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestFeedRange:

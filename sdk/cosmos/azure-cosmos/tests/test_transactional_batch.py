@@ -20,7 +20,7 @@ def get_subpartition_item(item_id):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestTransactionalBatch(unittest.TestCase):
     """Python Transactional Batch Tests.
     """

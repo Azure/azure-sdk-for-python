@@ -88,7 +88,7 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
     database: DatabaseProxy = None

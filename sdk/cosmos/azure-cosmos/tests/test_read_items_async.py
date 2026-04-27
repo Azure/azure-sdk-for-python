@@ -20,7 +20,7 @@ from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPo
 from azure.cosmos.aio._gone_retry_policy_async import PartitionKeyRangeGoneRetryPolicyAsync
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     """Test cases for the read_items API."""
 

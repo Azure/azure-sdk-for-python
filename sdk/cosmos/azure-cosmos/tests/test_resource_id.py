@@ -12,7 +12,7 @@ from azure.cosmos import PartitionKey, cosmos_client, exceptions, http_constants
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestResourceIds(unittest.TestCase):
     client: azure.cosmos.CosmosClient = None
     configs = test_config.TestConfig

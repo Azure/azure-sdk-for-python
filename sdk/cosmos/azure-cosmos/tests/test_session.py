@@ -21,7 +21,7 @@ from typing import Callable
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestSession(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

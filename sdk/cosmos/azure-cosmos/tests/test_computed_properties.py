@@ -13,7 +13,7 @@ from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.exceptions as exceptions
 
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestComputedPropertiesQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

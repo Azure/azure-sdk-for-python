@@ -8,7 +8,7 @@ import pytest
 import test_config
 
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.cosmosEmulator
 class TestRegionalRoutingContext(unittest.TestCase):
     host = test_config.TestConfig.host

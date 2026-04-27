@@ -33,7 +33,7 @@ def create_item(hpk):
 
 
 @pytest.mark.cosmosSplit
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestLatestSessionToken(unittest.TestCase):
     """Test for session token helpers"""
 

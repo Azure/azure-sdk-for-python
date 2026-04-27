@@ -15,7 +15,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check full text search and hybrid search queries behavior."""

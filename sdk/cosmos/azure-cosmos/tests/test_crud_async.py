@@ -66,7 +66,7 @@ class TimeoutTransport(AioHttpTransport):
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """

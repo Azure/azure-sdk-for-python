@@ -18,7 +18,7 @@ def check_quota_info_request_headers(raw_response):
     assert raw_response.http_request.headers[http_constants.HttpHeaders.PopulateQuotaInfo] == 'True'
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestBackwardsCompatibility(unittest.TestCase):
     configs = test_config.TestConfig
     databaseForTest: DatabaseProxy = None

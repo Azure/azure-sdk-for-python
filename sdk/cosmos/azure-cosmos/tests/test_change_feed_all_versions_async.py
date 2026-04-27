@@ -83,7 +83,7 @@ async def assert_change_feed(expected, actual):
                 assert expected_data[key] == actual_data[key]
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestAllVersionsChangeFeedAsync:

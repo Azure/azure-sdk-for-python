@@ -12,7 +12,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.asyncio
 class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
     """Tests to verify methods for operations on feed ranges

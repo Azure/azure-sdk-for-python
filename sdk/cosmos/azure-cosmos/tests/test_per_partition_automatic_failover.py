@@ -37,7 +37,7 @@ def create_threshold_errors():
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
 @pytest.mark.cosmosPerPartitionAutomaticFailover
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestPerPartitionAutomaticFailover:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey

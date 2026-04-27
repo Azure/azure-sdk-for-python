@@ -17,7 +17,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestContainerPropertiesCache(unittest.TestCase):
     """Python CRUD Tests.
         """

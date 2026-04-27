@@ -28,7 +28,7 @@ class _config:
 
 
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestAggregateQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     key_client: cosmos_client.CosmosClient = None

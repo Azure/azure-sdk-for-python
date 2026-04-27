@@ -42,7 +42,7 @@ class ClientIDVerificationError(Exception):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
     client: CosmosClient = None
     configs = test_config.TestConfig
