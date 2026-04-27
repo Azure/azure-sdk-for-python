@@ -29,7 +29,7 @@ setup(
     version="0.1.0",
     include_package_data=True,
     description=PACKAGE_PPRINT_NAME,
-    long_description=open('README.md', 'r').read(),
+    long_description=open('README.md', 'r', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
