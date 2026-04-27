@@ -80,6 +80,7 @@ package_pprint_name = "Monitorslis Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+no_sub = true
 need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
