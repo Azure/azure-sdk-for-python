@@ -15,8 +15,8 @@ class TestWebpubsubClientRecovery(WebpubsubClientTest):
     # recovery will be triggered if connection is dropped by accident
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_recovery(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=10)
+    def test_recovery(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint, message_retry_total=10)
         name = "test_recovery"
         with client:
             time.sleep(0.001)  # wait for connection_id to be updated

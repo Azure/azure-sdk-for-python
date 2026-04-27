@@ -32,8 +32,8 @@ load_dotenv()
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    connection_string = os.environ.get("WEBPUBSUBCLIENT_CONNECTION_STRING", "WEBPUBSUBCLIENT_CONNECTION_STRING")
+    endpoint = os.environ.get("WEBPUBSUBCLIENT_ENDPOINT", "WEBPUBSUBCLIENT_ENDPOINT")
     add_general_regex_sanitizer(
-        regex=connection_string,
-        value="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
+        regex=endpoint,
+        value="https://myservice.webpubsub.azure.com",
     )

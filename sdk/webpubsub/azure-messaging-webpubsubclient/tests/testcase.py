@@ -16,12 +16,18 @@ from azure.messaging.webpubsubservice import WebPubSubServiceClient
 class WebpubsubClientTest(AzureRecordedTestCase):
     def create_client(
         self,
-        connection_string,
+        endpoint,
         hub: str = "Hub",
         roles: List[str] = ["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"],
         **kwargs,
     ):
-        service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+        credential = self.get_credential(WebPubSubServiceClient)
+        service_client = self.create_client_from_credential(
+            WebPubSubServiceClient,
+            credential=credential,
+            endpoint=endpoint,
+            hub=hub,
+        )
         return WebPubSubClient(
             credential=WebPubSubClientCredential(lambda: service_client.get_client_access_token(roles=roles)["url"]),
             **kwargs,
@@ -31,7 +37,7 @@ class WebpubsubClientTest(AzureRecordedTestCase):
 WebpubsubClientPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "webpubsubclient",
-    webpubsubclient_connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
+    webpubsubclient_endpoint="https://myservice.webpubsub.azure.com",
 )
 
 TEST_RESULT = set()

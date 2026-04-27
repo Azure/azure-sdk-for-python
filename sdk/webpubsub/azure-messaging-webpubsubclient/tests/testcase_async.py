@@ -14,14 +14,20 @@ from azure.messaging.webpubsubservice.aio import WebPubSubServiceClient
 class WebpubsubClientTestAsync(AzureRecordedTestCase):
     async def create_client(
         self,
-        connection_string,
+        endpoint,
         hub: str = "Hub",
         roles: List[str] = ["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"],
         **kwargs,
     ):
-        service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
+        credential = self.get_credential(WebPubSubServiceClient, is_async=True)
         async def client_access_url_provider():
-            return (await service_client.get_client_access_token(roles=roles))["url"]
+            async with self.create_client_from_credential(
+                WebPubSubServiceClient,
+                credential=credential,
+                endpoint=endpoint,
+                hub=hub,
+            ) as service_client:
+                return (await service_client.get_client_access_token(roles=roles))["url"]
         return WebPubSubClient(
             credential=WebPubSubClientCredential(client_access_url_provider),
             **kwargs,

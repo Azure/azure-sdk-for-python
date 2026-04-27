@@ -27,11 +27,11 @@ class TestLiveApiCoverage(WebpubsubTest):
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
-    def test_live_api_coverage_all_apis_and_parameters(self, webpubsub_endpoint, webpubsub_connection_string):
+    def test_live_api_coverage_all_apis_and_parameters(self, webpubsub_endpoint, webpubsub_socketio_endpoint):
         if not getattr(self, "is_live", False):
             pytest.skip("Live WebSocket coverage test is skipped in playback mode")
 
-        client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
+        client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         aad_client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
 
         user_id = "live-user-1"
@@ -55,7 +55,8 @@ class TestLiveApiCoverage(WebpubsubTest):
         assert "webpubsub.joinLeaveGroup" in decoded["role"]
         assert group_1 in decoded["webpubsub.group"]
 
-        socketio_token = client.get_client_access_token(user_id=user_id, groups=[group_1], client_protocol="SocketIO")
+        socketio_client = self.create_client(endpoint=webpubsub_socketio_endpoint, hub="hub")
+        socketio_token = socketio_client.get_client_access_token(user_id=user_id, groups=[group_1], client_protocol="SocketIO")
         assert socketio_token["token"]
 
         generated_token = aad_client.generate_client_token(

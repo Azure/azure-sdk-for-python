@@ -15,8 +15,8 @@ from testcase_async import WebpubsubClientTestAsync
 class TestWebpubsubClientSendConcurrentlyAsync(WebpubsubClientTestAsync):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_send_concurrently_async(self, webpubsubclient_connection_string):
-        client = await self.create_client(connection_string=webpubsubclient_connection_string)
+    async def test_send_concurrently_async(self, webpubsubclient_endpoint):
+        client = await self.create_client(endpoint=webpubsubclient_endpoint)
         async with client:
             group_name = "test_send_concurrently_async"
             await client.join_group(group_name)

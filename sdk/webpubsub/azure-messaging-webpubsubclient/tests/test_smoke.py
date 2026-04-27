@@ -14,6 +14,7 @@ from testcase import (
     on_group_message,
     TEST_RESULT,
 )
+from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubclient.models import (
     OnGroupDataMessageArgs,
     OpenClientError,
@@ -25,8 +26,8 @@ from azure.messaging.webpubsubclient.models import (
 class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_call_back_deadlock(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string)
+    def test_call_back_deadlock(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint)
         group_name = "test_call_back_deadlock"
 
         def on_group_message(msg: OnGroupDataMessageArgs):
@@ -43,8 +44,8 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_context_manager(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string)
+    def test_context_manager(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint)
         with client:
             group_name = "test_context_manager"
             client.join_group(group_name)
@@ -55,8 +56,8 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     # test on_stop
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_on_stop(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string)
+    def test_on_stop(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint)
 
         def on_stop():
             client.open()
@@ -67,19 +68,19 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             time.sleep(0.1)
             assert client.is_connected()
             client.close()
-            time.sleep(1.0)
+            time.sleep(3.0)
             assert client.is_connected()
 
             # remove stopped event and close again
             client.unsubscribe("stopped", on_stop)
             client.close()
-            time.sleep(1.0)
+            time.sleep(3.0)
             assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_duplicated_start(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string)
+    def test_duplicated_start(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint)
         with pytest.raises(OpenClientError):
             with client:
                 client.open()
@@ -87,16 +88,16 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_duplicated_stop(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string)
+    def test_duplicated_stop(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint)
         with client:
             client.close()
         assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_send_event(self, webpubsubclient_connection_string):
-        client = self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=0)
+    def test_send_event(self, webpubsubclient_endpoint):
+        client = self.create_client(endpoint=webpubsubclient_endpoint, message_retry_total=0)
         with client:
             # please register event handler in azure portal before run this test
             try:
@@ -106,10 +107,10 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_rejoin_group(self, webpubsubclient_connection_string):
+    def test_rejoin_group(self, webpubsubclient_endpoint):
         def _test(enable_auto_rejoin, test_group_name, assert_func):
             client = self.create_client(
-                connection_string=webpubsubclient_connection_string,
+                endpoint=webpubsubclient_endpoint,
                 auto_rejoin_groups=enable_auto_rejoin,
             )
             group_name = test_group_name
@@ -137,8 +138,10 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
     def test_open_client_error(self):
-        client = self.create_client(
-            connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
+        client = WebPubSubClient(
+            credential=WebPubSubClientCredential(
+                lambda: "wss://myservice.webpubsub.azure.com/client/hubs/Hub"
+            ),
         )
         start_time = time.time()
         with pytest.raises(OpenClientError) as err:

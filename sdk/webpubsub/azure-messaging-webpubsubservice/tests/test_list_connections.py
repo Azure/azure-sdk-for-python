@@ -22,7 +22,7 @@ class TestListConnections(WebpubsubTest):
         asyncio.run(self._test_list_connections_impl(**kwargs))
 
     async def _test_list_connections_impl(self, **kwargs):
-        webpubsub_connection_string = kwargs.get("webpubsub_connection_string")
+        webpubsub_endpoint = kwargs.get("webpubsub_endpoint")
         # Test cases with different pagination scenarios
         test_cases = [
             {"total_connection_count": 6, "max_count_to_list": 6, "expected_total_count": 6, "expected_page_count": 1},
@@ -37,7 +37,7 @@ class TestListConnections(WebpubsubTest):
         ]
 
         for test_case in test_cases:
-            client = self.create_client(connection_string=webpubsub_connection_string, hub="test_list_connections")
+            client = self.create_client(endpoint=webpubsub_endpoint, hub="test_list_connections")
             group_name = "group1"
             ws_clients = []
 

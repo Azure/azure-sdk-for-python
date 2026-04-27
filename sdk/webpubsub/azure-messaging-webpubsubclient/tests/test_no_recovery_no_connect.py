@@ -25,9 +25,9 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
     # disable recovery and auto reconnect
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_disable_recovery_and_autoconnect(self, webpubsubclient_connection_string):
+    def test_disable_recovery_and_autoconnect(self, webpubsubclient_endpoint):
         client = self.create_client(
-            connection_string=webpubsubclient_connection_string,
+            endpoint=webpubsubclient_endpoint,
             reconnect_retry_total=0,
             protocol_type=WebPubSubProtocolType.JSON,
         )
@@ -47,10 +47,10 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
     def test_disable_recovery_and_autoconnect_send_concurrently(
-        self, webpubsubclient_connection_string
+        self, webpubsubclient_endpoint
     ):
         client = self.create_client(
-            connection_string=webpubsubclient_connection_string,
+            endpoint=webpubsubclient_endpoint,
             reconnect_retry_total=0,
             message_retry_total=3,
             protocol_type=WebPubSubProtocolType.JSON,

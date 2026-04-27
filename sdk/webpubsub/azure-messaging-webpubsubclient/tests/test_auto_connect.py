@@ -16,9 +16,9 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
     # auto_connect will be triggered if connection is dropped by accident and we disable recovery
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
-    def test_auto_connect(self, webpubsubclient_connection_string):
+    def test_auto_connect(self, webpubsubclient_endpoint):
         client = self.create_client(
-            connection_string=webpubsubclient_connection_string,
+            endpoint=webpubsubclient_endpoint,
             protocol_type=WebPubSubProtocolType.JSON,
             message_retry_total=10,
             reconnect_retry_total=10,

@@ -16,8 +16,8 @@ class TestWebpubsubClientRecoveryAsync(WebpubsubClientTestAsync):
     # recovery will be triggered if connection is dropped by accident
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_recovery_async(self, webpubsubclient_connection_string):
-        client = await self.create_client(connection_string=webpubsubclient_connection_string, message_retry_total=10)
+    async def test_recovery_async(self, webpubsubclient_endpoint):
+        client = await self.create_client(endpoint=webpubsubclient_endpoint, message_retry_total=10)
         name = "test_recovery_async"
         async with client:
             await asyncio.sleep(0.001)  # wait for connection_id to be updated
