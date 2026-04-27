@@ -133,7 +133,7 @@ stages:
 
                       - task: UsePythonVersion@0
                         inputs:
-                          versionSpec: '3.9'
+                          versionSpec: '3.10'
 
                       - script: |
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
@@ -207,7 +207,7 @@ stages:
 
               - task: UsePythonVersion@0
                 inputs:
-                  versionSpec: '3.9'
+                  versionSpec: '3.10'
 
               - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
                 parameters:
