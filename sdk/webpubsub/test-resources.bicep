@@ -38,13 +38,6 @@ resource webPubSub 'Microsoft.SignalRService/webPubSub@2024-10-01-preview' = {
     tls: {
       clientCertEnabled: false
     }
-    networkACLs: {
-      defaultAction: 'Deny'
-      publicNetwork: {
-        allow: ['ServerConnection', 'ClientConnection', 'RESTAPI', 'Trace']
-      }
-      privateEndpoints: []
-    }
     disableLocalAuth: supportsSafeSecretStandard
   }
 }

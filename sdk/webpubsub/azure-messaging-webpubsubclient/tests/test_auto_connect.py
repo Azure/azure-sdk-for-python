@@ -27,7 +27,7 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
         )
         name = "test_auto_connect"
         with client:
-            time.sleep(0.001)  # wait for connection_id to be updated
+            time.sleep(1)  # wait for connection_id to be updated
             conn_id0 = client._connection_id
             group_name = name
             client.subscribe("group-message", on_group_message)
