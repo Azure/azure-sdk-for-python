@@ -238,10 +238,11 @@ def add_sanitizers(test_proxy):
     )
 
     # Sanitize collection IDs with random hash suffixes
-    # Pattern: naip-atl-bde3e846 -> naip-atl-00000000
+    # Pattern: naip-bde3e846 -> naip-00000000
     # The service appends a random 8-character hex hash to collection IDs at runtime
-    # The env var may be "naip-atl" but the service will return "naip-atl-bde3e846"
-    planetarycomputer_collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip-atl")
+    # The env var may be "naip" but the service will return "naip-bde3e846"
+    # NOTE: Default MUST match testpreparer.py's default ("naip")
+    planetarycomputer_collection_id = os.environ.get("PLANETARYCOMPUTER_COLLECTION_ID", "naip")
 
     # ALWAYS sanitize any collection ID with hash suffix pattern
     # We use the base collection name from env var (which may or may not already have a hash)
@@ -256,13 +257,11 @@ def add_sanitizers(test_proxy):
         collection_base = planetarycomputer_collection_id
 
     # Sanitize collection IDs with hash: base-XXXXXXXX -> base-00000000
-    add_uri_regex_sanitizer(
+    # Use add_general_regex_sanitizer to catch the container name everywhere:
+    # URIs, query parameters, response bodies (inside URLs), and headers.
+    add_general_regex_sanitizer(
         regex=rf"{re.escape(collection_base)}-[a-f0-9]{{8}}",
         value=f"{collection_base}-00000000",
-    )
-    add_body_regex_sanitizer(
-        regex=rf'"{re.escape(collection_base)}-[a-f0-9]{{8}}"',
-        value=f'"{collection_base}-00000000"',
     )
 
     # Also sanitize the hash suffix AFTER the EnvironmentVariableLoader replaces
@@ -270,13 +269,9 @@ def add_sanitizers(test_proxy):
     # collection_id is "naip-atl-2" and the default is "naip-atl", the EnvVarLoader
     # replaces "naip-atl-2" -> "naip-atl", turning container name "naip-atl-2-1232d7af"
     # into "naip-atl-1232d7af". We need a sanitizer for this post-replacement form too.
-    default_collection_id = "naip-atl"
+    default_collection_id = "naip"
     if collection_base != default_collection_id:
-        add_uri_regex_sanitizer(
+        add_general_regex_sanitizer(
             regex=rf"{re.escape(default_collection_id)}-[a-f0-9]{{8}}",
             value=f"{default_collection_id}-00000000",
-        )
-        add_body_regex_sanitizer(
-            regex=rf'"{re.escape(default_collection_id)}-[a-f0-9]{{8}}"',
-            value=f'"{default_collection_id}-00000000"',
         )

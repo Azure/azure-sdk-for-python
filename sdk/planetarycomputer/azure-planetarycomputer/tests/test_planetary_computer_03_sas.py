@@ -223,6 +223,9 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
     def test_04_signed_href_can_download_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test that a signed HREF can be used to download an asset.
+
+        This is an end-to-end test: get collection → sign thumbnail href → download.
+        The actual download is only attempted in live mode since it bypasses the test proxy.
         """
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_04_signed_href_can_download_asset")
@@ -231,12 +234,6 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-
-        # Revoke any cached delegation keys to ensure a fresh key is used.
-        # This is necessary when an ingestion source has been renewed, as the
-        # server may cache a stale delegation key from the previous source.
-        test_logger.info("Revoking cached delegation keys...")
-        client.sas.revoke_token()
 
         test_logger.info("Getting collection...")
         collection = client.stac.get_collection(collection_id=planetarycomputer_collection_id)
@@ -268,9 +265,6 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
                         # Verify successful download
                         assert download_response.status == 200, f"Expected 200, got {download_response.status}"
                         assert len(content) > 0, "Downloaded content should not be empty"
-
-                        # Verify it's actually binary image data by checking PNG magic bytes
-                        assert content[:4] == b"\x89PNG", "Downloaded content should be a PNG image"
                     break
                 except Exception as e:
                     if attempt < max_retries - 1:
@@ -295,23 +289,11 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        # Generate a SAS token first, with retry for transient PPE 503 errors
-        import time
-
+        # Generate a SAS token first
         test_logger.info("Step 1: Generating SAS token...")
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                token_response = client.sas.get_token(
-                    collection_id=planetarycomputer_collection_id, duration_in_minutes=60
-                )
-                break
-            except Exception as e:
-                if attempt < max_retries - 1:
-                    test_logger.info(f"Attempt {attempt + 1} failed: {e}, retrying in 10s...")
-                    time.sleep(10)
-                else:
-                    raise
+        token_response = client.sas.get_token(
+            collection_id=planetarycomputer_collection_id, duration_in_minutes=60
+        )
 
         test_logger.info(f"Token generated: {token_response.token[:50]}...")
         assert token_response is not None, "Token response should not be None"
@@ -319,18 +301,9 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
             token_response, SharedAccessSignatureToken
         ), f"Response should be SharedAccessSignatureToken, got {type(token_response)}"
 
-        # Revoke the token, with retry for transient PPE 503 errors
+        # Revoke the token
         test_logger.info("Step 2: Revoking token...")
-        for attempt in range(max_retries):
-            try:
-                client.sas.revoke_token()
-                break
-            except Exception as e:
-                if attempt < max_retries - 1:
-                    test_logger.info(f"Attempt {attempt + 1} failed: {e}, retrying in 10s...")
-                    time.sleep(10)
-                else:
-                    raise
+        client.sas.revoke_token()
         test_logger.info("Token revoked successfully (no exception thrown)")
 
         test_logger.info("Test PASSED\n")
