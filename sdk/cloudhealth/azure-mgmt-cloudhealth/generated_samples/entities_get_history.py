@@ -15,7 +15,7 @@ from azure.mgmt.cloudhealth import CloudHealthMgmtClient
     pip install azure-identity
     pip install azure-mgmt-cloudhealth
 # USAGE
-    python authentication_settings_list_by_health_model.py
+    python entities_get_history.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.authentication_settings.list_by_health_model(
-        resource_group_name="my-resource-group",
-        health_model_name="my-health-model",
+    response = client.entities.get_history(
+        resource_group_name="rgopenapi",
+        health_model_name="myHealthModel",
+        entity_name="entity1",
+        body={"endAt": "2025-12-12T10:00:00Z", "startAt": "2025-12-11T10:00:00Z"},
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/AuthenticationSettings_ListByHealthModel.json
+# x-ms-original-file: 2026-01-01-preview/Entities_GetHistory.json
 if __name__ == "__main__":
     main()
