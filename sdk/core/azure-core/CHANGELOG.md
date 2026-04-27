@@ -6,6 +6,7 @@
 
 - Added support for per-operation `http_logging_level` overrides in `HttpLoggingPolicy`. #44115
 - Introduced the keyword argument `allowed_query_params` to `DistributedTracingPolicy` and `HttpLoggingPolicy` to allow users to specify additional URL query parameters that should not be redacted in span attributes or logs. #46482
+    - Users can specify this at the SDK client level by passing `allowed_query_params` to the client constructor. For example: `client = ServiceClient(..., allowed_query_params={"custom_param"})`. This will apply to all operations performed by the client.
 
 ### Breaking Changes
 

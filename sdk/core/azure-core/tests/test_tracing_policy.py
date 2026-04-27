@@ -9,7 +9,7 @@ import urllib
 from unittest import mock
 
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
-from azure.core.pipeline.policies import DistributedTracingPolicy, UserAgentPolicy, RetryPolicy
+from azure.core.pipeline.policies import DistributedTracingPolicy, HttpLoggingPolicy, UserAgentPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.settings import settings
 from azure.core.tracing._models import SpanKind
@@ -768,3 +768,74 @@ class TestTracingPolicyNativeTracing:
             finished_spans[0].attributes.get(policy._URL_FULL)
             == "http://localhost/temp?api-version=v1&custom=val&other=REDACTED"
         )
+
+    @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+    def test_client_pipeline_respects_allowed_query_params(self, tracing_helper, http_request, http_response):
+        """Test that both HttpLoggingPolicy and DistributedTracingPolicy respect
+        allowed_query_params when constructed via a client that propagates **kwargs,
+        mirroring how generated SDK clients work."""
+
+        class MockTransport(HttpTransport):
+            def __init__(self):
+                self._count = 0
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                pass
+
+            def close(self):
+                pass
+
+            def open(self):
+                pass
+
+            def send(self, request, **kwargs):
+                self._count += 1
+                response = create_http_response(http_response, request, None)
+                response.status_code = 200
+                return response
+
+        mock_handler = logging.Handler()
+        mock_handler.emit = mock.MagicMock()
+        logger = logging.getLogger("test_sdk_client_pipeline")
+        logger.addHandler(mock_handler)
+        logger.setLevel(logging.DEBUG)
+
+        class MockClient:
+
+            def __init__(self, **kwargs):
+                # This mirrors how generated clients build policies.
+                self.http_logging_policy = HttpLoggingPolicy(logger=logger, **kwargs)
+                _policies = [
+                    self.http_logging_policy,
+                    DistributedTracingPolicy(**kwargs),
+                ]
+                self._pipeline = Pipeline(MockTransport(), policies=_policies)
+
+            def make_request(self, request, **kwargs):
+                return self._pipeline.run(request, **kwargs)
+
+        # User passes allowed_query_params once at the client level.
+        client = MockClient(allowed_query_params=["customParam", "token"])
+
+        url = "http://localhost/temp?api-version=2024-01-01&customParam=myvalue&token=abc123&secret=hidden"
+
+        with tracing_helper.tracer.start_as_current_span("Root"):
+            client.make_request(http_request("GET", url))
+
+        # Verify DistributedTracingPolicy respected allowed_query_params.
+        finished_spans = tracing_helper.exporter.get_finished_spans()
+        assert len(finished_spans) == 2
+        assert finished_spans[0].name == "GET"
+        assert (
+            finished_spans[0].attributes.get("url.full")
+            == "http://localhost/temp?api-version=2024-01-01&customParam=myvalue&token=abc123&secret=REDACTED"
+        )
+
+        # Verify HttpLoggingPolicy respected allowed_query_params.
+        logged_messages = [call.args[0].message for call in mock_handler.emit.call_args_list]
+        request_log = logged_messages[0]
+        assert "api-version=2024-01-01" in request_log
+        assert "customParam=myvalue" in request_log
+        assert "token=abc123" in request_log
+        assert "secret=REDACTED" in request_log
+        assert "secret=hidden" not in request_log
