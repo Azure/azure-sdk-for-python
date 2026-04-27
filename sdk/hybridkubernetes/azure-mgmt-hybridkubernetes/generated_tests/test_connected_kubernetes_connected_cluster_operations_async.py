@@ -21,50 +21,26 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_connected_cluster_begin_create_or_replace(self, resource_group):
+    async def test_connected_cluster_begin_create(self, resource_group):
         response = await (
-            await self.client.connected_cluster.begin_create_or_replace(
+            await self.client.connected_cluster.begin_create(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 connected_cluster={
                     "agentPublicKeyCertificate": "str",
                     "identity": {"type": "SystemAssigned", "principalId": "str", "tenantId": "str"},
                     "location": "str",
-                    "aadProfile": {"adminGroupObjectIDs": ["str"], "enableAzureRBAC": bool, "tenantID": "str"},
                     "agentVersion": "str",
-                    "arcAgentProfile": {
-                        "agentAutoUpgrade": "Enabled",
-                        "agentErrors": [
-                            {"component": "str", "message": "str", "severity": "str", "time": "2020-02-20 00:00:00"}
-                        ],
-                        "agentState": "str",
-                        "desiredAgentVersion": "str",
-                        "systemComponents": [
-                            {"currentVersion": "str", "majorVersion": 0, "type": "str", "userSpecifiedVersion": "str"}
-                        ],
-                    },
-                    "arcAgentryConfigurations": [
-                        {"feature": "str", "protectedSettings": {"str": "str"}, "settings": {"str": "str"}}
-                    ],
-                    "azureHybridBenefit": "str",
                     "connectivityStatus": "str",
                     "distribution": "str",
-                    "distributionVersion": "str",
-                    "gateway": {"enabled": bool, "resourceId": "str"},
                     "id": "str",
                     "infrastructure": "str",
-                    "kind": "str",
                     "kubernetesVersion": "str",
                     "lastConnectivityTime": "2020-02-20 00:00:00",
                     "managedIdentityCertificateExpirationTime": "2020-02-20 00:00:00",
-                    "miscellaneousProperties": {"str": "str"},
                     "name": "str",
                     "offering": "str",
-                    "oidcIssuerProfile": {"enabled": bool, "issuerUrl": "str", "selfHostedIssuerUrl": "str"},
-                    "privateLinkScopeResourceId": "str",
-                    "privateLinkState": "Disabled",
                     "provisioningState": "str",
-                    "securityProfile": {"workloadIdentity": {"enabled": bool}},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -78,7 +54,7 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
                     "totalNodeCount": 0,
                     "type": "str",
                 },
-                api_version="2024-12-01-preview",
+                api_version="2021-10-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,13 +67,8 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.connected_cluster.update(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            connected_cluster_patch={
-                "azureHybridBenefit": "str",
-                "distribution": "str",
-                "distributionVersion": "str",
-                "tags": {"str": "str"},
-            },
-            api_version="2024-12-01-preview",
+            connected_cluster_patch={"properties": {}, "tags": {"str": "str"}},
+            api_version="2021-10-01",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +80,7 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.connected_cluster.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-12-01-preview",
+            api_version="2021-10-01",
         )
 
         # please add some check logic here by yourself
@@ -122,7 +93,7 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
             await self.client.connected_cluster.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
-                api_version="2024-12-01-preview",
+                api_version="2021-10-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -136,7 +107,7 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             cluster_name="str",
             properties={"authenticationMethod": "str", "clientProxy": bool},
-            api_version="2024-12-01-preview",
+            api_version="2021-10-01",
         )
 
         # please add some check logic here by yourself
@@ -147,7 +118,7 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
     async def test_connected_cluster_list_by_resource_group(self, resource_group):
         response = self.client.connected_cluster.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-12-01-preview",
+            api_version="2021-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -157,7 +128,7 @@ class TestConnectedKubernetesConnectedClusterOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_connected_cluster_list_by_subscription(self, resource_group):
         response = self.client.connected_cluster.list_by_subscription(
-            api_version="2024-12-01-preview",
+            api_version="2021-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

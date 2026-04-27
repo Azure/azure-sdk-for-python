@@ -77,13 +77,7 @@ def main():
                             }
                         },
                         "components": {
-                            "egressGateways": [
-                                {
-                                    "enabled": True,
-                                    "gatewayConfigurationName": "test-gateway-configuration",
-                                    "name": "test-istio-egress",
-                                }
-                            ],
+                            "egressGateways": [{"enabled": True, "name": "istioegress1"}],
                             "ingressGateways": [{"enabled": True, "mode": "Internal"}],
                         },
                     },
@@ -99,6 +93,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/ManagedClustersCreate_AzureServiceMesh.json
+# x-ms-original-file: 2026-02-02-preview/ManagedClustersCreate_AzureServiceMesh.json
 if __name__ == "__main__":
     main()

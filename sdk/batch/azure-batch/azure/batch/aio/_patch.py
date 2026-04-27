@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union
 
-from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureNamedKeyCredential
 
 from ._client import BatchClient as GenerateBatchClient
@@ -30,13 +30,15 @@ class BatchClient(GenerateBatchClient):
     :type hub: str
     :param credentials: Credential needed for the client to connect to Azure.
     :type credentials: ~azure.identity.ClientSecretCredential, ~azure.core.credentials.AzureNamedKeyCredential,
-     or ~azure.identity.TokenCredentials
+     or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureNamedKeyCredential, AsyncTokenCredential], **kwargs
+    ) -> None:
         per_call_policies = kwargs.pop("per_call_policies", [])
         per_call_policies.append(BatchExceptionPolicy())
         super().__init__(
