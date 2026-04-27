@@ -796,3 +796,212 @@ class TestParseEvalResult:
         # Token counts should be extracted from properties.metrics
         assert result["violence_prompt_tokens"] == "15"
         assert result["violence_completion_tokens"] == "55"
+
+    def test_parse_eval_result_case_insensitive_metric_name(self):
+        """Test that metric name matching is case-insensitive.
+
+        The RAI service sync_evals endpoint may return capitalized metric names
+        (e.g., "Violence") while the SDK constants use lowercase (e.g., "violence").
+        The parser should match regardless of case.
+        """
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # Service returns capitalized metric name "Violence"
+        eval_result = {
+            "results": [
+                {
+                    "name": "violence",
+                    "type": "azure_ai_evaluator",
+                    "metric": "Violence",
+                    "score": 0.0,
+                    "reason": "No violent content detected.",
+                    "properties": {
+                        "outcome": "pass",
+                    },
+                }
+            ],
+            "status": "completed",
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.VIOLENCE
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["violence"] == "Very low"
+        assert result["violence_score"] == 0.0
+        assert result["violence_reason"] == "No violent content detected."
+
+    def test_parse_eval_result_case_insensitive_builtin_prefix(self):
+        """Test case-insensitive matching with 'builtin.' prefix.
+
+        The service may return "Builtin.Violence" or "builtin.Violence" etc.
+        """
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        eval_result = {
+            "results": [
+                {
+                    "name": "sexual",
+                    "type": "azure_ai_evaluator",
+                    "metric": "Builtin.Sexual",
+                    "score": 0.0,
+                    "reason": "No sexual content detected.",
+                    "properties": {},
+                }
+            ],
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.SEXUAL
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["sexual"] == "Very low"
+        assert result["sexual_score"] == 0.0
+        assert result["sexual_reason"] == "No sexual content detected."
+
+    def test_parse_eval_result_case_insensitive_all_caps(self):
+        """Test that fully uppercased metric names are matched correctly."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        eval_result = {
+            "results": [
+                {
+                    "name": "self_harm",
+                    "type": "azure_ai_evaluator",
+                    "metric": "SELF_HARM",
+                    "score": 2,
+                    "reason": "Low self-harm content detected.",
+                    "properties": {},
+                }
+            ],
+        }
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._eval_metric = EvaluationMetrics.SELF_HARM
+
+        result = evaluator._parse_eval_result(eval_result)
+
+        assert result["self_harm"] == "Low"
+        assert result["self_harm_score"] == 2
+        assert result["self_harm_reason"] == "Low self-harm content detected."
+
+    def test_parse_eval_result_case_insensitive_label_evaluator(self):
+        """Test case-insensitive and PascalCase matching for label-type evaluators like protected_material."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        metric_variants = ["Protected_Material", "ProtectedMaterial", "builtin.ProtectedMaterial"]
+        for variant in metric_variants:
+            eval_result = {
+                "results": [
+                    {
+                        "name": "protected_material",
+                        "type": "azure_ai_evaluator",
+                        "metric": variant,
+                        "score": 0.0,
+                        "reason": "No protected material detected.",
+                        "properties": {
+                            "scoreProperties": {
+                                "label": "false",
+                            },
+                        },
+                    }
+                ],
+            }
+
+            evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+            evaluator._eval_metric = EvaluationMetrics.PROTECTED_MATERIAL
+
+            result = evaluator._parse_eval_result(eval_result)
+
+            assert result["protected_material_label"] is False, f"Failed for metric name variant: {variant}"
+            assert (
+                result["protected_material_reason"] == "No protected material detected."
+            ), f"Failed for metric name variant: {variant}"
+
+    def test_parse_eval_result_case_insensitive_pascal_case_underscore_metrics(self):
+        """Test PascalCase service-model metric names, with and without builtin prefix, for underscore metrics."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        test_cases = [
+            (
+                EvaluationMetrics.SELF_HARM,
+                "self_harm",
+                ["SelfHarm", "builtin.SelfHarm"],
+                2,
+                "Low self-harm content detected.",
+                {
+                    "self_harm": "Low",
+                    "self_harm_score": 2,
+                    "self_harm_reason": "Low self-harm content detected.",
+                },
+            ),
+            (
+                EvaluationMetrics.HATE_UNFAIRNESS,
+                "hate_unfairness",
+                ["HateUnfairness", "builtin.HateUnfairness"],
+                0.0,
+                "No hate/unfairness content.",
+                {
+                    "hate_unfairness": "Very low",
+                    "hate_unfairness_score": 0.0,
+                    "hate_unfairness_reason": "No hate/unfairness content.",
+                },
+            ),
+        ]
+
+        for eval_metric, name, metric_variants, score, reason, expected in test_cases:
+            for variant in metric_variants:
+                eval_result = {
+                    "results": [
+                        {
+                            "name": name,
+                            "type": "azure_ai_evaluator",
+                            "metric": variant,
+                            "score": score,
+                            "reason": reason,
+                            "properties": {},
+                        }
+                    ],
+                }
+
+                evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+                evaluator._eval_metric = eval_metric
+
+                result = evaluator._parse_eval_result(eval_result)
+
+                for key, value in expected.items():
+                    assert result.get(key) == value, f"Failed for metric name variant: {variant}"
+
+    def test_parse_eval_result_case_insensitive_mixed_case(self):
+        """Test various mixed-case metric name variants that the service might return."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        # Test several case variants
+        case_variants = ["Violence", "VIOLENCE", "violence", "ViOlEnCe"]
+        for variant in case_variants:
+            eval_result = {
+                "results": [
+                    {
+                        "metric": variant,
+                        "score": 0.0,
+                        "reason": "No violent content.",
+                        "properties": {},
+                    }
+                ],
+            }
+
+            evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+            evaluator._eval_metric = EvaluationMetrics.VIOLENCE
+
+            result = evaluator._parse_eval_result(eval_result)
+
+            assert result.get("violence") == "Very low", f"Failed for metric name variant: {variant}"
+            assert result.get("violence_score") == 0.0, f"Failed for metric name variant: {variant}"

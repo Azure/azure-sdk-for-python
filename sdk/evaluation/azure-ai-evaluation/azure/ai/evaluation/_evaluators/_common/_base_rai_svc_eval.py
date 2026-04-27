@@ -242,6 +242,11 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         # Parse the EvalRunOutputItem format to the expected dict format
         return self._parse_eval_result(eval_result)
 
+    @staticmethod
+    def _normalize_metric(name: str) -> str:
+        """Lowercase and remove underscores for flexible metric matching."""
+        return name.lower().replace("_", "")
+
     def _parse_eval_result(self, eval_result) -> Dict[str, T]:
         """Parse the EvalRunOutputItem format into the expected dict format.
 
@@ -252,6 +257,10 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         # Handle EvalRunOutputItem structure
         if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
             results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+
+            # Compute expected metric and its normalized form once before the loop
+            expected_metric = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
+            normalized_expected = self._normalize_metric(expected_metric)
 
             # Find the result matching our metric
             for result_item in results:
@@ -271,12 +280,16 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                 # Check if this result matches our evaluator's metric
                 # Handle both exact match ("violence") and prefixed format ("builtin.violence")
-                expected_metric = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
-                if (
-                    metric_name == expected_metric
-                    or metric_name == f"builtin.{expected_metric}"
-                    or metric_name == self._eval_metric
-                ):
+                # Normalize comparison: lowercase and strip underscores so both snake_case
+                # (e.g., "self_harm") and PascalCase (e.g., "SelfHarm") service responses match.
+                normalized_metric = self._normalize_metric(metric_name)
+                # Strip optional "builtin." prefix before comparing
+                normalized_metric_no_prefix = (
+                    normalized_metric[len("builtin.") :]
+                    if normalized_metric.startswith("builtin.")
+                    else normalized_metric
+                )
+                if normalized_metric_no_prefix == normalized_expected or normalized_metric == normalized_expected:
                     # Extract common fields
                     score = result_dict.get("score", 0)
                     reason = result_dict.get("reason", "")
