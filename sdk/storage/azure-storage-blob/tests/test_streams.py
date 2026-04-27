@@ -107,10 +107,12 @@ class TestStructuredMessageEncodeStream:
         assert not stream.closed
         assert not inner.closed
 
-        stream.close()
-        assert stream.closed
-        assert inner.closed
+        stream.close()  # no-op
+        assert not stream.closed
+        assert not inner.closed
+        assert stream.read(1) is not None
 
+        inner.close()  # closing inner will block reads
         with pytest.raises(ValueError):
             stream.read(0)
 
