@@ -4,6 +4,8 @@ This page describes the Python version support policy for the Azure SDK for Pyth
 
 End of support means, in the SDK context, that new features will not be supported for those unsupported Python versions. It will still be possible to install older SDK versions from PyPI as necessary.
 
+> **Note:** The "SDKs End Of Support" date is inclusive — the listed day is the last supported day, and the next day is the first unsupported day.
+
 | Python Version | PSF End of Support | SDKs End Of Support |
 |----------------|--------------------|---------------------|
 | 2.7 ([PEP 373](https://peps.python.org/pep-0373/))                   | April 2020       | January 2022   |
