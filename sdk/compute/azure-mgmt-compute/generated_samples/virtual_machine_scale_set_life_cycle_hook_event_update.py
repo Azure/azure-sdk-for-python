@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_deallocate_maximum_set_gen.py
+    python virtual_machine_scale_set_life_cycle_hook_event_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +31,27 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.virtual_machines.begin_deallocate(
-        resource_group_name="rgcompute",
-        vm_name="aaaaaaaaaa",
-    ).result()
+    response = client.virtual_machine_scale_set_life_cycle_hook_events.update(
+        resource_group_name="RG01",
+        vm_scale_set_name="VMSS01",
+        lifecycle_hook_event_name="445c0a08-cfc5-4ef6-bb89-fe77c5178628",
+        properties={
+            "properties": {
+                "targetResources": [
+                    {
+                        "actionState": "Approved",
+                        "resource": {
+                            "id": "/subscriptions/2167b012-c9f9-4b04-83b2-0ff304e7d51d/resourceGroups/RG01/providers/Microsoft.Compute/virtualMachineScaleSets/VMSS01/virtualMachines/2"
+                        },
+                    }
+                ],
+                "waitUntil": "2025-05-08T11:17:55.6844555+00:00",
+            }
+        },
+    )
+    print(response)
 
 
-# x-ms-original-file: 2025-04-01/virtualMachineExamples/VirtualMachine_Deallocate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-11-01/virtualMachineScaleSetExamples/VirtualMachineScaleSetLifeCycleHookEvent_Update.json
 if __name__ == "__main__":
     main()

@@ -26,7 +26,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             vm_name="str",
             run_command_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -95,7 +95,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -153,7 +153,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -168,7 +168,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vm_name="str",
                 run_command_name="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -181,7 +181,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
         response = self.client.virtual_machine_run_commands.list_by_virtual_machine(
             resource_group_name=resource_group.name,
             vm_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -192,7 +192,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
     async def test_virtual_machine_run_commands_list(self, resource_group):
         response = self.client.virtual_machine_run_commands.list(
             location="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -204,7 +204,7 @@ class TestComputeManagementVirtualMachineRunCommandsOperationsAsync(AzureMgmtRec
         response = await self.client.virtual_machine_run_commands.get(
             location="str",
             command_id="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
