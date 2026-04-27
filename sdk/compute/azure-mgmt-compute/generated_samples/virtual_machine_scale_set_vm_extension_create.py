@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSetVMExtension_Create.json
+# x-ms-original-file: 2025-11-01/virtualMachineScaleSetExamples/VirtualMachineScaleSetVMExtension_Create.json
 if __name__ == "__main__":
     main()
