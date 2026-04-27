@@ -6,10 +6,7 @@
 import base64
 import hashlib
 import json
-import time
-import datetime
 from threading import Lock
-import logging
 from typing import (
     Any,
     Dict,
@@ -48,88 +45,6 @@ from ._request_tracing_context import _RequestTracingContext
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
-logger = logging.getLogger(__name__)
-
-min_uptime = 5
-
-
-def delay_failure(start_time: datetime.datetime) -> None:
-    """
-    We want to make sure we are up a minimum amount of time before we kill the process.
-    Otherwise, we could get stuck in a quick restart loop.
-
-    :param start_time: The time when the process started.
-    :type start_time: datetime.datetime
-    """
-    min_time = datetime.timedelta(seconds=min_uptime)
-    current_time = datetime.datetime.now()
-    if current_time - start_time < min_time:
-        time.sleep((min_time - (current_time - start_time)).total_seconds())
-
-
-def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
-    """
-    Process and validate all load function parameters in one place.
-    This consolidates the most obviously duplicated logic from both sync and async load functions.
-
-    :param args: Positional arguments, either endpoint and credential, or connection string.
-    :type args: Any
-    :return: Dictionary containing processed parameters
-    :rtype: Dict[str, Any]
-    """
-    endpoint: Optional[str] = kwargs.pop("endpoint", None)
-    credential = kwargs.pop("credential", None)
-    connection_string: Optional[str] = kwargs.pop("connection_string", None)
-    start_time = datetime.datetime.now()
-
-    # Handle positional arguments
-    if len(args) > 2:
-        raise TypeError(
-            "Unexpected positional parameters. Please pass either endpoint and credential, or a connection string."
-        )
-    if len(args) == 1:
-        if endpoint is not None:
-            raise TypeError("Received multiple values for parameter 'endpoint'.")
-        endpoint = args[0]
-    elif len(args) == 2:
-        if credential is not None:
-            raise TypeError("Received multiple values for parameter 'credential'.")
-        endpoint, credential = args
-
-    # Validate endpoint/credential vs connection_string
-    if (endpoint or credential) and connection_string:
-        raise ValueError("Please pass either endpoint and credential, or a connection string.")
-
-    # Process Key Vault options in one place
-    key_vault_options = kwargs.pop("key_vault_options", None)
-    if key_vault_options:
-        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:
-            raise ValueError(
-                "Key Vault configurations should only be set by either the key_vault_options or kwargs not both."
-            )
-        kwargs["keyvault_credential"] = key_vault_options.credential
-        kwargs["secret_resolver"] = key_vault_options.secret_resolver
-        kwargs["keyvault_client_configs"] = key_vault_options.client_configs
-
-    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
-        raise ValueError("A keyvault credential and secret resolver can't both be configured.")
-
-    # Determine Key Vault usage
-    uses_key_vault = (
-        "keyvault_credential" in kwargs
-        or "keyvault_client_configs" in kwargs
-        or "secret_resolver" in kwargs
-        or kwargs.get("uses_key_vault", False)
-    )
-
-    return {
-        "endpoint": endpoint,
-        "credential": credential,
-        "connection_string": connection_string,
-        "uses_key_vault": uses_key_vault,
-        "start_time": start_time,
-        "kwargs": kwargs,
-    }
 
 
 def is_json_content_type(content_type: str) -> bool:
@@ -165,39 +80,6 @@ def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, s
     return key, label
 
 
-def sdk_allowed_kwargs(kwargs):
-    allowed_kwargs = [
-        "headers",
-        "request_id",
-        "user_agent",
-        "logging_enable",
-        "logger",
-        "response_encoding",
-        "raw_request_hook",
-        "raw_response_hook",
-        "network_span_namer",
-        "tracing_attributes",
-        "permit_redirects",
-        "redirect_max",
-        "retry_total",
-        "retry_connect",
-        "retry_read",
-        "retry_status",
-        "retry_backoff_factor",
-        "retry_backoff_max",
-        "retry_mode",
-        "timeout",
-        "connection_timeout",
-        "read_timeout",
-        "connection_verify",
-        "connection_cert",
-        "proxies",
-        "cookies",
-        "connection_data_block_size",
-    ]
-    return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
-
-
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -226,6 +108,13 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
+        refresh_enabled = kwargs.pop("refresh_enabled", None)
+        if refresh_enabled is None and len(refresh_on) > 0:
+            # If refresh_enabled is not explicitly set, enable refresh if there are settings to refresh on
+            # This make sure we don't break existing users.
+            refresh_enabled = True
+        self._refresh_enabled = refresh_enabled
+        self._page_etags: List[List[str]] = []
         self._tracing_context = _RequestTracingContext(kwargs.pop("load_balancing_enabled", False))
         self._update_lock = Lock()
         self._refresh_lock = Lock()
@@ -493,10 +382,14 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         return processed_settings
 
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
-        feature_flag_value = json.loads(feature_flag.value)
-        self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
-        self._tracing_context.update_feature_filter_telemetry(feature_flag)
-        return feature_flag_value
+        try:
+            feature_flag_value = json.loads(feature_flag.value)
+            self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
+            self._tracing_context.update_feature_filter_telemetry(feature_flag)
+            return feature_flag_value
+        except json.JSONDecodeError:
+            # Feature flag value is not a valid JSON
+            return {}
 
     def _update_watched_settings(
         self, configuration_settings: List[ConfigurationSetting]
@@ -560,17 +453,15 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             is_failover_request=is_failover_request,
         )
 
-    def _deduplicate_settings(
-        self, configuration_settings: List[ConfigurationSetting]
-    ) -> Dict[str, ConfigurationSetting]:
+    def _deduplicate_settings(self, configuration_settings: List[ConfigurationSetting]) -> List[ConfigurationSetting]:
         """
         Deduplicates configuration settings by key.
 
         :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
-        :return: A dictionary mapping keys to their unique configuration settings
-        :rtype: Dict[str, ConfigurationSetting]
+        :return: A list of unique configuration settings
+        :rtype: List[ConfigurationSetting]
         """
         unique_settings: Dict[str, ConfigurationSetting] = {}
         for settings in configuration_settings:
             unique_settings[settings.key] = settings
-        return unique_settings
+        return list(unique_settings.values())

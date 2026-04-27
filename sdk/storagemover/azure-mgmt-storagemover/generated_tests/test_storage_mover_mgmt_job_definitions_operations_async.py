@@ -47,12 +47,25 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                     "targetName": "str",
                     "agentName": "str",
                     "agentResourceId": "str",
+                    "connections": ["str"],
+                    "dataIntegrityValidation": "str",
                     "description": "str",
                     "jobType": "str",
                     "latestJobRunName": "str",
                     "latestJobRunResourceId": "str",
                     "latestJobRunStatus": "str",
+                    "preservePermissions": bool,
                     "provisioningState": "str",
+                    "schedule": {
+                        "cronExpression": "str",
+                        "daysOfMonth": [0],
+                        "daysOfWeek": ["str"],
+                        "endDate": "2020-02-20 00:00:00",
+                        "executionTime": {"hour": 0, "minute": 0},
+                        "frequency": "str",
+                        "isActive": bool,
+                        "startDate": "2020-02-20 00:00:00",
+                    },
                     "sourceResourceId": "str",
                     "sourceSubpath": "str",
                     "sourceTargetMap": {
@@ -104,7 +117,25 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
             storage_mover_name="str",
             project_name="str",
             job_definition_name="str",
-            job_definition={"properties": {"agentName": "str", "copyMode": "str", "description": "str"}},
+            job_definition={
+                "properties": {
+                    "agentName": "str",
+                    "connections": ["str"],
+                    "copyMode": "str",
+                    "dataIntegrityValidation": "str",
+                    "description": "str",
+                    "schedule": {
+                        "cronExpression": "str",
+                        "daysOfMonth": [0],
+                        "daysOfWeek": ["str"],
+                        "endDate": "2020-02-20 00:00:00",
+                        "executionTime": {"hour": 0, "minute": 0},
+                        "frequency": "str",
+                        "isActive": bool,
+                        "startDate": "2020-02-20 00:00:00",
+                    },
+                }
+            },
         )
 
         # please add some check logic here by yourself

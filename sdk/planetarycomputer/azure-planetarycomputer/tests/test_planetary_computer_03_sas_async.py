@@ -7,7 +7,6 @@
 Unit tests for Shared Access Signature (SAS) operations.
 """
 import logging
-import pytest
 from pathlib import Path
 from urllib.request import urlopen
 from datetime import datetime, timedelta, timezone
@@ -201,7 +200,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
         assert collection is not None
         assert collection.assets is not None
-        assert "thumbnail" in collection.assets
+        assert "thumbnail" in collection.assets, "Collection does not have a thumbnail asset"
 
         original_href = collection.assets["thumbnail"].href
         test_logger.info(f"Original HREF: {original_href}")
@@ -290,6 +289,7 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         collection = await client.stac.get_collection(
             collection_id=planetarycomputer_collection_id
         )
+        assert "thumbnail" in collection.assets, "Collection does not have a thumbnail asset"
         thumbnail_href = collection.assets["thumbnail"].href
         test_logger.info(f"Thumbnail HREF: {thumbnail_href}")
 
@@ -302,27 +302,37 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
 
         if is_live():
             test_logger.info("Attempting to download asset (live mode)...")
-            with urlopen(signed_href) as download_response:
-                content = download_response.read()
+            import time
 
-                test_logger.info(f"Download status code: {download_response.status}")
-                test_logger.info(f"Content length: {len(content)} bytes")
-                content_type = download_response.headers.get("content-type", "").lower()
-                test_logger.info(f"Content-Type: {content_type}")
+            # Retry with backoff for SAS token propagation
+            max_retries = 5
+            for attempt in range(max_retries):
+                try:
+                    with urlopen(signed_href) as download_response:
+                        content = download_response.read()
 
-                # Verify successful download
-                assert (
-                    download_response.status == 200
-                ), f"Expected 200, got {download_response.status}"
-                assert len(content) > 0, "Downloaded content should not be empty"
+                        test_logger.info(f"Download status code: {download_response.status}")
+                        test_logger.info(f"Content length: {len(content)} bytes")
+                        content_type = download_response.headers.get("content-type", "").lower()
+                        test_logger.info(f"Content-Type: {content_type}")
 
-                # Verify content is binary data (image file)
-                # Note: Azure Storage may return 'application/octet-stream' instead of 'image/*'
-                assert len(content) > 1000, "Downloaded file should be larger than 1KB"
-                # Verify it's actually binary image data by checking PNG magic bytes
-                assert (
-                    content[:4] == b"\x89PNG"
-                ), "Downloaded content should be a PNG image"
+                        # Verify successful download
+                        assert (
+                            download_response.status == 200
+                        ), f"Expected 200, got {download_response.status}"
+                        assert len(content) > 0, "Downloaded content should not be empty"
+
+                        # Verify it's actually binary image data by checking PNG magic bytes
+                        assert (
+                            content[:4] == b"\x89PNG"
+                        ), "Downloaded content should be a PNG image"
+                    break
+                except Exception as e:
+                    if attempt < max_retries - 1:
+                        test_logger.info(f"Attempt {attempt + 1} failed: {e}, retrying in 15s...")
+                        time.sleep(15)
+                    else:
+                        raise
         else:
             test_logger.info("Skipping download test (playback mode)")
 

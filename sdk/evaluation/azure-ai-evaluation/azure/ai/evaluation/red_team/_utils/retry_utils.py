@@ -183,7 +183,9 @@ class RetryManager:
         }
 
 
-def create_standard_retry_manager(logger: Optional[logging.Logger] = None) -> RetryManager:
+def create_standard_retry_manager(
+    logger: Optional[logging.Logger] = None,
+) -> RetryManager:
     """Create a standard retry manager with default settings.
 
     :param logger: Optional logger instance

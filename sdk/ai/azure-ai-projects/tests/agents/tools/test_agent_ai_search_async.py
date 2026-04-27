@@ -74,7 +74,7 @@ class TestAgentAISearchAsync(TestBase):
             stream=True,
             tool_choice="required",
             input=f"Answer this question with only 'True' or 'False': {question}",
-            extra_body={"agent": {"name": agent_name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent_name, "type": "agent_reference"}},
         )
 
         async for event in stream_response:
@@ -148,7 +148,7 @@ class TestAgentAISearchAsync(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)

@@ -3,7 +3,7 @@
 import unittest
 import threading
 import time
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
 from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_PYTHON_TARGETING
@@ -21,7 +21,7 @@ class TestConfigurationWorker(unittest.TestCase):
         """Clean up after each test."""
         # Ensure any workers created during tests are shut down
         # This prevents hanging tests and resource leaks
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
     def test_init_with_default_refresh_interval(self):
         """Test worker initialization with default refresh interval."""
@@ -213,7 +213,7 @@ class TestConfigurationWorker(unittest.TestCase):
             # Second shutdown should not cause errors
             try:
                 worker.shutdown()
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 self.fail(f"Second shutdown raised an exception: {e}")
 
             # State should remain shutdown
@@ -253,7 +253,7 @@ class TestConfigurationWorker(unittest.TestCase):
                 try:
                     worker.shutdown()
                     shutdown_results.append("success")
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-exception-caught
                     shutdown_results.append(f"error: {e}")
 
             threads = [threading.Thread(target=shutdown_worker) for _ in range(5)]

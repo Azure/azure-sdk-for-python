@@ -1,5 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-keyvault"
+version = "4.2.0"
+authors = [
+    {name = "Microsoft Corporation", email = "azurekeyvault@microsoft.com"},
+]
+description = "Microsoft Azure Key Vault Client Libraries for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.8"
+license = {text = "MIT License"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+    "azure-keyvault-certificates~=4.4",
+    "azure-keyvault-secrets~=4.4",
+    "azure-keyvault-keys~=4.5",
+]
+dynamic = ["readme"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
 [tool.azure-sdk-build]
 pylint = false
+pyright = false
+
+[tool.uv.sources]
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+
+[dependency-groups]
+dev = [
+    "azure-sdk-tools",
+]
 
 [tool.azure-sdk-conda]
 in_bundle = false

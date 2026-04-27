@@ -20,6 +20,7 @@ class SecretProperties(object):
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
         self._managed = kwargs.get("managed", None)
+        self._previous_version = kwargs.get("previous_version", None)
         self._tags = kwargs.get("tags", None)
 
     def __repr__(self) -> str:
@@ -35,6 +36,7 @@ class SecretProperties(object):
             content_type=secret_bundle.content_type,
             key_id=secret_bundle.kid,
             managed=secret_bundle.managed,
+            previous_version=secret_bundle.previous_version,
             tags=secret_bundle.tags,
         )
 
@@ -45,6 +47,7 @@ class SecretProperties(object):
             secret_item.id,
             content_type=secret_item.content_type,
             managed=secret_item.managed,
+            previous_version=getattr(secret_item, "previous_version", None),
             tags=secret_item.tags,
         )
 
@@ -186,6 +189,15 @@ class SecretProperties(object):
         :rtype: bool or None
         """
         return self._managed
+
+    @property
+    def previous_version(self) -> Optional[str]:
+        """The previous version identifier for certificate-backed secrets, if available.
+
+        :returns: The previous version identifier.
+        :rtype: str or None
+        """
+        return self._previous_version
 
 
 class KeyVaultSecret(object):

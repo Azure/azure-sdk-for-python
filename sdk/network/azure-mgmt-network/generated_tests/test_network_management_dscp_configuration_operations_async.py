@@ -520,6 +520,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -541,6 +542,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                             "publicIpPrefixes": [{"id": "str"}],
                                             "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
+                                            "serviceGateway": {"id": "str"},
                                             "sku": {"name": "str"},
                                             "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
@@ -640,6 +642,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -973,6 +976,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                 "service": "str",
                                             }
                                         ],
+                                        "serviceGateway": {"id": "str"},
                                         "sharingScope": "str",
                                         "type": "str",
                                     },
@@ -1376,6 +1380,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                                     "service": "str",
                                                                 }
                                                             ],
+                                                            "serviceGateway": {"id": "str"},
                                                             "sharingScope": "str",
                                                             "type": "str",
                                                         },
@@ -1397,6 +1402,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -1497,6 +1503,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -1832,6 +1839,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                             "service": "str",
                                                         }
                                                     ],
+                                                    "serviceGateway": {"id": "str"},
                                                     "sharingScope": "str",
                                                     "type": "str",
                                                 },
@@ -2085,6 +2093,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -2278,6 +2287,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                 "service": "str",
                                             }
                                         ],
+                                        "serviceGateway": {"id": "str"},
                                         "sharingScope": "str",
                                         "type": "str",
                                     }
@@ -2435,6 +2445,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -2692,6 +2703,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                             "service": "str",
                                         }
                                     ],
+                                    "serviceGateway": {"id": "str"},
                                     "sharingScope": "str",
                                     "type": "str",
                                 },
@@ -2799,6 +2811,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -3132,6 +3145,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                     "service": "str",
                                                 }
                                             ],
+                                            "serviceGateway": {"id": "str"},
                                             "sharingScope": "str",
                                             "type": "str",
                                         },
@@ -3530,6 +3544,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                             "service": "str",
                                                         }
                                                     ],
+                                                    "serviceGateway": {"id": "str"},
                                                     "sharingScope": "str",
                                                     "type": "str",
                                                 },
@@ -3551,6 +3566,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                 "publicIpPrefixes": [{"id": "str"}],
                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
+                                                "serviceGateway": {"id": "str"},
                                                 "sku": {"name": "str"},
                                                 "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
@@ -3651,6 +3667,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -3984,6 +4001,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                     "service": "str",
                                                 }
                                             ],
+                                            "serviceGateway": {"id": "str"},
                                             "sharingScope": "str",
                                             "type": "str",
                                         },
@@ -4148,6 +4166,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -4409,6 +4428,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -4835,6 +4855,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -4856,6 +4877,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -4956,6 +4978,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -5289,6 +5312,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -5774,6 +5798,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -5795,6 +5820,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -5894,6 +5920,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -6227,6 +6254,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -6278,7 +6306,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-03-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -6292,7 +6320,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
             await self.client.dscp_configuration.begin_delete(
                 resource_group_name=resource_group.name,
                 dscp_configuration_name="str",
-                api_version="2025-03-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -6305,7 +6333,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.dscp_configuration.get(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -6316,7 +6344,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
     async def test_dscp_configuration_list(self, resource_group):
         response = self.client.dscp_configuration.list(
             resource_group_name=resource_group.name,
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -6326,7 +6354,7 @@ class TestNetworkManagementDscpConfigurationOperationsAsync(AzureMgmtRecordedTes
     @recorded_by_proxy_async
     async def test_dscp_configuration_list_all(self, resource_group):
         response = self.client.dscp_configuration.list_all(
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -126,6 +126,7 @@ def main():
                         "service": "Microsoft.Storage",
                     }
                 ],
+                "skipManagedNsgAssignment": True,
                 "upgradeDescription": {
                     "deltaHealthPolicy": {
                         "maxPercentDeltaUnhealthyApplications": 40,
@@ -153,6 +154,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01-preview/ManagedClusterPutOperation_example_max.json
+# x-ms-original-file: 2026-02-01/ManagedClusterPutOperation_example_max.json
 if __name__ == "__main__":
     main()

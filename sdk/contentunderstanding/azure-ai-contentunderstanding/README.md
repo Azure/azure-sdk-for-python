@@ -13,6 +13,32 @@ Use the client library for Azure AI Content Understanding to:
 
 [Source code][python_cu_src] | [Package (PyPI)][python_cu_pypi] | [Product documentation][python_cu_product_docs] | [Samples][python_cu_samples]
 
+## Table of Contents
+
+- [Getting started](#getting-started)
+  - [Install the package](#install-the-package)
+  - [Prerequisites](#prerequisites)
+  - [Configuring Microsoft Foundry resource](#configuring-microsoft-foundry-resource)
+  - [Authenticate the client](#authenticate-the-client)
+- [Key concepts](#key-concepts)
+  - [Prebuilt analyzers](#prebuilt-analyzers)
+  - [Custom analyzers](#custom-analyzers)
+  - [Content types](#content-types)
+  - [Asynchronous operations](#asynchronous-operations)
+  - [Main classes](#main-classes)
+  - [Thread safety](#thread-safety)
+- [Examples](#examples)
+  - [Running the samples](#running-the-samples)
+  - [Example code](#example-code)
+- [Troubleshooting](#troubleshooting)
+- [GitHub Copilot Skills](#github-copilot-skills)
+  - [Available Skills](#available-skills)
+  - [Using Skills in VS Code](#using-skills-in-vs-code)
+  - [Troubleshooting Skill Selection](#troubleshooting-skill-selection)
+- [Next steps](#next-steps)
+- [Running tests](#running-tests)
+- [Contributing](#contributing)
+
 ## Getting started
 
 ### Install the package
@@ -31,7 +57,9 @@ This table shows the relationship between SDK versions and supported API service
 
 | SDK version | Supported API service version |
 | ----------- | ----------------------------- |
-| 1.0.0b1     | 2025-11-01                    |
+| 1.1.0       | 2025-11-01                    |
+| 1.0.1       | 2025-11-01                    |
+| 1.0.0       | 2025-11-01                    |
 
 ### Prerequisites
 
@@ -283,7 +311,7 @@ You can create custom analyzers with specific field schemas for multi-modal cont
 
 ### Content types
 
-The API returns different content types based on the input. Both `DocumentContent` and `AudioVisualContent` classes derive from `MediaContent` class, which provides basic information and markdown representation. Each derived class provides additional properties to access detailed information:
+The API returns different content types based on the input. Both `DocumentContent` and `AudioVisualContent` classes derive from `AnalysisContent` class, which provides basic information and markdown representation. Each derived class provides additional properties to access detailed information:
 
 * **`DocumentContent`** - For document files (PDF, HTML, images, Office documents such as Word, Excel, PowerPoint, and more). Provides basic information such as page count and MIME type. Retrieve detailed information including pages, tables, figures, paragraphs, and many others.
 * **`AudioVisualContent`** - For audio and video files. Provides basic information such as timing information (start/end times) and frame dimensions (for video). Retrieve detailed information including transcript phrases, timing information, and for video, key frame references and more.
@@ -301,7 +329,7 @@ The SDK provides `LROPoller` types that handle polling automatically when using 
 ### Main classes
 
 * **`ContentUnderstandingClient`** - The main client for analyzing content, as well as creating, managing, and configuring analyzers
-* **`AnalyzeResult`** - Contains the structured results of an analysis operation, including content elements, markdown, and metadata
+* **`AnalysisResult`** - Contains the structured results of an analysis operation, including content elements, markdown, and metadata
 
 ### Thread safety
 
@@ -327,6 +355,7 @@ The samples demonstrate:
 * **Custom Analyzers** - Create custom analyzers with field schemas for specialized extraction needs
 * **Document Classification** - Create and use classifiers to categorize documents
 * **Analyzer Management** - Get, list, update, copy, and delete analyzers
+* **Labeled Training Data** - Create custom analyzers with labeled training data from Azure Blob Storage for improved extraction accuracy
 * **Result Management** - Retrieve result files from video analysis and delete analysis results
 
 See the [samples README][sample_readme] for introductions of samples and the [samples directory][python_cu_samples] for complete examples. 
@@ -383,7 +412,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, MediaContent, DocumentContent, MediaContentKind
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult, AnalysisContent, DocumentContent, AnalysisContentKind
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -400,17 +429,17 @@ async def analyze_document():
         # Analyze document using prebuilt-documentSearch
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-documentSearch", 
-            inputs=[AnalyzeInput(url=file_url)]
+            inputs=[AnalysisInput(url=file_url)]
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         
         # Extract markdown content
-        content: MediaContent = result.contents[0]
+        content: AnalysisContent = result.contents[0]
         print("Markdown Content:")
         print(content.markdown)
         
         # Access document-specific properties
-        if content.kind == MediaContentKind.DOCUMENT:
+        if content.kind == AnalysisContentKind.DOCUMENT:
             document_content: DocumentContent = content  # type: ignore
             print(f"Pages: {document_content.start_page_number} - {document_content.end_page_number}")
 
@@ -430,7 +459,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult, DocumentContent
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -452,9 +481,9 @@ async def analyze_invoice():
         # Analyze invoice using prebuilt-invoice analyzer
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice", 
-            inputs=[AnalyzeInput(url=file_url)]
+            inputs=[AnalysisInput(url=file_url)]
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         
         # Extract invoice fields
         content: DocumentContent = result.contents[0]  # type: ignore
@@ -529,6 +558,41 @@ client = ContentUnderstandingClient(
 
 For more information about logging, see the [Azure SDK Python logging documentation][sdk_logging_docs].
 
+## GitHub Copilot Skills
+
+This package includes [GitHub Copilot][github_copilot] skills under `.github/skills/` that provide interactive, AI-assisted workflows for common tasks. In VS Code, Copilot can use these skills to help with setup, running samples, and understanding the service.
+
+### Available Skills
+
+| Skill | Description | How to Use |
+|-------|-------------|------------|
+| [**cu-sdk-setup**][cu_sdk_setup_skill] | Interactive environment setup wizard — creates virtual environment, installs the SDK, configures `.env`, helps set up model deployments, and runs model defaults | In VS Code Copilot Chat, ask: *"Help me set up the Content Understanding Python SDK"* or reference the skill directly |
+| [**cu-sdk-sample-run**][cu_sdk_sample_run_skill] | Guided sample runner — helps you choose and run sync/async samples with troubleshooting | Ask: *"Run a Content Understanding sample"* or *"Run sample_analyze_invoice"* |
+| [**cu-sdk-common-knowledge**][cu_sdk_common_knowledge_skill] | Domain knowledge reference — answers questions about Content Understanding concepts, analyzers, field schemas, API operations, and SDK usage | Ask: *"What prebuilt analyzers are available?"* or *"How do I create a custom analyzer?"* |
+
+### Using Skills in VS Code
+
+1. In VS Code, open the package folder `sdk/contentunderstanding/azure-ai-contentunderstanding` (File → Open Folder). This is required for VS Code to discover the skills in `.github/skills/`.
+2. Ensure [GitHub Copilot][github_copilot] is installed and activated
+3. Open Copilot Chat from the Chat view or Command Palette
+4. Ask a question related to Content Understanding; Copilot can use the relevant skill when appropriate
+
+**Example prompts:**
+- *"Set up my Python environment for Content Understanding"* → likely uses `cu-sdk-setup`
+- *"Run the async version of sample_analyze_url"* → likely uses `cu-sdk-sample-run`
+- *"Explain how custom analyzers work"* → likely uses `cu-sdk-common-knowledge`
+
+### Troubleshooting Skill Selection
+
+If Copilot does not use the expected skill, try the following:
+
+1. Be explicit about intent and context in one prompt (for example: *"Use cu-sdk-sample-run to run sample_analyze_invoice_async"*).
+2. Include your goal and current state (for example: *"My `.venv` is active and `.env` is configured; help me run sample_analyze_binary"*).
+3. Ask for a step-by-step interactive flow when needed (for example: *"Guide me step by step to set up the SDK environment"*).
+4. For sample execution errors, mention the exact error text and your working directory so Copilot can apply the right troubleshooting path.
+
+Tip: For async sample runs, use `sample_name_async` and run from the `samples/` directory when using direct Python commands.
+
 ## Next steps
 
 * [`sample_update_defaults.py`][sample_update_defaults] - Required one-time setup to configure model deployments for prebuilt and custom analyzers
@@ -569,6 +633,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/README.md
 [sample_update_defaults]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_update_defaults.py
 [sample_analyze_binary]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary.py
+[cu_sdk_setup_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-setup
+[cu_sdk_sample_run_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-sample-run
+[cu_sdk_common_knowledge_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-common-knowledge
 [tests_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/tests/README.md
 [azure_sdk_testing_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [pip]: https://pypi.org/project/pip/
@@ -577,3 +644,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [opencode_email]: mailto:opencode@microsoft.com
 [aiohttp]: https://pypi.org/project/aiohttp/
+[github_copilot]: https://github.com/features/copilot

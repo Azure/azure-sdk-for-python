@@ -228,17 +228,26 @@ az account get-access-token --output json --resource https://management.core.win
 
 #### __Verify the Azure Developer CLI can obtain tokens__
 
-You can manually verify that the Azure Developer CLI is properly authenticated, and can obtain tokens. First use the `config` command to verify the account which is currently logged in to the Azure Developer CLI.
+You can manually verify that the Azure Developer CLI is properly authenticated and can obtain tokens. Execute the command corresponding to your CLI version to verify the account currently logged in.
 
-```bash
-azd config list
-```
+- In Azure Developer CLI versions >= 1.23.0:
 
+    ```sh
+    azd auth status
+    ```
+
+- In Azure Developer CLI versions < 1.23.0:
+
+    ```sh
+    azd config list
+    ```
+    
 Once you've verified the Azure Developer CLI is using correct account, you can validate that it's able to obtain tokens for this account.
 
 ```bash
 azd auth token --output json --scope https://management.core.windows.net/.default
 ```
+
 >Note that output of this command will contain a valid access token, and SHOULD NOT BE SHARED to avoid compromising account security.
 
 ## Troubleshoot `AzurePowerShellCredential` authentication issues

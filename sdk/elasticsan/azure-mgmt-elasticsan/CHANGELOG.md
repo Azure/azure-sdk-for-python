@@ -1,5 +1,31 @@
 # Release History
 
+## 2.0.0 (2026-01-29)
+
+### Features Added
+
+  - Model `ElasticSanMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ElasticSanMgmtClient` added method `send_request`
+  - Model `ElasticSanProperties` added property `auto_scale_properties`
+  - Model `ElasticSanUpdateProperties` added property `auto_scale_properties`
+  - Enum `ProvisioningStates` added member `DELETED`
+  - Enum `ProvisioningStates` added member `RESTORING`
+  - Added enum `AutoScalePolicyEnforcement`
+  - Added model `AutoScaleProperties`
+  - Added model `DiskSnapshotList`
+  - Added model `PreValidationResponse`
+  - Added model `ScaleUpProperties`
+  - Added model `VolumeNameList`
+  - Operation group `VolumesOperations` added method `begin_pre_backup`
+  - Operation group `VolumesOperations` added method `begin_pre_restore`
+
+### Breaking Changes
+
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted model `ElasticSanList`/`SkuInformationList`/`SnapshotList`/`VolumeGroupList`/`VolumeList` which actually were not used by SDK users
+  - Method `VolumesOperations.begin_delete` changed its parameter `x_ms_delete_snapshots` from `positional_or_keyword` to `keyword_only`
+  - Method `VolumesOperations.begin_delete` changed its parameter `x_ms_force_delete` from `positional_or_keyword` to `keyword_only`
+
 ## 1.2.0b2 (2025-04-21)
 
 ### Features Added

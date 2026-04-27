@@ -5,6 +5,7 @@
 
 # This script is used to create issues for client libraries failing the vnext of mypy, pyright, and pylint.
 from __future__ import annotations
+from typing import Optional
 
 import sys
 import os
@@ -140,7 +141,7 @@ def get_labels(package_name: str, service: str) -> tuple[list[str], list[str]]:
     return labels, assignees
 
 
-def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
+def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: Optional[str] = None) -> None:
     """This is called when a client library fails a vnext check.
     An issue is created with the details or an existing issue is updated with the latest information."""
 
@@ -156,7 +157,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
     issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
     vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
 
-    version = get_version_running(check_type)
+    version = check_version or get_version_running(check_type)
     build_link = get_build_link(check_type)
     merge_date = get_date_for_version_bump(today)
     error_type = "linting" if check_type == "pylint" else "docstring" if check_type == "sphinx" else "typing"
@@ -170,6 +171,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         )
     )
 
+    repo_root = discover_repo_root()
     title = f"{package_name} needs {error_type} updates for {check_type} version {version}"
     template = (
         f"**ACTION NEEDED:** This version of {check_type} will be merged on **{merge_date}**. "
@@ -177,10 +179,10 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE) -> None:
         f"\n\n**Library name:** {package_name}"
         f"\n**{check_type.capitalize()} version:** {version}"
         f"\n**{check_type.capitalize()} Build:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
-        f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
+        f"\n**How to fix:** Run the `next-{check_type}` azpysdk command at the library package-level and resolve "
         f"the {error_type} errors.\n"
-        f'1) `../{package_name}>pip install "tox<5"`\n'
-        f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
+        f"1) `{repo_root}>pip install -e ./eng/tools/azure-sdk-tools`\n"
+        f"2) `../{package_name}>azpysdk next-{check_type} --isolate .`\n\n"
         f"See the {guide_link} for more information."
     )
 

@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             connection_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2025-03-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -66,7 +66,7 @@ class TestNetworkManagementVirtualHubBgpConnectionOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 virtual_hub_name="str",
                 connection_name="str",
-                api_version="2025-03-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

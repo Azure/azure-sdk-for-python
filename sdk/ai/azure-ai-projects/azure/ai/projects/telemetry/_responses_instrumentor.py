@@ -63,7 +63,6 @@ from ._utils import (
     RESPONSES_PROVIDER,
 )
 
-
 _Unset: Any = object()
 
 logger = logging.getLogger(__name__)
@@ -108,7 +107,7 @@ class ResponsesInstrumentor:
     and provides functionality to check whether instrumentation is active.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not _tracing_library_available:
             logger.warning(
                 "OpenTelemetry is not available. "
@@ -1752,7 +1751,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """Extract assistant/agent name from kwargs."""
         extra_body = kwargs.get("extra_body")
         if extra_body and isinstance(extra_body, dict):
-            agent_info = extra_body.get("agent")
+            agent_info = extra_body.get("agent_reference")
             if agent_info and isinstance(agent_info, dict):
                 return agent_info.get("name")
         return None
@@ -1761,7 +1760,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """Extract agent ID from kwargs."""
         extra_body = kwargs.get("extra_body")
         if extra_body and isinstance(extra_body, dict):
-            agent_info = extra_body.get("agent")
+            agent_info = extra_body.get("agent_reference")
             if agent_info and isinstance(agent_info, dict):
                 return agent_info.get("id")
         return None

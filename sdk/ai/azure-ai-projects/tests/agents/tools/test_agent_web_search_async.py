@@ -17,7 +17,7 @@ class TestAgentWebSearchAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_web_search_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -46,7 +46,7 @@ class TestAgentWebSearchAsync(TestBase):
 
             response = await openai_client.responses.create(
                 input="What is the current weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response)

@@ -4,6 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+)
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
@@ -12,22 +18,14 @@ from azure.appconfiguration import (
     SecretReferenceConfigurationSetting,
     ConfigurationSnapshot,
 )
-from azure.core.exceptions import ResourceExistsError
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-)
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
-    def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
+    client = None
+
+    def create_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
-
-    def create_client(self, appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
 
     def create_config_setting(self):
         return ConfigurationSetting(
@@ -47,19 +45,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
             tags={"tag3": "value3", "tag4": "value4"},
         )
 
-    def add_for_test(self, client, config_setting):
-        try:
-            client.add_configuration_setting(config_setting)
-        except ResourceExistsError:
-            pass
-
-    def set_up(self, appconfiguration_string, is_aad=False):
-        if is_aad:
-            self.client = self.create_aad_client(appconfiguration_string)
-        else:
-            self.client = self.create_client(appconfiguration_string)
-        self.add_for_test(self.client, self.create_config_setting())
-        self.add_for_test(self.client, self.create_config_setting_no_label())
+    def set_up(self, appconfiguration_string):
+        self.client = self.create_client(appconfiguration_string)
+        self.client.set_configuration_setting(self.create_config_setting())
+        self.client.set_configuration_setting(self.create_config_setting_no_label())
 
     def tear_down(self):
         if self.client is not None:
@@ -68,7 +57,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             for snapshot in snapshots:
                 try:
                     self.client.archive_snapshot(name=snapshot.name)
-                except Exception:
+                except Exception:  # pylint:disable=broad-except
                     pass
 
             # Delete all configuration settings

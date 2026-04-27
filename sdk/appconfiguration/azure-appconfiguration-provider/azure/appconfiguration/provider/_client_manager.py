@@ -28,6 +28,8 @@ from ._client_manager_base import (
 from ._models import SettingSelector
 from ._constants import FEATURE_FLAG_PREFIX
 from ._discovery import find_auto_failover_endpoints
+from ._snapshot_reference_parser import SnapshotReferenceParser
+from ._constants import SNAPSHOT_REF_CONTENT_TYPE
 
 
 @dataclass
@@ -134,30 +136,70 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return False, None
 
     @distributed_trace
-    def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
-        configuration_settings = []
+    def load_configuration_settings(
+        self, selects: List[SettingSelector], **kwargs
+    ) -> Tuple[List[ConfigurationSetting], List[List[str]]]:
+        """
+        Loads configuration settings using page-based iteration, collecting page etags for each selector.
+
+        :param selects: List of setting selectors to filter configuration settings
+        :type selects: List[SettingSelector]
+        :return: A tuple of (configuration_settings, page_etags_per_selector)
+        :rtype: Tuple[List[ConfigurationSetting], List[List[str]]]
+        """
+        configuration_settings: List[ConfigurationSetting] = []
+        page_etags: List[List[str]] = []
         for select in selects:
-            configurations = []
+            selector_etags: List[str] = []
             if select.snapshot_name is not None:
-                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = self._client.get_snapshot(select.snapshot_name)
-                if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
+                if not self._validate_snapshot(select.snapshot_name):
+                    return [], []
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+                for config in configurations:
+                    if not isinstance(config, FeatureFlagConfigurationSetting):
+                        configuration_settings.append(config)
             else:
-                # Use traditional filtering when not loading from a snapshot
                 configurations = self._client.list_configuration_settings(
                     key_filter=select.key_filter,
                     label_filter=select.label_filter,
                     tags_filter=select.tag_filters,
                     **kwargs,
                 )
-            for config in configurations:
-                if not isinstance(config, FeatureFlagConfigurationSetting):
-                    # Feature flags are ignored when loaded by Selects, as they are selected from
-                    # `feature_flag_selectors`
-                    configuration_settings.append(config)
-        return configuration_settings
+                iterator = configurations.by_page()
+                for page in iterator:
+                    for config in page:
+                        if not isinstance(config, FeatureFlagConfigurationSetting):
+                            configuration_settings.append(config)
+                    selector_etags.append(iterator.etag)
+            page_etags.append(selector_etags)
+        return configuration_settings, page_etags
+
+    @distributed_trace
+    def check_page_etags(self, selects: List[SettingSelector], page_etags: List[List[str]], **kwargs) -> bool:
+        """
+        Checks if any configuration settings page has changed using page etags.
+
+        :param selects: List of setting selectors to check
+        :type selects: List[SettingSelector]
+        :param page_etags: The page etags from the last load, one list per selector
+        :type page_etags: List[List[str]]
+        :return: True if any page has changed, False otherwise
+        :rtype: bool
+        """
+        for i, select in enumerate(selects):
+            selector_etags = page_etags[i]
+            if select.snapshot_name is None:
+                # We only process non-snapshot selectors here, because snapshot never change
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+                for _ in configurations.by_page(match_conditions=selector_etags):
+                    # If any page is returned, it means that page has changed
+                    return True
+        return False
 
     @distributed_trace
     def load_feature_flags(
@@ -170,9 +212,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             feature_flags = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = self._client.get_snapshot(select.snapshot_name)
-                if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
+                if not self._validate_snapshot(select.snapshot_name):
+                    return []
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Handle None key_filter by converting to empty string
@@ -248,6 +289,30 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
+    def _validate_snapshot(self, snapshot_name: str) -> bool:
+        """Gets and validates a snapshot by name.
+
+        Returns True if the snapshot is found and has a valid composition type,
+        or False if the snapshot does not exist (404).
+
+        :param str snapshot_name: The name of the snapshot to retrieve
+        :return: True if the snapshot is valid, False if not found
+        :rtype: bool
+        :raises HttpResponseError: If the error is not a 404
+        :raises ValueError: If the snapshot composition type is not 'key'
+        """
+        snapshot = None
+        try:
+            snapshot = self._client.get_snapshot(snapshot_name)
+        except HttpResponseError as e:
+            if e.status_code == 404:
+                self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
+                return False
+            raise e
+        if snapshot.composition_type != SnapshotComposition.KEY:
+            raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
+        return True
+
     def is_active(self) -> bool:
         """
         Checks if the client is active and can be used.
@@ -269,6 +334,31 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     def __exit__(self, *args):
         self._client.__exit__(*args)
+
+    def resolve_snapshot_reference(self, setting: ConfigurationSetting, **kwargs) -> List[ConfigurationSetting]:
+        """
+        Resolve a snapshot reference configuration setting to the actual snapshot data.
+
+        :param ConfigurationSetting setting: The snapshot reference configuration setting
+        :return: A list of resolved configuration settings from the snapshot
+        :rtype: List[ConfigurationSetting]
+        :raises ValueError: When the setting is not a valid snapshot reference
+        """
+        if SNAPSHOT_REF_CONTENT_TYPE != setting.content_type:
+            raise ValueError("Setting is not a snapshot reference")
+
+        # Parse the snapshot reference
+        snapshot_name = SnapshotReferenceParser.parse(setting)
+        if not self._validate_snapshot(snapshot_name):
+            return []
+
+        # Create a selector for the snapshot
+        snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+
+        # Use existing load_configuration_settings to load from snapshot
+        configurations, _ = self.load_configuration_settings([snapshot_selector], **kwargs)
+
+        return configurations
 
 
 class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes

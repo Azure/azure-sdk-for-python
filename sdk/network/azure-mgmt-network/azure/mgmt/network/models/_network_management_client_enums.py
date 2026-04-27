@@ -42,6 +42,7 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BLOCK = "Block"
     LOG = "Log"
     JS_CHALLENGE = "JSChallenge"
+    CAPTCHA = "CAPTCHA"
 
 
 class AddressPrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -61,6 +62,20 @@ class AddressSpaceAggregationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta
     MANUAL = "Manual"
 
 
+class AddressUpdateAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of update operation to perform on addresses within the address location of
+    service gateway.
+
+
+    * FullUpdate: Replaces all existing address data with the new list provided in the request. Any
+    previously defined addresses not included will be removed.
+    * PartialUpdate: Updates only the specified addresses.
+    """
+
+    FULL_UPDATE = "FullUpdate"
+    PARTIAL_UPDATE = "PartialUpdate"
+
+
 class AdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the rule is custom or default."""
 
@@ -77,7 +92,9 @@ class AdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
-class AdvertisedPublicPrefixPropertiesValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AdvertisedPublicPrefixPropertiesValidationState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Advertised Public Prefix State that denotes if the prefix is validated or not."""
 
     NOT_CONFIGURED = "NotConfigured"
@@ -92,7 +109,9 @@ class AdvertisedPublicPrefixPropertiesValidationState(str, Enum, metaclass=CaseI
     SIGNATURE_VERIFICATION_FAILED = "SignatureVerificationFailed"
 
 
-class ApplicationGatewayBackendHealthServerHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayBackendHealthServerHealth(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Health of backend server."""
 
     UNKNOWN = "Unknown"
@@ -102,14 +121,18 @@ class ApplicationGatewayBackendHealthServerHealth(str, Enum, metaclass=CaseInsen
     DRAINING = "Draining"
 
 
-class ApplicationGatewayClientAuthVerificationModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayClientAuthVerificationModes(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Verify client Authentication mode."""
 
     STRICT = "Strict"
     PASSTHROUGH = "Passthrough"
 
 
-class ApplicationGatewayClientRevocationOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayClientRevocationOptions(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Verify client certificate revocation status."""
 
     NONE = "None"
@@ -144,7 +167,9 @@ class ApplicationGatewayFirewallMode(str, Enum, metaclass=CaseInsensitiveEnumMet
     PREVENTION = "Prevention"
 
 
-class ApplicationGatewayFirewallRateLimitDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayFirewallRateLimitDuration(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Duration over which Rate Limit policy will be applied. Applies only when ruleType is
     RateLimitRule.
     """
@@ -153,7 +178,9 @@ class ApplicationGatewayFirewallRateLimitDuration(str, Enum, metaclass=CaseInsen
     FIVE_MINS = "FiveMins"
 
 
-class ApplicationGatewayFirewallUserSessionVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayFirewallUserSessionVariable(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """User Session clause variable."""
 
     CLIENT_ADDR = "ClientAddr"
@@ -163,7 +190,9 @@ class ApplicationGatewayFirewallUserSessionVariable(str, Enum, metaclass=CaseIns
     GEO_LOCATION_XFF_HEADER = "GeoLocationXFFHeader"
 
 
-class ApplicationGatewayLoadDistributionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayLoadDistributionAlgorithm(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Load Distribution Algorithm enums."""
 
     ROUND_ROBIN = "RoundRobin"
@@ -317,7 +346,9 @@ class ApplicationGatewayTierTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAF_V2 = "WAF_v2"
 
 
-class ApplicationGatewayUnAuthorizedRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayUnAuthorizedRequestAction(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Unauthorized request action."""
 
     DENY = "Deny"
@@ -334,7 +365,9 @@ class ApplicationGatewayWafRuleActionTypes(str, Enum, metaclass=CaseInsensitiveE
     LOG = "Log"
 
 
-class ApplicationGatewayWafRuleSensitivityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ApplicationGatewayWafRuleSensitivityTypes(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The string representation of the web application firewall rule sensitivity."""
 
     LOW = "Low"
@@ -589,7 +622,9 @@ class ConnectionMonitorSourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta
     INACTIVE = "Inactive"
 
 
-class ConnectionMonitorTestConfigurationProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ConnectionMonitorTestConfigurationProtocol(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The protocol to use in test evaluation."""
 
     TCP = "Tcp"
@@ -819,7 +854,9 @@ class ExceptionEntryValueMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumM
     IP_MATCH = "IPMatch"
 
 
-class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ExpressRouteCircuitPeeringAdvertisedPublicPrefixState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The advertised public prefix state of the Peering resource."""
 
     NOT_CONFIGURED = "NotConfigured"
@@ -968,7 +1005,9 @@ class FailoverTestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "All"
 
 
-class FirewallPolicyFilterRuleCollectionActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FirewallPolicyFilterRuleCollectionActionType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The action type of a rule."""
 
     ALLOW = "Allow"
@@ -1011,12 +1050,23 @@ class FirewallPolicyIDPSSignatureSeverity(int, Enum, metaclass=CaseInsensitiveEn
     THREE = 3
 
 
-class FirewallPolicyIntrusionDetectionProfileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible Intrusion Detection profile values."""
+class FirewallPolicyIntrusionDetectionProfileType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Specifies the Intrusion Detection signature profile to apply.
 
-    BASIC = "Basic"
-    STANDARD = "Standard"
-    ADVANCED = "Advanced"
+    Values:
+
+
+    * Off: IDPS profiles disabled; uses the same signature set that existed before profiles.
+    * Emerging: Signatures of the newest, most recent threats.
+    * Core: Complete, modern, standard set of signatures.
+    * Extended: Core signatures plus older legacy signatures for maximum coverage.
+    """
+
+    OFF = "Off"
+    EMERGING = "Emerging"
+    CORE = "Core"
     EXTENDED = "Extended"
 
 
@@ -1029,7 +1079,9 @@ class FirewallPolicyIntrusionDetectionProtocol(str, Enum, metaclass=CaseInsensit
     ANY = "ANY"
 
 
-class FirewallPolicyIntrusionDetectionStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FirewallPolicyIntrusionDetectionStateType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Possible state values."""
 
     OFF = "Off"
@@ -1037,13 +1089,17 @@ class FirewallPolicyIntrusionDetectionStateType(str, Enum, metaclass=CaseInsensi
     DENY = "Deny"
 
 
-class FirewallPolicyNatRuleCollectionActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FirewallPolicyNatRuleCollectionActionType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The action type of a rule."""
 
     DNAT = "DNAT"
 
 
-class FirewallPolicyRuleApplicationProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class FirewallPolicyRuleApplicationProtocolType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The application protocol type of a Rule."""
 
     HTTP = "Http"
@@ -1550,7 +1606,9 @@ class OwaspCrsExclusionEntryMatchVariable(str, Enum, metaclass=CaseInsensitiveEn
     REQUEST_ARG_VALUES = "RequestArgValues"
 
 
-class OwaspCrsExclusionEntrySelectorMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OwaspCrsExclusionEntrySelectorMatchOperator(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """When matchVariable is a collection, operate on the selector to specify which elements in the
     collection this exclusion applies to.
     """
@@ -1722,7 +1780,9 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
 
 
-class PublicIpAddressDnsSettingsDomainNameLabelScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PublicIpAddressDnsSettingsDomainNameLabelScope(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The domain name label scope. If a domain name label and a domain name label scope are
     specified, an A DNS record is created for the public IP in the Microsoft Azure DNS system with
     a hashed value includes in FQDN.
@@ -1995,6 +2055,18 @@ class SensitivityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HIGH = "High"
 
 
+class ServiceGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of a service gateway SKU."""
+
+    STANDARD = "Standard"
+
+
+class ServiceGatewaySkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tier of a service gateway SKU."""
+
+    REGIONAL = "Regional"
+
+
 class ServiceProviderProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The ServiceProviderProvisioningState state of the resource."""
 
@@ -2002,6 +2074,27 @@ class ServiceProviderProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     PROVISIONING = "Provisioning"
     PROVISIONED = "Provisioned"
     DEPROVISIONING = "Deprovisioning"
+
+
+class ServiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of the service."""
+
+    INBOUND = "Inbound"
+    OUTBOUND = "Outbound"
+    INBOUND_OUTBOUND = "InboundOutbound"
+
+
+class ServiceUpdateAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of update operation to perform on services within the service gateway.
+
+
+    * FullUpdate: Replaces all existing services with the new list provided in the request. Any
+    previously defined services not included will be removed.
+    * PartialUpdate: Updates only the specified services.
+    """
+
+    FULL_UPDATE = "FullUpdate"
+    PARTIAL_UPDATE = "PartialUpdate"
 
 
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2057,6 +2150,20 @@ class TunnelConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTING = "Connecting"
     CONNECTED = "Connected"
     NOT_CONNECTED = "NotConnected"
+
+
+class UpdateAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of update operation to perform on address locations within the service
+    gateway.
+
+
+    * FullUpdate: Replaces all existing address location data with the new list provided in the
+    request. Any previously defined locations not included will be removed.
+    * PartialUpdate: Updates only the specified address locations.
+    """
+
+    FULL_UPDATE = "FullUpdate"
+    PARTIAL_UPDATE = "PartialUpdate"
 
 
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2236,7 +2343,9 @@ class VirtualNetworkPeeringState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISCONNECTED = "Disconnected"
 
 
-class VirtualNetworkPrivateEndpointNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class VirtualNetworkPrivateEndpointNetworkPolicies(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Enable or Disable apply network policies on private end point in the subnet."""
 
     ENABLED = "Enabled"
@@ -2245,7 +2354,9 @@ class VirtualNetworkPrivateEndpointNetworkPolicies(str, Enum, metaclass=CaseInse
     ROUTE_TABLE_ENABLED = "RouteTableEnabled"
 
 
-class VirtualNetworkPrivateLinkServiceNetworkPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class VirtualNetworkPrivateLinkServiceNetworkPolicies(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Enable or Disable apply network policies on private link service in the subnet."""
 
     ENABLED = "Enabled"
@@ -2352,6 +2463,7 @@ class WebApplicationFirewallAction(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     BLOCK = "Block"
     LOG = "Log"
     JS_CHALLENGE = "JSChallenge"
+    CAPTCHA = "CAPTCHA"
 
 
 class WebApplicationFirewallEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2398,7 +2510,9 @@ class WebApplicationFirewallOperator(str, Enum, metaclass=CaseInsensitiveEnumMet
     ANY = "Any"
 
 
-class WebApplicationFirewallPolicyResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class WebApplicationFirewallPolicyResourceState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Resource status of the policy."""
 
     CREATING = "Creating"

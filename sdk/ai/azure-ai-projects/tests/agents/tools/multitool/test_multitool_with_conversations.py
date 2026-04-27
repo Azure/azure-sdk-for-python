@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
 """
 Test agents using multiple tools within conversations.
 
@@ -12,6 +11,7 @@ within the context of conversations, testing conversation state management with 
 
 import json
 from io import BytesIO
+from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
@@ -19,14 +19,13 @@ from azure.ai.projects.models import (
     FileSearchTool,
     PromptAgentDefinition,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestMultiToolWithConversations(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_file_search_and_function_with_conversation(self, **kwargs):
+    def test_file_search_and_function_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test using multiple tools (FileSearch + Function) within one conversation.
 
@@ -37,7 +36,7 @@ class TestMultiToolWithConversations(TestBase):
         - Verifying conversation state preserves all tool interactions
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -100,7 +99,7 @@ Total Revenue: $144,000
         response_1 = openai_client.responses.create(
             input="What was the total revenue in Q1 2024?",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response 1: {response_1.output_text[:150]}...")
@@ -111,7 +110,7 @@ Total Revenue: $144,000
         response_2 = openai_client.responses.create(
             input="Which product had the highest sales?",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response 2: {response_2.output_text[:150]}...")
@@ -122,7 +121,7 @@ Total Revenue: $144,000
         response_3 = openai_client.responses.create(
             input="Save a summary report of these Q1 results",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Handle function call
@@ -145,7 +144,7 @@ Total Revenue: $144,000
         response_3 = openai_client.responses.create(
             input=input_list,
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response 3: {response_3.output_text[:150]}...")
 

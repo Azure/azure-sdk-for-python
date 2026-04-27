@@ -9,8 +9,8 @@ import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 
 
 class TestAgentMCP(TestBase):
@@ -48,7 +48,7 @@ class TestAgentMCP(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -87,7 +87,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input="Please summarize the Azure REST API specifications Readme",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -125,7 +125,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")
@@ -179,7 +179,7 @@ class TestAgentMCP(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -230,7 +230,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input="What is my username in Github profile?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -268,7 +268,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 import tempfile
+import time
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
@@ -729,6 +730,27 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_upload_data_with_none_max_concurrency(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        # Create a directory to put the file under
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        data = self.get_random_bytes(100)
+        # max_concurrency=None should not raise TypeError
+        await file_client.upload_data(data, overwrite=True, max_concurrency=None)
+
+        downloaded_data = await (await file_client.download_file()).readall()
+        assert data == downloaded_data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_read_file(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -743,6 +765,24 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # download the data and make sure it is the same as uploaded data
         downloaded_data = await (await file_client.download_file()).readall()
+        assert data == downloaded_data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_read_file_with_none_max_concurrency(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+        data = self.get_random_bytes(1024)
+
+        # upload data to file
+        await file_client.append_data(data, 0, len(data))
+        await file_client.flush_data(len(data))
+
+        # max_concurrency=None should not raise TypeError
+        downloaded_data = await (await file_client.download_file(max_concurrency=None)).readall()
         assert data == downloaded_data
 
     @pytest.mark.live_test_only
@@ -1739,6 +1779,59 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         )
         props = identity_file.get_file_properties(raw_request_hook=callback)
         assert props is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_data_lake_tags(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+        await self._create_directory_and_return_client(directory_name)
+        file_name = self._get_file_reference()
+        file_client = self.dsc.get_file_client(self.file_system_name, directory_name + '/' + file_name)
+        first_resp = await file_client.create_file()
+
+        early = (await file_client.get_file_properties()).last_modified
+        first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
+
+        if self.is_live:
+            time.sleep(10)
+
+        with pytest.raises(ResourceModifiedError):
+            await file_client.set_tags(first_tags, if_modified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await file_client.get_tags(if_modified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await file_client.set_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+
+        await file_client.set_tags(first_tags, if_unmodified_since=early)
+        tags = await file_client.get_tags(if_unmodified_since=early)
+        assert tags == first_tags
+
+        await file_client.set_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+        tags = await file_client.get_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+        assert tags == second_tags
+
+        data = b"abc123"
+        await file_client.upload_data(data, length=len(data), overwrite=True)
+
+        with pytest.raises(ResourceModifiedError):
+            await file_client.set_tags(first_tags, if_unmodified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await file_client.get_tags(if_unmodified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await file_client.set_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+
+        await file_client.set_tags(first_tags, if_modified_since=early)
+        tags = await file_client.get_tags(if_modified_since=early)
+        assert tags == first_tags
+
+        await file_client.set_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+        tags = await file_client.get_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+        assert tags == second_tags
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

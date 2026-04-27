@@ -80,6 +80,7 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperationsAsync(AzureMg
                         "enableNodePublicIP": bool,
                         "enableNodePublicIPv6": bool,
                         "enableOverProvisioning": bool,
+                        "enableResilientEphemeralOsDisk": bool,
                         "ephemeralPorts": {"endPort": 0, "startPort": 0},
                         "evictionPolicy": "str",
                         "frontendConfigurations": [
@@ -320,60 +321,5 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperationsAsync(AzureMg
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_node_types_begin_start_fault_simulation(self, resource_group):
-        response = await (
-            await self.client.node_types.begin_start_fault_simulation(
-                resource_group_name=resource_group.name,
-                cluster_name="str",
-                node_type_name="str",
-                parameters={"parameters": "fault_simulation_content"},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_node_types_begin_stop_fault_simulation(self, resource_group):
-        response = await (
-            await self.client.node_types.begin_stop_fault_simulation(
-                resource_group_name=resource_group.name,
-                cluster_name="str",
-                node_type_name="str",
-                parameters={"simulationId": "str"},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_node_types_get_fault_simulation(self, resource_group):
-        response = await self.client.node_types.get_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            node_type_name="str",
-            parameters={"simulationId": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_node_types_list_fault_simulation(self, resource_group):
-        response = self.client.node_types.list_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            node_type_name="str",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

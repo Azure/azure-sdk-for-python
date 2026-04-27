@@ -16,8 +16,8 @@ import json
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
 
 
 class TestAgentFileSearchAndFunction(TestBase):
@@ -30,7 +30,7 @@ class TestAgentFileSearchAndFunction(TestBase):
         Test data analysis workflow: upload data, search, save results.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -106,7 +106,7 @@ Overall Total Revenue: $129,000
 
         response = openai_client.responses.create(
             input="Analyze the sales data and calculate the total revenue for each product. Then save the results.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Initial response completed (id: {response.id})")
@@ -143,7 +143,7 @@ Overall Total Revenue: $129,000
             response = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Final response: {response.output_text[:200]}...")
 
@@ -161,7 +161,7 @@ Overall Total Revenue: $129,000
         Test how agent handles empty vector store (no files uploaded).
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -209,7 +209,7 @@ Overall Total Revenue: $129,000
 
         response = openai_client.responses.create(
             input="Find and analyze the quarterly sales report.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         response_text = response.output_text
@@ -240,7 +240,7 @@ Overall Total Revenue: $129,000
         2. Function Tool: Agent saves the code review findings
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -307,7 +307,7 @@ print(f"Sum: {result}")
 
         response = openai_client.responses.create(
             input="Find the Python code file, explain what the calculate_sum function does, and save your code review findings.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Verify function call is made (both tools should be used)
@@ -346,7 +346,7 @@ print(f"Sum: {result}")
         response = openai_client.responses.create(
             input=input_list,
             previous_response_id=response.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         response_text = response.output_text
         print(f"Final response: {response_text[:200] if response_text else '(confirmation)'}...")
@@ -360,7 +360,7 @@ print(f"Sum: {result}")
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_multi_turn_search_and_save_workflow(self, **kwargs):
+    def test_multi_turn_search_and_save_workflow(self, **kwargs):  # pylint: disable=too-many-statements,too-many-locals
         """
         Test multi-turn workflow: search documents, ask follow-ups, save findings.
 
@@ -370,7 +370,7 @@ print(f"Sum: {result}")
         - Context retention across searches and function calls
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -453,7 +453,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         print("\n--- Turn 1: Initial search query ---")
         response_1 = openai_client.responses.create(
             input="What does the research say about machine learning in healthcare?",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         response_1_text = response_1.output_text
@@ -465,7 +465,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         response_2 = openai_client.responses.create(
             input="What specific applications are mentioned?",
             previous_response_id=response_1.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         response_2_text = response_2.output_text
@@ -478,7 +478,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         response_3 = openai_client.responses.create(
             input="Please save that finding about ML accuracy.",
             previous_response_id=response_2.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Handle function call
@@ -509,7 +509,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         response_3 = openai_client.responses.create(
             input=input_list,
             previous_response_id=response_3.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response 3: {response_3.output_text[:150]}...")
 
@@ -518,7 +518,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         response_4 = openai_client.responses.create(
             input="Now tell me about AI ethics concerns mentioned in the research.",
             previous_response_id=response_3.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         response_4_text = response_4.output_text

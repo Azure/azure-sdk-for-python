@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -18,15 +17,15 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the Agent's AI model,
+    2) FOUNDRY_MODEL_NAME - The deployment name of the Agent's AI model,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
     3) MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model for memory,
        as found under the "Name" column in the "Models + endpoints" tab in your Microsoft Foundry project.
@@ -44,12 +43,11 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
     MemorySearchPreviewTool,
     PromptAgentDefinition,
-    MemoryStoreDefaultOptions,
 )
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -60,7 +58,7 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        project_client.memory_stores.delete(memory_store_name)
+        project_client.beta.memory_stores.delete(memory_store_name)
         print(f"Memory store `{memory_store_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -69,11 +67,8 @@ with (
     definition = MemoryStoreDefaultDefinition(
         chat_model=os.environ["MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"],
         embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
-        options=MemoryStoreDefaultOptions(
-            user_profile_enabled=True, chat_summary_enabled=True
-        ),  # Note: This line will not be needed once the service is fixed to use correct defaults
     )
-    memory_store = project_client.memory_stores.create(
+    memory_store = project_client.beta.memory_stores.create(
         name=memory_store_name,
         description="Example memory store for conversations",
         definition=definition,
@@ -97,7 +92,7 @@ with (
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that answers general questions",
             tools=[tool],
         ),
@@ -112,7 +107,7 @@ with (
     response = openai_client.responses.create(
         input="I prefer dark roast coffee",
         conversation=conversation.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -128,7 +123,7 @@ with (
     new_response = openai_client.responses.create(
         input="Please order my usual coffee",
         conversation=new_conversation.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {new_response.output_text}")
 
@@ -140,5 +135,5 @@ with (
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
 
-    project_client.memory_stores.delete(memory_store.name)
+    project_client.beta.memory_stores.delete(memory_store.name)
     print("Memory store deleted")

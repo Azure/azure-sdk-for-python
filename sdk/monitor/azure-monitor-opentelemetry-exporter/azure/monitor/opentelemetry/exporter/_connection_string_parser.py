@@ -50,6 +50,9 @@ class ConnectionStringParser:
         env_cs = self._parse_connection_string(os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
         env_ikey = os.getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
 
+        if not self._connection_string:
+            self._connection_string = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+
         # The priority of which value takes on the instrumentation key is:
         # 1. Key from explicitly passed in connection string
         # 2. Key from explicitly passed in instrumentation key

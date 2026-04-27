@@ -3,7 +3,10 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml import load_environment
-from azure.ai.ml._restclient.v2022_05_01.models import EnvironmentVersionData, EnvironmentVersionDetails
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    EnvironmentVersion as EnvironmentVersionData,
+    EnvironmentVersionProperties as EnvironmentVersionDetails,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.operations import EnvironmentOperations
 

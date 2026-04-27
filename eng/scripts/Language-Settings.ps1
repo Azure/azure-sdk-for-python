@@ -162,11 +162,12 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   $allPkgPropLines = $null
   try
   {
-    $pathToBuild = (Join-Path $RepoRoot "eng" "tools" "azure-sdk-tools[build]")
+    $pathToBuild = (Join-Path $RepoRoot "eng" "tools" "azure-sdk-tools")
     # Use ‘uv pip install’ if uv is on PATH, otherwise fall back to python -m pip
     if (Get-Command uv -ErrorAction SilentlyContinue) {
       Write-Host "Using uv pip install"
-      $null = uv pip install "$pathToBuild"
+      $installerOutput = uv pip install "$pathToBuild"
+      Write-Host $installerOutput
       $freezeOutput = uv pip freeze
       Write-Host "Pip freeze output: $freezeOutput"
     } else {
@@ -219,28 +220,56 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
 }
 
 # Returns the pypi publish status of a package id and version.
+# Uses pip download against the configured package index (PIP_INDEX_URL) rather than
+# calling pypi.org directly, so this works in network-isolated (CFS) environments.
+# The Azure Artifacts feed has upstream to PyPI, so packages on PyPI are still found.
 function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
 {
+  $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) "pkg-verify-$([System.Guid]::NewGuid())"
+  New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
+
   try
   {
-    $existingVersion = (Invoke-RestMethod -MaximumRetryCount 3 -RetryIntervalSec 10 -Method "Get" -uri "https://pypi.org/pypi/$pkgId/$pkgVersion/json").info.version
-    # if existingVersion exists, then it's already been published
-    return $True
-  }
-  catch
-  {
-    $statusCode = $_.Exception.Response.StatusCode.value__
-    $statusDescription = $_.Exception.Response.StatusDescription
+    Write-Host "Checking whether $pkgId==$pkgVersion is already published (using pip download)"
 
-    # if this is 404ing, then this pkg has never been published before
-    if ($statusCode -eq 404)
+    $pipArgs = @("download", "--no-deps", "--no-cache-dir", "--dest", $tmpDir, "$pkgId==$pkgVersion")
+
+    if ($env:PIP_INDEX_URL) {
+      Write-Host "Using index from PIP_INDEX_URL"
+    }
+    else {
+      Write-Host "PIP_INDEX_URL is not set; pip will fall back to public PyPI."
+    }
+
+    $pipOutput = pip $pipArgs 2>&1
+    $pipExitCode = $LASTEXITCODE
+    # Reset $LASTEXITCODE so a non-zero pip exit code doesn't leak out and cause
+    # the PowerShell ADO task to report failure after the script finishes.
+    $global:LASTEXITCODE = 0
+
+    if ($pipExitCode -eq 0)
     {
+      Write-Host "Package $pkgId==$pkgVersion was found on the package index."
+      return $True
+    }
+
+    $outputStr = $pipOutput -join "`n"
+
+    # pip reports "No matching distribution found" when the version doesn't exist.
+    if ($outputStr -match "No matching distribution found" -or $outputStr -match "Could not find a version that satisfies")
+    {
+      Write-Host "Package $pkgId==$pkgVersion was not found on the package index (not yet published)."
       return $False
     }
-    Write-Host "PyPI Invocation failed:"
-    Write-Host "StatusCode:" $statusCode
-    Write-Host "StatusDescription:" $statusDescription
+
+    # Any other failure is unexpected — fail hard to avoid accidentally re-publishing.
+    Write-Host "Package version check failed unexpectedly:"
+    Write-Host $outputStr
     exit(1)
+  }
+  finally
+  {
+    Remove-Item $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
   }
 }
 
@@ -420,9 +449,9 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
     $ReleaseDate = Get-Date -Format "yyyy-MM-dd"
   }
   if (Get-Command uv -ErrorAction SilentlyContinue) {
-    uv pip install "$RepoRoot/eng/tools/azure-sdk-tools[build]"
+    uv pip install "$RepoRoot/eng/tools/azure-sdk-tools"
   } else {
-    python -m pip install "$RepoRoot/eng/tools/azure-sdk-tools[build]" -q -I
+    python -m pip install "$RepoRoot/eng/tools/azure-sdk-tools" -q -I
   }
   sdk_set_version --package-name $PackageName --new-version $Version `
   --service $ServiceDirectory --release-date $ReleaseDate --replace-latest-entry-title $ReplaceLatestEntryTitle
@@ -507,8 +536,7 @@ function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
       Write-Host "Generating project under directory 'sdk/$directory'" -ForegroundColor Yellow
       Write-Host "======================================================================`n"
 
-      $toxConfigPath = Resolve-Path "$RepoRoot/eng/tox/tox.ini"
-      Invoke-LoggedCommand "tox run -e generate -c `"$toxConfigPath`" --root ."
+      Invoke-LoggedCommand "azpysdk generate --isolate ."
     }
     catch {
       Write-Host "##[error]Error generating project under directory $directory"

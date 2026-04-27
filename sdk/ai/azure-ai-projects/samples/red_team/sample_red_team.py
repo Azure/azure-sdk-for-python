@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,16 +13,17 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. Your model deployment name.
+    2) FOUNDRY_MODEL_NAME - Required. Your model deployment name.
     3) MODEL_ENDPOINT - Required. The Azure AI Model endpoint, as found in the overview page of your
        Microsoft Foundry project. Example: https://<account_name>.services.ai.azure.com
     4) MODEL_API_KEY - Required. The API key for your Azure AI Model.
 """
+
 import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
@@ -38,11 +38,11 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ[
-    "AZURE_AI_PROJECT_ENDPOINT"
+    "FOUNDRY_PROJECT_ENDPOINT"
 ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
 model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample : https://<account_name>.services.ai.azure.com
 model_api_key = os.environ["MODEL_API_KEY"]
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]  # Sample : gpt-4o-mini
 
 with (
     DefaultAzureCredential() as credential,
@@ -64,7 +64,7 @@ with (
     )
 
     # Create and run the Red Team scan
-    red_team_response = project_client.red_teams.create(
+    red_team_response = project_client.beta.red_teams.create(
         red_team=red_team,
         headers={
             "model-endpoint": model_endpoint,
@@ -75,10 +75,10 @@ with (
 
     print("Getting Red Team scan details")
     # Use the name returned by the create operation for the get call
-    get_red_team_response = project_client.red_teams.get(name=red_team_response.name)
+    get_red_team_response = project_client.beta.red_teams.get(name=red_team_response.name)
     print(f"Red Team scan status: {get_red_team_response.status}")
 
     print("Listing all Red Team scans")
-    for scan in project_client.red_teams.list():
+    for scan in project_client.beta.red_teams.list():
         print(f"Found scan: {scan.name}, Status: {scan.status}")
         # [END red_team_sample]

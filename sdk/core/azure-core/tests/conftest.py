@@ -28,8 +28,8 @@ import pytest
 import signal
 import os
 import subprocess
-import random
 import platform
+import sys
 import urllib
 from typing import Generator
 
@@ -44,7 +44,7 @@ from tracing_common import FakeSpan
 
 
 def is_port_available(port_num):
-    req = urllib.request.Request("http://localhost:{}/health".format(port_num))
+    req = urllib.request.Request("http://127.0.0.1:{}/health".format(port_num))
     try:
         return urllib.request.urlopen(req).code != 200
     except Exception as e:
@@ -52,12 +52,12 @@ def is_port_available(port_num):
 
 
 def get_port():
-    count = 3
-    for _ in range(count):
-        port_num = random.randrange(3000, 5000)
-        if is_port_available(port_num):
-            return port_num
-    raise TypeError("Tried {} times, can't find an open port".format(count))
+    """Ask the OS for a free ephemeral port to avoid collisions in parallel CI."""
+    import socket
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return s.getsockname()[1]
 
 
 @pytest.fixture
@@ -74,18 +74,20 @@ def start_testserver():
         # to set these additional env vars for pypy
         os.environ["LC_ALL"] = "C.UTF-8"
         os.environ["LANG"] = "C.UTF-8"
-    cmd = "flask run -p {}".format(port)
+    cmd = f"{sys.executable} -m flask run -p {port}"
     if os.name == "nt":  # On windows, subprocess creation works without being in the shell
         child_process = subprocess.Popen(cmd, env=dict(os.environ))
     else:
         # On linux, have to set shell=True
         child_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid, env=dict(os.environ))
-    count = 5
-    for _ in range(count):
+    # Wait up to ~20s with backoff for Flask to start serving
+    for delay in [0.5, 1, 1, 2, 2, 2, 4, 4, 4]:
+        if child_process.poll() is not None:
+            raise ValueError("Flask process exited with code {}".format(child_process.returncode))
         if not is_port_available(port):
             return child_process
-        time.sleep(1)
-    raise ValueError(f"Didn't start!")
+        time.sleep(delay)
+    raise ValueError("Didn't start!")
 
 
 def terminate_testserver(process):

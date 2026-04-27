@@ -12,6 +12,8 @@ from opentelemetry.semconv.metrics.http_metrics import (
 from azure.core import CaseInsensitiveEnumMeta
 
 
+_EXPORTER_DOMAIN_SCHEMA_VERSION = 2
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
@@ -352,5 +354,16 @@ _DEFAULT_LOG_MESSAGE = "n/a"
 
 # Resource attribute applicationId
 _APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
+
+# Gen AI attributes whose value should be exempt from truncation
+_GEN_AI_ATTRIBUTES = (
+    "gen_ai.input.messages",
+    "gen_ai.output.messages",
+    "gen_ai.system_instructions",
+    "gen_ai.tool.definitions",
+    "gen_ai.tool.call.arguments",
+    "gen_ai.tool.call.result",
+    "gen_ai.evaluation.explanation",
+)
 
 # cSpell:disable

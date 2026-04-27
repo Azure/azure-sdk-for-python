@@ -12,6 +12,8 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 
 
 # TODO: Emitter did not produce the output class OpenAI.ConversationResource. Validating service response as Dict for now.
+
+
 class TestConversationCrud(TestBase):
 
     # To run only this test:
@@ -85,7 +87,7 @@ class TestConversationCrud(TestBase):
             metadata = {"key1": "value1", "key2": "value2"}
             conversation = client.conversations.update(conversation_id=conversation1.id, metadata=metadata)
             TestBase._validate_conversation(conversation, expected_id=conversation1.id, expected_metadata=metadata)
-            print(f"Conversation updated")
+            print("Conversation updated")
 
             conversation = client.conversations.retrieve(conversation_id=conversation1.id)
             TestBase._validate_conversation(conversation)

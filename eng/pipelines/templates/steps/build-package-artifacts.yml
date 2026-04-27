@@ -38,6 +38,13 @@ steps:
     inputs:
       versionSpec: $(PythonVersion)
 
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
+
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
@@ -47,11 +54,6 @@ steps:
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
 
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
@@ -117,7 +119,7 @@ steps:
 
   - pwsh: |
       which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
     displayName: 'Generate Packages'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     timeoutInMinutes: 80

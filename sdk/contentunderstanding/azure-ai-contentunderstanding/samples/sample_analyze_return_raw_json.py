@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
+# mypy: disable-error-code="attr-defined"
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,7 +15,7 @@ DESCRIPTION:
     the service.
 
     The Content Understanding SDK provides a convenient object model approach (shown in
-    sample_analyze_binary.py) that returns AnalyzeResult objects with deeper navigation
+    sample_analyze_binary.py) that returns AnalysisResult objects with deeper navigation
     through the object model. However, sometimes you may need access to the raw JSON
     response for:
 

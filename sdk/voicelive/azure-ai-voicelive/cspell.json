@@ -1,0 +1,25 @@
+{
+  "ignoreWords": [
+    "viseme",
+    "VISEME",
+    "ulaw",
+    "ULAW",
+    "logprobs",
+    "pyaudio",
+    "PyAudio",
+    "libasound",
+    "webrtc",
+    "WEBRTC",
+    "xhigh",
+    "XHIGH",
+    "genai",
+    "GENAI"
+  ],
+    "ignorePaths": [
+        "*.csv",
+        "*.json",
+        "*.ulaw"
+    ],
+    "words": [
+    ]
+}

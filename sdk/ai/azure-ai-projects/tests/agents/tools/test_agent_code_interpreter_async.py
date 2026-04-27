@@ -11,7 +11,7 @@ from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
 )
 
 
@@ -27,7 +27,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
         without any file uploads or downloads - just pure code execution.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         agent_name = "code-interpreter-simple-agent-async"
 
         async with (
@@ -40,7 +40,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can execute Python code.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Simple code interpreter agent for basic Python execution.",
             )
@@ -53,7 +53,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
 
             response = await openai_client.responses.create(
                 input="Calculate this using Python: First, find the sum of cubes from 1 to 50 (1³ + 2³ + ... + 50³). Then add 12 factorial divided by 8 factorial (12!/8!). What is the final result?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 

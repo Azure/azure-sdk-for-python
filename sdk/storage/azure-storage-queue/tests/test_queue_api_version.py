@@ -5,10 +5,11 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from azure.storage.queue import QueueClient, QueueServiceClient
-from azure.storage.queue._shared.constants import X_MS_VERSION
 
 from devtools_testutils.storage import StorageRecordedTestCase
+
+from azure.storage.queue import QueueClient, QueueServiceClient
+from azure.storage.queue._shared.constants import X_MS_VERSION
 
 
 # ------------------------------------------------------------------------------
@@ -31,7 +32,9 @@ class TestStorageClient(StorageRecordedTestCase):
             service_client.api_version = "foo"
 
         service_client = QueueServiceClient(
-            "https://foo.queue.core.windows.net/account", credential="fake_key", api_version=self.api_version_1
+            "https://foo.queue.core.windows.net/account",
+            credential="fake_key",
+            api_version=self.api_version_1,
         )
         assert service_client.api_version == self.api_version_1
         assert service_client._client._config.version == self.api_version_1
@@ -51,7 +54,11 @@ class TestStorageClient(StorageRecordedTestCase):
         assert queue_client.api_version == self.api_version_1
         assert queue_client._client._config.version == self.api_version_1
 
-        queue_client = QueueClient("https://foo.queue.core.windows.net/account", "queue_name", credential="fake_key")
+        queue_client = QueueClient(
+            "https://foo.queue.core.windows.net/account",
+            "queue_name",
+            credential="fake_key",
+        )
         assert queue_client.api_version == self.api_version_2
         assert queue_client._client._config.version == self.api_version_2
 

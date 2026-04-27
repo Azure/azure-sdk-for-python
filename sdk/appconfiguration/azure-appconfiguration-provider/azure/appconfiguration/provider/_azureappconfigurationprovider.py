@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import datetime
+import time
 import logging
 from typing import (
     Any,
@@ -11,7 +12,6 @@ from typing import (
     Dict,
     Mapping,
     Optional,
-    overload,
     List,
     Tuple,
 )
@@ -22,177 +22,20 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
 )
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import AzureError, HttpResponseError
-from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._key_vault._secret_provider import SecretProvider
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    DEFAULT_STARTUP_TIMEOUT,
+    SNAPSHOT_REF_CONTENT_TYPE,
 )
-from ._azureappconfigurationproviderbase import (
-    AzureAppConfigurationProviderBase,
-    delay_failure,
-    process_load_parameters,
-    sdk_allowed_kwargs,
-)
+from ._azureappconfigurationproviderbase import AzureAppConfigurationProviderBase
 from ._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper as ConfigurationClient
 from ._user_agent import USER_AGENT
+from ._utils import get_startup_backoff
 
 JSON = Mapping[str, Any]
 logger = logging.getLogger(__name__)
-
-
-@overload
-def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
-    endpoint: str,
-    credential: "TokenCredential",
-    *,
-    selects: Optional[List[SettingSelector]] = None,
-    trim_prefixes: Optional[List[str]] = None,
-    keyvault_credential: Optional["TokenCredential"] = None,
-    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
-    secret_resolver: Optional[Callable[[str], str]] = None,
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
-    refresh_on: Optional[List[Tuple[str, str]]] = None,
-    refresh_interval: int = 30,
-    on_refresh_success: Optional[Callable] = None,
-    on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    feature_flag_enabled: bool = False,
-    feature_flag_selectors: Optional[List[SettingSelector]] = None,
-    feature_flag_refresh_enabled: bool = False,
-    **kwargs,
-) -> "AzureAppConfigurationProvider":
-    """
-    Loads configuration settings from Azure App Configuration into a Python application.
-
-    :param str endpoint: Endpoint for App Configuration resource.
-    :param  ~azure.core.credentials.TokenCredential credential: Credential for App Configuration resource.
-    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
-    filter configuration settings
-    :keyword Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
-    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
-    vault. This is optional if keyvault_client_configs is provided.
-    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
-    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
-    isn't provided a credential will need to be in each set for each.
-    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
-    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
-    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
-    not supported).
-    :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
-     service call to update the settings. Default value is 30 seconds.
-    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
-    happened.
-    :paramtype on_refresh_success: Optional[Callable]
-    :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
-    specified, errors will be raised.
-    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
-    :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
-    :paramtype feature_flag_enabled: bool
-    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
-     feature flags without a label.
-    :paramtype feature_flag_selectors: List[SettingSelector]
-    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
-     False.
-    :paramtype feature_flag_refresh_enabled: bool
-    :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
-     is True.
-    :paramtype replica_discovery_enabled: bool
-    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
-     is False.
-    :paramtype load_balancing_enabled: bool
-    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
-    configurations before they are added to the provider.
-    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
-    """
-
-
-@overload
-def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
-    *,
-    connection_string: str,
-    selects: Optional[List[SettingSelector]] = None,
-    trim_prefixes: Optional[List[str]] = None,
-    keyvault_credential: Optional["TokenCredential"] = None,
-    keyvault_client_configs: Optional[Mapping[str, JSON]] = None,
-    secret_resolver: Optional[Callable[[str], str]] = None,
-    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
-    refresh_on: Optional[List[Tuple[str, str]]] = None,
-    refresh_interval: int = 30,
-    on_refresh_success: Optional[Callable] = None,
-    on_refresh_error: Optional[Callable[[Exception], None]] = None,
-    feature_flag_enabled: bool = False,
-    feature_flag_selectors: Optional[List[SettingSelector]] = None,
-    feature_flag_refresh_enabled: bool = False,
-    **kwargs,
-) -> "AzureAppConfigurationProvider":
-    """
-    Loads configuration settings from Azure App Configuration into a Python application.
-
-    :keyword str connection_string: Connection string for App Configuration resource.
-    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
-    filter configuration settings
-    :keyword trim_prefixes: Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
-    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
-    vault. This is optional if keyvault_client_configs is provided.
-    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
-    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
-    isn't provided a credential will need to be in each set for each.
-    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
-    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
-    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
-    not supported).
-    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_on: List[Tuple[str, str]]
-    :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
-     service call to update the settings. Default value is 30 seconds.
-    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
-     happened.
-    :paramtype on_refresh_success: Optional[Callable]
-    :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
-    specified, errors will be raised.
-    :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
-    :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
-    :paramtype feature_flag_enabled: bool
-    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
-     feature flags without a label.
-    :paramtype feature_flag_selectors: List[SettingSelector]
-    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
-     False.
-    :paramtype feature_flag_refresh_enabled: bool
-    :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
-     is True.
-    :paramtype replica_discovery_enabled: bool
-    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
-     is False.
-    :paramtype load_balancing_enabled: bool
-    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
-    configurations before they are added to the provider.
-    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
-    """
-
-
-def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
-    start_time = datetime.datetime.now()
-
-    # Process common load parameters using shared logic
-    params = process_load_parameters(*args, **kwargs)
-
-    provider = _buildprovider(
-        params["connection_string"],
-        params["endpoint"],
-        params["credential"],
-        uses_key_vault=params["uses_key_vault"],
-        **params["kwargs"],
-    )
-    kwargs = sdk_allowed_kwargs(params["kwargs"])
-
-    try:
-        provider._load_all(**kwargs)  # pylint:disable=protected-access
-    except Exception as e:
-        delay_failure(start_time)
-        raise e
-    return provider
 
 
 def _buildprovider(
@@ -233,6 +76,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
 
+        self._startup_timeout: int = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
+
         self._replica_client_manager = ConfigurationClientManager(
             connection_string=kwargs.pop("connection_string"),
             endpoint=kwargs.pop("endpoint"),
@@ -268,8 +113,18 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         feature_flag_refresh_attempted = False
         updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
+        page_etags: List[List[str]] = []
         try:
-            if self._watched_settings and self._refresh_timer.needs_refresh():
+            if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
+                configuration_refresh_attempted = True
+
+                if client.check_page_etags(self._selects, self._page_etags, headers=headers, **kwargs):
+                    configuration_settings, page_etags = client.load_configuration_settings(
+                        self._selects, headers=headers, **kwargs
+                    )
+                    settings_refreshed = True
+
+            elif self._refresh_enabled and self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
 
                 updated_watched_settings = client.get_updated_watched_settings(
@@ -277,7 +132,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
 
                 if len(updated_watched_settings) > 0:
-                    configuration_settings = client.load_configuration_settings(
+                    configuration_settings, _ = client.load_configuration_settings(
                         self._selects, headers=headers, **kwargs
                     )
                     settings_refreshed = True
@@ -299,11 +154,12 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             if settings_refreshed:
                 # Configuration Settings have been refreshed
-                processed_settings = self._process_configurations(configuration_settings)
+                processed_settings = self._process_configurations(configuration_settings, client)
 
             processed_settings = self._process_feature_flags(processed_settings, processed_feature_flags, feature_flags)
             self._dict = processed_settings
             if settings_refreshed:
+                self._page_etags = page_etags
                 # Update the watch keys that have changed
                 self._watched_settings.update(updated_watched_settings)
             # Reset timers at the same time as they should load from the same store.
@@ -321,8 +177,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             raise e
 
     def refresh(self, **kwargs) -> None:
-        if not self._watched_settings and not self._feature_flag_refresh_enabled:
-            logger.debug("Refresh called but no refresh enabled.")
+        if not self._refresh_enabled and not self._feature_flag_refresh_enabled:
+            logger.debug("Refresh called but refresh is not enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
@@ -362,15 +218,46 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             self._refresh_lock.release()
 
     def _load_all(self, **kwargs: Any) -> None:
+        startup_start_time = datetime.datetime.now()
+        exponential_backoff_attempts = 0
+        startup_exceptions: List[Exception] = []
+
+        while True:
+            # Try to initialize from all available clients
+            if self._try_initialize(startup_exceptions, **kwargs):
+                return  # Successfully loaded
+
+            # Calculate delay before next retry attempt
+            elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
+            delay, is_exponential_backoff = get_startup_backoff(elapsed_seconds, exponential_backoff_attempts)
+
+            if is_exponential_backoff:
+                exponential_backoff_attempts += 1
+
+            # Check if delay would exceed remaining timeout
+            remaining_timeout = self._startup_timeout - elapsed_seconds
+            if delay > remaining_timeout:
+                raise TimeoutError(
+                    "The provider timed out while attempting to load.",
+                    startup_exceptions,
+                )
+
+            if delay > 0:
+                time.sleep(delay)
+
+    def _try_initialize(self, startup_exceptions: List[Exception], **kwargs: Any) -> bool:
+        """
+        Try to initialize the provider from all available clients.
+
+        :param startup_exceptions: List to collect exceptions from failed attempts.
+        :type startup_exceptions: List[Exception]
+        :return: True if initialization succeeded, False otherwise.
+        :rtype: bool
+        """
         self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
         replica_count = self._replica_client_manager.get_client_count() - 1
-
-        error_message = """
-        Failed to load configuration settings. No Azure App Configuration stores successfully loaded from.
-        """
-        exception: Exception = RuntimeError(error_message)
 
         while client := self._replica_client_manager.get_next_active_client():
             headers = self._update_correlation_context_header(
@@ -381,9 +268,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request,
             )
             try:
-                configuration_settings = client.load_configuration_settings(self._selects, headers=headers, **kwargs)
+                configuration_settings, page_etags = client.load_configuration_settings(
+                    self._selects, headers=headers, **kwargs
+                )
                 watched_settings = self._update_watched_settings(configuration_settings)
-                processed_settings = self._process_configurations(configuration_settings)
+                processed_settings = self._process_configurations(configuration_settings, client)
 
                 if self._feature_flag_enabled:
                     feature_flags: List[FeatureFlagConfigurationSetting] = client.load_feature_flags(
@@ -414,35 +303,80 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 with self._update_lock:
                     self._watched_settings = watched_settings
                     self._dict = processed_settings
-                return
+                    self._page_etags = page_etags
+                return True
             except AzureError as e:
-                exception = e
                 logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)
                 self._replica_client_manager.backoff(client)
                 is_failover_request = True
-        raise exception
 
-    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+                startup_exceptions.append(e)
+
+        return False
+
+    def _expand_snapshot_references(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> List[ConfigurationSetting]:
+        """
+        Expands snapshot references in configuration settings to their actual settings.
+
+        :param configuration_settings: List of configuration settings that may contain snapshot references.
+        :type configuration_settings: List[~azure.appconfiguration.ConfigurationSetting]
+        :param client: The configuration client used to resolve snapshot references.
+        :type client: ~azure.appconfiguration.provider.ConfigurationClient
+        :return: List of configuration settings with snapshot references expanded.
+        :rtype: List[~azure.appconfiguration.ConfigurationSetting]
+        """
+        expanded_settings: List[ConfigurationSetting] = []
+
+        for setting in configuration_settings:
+            if SNAPSHOT_REF_CONTENT_TYPE == setting.content_type:
+                # Check if this is a snapshot reference
+
+                # Track snapshot reference usage for telemetry
+                self._tracing_context.uses_snapshot_reference = True
+                try:
+                    # Resolve the snapshot reference to actual settings
+                    expanded_settings.extend(client.resolve_snapshot_reference(setting))
+                except AzureError as e:
+                    logger.debug(
+                        "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
+                        setting.key,
+                        setting.label,
+                        str(e),
+                    )
+                    raise e
+            else:
+                expanded_settings.append(setting)
+
+        return expanded_settings
+
+    def _process_configurations(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> Dict[str, Any]:
+        # Snapshot references must be expanded in place to support override by key ordering.
+        expanded_settings = self._expand_snapshot_references(configuration_settings, client)
+
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
-        unique_settings = self._deduplicate_settings(configuration_settings)
+        unique_settings = self._deduplicate_settings(expanded_settings)
 
         configuration_settings_processed = {}
         feature_flags_processed = []
-        for settings in unique_settings.values():
+        for setting in unique_settings:
             if self._configuration_mapper:
                 # If a map function is provided, use it to process the configuration setting
-                self._configuration_mapper(settings)
-            if isinstance(settings, FeatureFlagConfigurationSetting):
+                self._configuration_mapper(setting)
+            if isinstance(setting, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
-                feature_flag_value = self._process_feature_flag(settings)
+                feature_flag_value = self._process_feature_flag(setting)
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
-                    self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
+                    self._watched_feature_flags[(setting.key, setting.label)] = setting.etag
             else:
-                key = self._process_key_name(settings)
-                value = self._process_key_value(settings)
+                key = self._process_key_name(setting)
+                value = self._process_key_value(setting)
                 configuration_settings_processed[key] = value
         return configuration_settings_processed
 

@@ -50,7 +50,11 @@ class TestNetAppManagementElasticAccountsOperationsAsync(AzureMgmtRecordedTestCa
                     "name": "str",
                     "properties": {
                         "encryption": {
-                            "identity": {"principalId": "str", "userAssignedIdentity": "str"},
+                            "identity": {
+                                "federatedClientId": "str",
+                                "principalId": "str",
+                                "userAssignedIdentity": "str",
+                            },
                             "keySource": "str",
                             "keyVaultProperties": {
                                 "keyName": "str",
@@ -94,7 +98,11 @@ class TestNetAppManagementElasticAccountsOperationsAsync(AzureMgmtRecordedTestCa
                     },
                     "properties": {
                         "encryption": {
-                            "identity": {"principalId": "str", "userAssignedIdentity": "str"},
+                            "identity": {
+                                "federatedClientId": "str",
+                                "principalId": "str",
+                                "userAssignedIdentity": "str",
+                            },
                             "keySource": "str",
                             "keyVaultProperties": {
                                 "keyName": "str",

@@ -21,7 +21,7 @@ import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
-from azure.ai.contentunderstanding.models import AnalyzeInput, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, DocumentContent
 
 
 class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
@@ -49,7 +49,7 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
             invoice_data = f.read()
 
         # Analyze the invoice
-        poller = await client.begin_analyze(analyzer_id="prebuilt-invoice", inputs=[AnalyzeInput(data=invoice_data)])
+        poller = await client.begin_analyze(analyzer_id="prebuilt-invoice", inputs=[AnalysisInput(data=invoice_data)])
 
         # Wait for analysis to complete
         result = await poller.result()
@@ -213,6 +213,28 @@ class TestSampleAnalyzeInvoiceAsync(ContentUnderstandingClientTestBaseAsync):
                 print("[INFO] LineItems format not as expected")
         else:
             print("[INFO] LineItems field not found in this document")
+
+        # Verify usage details (available after result() completes)
+        usage = poller.usage
+        assert usage is not None, "Usage details should be available after analysis"
+        print("[PASS] Usage details available")
+
+        # Verify at least one page metric is set
+        has_pages = (
+            (usage.document_pages_standard is not None and usage.document_pages_standard > 0)
+            or (usage.document_pages_basic is not None and usage.document_pages_basic > 0)
+            or (usage.document_pages_minimal is not None and usage.document_pages_minimal > 0)
+        )
+        assert has_pages, "Usage should report at least one document page metric"
+        print(f"[PASS] Usage reports document pages (standard={usage.document_pages_standard}, basic={usage.document_pages_basic}, minimal={usage.document_pages_minimal})")
+
+        # Verify token usage is reported
+        if usage.tokens:
+            assert len(usage.tokens) > 0, "Token usage should have at least one model entry"
+            for model, count in usage.tokens.items():
+                assert count > 0, f"Token count for {model} should be positive"
+                print(f"[INFO] Token usage: {model} = {count}")
+            print(f"[PASS] Token usage reported for {len(usage.tokens)} model(s)")
 
         await client.close()
         print("\n[SUCCESS] All test_sample_analyze_invoice_async assertions passed")

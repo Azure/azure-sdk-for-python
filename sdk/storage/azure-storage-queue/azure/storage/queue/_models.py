@@ -9,7 +9,10 @@ import sys
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
+from ._shared.response_handlers import (
+    process_storage_error,
+    return_context_and_deserialized,
+)
 from ._shared.models import DictMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -198,7 +201,9 @@ class CorsRule(GeneratedCorsRule):
         self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
-    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
+    def _to_generated(
+        rules: Optional[List["CorsRule"]],
+    ) -> Optional[List[GeneratedCorsRule]]:
         if rules is None:
             return rules
 
@@ -251,7 +256,13 @@ class QueueSasPermissions(object):
     process: bool = False
     """Get and delete messages from the queue."""
 
-    def __init__(self, read: bool = False, add: bool = False, update: bool = False, process: bool = False) -> None:
+    def __init__(
+        self,
+        read: bool = False,
+        add: bool = False,
+        update: bool = False,
+        process: bool = False,
+    ) -> None:
         self.read = read
         self.add = add
         self.update = update

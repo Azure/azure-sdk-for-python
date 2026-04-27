@@ -133,6 +133,94 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await self.created_db.delete_container(created_collection.id)
 
+    @pytest.mark.skip(reason="Emulator does not support query advisor yet")
+    async def test_populate_query_advice_async(self):
+        created_collection = await self.created_db.create_container(
+            "query_advice_test" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {
+            'pk': 'pk', 'id': doc_id, 'name': 'test document',
+            'tags': [{'name': 'python'}, {'name': 'cosmos'}],
+            'timestamp': '2099-01-01T00:00:00Z', 'ticks': 0, 'ts': 0
+        }
+        await created_collection.create_item(body=document_definition)
+        await asyncio.sleep(1)
+
+        QUERY_ADVICE_HEADER = http_constants.HttpHeaders.QueryAdvice
+
+        # QA1000 - PartialArrayContains: ARRAY_CONTAINS with partial match
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE ARRAY_CONTAINS(c.tags, {"name": "python"}, true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        [item async for item in query_iterable]
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        assert query_advice is not None
+        assert "QA1000" in query_advice
+
+        # QA1002 - Contains: CONTAINS usage
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE CONTAINS(c.name, "test")',
+            partition_key='pk', populate_query_advice=True
+        )
+        [item async for item in query_iterable]
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        assert query_advice is not None
+        assert "QA1002" in query_advice
+
+        # QA1003 - CaseInsensitiveStartsWithOrStringEquals: case-insensitive STARTSWITH
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE STARTSWITH(c.name, "test", true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        [item async for item in query_iterable]
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        assert query_advice is not None
+        assert "QA1003" in query_advice
+
+        # QA1004 - CaseInsensitiveEndsWith: case-insensitive ENDSWITH
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE ENDSWITH(c.name, "document", true)',
+            partition_key='pk', populate_query_advice=True
+        )
+        [item async for item in query_iterable]
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        assert query_advice is not None
+        assert "QA1004" in query_advice
+
+        # QA1007 - GetCurrentDateTime: usage of GetCurrentDateTime
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE c.timestamp < GetCurrentDateTime()',
+            partition_key='pk', populate_query_advice=True
+        )
+        [item async for item in query_iterable]
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        assert query_advice is not None
+        assert "QA1007" in query_advice
+
+        # QA1008 - GetCurrentTicks: usage of GetCurrentTicks
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE c.ticks < GetCurrentTicks()',
+            partition_key='pk', populate_query_advice=True
+        )
+        [item async for item in query_iterable]
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        assert query_advice is not None
+        assert "QA1008" in query_advice
+
+        # QA1009 - GetCurrentTimestamp: usage of GetCurrentTimestamp
+        query_iterable = created_collection.query_items(
+            query='SELECT * FROM c WHERE c.ts < GetCurrentTimestamp()',
+            partition_key='pk', populate_query_advice=True
+        )
+        [item async for item in query_iterable]
+        query_advice = created_collection.client_connection.last_response_headers.get(QUERY_ADVICE_HEADER)
+        assert query_advice is not None
+        assert "QA1009" in query_advice
+
+        await self.created_db.delete_container(created_collection.id)
+
     # TODO: Need to validate the query request count logic
     @pytest.mark.skip
     async def test_max_item_count_honored_in_order_by_query_async(self):

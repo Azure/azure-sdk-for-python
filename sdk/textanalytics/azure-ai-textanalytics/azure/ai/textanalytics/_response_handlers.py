@@ -553,9 +553,14 @@ def _get_result_from_continuation_token(
     client, continuation_token, poller_type, polling_method, callback, bespoke=False
 ):
     def result_callback(initial_response, pipeline_response):
-        doc_id_order = initial_response.context.options["doc_id_order"]
-        show_stats = initial_response.context.options["show_stats"]
-        task_id_order = initial_response.context.options.get("task_id_order")
+        context = initial_response.context
+        deserialized_data = context.get("deserialized_data") or {}
+        options = getattr(context, "options", {})
+
+        doc_id_order = deserialized_data.get("doc_id_order") or options.get("doc_id_order")
+        show_stats = deserialized_data.get("show_stats") if "show_stats" in deserialized_data else options.get("show_stats")
+        task_id_order = deserialized_data.get("task_id_order") or options.get("task_id_order")
+
         return callback(
             pipeline_response,
             None,

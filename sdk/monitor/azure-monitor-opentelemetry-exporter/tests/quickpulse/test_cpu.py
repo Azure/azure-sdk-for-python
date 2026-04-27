@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 # cSpell:disable
 import collections
-import psutil
 import unittest
 from datetime import datetime, timedelta
 from unittest import mock
+import psutil
 
 from azure.monitor.opentelemetry.exporter._quickpulse._cpu import (
     _get_process_memory,
@@ -70,8 +70,8 @@ class TestCpu(unittest.TestCase):
             datetime_mock.now.return_value = current
             time = _get_process_time_normalized_old(None)
         obs = next(time)
-        num_cpus = psutil.cpu_count()
-        # Without cap: (200 / 1 / num_cpus) * 100 = (200 / 16) * 100 = 1250%
+        _num_cpus = psutil.cpu_count()
+        # Without cap: (200 / 1 / _num_cpus) * 100 = (200 / 16) * 100 = 1250%
         # With cap: Should be 100%
         self.assertEqual(obs.value, 100)
 

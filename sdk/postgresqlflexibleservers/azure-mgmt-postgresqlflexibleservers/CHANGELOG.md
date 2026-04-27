@@ -1,5 +1,54 @@
 # Release History
 
+## 3.0.0b1 (2026-02-13)
+
+### Features Added
+
+  - Client `PostgreSQLManagementClient` added method `send_request`
+  - Model `AdvancedThreatProtectionSettingsModel` added property `properties`
+  - Model `BackupsLongTermRetentionOperation` added property `properties`
+  - Model `MigrationResourceForPatch` added property `properties`
+  - Enum `RecommendationTypeEnum` added member `VACUUM_TABLE`
+  - Enum `RecommendationTypeParameterEnum` added member `VACUUM_TABLE`
+  - Model `ServerForPatch` added property `properties`
+  - Model `VirtualEndpoint` added property `properties`
+  - Added model `AdministratorMicrosoftEntraPropertiesForAdd`
+  - Added model `AdvancedThreatProtectionSettingsProperties`
+  - Added model `BackupsLongTermRetentionResponseProperties`
+  - Added model `LogSpecification`
+  - Added model `LtrBackupOperationResponseProperties`
+  - Added model `MetricSpecification`
+  - Added model `MigrateNetworkStatus`
+  - Added model `MigrationPropertiesForPatch`
+  - Added enum `NetworkMigrationState`
+  - Added model `OperationProperties`
+  - Added enum `PostgreSqlFlexibleServerHighAvailabilityMode`
+  - Added model `ServerPropertiesForPatch`
+  - Added model `ServiceSpecification`
+  - Added model `VirtualEndpointResourceProperties`
+  - Operation group `ServersOperations` added method `begin_migrate_network_mode`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AdministratorMicrosoftEntraAdd` moved instance variable `principal_type`, `principal_name` and `tenant_id` under property `properties`
+  - Model `AdvancedThreatProtectionSettingsModel` moved instance variable `state` and `creation_time` under property `properties`
+  - Model `BackupsLongTermRetentionOperation` moved instance variable `datasource_size_in_bytes`, `data_transferred_in_bytes`, `backup_name`, `backup_metadata`, `status`, `start_time`, `end_time`, `percent_complete`, `error_code` and `error_message` under property `properties`
+  - Model `BackupsLongTermRetentionResponse` moved instance variable `datasource_size_in_bytes`, `data_transferred_in_bytes`, `backup_name`, `backup_metadata`, `status`, `start_time`, `end_time`, `percent_complete`, `error_code` and `error_message` under property `properties`
+  - Model `ConfigurationForUpdate` moved instance variable `value`, `description`, `default_value`, `data_type`, `allowed_values`, `source`, `is_dynamic_config`, `is_read_only`, `is_config_pending_restart`, `unit` and `documentation_link` under property `properties`
+  - Model `LtrPreBackupResponse` moved instance variable `number_of_containers` under property `properties`
+  - Model `MigrationResourceForPatch` moved instance variable `source_db_server_resource_id`, `source_db_server_fully_qualified_domain_name`, `target_db_server_fully_qualified_domain_name`, `secret_parameters`, `dbs_to_migrate`, `setup_logical_replication_on_source_db_if_needed`, `overwrite_dbs_in_target`, `migration_window_start_time_in_utc`, `migrate_roles`, `start_data_migration`, `trigger_cutover`, `dbs_to_trigger_cutover_on`, `cancel`, `dbs_to_cancel_migration_on` and `migration_mode` under property `properties`
+  - Model `ServerForPatch` moved instance variable `administrator_login`, `administrator_login_password`, `version`, `storage`, `backup`, `high_availability`, `maintenance_window`, `auth_config`, `data_encryption`, `availability_zone`, `create_mode`, `replication_role`, `replica`, `network` and `cluster` under property `properties`
+  - Model `VirtualEndpoint` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties`
+  - Model `VirtualEndpointResourceForPatch` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties`
+  - Method `MigrationsOperations.list_by_target_server` changed its parameter `migration_list_filter` from `positional_or_keyword` to `keyword_only`
+  - Method `TuningOptionsOperations.list_recommendations` changed its parameter `recommendation_type` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `MigrationDetailsLevel`/`AdministratorMicrosoftEntraList`/`AdvancedThreatProtectionSettingsList`/`BackupAutomaticAndOnDemandList`/`CapabilityList`/`CapturedLogList`/`ConfigurationList`/`DatabaseList`/`FirewallRuleList`/`LtrServerBackupOperationList`/`MigrationList`/`ObjectRecommendationList`/`OperationList`/`PrivateEndpointConnectionList`/`PrivateLinkResourceList`/`QuotaUsageList`/`ServerList`/`TuningOptionsList`/`VirtualEndpointsList` which actually were not used by SDK users
+
 ## 2.0.0 (2025-11-17)
 
 ### Features Added

@@ -221,6 +221,7 @@
     "consts",
     "contoso",
     "contosodataset",
+    "contosowidgetmanager",
     "centralus",
     "centraluseuap",
     "creds",
@@ -260,6 +261,7 @@
     "engsys",
     "entra",
     "envname",
+    "esrp",
     "evals",
     "fastmcp",
     "fileno",
@@ -2190,6 +2192,14 @@
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
       "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
+    },
+    {
+      "filename": ".github/**/ml/**",
+      "words": ["envml", "paginators"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
+      "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],
   "allowCompoundWords": true

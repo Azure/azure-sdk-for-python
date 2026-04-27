@@ -1,14 +1,45 @@
 # Release History
 
-## 1.38.1 (Unreleased)
+## 1.39.1 (Unreleased)
 
 ### Features Added
+
+- Added support for per-operation `http_logging_level` overrides in `HttpLoggingPolicy`. #44115
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.39.0 (2026-03-18)
+
+### Breaking Changes
+
+- Changed the previously undocumented `azure_cloud` setting environment variable from `AZURE_CLOUD` to `AZURE_SDK_CLOUD_CONF`.
+
+## 1.38.3 (2026-03-12)
+
+### Bugs Fixed
+
+- Fixed `PipelineClient.format_url` to preserve trailing slash in the base URL when the URL template is query-string-only (e.g., `?key=value`). #45365
+- Fixed `SensitiveHeaderCleanupPolicy` to persist the `insecure_domain_change` flag across retries after a cross-domain redirect. #45518
+
+### Other Changes
+
+- Added jitter to token refresh timing in `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to prevent simultaneous token refresh attempts across multiple processes. This helps mitigate the thundering herd problem during token refresh operations. #43720
+
+## 1.38.2 (2026-02-18)
+
+### Bugs Fixed
+
+- Fixed `PipelineClient.format_url` to preserve the leading slash when the URL template starts with `/?`. #45218
+
+## 1.38.1 (2026-02-10)
+
+### Bugs Fixed
+
+- Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters. #45044
 
 ## 1.38.0 (2026-01-12)
 
@@ -314,7 +345,7 @@
 
 ## 1.25.0 (2022-08-04)
 
-Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+Azure-core is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ### Features Added
 

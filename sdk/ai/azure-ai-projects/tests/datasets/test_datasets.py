@@ -6,12 +6,12 @@
 import os
 import re
 import pytest
+from test_base import TestBase, servicePreparer
+from devtools_testutils import recorded_by_proxy, is_live, is_live_and_not_recording, add_general_regex_sanitizer
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import DatasetVersion, DatasetType
-from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
+from azure.ai.projects.models._enums import ConnectionType
 from azure.core.exceptions import HttpResponseError
-
 
 # Construct the paths to the data folder and data file used in this test
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,24 +20,29 @@ data_file1 = os.path.join(data_folder, "data_file1.txt")
 data_file2 = os.path.join(data_folder, "data_file2.txt")
 
 
+@pytest.mark.skipif(
+    not is_live_and_not_recording(),
+    reason="Skipped when using recordings due to flakiness of recording blob storage calls",
+)
 class TestDatasets(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_datasets.py::TestDatasets::test_datasets_upload_file -s
+    # cls & pytest tests\datasets\test_datasets.py::TestDatasets::test_datasets_upload_file -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        not is_live_and_not_recording(),
-        reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.",
-    )
     @recorded_by_proxy
     def test_datasets_upload_file(self, **kwargs):
 
-        connection_name = self.test_datasets_params["connection_name"]
         dataset_name = self.test_datasets_params["dataset_name_1"]
         dataset_version = self.test_datasets_params["dataset_version"]
+        expected_dataset_name = dataset_name if is_live() else "sanitized-dataset-name"
+        add_general_regex_sanitizer(
+            regex=r"test-dataset-name-\d{5}", value="sanitized-dataset-name", function_scoped=True
+        )
 
         with self.create_client(**kwargs) as project_client:
 
+            print("Get the default Azure Storage connection to use for uploading files.")
+            connection_name = project_client.connections.get_default(ConnectionType.AZURE_STORAGE_ACCOUNT).name
             print(
                 f"[test_datasets_upload_file] Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version}`, to reference the file."
             )
@@ -51,7 +56,7 @@ class TestDatasets(TestBase):
             TestBase.validate_dataset(
                 dataset,
                 expected_dataset_type=DatasetType.URI_FILE,
-                expected_dataset_name=dataset_name,
+                expected_dataset_name=expected_dataset_name,
                 expected_dataset_version=str(dataset_version),
             )
 
@@ -61,7 +66,7 @@ class TestDatasets(TestBase):
             TestBase.validate_dataset(
                 dataset,
                 expected_dataset_type=DatasetType.URI_FILE,
-                expected_dataset_name=dataset_name,
+                expected_dataset_name=expected_dataset_name,
                 expected_dataset_version=str(dataset_version),
             )
 
@@ -78,7 +83,7 @@ class TestDatasets(TestBase):
             TestBase.validate_dataset(
                 dataset,
                 expected_dataset_type=DatasetType.URI_FILE,
-                expected_dataset_name=dataset_name,
+                expected_dataset_name=expected_dataset_name,
                 expected_dataset_version=str(dataset_version + 1),
             )
 
@@ -89,6 +94,7 @@ class TestDatasets(TestBase):
             print(dataset_credential)
             TestBase.validate_dataset_credential(dataset_credential)
 
+            # pylint: disable=pointless-string-statement
             """
             print("[test_datasets_upload_file] List latest versions of all Datasets:")
             empty = True
@@ -131,27 +137,28 @@ class TestDatasets(TestBase):
             assert exception_thrown
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_datasets.py::TestDatasets::test_datasets_upload_folder -s
+    # cls & pytest tests\datasets\test_datasets.py::TestDatasets::test_datasets_upload_folder -s
     @servicePreparer()
-    @pytest.mark.skipif(
-        not is_live_and_not_recording(),
-        reason="Skipped because this test involves network calls from another client (azure.storage.blob) that is not recorded.",
-    )
     @recorded_by_proxy
     def test_datasets_upload_folder(self, **kwargs):
 
-        endpoint = kwargs.pop("azure_ai_project_endpoint")
+        endpoint = kwargs.pop("foundry_project_endpoint")
         print("\n=====> Endpoint:", endpoint)
 
-        connection_name = self.test_datasets_params["connection_name"]
         dataset_name = self.test_datasets_params["dataset_name_2"]
         dataset_version = self.test_datasets_params["dataset_version"]
+        expected_dataset_name = dataset_name if is_live() else "sanitized-dataset-name"
+        add_general_regex_sanitizer(
+            regex=r"test-dataset-name-\d{5}", value="sanitized-dataset-name", function_scoped=True
+        )
 
         with AIProjectClient(
             endpoint=endpoint,
             credential=self.get_credential(AIProjectClient, is_async=False),
         ) as project_client:
 
+            print("Get the default Azure Storage connection to use for uploading files.")
+            connection_name = project_client.connections.get_default(ConnectionType.AZURE_STORAGE_ACCOUNT).name
             print(
                 f"[test_datasets_upload_folder] Upload files in a folder (including sub-folders) and create a new version `{dataset_version}` in the same Dataset, to reference the files."
             )
@@ -166,7 +173,7 @@ class TestDatasets(TestBase):
             TestBase.validate_dataset(
                 dataset,
                 expected_dataset_type=DatasetType.URI_FOLDER,
-                expected_dataset_name=dataset_name,
+                expected_dataset_name=expected_dataset_name,
                 expected_dataset_version=str(dataset_version),
             )
 
@@ -176,7 +183,7 @@ class TestDatasets(TestBase):
             TestBase.validate_dataset(
                 dataset,
                 expected_dataset_type=DatasetType.URI_FOLDER,
-                expected_dataset_name=dataset_name,
+                expected_dataset_name=expected_dataset_name,
                 expected_dataset_version=str(dataset_version),
             )
 

@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression
+# pylint: disable=too-many-lines,line-too-long,useless-suppression,broad-exception-caught
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -41,7 +41,7 @@ class TestAgentImageGeneration(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         image_model = kwargs.get("image_generation_model_deployment_name")
         agent_name = "image-gen-agent"
 
@@ -79,7 +79,7 @@ class TestAgentImageGeneration(TestBase):
             response = openai_client.responses.create(
                 input="Generate an image of a blue circle on a white background.",
                 extra_headers={"x-ms-oai-image-generation-deployment": image_model},  # Required for image generation
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             print(f"Response created (id: {response.id})")

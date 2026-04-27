@@ -3,20 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
+import functools
 import unittest
 from unittest.mock import Mock
-from azure.appconfiguration.provider import WatchKey
-from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator_aad
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase, ConfigurationSetting, has_feature_flag
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    FEATURE_MANAGEMENT_KEY,
+)
+from azure.appconfiguration.provider import WatchKey
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
 
 
 class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     # method: refresh
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_client(
@@ -33,7 +43,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
@@ -42,8 +52,9 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         appconfig_client.set_configuration_setting(setting)
         appconfig_client.set_configuration_setting(feature_flag)
 
-        # Waiting for the refresh interval to pass
-        time.sleep(2)
+        # Expire the refresh timers to simulate time passing
+        client._refresh_timer._next_refresh_time = 0
+        client._feature_flag_refresh_timer._next_refresh_time = 0
 
         client.refresh()
         assert client["refresh_message"] == "updated value"
@@ -55,8 +66,9 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         appconfig_client.set_configuration_setting(setting)
         appconfig_client.set_configuration_setting(feature_flag)
 
-        # Waiting for the refresh interval to pass
-        time.sleep(2)
+        # Expire the refresh timers to simulate time passing
+        client._refresh_timer._next_refresh_time = 0
+        client._feature_flag_refresh_timer._next_refresh_time = 0
 
         client.refresh()
         assert client["refresh_message"] == "original value"
@@ -75,17 +87,19 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert mock_callback.call_count == 2
 
         setting.value = "original value"
+        feature_flag.enabled = False
         appconfig_client.set_configuration_setting(setting)
+        appconfig_client.set_configuration_setting(feature_flag)
 
         client.refresh()
         assert client["refresh_message"] == "original value"
         assert mock_callback.call_count == 2
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_no_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         watch_key = ConfigurationSetting(key="watch key", value="0")
         appconfig_client.set_configuration_setting(watch_key)
@@ -109,8 +123,9 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         setting.value = "updated value"
         appconfig_client.set_configuration_setting(setting)
 
-        # Waiting for the refresh interval to pass
-        time.sleep(2)
+        # Expire the refresh timers to simulate time passing
+        client._refresh_timer._next_refresh_time = 0
+        client._feature_flag_refresh_timer._next_refresh_time = 0
 
         client.refresh()
         # No Change the Watch Key wasn't updated
@@ -121,49 +136,52 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         watch_key.value = "1"
         appconfig_client.set_configuration_setting(watch_key)
 
-        # Waiting for the refresh interval to pass
-        time.sleep(2)
+        # Expire the refresh timers to simulate time passing
+        client._refresh_timer._next_refresh_time = 0
+        client._feature_flag_refresh_timer._next_refresh_time = 0
 
         client.refresh()
         assert client["refresh_message"] == "updated value"
         assert has_feature_flag(client, "Alpha", False)
         assert mock_callback.call_count == 1
 
-    # method: refresh
+        # Reset modified settings
+        setting.value = "original value"
+        appconfig_client.set_configuration_setting(setting)
+        appconfig_client.delete_configuration_setting(key="watch key")
+
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_client(
             endpoint=appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            refresh_on=[WatchKey("refresh_message")],
+            refresh_interval=1,
             on_refresh_success=mock_callback,
             feature_flag_enabled=True,
+            feature_flag_refresh_enabled=True,
+            refresh_enabled=False,
         )
         assert client["refresh_message"] == "original value"
-        assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
 
-        appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+        appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
 
         setting = appconfig_client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
         appconfig_client.set_configuration_setting(setting)
-        static_setting = appconfig_client.get_configuration_setting(key="non_refreshed_message")
-        static_setting.value = "updated static"
-        appconfig_client.set_configuration_setting(static_setting)
 
-        # Waiting for the refresh interval to pass
-        time.sleep(2)
+        # Expire the refresh timers to simulate time passing
+        client._refresh_timer._next_refresh_time = 0
 
         client.refresh()
+        # Refresh is disabled, so the value should not change
         assert client["refresh_message"] == "original value"
-        assert client["non_refreshed_message"] == "Static"
         assert mock_callback.call_count == 0
 
         setting.value = "original value"
         appconfig_client.set_configuration_setting(setting)
-        static_setting.value = "Static"
-        appconfig_client.set_configuration_setting(static_setting)

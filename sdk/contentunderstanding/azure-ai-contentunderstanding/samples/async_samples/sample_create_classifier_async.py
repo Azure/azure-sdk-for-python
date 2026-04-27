@@ -48,6 +48,7 @@ USAGE:
 import asyncio
 import os
 import time
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
@@ -55,7 +56,7 @@ from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
     ContentCategoryDefinition,
-    AnalyzeResult,
+    AnalysisResult,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -69,7 +70,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START create_classifier]
         # Generate a unique analyzer ID
         analyzer_id = f"my_classifier_{int(time.time())}"
@@ -136,19 +139,23 @@ async def main() -> None:
             analyzer_id=analyzer_id,
             binary_input=file_bytes,
         )
-        analyze_result: AnalyzeResult = await analyze_poller.result()
+        analyze_result: AnalysisResult = await analyze_poller.result()
 
         # Display classification results
         if analyze_result.contents and len(analyze_result.contents) > 0:
-            document_content: DocumentContent = analyze_result.contents[0]  # type: ignore
-            print(f"Pages: {document_content.start_page_number}-{document_content.end_page_number}")
+            document_content = cast(DocumentContent, analyze_result.contents[0])
+            print(
+                f"Pages: {document_content.start_page_number}-{document_content.end_page_number}"
+            )
 
             # Display segments (classification results)
             if document_content.segments and len(document_content.segments) > 0:
                 print(f"\nFound {len(document_content.segments)} segment(s):")
                 for segment in document_content.segments:
                     print(f"  Category: {segment.category or '(unknown)'}")
-                    print(f"  Pages: {segment.start_page_number}-{segment.end_page_number}")
+                    print(
+                        f"  Pages: {segment.start_page_number}-{segment.end_page_number}"
+                    )
                     print(f"  Segment ID: {segment.segment_id or '(not available)'}")
                     print()
             else:

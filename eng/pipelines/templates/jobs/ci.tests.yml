@@ -109,11 +109,12 @@ jobs:
 
     - template: ../steps/build-test.yml
       parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        ToxTestEnv: $(toxenv)
+        CheckEnv: $(checks)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}

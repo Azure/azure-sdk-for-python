@@ -251,7 +251,9 @@ class StatsbeatManager(metaclass=Singleton):
 
         except Exception as e:  # pylint: disable=broad-except
             # Log the error for debugging
-            logger.warning("Failed to initialize statsbeat: %s", e)
+            logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                "Failed to initialize statsbeat: %s", e
+            )
             # Clean up on failure
             self._cleanup()
             return False
@@ -297,12 +299,16 @@ class StatsbeatManager(metaclass=Singleton):
                 # Force flush before shutdown to ensure data is sent
                 self._meter_provider.force_flush(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Failed to flush meter provider during reconfiguration: %s", e)
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to flush meter provider during reconfiguration: %s", e
+                )
 
             try:
                 self._meter_provider.shutdown(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Failed to shutdown meter provider during reconfiguration: %s", e)
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to shutdown meter provider during reconfiguration: %s", e
+                )
 
         # Reset state but keep initialized=True
         self._meter_provider = None

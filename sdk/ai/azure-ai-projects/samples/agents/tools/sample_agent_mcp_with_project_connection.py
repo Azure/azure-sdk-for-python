@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -14,12 +13,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys
        with key equals to "Authorization" and value to be "Bearer <your GitHub PAT token>".
@@ -28,15 +27,14 @@ USAGE:
 
 import os
 from dotenv import load_dotenv
+from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
-from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
-
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -57,7 +55,7 @@ with (
     agent = project_client.agents.create_version(
         agent_name="MyAgent7",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="Use MCP tools as needed",
             tools=[tool],
         ),
@@ -72,7 +70,7 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         input="What is my username in Github profile?",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     # Process any MCP approval requests that were generated
@@ -98,7 +96,7 @@ with (
     response = openai_client.responses.create(
         input=input_list,
         previous_response_id=response.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print(f"Response: {response.output_text}")

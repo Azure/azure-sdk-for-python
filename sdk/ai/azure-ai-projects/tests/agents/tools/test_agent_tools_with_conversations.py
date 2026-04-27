@@ -14,21 +14,21 @@ within the context of conversations, testing conversation state management with 
 import json
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
+from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
     PromptAgentDefinition,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentToolsWithConversations(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_function_tool_with_conversation(self, **kwargs):
+    def test_function_tool_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test using FunctionTool within a conversation.
 
@@ -39,7 +39,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Using conversation_id parameter
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -87,7 +87,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_1 = openai_client.responses.create(
                 input="What is 15 plus 27?",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -116,7 +116,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_1 = openai_client.responses.create(
                 input=input_list,
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response 1: {response_1.output_text[:100]}...")
             assert "42" in response_1.output_text
@@ -126,7 +126,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_2 = openai_client.responses.create(
                 input="Now multiply that result by 2",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Handle function call
@@ -152,7 +152,7 @@ class TestAgentToolsWithConversations(TestBase):
             response_2 = openai_client.responses.create(
                 input=input_list,
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response 2: {response_2.output_text[:100]}...")
             assert "84" in response_2.output_text
@@ -200,7 +200,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Conversation context retention
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -264,7 +264,7 @@ Widget C:
             response_1 = openai_client.responses.create(
                 input="Which widget has the highest rating?",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -276,7 +276,7 @@ Widget C:
             response_2 = openai_client.responses.create(
                 input="What is its price?",  # "its" refers to Widget B from previous turn
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -288,7 +288,7 @@ Widget C:
             response_3 = openai_client.responses.create(
                 input="Which widget is in the Home Goods category?",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -317,7 +317,7 @@ Widget C:
         - Variables/state persistence across turns
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -329,7 +329,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a data analysis assistant. Use Python to perform calculations.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Code interpreter agent for conversation testing.",
             )
@@ -344,7 +344,7 @@ Widget C:
             response_1 = openai_client.responses.create(
                 input="Calculate the average of these numbers: 10, 20, 30, 40, 50",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -356,7 +356,7 @@ Widget C:
             response_2 = openai_client.responses.create(
                 input="Now calculate the standard deviation of those same numbers",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -369,7 +369,7 @@ Widget C:
             response_3 = openai_client.responses.create(
                 input="Create a list of squares from 1 to 5",
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -402,7 +402,7 @@ Widget C:
         - Server-side code execution with file access and chart generation
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         import os
 
         with (
@@ -428,7 +428,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[uploaded_file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[uploaded_file.id]))],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )
@@ -443,7 +443,7 @@ Widget C:
             response_1 = openai_client.responses.create(
                 conversation=conversation.id,
                 input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text

@@ -2,13 +2,15 @@
 # Licensed under the MIT License.
 
 import datetime
-import os
 import platform
 import time
 import unittest
+from unittest.mock import patch
 
+from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
 from opentelemetry.sdk.resources import Resource
 from unittest.mock import patch
 
@@ -24,18 +26,17 @@ TEST_AZURE_MONITOR_CONTEXT = {
         TEST_SDK_VERSION_PREFIX,
     ),
 }
-TEST_TIMESTAMP = "TEST_TIMESTAMP"
-TEST_TIME = "TEST_TIME"
 TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
 
+# pylint: disable=unused-argument, too-many-public-methods
 class TestUtils(unittest.TestCase):
     def setUp(self):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
-    def test_filter_custom_properties_truncates_and_drops_invalid_entries(self):
+    def test_filter_custom_properties_drops_invalid_entries(self):
         oversized_value = "v" * 9000
         properties = {
             "valid_key": oversized_value,
@@ -49,9 +50,67 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(len(filtered), 2)
         self.assertIn("valid_key", filtered)
-        self.assertEqual(len(filtered["valid_key"]), 9000)
+        self.assertEqual(len(filtered["valid_key"]), 8192)
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
+
+    def test_custom_properties_gen_ai_attributes_not_truncated_at_8kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 8kb but at > 256kb
+        large_value = "x" * (8 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), 8 * 1024 + 1000)
+
+    def test_filter_custom_properties_non_gen_ai_truncated_at_8kb(self):
+        # Regular properties exceeding 8kb should be truncated
+        max_length = 8 * 1024
+        large_value = "y" * (max_length + 2000)
+        properties = {
+            "span_kind": large_value,
+            "gen_ai.agent.version": large_value,
+            "http.method": large_value,
+            "custom.attribute": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+        for key in properties:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length)
+
+    def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
+        # Gen AI attributes truncated at 256kb, regular ones are truncated at 8kb
+        max_length = 8 * 1024
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "z" * (1024 * 1024 + 3000)
+        properties = {
+            "gen_ai.input.messages": large_value,
+            "gen_ai.output.messages": large_value,
+            "gen_ai.agent.version": large_value,
+            "span_kind": large_value,
+            "db.statement": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties)
+
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_gen_ai_attributes)
+
+        self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
+        self.assertEqual(len(filtered["span_kind"]), max_length)
+        self.assertEqual(len(filtered["db.statement"]), max_length)
+
+    def test_custom_properties_gen_ai_attributes_truncated_at_256kb(self):
+        # All values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "x" * (256 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties)
+        for key in _GEN_AI_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
@@ -257,7 +316,47 @@ class TestUtils(unittest.TestCase):
         tags = _utils._populate_part_a_fields(resource)
         self.assertIsNotNone(tags)
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_uses_service_instance_id_when_pod_name_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "testServiceInstanceId",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
+        self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    def test_populate_part_a_fields_falls_back_to_hostname_when_pod_and_instance_id_empty(self):
+        resource = Resource(
+            {
+                "service.name": "testServiceName",
+                "service.instance.id": "",
+                "k8s.deployment.name": "testDeploymentName",
+                "k8s.replicaset.name": "testReplicaSetName",
+                "k8s.statefulset.name": "testStatefulSetName",
+                "k8s.job.name": "testJobName",
+                "k8s.cronjob.name": "testCronJobName",
+                "k8s.daemonset.name": "testDaemonSetName",
+                "k8s.pod.name": "",
+            }
+        )
+        tags = _utils._populate_part_a_fields(resource)
+        self.assertIsNotNone(tags)
+        self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
+        self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
     # Default service.name fields should be ignored when kubernetes values are present
@@ -280,22 +379,17 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str",
-        return_value=TEST_TIME,
-    )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.azure_monitor_context",
-        TEST_AZURE_MONITOR_CONTEXT,
-    )
-    def test_create_telemetry_item(self, mock_ns_to_iso_str):
-        result = _utils._create_telemetry_item(TEST_TIMESTAMP)
+    @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
+    def test_create_telemetry_item(self):
+        time_ns = time.time_ns()
+        expected_datetime = datetime.datetime.fromtimestamp(time_ns / 1e9, tz=datetime.timezone.utc)
+        result = _utils._create_telemetry_item(time_ns)
         expected_tags = dict(TEST_AZURE_MONITOR_CONTEXT)
         expected = TelemetryItem(
             name="",
             instrumentation_key="",
             tags=expected_tags,
-            time=TEST_TIME,
+            time=expected_datetime,
         )
         self.assertEqual(result, expected)
 
@@ -740,3 +834,47 @@ class TestUtils(unittest.TestCase):
     def test_is_any_synthetic_source_none(self):
         properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         self.assertFalse(_utils._is_any_synthetic_source(properties))
+
+    # _is_status_code_success tests
+
+    def test_is_status_code_success_none(self):
+        self.assertFalse(_utils._is_status_code_success(None))
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+
+    def test_is_status_code_success_zero(self):
+        self.assertFalse(_utils._is_status_code_success(0))
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+
+    def test_is_status_code_success_200(self):
+        self.assertTrue(_utils._is_status_code_success(200))
+        self.assertTrue(_utils._is_status_code_success(200, is_trace=True))
+
+    def test_is_status_code_success_4xx_metrics(self):
+        self.assertFalse(_utils._is_status_code_success(400))
+        self.assertFalse(_utils._is_status_code_success(404))
+        self.assertFalse(_utils._is_status_code_success(499))
+
+    def test_is_status_code_success_4xx_trace(self):
+        self.assertFalse(_utils._is_status_code_success(400, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(404, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(499, is_trace=True))
+
+    def test_is_status_code_success_5xx_metrics(self):
+        # Metrics: 5xx is failure (code >= 400)
+        self.assertFalse(_utils._is_status_code_success(500))
+        self.assertFalse(_utils._is_status_code_success(503))
+
+    def test_is_status_code_success_5xx_trace(self):
+        # Trace: 5xx is NOT failure (only 4xx range is failure)
+        self.assertTrue(_utils._is_status_code_success(500, is_trace=True))
+        self.assertTrue(_utils._is_status_code_success(503, is_trace=True))
+
+    def test_is_status_code_success_3xx(self):
+        self.assertTrue(_utils._is_status_code_success(301))
+        self.assertTrue(_utils._is_status_code_success(301, is_trace=True))
+
+    def test_is_status_code_success_returns_bool(self):
+        self.assertIsInstance(_utils._is_status_code_success(200), bool)
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+        self.assertIsInstance(_utils._is_status_code_success(500, is_trace=True), bool)
