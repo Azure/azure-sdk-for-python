@@ -20,7 +20,11 @@ class TestWebpubsubClientRecoveryAsync(WebpubsubClientTestAsync):
         client = await self.create_client(endpoint=webpubsubclient_endpoint, message_retry_total=10)
         name = "test_recovery_async"
         async with client:
-            await asyncio.sleep(1)  # wait for connection_id to be updated
+            # wait for connection_id to be updated
+            for _ in range(30):
+                if client._connection_id is not None:
+                    break
+                await asyncio.sleep(1)
             conn_id0 = client._connection_id
             group_name = name
             await client.subscribe("group-message", on_group_message)

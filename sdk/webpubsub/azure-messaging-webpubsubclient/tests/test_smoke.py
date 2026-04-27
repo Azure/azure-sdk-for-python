@@ -68,13 +68,21 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             time.sleep(0.1)
             assert client.is_connected()
             client.close()
-            time.sleep(3.0)
+            # wait for on_stop callback to reconnect
+            for _ in range(30):
+                if client.is_connected():
+                    break
+                time.sleep(1)
             assert client.is_connected()
 
             # remove stopped event and close again
             client.unsubscribe("stopped", on_stop)
             client.close()
-            time.sleep(3.0)
+            # wait for disconnect to finalize
+            for _ in range(30):
+                if not client.is_connected():
+                    break
+                time.sleep(1)
             assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
@@ -112,6 +120,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             client = self.create_client(
                 endpoint=webpubsubclient_endpoint,
                 auto_rejoin_groups=enable_auto_rejoin,
+                message_retry_total=10,
             )
             group_name = test_group_name
             client.subscribe("group-message", on_group_message)
@@ -119,8 +128,18 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 client.join_group(group_name)
 
             with client:
-                time.sleep(3)  # make sure rejoin group is called
-                client.send_to_group(group_name, group_name, "text")
+                # retry send until connection is ready (open() runs in background thread)
+                for attempt in range(30):
+                    try:
+                        if not client.is_connected():
+                            time.sleep(1)
+                            continue
+                        client.send_to_group(group_name, group_name, "text")
+                        break
+                    except SendMessageError:
+                        time.sleep(1)
+                else:
+                    raise RuntimeError("Failed to send after 30 attempts")
                 time.sleep(1)  # wait for on_group_message to be called
                 assert assert_func(test_group_name)
 

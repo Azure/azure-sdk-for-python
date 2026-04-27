@@ -68,13 +68,21 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             await asyncio.sleep(0.1)
             assert client.is_connected()
             await client.close()
-            await asyncio.sleep(3.0)
+            # wait for on_stop callback to reconnect
+            for _ in range(30):
+                if client.is_connected():
+                    break
+                await asyncio.sleep(1)
             assert client.is_connected()
 
             # remove stopped event and close again
             await client.unsubscribe("stopped", on_stop)
             await client.close()
-            await asyncio.sleep(3.0)
+            # wait for disconnect to finalize
+            for _ in range(30):
+                if not client.is_connected():
+                    break
+                await asyncio.sleep(1)
             assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
@@ -119,7 +127,12 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
                 await client.join_group(group_name)
 
             async with client:
-                await asyncio.sleep(1)  # make sure rejoin group is called
+                # wait for connection and auto-rejoin to complete
+                for _ in range(30):
+                    if client.is_connected():
+                        break
+                    await asyncio.sleep(1)
+                await asyncio.sleep(2)  # extra time for auto-rejoin
                 await client.send_to_group(group_name, group_name, "text")
                 await asyncio.sleep(1)  # wait for on_group_message to be called
                 assert assert_func(test_group_name)

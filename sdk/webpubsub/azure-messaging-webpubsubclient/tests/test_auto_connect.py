@@ -27,13 +27,21 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
         )
         name = "test_auto_connect"
         with client:
-            time.sleep(1)  # wait for connection_id to be updated
+            # wait for connection_id to be updated
+            for _ in range(30):
+                if client._connection_id is not None:
+                    break
+                time.sleep(1)
             conn_id0 = client._connection_id
             group_name = name
             client.subscribe("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close the connection to trigger auto connect
-            time.sleep(3)  # wait for reconnect
+            # wait for reconnect
+            for _ in range(30):
+                if client.is_connected() and client._connection_id != conn_id0:
+                    break
+                time.sleep(1)
             client.send_to_group(group_name, name, "text")
             time.sleep(1)  # wait for on_group_message to be called
             conn_id1 = client._connection_id

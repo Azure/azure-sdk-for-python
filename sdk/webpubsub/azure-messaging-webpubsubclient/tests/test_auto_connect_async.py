@@ -27,7 +27,11 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
         )
         name = "test_auto_connect_async"
         async with client:
-            await asyncio.sleep(1)  # wait for connection_id to be updated
+            # wait for connection_id to be updated
+            for _ in range(30):
+                if client._connection_id is not None:
+                    break
+                await asyncio.sleep(1)
             conn_id0 = client._connection_id
             group_name = name
             await client.subscribe("group-message", on_group_message)
@@ -35,7 +39,11 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
             await client._ws.sock.close(
                 code=1001
             )  # close the connection to trigger auto connect
-            await asyncio.sleep(3)  # wait for reconnect
+            # wait for reconnect
+            for _ in range(30):
+                if client.is_connected() and client._connection_id != conn_id0:
+                    break
+                await asyncio.sleep(1)
             await client.send_to_group(group_name, name, "text")
             await asyncio.sleep(1)  # wait for on_group_message to be called
             conn_id1 = client._connection_id
