@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-10-01",
+  "apiVersions": {
+    "Microsoft.VirtualMachineImages": "2025-10-01"
+  },
+  "commit": "025d308302c7184a696f8b73dbe4a66f9a77a2f2",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/ImageBuilder",
+  "emitterVersion": "0.61.3"
+}

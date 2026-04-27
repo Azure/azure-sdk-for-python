@@ -1,0 +1,4 @@
+directory: specification/imagebuilder/resource-manager/Microsoft.VirtualMachineImages/ImageBuilder
+commit: 025d308302c7184a696f8b73dbe4a66f9a77a2f2
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
