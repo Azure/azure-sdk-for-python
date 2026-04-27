@@ -69,7 +69,7 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         last_version = ""
         last_stable_release = ""
 
-    # 0.0.0 is not valid version although it is in pypi
+    # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
     if last_version.startswith("0.0.0"):
         return "", ""
 
