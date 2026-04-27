@@ -9,14 +9,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerservice import ContainerServiceClient
+from azure.mgmt.compute import ComputeManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-containerservice
+    pip install azure-mgmt-compute
 # USAGE
-    python agent_pools_create_crg.py
+    python virtual_machine_scale_set_life_cycle_hook_event_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,28 +26,32 @@ from azure.mgmt.containerservice import ContainerServiceClient
 
 
 def main():
-    client = ContainerServiceClient(
+    client = ComputeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.agent_pools.begin_create_or_update(
-        resource_group_name="rg1",
-        resource_name="clustername1",
-        agent_pool_name="agentpool1",
-        parameters={
+    response = client.virtual_machine_scale_set_life_cycle_hook_events.update(
+        resource_group_name="RG01",
+        vm_scale_set_name="VMSS01",
+        lifecycle_hook_event_name="445c0a08-cfc5-4ef6-bb89-fe77c5178628",
+        properties={
             "properties": {
-                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
-                "count": 3,
-                "orchestratorVersion": "",
-                "osType": "Linux",
-                "vmSize": "Standard_DS2_v2",
+                "targetResources": [
+                    {
+                        "actionState": "Approved",
+                        "resource": {
+                            "id": "/subscriptions/2167b012-c9f9-4b04-83b2-0ff304e7d51d/resourceGroups/RG01/providers/Microsoft.Compute/virtualMachineScaleSets/VMSS01/virtualMachines/2"
+                        },
+                    }
+                ],
+                "waitUntil": "2025-05-08T11:17:55.6844555+00:00",
             }
         },
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/AgentPoolsCreate_CRG.json
+# x-ms-original-file: 2025-11-01/virtualMachineScaleSetExamples/VirtualMachineScaleSetLifeCycleHookEvent_Update.json
 if __name__ == "__main__":
     main()

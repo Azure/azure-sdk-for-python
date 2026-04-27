@@ -15,7 +15,7 @@ from azure.mgmt.compute import ComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-compute
 # USAGE
-    python virtual_machine_deallocate_maximum_set_gen.py
+    python virtual_machine_deallocate_with_force_deallocate.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,10 +32,10 @@ def main():
 
     client.virtual_machines.begin_deallocate(
         resource_group_name="rgcompute",
-        vm_name="aaaaaaaaaa",
+        vm_name="aaaaaaaaaaaaaaaa",
     ).result()
 
 
-# x-ms-original-file: 2025-04-01/virtualMachineExamples/VirtualMachine_Deallocate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-11-01/virtualMachineExamples/VirtualMachine_Deallocate_WithForceDeallocate.json
 if __name__ == "__main__":
     main()
