@@ -8,11 +8,8 @@
   - Model `AddressResponse` added property `system_data`
   - Model `AnalysisDefinition` added property `system_data`
   - Model `ApiKVReference` added property `system_data`
-  - Model `AppServiceEnvironmentPatchResource` added property `properties`
-  - Model `AppServiceEnvironmentResource` added property `properties`
   - Model `AppServiceEnvironmentResource` added property `system_data`
   - Model `AppServicePlan` added property `system_data`
-  - Model `ApplicationStackResource` added property `properties`
   - Model `AseV3NetworkingConfiguration` added property `system_data`
   - Model `BackupItem` added property `system_data`
   - Model `Certificate` added property `system_data`
@@ -23,11 +20,9 @@
   - Model `DatabaseConnection` added property `system_data`
   - Model `DeletedSite` added property `system_data`
   - Model `Deployment` added property `system_data`
-  - Model `DetectorDefinitionResource` added property `properties`
   - Model `DetectorDefinitionResource` added property `system_data`
   - Model `DetectorResponse` added property `system_data`
   - Model `DiagnosticCategory` added property `system_data`
-  - Model `DiagnosticMetricSet` added property `values_property`
   - Model `FunctionAppConfig` added property `site_update_strategy`
   - Model `FunctionEnvelope` added property `system_data`
   - Model `HostNameBinding` added property `system_data`
@@ -38,7 +33,6 @@
   - Model `MSDeployStatus` added property `system_data`
   - Model `MigrateMySqlStatus` added property `system_data`
   - Model `NetworkFeatures` added property `system_data`
-  - Model `PerfMonSet` added property `values_property`
   - Model `PremierAddOn` added property `system_data`
   - Model `PrivateAccess` added property `system_data`
   - Model `ProcessInfo` added property `system_data`
@@ -52,63 +46,49 @@
   - Model `ResourceHealthMetadata` added property `system_data`
   - Model `Site` added property `system_data`
   - Model `SiteAuthSettingsV2` added property `system_data`
-  - Model `SiteConfigResource` added property `properties`
   - Model `SiteConfigResource` added property `system_data`
   - Model `SiteContainer` added property `system_data`
   - Model `SiteExtensionInfo` added property `system_data`
   - Model `SiteLogsConfig` added property `system_data`
   - Model `SiteSourceControl` added property `system_data`
-  - Model `SlotConfigNamesResource` added property `properties`
   - Model `SlotConfigNamesResource` added property `system_data`
   - Model `SourceControl` added property `system_data`
-  - Model `StaticSiteARMResource` added property `properties`
   - Model `StaticSiteARMResource` added property `system_data`
   - Model `StaticSiteBasicAuthPropertiesARMResource` added property `system_data`
   - Model `StaticSiteBuildARMResource` added property `system_data`
   - Model `StaticSiteCustomDomainOverviewARMResource` added property `system_data`
   - Model `StaticSiteLinkedBackendARMResource` added property `system_data`
-  - Model `StaticSitePatchResource` added property `properties`
   - Model `StaticSiteUserProvidedFunctionAppARMResource` added property `system_data`
-  - Model `StaticSiteZipDeploymentARMResource` added property `properties`
   - Model `SwiftVirtualNetwork` added property `system_data`
   - Model `TriggeredJobHistory` added property `system_data`
   - Model `TriggeredWebJob` added property `system_data`
   - Model `User` added property `system_data`
-  - Model `ValidateRequest` added property `properties`
   - Model `VnetGateway` added property `system_data`
-  - Model `VnetInfoResource` added property `properties`
   - Model `VnetInfoResource` added property `system_data`
   - Model `VnetRoute` added property `system_data`
   - Model `WebJob` added property `system_data`
   - Model `WebSiteInstanceStatus` added property `system_data`
-  - Model `WorkerPoolResource` added property `properties`
   - Model `WorkerPoolResource` added property `system_data`
   - Model `WorkflowEnvelope` added property `system_data`
   - Model `WorkflowRun` added property `system_data`
   - Model `WorkflowRunAction` added property `system_data`
-  - Model `WorkflowRunActionRepetitionDefinition` added property `properties`
   - Model `WorkflowRunActionRepetitionDefinition` added property `system_data`
   - Model `WorkflowTrigger` added property `system_data`
   - Model `WorkflowTriggerHistory` added property `system_data`
   - Model `WorkflowVersion` added property `system_data`
   - Added enum `CreatedByType`
-  - Added model `DatabaseConnectionPatchRequestProperties`
   - Added model `FunctionsSiteUpdateStrategy`
   - Added model `MSDeployCore`
   - Added model `ProxyResource`
-  - Added model `ResourceMetricDefinitionProperties`
   - Added enum `SiteUpdateStrategyType`
-  - Added model `SlotConfigNames`
-  - Added model `StaticSite`
-  - Added model `StaticSiteZipDeployment`
   - Added model `SystemData`
   - Added model `TrackedResource`
-  - Added model `ValidateProperties`
-  - Added model `WorkerPool`
   - Added model `WorkflowErrorResponse`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Deleted or renamed client operation group `WebSiteManagementClient.app_service_certificate_orders`
   - Deleted or renamed client operation group `WebSiteManagementClient.certificate_orders_diagnostics`
   - Deleted or renamed client operation group `WebSiteManagementClient.certificate_registration_provider`
@@ -121,258 +101,23 @@
   - Method `WebSiteManagementClient.check_name_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
   - Method `WebSiteManagementClient.check_name_availability` deleted or renamed its parameter `is_fqdn` of kind `positional_or_keyword`
   - Method `WebSiteManagementClient.check_name_availability` deleted or renamed its parameter `environment_id` of kind `positional_or_keyword`
-  - Method `WebSiteManagementClient.list_billing_meters` changed its parameter `billing_location` from `positional_or_keyword` to `keyword_only`
-  - Method `WebSiteManagementClient.list_billing_meters` changed its parameter `os_type` from `positional_or_keyword` to `keyword_only`
   - Method `WebSiteManagementClient.list_custom_host_name_sites` changed its parameter `hostname` from `positional_or_keyword` to `keyword_only`
-  - Method `WebSiteManagementClient.list_geo_regions` changed its parameter `sku` from `positional_or_keyword` to `keyword_only`
-  - Method `WebSiteManagementClient.list_geo_regions` changed its parameter `linux_workers_enabled` from `positional_or_keyword` to `keyword_only`
-  - Method `WebSiteManagementClient.list_geo_regions` changed its parameter `xenon_workers_enabled` from `positional_or_keyword` to `keyword_only`
-  - Method `WebSiteManagementClient.list_geo_regions` changed its parameter `linux_dynamic_workers_enabled` from `positional_or_keyword` to `keyword_only`
-  - Method `WebSiteManagementClient.list_geo_regions` changed its parameter `custom_mode_workers_enabled` from `positional_or_keyword` to `keyword_only`
   - Method `WebSiteManagementClient.regional_check_name_availability` inserted a `positional_or_keyword` parameter `request`
   - Method `WebSiteManagementClient.regional_check_name_availability` deleted or renamed its parameter `name` of kind `positional_or_keyword`
   - Method `WebSiteManagementClient.regional_check_name_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
   - Method `WebSiteManagementClient.regional_check_name_availability` deleted or renamed its parameter `resource_group_name` of kind `positional_or_keyword`
   - Method `WebSiteManagementClient.regional_check_name_availability` deleted or renamed its parameter `auto_generated_domain_name_label_scope` of kind `positional_or_keyword`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `status`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `virtual_network`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `internal_load_balancing_mode`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `multi_size`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `multi_role_count`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `ipssl_address_count`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `dns_suffix`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `maximum_number_of_machines`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `front_end_scale_factor`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `suspended`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `cluster_settings`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `user_whitelisted_ip_ranges`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `has_linux_workers`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `upgrade_preference`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `dedicated_host_count`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `zone_redundant`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `custom_dns_suffix_configuration`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `networking_configuration`
-  - Model `AppServiceEnvironmentPatchResource` deleted or renamed its instance variable `upgrade_availability`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `status`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `virtual_network`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `internal_load_balancing_mode`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `multi_size`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `multi_role_count`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `ipssl_address_count`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `dns_suffix`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `maximum_number_of_machines`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `front_end_scale_factor`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `suspended`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `cluster_settings`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `user_whitelisted_ip_ranges`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `has_linux_workers`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `upgrade_preference`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `dedicated_host_count`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `zone_redundant`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `custom_dns_suffix_configuration`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `networking_configuration`
-  - Model `AppServiceEnvironmentResource` deleted or renamed its instance variable `upgrade_availability`
-  - Model `ApplicationStackResource` deleted or renamed its instance variable `name_properties_name`
-  - Model `ApplicationStackResource` deleted or renamed its instance variable `display`
-  - Model `ApplicationStackResource` deleted or renamed its instance variable `dependency`
-  - Model `ApplicationStackResource` deleted or renamed its instance variable `major_versions`
-  - Model `ApplicationStackResource` deleted or renamed its instance variable `frameworks`
-  - Model `ApplicationStackResource` deleted or renamed its instance variable `is_deprecated`
-  - Model `DatabaseConnectionPatchRequest` deleted or renamed its instance variable `resource_id`
-  - Model `DatabaseConnectionPatchRequest` deleted or renamed its instance variable `connection_identity`
-  - Model `DatabaseConnectionPatchRequest` deleted or renamed its instance variable `connection_string`
-  - Model `DatabaseConnectionPatchRequest` deleted or renamed its instance variable `region`
-  - Model `DetectorDefinitionResource` deleted or renamed its instance variable `display_name`
-  - Model `DetectorDefinitionResource` deleted or renamed its instance variable `description`
-  - Model `DetectorDefinitionResource` deleted or renamed its instance variable `rank`
-  - Model `DetectorDefinitionResource` deleted or renamed its instance variable `is_enabled`
-  - Model `DiagnosticMetricSet` deleted or renamed its instance variable `values`
-  - Model `PerfMonSet` deleted or renamed its instance variable `values`
   - Model `Resource` deleted or renamed its instance variable `kind`
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `tags`
-  - Model `ResourceMetricDefinition` deleted or renamed its instance variable `unit`
-  - Model `ResourceMetricDefinition` deleted or renamed its instance variable `primary_aggregation_type`
-  - Model `ResourceMetricDefinition` deleted or renamed its instance variable `metric_availabilities`
-  - Model `ResourceMetricDefinition` deleted or renamed its instance variable `resource_uri`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `number_of_workers`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `default_documents`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `net_framework_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `php_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `python_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `node_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `power_shell_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `linux_fx_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `windows_fx_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `request_tracing_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `request_tracing_expiration_time`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `remote_debugging_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `remote_debugging_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `http_logging_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `acr_use_managed_identity_creds`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `acr_user_managed_identity_id`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `logs_directory_size_limit`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `detailed_error_logging_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `publishing_username`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `app_settings`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `metadata`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `connection_strings`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `machine_key`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `handler_mappings`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `document_root`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `scm_type`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `use32_bit_worker_process`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `web_sockets_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `always_on`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `java_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `java_container`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `java_container_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `app_command_line`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `managed_pipeline_mode`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `virtual_applications`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `load_balancing`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `experiments`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `limits`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `auto_heal_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `auto_heal_rules`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `tracing_options`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `vnet_name`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `vnet_route_all_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `vnet_private_ports_count`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `cors`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `push`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `api_definition`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `api_management_config`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `auto_swap_slot_name`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `local_my_sql_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `managed_service_identity_id`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `x_managed_service_identity_id`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `key_vault_reference_identity`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `ip_security_restrictions`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `ip_security_restrictions_default_action`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `scm_ip_security_restrictions`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `scm_ip_security_restrictions_default_action`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `scm_ip_security_restrictions_use_main`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `http20_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `http20_proxy_flag`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `min_tls_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `min_tls_cipher_suite`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `scm_min_tls_version`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `ftps_state`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `pre_warmed_instance_count`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `function_app_scale_limit`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `elastic_web_app_scale_limit`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `health_check_path`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `functions_runtime_scale_monitoring_enabled`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `website_time_zone`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `minimum_elastic_instance_count`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `azure_storage_accounts`
-  - Model `SiteConfigResource` deleted or renamed its instance variable `public_network_access`
-  - Model `SlotConfigNamesResource` deleted or renamed its instance variable `connection_string_names`
-  - Model `SlotConfigNamesResource` deleted or renamed its instance variable `app_setting_names`
-  - Model `SlotConfigNamesResource` deleted or renamed its instance variable `azure_storage_config_names`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `default_hostname`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `repository_url`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `branch`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `custom_domains`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `repository_token`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `build_properties`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `staging_environment_policy`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `allow_config_file_updates`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `template_properties`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `content_distribution_endpoint`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `key_vault_reference_identity`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `user_provided_function_apps`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `linked_backends`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `provider`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `enterprise_grade_cdn_status`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `public_network_access`
-  - Model `StaticSiteARMResource` deleted or renamed its instance variable `database_connections`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `default_hostname`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `repository_url`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `branch`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `custom_domains`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `repository_token`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `build_properties`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `staging_environment_policy`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `allow_config_file_updates`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `template_properties`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `content_distribution_endpoint`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `key_vault_reference_identity`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `user_provided_function_apps`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `linked_backends`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `provider`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `enterprise_grade_cdn_status`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `public_network_access`
-  - Model `StaticSitePatchResource` deleted or renamed its instance variable `database_connections`
-  - Model `StaticSiteZipDeploymentARMResource` deleted or renamed its instance variable `app_zip_url`
-  - Model `StaticSiteZipDeploymentARMResource` deleted or renamed its instance variable `api_zip_url`
-  - Model `StaticSiteZipDeploymentARMResource` deleted or renamed its instance variable `deployment_title`
-  - Model `StaticSiteZipDeploymentARMResource` deleted or renamed its instance variable `provider`
-  - Model `StaticSiteZipDeploymentARMResource` deleted or renamed its instance variable `function_language`
-  - Model `ValidateRequest` deleted or renamed its instance variable `server_farm_id`
-  - Model `ValidateRequest` deleted or renamed its instance variable `sku_name`
-  - Model `ValidateRequest` deleted or renamed its instance variable `need_linux_workers`
-  - Model `ValidateRequest` deleted or renamed its instance variable `is_spot`
-  - Model `ValidateRequest` deleted or renamed its instance variable `capacity`
-  - Model `ValidateRequest` deleted or renamed its instance variable `hosting_environment`
-  - Model `ValidateRequest` deleted or renamed its instance variable `is_xenon`
-  - Model `ValidateRequest` deleted or renamed its instance variable `container_registry_base_url`
-  - Model `ValidateRequest` deleted or renamed its instance variable `container_registry_username`
-  - Model `ValidateRequest` deleted or renamed its instance variable `container_registry_password`
-  - Model `ValidateRequest` deleted or renamed its instance variable `container_image_repository`
-  - Model `ValidateRequest` deleted or renamed its instance variable `container_image_tag`
-  - Model `ValidateRequest` deleted or renamed its instance variable `container_image_platform`
-  - Model `ValidateRequest` deleted or renamed its instance variable `app_service_environment`
-  - Model `VnetInfoResource` deleted or renamed its instance variable `vnet_resource_id`
-  - Model `VnetInfoResource` deleted or renamed its instance variable `cert_thumbprint`
-  - Model `VnetInfoResource` deleted or renamed its instance variable `cert_blob`
-  - Model `VnetInfoResource` deleted or renamed its instance variable `routes`
-  - Model `VnetInfoResource` deleted or renamed its instance variable `resync_required`
-  - Model `VnetInfoResource` deleted or renamed its instance variable `dns_servers`
-  - Model `VnetInfoResource` deleted or renamed its instance variable `is_swift`
-  - Model `WorkerPoolResource` deleted or renamed its instance variable `worker_size_id`
-  - Model `WorkerPoolResource` deleted or renamed its instance variable `compute_mode`
-  - Model `WorkerPoolResource` deleted or renamed its instance variable `worker_size`
-  - Model `WorkerPoolResource` deleted or renamed its instance variable `worker_count`
-  - Model `WorkerPoolResource` deleted or renamed its instance variable `instance_names`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `start_time`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `end_time`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `correlation`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `status`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `code`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `error`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `tracking_id`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `inputs`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `inputs_link`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `outputs`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `outputs_link`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `tracked_properties`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `retry_history`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `iteration_count`
-  - Model `WorkflowRunActionRepetitionDefinition` deleted or renamed its instance variable `repetition_indexes`
   - Deleted or renamed model `Address`
-  - Deleted or renamed model `ApiKVReferenceCollection`
   - Deleted or renamed model `AppServiceCertificate`
-  - Deleted or renamed model `AppServiceCertificateCollection`
   - Deleted or renamed model `AppServiceCertificateOrder`
-  - Deleted or renamed model `AppServiceCertificateOrderCollection`
   - Deleted or renamed model `AppServiceCertificateOrderPatchResource`
   - Deleted or renamed model `AppServiceCertificatePatchResource`
   - Deleted or renamed model `AppServiceCertificateResource`
-  - Deleted or renamed model `AppServiceEnvironmentCollection`
-  - Deleted or renamed model `AppServicePlanCollection`
-  - Deleted or renamed model `ApplicationStackCollection`
   - Deleted or renamed model `AppserviceGithubToken`
   - Deleted or renamed model `AppserviceGithubTokenRequest`
-  - Deleted or renamed model `AseRegionCollection`
-  - Deleted or renamed model `BackupItemCollection`
-  - Deleted or renamed model `BillingMeterCollection`
-  - Deleted or renamed model `CertificateCollection`
   - Deleted or renamed model `CertificateDetails`
   - Deleted or renamed model `CertificateEmail`
   - Deleted or renamed model `CertificateOrderAction`
@@ -384,29 +129,15 @@
   - Deleted or renamed model `Contact`
   - Deleted or renamed model `Container`
   - Deleted or renamed model `ContainerResources`
-  - Deleted or renamed model `ContinuousWebJobCollection`
-  - Deleted or renamed model `CsmDeploymentStatusCollection`
-  - Deleted or renamed model `CsmOperationCollection`
-  - Deleted or renamed model `CsmUsageQuotaCollection`
-  - Deleted or renamed model `CustomHostnameSitesCollection`
   - Deleted or renamed model `CustomScaleRule`
   - Deleted or renamed model `Dapr`
   - Deleted or renamed model `DaprComponent`
   - Deleted or renamed model `DaprMetadata`
-  - Deleted or renamed model `DatabaseConnectionCollection`
-  - Deleted or renamed model `DeletedWebAppCollection`
-  - Deleted or renamed model `DeploymentCollection`
-  - Deleted or renamed model `DetectorResponseCollection`
-  - Deleted or renamed model `DiagnosticAnalysisCollection`
-  - Deleted or renamed model `DiagnosticCategoryCollection`
-  - Deleted or renamed model `DiagnosticDetectorCollection`
   - Deleted or renamed model `DnsType`
   - Deleted or renamed model `Domain`
   - Deleted or renamed model `DomainAvailabilityCheckResult`
-  - Deleted or renamed model `DomainCollection`
   - Deleted or renamed model `DomainControlCenterSsoRequest`
   - Deleted or renamed model `DomainOwnershipIdentifier`
-  - Deleted or renamed model `DomainOwnershipIdentifierCollection`
   - Deleted or renamed model `DomainPatchResource`
   - Deleted or renamed model `DomainPurchaseConsent`
   - Deleted or renamed model `DomainRecommendationSearchParameters`
@@ -416,105 +147,28 @@
   - Deleted or renamed model `ErrorPage`
   - Deleted or renamed model `ErrorResponse`
   - Deleted or renamed model `ExpressionTraces`
-  - Deleted or renamed model `FunctionAppStackCollection`
-  - Deleted or renamed model `FunctionEnvelopeCollection`
-  - Deleted or renamed model `GeoRegionCollection`
   - Deleted or renamed model `HostName`
-  - Deleted or renamed model `HostNameBindingCollection`
   - Deleted or renamed model `HttpScaleRule`
-  - Deleted or renamed model `HybridConnectionCollection`
-  - Deleted or renamed model `IdentifierCollection`
-  - Deleted or renamed model `InboundEnvironmentEndpointCollection`
-  - Deleted or renamed model `KubeEnvironmentCollection`
-  - Deleted or renamed model `NameIdentifierCollection`
-  - Deleted or renamed model `OutboundEnvironmentEndpointCollection`
-  - Deleted or renamed model `PerfMonCounterCollection`
-  - Deleted or renamed model `PremierAddOnOfferCollection`
-  - Deleted or renamed model `PrivateEndpointConnectionCollection`
   - Deleted or renamed model `PrivateLinkConnectionApprovalRequestResource`
-  - Deleted or renamed model `ProcessInfoCollection`
-  - Deleted or renamed model `ProcessModuleInfoCollection`
-  - Deleted or renamed model `ProcessThreadInfoCollection`
-  - Deleted or renamed model `PublicCertificateCollection`
-  - Deleted or renamed model `PublishingCredentialsPoliciesCollection`
   - Deleted or renamed model `QueueScaleRule`
-  - Deleted or renamed model `RecommendationCollection`
   - Deleted or renamed model `ReissueCertificateOrderRequest`
   - Deleted or renamed model `RenewCertificateOrderRequest`
-  - Deleted or renamed model `ResourceCollection`
-  - Deleted or renamed model `ResourceHealthMetadataCollection`
-  - Deleted or renamed model `ResourceMetricDefinitionCollection`
   - Deleted or renamed model `ResourceNotRenewableReason`
   - Deleted or renamed model `Scale`
   - Deleted or renamed model `ScaleRule`
   - Deleted or renamed model `ScaleRuleAuth`
-  - Deleted or renamed model `SiteConfigResourceCollection`
-  - Deleted or renamed model `SiteConfigurationSnapshotInfoCollection`
-  - Deleted or renamed model `SiteContainerCollection`
-  - Deleted or renamed model `SiteExtensionInfoCollection`
   - Deleted or renamed model `SiteSeal`
   - Deleted or renamed model `SiteSealRequest`
-  - Deleted or renamed model `SkuInfoCollection`
-  - Deleted or renamed model `SlotDifferenceCollection`
-  - Deleted or renamed model `SnapshotCollection`
-  - Deleted or renamed model `SourceControlCollection`
-  - Deleted or renamed model `StampCapacityCollection`
-  - Deleted or renamed model `StaticSiteBasicAuthPropertiesCollection`
-  - Deleted or renamed model `StaticSiteBuildCollection`
-  - Deleted or renamed model `StaticSiteCollection`
-  - Deleted or renamed model `StaticSiteCustomDomainOverviewCollection`
-  - Deleted or renamed model `StaticSiteFunctionOverviewCollection`
-  - Deleted or renamed model `StaticSiteLinkedBackendsCollection`
-  - Deleted or renamed model `StaticSiteUserCollection`
-  - Deleted or renamed model `StaticSiteUserProvidedFunctionAppsCollection`
   - Deleted or renamed model `SubResource`
   - Deleted or renamed model `Template`
   - Deleted or renamed model `TldLegalAgreement`
-  - Deleted or renamed model `TldLegalAgreementCollection`
   - Deleted or renamed model `TopLevelDomain`
   - Deleted or renamed model `TopLevelDomainAgreementOption`
-  - Deleted or renamed model `TopLevelDomainCollection`
-  - Deleted or renamed model `TriggeredJobHistoryCollection`
-  - Deleted or renamed model `TriggeredWebJobCollection`
-  - Deleted or renamed model `UsageCollection`
-  - Deleted or renamed model `WebAppCollection`
-  - Deleted or renamed model `WebAppInstanceStatusCollection`
-  - Deleted or renamed model `WebAppStackCollection`
-  - Deleted or renamed model `WebJobCollection`
-  - Deleted or renamed model `WorkerPoolCollection`
-  - Deleted or renamed model `WorkflowEnvelopeCollection`
-  - Deleted or renamed model `WorkflowFilter`
-  - Deleted or renamed model `WorkflowRunActionFilter`
-  - Deleted or renamed model `WorkflowRunActionRepetitionDefinitionCollection`
-  - Deleted or renamed model `WorkflowRunFilter`
-  - Deleted or renamed model `WorkflowTriggerFilter`
-  - Deleted or renamed model `WorkflowTriggerHistoryFilter`
   - Method `AppServiceEnvironmentsOperations.begin_delete` changed its parameter `force_delete` from `positional_or_keyword` to `keyword_only`
   - Method `AppServiceEnvironmentsOperations.list_web_apps` changed its parameter `properties_to_include` from `positional_or_keyword` to `keyword_only`
   - Method `AppServicePlansOperations.list` changed its parameter `detailed` from `positional_or_keyword` to `keyword_only`
   - Method `AppServicePlansOperations.list_web_apps` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `AppServicePlansOperations.restart_web_apps` changed its parameter `soft_restart` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_analysis` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_analysis` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_analysis` changed its parameter `time_grain` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_analysis_slot` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_analysis_slot` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_analysis_slot` changed its parameter `time_grain` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_detector` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_detector` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_detector` changed its parameter `time_grain` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_detector_slot` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_detector_slot` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.execute_site_detector_slot` changed its parameter `time_grain` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_hosting_environment_detector_response` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_hosting_environment_detector_response` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_hosting_environment_detector_response` changed its parameter `time_grain` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_site_detector_response` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_site_detector_response` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_site_detector_response` changed its parameter `time_grain` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_site_detector_response_slot` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_site_detector_response_slot` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `DiagnosticsOperations.get_site_detector_response_slot` changed its parameter `time_grain` from `positional_or_keyword` to `keyword_only`
   - Method `ProviderOperations.get_available_stacks` changed its parameter `os_type_selected` from `positional_or_keyword` to `keyword_only`
   - Method `ProviderOperations.get_available_stacks_on_prem` changed its parameter `os_type_selected` from `positional_or_keyword` to `keyword_only`
   - Method `ProviderOperations.get_function_app_stacks` changed its parameter `stack_os_type` from `positional_or_keyword` to `keyword_only`
@@ -523,10 +177,6 @@
   - Method `ProviderOperations.get_web_app_stacks_for_location` changed its parameter `stack_os_type` from `positional_or_keyword` to `keyword_only`
   - Method `RecommendationsOperations.disable_all_for_hosting_environment` changed its parameter `environment_name` from `positional_or_keyword` to `keyword_only`
   - Method `RecommendationsOperations.disable_recommendation_for_hosting_environment` changed its parameter `environment_name` from `positional_or_keyword` to `keyword_only`
-  - Method `RecommendationsOperations.get_rule_details_by_hosting_environment` changed its parameter `update_seen` from `positional_or_keyword` to `keyword_only`
-  - Method `RecommendationsOperations.get_rule_details_by_hosting_environment` changed its parameter `recommendation_id` from `positional_or_keyword` to `keyword_only`
-  - Method `RecommendationsOperations.get_rule_details_by_web_app` changed its parameter `update_seen` from `positional_or_keyword` to `keyword_only`
-  - Method `RecommendationsOperations.get_rule_details_by_web_app` changed its parameter `recommendation_id` from `positional_or_keyword` to `keyword_only`
   - Method `RecommendationsOperations.list` changed its parameter `featured` from `positional_or_keyword` to `keyword_only`
   - Method `RecommendationsOperations.list_history_for_hosting_environment` changed its parameter `expired_only` from `positional_or_keyword` to `keyword_only`
   - Method `RecommendationsOperations.list_history_for_web_app` changed its parameter `expired_only` from `positional_or_keyword` to `keyword_only`
@@ -540,45 +190,57 @@
   - Method `WebAppsOperations.analyze_custom_hostname` changed its parameter `host_name` from `positional_or_keyword` to `keyword_only`
   - Method `WebAppsOperations.analyze_custom_hostname_slot` changed its parameter `host_name` from `positional_or_keyword` to `keyword_only`
   - Method `WebAppsOperations.begin_migrate_storage` changed its parameter `subscription_name` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_network_trace` changed its parameter `duration_in_seconds` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_network_trace` changed its parameter `max_frame_length` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_network_trace` changed its parameter `sas_url` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_network_trace_slot` changed its parameter `duration_in_seconds` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_network_trace_slot` changed its parameter `max_frame_length` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_network_trace_slot` changed its parameter `sas_url` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed its parameter `duration_in_seconds` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed its parameter `max_frame_length` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed its parameter `sas_url` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed its parameter `duration_in_seconds` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed its parameter `max_frame_length` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed its parameter `sas_url` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.delete` changed its parameter `delete_metrics` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.delete` changed its parameter `delete_empty_server_farm` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.delete_slot` changed its parameter `delete_metrics` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.delete_slot` changed its parameter `delete_empty_server_farm` from `positional_or_keyword` to `keyword_only`
   - Method `WebAppsOperations.delete_source_control` changed its parameter `additional_flags` from `positional_or_keyword` to `keyword_only`
   - Method `WebAppsOperations.delete_source_control_slot` changed its parameter `additional_flags` from `positional_or_keyword` to `keyword_only`
   - Method `WebAppsOperations.list_by_resource_group` changed its parameter `include_slots` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.restart` changed its parameter `soft_restart` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.restart` changed its parameter `synchronous` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.restart_slot` changed its parameter `soft_restart` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.restart_slot` changed its parameter `synchronous` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.start_web_site_network_trace` changed its parameter `duration_in_seconds` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.start_web_site_network_trace` changed its parameter `max_frame_length` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.start_web_site_network_trace` changed its parameter `sas_url` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.start_web_site_network_trace_slot` changed its parameter `duration_in_seconds` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.start_web_site_network_trace_slot` changed its parameter `max_frame_length` from `positional_or_keyword` to `keyword_only`
-  - Method `WebAppsOperations.start_web_site_network_trace_slot` changed its parameter `sas_url` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `AppServiceCertificateOrdersOperations`
-  - Deleted or renamed model `CertificateOrdersDiagnosticsOperations`
-  - Deleted or renamed model `CertificateRegistrationProviderOperations`
-  - Deleted or renamed model `DomainRegistrationProviderOperations`
-  - Deleted or renamed model `DomainsOperations`
-  - Deleted or renamed model `TopLevelDomainsOperations`
-  - Method `RecommendationsOperations.disable_all_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'hosting_environment_name', 'environment_name', 'kwargs']`
-  - Method `RecommendationsOperations.disable_recommendation_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'name', 'hosting_environment_name', 'environment_name', 'kwargs']`
-  - Method `RecommendationsOperations.reset_all_filters_for_hosting_environment` re-ordered its parameters from `['self', 'resource_group_name', 'environment_name', 'hosting_environment_name', 'kwargs']` to `['self', 'resource_group_name', 'hosting_environment_name', 'environment_name', 'kwargs']`
-  - Method `WebAppsOperations.begin_migrate_storage` re-ordered its parameters from `['self', 'subscription_name', 'resource_group_name', 'name', 'migration_options', 'kwargs']` to `['self', 'resource_group_name', 'name', 'migration_options', 'subscription_name', 'kwargs']`
+  - Model `DiagnosticMetricSet` renamed its instance variable `values` to `values_property`
+  - Model `PerfMonSet` renamed its instance variable `values` to `values_property`
+  - Model `AppServiceEnvironmentPatchResource` moved instance variable `provisioning_state`, `status`, `virtual_network`, `internal_load_balancing_mode`, `multi_size`, `multi_role_count`, `ipssl_address_count`, `dns_suffix`, `maximum_number_of_machines`, `front_end_scale_factor`, `suspended`, `cluster_settings`, `user_whitelisted_ip_ranges`, `has_linux_workers`, `upgrade_preference`, `dedicated_host_count`, `zone_redundant`, `custom_dns_suffix_configuration`, `networking_configuration` and `upgrade_availability` under property `properties` whose type is `AppServiceEnvironment`
+  - Model `AppServiceEnvironmentResource` moved instance variable `provisioning_state`, `status`, `virtual_network`, `internal_load_balancing_mode`, `multi_size`, `multi_role_count`, `ipssl_address_count`, `dns_suffix`, `maximum_number_of_machines`, `front_end_scale_factor`, `suspended`, `cluster_settings`, `user_whitelisted_ip_ranges`, `has_linux_workers`, `upgrade_preference`, `dedicated_host_count`, `zone_redundant`, `custom_dns_suffix_configuration`, `networking_configuration` and `upgrade_availability` under property `properties` whose type is `AppServiceEnvironment`
+  - Model `ApplicationStackResource` moved instance variable `name_properties_name`, `display`, `dependency`, `major_versions`, `frameworks` and `is_deprecated` under property `properties` whose type is `ApplicationStack`
+  - Model `DatabaseConnectionPatchRequest` moved instance variable `resource_id`, `connection_identity`, `connection_string` and `region` under property `properties` whose type is `DatabaseConnectionPatchRequestProperties`
+  - Model `DetectorDefinitionResource` moved instance variable `display_name`, `description`, `rank` and `is_enabled` under property `properties` whose type is `DetectorDefinition`
+  - Model `ResourceMetricDefinition` moved instance variable `unit`, `primary_aggregation_type`, `metric_availabilities` and `resource_uri` under property `properties` whose type is `ResourceMetricDefinitionProperties`
+  - Model `SiteConfigResource` moved instance variable `number_of_workers`, `default_documents`, `net_framework_version`, `php_version`, `python_version`, `node_version`, `power_shell_version`, `linux_fx_version`, `windows_fx_version`, `request_tracing_enabled`, `request_tracing_expiration_time`, `remote_debugging_enabled`, `remote_debugging_version`, `http_logging_enabled`, `acr_use_managed_identity_creds`, `acr_user_managed_identity_id`, `logs_directory_size_limit`, `detailed_error_logging_enabled`, `publishing_username`, `app_settings`, `metadata`, `connection_strings`, `machine_key`, `handler_mappings`, `document_root`, `scm_type`, `use32_bit_worker_process`, `web_sockets_enabled`, `always_on`, `java_version`, `java_container`, `java_container_version`, `app_command_line`, `managed_pipeline_mode`, `virtual_applications`, `load_balancing`, `experiments`, `limits`, `auto_heal_enabled`, `auto_heal_rules`, `tracing_options`, `vnet_name`, `vnet_route_all_enabled`, `vnet_private_ports_count`, `cors`, `push`, `api_definition`, `api_management_config`, `auto_swap_slot_name`, `local_my_sql_enabled`, `managed_service_identity_id`, `x_managed_service_identity_id`, `key_vault_reference_identity`, `ip_security_restrictions`, `ip_security_restrictions_default_action`, `scm_ip_security_restrictions`, `scm_ip_security_restrictions_default_action`, `scm_ip_security_restrictions_use_main`, `http20_enabled`, `http20_proxy_flag`, `min_tls_version`, `min_tls_cipher_suite`, `scm_min_tls_version`, `ftps_state`, `pre_warmed_instance_count`, `function_app_scale_limit`, `elastic_web_app_scale_limit`, `health_check_path`, `functions_runtime_scale_monitoring_enabled`, `website_time_zone`, `minimum_elastic_instance_count`, `azure_storage_accounts` and `public_network_access` under property `properties` whose type is `SiteConfig`
+  - Model `SlotConfigNamesResource` moved instance variable `connection_string_names`, `app_setting_names` and `azure_storage_config_names` under property `properties` whose type is `SlotConfigNames`
+  - Model `StaticSiteARMResource` moved instance variable `default_hostname`, `repository_url`, `branch`, `custom_domains`, `repository_token`, `build_properties`, `private_endpoint_connections`, `staging_environment_policy`, `allow_config_file_updates`, `template_properties`, `content_distribution_endpoint`, `key_vault_reference_identity`, `user_provided_function_apps`, `linked_backends`, `provider`, `enterprise_grade_cdn_status`, `public_network_access` and `database_connections` under property `properties` whose type is `StaticSite`
+  - Model `StaticSitePatchResource` moved instance variable `default_hostname`, `repository_url`, `branch`, `custom_domains`, `repository_token`, `build_properties`, `private_endpoint_connections`, `staging_environment_policy`, `allow_config_file_updates`, `template_properties`, `content_distribution_endpoint`, `key_vault_reference_identity`, `user_provided_function_apps`, `linked_backends`, `provider`, `enterprise_grade_cdn_status`, `public_network_access` and `database_connections` under property `properties` whose type is `StaticSite`
+  - Model `StaticSiteZipDeploymentARMResource` moved instance variable `app_zip_url`, `api_zip_url`, `deployment_title`, `provider` and `function_language` under property `properties` whose type is `StaticSiteZipDeployment`
+  - Model `ValidateRequest` moved instance variable `server_farm_id`, `sku_name`, `need_linux_workers`, `is_spot`, `capacity`, `hosting_environment`, `is_xenon`, `container_registry_base_url`, `container_registry_username`, `container_registry_password`, `container_image_repository`, `container_image_tag`, `container_image_platform` and `app_service_environment` under property `properties` whose type is `ValidateProperties`
+  - Model `VnetInfoResource` moved instance variable `vnet_resource_id`, `cert_thumbprint`, `cert_blob`, `routes`, `resync_required`, `dns_servers` and `is_swift` under property `properties` whose type is `VnetInfo`
+  - Model `WorkerPoolResource` moved instance variable `worker_size_id`, `compute_mode`, `worker_size`, `worker_count` and `instance_names` under property `properties` whose type is `WorkerPool`
+  - Model `WorkflowRunActionRepetitionDefinition` moved instance variable `start_time`, `end_time`, `correlation`, `status`, `code`, `error`, `tracking_id`, `inputs`, `inputs_link`, `outputs`, `outputs_link`, `tracked_properties`, `retry_history`, `iteration_count` and `repetition_indexes` under property `properties` whose type is `WorkflowRunActionRepetitionProperties`
+  - Deleted or renamed operation group `AppServiceCertificateOrdersOperations`
+  - Deleted or renamed operation group `CertificateOrdersDiagnosticsOperations`
+  - Deleted or renamed operation group `CertificateRegistrationProviderOperations`
+  - Deleted or renamed operation group `DomainRegistrationProviderOperations`
+  - Deleted or renamed operation group `DomainsOperations`
+  - Deleted or renamed operation group `TopLevelDomainsOperations`
+  - Method `WebSiteManagementClient.list_billing_meters` changed its parameter `billing_location`/`os_type` from `positional_or_keyword` to `keyword_only`
+  - Method `WebSiteManagementClient.list_geo_regions` changed its parameter `sku`/`linux_workers_enabled`/`xenon_workers_enabled`/`linux_dynamic_workers_enabled`/`custom_mode_workers_enabled` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_analysis` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_analysis_slot` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_detector` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.execute_site_detector_slot` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.get_hosting_environment_detector_response` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.get_site_detector_response` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticsOperations.get_site_detector_response_slot` changed its parameter `start_time`/`end_time`/`time_grain` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.get_rule_details_by_hosting_environment` changed its parameter `update_seen`/`recommendation_id` from `positional_or_keyword` to `keyword_only`
+  - Method `RecommendationsOperations.get_rule_details_by_web_app` changed its parameter `update_seen`/`recommendation_id` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_network_trace` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_network_trace_slot` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.begin_start_web_site_network_trace_operation_slot` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.delete` changed its parameter `delete_metrics`/`delete_empty_server_farm` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.delete_slot` changed its parameter `delete_metrics`/`delete_empty_server_farm` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.restart` changed its parameter `soft_restart`/`synchronous` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.restart_slot` changed its parameter `soft_restart`/`synchronous` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.start_web_site_network_trace` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+  - Method `WebAppsOperations.start_web_site_network_trace_slot` changed its parameter `duration_in_seconds`/`max_frame_length`/`sas_url` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ApiKVReferenceCollection`/`AppServiceCertificateCollection`/`AppServiceCertificateOrderCollection`/`AppServiceEnvironmentCollection`/`AppServicePlanCollection`/`ApplicationStackCollection`/`AseRegionCollection`/`BackupItemCollection`/`BillingMeterCollection`/`CertificateCollection`/`ContinuousWebJobCollection`/`CsmDeploymentStatusCollection`/`CsmOperationCollection`/`CsmUsageQuotaCollection`/`CustomHostnameSitesCollection`/`DatabaseConnectionCollection`/`DeletedWebAppCollection`/`DeploymentCollection`/`DetectorResponseCollection`/`DiagnosticAnalysisCollection`/`DiagnosticCategoryCollection`/`DiagnosticDetectorCollection`/`DomainCollection`/`DomainOwnershipIdentifierCollection`/`FunctionAppStackCollection`/`FunctionEnvelopeCollection`/`GeoRegionCollection`/`HostNameBindingCollection`/`HybridConnectionCollection`/`IdentifierCollection`/`InboundEnvironmentEndpointCollection`/`KubeEnvironmentCollection`/`NameIdentifierCollection`/`OutboundEnvironmentEndpointCollection`/`PerfMonCounterCollection`/`PremierAddOnOfferCollection`/`PrivateEndpointConnectionCollection`/`ProcessInfoCollection`/`ProcessModuleInfoCollection`/`ProcessThreadInfoCollection`/`PublicCertificateCollection`/`PublishingCredentialsPoliciesCollection`/`RecommendationCollection`/`ResourceCollection`/`ResourceHealthMetadataCollection`/`ResourceMetricDefinitionCollection`/`SiteConfigResourceCollection`/`SiteConfigurationSnapshotInfoCollection`/`SiteContainerCollection`/`SiteExtensionInfoCollection`/`SkuInfoCollection`/`SlotDifferenceCollection`/`SnapshotCollection`/`SourceControlCollection`/`StampCapacityCollection`/`StaticSiteBasicAuthPropertiesCollection`/`StaticSiteBuildCollection`/`StaticSiteCollection`/`StaticSiteCustomDomainOverviewCollection`/`StaticSiteFunctionOverviewCollection`/`StaticSiteLinkedBackendsCollection`/`StaticSiteUserCollection`/`StaticSiteUserProvidedFunctionAppsCollection`/`TldLegalAgreementCollection`/`TopLevelDomainCollection`/`TriggeredJobHistoryCollection`/`TriggeredWebJobCollection`/`UsageCollection`/`WebAppCollection`/`WebAppInstanceStatusCollection`/`WebAppStackCollection`/`WebJobCollection`/`WorkerPoolCollection`/`WorkflowEnvelopeCollection`/`WorkflowFilter`/`WorkflowRunActionFilter`/`WorkflowRunActionRepetitionDefinitionCollection`/`WorkflowRunFilter`/`WorkflowTriggerFilter`/`WorkflowTriggerHistoryFilter` which actually were not used by SDK users
 
 ## 10.1.0 (2025-11-17)
 
