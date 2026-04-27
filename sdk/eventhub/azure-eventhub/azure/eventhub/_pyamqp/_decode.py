@@ -313,7 +313,7 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
         return buffer, value
 
 
-def _decode_described_array(buffer: memoryview, tp, descriptor) -> Tuple[memoryview, object]:
+def _decode_described_array(buffer: memoryview, tp: int, descriptor) -> Tuple[memoryview, Any]:
     buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer)
     try:
         value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
@@ -433,7 +433,7 @@ _DECODE_BY_CONSTRUCTOR[209] = _decode_map_large
 _DECODE_BY_CONSTRUCTOR[224] = _decode_array_small
 _DECODE_BY_CONSTRUCTOR[240] = _decode_array_large
 
-_DESCR_BY_CONSTRUCTOR = {
+_DESCR_BY_CONSTRUCTOR: Dict[int, Any] = {
     67: described.DescribedInt,
     68: described.DescribedInt,
     69: described.DescribedList,
