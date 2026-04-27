@@ -15,7 +15,7 @@ from azure.mgmt.education import EducationClient
     pip install azure-identity
     pip install azure-mgmt-education
 # USAGE
-    python lab_list_include_budget.py
+    python join_request_approve_and_deny_for_approve.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.labs.list_all(
+    client.join_requests.approve(
         billing_account_name="{billingAccountName}",
         billing_profile_name="{billingProfileName}",
+        invoice_section_name="{invoiceSectionName}",
+        join_request_name="{joinRequestName}",
     )
-    for item in response:
-        print(item)
 
 
-# x-ms-original-file: 2021-12-01-preview/LabListIncludeBudget.json
+# x-ms-original-file: 2021-12-01-preview/JoinRequestApproveAndDenyForApprove.json
 if __name__ == "__main__":
     main()

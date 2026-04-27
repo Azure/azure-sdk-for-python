@@ -1,0 +1,4 @@
+directory: specification/education/resource-manager/Microsoft.Education/Education
+commit: 1c7a8d8bce98d0984c2f2edd56c9d9223d86f3f4
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
