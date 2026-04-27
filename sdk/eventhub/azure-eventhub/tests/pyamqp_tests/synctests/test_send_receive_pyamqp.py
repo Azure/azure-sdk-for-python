@@ -67,13 +67,11 @@ def test_described(live_eventhub):
         live_eventhub["hostname"], live_eventhub["event_hub"], live_eventhub["partition"]
     )
 
-    out = bytearray();
-    encode_described(out, (12345, "TEST"))
-
-    message = Message(value=out)
+    # A tuple is encoded as a described type: (descriptor, value)
+    message = Message(value=(12345, "TEST"))
 
     with SendClient(
-            live_eventhub["hostname"], target, auth=sas_auth, debug=True, transport_type=TransportType.Amqp
+        live_eventhub["hostname"], target, auth=sas_auth, debug=True, transport_type=TransportType.Amqp
     ) as send_client:
         send_client.send_message(message)
 
@@ -85,13 +83,20 @@ def test_described(live_eventhub):
     )
 
     with ReceiveClient(
-            live_eventhub["hostname"],
-            source,
-            auth=sas_auth,
-            debug=False,
-            timeout=500,
-            prefetch=1,
-            transport_type=TransportType.Amqp,
+        live_eventhub["hostname"],
+        source,
+        auth=sas_auth,
+        debug=False,
+        timeout=500,
+        prefetch=1,
+        transport_type=TransportType.Amqp,
     ) as receive_client:
         messages = receive_client.receive_message_batch(max_batch_size=1)
         assert len(messages) > 0
+
+        msg = messages[0]
+        # The value body should be decoded as a described type with descriptor preserved
+        assert msg.value is not None
+        assert hasattr(msg.value, "descriptor")
+        assert msg.value.descriptor == 12345
+        assert msg.value == b"TEST"

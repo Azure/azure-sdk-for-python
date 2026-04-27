@@ -723,3 +723,39 @@ def test_send_long_wait_idle_timeout(auth_credential_receivers, keep_alive, uamq
             else:
                 with pytest.raises(AMQPConnectionError):
                     sender._send_event_data()
+
+
+@pytest.mark.liveTest
+def test_send_and_receive_described_types(auth_credential_receivers, uamqp_transport, timeout_factor, client_args):
+    if uamqp_transport:
+        pytest.skip("Described type preservation only applies to pyamqp transport")
+
+    fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
+    client = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=credential(),
+        uamqp_transport=uamqp_transport,
+        **client_args
+    )
+
+    with client:
+        # A tuple is encoded as a described type: (descriptor, value)
+        described_value = (12345, "TEST")
+        message = AmqpAnnotatedMessage(value_body=described_value)
+        client.send_event(message)
+
+    timeout = 10 * timeout_factor
+    received = []
+    for r in receivers:
+        received.extend(r.receive_message_batch(timeout=timeout))
+
+    assert len(received) >= 1
+
+    for msg in received:
+        if msg.value is not None and hasattr(msg.value, "descriptor"):
+            assert msg.value.descriptor == 12345
+            assert msg.value == b"TEST"
+            break
+    else:
+        pytest.fail("Did not receive message with described value body")
