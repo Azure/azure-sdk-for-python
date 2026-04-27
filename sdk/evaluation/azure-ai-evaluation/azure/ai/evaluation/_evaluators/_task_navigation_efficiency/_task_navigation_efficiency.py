@@ -137,7 +137,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             error_target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
         )
 
-        super().__init__()
+        super().__init__(threshold=1.0)
 
     @override
     async def _real_call(self, **kwargs):
@@ -345,7 +345,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                 "task_navigation_efficiency_passed": match_result,
                 "task_navigation_efficiency_reason": None,
                 "task_navigation_efficiency_status": "completed",
-                "task_navigation_efficiency_threshold": None,
+                "task_navigation_efficiency_threshold": float(self._threshold),
                 "task_navigation_efficiency_properties": additional_properties_metrics,
             }
         else:
