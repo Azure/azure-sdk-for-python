@@ -9,6 +9,8 @@ from ci_tools.functions import install_into_venv
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.logging import logger
 
+RUFF_VERSION = "0.15.11"
+
 
 class ruff(Check):
     def __init__(self) -> None:
@@ -48,7 +50,7 @@ class ruff(Check):
             self.install_dev_reqs(executable, args, package_dir)
 
             try:
-                install_into_venv(executable, ["ruff"], package_dir)
+                install_into_venv(executable, [f"ruff=={RUFF_VERSION}"], package_dir)
             except subprocess.CalledProcessError as e:
                 logger.error(f"Failed to install ruff: {e}")
                 return e.returncode
