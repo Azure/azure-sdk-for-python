@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_protectable_items_operations import (
     build_get_request,
     build_list_by_replication_protection_containers_request,
@@ -35,7 +35,8 @@ from ...operations._replication_protectable_items_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationProtectableItemsOperations:
@@ -62,17 +63,24 @@ class ReplicationProtectableItemsOperations:
     @distributed_trace
     def list_by_replication_protection_containers(  # pylint: disable=name-too-long
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         filter: Optional[str] = None,
         take: Optional[str] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ProtectableItem"]:
+    ) -> AsyncItemPaged["_models.ProtectableItem"]:
         """Gets the list of protectable items.
 
         Lists the protectable items in a protection container.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -106,10 +114,10 @@ class ReplicationProtectableItemsOperations:
             if not next_link:
 
                 _request = build_list_by_replication_protection_containers_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     take=take,
@@ -163,12 +171,23 @@ class ReplicationProtectableItemsOperations:
 
     @distributed_trace_async
     async def get(
-        self, fabric_name: str, protection_container_name: str, protectable_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        protectable_item_name: str,
+        **kwargs: Any
     ) -> _models.ProtectableItem:
         """Gets the details of a protectable item.
 
         The operation to get the details of a protectable item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -194,11 +213,11 @@ class ReplicationProtectableItemsOperations:
         cls: ClsType[_models.ProtectableItem] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             protectable_item_name=protectable_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

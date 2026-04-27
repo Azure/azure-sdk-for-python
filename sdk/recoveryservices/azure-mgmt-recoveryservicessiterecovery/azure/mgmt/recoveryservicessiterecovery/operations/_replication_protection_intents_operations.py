@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -29,10 +29,11 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -50,7 +51,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -59,9 +60,11 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationProtectionIntents",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -80,12 +83,12 @@ def build_list_request(
 
 
 def build_get_request(
-    intent_object_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, intent_object_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -94,9 +97,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationProtectionIntents/{intentObjectName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "intentObjectName": _SERIALIZER.url("intent_object_name", intent_object_name, "str"),
     }
 
@@ -112,12 +117,12 @@ def build_get_request(
 
 
 def build_create_request(
-    intent_object_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, intent_object_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -127,9 +132,11 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationProtectionIntents/{intentObjectName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "intentObjectName": _SERIALIZER.url("intent_object_name", intent_object_name, "str"),
     }
 
@@ -158,7 +165,7 @@ class ReplicationProtectionIntentsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -169,12 +176,22 @@ class ReplicationProtectionIntentsOperations:
 
     @distributed_trace
     def list(
-        self, skip_token: Optional[str] = None, take_token: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.ReplicationProtectionIntent"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        skip_token: Optional[str] = None,
+        take_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ReplicationProtectionIntent"]:
         """Gets the list of replication protection intent objects.
 
         Gets the list of ASR replication protection intent objects in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param skip_token: The pagination token. Default value is None.
         :type skip_token: str
         :param take_token: The page size. Default value is None.
@@ -203,8 +220,8 @@ class ReplicationProtectionIntentsOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     skip_token=skip_token,
                     take_token=take_token,
@@ -256,11 +273,18 @@ class ReplicationProtectionIntentsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, intent_object_name: str, **kwargs: Any) -> _models.ReplicationProtectionIntent:
+    def get(
+        self, resource_group_name: str, resource_name: str, intent_object_name: str, **kwargs: Any
+    ) -> _models.ReplicationProtectionIntent:
         """Gets the details of a Replication protection intent item.
 
         Gets the details of an ASR replication protection intent.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param intent_object_name: Replication protection intent name. Required.
         :type intent_object_name: str
         :return: ReplicationProtectionIntent or the result of cls(response)
@@ -282,9 +306,9 @@ class ReplicationProtectionIntentsOperations:
         cls: ClsType[_models.ReplicationProtectionIntent] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             intent_object_name=intent_object_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -313,6 +337,8 @@ class ReplicationProtectionIntentsOperations:
     @overload
     def create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         intent_object_name: str,
         input: _models.CreateProtectionIntentInput,
         *,
@@ -323,7 +349,12 @@ class ReplicationProtectionIntentsOperations:
 
         The operation to create an ASR replication protection intent item.
 
-        :param intent_object_name: A name for the replication protection item. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param intent_object_name: Replication protection intent name. Required.
         :type intent_object_name: str
         :param input: Create Protection Intent Input. Required.
         :type input: ~azure.mgmt.recoveryservicessiterecovery.models.CreateProtectionIntentInput
@@ -337,13 +368,25 @@ class ReplicationProtectionIntentsOperations:
 
     @overload
     def create(
-        self, intent_object_name: str, input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        intent_object_name: str,
+        input: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ReplicationProtectionIntent:
         """Create protection intent Resource.
 
         The operation to create an ASR replication protection intent item.
 
-        :param intent_object_name: A name for the replication protection item. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param intent_object_name: Replication protection intent name. Required.
         :type intent_object_name: str
         :param input: Create Protection Intent Input. Required.
         :type input: IO[bytes]
@@ -357,13 +400,23 @@ class ReplicationProtectionIntentsOperations:
 
     @distributed_trace
     def create(
-        self, intent_object_name: str, input: Union[_models.CreateProtectionIntentInput, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        intent_object_name: str,
+        input: Union[_models.CreateProtectionIntentInput, IO[bytes]],
+        **kwargs: Any
     ) -> _models.ReplicationProtectionIntent:
         """Create protection intent Resource.
 
         The operation to create an ASR replication protection intent item.
 
-        :param intent_object_name: A name for the replication protection item. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param intent_object_name: Replication protection intent name. Required.
         :type intent_object_name: str
         :param input: Create Protection Intent Input. Is either a CreateProtectionIntentInput type or a
          IO[bytes] type. Required.
@@ -397,9 +450,9 @@ class ReplicationProtectionIntentsOperations:
             _json = self._serialize.body(input, "CreateProtectionIntentInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             intent_object_name=intent_object_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,

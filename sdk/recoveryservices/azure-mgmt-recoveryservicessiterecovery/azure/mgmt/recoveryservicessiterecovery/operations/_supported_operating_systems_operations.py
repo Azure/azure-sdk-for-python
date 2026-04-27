@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -26,10 +26,11 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -46,7 +47,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -55,9 +56,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationSupportedOperatingSystems",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -85,7 +88,7 @@ class SupportedOperatingSystemsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -95,11 +98,18 @@ class SupportedOperatingSystemsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, instance_type: Optional[str] = None, **kwargs: Any) -> _models.SupportedOperatingSystems:
+    def get(
+        self, resource_group_name: str, resource_name: str, instance_type: Optional[str] = None, **kwargs: Any
+    ) -> _models.SupportedOperatingSystems:
         """Gets the data of supported operating systems by SRS.
 
         Gets the data of supported operating systems by SRS.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param instance_type: The instance type. Default value is None.
         :type instance_type: str
         :return: SupportedOperatingSystems or the result of cls(response)
@@ -121,8 +131,8 @@ class SupportedOperatingSystemsOperations:
         cls: ClsType[_models.SupportedOperatingSystems] = kwargs.pop("cls", None)
 
         _request = build_get_request(
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             instance_type=instance_type,
             api_version=api_version,

@@ -22,12 +22,13 @@ class TestSiteRecoveryManagementClusterRecoveryPointOperations(AzureMgmtRecorded
     @recorded_by_proxy
     def test_cluster_recovery_point_get(self, resource_group):
         response = self.client.cluster_recovery_point.get(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
             recovery_point_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

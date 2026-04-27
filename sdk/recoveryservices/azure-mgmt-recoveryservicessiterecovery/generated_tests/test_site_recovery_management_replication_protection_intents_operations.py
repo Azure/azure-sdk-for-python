@@ -22,7 +22,9 @@ class TestSiteRecoveryManagementReplicationProtectionIntentsOperations(AzureMgmt
     @recorded_by_proxy
     def test_replication_protection_intents_list(self, resource_group):
         response = self.client.replication_protection_intents.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,8 +34,10 @@ class TestSiteRecoveryManagementReplicationProtectionIntentsOperations(AzureMgmt
     @recorded_by_proxy
     def test_replication_protection_intents_get(self, resource_group):
         response = self.client.replication_protection_intents.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             intent_object_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -43,9 +47,11 @@ class TestSiteRecoveryManagementReplicationProtectionIntentsOperations(AzureMgmt
     @recorded_by_proxy
     def test_replication_protection_intents_create(self, resource_group):
         response = self.client.replication_protection_intents.create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             intent_object_name="str",
             input={"properties": {"providerSpecificDetails": "create_protection_intent_provider_specific_details"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

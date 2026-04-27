@@ -22,10 +22,11 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_list_by_replication_protection_containers(self, resource_group):
         response = self.client.replication_protection_clusters.list_by_replication_protection_containers(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -35,11 +36,12 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_get(self, resource_group):
         response = self.client.replication_protection_clusters.get(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -49,6 +51,8 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_create(self, resource_group):
         response = self.client.replication_protection_clusters.begin_create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
@@ -168,9 +172,17 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
                     "testFailoverState": "str",
                     "testFailoverStateDescription": "str",
                 },
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -180,10 +192,12 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_purge(self, resource_group):
         response = self.client.replication_protection_clusters.begin_purge(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -193,6 +207,7 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_apply_recovery_point(self, resource_group):
         response = self.client.replication_protection_clusters.begin_apply_recovery_point(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
@@ -204,7 +219,7 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
                     "individualNodeRecoveryPoints": ["str"],
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -214,11 +229,12 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_failover_commit(self, resource_group):
         response = self.client.replication_protection_clusters.begin_failover_commit(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -228,12 +244,13 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_get_operation_results(self, resource_group):
         response = self.client.replication_protection_clusters.get_operation_results(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
             job_id="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -243,11 +260,12 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_repair_replication(self, resource_group):
         response = self.client.replication_protection_clusters.begin_repair_replication(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -257,6 +275,7 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_test_failover(self, resource_group):
         response = self.client.replication_protection_clusters.begin_test_failover(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
@@ -269,7 +288,7 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
                     "providerSpecificDetails": "cluster_test_failover_provider_specific_input",
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -279,12 +298,13 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_test_failover_cleanup(self, resource_group):
         response = self.client.replication_protection_clusters.begin_test_failover_cleanup(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
             cleanup_input={"properties": {"comments": "str"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -294,6 +314,7 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_begin_unplanned_failover(self, resource_group):
         response = self.client.replication_protection_clusters.begin_unplanned_failover(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
@@ -305,7 +326,7 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
                     "sourceSiteOperations": "str",
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -315,8 +336,9 @@ class TestSiteRecoveryManagementReplicationProtectionClustersOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_protection_clusters_list(self, resource_group):
         response = self.client.replication_protection_clusters.list(
+            resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

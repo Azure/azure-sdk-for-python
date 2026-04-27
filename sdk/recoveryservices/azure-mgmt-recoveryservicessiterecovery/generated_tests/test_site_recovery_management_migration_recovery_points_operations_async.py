@@ -23,10 +23,12 @@ class TestSiteRecoveryManagementMigrationRecoveryPointsOperationsAsync(AzureMgmt
     @recorded_by_proxy_async
     async def test_migration_recovery_points_list_by_replication_migration_items(self, resource_group):
         response = self.client.migration_recovery_points.list_by_replication_migration_items(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             migration_item_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,11 +38,13 @@ class TestSiteRecoveryManagementMigrationRecoveryPointsOperationsAsync(AzureMgmt
     @recorded_by_proxy_async
     async def test_migration_recovery_points_get(self, resource_group):
         response = await self.client.migration_recovery_points.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             migration_item_name="str",
             migration_recovery_point_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

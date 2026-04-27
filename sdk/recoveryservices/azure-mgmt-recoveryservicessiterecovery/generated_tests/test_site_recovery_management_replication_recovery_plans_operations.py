@@ -22,7 +22,9 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_list(self, resource_group):
         response = self.client.replication_recovery_plans.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,8 +34,10 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_get(self, resource_group):
         response = self.client.replication_recovery_plans.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -43,6 +47,8 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_create(self, resource_group):
         response = self.client.replication_recovery_plans.begin_create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
             input={
                 "properties": {
@@ -74,18 +80,7 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
                     "providerSpecificInput": ["recovery_plan_provider_specific_input"],
                 }
             },
-            api_version="2025-01-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_replication_recovery_plans_begin_delete(self, resource_group):
-        response = self.client.replication_recovery_plans.begin_delete(
-            recovery_plan_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -95,6 +90,8 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_update(self, resource_group):
         response = self.client.replication_recovery_plans.begin_update(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
             input={
                 "properties": {
@@ -122,7 +119,20 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
                     ]
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_replication_recovery_plans_begin_delete(self, resource_group):
+        response = self.client.replication_recovery_plans.begin_delete(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            recovery_plan_name="str",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -132,8 +142,10 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_failover_cancel(self, resource_group):
         response = self.client.replication_recovery_plans.begin_failover_cancel(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -143,8 +155,10 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_failover_commit(self, resource_group):
         response = self.client.replication_recovery_plans.begin_failover_commit(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -154,6 +168,8 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_planned_failover(self, resource_group):
         response = self.client.replication_recovery_plans.begin_planned_failover(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
             input={
                 "properties": {
@@ -161,7 +177,7 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
                     "providerSpecificDetails": ["recovery_plan_provider_specific_failover_input"],
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -171,8 +187,10 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_reprotect(self, resource_group):
         response = self.client.replication_recovery_plans.begin_reprotect(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -182,6 +200,8 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_test_failover(self, resource_group):
         response = self.client.replication_recovery_plans.begin_test_failover(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
             input={
                 "properties": {
@@ -191,7 +211,7 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
                     "providerSpecificDetails": ["recovery_plan_provider_specific_failover_input"],
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -201,9 +221,11 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_test_failover_cleanup(self, resource_group):
         response = self.client.replication_recovery_plans.begin_test_failover_cleanup(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
             input={"properties": {"comments": "str"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -213,6 +235,8 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
     @recorded_by_proxy
     def test_replication_recovery_plans_begin_unplanned_failover(self, resource_group):
         response = self.client.replication_recovery_plans.begin_unplanned_failover(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             recovery_plan_name="str",
             input={
                 "properties": {
@@ -221,7 +245,7 @@ class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtReco
                     "providerSpecificDetails": ["recovery_plan_provider_specific_failover_input"],
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

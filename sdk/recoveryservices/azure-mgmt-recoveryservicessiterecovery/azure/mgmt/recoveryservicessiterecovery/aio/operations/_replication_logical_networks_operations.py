@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_logical_networks_operations import (
     build_get_request,
     build_list_by_replication_fabrics_request,
@@ -35,7 +35,8 @@ from ...operations._replication_logical_networks_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationLogicalNetworksOperations:
@@ -60,12 +61,19 @@ class ReplicationLogicalNetworksOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_replication_fabrics(self, fabric_name: str, **kwargs: Any) -> AsyncIterable["_models.LogicalNetwork"]:
+    def list_by_replication_fabrics(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.LogicalNetwork"]:
         """Gets the list of logical networks under a fabric.
 
         Lists all the logical networks of the Azure Site Recovery fabric.
 
-        :param fabric_name: Server Id. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An iterator like instance of either LogicalNetwork or the result of cls(response)
         :rtype:
@@ -90,9 +98,9 @@ class ReplicationLogicalNetworksOperations:
             if not next_link:
 
                 _request = build_list_by_replication_fabrics_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -142,12 +150,19 @@ class ReplicationLogicalNetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(self, fabric_name: str, logical_network_name: str, **kwargs: Any) -> _models.LogicalNetwork:
+    async def get(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, logical_network_name: str, **kwargs: Any
+    ) -> _models.LogicalNetwork:
         """Gets a logical network with specified server id and logical network name.
 
         Gets the details of a logical network.
 
-        :param fabric_name: Server Id. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param logical_network_name: Logical network name. Required.
         :type logical_network_name: str
@@ -170,10 +185,10 @@ class ReplicationLogicalNetworksOperations:
         cls: ClsType[_models.LogicalNetwork] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             logical_network_name=logical_network_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

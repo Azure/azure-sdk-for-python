@@ -29,15 +29,16 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="cb53d0c3-bd59-4721-89bc-06916a9147ef",
+    )
+
+    response = client.replication_migration_items.list(
         resource_group_name="resourcegroup1",
         resource_name="migrationvault",
     )
-
-    response = client.replication_migration_items.list()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationMigrationItems_List.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationMigrationItems_List.json
 if __name__ == "__main__":
     main()

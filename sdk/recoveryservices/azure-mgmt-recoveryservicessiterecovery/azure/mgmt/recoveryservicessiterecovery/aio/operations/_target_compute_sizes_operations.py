@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -26,12 +26,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._target_compute_sizes_operations import build_list_by_replication_protected_items_request
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class TargetComputeSizesOperations:
@@ -57,15 +58,26 @@ class TargetComputeSizesOperations:
 
     @distributed_trace
     def list_by_replication_protected_items(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.TargetComputeSize"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.TargetComputeSize"]:
         """Gets the list of target compute sizes for the replication protected item.
 
         Lists the available target compute sizes for a replication protected item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: protection container name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
@@ -92,11 +104,11 @@ class TargetComputeSizesOperations:
             if not next_link:
 
                 _request = build_list_by_replication_protected_items_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
                     replicated_protected_item_name=replicated_protected_item_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,

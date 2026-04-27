@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,9 +9,9 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -73,8 +73,8 @@ class A2AAddDisksInput(AddDisksProviderSpecificInput):
     def __init__(
         self,
         *,
-        vm_disks: Optional[List["_models.A2AVmDiskInputDetails"]] = None,
-        vm_managed_disks: Optional[List["_models.A2AVmManagedDiskInputDetails"]] = None,
+        vm_disks: Optional[list["_models.A2AVmDiskInputDetails"]] = None,
+        vm_managed_disks: Optional[list["_models.A2AVmManagedDiskInputDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -89,6 +89,66 @@ class A2AAddDisksInput(AddDisksProviderSpecificInput):
         self.instance_type: str = "A2A"
         self.vm_disks = vm_disks
         self.vm_managed_disks = vm_managed_disks
+
+
+class A2AAgentReinstallBlockingErrorDetails(_serialization.Model):
+    """A2A source agent reinstall blocking error details.
+
+    :ivar error_code: error code.
+    :vartype error_code: str
+    :ivar error_message: error message.
+    :vartype error_message: str
+    :ivar possible_causes: possible causes.
+    :vartype possible_causes: str
+    :ivar recommended_action: recommended action.
+    :vartype recommended_action: str
+    :ivar error_message_parameters: error message parameters.
+    :vartype error_message_parameters: dict[str, str]
+    :ivar error_tags: error tags.
+    :vartype error_tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "possible_causes": {"key": "possibleCauses", "type": "str"},
+        "recommended_action": {"key": "recommendedAction", "type": "str"},
+        "error_message_parameters": {"key": "errorMessageParameters", "type": "{str}"},
+        "error_tags": {"key": "errorTags", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        possible_causes: Optional[str] = None,
+        recommended_action: Optional[str] = None,
+        error_message_parameters: Optional[dict[str, str]] = None,
+        error_tags: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword error_code: error code.
+        :paramtype error_code: str
+        :keyword error_message: error message.
+        :paramtype error_message: str
+        :keyword possible_causes: possible causes.
+        :paramtype possible_causes: str
+        :keyword recommended_action: recommended action.
+        :paramtype recommended_action: str
+        :keyword error_message_parameters: error message parameters.
+        :paramtype error_message_parameters: dict[str, str]
+        :keyword error_tags: error tags.
+        :paramtype error_tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.possible_causes = possible_causes
+        self.recommended_action = recommended_action
+        self.error_message_parameters = error_message_parameters
+        self.error_tags = error_tags
 
 
 class ApplyClusterRecoveryPointProviderSpecificInput(_serialization.Model):  # pylint: disable=name-too-long
@@ -264,7 +324,7 @@ class A2AClusterRecoveryPointDetails(ClusterProviderSpecificRecoveryPointDetails
         self,
         *,
         recovery_point_sync_type: Optional[Union[str, "_models.RecoveryPointSyncType"]] = None,
-        nodes: Optional[List[str]] = None,
+        nodes: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -337,7 +397,7 @@ class A2AClusterTestFailoverInput(ClusterTestFailoverProviderSpecificInput):
         self,
         *,
         cluster_recovery_point_id: Optional[str] = None,
-        individual_node_recovery_points: Optional[List[str]] = None,
+        individual_node_recovery_points: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -409,7 +469,7 @@ class A2AClusterUnplannedFailoverInput(ClusterUnplannedFailoverProviderSpecificI
         self,
         *,
         cluster_recovery_point_id: Optional[str] = None,
-        individual_node_recovery_points: Optional[List[str]] = None,
+        individual_node_recovery_points: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -742,8 +802,8 @@ class A2ACreateProtectionIntentInput(CreateProtectionIntentProviderSpecificDetai
             "_models.RecoveryProximityPlacementGroupCustomDetails"
         ] = None,
         auto_protection_of_data_disk: Optional[Union[str, "_models.AutoProtectionOfDataDisk"]] = None,
-        vm_disks: Optional[List["_models.A2AProtectionIntentDiskInputDetails"]] = None,
-        vm_managed_disks: Optional[List["_models.A2AProtectionIntentManagedDiskInputDetails"]] = None,
+        vm_disks: Optional[list["_models.A2AProtectionIntentDiskInputDetails"]] = None,
+        vm_managed_disks: Optional[list["_models.A2AProtectionIntentManagedDiskInputDetails"]] = None,
         multi_vm_group_name: Optional[str] = None,
         multi_vm_group_id: Optional[str] = None,
         recovery_boot_diag_storage_account: Optional["_models.StorageAccountCustomDetails"] = None,
@@ -1214,6 +1274,8 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):
     :vartype recovery_virtual_machine_scale_set_id: str
     :ivar recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
     :vartype recovery_capacity_reservation_group_id: str
+    :ivar platform_fault_domain: the platform fault domain.
+    :vartype platform_fault_domain: int
     :ivar auto_protection_of_data_disk: A value indicating whether the auto protection is enabled.
      Known values are: "Disabled" and "Enabled".
     :vartype auto_protection_of_data_disk: str or
@@ -1246,6 +1308,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):
         "recovery_subnet_name": {"key": "recoverySubnetName", "type": "str"},
         "recovery_virtual_machine_scale_set_id": {"key": "recoveryVirtualMachineScaleSetId", "type": "str"},
         "recovery_capacity_reservation_group_id": {"key": "recoveryCapacityReservationGroupId", "type": "str"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
         "auto_protection_of_data_disk": {"key": "autoProtectionOfDataDisk", "type": "str"},
     }
 
@@ -1258,8 +1321,8 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):
         recovery_cloud_service_id: Optional[str] = None,
         recovery_availability_set_id: Optional[str] = None,
         recovery_proximity_placement_group_id: Optional[str] = None,
-        vm_disks: Optional[List["_models.A2AVmDiskInputDetails"]] = None,
-        vm_managed_disks: Optional[List["_models.A2AVmManagedDiskInputDetails"]] = None,
+        vm_disks: Optional[list["_models.A2AVmDiskInputDetails"]] = None,
+        vm_managed_disks: Optional[list["_models.A2AVmManagedDiskInputDetails"]] = None,
         multi_vm_group_name: Optional[str] = None,
         multi_vm_group_id: Optional[str] = None,
         protection_cluster_id: Optional[str] = None,
@@ -1271,6 +1334,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):
         recovery_subnet_name: Optional[str] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
+        platform_fault_domain: Optional[int] = None,
         auto_protection_of_data_disk: Optional[Union[str, "_models.AutoProtectionOfDataDisk"]] = None,
         **kwargs: Any
     ) -> None:
@@ -1317,6 +1381,8 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):
         :paramtype recovery_virtual_machine_scale_set_id: str
         :keyword recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
         :paramtype recovery_capacity_reservation_group_id: str
+        :keyword platform_fault_domain: the platform fault domain.
+        :paramtype platform_fault_domain: int
         :keyword auto_protection_of_data_disk: A value indicating whether the auto protection is
          enabled. Known values are: "Disabled" and "Enabled".
         :paramtype auto_protection_of_data_disk: str or
@@ -1343,6 +1409,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):
         self.recovery_subnet_name = recovery_subnet_name
         self.recovery_virtual_machine_scale_set_id = recovery_virtual_machine_scale_set_id
         self.recovery_capacity_reservation_group_id = recovery_capacity_reservation_group_id
+        self.platform_fault_domain = platform_fault_domain
         self.auto_protection_of_data_disk = auto_protection_of_data_disk
 
 
@@ -1882,7 +1949,7 @@ class A2AProtectedDiskDetails(_serialization.Model):
         data_pending_in_staging_storage_account_in_mb: Optional[float] = None,
         data_pending_at_source_agent_in_mb: Optional[float] = None,
         disk_state: Optional[str] = None,
-        allowed_disk_level_operation: Optional[List[str]] = None,
+        allowed_disk_level_operation: Optional[list[str]] = None,
         is_disk_encrypted: Optional[bool] = None,
         secret_identifier: Optional[str] = None,
         dek_key_vault_arm_id: Optional[str] = None,
@@ -2013,7 +2080,7 @@ class A2AProtectedItemDetail(_serialization.Model):
     def __init__(
         self,
         *,
-        vm_managed_disks: Optional[List["_models.A2AVmManagedDiskInputDetails"]] = None,
+        vm_managed_disks: Optional[list["_models.A2AVmManagedDiskInputDetails"]] = None,
         recovery_resource_group_id: Optional[str] = None,
         recovery_availability_set_id: Optional[str] = None,
         recovery_boot_diag_storage_account_id: Optional[str] = None,
@@ -2184,7 +2251,7 @@ class A2AProtectedManagedDiskDetails(_serialization.Model):
         data_pending_in_staging_storage_account_in_mb: Optional[float] = None,
         data_pending_at_source_agent_in_mb: Optional[float] = None,
         disk_state: Optional[str] = None,
-        allowed_disk_level_operation: Optional[List[str]] = None,
+        allowed_disk_level_operation: Optional[list[str]] = None,
         is_disk_encrypted: Optional[bool] = None,
         secret_identifier: Optional[str] = None,
         dek_key_vault_arm_id: Optional[str] = None,
@@ -2608,7 +2675,7 @@ class A2ARecoveryPointDetails(ProviderSpecificRecoveryPointDetails):
         self,
         *,
         recovery_point_sync_type: Optional[Union[str, "_models.RecoveryPointSyncType"]] = None,
-        disks: Optional[List[str]] = None,
+        disks: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2679,8 +2746,8 @@ class A2ARemoveDisksInput(RemoveDisksProviderSpecificInput):
     def __init__(
         self,
         *,
-        vm_disks_uris: Optional[List[str]] = None,
-        vm_managed_disks_ids: Optional[List[str]] = None,
+        vm_disks_uris: Optional[list[str]] = None,
+        vm_managed_disks_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2841,6 +2908,36 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):
      are: "Normal" and "High".
     :vartype churn_option_selected: str or
      ~azure.mgmt.recoveryservicessiterecovery.models.ChurnOptionSelected
+    :ivar agent_reinstall_attempt_to_version: The agent version to which last agent reinstall was
+     attempted.
+    :vartype agent_reinstall_attempt_to_version: str
+    :ivar os_family_name: The OS family name.
+    :vartype os_family_name: str
+    :ivar distro_name: The distro name.
+    :vartype distro_name: str
+    :ivar distro_name_for_which_agent_is_installed: The agent os name last agent reinstall was
+     attempted.
+    :vartype distro_name_for_which_agent_is_installed: str
+    :ivar is_agent_upgradeable: A value indicating whether replication agent upgradeable.
+    :vartype is_agent_upgradeable: bool
+    :ivar is_agent_reinstall_required: A value indicating whether replication agent reinstallation
+     is required.
+    :vartype is_agent_reinstall_required: bool
+    :ivar reasons_blocking_re_install: value for reason blocking reinstall.
+    :vartype reasons_blocking_re_install: str
+    :ivar reasons_blocking_reinstall_details: whether reinstall is possible or not.
+    :vartype reasons_blocking_reinstall_details:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.A2AAgentReinstallBlockingErrorDetails]
+    :ivar is_agent_upgrade_in_progress: A value indicating whether replication agent Upgrade is
+     In-Progress.
+    :vartype is_agent_upgrade_in_progress: bool
+    :ivar auto_agent_upgrade_retry_count: auto agent upgrade retry count.
+    :vartype auto_agent_upgrade_retry_count: int
+    :ivar is_agent_upgrade_retry_threshold_exhausted: A value indicating whether replication agent
+     Upgrade retry exhausted.
+    :vartype is_agent_upgrade_retry_threshold_exhausted: bool
+    :ivar platform_fault_domain: the platform fault domain.
+    :vartype platform_fault_domain: int
     """
 
     _validation = {
@@ -2916,6 +3013,21 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):
         "recovery_virtual_machine_scale_set_id": {"key": "recoveryVirtualMachineScaleSetId", "type": "str"},
         "recovery_capacity_reservation_group_id": {"key": "recoveryCapacityReservationGroupId", "type": "str"},
         "churn_option_selected": {"key": "churnOptionSelected", "type": "str"},
+        "agent_reinstall_attempt_to_version": {"key": "agentReinstallAttemptToVersion", "type": "str"},
+        "os_family_name": {"key": "osFamilyName", "type": "str"},
+        "distro_name": {"key": "distroName", "type": "str"},
+        "distro_name_for_which_agent_is_installed": {"key": "distroNameForWhichAgentIsInstalled", "type": "str"},
+        "is_agent_upgradeable": {"key": "isAgentUpgradeable", "type": "bool"},
+        "is_agent_reinstall_required": {"key": "isAgentReinstallRequired", "type": "bool"},
+        "reasons_blocking_re_install": {"key": "reasonsBlockingReInstall", "type": "str"},
+        "reasons_blocking_reinstall_details": {
+            "key": "reasonsBlockingReinstallDetails",
+            "type": "[A2AAgentReinstallBlockingErrorDetails]",
+        },
+        "is_agent_upgrade_in_progress": {"key": "isAgentUpgradeInProgress", "type": "bool"},
+        "auto_agent_upgrade_retry_count": {"key": "autoAgentUpgradeRetryCount", "type": "int"},
+        "is_agent_upgrade_retry_threshold_exhausted": {"key": "isAgentUpgradeRetryThresholdExhausted", "type": "bool"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2930,9 +3042,9 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):
         management_id: Optional[str] = None,
         protection_cluster_id: Optional[str] = None,
         is_cluster_infra_ready: Optional[bool] = None,
-        protected_disks: Optional[List["_models.A2AProtectedDiskDetails"]] = None,
-        unprotected_disks: Optional[List["_models.A2AUnprotectedDiskDetails"]] = None,
-        protected_managed_disks: Optional[List["_models.A2AProtectedManagedDiskDetails"]] = None,
+        protected_disks: Optional[list["_models.A2AProtectedDiskDetails"]] = None,
+        unprotected_disks: Optional[list["_models.A2AUnprotectedDiskDetails"]] = None,
+        protected_managed_disks: Optional[list["_models.A2AProtectedManagedDiskDetails"]] = None,
         recovery_boot_diag_storage_account_id: Optional[str] = None,
         primary_fabric_location: Optional[str] = None,
         recovery_fabric_location: Optional[str] = None,
@@ -2944,7 +3056,7 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):
         recovery_availability_set: Optional[str] = None,
         selected_recovery_azure_network_id: Optional[str] = None,
         selected_tfo_azure_network_id: Optional[str] = None,
-        vm_nics: Optional[List["_models.VMNicDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicDetails"]] = None,
         vm_synced_config_details: Optional["_models.AzureToAzureVmSyncedConfigDetails"] = None,
         monitoring_percentage_completion: Optional[int] = None,
         monitoring_job_type: Optional[str] = None,
@@ -2969,6 +3081,18 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):
         auto_protection_of_data_disk: Optional[Union[str, "_models.AutoProtectionOfDataDisk"]] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
+        agent_reinstall_attempt_to_version: Optional[str] = None,
+        os_family_name: Optional[str] = None,
+        distro_name: Optional[str] = None,
+        distro_name_for_which_agent_is_installed: Optional[str] = None,
+        is_agent_upgradeable: Optional[bool] = None,
+        is_agent_reinstall_required: Optional[bool] = None,
+        reasons_blocking_re_install: Optional[str] = None,
+        reasons_blocking_reinstall_details: Optional[list["_models.A2AAgentReinstallBlockingErrorDetails"]] = None,
+        is_agent_upgrade_in_progress: Optional[bool] = None,
+        auto_agent_upgrade_retry_count: Optional[int] = None,
+        is_agent_upgrade_retry_threshold_exhausted: Optional[bool] = None,
+        platform_fault_domain: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3089,6 +3213,36 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):
         :paramtype recovery_virtual_machine_scale_set_id: str
         :keyword recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
         :paramtype recovery_capacity_reservation_group_id: str
+        :keyword agent_reinstall_attempt_to_version: The agent version to which last agent reinstall
+         was attempted.
+        :paramtype agent_reinstall_attempt_to_version: str
+        :keyword os_family_name: The OS family name.
+        :paramtype os_family_name: str
+        :keyword distro_name: The distro name.
+        :paramtype distro_name: str
+        :keyword distro_name_for_which_agent_is_installed: The agent os name last agent reinstall was
+         attempted.
+        :paramtype distro_name_for_which_agent_is_installed: str
+        :keyword is_agent_upgradeable: A value indicating whether replication agent upgradeable.
+        :paramtype is_agent_upgradeable: bool
+        :keyword is_agent_reinstall_required: A value indicating whether replication agent
+         reinstallation is required.
+        :paramtype is_agent_reinstall_required: bool
+        :keyword reasons_blocking_re_install: value for reason blocking reinstall.
+        :paramtype reasons_blocking_re_install: str
+        :keyword reasons_blocking_reinstall_details: whether reinstall is possible or not.
+        :paramtype reasons_blocking_reinstall_details:
+         list[~azure.mgmt.recoveryservicessiterecovery.models.A2AAgentReinstallBlockingErrorDetails]
+        :keyword is_agent_upgrade_in_progress: A value indicating whether replication agent Upgrade is
+         In-Progress.
+        :paramtype is_agent_upgrade_in_progress: bool
+        :keyword auto_agent_upgrade_retry_count: auto agent upgrade retry count.
+        :paramtype auto_agent_upgrade_retry_count: int
+        :keyword is_agent_upgrade_retry_threshold_exhausted: A value indicating whether replication
+         agent Upgrade retry exhausted.
+        :paramtype is_agent_upgrade_retry_threshold_exhausted: bool
+        :keyword platform_fault_domain: the platform fault domain.
+        :paramtype platform_fault_domain: int
         """
         super().__init__(**kwargs)
         self.instance_type: str = "A2A"
@@ -3148,6 +3302,18 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):
         self.recovery_virtual_machine_scale_set_id = recovery_virtual_machine_scale_set_id
         self.recovery_capacity_reservation_group_id = recovery_capacity_reservation_group_id
         self.churn_option_selected: Optional[Union[str, "_models.ChurnOptionSelected"]] = None
+        self.agent_reinstall_attempt_to_version = agent_reinstall_attempt_to_version
+        self.os_family_name = os_family_name
+        self.distro_name = distro_name
+        self.distro_name_for_which_agent_is_installed = distro_name_for_which_agent_is_installed
+        self.is_agent_upgradeable = is_agent_upgradeable
+        self.is_agent_reinstall_required = is_agent_reinstall_required
+        self.reasons_blocking_re_install = reasons_blocking_re_install
+        self.reasons_blocking_reinstall_details = reasons_blocking_reinstall_details
+        self.is_agent_upgrade_in_progress = is_agent_upgrade_in_progress
+        self.auto_agent_upgrade_retry_count = auto_agent_upgrade_retry_count
+        self.is_agent_upgrade_retry_threshold_exhausted = is_agent_upgrade_retry_threshold_exhausted
+        self.platform_fault_domain = platform_fault_domain
 
 
 class ReplicationProtectionIntentProviderSpecificSettings(_serialization.Model):  # pylint: disable=name-too-long
@@ -3296,8 +3462,8 @@ class A2AReplicationIntentDetails(ReplicationProtectionIntentProviderSpecificSet
         primary_location: Optional[str] = None,
         recovery_location: Optional[str] = None,
         recovery_subscription_id: Optional[str] = None,
-        vm_disks: Optional[List["_models.A2AProtectionIntentDiskInputDetails"]] = None,
-        vm_managed_disks: Optional[List["_models.A2AProtectionIntentManagedDiskInputDetails"]] = None,
+        vm_disks: Optional[list["_models.A2AProtectionIntentDiskInputDetails"]] = None,
+        vm_managed_disks: Optional[list["_models.A2AProtectionIntentManagedDiskInputDetails"]] = None,
         recovery_resource_group_id: Optional[str] = None,
         protection_profile: Optional["_models.ProtectionProfileCustomDetails"] = None,
         primary_staging_storage_account: Optional["_models.StorageAccountCustomDetails"] = None,
@@ -3700,7 +3866,7 @@ class A2AReprotectInput(ReverseReplicationProviderSpecificInput):
         self,
         *,
         recovery_container_id: Optional[str] = None,
-        vm_disks: Optional[List["_models.A2AVmDiskInputDetails"]] = None,
+        vm_disks: Optional[list["_models.A2AVmDiskInputDetails"]] = None,
         recovery_resource_group_id: Optional[str] = None,
         recovery_cloud_service_id: Optional[str] = None,
         recovery_availability_set_id: Optional[str] = None,
@@ -3864,8 +4030,8 @@ class A2ASharedDiskReplicationDetails(SharedDiskReplicationProviderSpecificSetti
         self,
         *,
         management_id: Optional[str] = None,
-        unprotected_disks: Optional[List["_models.A2AUnprotectedDiskDetails"]] = None,
-        protected_managed_disks: Optional[List["_models.A2AProtectedManagedDiskDetails"]] = None,
+        unprotected_disks: Optional[list["_models.A2AUnprotectedDiskDetails"]] = None,
+        protected_managed_disks: Optional[list["_models.A2AProtectedManagedDiskDetails"]] = None,
         primary_fabric_location: Optional[str] = None,
         recovery_fabric_location: Optional[str] = None,
         failover_recovery_point_id: Optional[str] = None,
@@ -3873,7 +4039,7 @@ class A2ASharedDiskReplicationDetails(SharedDiskReplicationProviderSpecificSetti
         monitoring_job_type: Optional[str] = None,
         rpo_in_seconds: Optional[int] = None,
         last_rpo_calculated_time: Optional[datetime.datetime] = None,
-        shared_disk_ir_errors: Optional[List["_models.A2ASharedDiskIRErrorDetails"]] = None,
+        shared_disk_ir_errors: Optional[list["_models.A2ASharedDiskIRErrorDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3982,7 +4148,7 @@ class A2ASwitchClusterProtectionInput(SwitchClusterProtectionProviderSpecificInp
         *,
         recovery_container_id: Optional[str] = None,
         policy_id: Optional[str] = None,
-        protected_items_detail: Optional[List["_models.A2AProtectedItemDetail"]] = None,
+        protected_items_detail: Optional[list["_models.A2AProtectedItemDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4061,6 +4227,8 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput):
     :vartype recovery_virtual_machine_scale_set_id: str
     :ivar recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
     :vartype recovery_capacity_reservation_group_id: str
+    :ivar platform_fault_domain: the platform fault domain.
+    :vartype platform_fault_domain: int
     :ivar disk_encryption_info: The recovery disk encryption information.
     :vartype disk_encryption_info:
      ~azure.mgmt.recoveryservicessiterecovery.models.DiskEncryptionInfo
@@ -4084,6 +4252,7 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput):
         "recovery_proximity_placement_group_id": {"key": "recoveryProximityPlacementGroupId", "type": "str"},
         "recovery_virtual_machine_scale_set_id": {"key": "recoveryVirtualMachineScaleSetId", "type": "str"},
         "recovery_capacity_reservation_group_id": {"key": "recoveryCapacityReservationGroupId", "type": "str"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
         "disk_encryption_info": {"key": "diskEncryptionInfo", "type": "DiskEncryptionInfo"},
     }
 
@@ -4091,8 +4260,8 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput):
         self,
         *,
         recovery_container_id: Optional[str] = None,
-        vm_disks: Optional[List["_models.A2AVmDiskInputDetails"]] = None,
-        vm_managed_disks: Optional[List["_models.A2AVmManagedDiskInputDetails"]] = None,
+        vm_disks: Optional[list["_models.A2AVmDiskInputDetails"]] = None,
+        vm_managed_disks: Optional[list["_models.A2AVmManagedDiskInputDetails"]] = None,
         recovery_resource_group_id: Optional[str] = None,
         recovery_cloud_service_id: Optional[str] = None,
         recovery_availability_set_id: Optional[str] = None,
@@ -4102,6 +4271,7 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput):
         recovery_proximity_placement_group_id: Optional[str] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
+        platform_fault_domain: Optional[int] = None,
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
         **kwargs: Any
     ) -> None:
@@ -4132,6 +4302,8 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput):
         :paramtype recovery_virtual_machine_scale_set_id: str
         :keyword recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
         :paramtype recovery_capacity_reservation_group_id: str
+        :keyword platform_fault_domain: the platform fault domain.
+        :paramtype platform_fault_domain: int
         :keyword disk_encryption_info: The recovery disk encryption information.
         :paramtype disk_encryption_info:
          ~azure.mgmt.recoveryservicessiterecovery.models.DiskEncryptionInfo
@@ -4150,6 +4322,7 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput):
         self.recovery_proximity_placement_group_id = recovery_proximity_placement_group_id
         self.recovery_virtual_machine_scale_set_id = recovery_virtual_machine_scale_set_id
         self.recovery_capacity_reservation_group_id = recovery_capacity_reservation_group_id
+        self.platform_fault_domain = platform_fault_domain
         self.disk_encryption_info = disk_encryption_info
 
 
@@ -4508,6 +4681,10 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
     :vartype recovery_virtual_machine_scale_set_id: str
     :ivar recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
     :vartype recovery_capacity_reservation_group_id: str
+    :ivar recovery_availability_zone: The recovery availability zone.
+    :vartype recovery_availability_zone: str
+    :ivar platform_fault_domain: The platform fault domain.
+    :vartype platform_fault_domain: int
     """
 
     _validation = {
@@ -4525,6 +4702,8 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         "recovery_proximity_placement_group_id": {"key": "recoveryProximityPlacementGroupId", "type": "str"},
         "recovery_virtual_machine_scale_set_id": {"key": "recoveryVirtualMachineScaleSetId", "type": "str"},
         "recovery_capacity_reservation_group_id": {"key": "recoveryCapacityReservationGroupId", "type": "str"},
+        "recovery_availability_zone": {"key": "recoveryAvailabilityZone", "type": "str"},
+        "platform_fault_domain": {"key": "platformFaultDomain", "type": "int"},
     }
 
     def __init__(
@@ -4532,13 +4711,15 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         *,
         recovery_cloud_service_id: Optional[str] = None,
         recovery_resource_group_id: Optional[str] = None,
-        managed_disk_update_details: Optional[List["_models.A2AVmManagedDiskUpdateDetails"]] = None,
+        managed_disk_update_details: Optional[list["_models.A2AVmManagedDiskUpdateDetails"]] = None,
         recovery_boot_diag_storage_account_id: Optional[str] = None,
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
         tfo_azure_vm_name: Optional[str] = None,
         recovery_proximity_placement_group_id: Optional[str] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
+        recovery_availability_zone: Optional[str] = None,
+        platform_fault_domain: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4562,6 +4743,10 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         :paramtype recovery_virtual_machine_scale_set_id: str
         :keyword recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
         :paramtype recovery_capacity_reservation_group_id: str
+        :keyword recovery_availability_zone: The recovery availability zone.
+        :paramtype recovery_availability_zone: str
+        :keyword platform_fault_domain: The platform fault domain.
+        :paramtype platform_fault_domain: int
         """
         super().__init__(**kwargs)
         self.instance_type: str = "A2A"
@@ -4574,6 +4759,8 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         self.recovery_proximity_placement_group_id = recovery_proximity_placement_group_id
         self.recovery_virtual_machine_scale_set_id = recovery_virtual_machine_scale_set_id
         self.recovery_capacity_reservation_group_id = recovery_capacity_reservation_group_id
+        self.recovery_availability_zone = recovery_availability_zone
+        self.platform_fault_domain = platform_fault_domain
 
 
 class A2AVmDiskInputDetails(_serialization.Model):
@@ -5076,7 +5263,7 @@ class AgentDetails(_serialization.Model):
         self.machine_id: Optional[str] = None
         self.bios_id: Optional[str] = None
         self.fqdn: Optional[str] = None
-        self.disks: Optional[List["_models.AgentDiskDetails"]] = None
+        self.disks: Optional[list["_models.AgentDiskDetails"]] = None
 
 
 class AgentDiskDetails(_serialization.Model):
@@ -5123,110 +5310,143 @@ class AgentDiskDetails(_serialization.Model):
 
 
 class Resource(_serialization.Model):
-    """Azure resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource Location.
-        :paramtype location: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
-        self.location = location
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class Alert(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
+    """
+
+
+class Alert(ProxyResource):
     """Implements the Alert class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Alert related data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.AlertProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "AlertProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.AlertProperties"] = None, **kwargs: Any
+        self, *, properties: Optional["_models.AlertProperties"] = None, location: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: Alert related data.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.AlertProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class AlertCollection(_serialization.Model):
     """Collection of alerts.
 
-    :ivar value: The list of alerts.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Alert items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Alert]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Alert]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.Alert"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.Alert"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The list of alerts.
+        :keyword value: The Alert items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Alert]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -5255,7 +5475,7 @@ class AlertProperties(_serialization.Model):
         self,
         *,
         send_to_owners: Optional[str] = None,
-        custom_email_addresses: Optional[List[str]] = None,
+        custom_email_addresses: Optional[list[str]] = None,
         locale: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5277,11 +5497,17 @@ class AlertProperties(_serialization.Model):
 class ApplianceCollection(_serialization.Model):
     """Collection of appliance details.
 
-    :ivar value: The appliance details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ReplicationAppliance items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationAppliance]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ReplicationAppliance]"},
@@ -5289,16 +5515,12 @@ class ApplianceCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ReplicationAppliance"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.ReplicationAppliance"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The appliance details.
+        :keyword value: The ReplicationAppliance items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationAppliance]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -5352,30 +5574,10 @@ class ApplianceMonitoringDetails(_serialization.Model):
         super().__init__(**kwargs)
         self.cpu_details: Optional["_models.ApplianceResourceDetails"] = None
         self.ram_details: Optional["_models.ApplianceResourceDetails"] = None
-        self.datastore_snapshot: Optional[List["_models.DataStoreUtilizationDetails"]] = None
+        self.datastore_snapshot: Optional[list["_models.DataStoreUtilizationDetails"]] = None
         self.disks_replication_details: Optional["_models.ApplianceResourceDetails"] = None
         self.esxi_nfc_buffer: Optional["_models.ApplianceResourceDetails"] = None
         self.network_bandwidth: Optional["_models.ApplianceResourceDetails"] = None
-
-
-class ApplianceQueryParameter(_serialization.Model):
-    """Query parameter to get appliance.
-
-    :ivar provider_type: The providerType to be used for fetching appliance details.
-    :vartype provider_type: str
-    """
-
-    _attribute_map = {
-        "provider_type": {"key": "providerType", "type": "str"},
-    }
-
-    def __init__(self, *, provider_type: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword provider_type: The providerType to be used for fetching appliance details.
-        :paramtype provider_type: str
-        """
-        super().__init__(**kwargs)
-        self.provider_type = provider_type
 
 
 class ApplianceResourceDetails(_serialization.Model):
@@ -5508,7 +5710,7 @@ class ApplyClusterRecoveryPointInputProperties(_serialization.Model):
         *,
         provider_specific_details: "_models.ApplyClusterRecoveryPointProviderSpecificInput",
         cluster_recovery_point_id: Optional[str] = None,
-        individual_node_recovery_points: Optional[List[str]] = None,
+        individual_node_recovery_points: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5640,7 +5842,7 @@ class JobDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, *, affected_object_details: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, affected_object_details: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -5673,7 +5875,7 @@ class AsrJobDetails(JobDetails):
         "affected_object_details": {"key": "affectedObjectDetails", "type": "{str}"},
     }
 
-    def __init__(self, *, affected_object_details: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, affected_object_details: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -5738,14 +5940,14 @@ class ASRTask(_serialization.Model):
         name: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        allowed_actions: Optional[List[str]] = None,
+        allowed_actions: Optional[list[str]] = None,
         friendly_name: Optional[str] = None,
         state: Optional[str] = None,
         state_description: Optional[str] = None,
         task_type: Optional[str] = None,
         custom_details: Optional["_models.TaskTypeDetails"] = None,
         group_task_custom_details: Optional["_models.GroupTaskDetails"] = None,
-        errors: Optional[List["_models.JobErrorDetails"]] = None,
+        errors: Optional[list["_models.JobErrorDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6062,10 +6264,10 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         self,
         *,
         location: Optional[str] = None,
-        container_ids: Optional[List[str]] = None,
-        zones: Optional[List["_models.A2AZoneDetails"]] = None,
-        extended_locations: Optional[List["_models.A2AExtendedLocationDetails"]] = None,
-        location_details: Optional[List["_models.A2AFabricSpecificLocationDetails"]] = None,
+        container_ids: Optional[list[str]] = None,
+        zones: Optional[list["_models.A2AZoneDetails"]] = None,
+        extended_locations: Optional[list["_models.A2AExtendedLocationDetails"]] = None,
+        location_details: Optional[list["_models.A2AFabricSpecificLocationDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6316,8 +6518,8 @@ class AzureToAzureVmSyncedConfigDetails(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
-        input_endpoints: Optional[List["_models.InputEndpoint"]] = None,
+        tags: Optional[dict[str, str]] = None,
+        input_endpoints: Optional[list["_models.InputEndpoint"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6448,8 +6650,8 @@ class ClusterFailoverJobDetails(JobDetails):
     def __init__(
         self,
         *,
-        affected_object_details: Optional[Dict[str, str]] = None,
-        protected_item_details: Optional[List["_models.FailoverReplicationProtectedItemDetails"]] = None,
+        affected_object_details: Optional[dict[str, str]] = None,
+        protected_item_details: Optional[list["_models.FailoverReplicationProtectedItemDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6470,7 +6672,7 @@ class ClusterRecoveryPoint(_serialization.Model):
 
     :ivar id: The recovery point Id.
     :vartype id: str
-    :ivar name: The name of the recovery point.
+    :ivar name: The recovery point name.
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
@@ -6498,7 +6700,7 @@ class ClusterRecoveryPoint(_serialization.Model):
         """
         :keyword id: The recovery point Id.
         :paramtype id: str
-        :keyword name: The name of the recovery point.
+        :keyword name: The recovery point name.
         :paramtype name: str
         :keyword type: The resource type.
         :paramtype type: str
@@ -6516,11 +6718,17 @@ class ClusterRecoveryPoint(_serialization.Model):
 class ClusterRecoveryPointCollection(_serialization.Model):
     """Collection of cluster recovery point details.
 
-    :ivar value: The cluster recovery point details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ClusterRecoveryPoint items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ClusterRecoveryPoint]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ClusterRecoveryPoint]"},
@@ -6528,16 +6736,12 @@ class ClusterRecoveryPointCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ClusterRecoveryPoint"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.ClusterRecoveryPoint"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The cluster recovery point details.
+        :keyword value: The ClusterRecoveryPoint items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ClusterRecoveryPoint]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -6621,7 +6825,7 @@ class ClusterSwitchProtectionJobDetails(JobDetails):
     def __init__(
         self,
         *,
-        affected_object_details: Optional[Dict[str, str]] = None,
+        affected_object_details: Optional[dict[str, str]] = None,
         new_replication_protection_cluster_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -6817,13 +7021,13 @@ class ClusterTestFailoverJobDetails(JobDetails):
     def __init__(
         self,
         *,
-        affected_object_details: Optional[Dict[str, str]] = None,
+        affected_object_details: Optional[dict[str, str]] = None,
         test_failover_status: Optional[str] = None,
         comments: Optional[str] = None,
         network_name: Optional[str] = None,
         network_friendly_name: Optional[str] = None,
         network_type: Optional[str] = None,
-        protected_item_details: Optional[List["_models.FailoverReplicationProtectedItemDetails"]] = None,
+        protected_item_details: Optional[list["_models.FailoverReplicationProtectedItemDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7031,7 +7235,7 @@ class ConfigureAlertRequestProperties(_serialization.Model):
         self,
         *,
         send_to_owners: Optional[str] = None,
-        custom_email_addresses: Optional[List[str]] = None,
+        custom_email_addresses: Optional[list[str]] = None,
         locale: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -7071,7 +7275,7 @@ class ConsistencyCheckTaskDetails(TaskTypeDetails):
         "vm_details": {"key": "vmDetails", "type": "[InconsistentVmDetails]"},
     }
 
-    def __init__(self, *, vm_details: Optional[List["_models.InconsistentVmDetails"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, vm_details: Optional[list["_models.InconsistentVmDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword vm_details: The list of inconsistent Vm details.
         :paramtype vm_details:
@@ -7245,7 +7449,7 @@ class CreateProtectionContainerInputProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        provider_specific_input: Optional[List["_models.ReplicationProviderSpecificContainerCreationInput"]] = None,
+        provider_specific_input: Optional[list["_models.ReplicationProviderSpecificContainerCreationInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7448,9 +7652,9 @@ class CreateRecoveryPlanInputProperties(_serialization.Model):
         *,
         primary_fabric_id: str,
         recovery_fabric_id: str,
-        groups: List["_models.RecoveryPlanGroup"],
+        groups: list["_models.RecoveryPlanGroup"],
         failover_deployment_model: Optional[Union[str, "_models.FailoverDeploymentModel"]] = None,
-        provider_specific_input: Optional[List["_models.RecoveryPlanProviderSpecificInput"]] = None,
+        provider_specific_input: Optional[list["_models.RecoveryPlanProviderSpecificInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8109,7 +8313,7 @@ class DraDetails(_serialization.Model):
         self.version: Optional[str] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
         self.forward_protected_item_count: Optional[int] = None
         self.reverse_protected_item_count: Optional[int] = None
 
@@ -8390,8 +8594,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -8415,71 +8619,83 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
-class Event(Resource):
+class Event(ProxyResource):
     """Implements the Event class.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Event related data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.EventProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "EventProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.EventProperties"] = None, **kwargs: Any
+        self, *, properties: Optional["_models.EventProperties"] = None, location: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: Event related data.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.EventProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class EventCollection(_serialization.Model):
     """Collection of fabric details.
 
-    :ivar value: The list of events.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Event items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Event]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Event]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.Event"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.Event"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The list of events.
+        :keyword value: The Event items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Event]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -8546,7 +8762,7 @@ class EventProperties(_serialization.Model):
         fabric_id: Optional[str] = None,
         provider_specific_details: Optional["_models.EventProviderSpecificDetails"] = None,
         event_specific_details: Optional["_models.EventSpecificDetails"] = None,
-        health_errors: Optional[List["_models.HealthError"]] = None,
+        health_errors: Optional[list["_models.HealthError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8590,83 +8806,6 @@ class EventProperties(_serialization.Model):
         self.provider_specific_details = provider_specific_details
         self.event_specific_details = event_specific_details
         self.health_errors = health_errors
-
-
-class EventQueryParameter(_serialization.Model):
-    """Implements the event query parameter.
-
-    :ivar event_code: The source id of the events to be queried.
-    :vartype event_code: str
-    :ivar severity: The severity of the events to be queried.
-    :vartype severity: str
-    :ivar event_type: The type of the events to be queried.
-    :vartype event_type: str
-    :ivar fabric_name: The affected object server id of the events to be queried.
-    :vartype fabric_name: str
-    :ivar affected_object_friendly_name: The affected object name of the events to be queried.
-    :vartype affected_object_friendly_name: str
-    :ivar affected_object_correlation_id: The affected object correlationId for the events to be
-     queried.
-    :vartype affected_object_correlation_id: str
-    :ivar start_time: The start time of the time range within which the events are to be queried.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The end time of the time range within which the events are to be queried.
-    :vartype end_time: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        "event_code": {"key": "eventCode", "type": "str"},
-        "severity": {"key": "severity", "type": "str"},
-        "event_type": {"key": "eventType", "type": "str"},
-        "fabric_name": {"key": "fabricName", "type": "str"},
-        "affected_object_friendly_name": {"key": "affectedObjectFriendlyName", "type": "str"},
-        "affected_object_correlation_id": {"key": "affectedObjectCorrelationId", "type": "str"},
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self,
-        *,
-        event_code: Optional[str] = None,
-        severity: Optional[str] = None,
-        event_type: Optional[str] = None,
-        fabric_name: Optional[str] = None,
-        affected_object_friendly_name: Optional[str] = None,
-        affected_object_correlation_id: Optional[str] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword event_code: The source id of the events to be queried.
-        :paramtype event_code: str
-        :keyword severity: The severity of the events to be queried.
-        :paramtype severity: str
-        :keyword event_type: The type of the events to be queried.
-        :paramtype event_type: str
-        :keyword fabric_name: The affected object server id of the events to be queried.
-        :paramtype fabric_name: str
-        :keyword affected_object_friendly_name: The affected object name of the events to be queried.
-        :paramtype affected_object_friendly_name: str
-        :keyword affected_object_correlation_id: The affected object correlationId for the events to be
-         queried.
-        :paramtype affected_object_correlation_id: str
-        :keyword start_time: The start time of the time range within which the events are to be
-         queried.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: The end time of the time range within which the events are to be queried.
-        :paramtype end_time: ~datetime.datetime
-        """
-        super().__init__(**kwargs)
-        self.event_code = event_code
-        self.severity = severity
-        self.event_type = event_type
-        self.fabric_name = fabric_name
-        self.affected_object_friendly_name = affected_object_friendly_name
-        self.affected_object_correlation_id = affected_object_correlation_id
-        self.start_time = start_time
-        self.end_time = end_time
 
 
 class EventSpecificDetails(_serialization.Model):
@@ -9097,7 +9236,7 @@ class ExportJobDetails(JobDetails):
     def __init__(
         self,
         *,
-        affected_object_details: Optional[Dict[str, str]] = None,
+        affected_object_details: Optional[dict[str, str]] = None,
         blob_uri: Optional[str] = None,
         sas_token: Optional[str] = None,
         **kwargs: Any
@@ -9150,71 +9289,83 @@ class ExtendedLocation(_serialization.Model):
         self.type = type
 
 
-class Fabric(Resource):
+class Fabric(ProxyResource):
     """Fabric definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Fabric related data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.FabricProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "FabricProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.FabricProperties"] = None, **kwargs: Any
+        self, *, properties: Optional["_models.FabricProperties"] = None, location: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: Fabric related data.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.FabricProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class FabricCollection(_serialization.Model):
     """Collection of fabric details.
 
-    :ivar value: The fabric details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Fabric items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Fabric]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Fabric]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.Fabric"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.Fabric"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The fabric details.
+        :keyword value: The Fabric items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Fabric]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -9311,7 +9462,7 @@ class FabricProperties(_serialization.Model):
         internal_identifier: Optional[str] = None,
         bcdr_state: Optional[str] = None,
         custom_details: Optional["_models.FabricSpecificDetails"] = None,
-        health_error_details: Optional[List["_models.HealthError"]] = None,
+        health_error_details: Optional[list["_models.HealthError"]] = None,
         health: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -9346,85 +9497,6 @@ class FabricProperties(_serialization.Model):
         self.custom_details = custom_details
         self.health_error_details = health_error_details
         self.health = health
-
-
-class FabricQueryParameter(_serialization.Model):
-    """Query parameter to get fabric.
-
-    :ivar zone_to_zone_mappings: A value indicating whether the zone to zone mappings are to be
-     returned.
-    :vartype zone_to_zone_mappings: str
-    :ivar extended_location_mappings: A value indicating whether the Extended Location mappings are
-     to be returned.
-    :vartype extended_location_mappings: str
-    :ivar location_details: A value indicating whether the location details are to be returned.
-    :vartype location_details: str
-    :ivar fetch_agent_details: A value indicating whether the agent details are to be fetched.
-    :vartype fetch_agent_details: str
-    :ivar bios_id: The BIOS Id to be used for fetching agent details.
-    :vartype bios_id: str
-    :ivar fqdn: The FQDN to be used for fetching agent details.
-    :vartype fqdn: str
-    :ivar discovery_type: The type of the discovered machine to be used for fetching agent details.
-    :vartype discovery_type: str
-    :ivar os_type: The OS type to be used for fetching agent details.
-    :vartype os_type: str
-    """
-
-    _attribute_map = {
-        "zone_to_zone_mappings": {"key": "zoneToZoneMappings", "type": "str"},
-        "extended_location_mappings": {"key": "extendedLocationMappings", "type": "str"},
-        "location_details": {"key": "locationDetails", "type": "str"},
-        "fetch_agent_details": {"key": "fetchAgentDetails", "type": "str"},
-        "bios_id": {"key": "biosId", "type": "str"},
-        "fqdn": {"key": "fqdn", "type": "str"},
-        "discovery_type": {"key": "discoveryType", "type": "str"},
-        "os_type": {"key": "osType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        zone_to_zone_mappings: Optional[str] = None,
-        extended_location_mappings: Optional[str] = None,
-        location_details: Optional[str] = None,
-        fetch_agent_details: Optional[str] = None,
-        bios_id: Optional[str] = None,
-        fqdn: Optional[str] = None,
-        discovery_type: Optional[str] = None,
-        os_type: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword zone_to_zone_mappings: A value indicating whether the zone to zone mappings are to be
-         returned.
-        :paramtype zone_to_zone_mappings: str
-        :keyword extended_location_mappings: A value indicating whether the Extended Location mappings
-         are to be returned.
-        :paramtype extended_location_mappings: str
-        :keyword location_details: A value indicating whether the location details are to be returned.
-        :paramtype location_details: str
-        :keyword fetch_agent_details: A value indicating whether the agent details are to be fetched.
-        :paramtype fetch_agent_details: str
-        :keyword bios_id: The BIOS Id to be used for fetching agent details.
-        :paramtype bios_id: str
-        :keyword fqdn: The FQDN to be used for fetching agent details.
-        :paramtype fqdn: str
-        :keyword discovery_type: The type of the discovered machine to be used for fetching agent
-         details.
-        :paramtype discovery_type: str
-        :keyword os_type: The OS type to be used for fetching agent details.
-        :paramtype os_type: str
-        """
-        super().__init__(**kwargs)
-        self.zone_to_zone_mappings = zone_to_zone_mappings
-        self.extended_location_mappings = extended_location_mappings
-        self.location_details = location_details
-        self.fetch_agent_details = fetch_agent_details
-        self.bios_id = bios_id
-        self.fqdn = fqdn
-        self.discovery_type = discovery_type
-        self.os_type = os_type
 
 
 class JobTaskDetails(TaskTypeDetails):
@@ -9545,8 +9617,8 @@ class FailoverJobDetails(JobDetails):
     def __init__(
         self,
         *,
-        affected_object_details: Optional[Dict[str, str]] = None,
-        protected_item_details: Optional[List["_models.FailoverReplicationProtectedItemDetails"]] = None,
+        affected_object_details: Optional[dict[str, str]] = None,
+        protected_item_details: Optional[list["_models.FailoverReplicationProtectedItemDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9615,7 +9687,7 @@ class FailoverProcessServerRequestProperties(_serialization.Model):
         container_name: Optional[str] = None,
         source_process_server_id: Optional[str] = None,
         target_process_server_id: Optional[str] = None,
-        vms_to_migrate: Optional[List[str]] = None,
+        vms_to_migrate: Optional[list[str]] = None,
         update_type: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -9775,7 +9847,7 @@ class GatewayOperationDetails(_serialization.Model):
         self.time_remaining: Optional[int] = None
         self.upload_speed: Optional[int] = None
         self.host_name: Optional[str] = None
-        self.data_stores: Optional[List[str]] = None
+        self.data_stores: Optional[list[str]] = None
         self.vmware_read_throughput: Optional[int] = None
 
 
@@ -9810,7 +9882,7 @@ class GroupTaskDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, *, child_tasks: Optional[List["_models.ASRTask"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, child_tasks: Optional[list["_models.ASRTask"]] = None, **kwargs: Any) -> None:
         """
         :keyword child_tasks: The child tasks.
         :paramtype child_tasks: list[~azure.mgmt.recoveryservicessiterecovery.models.ASRTask]
@@ -9883,7 +9955,7 @@ class HealthError(_serialization.Model):
     def __init__(
         self,
         *,
-        inner_health_errors: Optional[List["_models.InnerHealthError"]] = None,
+        inner_health_errors: Optional[list["_models.InnerHealthError"]] = None,
         error_source: Optional[str] = None,
         error_type: Optional[str] = None,
         error_level: Optional[str] = None,
@@ -10001,7 +10073,7 @@ class HealthErrorSummary(_serialization.Model):
         summary_message: Optional[str] = None,
         affected_resource_type: Optional[str] = None,
         affected_resource_subtype: Optional[str] = None,
-        affected_resource_correlation_ids: Optional[List[str]] = None,
+        affected_resource_correlation_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10239,6 +10311,12 @@ class HyperVReplicaAzureDiskInputDetails(_serialization.Model):
     :vartype disk_encryption_set_id: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _attribute_map = {
@@ -10247,6 +10325,9 @@ class HyperVReplicaAzureDiskInputDetails(_serialization.Model):
         "disk_type": {"key": "diskType", "type": "str"},
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
         "sector_size_in_bytes": {"key": "sectorSizeInBytes", "type": "int"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
@@ -10257,6 +10338,9 @@ class HyperVReplicaAzureDiskInputDetails(_serialization.Model):
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         disk_encryption_set_id: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10271,6 +10355,12 @@ class HyperVReplicaAzureDiskInputDetails(_serialization.Model):
         :paramtype disk_encryption_set_id: str
         :keyword sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
         :paramtype sector_size_in_bytes: int
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id = disk_id
@@ -10278,6 +10368,9 @@ class HyperVReplicaAzureDiskInputDetails(_serialization.Model):
         self.disk_type = disk_type
         self.disk_encryption_set_id = disk_encryption_set_id
         self.sector_size_in_bytes = sector_size_in_bytes
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class HyperVReplicaAzureEnableProtectionInput(EnableProtectionProviderSpecificInput):
@@ -10363,6 +10456,8 @@ class HyperVReplicaAzureEnableProtectionInput(EnableProtectionProviderSpecificIn
     :vartype target_managed_disk_tags: dict[str, str]
     :ivar target_nic_tags: The tags for the target NICs.
     :vartype target_nic_tags: dict[str, str]
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -10405,6 +10500,7 @@ class HyperVReplicaAzureEnableProtectionInput(EnableProtectionProviderSpecificIn
         "seed_managed_disk_tags": {"key": "seedManagedDiskTags", "type": "{str}"},
         "target_managed_disk_tags": {"key": "targetManagedDiskTags", "type": "{str}"},
         "target_nic_tags": {"key": "targetNicTags", "type": "{str}"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -10421,7 +10517,7 @@ class HyperVReplicaAzureEnableProtectionInput(EnableProtectionProviderSpecificIn
         enable_rdp_on_target_option: Optional[str] = None,
         target_azure_vm_name: Optional[str] = None,
         log_storage_account_id: Optional[str] = None,
-        disks_to_include: Optional[List[str]] = None,
+        disks_to_include: Optional[list[str]] = None,
         target_azure_v1_resource_group_id: Optional[str] = None,
         target_azure_v2_resource_group_id: Optional[str] = None,
         use_managed_disks: Optional[str] = None,
@@ -10435,12 +10531,13 @@ class HyperVReplicaAzureEnableProtectionInput(EnableProtectionProviderSpecificIn
         target_proximity_placement_group_id: Optional[str] = None,
         use_managed_disks_for_replication: Optional[str] = None,
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
-        disks_to_include_for_managed_disks: Optional[List["_models.HyperVReplicaAzureDiskInputDetails"]] = None,
+        disks_to_include_for_managed_disks: Optional[list["_models.HyperVReplicaAzureDiskInputDetails"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        seed_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        seed_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10520,6 +10617,8 @@ class HyperVReplicaAzureEnableProtectionInput(EnableProtectionProviderSpecificIn
         :paramtype target_managed_disk_tags: dict[str, str]
         :keyword target_nic_tags: The tags for the target NICs.
         :paramtype target_nic_tags: dict[str, str]
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "HyperVReplicaAzure"
@@ -10554,6 +10653,7 @@ class HyperVReplicaAzureEnableProtectionInput(EnableProtectionProviderSpecificIn
         self.seed_managed_disk_tags = seed_managed_disk_tags
         self.target_managed_disk_tags = target_managed_disk_tags
         self.target_nic_tags = target_nic_tags
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class HyperVReplicaAzureEventDetails(EventProviderSpecificDetails):
@@ -10706,6 +10806,12 @@ class HyperVReplicaAzureManagedDiskDetails(_serialization.Model):
      ~azure.mgmt.recoveryservicessiterecovery.models.DiskAccountType
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _attribute_map = {
@@ -10715,6 +10821,9 @@ class HyperVReplicaAzureManagedDiskDetails(_serialization.Model):
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
         "target_disk_account_type": {"key": "targetDiskAccountType", "type": "str"},
         "sector_size_in_bytes": {"key": "sectorSizeInBytes", "type": "int"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
@@ -10726,6 +10835,9 @@ class HyperVReplicaAzureManagedDiskDetails(_serialization.Model):
         disk_encryption_set_id: Optional[str] = None,
         target_disk_account_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         sector_size_in_bytes: Optional[int] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10744,6 +10856,12 @@ class HyperVReplicaAzureManagedDiskDetails(_serialization.Model):
          ~azure.mgmt.recoveryservicessiterecovery.models.DiskAccountType
         :keyword sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
         :paramtype sector_size_in_bytes: int
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id = disk_id
@@ -10752,6 +10870,9 @@ class HyperVReplicaAzureManagedDiskDetails(_serialization.Model):
         self.disk_encryption_set_id = disk_encryption_set_id
         self.target_disk_account_type = target_disk_account_type
         self.sector_size_in_bytes = sector_size_in_bytes
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class HyperVReplicaAzurePlannedFailoverProviderInput(
@@ -10772,6 +10893,8 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(
     :vartype recovery_point_id: str
     :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
     :vartype os_upgrade_version: str
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -10784,6 +10907,7 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(
         "secondary_kek_certificate_pfx": {"key": "secondaryKekCertificatePfx", "type": "str"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
         "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(
@@ -10793,6 +10917,7 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(
         secondary_kek_certificate_pfx: Optional[str] = None,
         recovery_point_id: Optional[str] = None,
         os_upgrade_version: Optional[str] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10805,6 +10930,8 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(
         :paramtype recovery_point_id: str
         :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
         :paramtype os_upgrade_version: str
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "HyperVReplicaAzure"
@@ -10812,6 +10939,7 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(
         self.secondary_kek_certificate_pfx = secondary_kek_certificate_pfx
         self.recovery_point_id = recovery_point_id
         self.os_upgrade_version = os_upgrade_version
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class HyperVReplicaAzurePolicyDetails(PolicyProviderSpecificDetails):
@@ -10941,7 +11069,7 @@ class HyperVReplicaAzurePolicyInput(PolicyProviderSpecificInput):
         application_consistent_snapshot_frequency_in_hours: Optional[int] = None,
         replication_interval: Optional[int] = None,
         online_replication_start_time: Optional[str] = None,
-        storage_accounts: Optional[List[str]] = None,
+        storage_accounts: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11063,6 +11191,8 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings):
     :ivar target_vm_security_profile: The target VM security profile.
     :vartype target_vm_security_profile:
      ~azure.mgmt.recoveryservicessiterecovery.models.SecurityProfileProperties
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -11111,12 +11241,13 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings):
             "type": "[OSUpgradeSupportedVersions]",
         },
         "target_vm_security_profile": {"key": "targetVmSecurityProfile", "type": "SecurityProfileProperties"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        azure_vm_disk_details: Optional[List["_models.AzureVmDiskDetails"]] = None,
+        azure_vm_disk_details: Optional[list["_models.AzureVmDiskDetails"]] = None,
         recovery_azure_vm_name: Optional[str] = None,
         recovery_azure_vm_size: Optional[str] = None,
         recovery_azure_storage_account: Optional[str] = None,
@@ -11128,7 +11259,7 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings):
         vm_protection_state: Optional[str] = None,
         vm_protection_state_description: Optional[str] = None,
         initial_replication_details: Optional["_models.InitialReplicationDetails"] = None,
-        vm_nics: Optional[List["_models.VMNicDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicDetails"]] = None,
         selected_recovery_azure_network_id: Optional[str] = None,
         selected_source_nic_id: Optional[str] = None,
         encryption: Optional[str] = None,
@@ -11144,13 +11275,14 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings):
         license_type: Optional[str] = None,
         sql_server_license_type: Optional[str] = None,
         linux_license_type: Optional[Union[str, "_models.LinuxLicenseType"]] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        seed_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
-        protected_managed_disks: Optional[List["_models.HyperVReplicaAzureManagedDiskDetails"]] = None,
-        all_available_os_upgrade_configurations: Optional[List["_models.OSUpgradeSupportedVersions"]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        seed_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
+        protected_managed_disks: Optional[list["_models.HyperVReplicaAzureManagedDiskDetails"]] = None,
+        all_available_os_upgrade_configurations: Optional[list["_models.OSUpgradeSupportedVersions"]] = None,
         target_vm_security_profile: Optional["_models.SecurityProfileProperties"] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11237,6 +11369,8 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings):
         :keyword target_vm_security_profile: The target VM security profile.
         :paramtype target_vm_security_profile:
          ~azure.mgmt.recoveryservicessiterecovery.models.SecurityProfileProperties
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "HyperVReplicaAzure"
@@ -11276,6 +11410,7 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings):
         self.protected_managed_disks = protected_managed_disks
         self.all_available_os_upgrade_configurations = all_available_os_upgrade_configurations
         self.target_vm_security_profile = target_vm_security_profile
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class HyperVReplicaAzureReprotectInput(ReverseReplicationProviderSpecificInput):
@@ -11500,6 +11635,8 @@ class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
     :vartype user_selected_os_name: str
     :ivar vm_disks: The list of disk update properties.
     :vartype vm_disks: list[~azure.mgmt.recoveryservicessiterecovery.models.UpdateDiskInput]
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -11521,6 +11658,7 @@ class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
         "linux_license_type": {"key": "linuxLicenseType", "type": "str"},
         "user_selected_os_name": {"key": "userSelectedOSName", "type": "str"},
         "vm_disks": {"key": "vmDisks", "type": "[UpdateDiskInput]"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(
@@ -11529,16 +11667,17 @@ class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
         recovery_azure_v1_resource_group_id: Optional[str] = None,
         recovery_azure_v2_resource_group_id: Optional[str] = None,
         use_managed_disks: Optional[str] = None,
-        disk_id_to_disk_encryption_map: Optional[Dict[str, str]] = None,
+        disk_id_to_disk_encryption_map: Optional[dict[str, str]] = None,
         target_proximity_placement_group_id: Optional[str] = None,
         target_availability_zone: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        target_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        target_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         linux_license_type: Optional[Union[str, "_models.LinuxLicenseType"]] = None,
         user_selected_os_name: Optional[str] = None,
-        vm_disks: Optional[List["_models.UpdateDiskInput"]] = None,
+        vm_disks: Optional[list["_models.UpdateDiskInput"]] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -11576,6 +11715,8 @@ class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
         :paramtype user_selected_os_name: str
         :keyword vm_disks: The list of disk update properties.
         :paramtype vm_disks: list[~azure.mgmt.recoveryservicessiterecovery.models.UpdateDiskInput]
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "HyperVReplicaAzure"
@@ -11592,6 +11733,7 @@ class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
         self.linux_license_type = linux_license_type
         self.user_selected_os_name = user_selected_os_name
         self.vm_disks = vm_disks
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class HyperVReplicaBaseEventDetails(EventProviderSpecificDetails):
@@ -11798,12 +11940,12 @@ class HyperVReplicaBaseReplicationDetails(ReplicationProviderSpecificSettings):
         self,
         *,
         last_replicated_time: Optional[datetime.datetime] = None,
-        vm_nics: Optional[List["_models.VMNicDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicDetails"]] = None,
         vm_id: Optional[str] = None,
         vm_protection_state: Optional[str] = None,
         vm_protection_state_description: Optional[str] = None,
         initial_replication_details: Optional["_models.InitialReplicationDetails"] = None,
-        v_m_disk_details: Optional[List["_models.DiskDetails"]] = None,
+        v_m_disk_details: Optional[list["_models.DiskDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12209,12 +12351,12 @@ class HyperVReplicaBlueReplicationDetails(ReplicationProviderSpecificSettings):
         self,
         *,
         last_replicated_time: Optional[datetime.datetime] = None,
-        vm_nics: Optional[List["_models.VMNicDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicDetails"]] = None,
         vm_id: Optional[str] = None,
         vm_protection_state: Optional[str] = None,
         vm_protection_state_description: Optional[str] = None,
         initial_replication_details: Optional["_models.InitialReplicationDetails"] = None,
-        v_m_disk_details: Optional[List["_models.DiskDetails"]] = None,
+        v_m_disk_details: Optional[list["_models.DiskDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12393,12 +12535,12 @@ class HyperVReplicaReplicationDetails(ReplicationProviderSpecificSettings):
         self,
         *,
         last_replicated_time: Optional[datetime.datetime] = None,
-        vm_nics: Optional[List["_models.VMNicDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicDetails"]] = None,
         vm_id: Optional[str] = None,
         vm_protection_state: Optional[str] = None,
         vm_protection_state_description: Optional[str] = None,
         initial_replication_details: Optional["_models.InitialReplicationDetails"] = None,
-        v_m_disk_details: Optional[List["_models.DiskDetails"]] = None,
+        v_m_disk_details: Optional[list["_models.DiskDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12449,7 +12591,7 @@ class HyperVSiteDetails(FabricSpecificDetails):
         "hyper_v_hosts": {"key": "hyperVHosts", "type": "[HyperVHostDetails]"},
     }
 
-    def __init__(self, *, hyper_v_hosts: Optional[List["_models.HyperVHostDetails"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, hyper_v_hosts: Optional[list["_models.HyperVHostDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword hyper_v_hosts: The list of Hyper-V hosts associated with the fabric.
         :paramtype hyper_v_hosts:
@@ -12520,7 +12662,7 @@ class HyperVVirtualMachineDetails(ConfigurationSettings):
         source_item_id: Optional[str] = None,
         generation: Optional[str] = None,
         os_details: Optional["_models.OSDetails"] = None,
-        disk_details: Optional[List["_models.DiskDetails"]] = None,
+        disk_details: Optional[list["_models.DiskDetails"]] = None,
         has_physical_disk: Optional[Union[str, "_models.PresenceStatus"]] = None,
         has_fibre_channel_adapter: Optional[Union[str, "_models.PresenceStatus"]] = None,
         has_shared_vhd: Optional[Union[str, "_models.PresenceStatus"]] = None,
@@ -12719,8 +12861,8 @@ class InconsistentVmDetails(_serialization.Model):
         *,
         vm_name: Optional[str] = None,
         cloud_name: Optional[str] = None,
-        details: Optional[List[str]] = None,
-        error_ids: Optional[List[str]] = None,
+        details: Optional[list[str]] = None,
+        error_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12799,8 +12941,8 @@ class InlineWorkflowTaskDetails(GroupTaskDetails):
     def __init__(
         self,
         *,
-        child_tasks: Optional[List["_models.ASRTask"]] = None,
-        workflow_ids: Optional[List[str]] = None,
+        child_tasks: Optional[list["_models.ASRTask"]] = None,
+        workflow_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13046,7 +13188,7 @@ class InMageAzureV2EnableProtectionInput(EnableProtectionProviderSpecificInput):
         run_as_account_id: Optional[str] = None,
         multi_vm_group_id: Optional[str] = None,
         multi_vm_group_name: Optional[str] = None,
-        disks_to_include: Optional[List["_models.InMageAzureV2DiskInputDetails"]] = None,
+        disks_to_include: Optional[list["_models.InMageAzureV2DiskInputDetails"]] = None,
         target_azure_network_id: Optional[str] = None,
         target_azure_subnet_id: Optional[str] = None,
         enable_rdp_on_target_option: Optional[str] = None,
@@ -13062,10 +13204,10 @@ class InMageAzureV2EnableProtectionInput(EnableProtectionProviderSpecificInput):
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         target_vm_size: Optional[str] = None,
         disk_encryption_set_id: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        seed_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        seed_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13923,7 +14065,7 @@ class InMageAzureV2ReplicationDetails(ReplicationProviderSpecificSettings):
         multi_vm_group_id: Optional[str] = None,
         multi_vm_group_name: Optional[str] = None,
         multi_vm_sync_status: Optional[str] = None,
-        protected_disks: Optional[List["_models.InMageAzureV2ProtectedDiskDetails"]] = None,
+        protected_disks: Optional[list["_models.InMageAzureV2ProtectedDiskDetails"]] = None,
         disk_resized: Optional[str] = None,
         master_target_id: Optional[str] = None,
         source_vm_cpu_count: Optional[int] = None,
@@ -13931,18 +14073,18 @@ class InMageAzureV2ReplicationDetails(ReplicationProviderSpecificSettings):
         os_type: Optional[str] = None,
         vhd_name: Optional[str] = None,
         os_disk_id: Optional[str] = None,
-        azure_vm_disk_details: Optional[List["_models.AzureVmDiskDetails"]] = None,
+        azure_vm_disk_details: Optional[list["_models.AzureVmDiskDetails"]] = None,
         recovery_azure_vm_name: Optional[str] = None,
         recovery_azure_vm_size: Optional[str] = None,
         recovery_azure_storage_account: Optional[str] = None,
         recovery_azure_log_storage_account_id: Optional[str] = None,
-        vm_nics: Optional[List["_models.VMNicDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicDetails"]] = None,
         selected_recovery_azure_network_id: Optional[str] = None,
         selected_tfo_azure_network_id: Optional[str] = None,
         selected_source_nic_id: Optional[str] = None,
         discovery_type: Optional[str] = None,
         enable_rdp_on_target_option: Optional[str] = None,
-        datastores: Optional[List[str]] = None,
+        datastores: Optional[list[str]] = None,
         target_vm_id: Optional[str] = None,
         recovery_azure_resource_group_id: Optional[str] = None,
         recovery_availability_set_id: Optional[str] = None,
@@ -13951,27 +14093,27 @@ class InMageAzureV2ReplicationDetails(ReplicationProviderSpecificSettings):
         use_managed_disks: Optional[str] = None,
         license_type: Optional[str] = None,
         sql_server_license_type: Optional[str] = None,
-        validation_errors: Optional[List["_models.HealthError"]] = None,
+        validation_errors: Optional[list["_models.HealthError"]] = None,
         last_rpo_calculated_time: Optional[datetime.datetime] = None,
         last_update_received_time: Optional[datetime.datetime] = None,
         replica_id: Optional[str] = None,
         os_version: Optional[str] = None,
-        protected_managed_disks: Optional[List["_models.InMageAzureV2ManagedDiskDetails"]] = None,
+        protected_managed_disks: Optional[list["_models.InMageAzureV2ManagedDiskDetails"]] = None,
         firmware_type: Optional[str] = None,
         azure_vm_generation: Optional[str] = None,
         is_additional_stats_available: Optional[bool] = None,
         total_data_transferred: Optional[int] = None,
         total_progress_health: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        seed_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        seed_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
         switch_provider_blocking_error_details: Optional[
-            List["_models.InMageAzureV2SwitchProviderBlockingErrorDetails"]
+            list["_models.InMageAzureV2SwitchProviderBlockingErrorDetails"]
         ] = None,
         switch_provider_details: Optional["_models.InMageAzureV2SwitchProviderDetails"] = None,
-        supported_os_versions: Optional[List[str]] = None,
-        all_available_os_upgrade_configurations: Optional[List["_models.OSUpgradeSupportedVersions"]] = None,
+        supported_os_versions: Optional[list[str]] = None,
+        all_available_os_upgrade_configurations: Optional[list["_models.OSUpgradeSupportedVersions"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14253,7 +14395,7 @@ class InMageAzureV2ReprotectInput(ReverseReplicationProviderSpecificInput):
         run_as_account_id: Optional[str] = None,
         policy_id: Optional[str] = None,
         log_storage_account_id: Optional[str] = None,
-        disks_to_include: Optional[List[str]] = None,
+        disks_to_include: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14327,8 +14469,8 @@ class InMageAzureV2SwitchProviderBlockingErrorDetails(_serialization.Model):  # 
         self.error_message: Optional[str] = None
         self.possible_causes: Optional[str] = None
         self.recommended_action: Optional[str] = None
-        self.error_message_parameters: Optional[Dict[str, str]] = None
-        self.error_tags: Optional[Dict[str, str]] = None
+        self.error_message_parameters: Optional[dict[str, str]] = None
+        self.error_tags: Optional[dict[str, str]] = None
 
 
 class InMageAzureV2SwitchProviderDetails(_serialization.Model):
@@ -14584,11 +14726,11 @@ class InMageAzureV2UpdateReplicationProtectedItemInput(
         use_managed_disks: Optional[str] = None,
         target_proximity_placement_group_id: Optional[str] = None,
         target_availability_zone: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        target_managed_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        target_managed_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
-        vm_disks: Optional[List["_models.UpdateDiskInput"]] = None,
+        vm_disks: Optional[list["_models.UpdateDiskInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14758,7 +14900,7 @@ class InMageDiskDetails(_serialization.Model):
         disk_size_in_mb: Optional[str] = None,
         disk_type: Optional[str] = None,
         disk_configuration: Optional[str] = None,
-        volume_list: Optional[List["_models.DiskVolumeDetails"]] = None,
+        volume_list: Optional[list["_models.DiskVolumeDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14803,8 +14945,8 @@ class InMageDiskExclusionInput(_serialization.Model):
     def __init__(
         self,
         *,
-        volume_options: Optional[List["_models.InMageVolumeExclusionOptions"]] = None,
-        disk_signature_options: Optional[List["_models.InMageDiskSignatureExclusionOptions"]] = None,
+        volume_options: Optional[list["_models.InMageVolumeExclusionOptions"]] = None,
+        disk_signature_options: Optional[list["_models.InMageDiskSignatureExclusionOptions"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14906,7 +15048,7 @@ class InMageEnableProtectionInput(EnableProtectionProviderSpecificInput):
         run_as_account_id: Optional[str] = None,
         datastore_name: Optional[str] = None,
         disk_exclusion_input: Optional["_models.InMageDiskExclusionInput"] = None,
-        disks_to_include: Optional[List[str]] = None,
+        disks_to_include: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14990,8 +15132,8 @@ class InMageFabricSwitchProviderBlockingErrorDetails(_serialization.Model):  # p
         self.error_message: Optional[str] = None
         self.possible_causes: Optional[str] = None
         self.recommended_action: Optional[str] = None
-        self.error_message_parameters: Optional[Dict[str, str]] = None
-        self.error_tags: Optional[Dict[str, str]] = None
+        self.error_message_parameters: Optional[dict[str, str]] = None
+        self.error_tags: Optional[dict[str, str]] = None
 
 
 class InMagePolicyDetails(PolicyProviderSpecificDetails):
@@ -15309,7 +15451,7 @@ class InMageRcmAddDisksInput(AddDisksProviderSpecificInput):
         "disks": {"key": "disks", "type": "[InMageRcmDiskInput]"},
     }
 
-    def __init__(self, *, disks: List["_models.InMageRcmDiskInput"], **kwargs: Any) -> None:
+    def __init__(self, *, disks: list["_models.InMageRcmDiskInput"], **kwargs: Any) -> None:
         """
         :keyword disks: The list of disk details. Required.
         :paramtype disks: list[~azure.mgmt.recoveryservicessiterecovery.models.InMageRcmDiskInput]
@@ -15317,6 +15459,66 @@ class InMageRcmAddDisksInput(AddDisksProviderSpecificInput):
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
         self.disks = disks
+
+
+class InMageRcmAgentReinstallBlockingErrorDetails(_serialization.Model):  # pylint: disable=name-too-long
+    """InMageRcm source agent reinstall blocking error details.
+
+    :ivar error_code: error code.
+    :vartype error_code: str
+    :ivar error_message: error message.
+    :vartype error_message: str
+    :ivar possible_causes: possible causes.
+    :vartype possible_causes: str
+    :ivar recommended_action: recommended action.
+    :vartype recommended_action: str
+    :ivar error_message_parameters: error message parameters.
+    :vartype error_message_parameters: dict[str, str]
+    :ivar error_tags: error tags.
+    :vartype error_tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "possible_causes": {"key": "possibleCauses", "type": "str"},
+        "recommended_action": {"key": "recommendedAction", "type": "str"},
+        "error_message_parameters": {"key": "errorMessageParameters", "type": "{str}"},
+        "error_tags": {"key": "errorTags", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        possible_causes: Optional[str] = None,
+        recommended_action: Optional[str] = None,
+        error_message_parameters: Optional[dict[str, str]] = None,
+        error_tags: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword error_code: error code.
+        :paramtype error_code: str
+        :keyword error_message: error message.
+        :paramtype error_message: str
+        :keyword possible_causes: possible causes.
+        :paramtype possible_causes: str
+        :keyword recommended_action: recommended action.
+        :paramtype recommended_action: str
+        :keyword error_message_parameters: error message parameters.
+        :paramtype error_message_parameters: dict[str, str]
+        :keyword error_tags: error tags.
+        :paramtype error_tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.error_code = error_code
+        self.error_message = error_message
+        self.possible_causes = possible_causes
+        self.recommended_action = recommended_action
+        self.error_message_parameters = error_message_parameters
+        self.error_tags = error_tags
 
 
 class InMageRcmAgentUpgradeBlockingErrorDetails(_serialization.Model):  # pylint: disable=name-too-long
@@ -15363,8 +15565,8 @@ class InMageRcmAgentUpgradeBlockingErrorDetails(_serialization.Model):  # pylint
         self.error_message: Optional[str] = None
         self.possible_causes: Optional[str] = None
         self.recommended_action: Optional[str] = None
-        self.error_message_parameters: Optional[Dict[str, str]] = None
-        self.error_tags: Optional[Dict[str, str]] = None
+        self.error_message_parameters: Optional[dict[str, str]] = None
+        self.error_tags: Optional[dict[str, str]] = None
 
 
 class InMageRcmApplianceDetails(_serialization.Model):
@@ -15443,7 +15645,7 @@ class InMageRcmApplianceDetails(_serialization.Model):
         self.mars_agent: Optional["_models.MarsAgentDetails"] = None
         self.dra: Optional["_models.DraDetails"] = None
         self.switch_provider_blocking_error_details: Optional[
-            List["_models.InMageRcmFabricSwitchProviderBlockingErrorDetails"]
+            list["_models.InMageRcmFabricSwitchProviderBlockingErrorDetails"]
         ] = None
 
 
@@ -15475,7 +15677,7 @@ class InMageRcmApplianceSpecificDetails(ApplianceSpecificDetails):
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
-        self.appliances: Optional[List["_models.InMageRcmApplianceDetails"]] = None
+        self.appliances: Optional[list["_models.InMageRcmApplianceDetails"]] = None
 
 
 class InMageRcmApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecificInput):
@@ -15575,8 +15777,8 @@ class InMageRcmDiscoveredProtectedVmDetails(_serialization.Model):
         super().__init__(**kwargs)
         self.v_center_id: Optional[str] = None
         self.v_center_fqdn: Optional[str] = None
-        self.datastores: Optional[List[str]] = None
-        self.ip_addresses: Optional[List[str]] = None
+        self.datastores: Optional[list[str]] = None
+        self.ip_addresses: Optional[list[str]] = None
         self.vmware_tools_status: Optional[str] = None
         self.power_status: Optional[str] = None
         self.vm_fqdn: Optional[str] = None
@@ -15603,6 +15805,12 @@ class InMageRcmDiskInput(_serialization.Model):
     :vartype disk_encryption_set_id: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _validation = {
@@ -15617,6 +15825,9 @@ class InMageRcmDiskInput(_serialization.Model):
         "disk_type": {"key": "diskType", "type": "str"},
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
         "sector_size_in_bytes": {"key": "sectorSizeInBytes", "type": "int"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
@@ -15627,6 +15838,9 @@ class InMageRcmDiskInput(_serialization.Model):
         disk_type: Union[str, "_models.DiskAccountType"],
         disk_encryption_set_id: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15641,6 +15855,12 @@ class InMageRcmDiskInput(_serialization.Model):
         :paramtype disk_encryption_set_id: str
         :keyword sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
         :paramtype sector_size_in_bytes: int
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id = disk_id
@@ -15648,6 +15868,9 @@ class InMageRcmDiskInput(_serialization.Model):
         self.disk_type = disk_type
         self.disk_encryption_set_id = disk_encryption_set_id
         self.sector_size_in_bytes = sector_size_in_bytes
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class InMageRcmDisksDefaultInput(_serialization.Model):
@@ -15664,6 +15887,12 @@ class InMageRcmDisksDefaultInput(_serialization.Model):
     :vartype disk_encryption_set_id: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _validation = {
@@ -15676,6 +15905,9 @@ class InMageRcmDisksDefaultInput(_serialization.Model):
         "disk_type": {"key": "diskType", "type": "str"},
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
         "sector_size_in_bytes": {"key": "sectorSizeInBytes", "type": "int"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
@@ -15685,6 +15917,9 @@ class InMageRcmDisksDefaultInput(_serialization.Model):
         disk_type: Union[str, "_models.DiskAccountType"],
         disk_encryption_set_id: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15697,12 +15932,21 @@ class InMageRcmDisksDefaultInput(_serialization.Model):
         :paramtype disk_encryption_set_id: str
         :keyword sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
         :paramtype sector_size_in_bytes: int
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.log_storage_account_id = log_storage_account_id
         self.disk_type = disk_type
         self.disk_encryption_set_id = disk_encryption_set_id
         self.sector_size_in_bytes = sector_size_in_bytes
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput):
@@ -15777,6 +16021,8 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput):
     :ivar target_vm_security_profile: The target VM security profile.
     :vartype target_vm_security_profile:
      ~azure.mgmt.recoveryservicessiterecovery.models.SecurityProfileProperties
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -15814,6 +16060,7 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput):
         "target_nic_tags": {"key": "targetNicTags", "type": "[UserCreatedResourceTag]"},
         "user_selected_os_name": {"key": "userSelectedOSName", "type": "str"},
         "target_vm_security_profile": {"key": "targetVmSecurityProfile", "type": "SecurityProfileProperties"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -15822,7 +16069,7 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput):
         fabric_discovery_machine_id: str,
         target_resource_group_id: str,
         process_server_id: str,
-        disks_to_include: Optional[List["_models.InMageRcmDiskInput"]] = None,
+        disks_to_include: Optional[list["_models.InMageRcmDiskInput"]] = None,
         disks_default: Optional["_models.InMageRcmDisksDefaultInput"] = None,
         target_network_id: Optional[str] = None,
         test_network_id: Optional[str] = None,
@@ -15839,12 +16086,13 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput):
         multi_vm_group_name: Optional[str] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         linux_license_type: Optional[Union[str, "_models.LinuxLicenseType"]] = None,
-        target_vm_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        seed_managed_disk_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        target_managed_disk_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        target_nic_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
+        target_vm_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        seed_managed_disk_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        target_managed_disk_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        target_nic_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
         user_selected_os_name: Optional[str] = None,
         target_vm_security_profile: Optional["_models.SecurityProfileProperties"] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15913,6 +16161,8 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput):
         :keyword target_vm_security_profile: The target VM security profile.
         :paramtype target_vm_security_profile:
          ~azure.mgmt.recoveryservicessiterecovery.models.SecurityProfileProperties
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
@@ -15942,6 +16192,7 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput):
         self.target_nic_tags = target_nic_tags
         self.user_selected_os_name = user_selected_os_name
         self.target_vm_security_profile = target_vm_security_profile
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class InMageRcmEventDetails(EventProviderSpecificDetails):
@@ -16170,14 +16421,14 @@ class InMageRcmFabricSpecificDetails(FabricSpecificDetails):
         self.data_plane_uri: Optional[str] = None
         self.control_plane_uri: Optional[str] = None
         self.source_agent_identity_details = source_agent_identity_details
-        self.process_servers: Optional[List["_models.ProcessServerDetails"]] = None
-        self.rcm_proxies: Optional[List["_models.RcmProxyDetails"]] = None
-        self.push_installers: Optional[List["_models.PushInstallerDetails"]] = None
-        self.replication_agents: Optional[List["_models.ReplicationAgentDetails"]] = None
-        self.reprotect_agents: Optional[List["_models.ReprotectAgentDetails"]] = None
-        self.mars_agents: Optional[List["_models.MarsAgentDetails"]] = None
-        self.dras: Optional[List["_models.DraDetails"]] = None
-        self.agent_details: Optional[List["_models.AgentDetails"]] = None
+        self.process_servers: Optional[list["_models.ProcessServerDetails"]] = None
+        self.rcm_proxies: Optional[list["_models.RcmProxyDetails"]] = None
+        self.push_installers: Optional[list["_models.PushInstallerDetails"]] = None
+        self.replication_agents: Optional[list["_models.ReplicationAgentDetails"]] = None
+        self.reprotect_agents: Optional[list["_models.ReprotectAgentDetails"]] = None
+        self.mars_agents: Optional[list["_models.MarsAgentDetails"]] = None
+        self.dras: Optional[list["_models.DraDetails"]] = None
+        self.agent_details: Optional[list["_models.AgentDetails"]] = None
 
 
 class InMageRcmFabricSwitchProviderBlockingErrorDetails(_serialization.Model):  # pylint: disable=name-too-long
@@ -16224,8 +16475,8 @@ class InMageRcmFabricSwitchProviderBlockingErrorDetails(_serialization.Model):  
         self.error_message: Optional[str] = None
         self.possible_causes: Optional[str] = None
         self.recommended_action: Optional[str] = None
-        self.error_message_parameters: Optional[Dict[str, str]] = None
-        self.error_tags: Optional[Dict[str, str]] = None
+        self.error_message_parameters: Optional[dict[str, str]] = None
+        self.error_tags: Optional[dict[str, str]] = None
 
 
 class InMageRcmFailbackDiscoveredProtectedVmDetails(_serialization.Model):  # pylint: disable=name-too-long
@@ -16294,8 +16545,8 @@ class InMageRcmFailbackDiscoveredProtectedVmDetails(_serialization.Model):  # py
         super().__init__(**kwargs)
         self.v_center_id: Optional[str] = None
         self.v_center_fqdn: Optional[str] = None
-        self.datastores: Optional[List[str]] = None
-        self.ip_addresses: Optional[List[str]] = None
+        self.datastores: Optional[list[str]] = None
+        self.ip_addresses: Optional[list[str]] = None
         self.vmware_tools_status: Optional[str] = None
         self.power_status: Optional[str] = None
         self.vm_fqdn: Optional[str] = None
@@ -16417,7 +16668,7 @@ class InMageRcmFailbackMobilityAgentDetails(_serialization.Model):
         self.agent_version_expiry_date: Optional[datetime.datetime] = None
         self.driver_version_expiry_date: Optional[datetime.datetime] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
-        self.reasons_blocking_upgrade: Optional[List[Union[str, "_models.AgentUpgradeBlockedReason"]]] = None
+        self.reasons_blocking_upgrade: Optional[list[Union[str, "_models.AgentUpgradeBlockedReason"]]] = None
         self.is_upgradeable: Optional[str] = None
 
 
@@ -16830,9 +17081,9 @@ class InMageRcmFailbackReplicationDetails(ReplicationProviderSpecificSettings):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        protected_disks: Optional[List["_models.InMageRcmFailbackProtectedDiskDetails"]] = None,
+        protected_disks: Optional[list["_models.InMageRcmFailbackProtectedDiskDetails"]] = None,
         mobility_agent_details: Optional["_models.InMageRcmFailbackMobilityAgentDetails"] = None,
-        vm_nics: Optional[List["_models.InMageRcmFailbackNicDetails"]] = None,
+        vm_nics: Optional[list["_models.InMageRcmFailbackNicDetails"]] = None,
         discovered_vm_details: Optional["_models.InMageRcmFailbackDiscoveredProtectedVmDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -17036,8 +17287,8 @@ class InMageRcmLastAgentUpgradeErrorDetails(_serialization.Model):
         self.error_message: Optional[str] = None
         self.possible_causes: Optional[str] = None
         self.recommended_action: Optional[str] = None
-        self.error_message_parameters: Optional[Dict[str, str]] = None
-        self.error_tags: Optional[Dict[str, str]] = None
+        self.error_message_parameters: Optional[dict[str, str]] = None
+        self.error_tags: Optional[dict[str, str]] = None
 
 
 class InMageRcmMobilityAgentDetails(_serialization.Model):
@@ -17067,6 +17318,35 @@ class InMageRcmMobilityAgentDetails(_serialization.Model):
      ~azure.mgmt.recoveryservicessiterecovery.models.AgentUpgradeBlockedReason]
     :ivar is_upgradeable: A value indicating whether agent is upgradeable or not.
     :vartype is_upgradeable: str
+    :ivar agent_reinstall_state: The agent auto reinstall state.
+    :vartype agent_reinstall_state: list[str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.MobilityAgentReinstallType]
+    :ivar last_agent_reinstall_type: The last agent reinstall type.
+    :vartype last_agent_reinstall_type: str
+    :ivar agent_reinstall_job_id: The agent reinstall job Id.
+    :vartype agent_reinstall_job_id: str
+    :ivar agent_reinstall_attempt_to_version: The last agent reinstall type.
+    :vartype agent_reinstall_attempt_to_version: str
+    :ivar os_family_name: The OS family name.
+    :vartype os_family_name: str
+    :ivar distro_name: The distro name.
+    :vartype distro_name: str
+    :ivar distro_name_for_which_agent_is_installed: Distro name for which agent is installed.
+    :vartype distro_name_for_which_agent_is_installed: str
+    :ivar is_agent_upgradeable: A value indicating whether replication agent upgradeable.
+    :vartype is_agent_upgradeable: bool
+    :ivar is_agent_reinstall_required: A value indicating whether replication agent reinstallation
+     is required.
+    :vartype is_agent_reinstall_required: bool
+    :ivar is_last_reinstall_successful: A value indicating whether replication agent reinstallation
+     is required.
+    :vartype is_last_reinstall_successful: bool
+    :ivar reasons_blocking_reinstall: whether reinstall is possible or not.
+    :vartype reasons_blocking_reinstall: list[str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.AgentReinstallBlockedReason]
+    :ivar reasons_blocking_reinstall_details: whether reinstall is possible or not.
+    :vartype reasons_blocking_reinstall_details:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.InMageRcmAgentReinstallBlockingErrorDetails]
     """
 
     _validation = {
@@ -17080,6 +17360,12 @@ class InMageRcmMobilityAgentDetails(_serialization.Model):
         "last_heartbeat_utc": {"readonly": True},
         "reasons_blocking_upgrade": {"readonly": True},
         "is_upgradeable": {"readonly": True},
+        "agent_reinstall_state": {"readonly": True},
+        "last_agent_reinstall_type": {"readonly": True},
+        "agent_reinstall_job_id": {"readonly": True},
+        "agent_reinstall_attempt_to_version": {"readonly": True},
+        "reasons_blocking_reinstall": {"readonly": True},
+        "reasons_blocking_reinstall_details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -17093,10 +17379,50 @@ class InMageRcmMobilityAgentDetails(_serialization.Model):
         "last_heartbeat_utc": {"key": "lastHeartbeatUtc", "type": "iso-8601"},
         "reasons_blocking_upgrade": {"key": "reasonsBlockingUpgrade", "type": "[str]"},
         "is_upgradeable": {"key": "isUpgradeable", "type": "str"},
+        "agent_reinstall_state": {"key": "agentReinstallState", "type": "[str]"},
+        "last_agent_reinstall_type": {"key": "lastAgentReinstallType", "type": "str"},
+        "agent_reinstall_job_id": {"key": "agentReinstallJobId", "type": "str"},
+        "agent_reinstall_attempt_to_version": {"key": "agentReinstallAttemptToVersion", "type": "str"},
+        "os_family_name": {"key": "osFamilyName", "type": "str"},
+        "distro_name": {"key": "distroName", "type": "str"},
+        "distro_name_for_which_agent_is_installed": {"key": "distroNameForWhichAgentIsInstalled", "type": "str"},
+        "is_agent_upgradeable": {"key": "isAgentUpgradeable", "type": "bool"},
+        "is_agent_reinstall_required": {"key": "isAgentReinstallRequired", "type": "bool"},
+        "is_last_reinstall_successful": {"key": "isLastReinstallSuccessful", "type": "bool"},
+        "reasons_blocking_reinstall": {"key": "reasonsBlockingReinstall", "type": "[str]"},
+        "reasons_blocking_reinstall_details": {
+            "key": "reasonsBlockingReinstallDetails",
+            "type": "[InMageRcmAgentReinstallBlockingErrorDetails]",
+        },
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self,
+        *,
+        os_family_name: Optional[str] = None,
+        distro_name: Optional[str] = None,
+        distro_name_for_which_agent_is_installed: Optional[str] = None,
+        is_agent_upgradeable: Optional[bool] = None,
+        is_agent_reinstall_required: Optional[bool] = None,
+        is_last_reinstall_successful: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword os_family_name: The OS family name.
+        :paramtype os_family_name: str
+        :keyword distro_name: The distro name.
+        :paramtype distro_name: str
+        :keyword distro_name_for_which_agent_is_installed: Distro name for which agent is installed.
+        :paramtype distro_name_for_which_agent_is_installed: str
+        :keyword is_agent_upgradeable: A value indicating whether replication agent upgradeable.
+        :paramtype is_agent_upgradeable: bool
+        :keyword is_agent_reinstall_required: A value indicating whether replication agent
+         reinstallation is required.
+        :paramtype is_agent_reinstall_required: bool
+        :keyword is_last_reinstall_successful: A value indicating whether replication agent
+         reinstallation is required.
+        :paramtype is_last_reinstall_successful: bool
+        """
         super().__init__(**kwargs)
         self.version: Optional[str] = None
         self.latest_version: Optional[str] = None
@@ -17106,8 +17432,22 @@ class InMageRcmMobilityAgentDetails(_serialization.Model):
         self.agent_version_expiry_date: Optional[datetime.datetime] = None
         self.driver_version_expiry_date: Optional[datetime.datetime] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
-        self.reasons_blocking_upgrade: Optional[List[Union[str, "_models.AgentUpgradeBlockedReason"]]] = None
+        self.reasons_blocking_upgrade: Optional[list[Union[str, "_models.AgentUpgradeBlockedReason"]]] = None
         self.is_upgradeable: Optional[str] = None
+        self.agent_reinstall_state: Optional[list[Union[str, "_models.MobilityAgentReinstallType"]]] = None
+        self.last_agent_reinstall_type: Optional[str] = None
+        self.agent_reinstall_job_id: Optional[str] = None
+        self.agent_reinstall_attempt_to_version: Optional[str] = None
+        self.os_family_name = os_family_name
+        self.distro_name = distro_name
+        self.distro_name_for_which_agent_is_installed = distro_name_for_which_agent_is_installed
+        self.is_agent_upgradeable = is_agent_upgradeable
+        self.is_agent_reinstall_required = is_agent_reinstall_required
+        self.is_last_reinstall_successful = is_last_reinstall_successful
+        self.reasons_blocking_reinstall: Optional[list[Union[str, "_models.AgentReinstallBlockedReason"]]] = None
+        self.reasons_blocking_reinstall_details: Optional[
+            list["_models.InMageRcmAgentReinstallBlockingErrorDetails"]
+        ] = None
 
 
 class InMageRcmNicDetails(_serialization.Model):
@@ -17478,6 +17818,12 @@ class InMageRcmProtectedDiskDetails(_serialization.Model):
     :vartype custom_target_disk_name: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _validation = {
@@ -17515,6 +17861,9 @@ class InMageRcmProtectedDiskDetails(_serialization.Model):
         "resync_details": {"key": "resyncDetails", "type": "InMageRcmSyncDetails"},
         "custom_target_disk_name": {"key": "customTargetDiskName", "type": "str"},
         "sector_size_in_bytes": {"key": "sectorSizeInBytes", "type": "int"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
@@ -17525,6 +17874,9 @@ class InMageRcmProtectedDiskDetails(_serialization.Model):
         resync_details: Optional["_models.InMageRcmSyncDetails"] = None,
         custom_target_disk_name: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -17539,6 +17891,12 @@ class InMageRcmProtectedDiskDetails(_serialization.Model):
         :paramtype custom_target_disk_name: str
         :keyword sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
         :paramtype sector_size_in_bytes: int
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id: Optional[str] = None
@@ -17559,6 +17917,9 @@ class InMageRcmProtectedDiskDetails(_serialization.Model):
         self.resync_details = resync_details
         self.custom_target_disk_name = custom_target_disk_name
         self.sector_size_in_bytes = sector_size_in_bytes
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class InMageRcmProtectionContainerMappingDetails(
@@ -17789,6 +18150,8 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings):
     :ivar target_vm_security_profile: The target VM security profile.
     :vartype target_vm_security_profile:
      ~azure.mgmt.recoveryservicessiterecovery.models.SecurityProfileProperties
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -17903,6 +18266,7 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings):
         "supported_os_versions": {"key": "supportedOSVersions", "type": "[str]"},
         "os_name": {"key": "osName", "type": "str"},
         "target_vm_security_profile": {"key": "targetVmSecurityProfile", "type": "SecurityProfileProperties"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -17920,23 +18284,24 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings):
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         target_network_id: Optional[str] = None,
         test_network_id: Optional[str] = None,
-        protected_disks: Optional[List["_models.InMageRcmProtectedDiskDetails"]] = None,
-        unprotected_disks: Optional[List["_models.InMageRcmUnProtectedDiskDetails"]] = None,
+        protected_disks: Optional[list["_models.InMageRcmProtectedDiskDetails"]] = None,
+        unprotected_disks: Optional[list["_models.InMageRcmUnProtectedDiskDetails"]] = None,
         mobility_agent_details: Optional["_models.InMageRcmMobilityAgentDetails"] = None,
-        last_agent_upgrade_error_details: Optional[List["_models.InMageRcmLastAgentUpgradeErrorDetails"]] = None,
+        last_agent_upgrade_error_details: Optional[list["_models.InMageRcmLastAgentUpgradeErrorDetails"]] = None,
         agent_upgrade_blocking_error_details: Optional[
-            List["_models.InMageRcmAgentUpgradeBlockingErrorDetails"]
+            list["_models.InMageRcmAgentUpgradeBlockingErrorDetails"]
         ] = None,
-        vm_nics: Optional[List["_models.InMageRcmNicDetails"]] = None,
+        vm_nics: Optional[list["_models.InMageRcmNicDetails"]] = None,
         discovered_vm_details: Optional["_models.InMageRcmDiscoveredProtectedVmDetails"] = None,
-        target_vm_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        seed_managed_disk_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        target_managed_disk_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        target_nic_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
+        target_vm_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        seed_managed_disk_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        target_managed_disk_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        target_nic_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
         sql_server_license_type: Optional[str] = None,
-        supported_os_versions: Optional[List[str]] = None,
+        supported_os_versions: Optional[list[str]] = None,
         os_name: Optional[str] = None,
         target_vm_security_profile: Optional["_models.SecurityProfileProperties"] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18008,6 +18373,8 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings):
         :keyword target_vm_security_profile: The target VM security profile.
         :paramtype target_vm_security_profile:
          ~azure.mgmt.recoveryservicessiterecovery.models.SecurityProfileProperties
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
@@ -18073,6 +18440,7 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings):
         self.supported_os_versions = supported_os_versions
         self.os_name = os_name
         self.target_vm_security_profile = target_vm_security_profile
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class InMageRcmReprotectInput(ReverseReplicationProviderSpecificInput):
@@ -18262,6 +18630,8 @@ class InMageRcmUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
     :vartype recovery_point_id: str
     :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
     :vartype os_upgrade_version: str
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -18274,6 +18644,7 @@ class InMageRcmUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
         "perform_shutdown": {"key": "performShutdown", "type": "str"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
         "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(
@@ -18282,6 +18653,7 @@ class InMageRcmUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
         perform_shutdown: str,
         recovery_point_id: Optional[str] = None,
         os_upgrade_version: Optional[str] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18292,12 +18664,15 @@ class InMageRcmUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
         :paramtype recovery_point_id: str
         :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
         :paramtype os_upgrade_version: str
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
         self.perform_shutdown = perform_shutdown
         self.recovery_point_id = recovery_point_id
         self.os_upgrade_version = os_upgrade_version
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class InMageRcmUnProtectedDiskDetails(_serialization.Model):
@@ -18480,6 +18855,10 @@ class InMageRcmUpdateReplicationProtectedItemInput(
     :ivar target_nic_tags: The tags for the target NICs.
     :vartype target_nic_tags:
      list[~azure.mgmt.recoveryservicessiterecovery.models.UserCreatedResourceTag]
+    :ivar vm_disks: The list of disk update properties.
+    :vartype vm_disks: list[~azure.mgmt.recoveryservicessiterecovery.models.UpdateDiskInput]
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -18505,6 +18884,8 @@ class InMageRcmUpdateReplicationProtectedItemInput(
         "target_vm_tags": {"key": "targetVmTags", "type": "[UserCreatedResourceTag]"},
         "target_managed_disk_tags": {"key": "targetManagedDiskTags", "type": "[UserCreatedResourceTag]"},
         "target_nic_tags": {"key": "targetNicTags", "type": "[UserCreatedResourceTag]"},
+        "vm_disks": {"key": "vmDisks", "type": "[UpdateDiskInput]"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(
@@ -18519,14 +18900,16 @@ class InMageRcmUpdateReplicationProtectedItemInput(
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         target_network_id: Optional[str] = None,
         test_network_id: Optional[str] = None,
-        vm_nics: Optional[List["_models.InMageRcmNicInput"]] = None,
+        vm_nics: Optional[list["_models.InMageRcmNicInput"]] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         linux_license_type: Optional[Union[str, "_models.LinuxLicenseType"]] = None,
         user_selected_os_name: Optional[str] = None,
-        target_vm_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        target_managed_disk_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
-        target_nic_tags: Optional[List["_models.UserCreatedResourceTag"]] = None,
+        target_vm_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        target_managed_disk_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        target_nic_tags: Optional[list["_models.UserCreatedResourceTag"]] = None,
+        vm_disks: Optional[list["_models.UpdateDiskInput"]] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18573,6 +18956,10 @@ class InMageRcmUpdateReplicationProtectedItemInput(
         :keyword target_nic_tags: The tags for the target NICs.
         :paramtype target_nic_tags:
          list[~azure.mgmt.recoveryservicessiterecovery.models.UserCreatedResourceTag]
+        :keyword vm_disks: The list of disk update properties.
+        :paramtype vm_disks: list[~azure.mgmt.recoveryservicessiterecovery.models.UpdateDiskInput]
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
@@ -18593,6 +18980,8 @@ class InMageRcmUpdateReplicationProtectedItemInput(
         self.target_vm_tags = target_vm_tags
         self.target_managed_disk_tags = target_managed_disk_tags
         self.target_nic_tags = target_nic_tags
+        self.vm_disks = vm_disks
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class InMageReplicationDetails(ReplicationProviderSpecificSettings):
@@ -18759,12 +19148,12 @@ class InMageReplicationDetails(ReplicationProviderSpecificSettings):
         compressed_data_rate_in_mb: Optional[float] = None,
         uncompressed_data_rate_in_mb: Optional[float] = None,
         rpo_in_seconds: Optional[int] = None,
-        protected_disks: Optional[List["_models.InMageProtectedDiskDetails"]] = None,
+        protected_disks: Optional[list["_models.InMageProtectedDiskDetails"]] = None,
         ip_address: Optional[str] = None,
         last_heartbeat: Optional[datetime.datetime] = None,
         process_server_id: Optional[str] = None,
         master_target_id: Optional[str] = None,
-        consistency_points: Optional[Dict[str, datetime.datetime]] = None,
+        consistency_points: Optional[dict[str, datetime.datetime]] = None,
         disk_resized: Optional[str] = None,
         reboot_after_update_status: Optional[str] = None,
         multi_vm_group_id: Optional[str] = None,
@@ -18773,11 +19162,11 @@ class InMageReplicationDetails(ReplicationProviderSpecificSettings):
         agent_details: Optional["_models.InMageAgentDetails"] = None,
         v_center_infrastructure_id: Optional[str] = None,
         infrastructure_vm_id: Optional[str] = None,
-        vm_nics: Optional[List["_models.VMNicDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicDetails"]] = None,
         discovery_type: Optional[str] = None,
         azure_storage_account_id: Optional[str] = None,
-        datastores: Optional[List[str]] = None,
-        validation_errors: Optional[List["_models.HealthError"]] = None,
+        datastores: Optional[list[str]] = None,
+        validation_errors: Optional[list["_models.HealthError"]] = None,
         last_rpo_calculated_time: Optional[datetime.datetime] = None,
         last_update_received_time: Optional[datetime.datetime] = None,
         replica_id: Optional[str] = None,
@@ -18979,7 +19368,7 @@ class InMageReprotectInput(ReverseReplicationProviderSpecificInput):
         run_as_account_id: Optional[str] = None,
         datastore_name: Optional[str] = None,
         disk_exclusion_input: Optional["_models.InMageDiskExclusionInput"] = None,
-        disks_to_include: Optional[List[str]] = None,
+        disks_to_include: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19388,11 +19777,11 @@ class IPConfigDetails(_serialization.Model):
         recovery_static_ip_address: Optional[str] = None,
         recovery_ip_address_type: Optional[str] = None,
         recovery_public_ip_address_id: Optional[str] = None,
-        recovery_lb_backend_address_pool_ids: Optional[List[str]] = None,
+        recovery_lb_backend_address_pool_ids: Optional[list[str]] = None,
         tfo_subnet_name: Optional[str] = None,
         tfo_static_ip_address: Optional[str] = None,
         tfo_public_ip_address_id: Optional[str] = None,
-        tfo_lb_backend_address_pool_ids: Optional[List[str]] = None,
+        tfo_lb_backend_address_pool_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19495,11 +19884,11 @@ class IPConfigInputDetails(_serialization.Model):
         recovery_subnet_name: Optional[str] = None,
         recovery_static_ip_address: Optional[str] = None,
         recovery_public_ip_address_id: Optional[str] = None,
-        recovery_lb_backend_address_pool_ids: Optional[List[str]] = None,
+        recovery_lb_backend_address_pool_ids: Optional[list[str]] = None,
         tfo_subnet_name: Optional[str] = None,
         tfo_static_ip_address: Optional[str] = None,
         tfo_public_ip_address_id: Optional[str] = None,
-        tfo_lb_backend_address_pool_ids: Optional[List[str]] = None,
+        tfo_lb_backend_address_pool_ids: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19540,71 +19929,83 @@ class IPConfigInputDetails(_serialization.Model):
         self.tfo_lb_backend_address_pool_ids = tfo_lb_backend_address_pool_ids
 
 
-class Job(Resource):
+class Job(ProxyResource):
     """Job details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.JobProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "JobProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.JobProperties"] = None, **kwargs: Any
+        self, *, properties: Optional["_models.JobProperties"] = None, location: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom data.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.JobProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class JobCollection(_serialization.Model):
     """Collection of jobs.
 
-    :ivar value: The list of jobs.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Job items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Job]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Job]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.Job"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.Job"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The list of jobs.
+        :keyword value: The Job items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Job]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -19787,11 +20188,11 @@ class JobProperties(_serialization.Model):
         friendly_name: Optional[str] = None,
         state: Optional[str] = None,
         state_description: Optional[str] = None,
-        tasks: Optional[List["_models.ASRTask"]] = None,
-        errors: Optional[List["_models.JobErrorDetails"]] = None,
+        tasks: Optional[list["_models.ASRTask"]] = None,
+        errors: Optional[list["_models.JobErrorDetails"]] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        allowed_actions: Optional[List[str]] = None,
+        allowed_actions: Optional[list[str]] = None,
         target_object_id: Optional[str] = None,
         target_object_name: Optional[str] = None,
         target_instance_type: Optional[str] = None,
@@ -20010,62 +20411,76 @@ class KeyEncryptionKeyInfo(_serialization.Model):
         self.key_vault_resource_arm_id = key_vault_resource_arm_id
 
 
-class LogicalNetwork(Resource):
+class LogicalNetwork(ProxyResource):
     """Logical network data model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The Logical Network Properties.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.LogicalNetworkProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "LogicalNetworkProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.LogicalNetworkProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The Logical Network Properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.LogicalNetworkProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class LogicalNetworkCollection(_serialization.Model):
     """List of logical networks.
 
-    :ivar value: The Logical Networks list details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The LogicalNetwork items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.LogicalNetwork]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[LogicalNetwork]"},
@@ -20073,12 +20488,12 @@ class LogicalNetworkCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LogicalNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.LogicalNetwork"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Logical Networks list details.
+        :keyword value: The LogicalNetwork items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.LogicalNetwork]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -20288,7 +20703,7 @@ class MarsAgentDetails(_serialization.Model):
         self.version: Optional[str] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
 
 
 class MasterTargetServer(_serialization.Model):
@@ -20365,10 +20780,10 @@ class MasterTargetServer(_serialization.Model):
         agent_version: Optional[str] = None,
         last_heartbeat: Optional[datetime.datetime] = None,
         version_status: Optional[str] = None,
-        retention_volumes: Optional[List["_models.RetentionVolume"]] = None,
-        data_stores: Optional[List["_models.DataStore"]] = None,
-        validation_errors: Optional[List["_models.HealthError"]] = None,
-        health_errors: Optional[List["_models.HealthError"]] = None,
+        retention_volumes: Optional[list["_models.RetentionVolume"]] = None,
+        data_stores: Optional[list["_models.DataStore"]] = None,
+        validation_errors: Optional[list["_models.HealthError"]] = None,
+        health_errors: Optional[list["_models.HealthError"]] = None,
         disk_count: Optional[int] = None,
         os_version: Optional[str] = None,
         agent_expiry_date: Optional[datetime.datetime] = None,
@@ -20522,75 +20937,87 @@ class MigrateProviderSpecificInput(_serialization.Model):
         self.instance_type: Optional[str] = None
 
 
-class MigrationItem(Resource):
+class MigrationItem(ProxyResource):
     """Migration item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The migration item properties.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.MigrationItemProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "MigrationItemProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.MigrationItemProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The migration item properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.MigrationItemProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class MigrationItemCollection(_serialization.Model):
     """Migration item collection.
 
-    :ivar value: The list of migration items.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The MigrationItem items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.MigrationItem]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[MigrationItem]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.MigrationItem"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.MigrationItem"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The list of migration items.
+        :keyword value: The MigrationItem items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.MigrationItem]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -20727,51 +21154,12 @@ class MigrationItemProperties(_serialization.Model):
         self.test_migrate_state: Optional[Union[str, "_models.TestMigrationState"]] = None
         self.test_migrate_state_description: Optional[str] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
-        self.allowed_operations: Optional[List[Union[str, "_models.MigrationItemOperation"]]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
+        self.allowed_operations: Optional[list[Union[str, "_models.MigrationItemOperation"]]] = None
         self.current_job: Optional["_models.CurrentJobDetails"] = None
-        self.critical_job_history: Optional[List["_models.CriticalJobHistoryDetails"]] = None
+        self.critical_job_history: Optional[list["_models.CriticalJobHistoryDetails"]] = None
         self.event_correlation_id: Optional[str] = None
         self.provider_specific_details = provider_specific_details
-
-
-class MigrationItemsQueryParameter(_serialization.Model):
-    """Query parameter to enumerate migration items.
-
-    :ivar source_fabric_name: The source fabric name filter.
-    :vartype source_fabric_name: str
-    :ivar source_container_name: The source container name filter.
-    :vartype source_container_name: str
-    :ivar instance_type: The replication provider type.
-    :vartype instance_type: str
-    """
-
-    _attribute_map = {
-        "source_fabric_name": {"key": "sourceFabricName", "type": "str"},
-        "source_container_name": {"key": "sourceContainerName", "type": "str"},
-        "instance_type": {"key": "instanceType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_fabric_name: Optional[str] = None,
-        source_container_name: Optional[str] = None,
-        instance_type: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword source_fabric_name: The source fabric name filter.
-        :paramtype source_fabric_name: str
-        :keyword source_container_name: The source container name filter.
-        :paramtype source_container_name: str
-        :keyword instance_type: The replication provider type.
-        :paramtype instance_type: str
-        """
-        super().__init__(**kwargs)
-        self.source_fabric_name = source_fabric_name
-        self.source_container_name = source_container_name
-        self.instance_type = instance_type
 
 
 class MigrationProviderSpecificSettings(_serialization.Model):
@@ -20802,64 +21190,78 @@ class MigrationProviderSpecificSettings(_serialization.Model):
         self.instance_type: Optional[str] = None
 
 
-class MigrationRecoveryPoint(Resource):
+class MigrationRecoveryPoint(ProxyResource):
     """Recovery point for a migration item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Recovery point properties.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.MigrationRecoveryPointProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "MigrationRecoveryPointProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.MigrationRecoveryPointProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: Recovery point properties.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.MigrationRecoveryPointProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class MigrationRecoveryPointCollection(_serialization.Model):
     """Collection of migration recovery points.
 
-    :ivar value: The migration recovery point details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The MigrationRecoveryPoint items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.MigrationRecoveryPoint]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[MigrationRecoveryPoint]"},
@@ -20867,16 +21269,12 @@ class MigrationRecoveryPointCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.MigrationRecoveryPoint"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.MigrationRecoveryPoint"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The migration recovery point details.
+        :keyword value: The MigrationRecoveryPoint items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.MigrationRecoveryPoint]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -20953,71 +21351,83 @@ class MobilityServiceUpdate(_serialization.Model):
         self.os_type = os_type
 
 
-class Network(Resource):
+class Network(ProxyResource):
     """Network model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The Network Properties.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.NetworkProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "NetworkProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.NetworkProperties"] = None, **kwargs: Any
+        self, *, properties: Optional["_models.NetworkProperties"] = None, location: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The Network Properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.NetworkProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class NetworkCollection(_serialization.Model):
     """List of networks.
 
-    :ivar value: The Networks list details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Network items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Network]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Network]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.Network"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.Network"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The Networks list details.
+        :keyword value: The Network items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Network]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -21025,7 +21435,7 @@ class NetworkCollection(_serialization.Model):
         self.next_link = next_link
 
 
-class NetworkMapping(Resource):
+class NetworkMapping(ProxyResource):
     """Network Mapping model. Ideally it should have been possible to inherit this class from prev
     version in InheritedModels as long as there is no difference in structure or method signature.
     Since there were no base Models for certain fields and methods viz NetworkMappingProperties and
@@ -21034,47 +21444,55 @@ class NetworkMapping(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The Network Mapping Properties.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.NetworkMappingProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "NetworkMappingProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.NetworkMappingProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The Network Mapping Properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.NetworkMappingProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class NetworkMappingCollection(_serialization.Model):
@@ -21083,11 +21501,17 @@ class NetworkMappingCollection(_serialization.Model):
     collection of NetworkMapping. Hence it makes sense to override Load with Base.NetworkMapping
     instead of existing CurrentVersion.NetworkMapping.
 
-    :ivar value: The Network Mappings list.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The NetworkMapping items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.NetworkMapping]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[NetworkMapping]"},
@@ -21095,12 +21519,12 @@ class NetworkMappingCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NetworkMapping"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.NetworkMapping"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Network Mappings list.
+        :keyword value: The NetworkMapping items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.NetworkMapping]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -21215,7 +21639,7 @@ class NetworkProperties(_serialization.Model):
         self,
         *,
         fabric_type: Optional[str] = None,
-        subnets: Optional[List["_models.Subnet"]] = None,
+        subnets: Optional[list["_models.Subnet"]] = None,
         friendly_name: Optional[str] = None,
         network_type: Optional[str] = None,
         **kwargs: Any
@@ -21383,7 +21807,7 @@ class OperationsDiscovery(_serialization.Model):
      operation in the RBAC UX and the audit logs UX. Default value is "user,system".
     :vartype origin: str
     :ivar properties: Properties. Reserved for future use.
-    :vartype properties: JSON
+    :vartype properties: any
     """
 
     _attribute_map = {
@@ -21399,7 +21823,7 @@ class OperationsDiscovery(_serialization.Model):
         name: Optional[str] = None,
         display: Optional["_models.Display"] = None,
         origin: Optional[str] = None,
-        properties: Optional[JSON] = None,
+        properties: Optional[Any] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -21423,7 +21847,7 @@ class OperationsDiscovery(_serialization.Model):
          operation in the RBAC UX and the audit logs UX. Default value is "user,system".
         :paramtype origin: str
         :keyword properties: Properties. Reserved for future use.
-        :paramtype properties: JSON
+        :paramtype properties: any
         """
         super().__init__(**kwargs)
         self.name = name
@@ -21435,11 +21859,17 @@ class OperationsDiscovery(_serialization.Model):
 class OperationsDiscoveryCollection(_serialization.Model):
     """Collection of ClientDiscovery details.
 
-    :ivar value: The ClientDiscovery details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The OperationsDiscovery items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.OperationsDiscovery]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[OperationsDiscovery]"},
@@ -21447,16 +21877,12 @@ class OperationsDiscoveryCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.OperationsDiscovery"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.OperationsDiscovery"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The ClientDiscovery details.
+        :keyword value: The OperationsDiscovery items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.OperationsDiscovery]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -21595,7 +22021,7 @@ class OSUpgradeSupportedVersions(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.supported_source_os_version: Optional[str] = None
-        self.supported_target_os_versions: Optional[List[str]] = None
+        self.supported_target_os_versions: Optional[list[str]] = None
 
 
 class OSVersionWrapper(_serialization.Model):
@@ -21737,71 +22163,83 @@ class PlannedFailoverInputProperties(_serialization.Model):
         self.provider_specific_details = provider_specific_details
 
 
-class Policy(Resource):
+class Policy(ProxyResource):
     """Protection profile details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.PolicyProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "PolicyProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.PolicyProperties"] = None, **kwargs: Any
+        self, *, properties: Optional["_models.PolicyProperties"] = None, location: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom data.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.PolicyProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class PolicyCollection(_serialization.Model):
     """Protection Profile Collection details.
 
-    :ivar value: The policy details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The Policy items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Policy]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Policy]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.Policy"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The policy details.
+        :keyword value: The Policy items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Policy]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -21986,7 +22424,7 @@ class ProcessServer(_serialization.Model):
         agent_version: Optional[str] = None,
         last_heartbeat: Optional[datetime.datetime] = None,
         version_status: Optional[str] = None,
-        mobility_service_updates: Optional[List["_models.MobilityServiceUpdate"]] = None,
+        mobility_service_updates: Optional[list["_models.MobilityServiceUpdate"]] = None,
         host_id: Optional[str] = None,
         machine_count: Optional[str] = None,
         replication_pair_count: Optional[str] = None,
@@ -22004,7 +22442,7 @@ class ProcessServer(_serialization.Model):
         ssl_cert_expiry_date: Optional[datetime.datetime] = None,
         ssl_cert_expiry_remaining_days: Optional[int] = None,
         os_version: Optional[str] = None,
-        health_errors: Optional[List["_models.HealthError"]] = None,
+        health_errors: Optional[list["_models.HealthError"]] = None,
         agent_expiry_date: Optional[datetime.datetime] = None,
         agent_version_details: Optional["_models.VersionDetails"] = None,
         **kwargs: Any
@@ -22260,7 +22698,7 @@ class ProcessServerDetails(_serialization.Model):
         self.bios_id: Optional[str] = None
         self.fabric_object_id: Optional[str] = None
         self.fqdn: Optional[str] = None
-        self.ip_addresses: Optional[List[str]] = None
+        self.ip_addresses: Optional[list[str]] = None
         self.version: Optional[str] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
         self.total_memory_in_bytes: Optional[int] = None
@@ -22281,68 +22719,82 @@ class ProcessServerDetails(_serialization.Model):
         self.memory_usage_status: Optional[Union[str, "_models.RcmComponentStatus"]] = None
         self.processor_usage_status: Optional[Union[str, "_models.RcmComponentStatus"]] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
         self.protected_item_count: Optional[int] = None
         self.historic_health: Optional[Union[str, "_models.ProtectionHealth"]] = None
 
 
-class ProtectableItem(Resource):
+class ProtectableItem(ProxyResource):
     """Replication protected item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.ProtectableItemProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "ProtectableItemProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.ProtectableItemProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom data.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.ProtectableItemProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class ProtectableItemCollection(_serialization.Model):
     """Protectable item collection.
 
-    :ivar value: The Protectable item details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ProtectableItem items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectableItem]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ProtectableItem]"},
@@ -22350,12 +22802,12 @@ class ProtectableItemCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ProtectableItem"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.ProtectableItem"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Protectable item details.
+        :keyword value: The ProtectableItem items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectableItem]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -22400,8 +22852,8 @@ class ProtectableItemProperties(_serialization.Model):
         protection_status: Optional[str] = None,
         replication_protected_item_id: Optional[str] = None,
         recovery_services_provider_id: Optional[str] = None,
-        protection_readiness_errors: Optional[List[str]] = None,
-        supported_replication_providers: Optional[List[str]] = None,
+        protection_readiness_errors: Optional[list[str]] = None,
+        supported_replication_providers: Optional[list[str]] = None,
         custom_details: Optional["_models.ConfigurationSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -22433,201 +22885,78 @@ class ProtectableItemProperties(_serialization.Model):
         self.custom_details = custom_details
 
 
-class ProtectableItemQueryParameter(_serialization.Model):
-    """Query parameter to enumerate Protectable items.
-
-    :ivar state: State of the Protectable item query filter.
-    :vartype state: str
-    """
-
-    _attribute_map = {
-        "state": {"key": "state", "type": "str"},
-    }
-
-    def __init__(self, *, state: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword state: State of the Protectable item query filter.
-        :paramtype state: str
-        """
-        super().__init__(**kwargs)
-        self.state = state
-
-
-class ProtectedClustersQueryParameter(_serialization.Model):
-    """Query parameter to enumerate protected clusters.
-
-    :ivar source_fabric_name: The source fabric name filter.
-    :vartype source_fabric_name: str
-    :ivar source_fabric_location: The source fabric location filter.
-    :vartype source_fabric_location: str
-    :ivar instance_type: The replication provider type.
-    :vartype instance_type: str
-    """
-
-    _attribute_map = {
-        "source_fabric_name": {"key": "sourceFabricName", "type": "str"},
-        "source_fabric_location": {"key": "sourceFabricLocation", "type": "str"},
-        "instance_type": {"key": "instanceType", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_fabric_name: Optional[str] = None,
-        source_fabric_location: Optional[str] = None,
-        instance_type: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword source_fabric_name: The source fabric name filter.
-        :paramtype source_fabric_name: str
-        :keyword source_fabric_location: The source fabric location filter.
-        :paramtype source_fabric_location: str
-        :keyword instance_type: The replication provider type.
-        :paramtype instance_type: str
-        """
-        super().__init__(**kwargs)
-        self.source_fabric_name = source_fabric_name
-        self.source_fabric_location = source_fabric_location
-        self.instance_type = instance_type
-
-
-class ProtectedItemsQueryParameter(_serialization.Model):
-    """Query parameter to enumerate protected items.
-
-    :ivar source_fabric_name: The source fabric name filter.
-    :vartype source_fabric_name: str
-    :ivar recovery_plan_name: The recovery plan filter.
-    :vartype recovery_plan_name: str
-    :ivar source_fabric_location: The source fabric location filter.
-    :vartype source_fabric_location: str
-    :ivar fabric_object_id: The fabric object Id filter.
-    :vartype fabric_object_id: str
-    :ivar v_center_name: The vCenter name filter.
-    :vartype v_center_name: str
-    :ivar instance_type: The replication provider type.
-    :vartype instance_type: str
-    :ivar multi_vm_group_create_option: Whether Multi VM group is auto created or specified by
-     user. Known values are: "AutoCreated" and "UserSpecified".
-    :vartype multi_vm_group_create_option: str or
-     ~azure.mgmt.recoveryservicessiterecovery.models.MultiVmGroupCreateOption
-    :ivar process_server_id: The process server Id filter.
-    :vartype process_server_id: str
-    """
-
-    _attribute_map = {
-        "source_fabric_name": {"key": "sourceFabricName", "type": "str"},
-        "recovery_plan_name": {"key": "recoveryPlanName", "type": "str"},
-        "source_fabric_location": {"key": "sourceFabricLocation", "type": "str"},
-        "fabric_object_id": {"key": "fabricObjectId", "type": "str"},
-        "v_center_name": {"key": "vCenterName", "type": "str"},
-        "instance_type": {"key": "instanceType", "type": "str"},
-        "multi_vm_group_create_option": {"key": "multiVmGroupCreateOption", "type": "str"},
-        "process_server_id": {"key": "processServerId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_fabric_name: Optional[str] = None,
-        recovery_plan_name: Optional[str] = None,
-        source_fabric_location: Optional[str] = None,
-        fabric_object_id: Optional[str] = None,
-        v_center_name: Optional[str] = None,
-        instance_type: Optional[str] = None,
-        multi_vm_group_create_option: Optional[Union[str, "_models.MultiVmGroupCreateOption"]] = None,
-        process_server_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword source_fabric_name: The source fabric name filter.
-        :paramtype source_fabric_name: str
-        :keyword recovery_plan_name: The recovery plan filter.
-        :paramtype recovery_plan_name: str
-        :keyword source_fabric_location: The source fabric location filter.
-        :paramtype source_fabric_location: str
-        :keyword fabric_object_id: The fabric object Id filter.
-        :paramtype fabric_object_id: str
-        :keyword v_center_name: The vCenter name filter.
-        :paramtype v_center_name: str
-        :keyword instance_type: The replication provider type.
-        :paramtype instance_type: str
-        :keyword multi_vm_group_create_option: Whether Multi VM group is auto created or specified by
-         user. Known values are: "AutoCreated" and "UserSpecified".
-        :paramtype multi_vm_group_create_option: str or
-         ~azure.mgmt.recoveryservicessiterecovery.models.MultiVmGroupCreateOption
-        :keyword process_server_id: The process server Id filter.
-        :paramtype process_server_id: str
-        """
-        super().__init__(**kwargs)
-        self.source_fabric_name = source_fabric_name
-        self.recovery_plan_name = recovery_plan_name
-        self.source_fabric_location = source_fabric_location
-        self.fabric_object_id = fabric_object_id
-        self.v_center_name = v_center_name
-        self.instance_type = instance_type
-        self.multi_vm_group_create_option = multi_vm_group_create_option
-        self.process_server_id = process_server_id
-
-
-class ProtectionContainer(Resource):
+class ProtectionContainer(ProxyResource):
     """Protection container details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainerProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "ProtectionContainerProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.ProtectionContainerProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom data.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainerProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class ProtectionContainerCollection(_serialization.Model):
     """Protection Container collection.
 
-    :ivar value: The Protection Container details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ProtectionContainer items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainer]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ProtectionContainer]"},
@@ -22635,16 +22964,12 @@ class ProtectionContainerCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ProtectionContainer"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.ProtectionContainer"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Protection Container details.
+        :keyword value: The ProtectionContainer items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainer]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -22675,65 +23000,79 @@ class ProtectionContainerFabricSpecificDetails(_serialization.Model):
         self.instance_type: Optional[str] = None
 
 
-class ProtectionContainerMapping(Resource):
+class ProtectionContainerMapping(ProxyResource):
     """Protection container mapping object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainerMappingProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "ProtectionContainerMappingProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.ProtectionContainerMappingProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom data.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainerMappingProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class ProtectionContainerMappingCollection(_serialization.Model):
     """Protection container mapping collection class.
 
-    :ivar value: List of container mappings.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ProtectionContainerMapping items on this page. Required.
     :vartype value:
      list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainerMapping]
-    :ivar next_link: Link to fetch rest of the data.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ProtectionContainerMapping]"},
@@ -22741,17 +23080,13 @@ class ProtectionContainerMappingCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ProtectionContainerMapping"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.ProtectionContainerMapping"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: List of container mappings.
+        :keyword value: The ProtectionContainerMapping items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainerMapping]
-        :keyword next_link: Link to fetch rest of the data.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -22812,7 +23147,7 @@ class ProtectionContainerMappingProperties(_serialization.Model):
         target_protection_container_friendly_name: Optional[str] = None,
         provider_specific_details: Optional["_models.ProtectionContainerMappingProviderSpecificDetails"] = None,
         health: Optional[str] = None,
-        health_error_details: Optional[List["_models.HealthError"]] = None,
+        health_error_details: Optional[list["_models.HealthError"]] = None,
         policy_id: Optional[str] = None,
         state: Optional[str] = None,
         source_protection_container_friendly_name: Optional[str] = None,
@@ -23045,7 +23380,7 @@ class PushInstallerDetails(_serialization.Model):
         self.version: Optional[str] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
 
 
 class RcmProxyDetails(_serialization.Model):
@@ -23114,55 +23449,63 @@ class RcmProxyDetails(_serialization.Model):
         self.version: Optional[str] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
 
 
-class RecoveryPlan(Resource):
+class RecoveryPlan(ProxyResource):
     """Recovery plan details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom details.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "RecoveryPlanProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.RecoveryPlanProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom details.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class RecoveryPlanProviderSpecificDetails(_serialization.Model):
@@ -23480,8 +23823,8 @@ class RecoveryPlanAction(_serialization.Model):
         self,
         *,
         action_name: str,
-        failover_types: List[Union[str, "_models.ReplicationProtectedItemOperation"]],
-        failover_directions: List[Union[str, "_models.PossibleOperationsDirections"]],
+        failover_types: list[Union[str, "_models.ReplicationProtectedItemOperation"]],
+        failover_directions: list[Union[str, "_models.PossibleOperationsDirections"]],
         custom_details: "_models.RecoveryPlanActionDetails",
         **kwargs: Any
     ) -> None:
@@ -23599,24 +23942,28 @@ class RecoveryPlanAutomationRunbookActionDetails(RecoveryPlanActionDetails):  # 
 class RecoveryPlanCollection(_serialization.Model):
     """Recovery plan collection details.
 
-    :ivar value: The list of recovery plans.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The RecoveryPlan items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlan]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[RecoveryPlan]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.RecoveryPlan"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.RecoveryPlan"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The list of recovery plans.
+        :keyword value: The RecoveryPlan items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlan]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -23659,9 +24006,9 @@ class RecoveryPlanGroup(_serialization.Model):
         self,
         *,
         group_type: Union[str, "_models.RecoveryPlanGroupType"],
-        replication_protected_items: Optional[List["_models.RecoveryPlanProtectedItem"]] = None,
-        start_group_actions: Optional[List["_models.RecoveryPlanAction"]] = None,
-        end_group_actions: Optional[List["_models.RecoveryPlanAction"]] = None,
+        replication_protected_items: Optional[list["_models.RecoveryPlanProtectedItem"]] = None,
+        start_group_actions: Optional[list["_models.RecoveryPlanAction"]] = None,
+        end_group_actions: Optional[list["_models.RecoveryPlanAction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23723,7 +24070,7 @@ class RecoveryPlanGroupTaskDetails(GroupTaskDetails):
     def __init__(
         self,
         *,
-        child_tasks: Optional[List["_models.ASRTask"]] = None,
+        child_tasks: Optional[list["_models.ASRTask"]] = None,
         name: Optional[str] = None,
         group_id: Optional[str] = None,
         rp_group_type: Optional[str] = None,
@@ -24128,7 +24475,7 @@ class RecoveryPlanPlannedFailoverInputProperties(_serialization.Model):  # pylin
         self,
         *,
         failover_direction: Union[str, "_models.PossibleOperationsDirections"],
-        provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
+        provider_specific_details: Optional[list["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24215,16 +24562,16 @@ class RecoveryPlanProperties(_serialization.Model):
         recovery_fabric_id: Optional[str] = None,
         recovery_fabric_friendly_name: Optional[str] = None,
         failover_deployment_model: Optional[str] = None,
-        replication_providers: Optional[List[str]] = None,
-        allowed_operations: Optional[List[str]] = None,
+        replication_providers: Optional[list[str]] = None,
+        allowed_operations: Optional[list[str]] = None,
         last_planned_failover_time: Optional[datetime.datetime] = None,
         last_unplanned_failover_time: Optional[datetime.datetime] = None,
         last_test_failover_time: Optional[datetime.datetime] = None,
         current_scenario: Optional["_models.CurrentScenarioDetails"] = None,
         current_scenario_status: Optional[str] = None,
         current_scenario_status_description: Optional[str] = None,
-        groups: Optional[List["_models.RecoveryPlanGroup"]] = None,
-        provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificDetails"]] = None,
+        groups: Optional[list["_models.RecoveryPlanGroup"]] = None,
+        provider_specific_details: Optional[list["_models.RecoveryPlanProviderSpecificDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24402,7 +24749,7 @@ class RecoveryPlanShutdownGroupTaskDetails(RecoveryPlanGroupTaskDetails):
     def __init__(
         self,
         *,
-        child_tasks: Optional[List["_models.ASRTask"]] = None,
+        child_tasks: Optional[list["_models.ASRTask"]] = None,
         name: Optional[str] = None,
         group_id: Optional[str] = None,
         rp_group_type: Optional[str] = None,
@@ -24541,7 +24888,7 @@ class RecoveryPlanTestFailoverInputProperties(_serialization.Model):
         failover_direction: Union[str, "_models.PossibleOperationsDirections"],
         network_type: str,
         network_id: Optional[str] = None,
-        provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
+        provider_specific_details: Optional[list["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24629,7 +24976,7 @@ class RecoveryPlanUnplannedFailoverInputProperties(_serialization.Model):  # pyl
         *,
         failover_direction: Union[str, "_models.PossibleOperationsDirections"],
         source_site_operations: Union[str, "_models.SourceSiteOperations"],
-        provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
+        provider_specific_details: Optional[list["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24651,75 +24998,87 @@ class RecoveryPlanUnplannedFailoverInputProperties(_serialization.Model):  # pyl
         self.provider_specific_details = provider_specific_details
 
 
-class RecoveryPoint(Resource):
+class RecoveryPoint(ProxyResource):
     """Recovery point.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The recovery point properties.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPointProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "RecoveryPointProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.RecoveryPointProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The recovery point properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPointProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class RecoveryPointCollection(_serialization.Model):
     """Collection of recovery point details.
 
-    :ivar value: The recovery point details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The RecoveryPoint items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPoint]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[RecoveryPoint]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.RecoveryPoint"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.RecoveryPoint"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The recovery point details.
+        :keyword value: The RecoveryPoint items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPoint]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -24768,64 +25127,78 @@ class RecoveryPointProperties(_serialization.Model):
         self.provider_specific_details = provider_specific_details
 
 
-class RecoveryServicesProvider(Resource):
+class RecoveryServicesProvider(ProxyResource):
     """Provider details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Provider properties.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryServicesProviderProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "RecoveryServicesProviderProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.RecoveryServicesProviderProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: Provider properties.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryServicesProviderProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class RecoveryServicesProviderCollection(_serialization.Model):
     """Collection of providers.
 
-    :ivar value: The Servers details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The RecoveryServicesProvider items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryServicesProvider]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[RecoveryServicesProvider]"},
@@ -24833,17 +25206,13 @@ class RecoveryServicesProviderCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.RecoveryServicesProvider"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.RecoveryServicesProvider"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Servers details.
+        :keyword value: The RecoveryServicesProvider items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryServicesProvider]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -24941,8 +25310,8 @@ class RecoveryServicesProviderProperties(_serialization.Model):
         last_heart_beat: Optional[datetime.datetime] = None,
         connection_status: Optional[str] = None,
         protected_item_count: Optional[int] = None,
-        allowed_scenarios: Optional[List[str]] = None,
-        health_error_details: Optional[List["_models.HealthError"]] = None,
+        allowed_scenarios: Optional[list[str]] = None,
+        health_error_details: Optional[list["_models.HealthError"]] = None,
         dra_identifier: Optional[str] = None,
         machine_id: Optional[str] = None,
         machine_name: Optional[str] = None,
@@ -25070,6 +25439,50 @@ class RegisteredClusterNodes(_serialization.Model):
         self.machine_id = machine_id
         self.bios_id = bios_id
         self.is_shared_disk_virtual_node = is_shared_disk_virtual_node
+
+
+class ReinstallMobilityServiceRequest(_serialization.Model):
+    """Request to Reinstall the mobility service on a protected item.
+
+    :ivar properties: The properties of the reinstall mobility service request.
+    :vartype properties:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ReinstallMobilityServiceRequestProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "ReinstallMobilityServiceRequestProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.ReinstallMobilityServiceRequestProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: The properties of the reinstall mobility service request.
+        :paramtype properties:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ReinstallMobilityServiceRequestProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ReinstallMobilityServiceRequestProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """The properties of an update mobility service request.
+
+    :ivar run_as_account_id: The CS run as account Id.
+    :vartype run_as_account_id: str
+    """
+
+    _attribute_map = {
+        "run_as_account_id": {"key": "runAsAccountId", "type": "str"},
+    }
+
+    def __init__(self, *, run_as_account_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword run_as_account_id: The CS run as account Id.
+        :paramtype run_as_account_id: str
+        """
+        super().__init__(**kwargs)
+        self.run_as_account_id = run_as_account_id
 
 
 class RemoveDisksInput(_serialization.Model):
@@ -25280,7 +25693,7 @@ class ReplicationAgentDetails(_serialization.Model):
         self.version: Optional[str] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
 
 
 class ReplicationAppliance(_serialization.Model):
@@ -25329,43 +25742,52 @@ class ReplicationApplianceProperties(_serialization.Model):
         self.provider_specific_details = provider_specific_details
 
 
-class ReplicationEligibilityResults(_serialization.Model):
+class ReplicationEligibilityResults(ProxyResource):
     """Replication eligibility results response model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: Gets the name of this object.
-    :vartype name: str
-    :ivar type: Gets the object type.
-    :vartype type: str
-    :ivar id: Gets Unique ARM identifier for this object.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Gets properties model for replication eligibility results API.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationEligibilityResultsProperties
     """
 
     _validation = {
+        "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "id": {"readonly": True},
-        "properties": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
+        "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "id": {"key": "id", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "ReplicationEligibilityResultsProperties"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(
+        self, *, properties: Optional["_models.ReplicationEligibilityResultsProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Gets properties model for replication eligibility results API.
+        :paramtype properties:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationEligibilityResultsProperties
+        """
         super().__init__(**kwargs)
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.id: Optional[str] = None
-        self.properties: Optional["_models.ReplicationEligibilityResultsProperties"] = None
+        self.properties = properties
 
 
 class ReplicationEligibilityResultsCollection(_serialization.Model):
@@ -25380,7 +25802,7 @@ class ReplicationEligibilityResultsCollection(_serialization.Model):
         "value": {"key": "value", "type": "[ReplicationEligibilityResults]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ReplicationEligibilityResults"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ReplicationEligibilityResults"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The replication eligibility results details.
         :paramtype value:
@@ -25468,7 +25890,7 @@ class ReplicationEligibilityResultsProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, errors: Optional[List["_models.ReplicationEligibilityResultsErrorInfo"]] = None, **kwargs: Any
+        self, *, errors: Optional[list["_models.ReplicationEligibilityResultsErrorInfo"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword errors: The error details.
@@ -25503,64 +25925,78 @@ class ReplicationGroupDetails(ConfigurationSettings):
         self.instance_type: str = "ReplicationGroupDetails"
 
 
-class ReplicationProtectedItem(Resource):
+class ReplicationProtectedItem(ProxyResource):
     """Replication protected item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItemProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "ReplicationProtectedItemProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.ReplicationProtectedItemProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom data.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItemProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class ReplicationProtectedItemCollection(_serialization.Model):
     """Replication protected item collection.
 
-    :ivar value: The Replication protected item details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ReplicationProtectedItem items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ReplicationProtectedItem]"},
@@ -25568,17 +26004,13 @@ class ReplicationProtectedItemCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ReplicationProtectedItem"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.ReplicationProtectedItem"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Replication protected item details.
+        :keyword value: The ReplicationProtectedItem items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -25713,10 +26145,10 @@ class ReplicationProtectedItemProperties(_serialization.Model):
         test_failover_state_description: Optional[str] = None,
         switch_provider_state: Optional[str] = None,
         switch_provider_state_description: Optional[str] = None,
-        allowed_operations: Optional[List[str]] = None,
+        allowed_operations: Optional[list[str]] = None,
         replication_health: Optional[str] = None,
         failover_health: Optional[str] = None,
-        health_errors: Optional[List["_models.HealthError"]] = None,
+        health_errors: Optional[list["_models.HealthError"]] = None,
         policy_id: Optional[str] = None,
         policy_friendly_name: Optional[str] = None,
         last_successful_failover_time: Optional[datetime.datetime] = None,
@@ -25830,17 +26262,22 @@ class ReplicationProtectedItemProperties(_serialization.Model):
         self.event_correlation_id = event_correlation_id
 
 
-class ReplicationProtectionCluster(_serialization.Model):
+class ReplicationProtectionCluster(ProxyResource):
     """Replication protection Cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The protection cluster Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: The name of the protection cluster.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The Type of the object.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionClusterProperties
@@ -25850,12 +26287,14 @@ class ReplicationProtectionCluster(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "ReplicationProtectionClusterProperties"},
     }
 
@@ -25868,21 +26307,24 @@ class ReplicationProtectionCluster(_serialization.Model):
          ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionClusterProperties
         """
         super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
         self.properties = properties
 
 
 class ReplicationProtectionClusterCollection(_serialization.Model):
     """Replication protected item collection.
 
-    :ivar value: The Replication protection cluster details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ReplicationProtectionCluster items on this page. Required.
     :vartype value:
      list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionCluster]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ReplicationProtectionCluster]"},
@@ -25890,17 +26332,13 @@ class ReplicationProtectionClusterCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ReplicationProtectionCluster"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.ReplicationProtectionCluster"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Replication protection cluster details.
+        :keyword value: The ReplicationProtectionCluster items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionCluster]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -26042,9 +26480,9 @@ class ReplicationProtectionClusterProperties(_serialization.Model):
         active_location: Optional[str] = None,
         test_failover_state: Optional[str] = None,
         test_failover_state_description: Optional[str] = None,
-        allowed_operations: Optional[List[str]] = None,
+        allowed_operations: Optional[list[str]] = None,
         replication_health: Optional[str] = None,
-        health_errors: Optional[List["_models.HealthError"]] = None,
+        health_errors: Optional[list["_models.HealthError"]] = None,
         last_successful_failover_time: Optional[datetime.datetime] = None,
         last_successful_test_failover_time: Optional[datetime.datetime] = None,
         policy_friendly_name: Optional[str] = None,
@@ -26052,10 +26490,10 @@ class ReplicationProtectionClusterProperties(_serialization.Model):
         recovery_container_id: Optional[str] = None,
         agent_cluster_id: Optional[str] = None,
         cluster_fqdn: Optional[str] = None,
-        cluster_node_fqdns: Optional[List[str]] = None,
-        cluster_protected_item_ids: Optional[List[str]] = None,
+        cluster_node_fqdns: Optional[list[str]] = None,
+        cluster_protected_item_ids: Optional[list[str]] = None,
         are_all_cluster_nodes_registered: Optional[bool] = None,
-        cluster_registered_nodes: Optional[List["_models.RegisteredClusterNodes"]] = None,
+        cluster_registered_nodes: Optional[list["_models.RegisteredClusterNodes"]] = None,
         provider_specific_details: Optional["_models.ReplicationClusterProviderSpecificSettings"] = None,
         shared_disk_properties: Optional["_models.SharedDiskReplicationItemProperties"] = None,
         policy_id: Optional[str] = None,
@@ -26163,65 +26601,79 @@ class ReplicationProtectionClusterProperties(_serialization.Model):
         self.policy_id = policy_id
 
 
-class ReplicationProtectionIntent(Resource):
+class ReplicationProtectionIntent(ProxyResource):
     """Replication protection intent.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The custom data.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionIntentProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "ReplicationProtectionIntentProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.ReplicationProtectionIntentProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The custom data.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionIntentProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class ReplicationProtectionIntentCollection(_serialization.Model):
     """Replication protection intent objects collection.
 
-    :ivar value: The Replication protection intent details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The ReplicationProtectionIntent items on this page. Required.
     :vartype value:
      list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionIntent]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[ReplicationProtectionIntent]"},
@@ -26229,17 +26681,13 @@ class ReplicationProtectionIntentCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ReplicationProtectionIntent"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.ReplicationProtectionIntent"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The Replication protection intent details.
+        :keyword value: The ReplicationProtectionIntent items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectionIntent]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -26406,9 +26854,9 @@ class ReprotectAgentDetails(_serialization.Model):
         self.version: Optional[str] = None
         self.last_heartbeat_utc: Optional[datetime.datetime] = None
         self.health: Optional[Union[str, "_models.ProtectionHealth"]] = None
-        self.health_errors: Optional[List["_models.HealthError"]] = None
+        self.health_errors: Optional[list["_models.HealthError"]] = None
         self.protected_item_count: Optional[int] = None
-        self.accessible_datastores: Optional[List[str]] = None
+        self.accessible_datastores: Optional[list[str]] = None
         self.vcenter_id: Optional[str] = None
         self.last_discovery_in_utc: Optional[datetime.datetime] = None
 
@@ -26467,7 +26915,7 @@ class ResolveHealthInputProperties(_serialization.Model):
         "health_errors": {"key": "healthErrors", "type": "[ResolveHealthError]"},
     }
 
-    def __init__(self, *, health_errors: Optional[List["_models.ResolveHealthError"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, health_errors: Optional[list["_models.ResolveHealthError"]] = None, **kwargs: Any) -> None:
         """
         :keyword health_errors: Health errors.
         :paramtype health_errors:
@@ -26498,8 +26946,8 @@ class ResourceHealthSummary(_serialization.Model):
         self,
         *,
         resource_count: Optional[int] = None,
-        issues: Optional[List["_models.HealthErrorSummary"]] = None,
-        categorized_resource_counts: Optional[Dict[str, int]] = None,
+        issues: Optional[list["_models.HealthErrorSummary"]] = None,
+        categorized_resource_counts: Optional[dict[str, int]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -26836,59 +27284,6 @@ class ReverseReplicationInputProperties(_serialization.Model):
         self.provider_specific_details = provider_specific_details
 
 
-class RoleAssignment(_serialization.Model):
-    """Azure role assignment details.
-
-    :ivar id: The ARM Id of the role assignment.
-    :vartype id: str
-    :ivar name: The name of the role assignment.
-    :vartype name: str
-    :ivar scope: Role assignment scope.
-    :vartype scope: str
-    :ivar principal_id: Principal Id.
-    :vartype principal_id: str
-    :ivar role_definition_id: Role definition id.
-    :vartype role_definition_id: str
-    """
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "scope": {"key": "scope", "type": "str"},
-        "principal_id": {"key": "principalId", "type": "str"},
-        "role_definition_id": {"key": "roleDefinitionId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
-        scope: Optional[str] = None,
-        principal_id: Optional[str] = None,
-        role_definition_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: The ARM Id of the role assignment.
-        :paramtype id: str
-        :keyword name: The name of the role assignment.
-        :paramtype name: str
-        :keyword scope: Role assignment scope.
-        :paramtype scope: str
-        :keyword principal_id: Principal Id.
-        :paramtype principal_id: str
-        :keyword role_definition_id: Role definition id.
-        :paramtype role_definition_id: str
-        """
-        super().__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.scope = scope
-        self.principal_id = principal_id
-        self.role_definition_id = role_definition_id
-
-
 class RunAsAccount(_serialization.Model):
     """CS Accounts Details.
 
@@ -27142,9 +27537,9 @@ class SharedDiskReplicationItemProperties(_serialization.Model):
         protection_state: Optional[str] = None,
         test_failover_state: Optional[str] = None,
         active_location: Optional[str] = None,
-        allowed_operations: Optional[List[str]] = None,
+        allowed_operations: Optional[list[str]] = None,
         replication_health: Optional[str] = None,
-        health_errors: Optional[List["_models.HealthError"]] = None,
+        health_errors: Optional[list["_models.HealthError"]] = None,
         current_scenario: Optional["_models.CurrentScenarioDetails"] = None,
         shared_disk_provider_specific_details: Optional["_models.SharedDiskReplicationProviderSpecificSettings"] = None,
         **kwargs: Any
@@ -27182,64 +27577,78 @@ class SharedDiskReplicationItemProperties(_serialization.Model):
         self.shared_disk_provider_specific_details = shared_disk_provider_specific_details
 
 
-class StorageClassification(Resource):
+class StorageClassification(ProxyResource):
     """Storage object definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Properties of the storage object.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "StorageClassificationProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.StorageClassificationProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: Properties of the storage object.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class StorageClassificationCollection(_serialization.Model):
     """Collection of storage details.
 
-    :ivar value: The storage details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The StorageClassification items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.StorageClassification]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[StorageClassification]"},
@@ -27247,16 +27656,12 @@ class StorageClassificationCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.StorageClassification"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.StorageClassification"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The storage details.
+        :keyword value: The StorageClassification items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.StorageClassification]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -27264,65 +27669,79 @@ class StorageClassificationCollection(_serialization.Model):
         self.next_link = next_link
 
 
-class StorageClassificationMapping(Resource):
+class StorageClassificationMapping(ProxyResource):
     """Storage mapping object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: Properties of the storage mapping object.
     :vartype properties:
      ~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationMappingProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "StorageClassificationMappingProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.StorageClassificationMappingProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: Properties of the storage mapping object.
         :paramtype properties:
          ~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationMappingProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class StorageClassificationMappingCollection(_serialization.Model):
     """Collection of storage mapping details.
 
-    :ivar value: The storage details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The StorageClassificationMapping items on this page. Required.
     :vartype value:
      list[~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationMapping]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[StorageClassificationMapping]"},
@@ -27330,17 +27749,13 @@ class StorageClassificationMappingCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.StorageClassificationMapping"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.StorageClassificationMapping"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The storage details.
+        :keyword value: The StorageClassificationMapping items on this page. Required.
         :paramtype value:
          list[~azure.mgmt.recoveryservicessiterecovery.models.StorageClassificationMapping]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -27452,7 +27867,7 @@ class Subnet(_serialization.Model):
         *,
         name: Optional[str] = None,
         friendly_name: Optional[str] = None,
-        address_list: Optional[List[str]] = None,
+        address_list: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -27474,47 +27889,55 @@ class SupportedOperatingSystems(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The supported operating systems properties.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.SupportedOSProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "SupportedOSProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.SupportedOSProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The supported operating systems properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.SupportedOSProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class SupportedOSDetails(_serialization.Model):
@@ -27539,7 +27962,7 @@ class SupportedOSDetails(_serialization.Model):
         *,
         os_name: Optional[str] = None,
         os_type: Optional[str] = None,
-        os_versions: Optional[List["_models.OSVersionWrapper"]] = None,
+        os_versions: Optional[list["_models.OSVersionWrapper"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -27569,7 +27992,7 @@ class SupportedOSProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, supported_os_list: Optional[List["_models.SupportedOSProperty"]] = None, **kwargs: Any
+        self, *, supported_os_list: Optional[list["_models.SupportedOSProperty"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword supported_os_list: The supported operating systems property list.
@@ -27598,7 +28021,7 @@ class SupportedOSProperty(_serialization.Model):
         self,
         *,
         instance_type: Optional[str] = None,
-        supported_os: Optional[List["_models.SupportedOSDetails"]] = None,
+        supported_os: Optional[list["_models.SupportedOSDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -27763,7 +28186,7 @@ class SwitchProtectionJobDetails(JobDetails):
     def __init__(
         self,
         *,
-        affected_object_details: Optional[Dict[str, str]] = None,
+        affected_object_details: Optional[dict[str, str]] = None,
         new_replication_protected_item_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -27835,6 +28258,73 @@ class SwitchProviderInputProperties(_serialization.Model):
         self.provider_specific_details = provider_specific_details
 
 
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.recoveryservicessiterecovery.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or
+         ~azure.mgmt.recoveryservicessiterecovery.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or
+         ~azure.mgmt.recoveryservicessiterecovery.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
 class TargetComputeSize(_serialization.Model):
     """Represents applicable recovery vm sizes.
 
@@ -27886,11 +28376,17 @@ class TargetComputeSize(_serialization.Model):
 class TargetComputeSizeCollection(_serialization.Model):
     """Target compute size collection.
 
-    :ivar value: The list of target compute sizes.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The TargetComputeSize items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.TargetComputeSize]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[TargetComputeSize]"},
@@ -27898,16 +28394,12 @@ class TargetComputeSizeCollection(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.TargetComputeSize"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: list["_models.TargetComputeSize"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of target compute sizes.
+        :keyword value: The TargetComputeSize items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.TargetComputeSize]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -27969,9 +28461,9 @@ class TargetComputeSizeProperties(_serialization.Model):
         memory_in_gb: Optional[float] = None,
         max_data_disk_count: Optional[int] = None,
         max_nics_count: Optional[int] = None,
-        errors: Optional[List["_models.ComputeSizeErrorDetails"]] = None,
+        errors: Optional[list["_models.ComputeSizeErrorDetails"]] = None,
         high_iops_supported: Optional[str] = None,
-        hyper_v_generations: Optional[List[str]] = None,
+        hyper_v_generations: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -28182,13 +28674,13 @@ class TestFailoverJobDetails(JobDetails):
     def __init__(
         self,
         *,
-        affected_object_details: Optional[Dict[str, str]] = None,
+        affected_object_details: Optional[dict[str, str]] = None,
         test_failover_status: Optional[str] = None,
         comments: Optional[str] = None,
         network_name: Optional[str] = None,
         network_friendly_name: Optional[str] = None,
         network_type: Optional[str] = None,
-        protected_item_details: Optional[List["_models.FailoverReplicationProtectedItemDetails"]] = None,
+        protected_item_details: Optional[list["_models.FailoverReplicationProtectedItemDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -28511,6 +29003,12 @@ class UpdateDiskInput(_serialization.Model):
     :vartype disk_id: str
     :ivar target_disk_name: The target disk name.
     :vartype target_disk_name: str
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _validation = {
@@ -28520,18 +29018,39 @@ class UpdateDiskInput(_serialization.Model):
     _attribute_map = {
         "disk_id": {"key": "diskId", "type": "str"},
         "target_disk_name": {"key": "targetDiskName", "type": "str"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
-    def __init__(self, *, disk_id: str, target_disk_name: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        disk_id: str,
+        target_disk_name: Optional[str] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id. Required.
         :paramtype disk_id: str
         :keyword target_disk_name: The target disk name.
         :paramtype target_disk_name: str
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id = disk_id
         self.target_disk_name = target_disk_name
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class UpdateMigrationItemInput(_serialization.Model):
@@ -28867,7 +29386,7 @@ class UpdateRecoveryPlanInputProperties(_serialization.Model):
         "groups": {"key": "groups", "type": "[RecoveryPlanGroup]"},
     }
 
-    def __init__(self, *, groups: Optional[List["_models.RecoveryPlanGroup"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, groups: Optional[list["_models.RecoveryPlanGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword groups: The recovery plan groups.
         :paramtype groups: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanGroup]
@@ -28955,7 +29474,7 @@ class UpdateReplicationProtectedItemInputProperties(_serialization.Model):  # py
         selected_tfo_azure_network_id: Optional[str] = None,
         selected_source_nic_id: Optional[str] = None,
         enable_rdp_on_target_option: Optional[str] = None,
-        vm_nics: Optional[List["_models.VMNicInputDetails"]] = None,
+        vm_nics: Optional[list["_models.VMNicInputDetails"]] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         recovery_availability_set_id: Optional[str] = None,
         provider_specific_details: Optional["_models.UpdateReplicationProtectedItemProviderInput"] = None,
@@ -29116,47 +29635,55 @@ class VaultHealthDetails(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The vault health related data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.VaultHealthProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "VaultHealthProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.VaultHealthProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The vault health related data.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.VaultHealthProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class VaultHealthProperties(_serialization.Model):
@@ -29185,7 +29712,7 @@ class VaultHealthProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        vault_errors: Optional[List["_models.HealthError"]] = None,
+        vault_errors: Optional[list["_models.HealthError"]] = None,
         protected_items_health: Optional["_models.ResourceHealthSummary"] = None,
         fabrics_health: Optional["_models.ResourceHealthSummary"] = None,
         containers_health: Optional["_models.ResourceHealthSummary"] = None,
@@ -29212,75 +29739,87 @@ class VaultHealthProperties(_serialization.Model):
         self.containers_health = containers_health
 
 
-class VaultSetting(Resource):
+class VaultSetting(ProxyResource):
     """Vault setting.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: The vault setting properties.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.VaultSettingProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "VaultSettingProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
         properties: Optional["_models.VaultSettingProperties"] = None,
+        location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: The vault setting properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.VaultSettingProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class VaultSettingCollection(_serialization.Model):
     """Vault setting collection.
 
-    :ivar value: The list of vault setting.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The VaultSetting items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.VaultSetting]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[VaultSetting]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.VaultSetting"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.VaultSetting"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The list of vault setting.
+        :keyword value: The VaultSetting items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.VaultSetting]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -29380,71 +29919,83 @@ class VaultSettingProperties(_serialization.Model):
         self.vmware_to_azure_provider_type = vmware_to_azure_provider_type
 
 
-class VCenter(Resource):
+class VCenter(ProxyResource):
     """vCenter definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource Id.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
-    :ivar name: Resource Name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource Type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource Location.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicessiterecovery.models.SystemData
     :ivar properties: VCenter related data.
     :vartype properties: ~azure.mgmt.recoveryservicessiterecovery.models.VCenterProperties
+    :ivar location: Resource Location.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "VCenterProperties"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.VCenterProperties"] = None, **kwargs: Any
+        self, *, properties: Optional["_models.VCenterProperties"] = None, location: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource Location.
-        :paramtype location: str
         :keyword properties: VCenter related data.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.VCenterProperties
+        :keyword location: Resource Location.
+        :paramtype location: str
         """
-        super().__init__(location=location, **kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
+        self.location = location
 
 
 class VCenterCollection(_serialization.Model):
     """Collection of vCenter details.
 
-    :ivar value: The vCenter details.
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: The VCenter items on this page. Required.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.VCenter]
-    :ivar next_link: The value of next link.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"required": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[VCenter]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[List["_models.VCenter"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, value: list["_models.VCenter"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The vCenter details.
+        :keyword value: The VCenter items on this page. Required.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.VCenter]
-        :keyword next_link: The value of next link.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -29506,7 +30057,7 @@ class VCenterProperties(_serialization.Model):
         port: Optional[str] = None,
         run_as_account_id: Optional[str] = None,
         fabric_arm_resource_name: Optional[str] = None,
-        health_errors: Optional[List["_models.HealthError"]] = None,
+        health_errors: Optional[list["_models.HealthError"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -29852,7 +30403,7 @@ class VmmVirtualMachineDetails(HyperVVirtualMachineDetails):
         source_item_id: Optional[str] = None,
         generation: Optional[str] = None,
         os_details: Optional["_models.OSDetails"] = None,
-        disk_details: Optional[List["_models.DiskDetails"]] = None,
+        disk_details: Optional[list["_models.DiskDetails"]] = None,
         has_physical_disk: Optional[Union[str, "_models.PresenceStatus"]] = None,
         has_fibre_channel_adapter: Optional[Union[str, "_models.PresenceStatus"]] = None,
         has_shared_vhd: Optional[Union[str, "_models.PresenceStatus"]] = None,
@@ -29979,7 +30530,7 @@ class VMNicDetails(_serialization.Model):
         source_nic_arm_id: Optional[str] = None,
         v_m_network_name: Optional[str] = None,
         recovery_vm_network_id: Optional[str] = None,
-        ip_configs: Optional[List["_models.IPConfigDetails"]] = None,
+        ip_configs: Optional[list["_models.IPConfigDetails"]] = None,
         selection_type: Optional[str] = None,
         recovery_network_security_group_id: Optional[str] = None,
         enable_accelerated_networking_on_recovery: Optional[bool] = None,
@@ -30124,7 +30675,7 @@ class VMNicInputDetails(_serialization.Model):
         self,
         *,
         nic_id: Optional[str] = None,
-        ip_configs: Optional[List["_models.IPConfigInputDetails"]] = None,
+        ip_configs: Optional[list["_models.IPConfigInputDetails"]] = None,
         selection_type: Optional[str] = None,
         recovery_network_security_group_id: Optional[str] = None,
         enable_accelerated_networking_on_recovery: Optional[bool] = None,
@@ -30355,6 +30906,12 @@ class VMwareCbtDiskInput(_serialization.Model):
     :vartype disk_encryption_set_id: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _validation = {
@@ -30372,6 +30929,9 @@ class VMwareCbtDiskInput(_serialization.Model):
         "log_storage_account_sas_secret_name": {"key": "logStorageAccountSasSecretName", "type": "str"},
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
         "sector_size_in_bytes": {"key": "sectorSizeInBytes", "type": "int"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
@@ -30384,6 +30944,9 @@ class VMwareCbtDiskInput(_serialization.Model):
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         disk_encryption_set_id: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30403,6 +30966,12 @@ class VMwareCbtDiskInput(_serialization.Model):
         :paramtype disk_encryption_set_id: str
         :keyword sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
         :paramtype sector_size_in_bytes: int
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id = disk_id
@@ -30412,6 +30981,9 @@ class VMwareCbtDiskInput(_serialization.Model):
         self.log_storage_account_sas_secret_name = log_storage_account_sas_secret_name
         self.disk_encryption_set_id = disk_encryption_set_id
         self.sector_size_in_bytes = sector_size_in_bytes
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class VMwareCbtEnableMigrationInput(EnableMigrationProviderSpecificInput):
@@ -30484,6 +31056,8 @@ class VMwareCbtEnableMigrationInput(EnableMigrationProviderSpecificInput):
     :vartype target_nic_tags: dict[str, str]
     :ivar user_selected_os_name: The OS name selected by user.
     :vartype user_selected_os_name: str
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -30525,13 +31099,14 @@ class VMwareCbtEnableMigrationInput(EnableMigrationProviderSpecificInput):
         "target_disk_tags": {"key": "targetDiskTags", "type": "{str}"},
         "target_nic_tags": {"key": "targetNicTags", "type": "{str}"},
         "user_selected_os_name": {"key": "userSelectedOSName", "type": "str"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         vmware_machine_id: str,
-        disks_to_include: List["_models.VMwareCbtDiskInput"],
+        disks_to_include: list["_models.VMwareCbtDiskInput"],
         data_mover_run_as_account_id: str,
         snapshot_run_as_account_id: str,
         target_resource_group_id: str,
@@ -30552,11 +31127,12 @@ class VMwareCbtEnableMigrationInput(EnableMigrationProviderSpecificInput):
         target_vm_security_profile: Optional["_models.VMwareCbtSecurityProfileProperties"] = None,
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         perform_auto_resync: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        seed_disk_tags: Optional[Dict[str, str]] = None,
-        target_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        seed_disk_tags: Optional[dict[str, str]] = None,
+        target_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
         user_selected_os_name: Optional[str] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30623,6 +31199,8 @@ class VMwareCbtEnableMigrationInput(EnableMigrationProviderSpecificInput):
         :paramtype target_nic_tags: dict[str, str]
         :keyword user_selected_os_name: The OS name selected by user.
         :paramtype user_selected_os_name: str
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
@@ -30653,6 +31231,7 @@ class VMwareCbtEnableMigrationInput(EnableMigrationProviderSpecificInput):
         self.target_disk_tags = target_disk_tags
         self.target_nic_tags = target_nic_tags
         self.user_selected_os_name = user_selected_os_name
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class VMwareCbtEventDetails(EventProviderSpecificDetails):
@@ -30699,6 +31278,8 @@ class VMwareCbtMigrateInput(MigrateProviderSpecificInput):
     :ivar post_migration_steps: The managed run command script input.
     :vartype post_migration_steps:
      list[~azure.mgmt.recoveryservicessiterecovery.models.ManagedRunCommandScriptInput]
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -30711,6 +31292,7 @@ class VMwareCbtMigrateInput(MigrateProviderSpecificInput):
         "perform_shutdown": {"key": "performShutdown", "type": "str"},
         "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
         "post_migration_steps": {"key": "postMigrationSteps", "type": "[ManagedRunCommandScriptInput]"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(
@@ -30718,7 +31300,8 @@ class VMwareCbtMigrateInput(MigrateProviderSpecificInput):
         *,
         perform_shutdown: str,
         os_upgrade_version: Optional[str] = None,
-        post_migration_steps: Optional[List["_models.ManagedRunCommandScriptInput"]] = None,
+        post_migration_steps: Optional[list["_models.ManagedRunCommandScriptInput"]] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30729,12 +31312,15 @@ class VMwareCbtMigrateInput(MigrateProviderSpecificInput):
         :keyword post_migration_steps: The managed run command script input.
         :paramtype post_migration_steps:
          list[~azure.mgmt.recoveryservicessiterecovery.models.ManagedRunCommandScriptInput]
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
         self.perform_shutdown = perform_shutdown
         self.os_upgrade_version = os_upgrade_version
         self.post_migration_steps = post_migration_steps
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):
@@ -30854,6 +31440,8 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):
      ~azure.mgmt.recoveryservicessiterecovery.models.GatewayOperationDetails
     :ivar operation_name: A value indicating the SRS operation name.
     :vartype operation_name: str
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -30938,6 +31526,7 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):
         "appliance_monitoring_details": {"key": "applianceMonitoringDetails", "type": "ApplianceMonitoringDetails"},
         "gateway_operation_details": {"key": "gatewayOperationDetails", "type": "GatewayOperationDetails"},
         "operation_name": {"key": "operationName", "type": "str"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -30955,16 +31544,17 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):
         confidential_vm_key_vault_id: Optional[str] = None,
         target_vm_security_profile: Optional["_models.VMwareCbtSecurityProfileProperties"] = None,
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        protected_disks: Optional[List["_models.VMwareCbtProtectedDiskDetails"]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        protected_disks: Optional[list["_models.VMwareCbtProtectedDiskDetails"]] = None,
         target_network_id: Optional[str] = None,
         test_network_id: Optional[str] = None,
-        vm_nics: Optional[List["_models.VMwareCbtNicDetails"]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        vm_nics: Optional[list["_models.VMwareCbtNicDetails"]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
         perform_auto_resync: Optional[str] = None,
-        seed_disk_tags: Optional[Dict[str, str]] = None,
-        target_disk_tags: Optional[Dict[str, str]] = None,
-        supported_os_versions: Optional[List[str]] = None,
+        seed_disk_tags: Optional[dict[str, str]] = None,
+        target_disk_tags: Optional[dict[str, str]] = None,
+        supported_os_versions: Optional[list[str]] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31017,6 +31607,8 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):
         :paramtype target_disk_tags: dict[str, str]
         :keyword supported_os_versions: A value indicating the inplace OS Upgrade version.
         :paramtype supported_os_versions: list[str]
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
@@ -31069,6 +31661,7 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):
         self.appliance_monitoring_details: Optional["_models.ApplianceMonitoringDetails"] = None
         self.gateway_operation_details: Optional["_models.GatewayOperationDetails"] = None
         self.operation_name: Optional[str] = None
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class VMwareCbtNicDetails(_serialization.Model):
@@ -31423,6 +32016,12 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):
      ~azure.mgmt.recoveryservicessiterecovery.models.GatewayOperationDetails
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _validation = {
@@ -31458,6 +32057,9 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):
         "target_disk_name": {"key": "targetDiskName", "type": "str"},
         "gateway_operation_details": {"key": "gatewayOperationDetails", "type": "GatewayOperationDetails"},
         "sector_size_in_bytes": {"key": "sectorSizeInBytes", "type": "int"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
@@ -31466,6 +32068,9 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         target_disk_name: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31476,6 +32081,12 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):
         :paramtype target_disk_name: str
         :keyword sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
         :paramtype sector_size_in_bytes: int
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id: Optional[str] = None
@@ -31494,6 +32105,9 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):
         self.target_disk_name = target_disk_name
         self.gateway_operation_details: Optional["_models.GatewayOperationDetails"] = None
         self.sector_size_in_bytes = sector_size_in_bytes
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class VMwareCbtProtectionContainerMappingDetails(
@@ -31549,7 +32163,7 @@ class VMwareCbtProtectionContainerMappingDetails(
         "excluded_skus": {"key": "excludedSkus", "type": "[str]"},
     }
 
-    def __init__(self, *, excluded_skus: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, excluded_skus: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword excluded_skus: The SKUs to be excluded.
         :paramtype excluded_skus: list[str]
@@ -31562,7 +32176,7 @@ class VMwareCbtProtectionContainerMappingDetails(
         self.storage_account_sas_secret_name: Optional[str] = None
         self.service_bus_connection_string_secret_name: Optional[str] = None
         self.target_location: Optional[str] = None
-        self.role_size_to_nic_count_map: Optional[Dict[str, int]] = None
+        self.role_size_to_nic_count_map: Optional[dict[str, int]] = None
         self.excluded_skus = excluded_skus
 
 
@@ -31735,9 +32349,9 @@ class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput):
         *,
         recovery_point_id: str,
         network_id: str,
-        vm_nics: Optional[List["_models.VMwareCbtNicInput"]] = None,
+        vm_nics: Optional[list["_models.VMwareCbtNicInput"]] = None,
         os_upgrade_version: Optional[str] = None,
-        post_migration_steps: Optional[List["_models.ManagedRunCommandScriptInput"]] = None,
+        post_migration_steps: Optional[list["_models.ManagedRunCommandScriptInput"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31773,6 +32387,12 @@ class VMwareCbtUpdateDiskInput(_serialization.Model):
     :vartype target_disk_name: str
     :ivar is_os_disk: A value indicating whether the disk is the OS disk.
     :vartype is_os_disk: str
+    :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+    :vartype iops: int
+    :ivar throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+    :vartype throughput_in_mbps: int
+    :ivar disk_size_in_gb: The target disk size in GB.
+    :vartype disk_size_in_gb: int
     """
 
     _validation = {
@@ -31783,10 +32403,21 @@ class VMwareCbtUpdateDiskInput(_serialization.Model):
         "disk_id": {"key": "diskId", "type": "str"},
         "target_disk_name": {"key": "targetDiskName", "type": "str"},
         "is_os_disk": {"key": "isOSDisk", "type": "str"},
+        "iops": {"key": "iops", "type": "int"},
+        "throughput_in_mbps": {"key": "throughputInMbps", "type": "int"},
+        "disk_size_in_gb": {"key": "diskSizeInGB", "type": "int"},
     }
 
     def __init__(
-        self, *, disk_id: str, target_disk_name: Optional[str] = None, is_os_disk: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        disk_id: str,
+        target_disk_name: Optional[str] = None,
+        is_os_disk: Optional[str] = None,
+        iops: Optional[int] = None,
+        throughput_in_mbps: Optional[int] = None,
+        disk_size_in_gb: Optional[int] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword disk_id: The disk Id. Required.
@@ -31795,11 +32426,20 @@ class VMwareCbtUpdateDiskInput(_serialization.Model):
         :paramtype target_disk_name: str
         :keyword is_os_disk: A value indicating whether the disk is the OS disk.
         :paramtype is_os_disk: str
+        :keyword iops: The number of IOPS allowed for Premium V2 and Ultra disks.
+        :paramtype iops: int
+        :keyword throughput_in_mbps: The total throughput in Mbps for Premium V2 and Ultra disks.
+        :paramtype throughput_in_mbps: int
+        :keyword disk_size_in_gb: The target disk size in GB.
+        :paramtype disk_size_in_gb: int
         """
         super().__init__(**kwargs)
         self.disk_id = disk_id
         self.target_disk_name = target_disk_name
         self.is_os_disk = is_os_disk
+        self.iops = iops
+        self.throughput_in_mbps = throughput_in_mbps
+        self.disk_size_in_gb = disk_size_in_gb
 
 
 class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput):
@@ -31854,6 +32494,8 @@ class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput
     :vartype target_disk_tags: dict[str, str]
     :ivar target_nic_tags: The tags for the target NICs.
     :vartype target_nic_tags: dict[str, str]
+    :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+    :vartype target_capacity_reservation_group_id: str
     """
 
     _validation = {
@@ -31881,6 +32523,7 @@ class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput
         "target_vm_tags": {"key": "targetVmTags", "type": "{str}"},
         "target_disk_tags": {"key": "targetDiskTags", "type": "{str}"},
         "target_nic_tags": {"key": "targetNicTags", "type": "{str}"},
+        "target_capacity_reservation_group_id": {"key": "targetCapacityReservationGroupId", "type": "str"},
     }
 
     def __init__(
@@ -31895,16 +32538,17 @@ class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         target_network_id: Optional[str] = None,
         test_network_id: Optional[str] = None,
-        vm_nics: Optional[List["_models.VMwareCbtNicInput"]] = None,
-        vm_disks: Optional[List["_models.VMwareCbtUpdateDiskInput"]] = None,
+        vm_nics: Optional[list["_models.VMwareCbtNicInput"]] = None,
+        vm_disks: Optional[list["_models.VMwareCbtUpdateDiskInput"]] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         linux_license_type: Optional[Union[str, "_models.LinuxLicenseType"]] = None,
         user_selected_os_name: Optional[str] = None,
         perform_auto_resync: Optional[str] = None,
-        target_vm_tags: Optional[Dict[str, str]] = None,
-        target_disk_tags: Optional[Dict[str, str]] = None,
-        target_nic_tags: Optional[Dict[str, str]] = None,
+        target_vm_tags: Optional[dict[str, str]] = None,
+        target_disk_tags: Optional[dict[str, str]] = None,
+        target_nic_tags: Optional[dict[str, str]] = None,
+        target_capacity_reservation_group_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31953,6 +32597,8 @@ class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput
         :paramtype target_disk_tags: dict[str, str]
         :keyword target_nic_tags: The tags for the target NICs.
         :paramtype target_nic_tags: dict[str, str]
+        :keyword target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
+        :paramtype target_capacity_reservation_group_id: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
@@ -31975,6 +32621,7 @@ class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput
         self.target_vm_tags = target_vm_tags
         self.target_disk_tags = target_disk_tags
         self.target_nic_tags = target_nic_tags
+        self.target_capacity_reservation_group_id = target_capacity_reservation_group_id
 
 
 class VMwareDetails(FabricSpecificDetails):
@@ -32101,9 +32748,9 @@ class VMwareDetails(FabricSpecificDetails):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        process_servers: Optional[List["_models.ProcessServer"]] = None,
-        master_target_servers: Optional[List["_models.MasterTargetServer"]] = None,
-        run_as_accounts: Optional[List["_models.RunAsAccount"]] = None,
+        process_servers: Optional[list["_models.ProcessServer"]] = None,
+        master_target_servers: Optional[list["_models.MasterTargetServer"]] = None,
+        run_as_accounts: Optional[list["_models.RunAsAccount"]] = None,
         replication_pair_count: Optional[str] = None,
         process_server_count: Optional[str] = None,
         agent_count: Optional[str] = None,
@@ -32134,7 +32781,7 @@ class VMwareDetails(FabricSpecificDetails):
         agent_expiry_date: Optional[datetime.datetime] = None,
         agent_version_details: Optional["_models.VersionDetails"] = None,
         switch_provider_blocking_error_details: Optional[
-            List["_models.InMageFabricSwitchProviderBlockingErrorDetails"]
+            list["_models.InMageFabricSwitchProviderBlockingErrorDetails"]
         ] = None,
         **kwargs: Any
     ) -> None:
@@ -32355,7 +33002,7 @@ class VMwareV2FabricSpecificDetails(FabricSpecificDetails):
         self.service_endpoint: Optional[str] = None
         self.service_resource_id: Optional[str] = None
         self.service_container_id: Optional[str] = None
-        self.process_servers: Optional[List["_models.ProcessServerDetails"]] = None
+        self.process_servers: Optional[list["_models.ProcessServerDetails"]] = None
 
 
 class VMwareVirtualMachineDetails(ConfigurationSettings):
@@ -32418,8 +33065,8 @@ class VMwareVirtualMachineDetails(ConfigurationSettings):
         powered_on: Optional[str] = None,
         v_center_infrastructure_id: Optional[str] = None,
         discovery_type: Optional[str] = None,
-        disk_details: Optional[List["_models.InMageDiskDetails"]] = None,
-        validation_errors: Optional[List["_models.HealthError"]] = None,
+        disk_details: Optional[list["_models.InMageDiskDetails"]] = None,
+        validation_errors: Optional[list["_models.HealthError"]] = None,
         **kwargs: Any
     ) -> None:
         """

@@ -29,11 +29,10 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="c183865e-6077-46f2-a3b1-deb0f4f4650a",
-        resource_group_name="resourceGroupPS1",
-        resource_name="vault1",
     )
 
     response = client.replication_protection_clusters.list_by_replication_protection_containers(
+        resource_group_name="resourceGroupPS1",
         resource_name="vault1",
         fabric_name="eastus",
         protection_container_name="eastus-container",
@@ -42,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationProtectionClusters_ListByReplicationProtectionContainers.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationProtectionClusters_ListByReplicationProtectionContainers.json
 if __name__ == "__main__":
     main()

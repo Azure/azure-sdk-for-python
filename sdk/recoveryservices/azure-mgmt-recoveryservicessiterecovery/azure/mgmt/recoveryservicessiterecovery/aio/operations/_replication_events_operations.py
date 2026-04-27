@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -27,12 +27,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_events_operations import build_get_request, build_list_request
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationEventsOperations:
@@ -57,11 +58,18 @@ class ReplicationEventsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncIterable["_models.Event"]:
+    def list(
+        self, resource_group_name: str, resource_name: str, filter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Event"]:
         """Gets the list of Azure Site Recovery events.
 
         Gets the list of Azure Site Recovery events for the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
         :return: An iterator like instance of either Event or the result of cls(response)
@@ -87,8 +95,8 @@ class ReplicationEventsOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,
@@ -139,11 +147,16 @@ class ReplicationEventsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(self, event_name: str, **kwargs: Any) -> _models.Event:
+    async def get(self, resource_group_name: str, resource_name: str, event_name: str, **kwargs: Any) -> _models.Event:
         """Get the details of an Azure Site recovery event.
 
         The operation to get the details of an Azure Site recovery event.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param event_name: The name of the Azure Site Recovery event. Required.
         :type event_name: str
         :return: Event or the result of cls(response)
@@ -165,9 +178,9 @@ class ReplicationEventsOperations:
         cls: ClsType[_models.Event] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             event_name=event_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -28,10 +28,11 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -43,7 +44,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -52,9 +53,11 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationAppliances",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -82,7 +85,7 @@ class ReplicationAppliancesOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -92,11 +95,18 @@ class ReplicationAppliancesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, filter: Optional[str] = None, **kwargs: Any) -> Iterable["_models.ReplicationAppliance"]:
+    def list(
+        self, resource_group_name: str, resource_name: str, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ReplicationAppliance"]:
         """Gets the list of appliances.
 
         Gets the list of Azure Site Recovery appliances for the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param filter: OData filter options. Default value is None.
         :type filter: str
         :return: An iterator like instance of either ReplicationAppliance or the result of
@@ -123,8 +133,8 @@ class ReplicationAppliancesOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     api_version=api_version,

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -33,27 +33,28 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_list_by_replication_protection_containers_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,11 +63,13 @@ def build_list_by_replication_protection_containers_request(  # pylint: disable=
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -90,18 +93,18 @@ def build_list_by_replication_protection_containers_request(  # pylint: disable=
 
 
 def build_get_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -110,11 +113,13 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -144,18 +149,18 @@ def build_get_request(
 
 
 def build_create_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -165,9 +170,13 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url(
+            "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
+        ),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -199,18 +208,18 @@ def build_create_request(
 
 
 def build_purge_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -219,9 +228,13 @@ def build_purge_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url(
+            "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
+        ),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -251,18 +264,18 @@ def build_purge_request(
 
 
 def build_apply_recovery_point_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -272,11 +285,13 @@ def build_apply_recovery_point_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}/applyRecoveryPoint",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -308,18 +323,18 @@ def build_apply_recovery_point_request(
 
 
 def build_failover_commit_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -328,11 +343,13 @@ def build_failover_commit_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}/failoverCommit",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -362,19 +379,19 @@ def build_failover_commit_request(
 
 
 def build_get_operation_results_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
     job_id: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -383,11 +400,13 @@ def build_get_operation_results_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}/operationResults/{jobId}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -418,18 +437,18 @@ def build_get_operation_results_request(
 
 
 def build_repair_replication_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -438,11 +457,13 @@ def build_repair_replication_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}/repairReplication",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -472,18 +493,18 @@ def build_repair_replication_request(
 
 
 def build_test_failover_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -493,11 +514,13 @@ def build_test_failover_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}/testFailover",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -529,18 +552,18 @@ def build_test_failover_request(
 
 
 def build_test_failover_cleanup_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -550,11 +573,13 @@ def build_test_failover_cleanup_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}/testFailoverCleanup",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -586,18 +611,18 @@ def build_test_failover_cleanup_request(
 
 
 def build_unplanned_failover_request(
+    resource_group_name: str,
     resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replication_protection_cluster_name: str,
-    resource_group_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -607,11 +632,13 @@ def build_unplanned_failover_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectionClusters/{replicationProtectionClusterName}/unplannedFailover",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "fabricName": _SERIALIZER.url(
             "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -643,8 +670,8 @@ def build_unplanned_failover_request(
 
 
 def build_list_request(
-    resource_name: str,
     resource_group_name: str,
+    resource_name: str,
     subscription_id: str,
     *,
     skip_token: Optional[str] = None,
@@ -654,7 +681,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -663,11 +690,13 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationProtectionClusters",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -697,7 +726,7 @@ class ReplicationProtectionClustersOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -708,12 +737,20 @@ class ReplicationProtectionClustersOperations:
 
     @distributed_trace
     def list_by_replication_protection_containers(  # pylint: disable=name-too-long
-        self, resource_name: str, fabric_name: str, protection_container_name: str, **kwargs: Any
-    ) -> Iterable["_models.ReplicationProtectionCluster"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ReplicationProtectionCluster"]:
         """Gets the list of Replication protection clusters in fabric, container.
 
         Gets the list of ASR replication protected clusters in the protection container.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -744,10 +781,10 @@ class ReplicationProtectionClustersOperations:
             if not next_link:
 
                 _request = build_list_by_replication_protection_containers_request(
+                    resource_group_name=resource_group_name,
                     resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
-                    resource_group_name=self._config.resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -790,7 +827,10 @@ class ReplicationProtectionClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -800,6 +840,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def get(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -810,6 +851,9 @@ class ReplicationProtectionClustersOperations:
 
         Gets the details of an ASR replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -837,11 +881,11 @@ class ReplicationProtectionClustersOperations:
         cls: ClsType[_models.ReplicationProtectionCluster] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -858,7 +902,10 @@ class ReplicationProtectionClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ReplicationProtectionCluster", pipeline_response.http_response)
@@ -870,6 +917,8 @@ class ReplicationProtectionClustersOperations:
 
     def _create_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
@@ -900,11 +949,11 @@ class ReplicationProtectionClustersOperations:
             _json = self._serialize.body(replication_protection_cluster, "ReplicationProtectionCluster")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -929,16 +978,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -950,6 +1002,8 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
@@ -962,6 +1016,11 @@ class ReplicationProtectionClustersOperations:
 
         The operation to create an ASR replication protection cluster item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -984,6 +1043,8 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
@@ -996,6 +1057,11 @@ class ReplicationProtectionClustersOperations:
 
         The operation to create an ASR replication protection cluster item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1017,6 +1083,8 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replication_protection_cluster_name: str,
@@ -1027,6 +1095,11 @@ class ReplicationProtectionClustersOperations:
 
         The operation to create an ASR replication protection cluster item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1054,6 +1127,8 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replication_protection_cluster_name=replication_protection_cluster_name,
@@ -1075,7 +1150,9 @@ class ReplicationProtectionClustersOperations:
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1092,7 +1169,13 @@ class ReplicationProtectionClustersOperations:
         )
 
     def _purge_initial(
-        self, fabric_name: str, protection_container_name: str, replication_protection_cluster_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replication_protection_cluster_name: str,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1109,11 +1192,11 @@ class ReplicationProtectionClustersOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_purge_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -1135,16 +1218,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1155,7 +1241,13 @@ class ReplicationProtectionClustersOperations:
 
     @distributed_trace
     def begin_purge(
-        self, fabric_name: str, protection_container_name: str, replication_protection_cluster_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replication_protection_cluster_name: str,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Purge the replication protection cluster.
 
@@ -1163,6 +1255,11 @@ class ReplicationProtectionClustersOperations:
         replication protection cluster. Use the remove operation on replication protection cluster to
         perform a clean disable replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1183,6 +1280,8 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._purge_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replication_protection_cluster_name=replication_protection_cluster_name,
@@ -1218,6 +1317,7 @@ class ReplicationProtectionClustersOperations:
 
     def _apply_recovery_point_initial(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1249,11 +1349,11 @@ class ReplicationProtectionClustersOperations:
             _json = self._serialize.body(apply_cluster_recovery_point_input, "ApplyClusterRecoveryPointInput")
 
         _request = build_apply_recovery_point_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1278,16 +1378,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1299,6 +1402,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_apply_recovery_point(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1312,6 +1416,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to apply a new cluster recovery point on the Protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1336,6 +1443,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_apply_recovery_point(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1349,6 +1457,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to apply a new cluster recovery point on the Protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1372,6 +1483,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def begin_apply_recovery_point(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1383,6 +1495,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to apply a new cluster recovery point on the Protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1412,6 +1527,7 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._apply_recovery_point_initial(
+                resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
@@ -1454,6 +1570,7 @@ class ReplicationProtectionClustersOperations:
 
     def _failover_commit_initial(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1475,11 +1592,11 @@ class ReplicationProtectionClustersOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_failover_commit_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -1501,16 +1618,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1522,6 +1642,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def begin_failover_commit(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1532,6 +1653,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to initiate commit failover of the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1556,6 +1680,7 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._failover_commit_initial(
+                resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
@@ -1597,6 +1722,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def get_operation_results(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1608,6 +1734,9 @@ class ReplicationProtectionClustersOperations:
 
         Track the results of an asynchronous operation on the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1637,12 +1766,12 @@ class ReplicationProtectionClustersOperations:
         cls: ClsType[_models.ReplicationProtectionCluster] = kwargs.pop("cls", None)
 
         _request = build_get_operation_results_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
             job_id=job_id,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -1659,7 +1788,10 @@ class ReplicationProtectionClustersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ReplicationProtectionCluster", pipeline_response.http_response)
@@ -1671,6 +1803,7 @@ class ReplicationProtectionClustersOperations:
 
     def _repair_replication_initial(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1692,11 +1825,11 @@ class ReplicationProtectionClustersOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_repair_replication_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -1718,16 +1851,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1739,6 +1875,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def begin_repair_replication(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1749,6 +1886,9 @@ class ReplicationProtectionClustersOperations:
 
         The operation to repair replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1773,6 +1913,7 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._repair_replication_initial(
+                resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
@@ -1813,6 +1954,7 @@ class ReplicationProtectionClustersOperations:
 
     def _test_failover_initial(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1844,11 +1986,11 @@ class ReplicationProtectionClustersOperations:
             _json = self._serialize.body(failover_input, "ClusterTestFailoverInput")
 
         _request = build_test_failover_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1873,16 +2015,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1894,6 +2039,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_test_failover(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1907,6 +2053,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to initiate a failover of the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1930,6 +2079,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_test_failover(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1943,6 +2093,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to initiate a failover of the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -1966,6 +2119,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def begin_test_failover(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -1977,6 +2131,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to initiate a failover of the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -2006,6 +2163,7 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._test_failover_initial(
+                resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
@@ -2048,6 +2206,7 @@ class ReplicationProtectionClustersOperations:
 
     def _test_failover_cleanup_initial(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2079,11 +2238,11 @@ class ReplicationProtectionClustersOperations:
             _json = self._serialize.body(cleanup_input, "ClusterTestFailoverCleanupInput")
 
         _request = build_test_failover_cleanup_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -2108,16 +2267,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -2129,6 +2291,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_test_failover_cleanup(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2142,6 +2305,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to clean up the test failover of a replication protected cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -2166,6 +2332,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_test_failover_cleanup(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2179,6 +2346,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to clean up the test failover of a replication protected cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -2202,6 +2372,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def begin_test_failover_cleanup(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2213,6 +2384,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to clean up the test failover of a replication protected cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -2242,6 +2416,7 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._test_failover_cleanup_initial(
+                resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
@@ -2284,6 +2459,7 @@ class ReplicationProtectionClustersOperations:
 
     def _unplanned_failover_initial(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2315,11 +2491,11 @@ class ReplicationProtectionClustersOperations:
             _json = self._serialize.body(failover_input, "ClusterUnplannedFailoverInput")
 
         _request = build_unplanned_failover_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -2344,16 +2520,19 @@ class ReplicationProtectionClustersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -2365,6 +2544,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_unplanned_failover(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2378,6 +2558,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to initiate a failover of the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -2402,6 +2585,7 @@ class ReplicationProtectionClustersOperations:
     @overload
     def begin_unplanned_failover(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2415,6 +2599,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to initiate a failover of the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -2438,6 +2625,7 @@ class ReplicationProtectionClustersOperations:
     @distributed_trace
     def begin_unplanned_failover(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -2449,6 +2637,9 @@ class ReplicationProtectionClustersOperations:
 
         Operation to initiate a failover of the replication protection cluster.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -2478,6 +2669,7 @@ class ReplicationProtectionClustersOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._unplanned_failover_initial(
+                resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
@@ -2520,12 +2712,20 @@ class ReplicationProtectionClustersOperations:
 
     @distributed_trace
     def list(
-        self, resource_name: str, skip_token: Optional[str] = None, filter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.ReplicationProtectionCluster"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        skip_token: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ReplicationProtectionCluster"]:
         """Gets the list of Replication protection clusters in vault.
 
         Gets the list of ASR replication protected clusters in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param skip_token: The pagination token. Possible values: "FabricId" or "FabricId_CloudId" or
@@ -2557,8 +2757,8 @@ class ReplicationProtectionClustersOperations:
             if not next_link:
 
                 _request = build_list_request(
+                    resource_group_name=resource_group_name,
                     resource_name=resource_name,
-                    resource_group_name=self._config.resource_group_name,
                     subscription_id=self._config.subscription_id,
                     skip_token=skip_token,
                     filter=filter,
@@ -2603,7 +2803,10 @@ class ReplicationProtectionClustersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

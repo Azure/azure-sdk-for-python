@@ -22,8 +22,10 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
     @recorded_by_proxy
     def test_replication_recovery_services_providers_list_by_replication_fabrics(self, resource_group):
         response = self.client.replication_recovery_services_providers.list_by_replication_fabrics(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,9 +35,11 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
     @recorded_by_proxy
     def test_replication_recovery_services_providers_get(self, resource_group):
         response = self.client.replication_recovery_services_providers.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             provider_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,6 +49,8 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
     @recorded_by_proxy
     def test_replication_recovery_services_providers_begin_create(self, resource_group):
         response = self.client.replication_recovery_services_providers.begin_create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             provider_name="str",
             add_provider_input={
@@ -75,7 +81,7 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
                     "machineId": "str",
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -85,9 +91,11 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
     @recorded_by_proxy
     def test_replication_recovery_services_providers_begin_purge(self, resource_group):
         response = self.client.replication_recovery_services_providers.begin_purge(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             provider_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -97,9 +105,11 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
     @recorded_by_proxy
     def test_replication_recovery_services_providers_begin_refresh_provider(self, resource_group):
         response = self.client.replication_recovery_services_providers.begin_refresh_provider(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             provider_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -109,9 +119,11 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
     @recorded_by_proxy
     def test_replication_recovery_services_providers_begin_delete(self, resource_group):
         response = self.client.replication_recovery_services_providers.begin_delete(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             provider_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -121,7 +133,9 @@ class TestSiteRecoveryManagementReplicationRecoveryServicesProvidersOperations(A
     @recorded_by_proxy
     def test_replication_recovery_services_providers_list(self, resource_group):
         response = self.client.replication_recovery_services_providers.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

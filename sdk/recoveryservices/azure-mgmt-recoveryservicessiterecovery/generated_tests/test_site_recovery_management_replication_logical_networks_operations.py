@@ -22,8 +22,10 @@ class TestSiteRecoveryManagementReplicationLogicalNetworksOperations(AzureMgmtRe
     @recorded_by_proxy
     def test_replication_logical_networks_list_by_replication_fabrics(self, resource_group):
         response = self.client.replication_logical_networks.list_by_replication_fabrics(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,9 +35,11 @@ class TestSiteRecoveryManagementReplicationLogicalNetworksOperations(AzureMgmtRe
     @recorded_by_proxy
     def test_replication_logical_networks_get(self, resource_group):
         response = self.client.replication_logical_networks.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             logical_network_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

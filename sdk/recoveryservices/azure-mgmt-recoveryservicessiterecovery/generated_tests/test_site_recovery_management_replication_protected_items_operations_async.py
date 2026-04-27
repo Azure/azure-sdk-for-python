@@ -24,9 +24,11 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_replication_protected_items_list_by_replication_protection_containers(self, resource_group):
         response = self.client.replication_protected_items.list_by_replication_protection_containers(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,10 +38,12 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_replication_protected_items_get(self, resource_group):
         response = await self.client.replication_protected_items.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replicated_protected_item_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -50,6 +54,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_create(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_create(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -60,22 +66,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "providerSpecificDetails": "enable_protection_provider_specific_input",
                     }
                 },
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_protected_items_begin_purge(self, resource_group):
-        response = await (
-            await self.client.replication_protected_items.begin_purge(
-                fabric_name="str",
-                protection_container_name="str",
-                replicated_protected_item_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -87,6 +78,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_update(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_update(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -135,7 +128,24 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         ],
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_protected_items_begin_purge(self, resource_group):
+        response = await (
+            await self.client.replication_protected_items.begin_purge(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                protection_container_name="str",
+                replicated_protected_item_name="str",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -147,11 +157,13 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_add_disks(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_add_disks(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
                 add_disks_input={"properties": {"providerSpecificDetails": "add_disks_provider_specific_input"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -163,6 +175,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_apply_recovery_point(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_apply_recovery_point(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -172,7 +186,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "recoveryPointId": "str",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -184,10 +198,12 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_failover_cancel(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_failover_cancel(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -199,10 +215,12 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_failover_commit(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_failover_commit(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -214,6 +232,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_planned_failover(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_planned_failover(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -223,59 +243,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "providerSpecificDetails": "planned_failover_provider_specific_failover_input",
                     }
                 },
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_protected_items_begin_delete(self, resource_group):
-        response = await (
-            await self.client.replication_protected_items.begin_delete(
-                fabric_name="str",
-                protection_container_name="str",
-                replicated_protected_item_name="str",
-                disable_protection_input={
-                    "properties": {
-                        "disableProtectionReason": "str",
-                        "replicationProviderInput": "disable_protection_provider_specific_input",
-                    }
-                },
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_protected_items_begin_remove_disks(self, resource_group):
-        response = await (
-            await self.client.replication_protected_items.begin_remove_disks(
-                fabric_name="str",
-                protection_container_name="str",
-                replicated_protected_item_name="str",
-                remove_disks_input={"properties": {"providerSpecificDetails": "remove_disks_provider_specific_input"}},
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_protected_items_begin_repair_replication(self, resource_group):
-        response = await (
-            await self.client.replication_protected_items.begin_repair_replication(
-                fabric_name="str",
-                protection_container_name="str",
-                replicated_protected_item_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -287,6 +255,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_reprotect(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_reprotect(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -296,7 +266,83 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "providerSpecificDetails": "reverse_replication_provider_specific_input",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_protected_items_begin_reinstall_mobility_service(self, resource_group):
+        response = await (
+            await self.client.replication_protected_items.begin_reinstall_mobility_service(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                protection_container_name="str",
+                replicated_protected_item_name="str",
+                update_mobility_service_request={"properties": {"runAsAccountId": "str"}},
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_protected_items_begin_delete(self, resource_group):
+        response = await (
+            await self.client.replication_protected_items.begin_delete(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                protection_container_name="str",
+                replicated_protected_item_name="str",
+                disable_protection_input={
+                    "properties": {
+                        "disableProtectionReason": "str",
+                        "replicationProviderInput": "disable_protection_provider_specific_input",
+                    }
+                },
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_protected_items_begin_remove_disks(self, resource_group):
+        response = await (
+            await self.client.replication_protected_items.begin_remove_disks(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                protection_container_name="str",
+                replicated_protected_item_name="str",
+                remove_disks_input={"properties": {"providerSpecificDetails": "remove_disks_provider_specific_input"}},
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_protected_items_begin_repair_replication(self, resource_group):
+        response = await (
+            await self.client.replication_protected_items.begin_repair_replication(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                protection_container_name="str",
+                replicated_protected_item_name="str",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -308,11 +354,13 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_resolve_health_errors(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_resolve_health_errors(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
                 resolve_health_input={"properties": {"healthErrors": [{"healthErrorId": "str"}]}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -324,6 +372,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_switch_provider(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_switch_provider(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -333,7 +383,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "targetInstanceType": "str",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -345,6 +395,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_test_failover(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_test_failover(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -356,7 +408,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "providerSpecificDetails": "test_failover_provider_specific_input",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -368,11 +420,13 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_test_failover_cleanup(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_test_failover_cleanup(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
                 cleanup_input={"properties": {"comments": "str"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -384,6 +438,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_unplanned_failover(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_unplanned_failover(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -394,7 +450,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "sourceSiteOperations": "str",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -406,6 +462,8 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_update_appliance(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_update_appliance(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
@@ -415,7 +473,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                         "targetApplianceId": "str",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -427,11 +485,13 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     async def test_replication_protected_items_begin_update_mobility_service(self, resource_group):
         response = await (
             await self.client.replication_protected_items.begin_update_mobility_service(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 replicated_protected_item_name="str",
                 update_mobility_service_request={"properties": {"runAsAccountId": "str"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -442,7 +502,9 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_replication_protected_items_list(self, resource_group):
         response = self.client.replication_protected_items.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

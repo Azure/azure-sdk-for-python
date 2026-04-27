@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._migration_recovery_points_operations import (
     build_get_request,
     build_list_by_replication_migration_items_request,
@@ -35,7 +35,8 @@ from ...operations._migration_recovery_points_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class MigrationRecoveryPointsOperations:
@@ -61,13 +62,24 @@ class MigrationRecoveryPointsOperations:
 
     @distributed_trace
     def list_by_replication_migration_items(
-        self, fabric_name: str, protection_container_name: str, migration_item_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.MigrationRecoveryPoint"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        migration_item_name: str,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.MigrationRecoveryPoint"]:
         """Gets the recovery points for a migration item.
 
         Gets the recovery points for a migration item.
 
-        :param fabric_name: Fabric unique name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -97,11 +109,11 @@ class MigrationRecoveryPointsOperations:
             if not next_link:
 
                 _request = build_list_by_replication_migration_items_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
                     migration_item_name=migration_item_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -153,6 +165,8 @@ class MigrationRecoveryPointsOperations:
     @distributed_trace_async
     async def get(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -163,7 +177,12 @@ class MigrationRecoveryPointsOperations:
 
         Gets a recovery point for a migration item.
 
-        :param fabric_name: Fabric unique name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -190,12 +209,12 @@ class MigrationRecoveryPointsOperations:
         cls: ClsType[_models.MigrationRecoveryPoint] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
             migration_recovery_point_name=migration_recovery_point_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

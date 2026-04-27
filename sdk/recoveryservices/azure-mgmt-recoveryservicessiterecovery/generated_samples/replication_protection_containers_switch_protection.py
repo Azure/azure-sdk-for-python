@@ -29,11 +29,11 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="42195872-7e70-4f8a-837f-84b28ecbb78b",
-        resource_group_name="priyanprg",
-        resource_name="priyanponeboxvault",
     )
 
     response = client.replication_protection_containers.begin_switch_protection(
+        resource_group_name="priyanprg",
+        resource_name="priyanponeboxvault",
         fabric_name="CentralUSCanSite",
         protection_container_name="CentralUSCancloud",
         switch_input={
@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationProtectionContainers_SwitchProtection.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationProtectionContainers_SwitchProtection.json
 if __name__ == "__main__":
     main()

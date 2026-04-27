@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -28,28 +28,29 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_list_by_replication_migration_items_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     migration_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -58,9 +59,11 @@ def build_list_by_replication_migration_items_request(  # pylint: disable=name-t
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationMigrationItems/{migrationItemName}/migrationRecoveryPoints",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "migrationItemName": _SERIALIZER.url("migration_item_name", migration_item_name, "str"),
@@ -78,19 +81,19 @@ def build_list_by_replication_migration_items_request(  # pylint: disable=name-t
 
 
 def build_get_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     migration_item_name: str,
     migration_recovery_point_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,9 +102,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationMigrationItems/{migrationItemName}/migrationRecoveryPoints/{migrationRecoveryPointName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "migrationItemName": _SERIALIZER.url("migration_item_name", migration_item_name, "str"),
@@ -133,7 +138,7 @@ class MigrationRecoveryPointsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -144,13 +149,24 @@ class MigrationRecoveryPointsOperations:
 
     @distributed_trace
     def list_by_replication_migration_items(
-        self, fabric_name: str, protection_container_name: str, migration_item_name: str, **kwargs: Any
-    ) -> Iterable["_models.MigrationRecoveryPoint"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        migration_item_name: str,
+        **kwargs: Any
+    ) -> ItemPaged["_models.MigrationRecoveryPoint"]:
         """Gets the recovery points for a migration item.
 
         Gets the recovery points for a migration item.
 
-        :param fabric_name: Fabric unique name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -180,11 +196,11 @@ class MigrationRecoveryPointsOperations:
             if not next_link:
 
                 _request = build_list_by_replication_migration_items_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
                     migration_item_name=migration_item_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -236,6 +252,8 @@ class MigrationRecoveryPointsOperations:
     @distributed_trace
     def get(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -246,7 +264,12 @@ class MigrationRecoveryPointsOperations:
 
         Gets a recovery point for a migration item.
 
-        :param fabric_name: Fabric unique name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -273,12 +296,12 @@ class MigrationRecoveryPointsOperations:
         cls: ClsType[_models.MigrationRecoveryPoint] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
             migration_recovery_point_name=migration_recovery_point_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

@@ -29,11 +29,11 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="9112a37f-0f3e-46ec-9c00-060c6edca071",
-        resource_group_name="srcBvte2a14C27",
-        resource_name="srce2avaultbvtaC27",
     )
 
     response = client.replication_network_mappings.list_by_replication_networks(
+        resource_group_name="srcBvte2a14C27",
+        resource_name="srce2avaultbvtaC27",
         fabric_name="b0cef6e9a4437b81803d0b55ada4f700ab66caae59c35d62723a1589c0cd13ac",
         network_name="e2267b5c-2650-49bd-ab3f-d66aae694c06",
     )
@@ -41,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationNetworkMappings_ListByReplicationNetworks.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationNetworkMappings_ListByReplicationNetworks.json
 if __name__ == "__main__":
     main()

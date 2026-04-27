@@ -23,9 +23,11 @@ class TestSiteRecoveryManagementReplicationNetworkMappingsOperationsAsync(AzureM
     @recorded_by_proxy_async
     async def test_replication_network_mappings_list_by_replication_networks(self, resource_group):
         response = self.client.replication_network_mappings.list_by_replication_networks(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             network_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,10 +37,12 @@ class TestSiteRecoveryManagementReplicationNetworkMappingsOperationsAsync(AzureM
     @recorded_by_proxy_async
     async def test_replication_network_mappings_get(self, resource_group):
         response = await self.client.replication_network_mappings.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             network_name="str",
             network_mapping_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -49,6 +53,8 @@ class TestSiteRecoveryManagementReplicationNetworkMappingsOperationsAsync(AzureM
     async def test_replication_network_mappings_begin_create(self, resource_group):
         response = await (
             await self.client.replication_network_mappings.begin_create(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 network_name="str",
                 network_mapping_name="str",
@@ -59,22 +65,7 @@ class TestSiteRecoveryManagementReplicationNetworkMappingsOperationsAsync(AzureM
                         "recoveryFabricName": "str",
                     }
                 },
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_network_mappings_begin_delete(self, resource_group):
-        response = await (
-            await self.client.replication_network_mappings.begin_delete(
-                fabric_name="str",
-                network_name="str",
-                network_mapping_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,6 +77,8 @@ class TestSiteRecoveryManagementReplicationNetworkMappingsOperationsAsync(AzureM
     async def test_replication_network_mappings_begin_update(self, resource_group):
         response = await (
             await self.client.replication_network_mappings.begin_update(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 network_name="str",
                 network_mapping_name="str",
@@ -96,7 +89,24 @@ class TestSiteRecoveryManagementReplicationNetworkMappingsOperationsAsync(AzureM
                         "recoveryNetworkId": "str",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_network_mappings_begin_delete(self, resource_group):
+        response = await (
+            await self.client.replication_network_mappings.begin_delete(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                network_name="str",
+                network_mapping_name="str",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -107,7 +117,9 @@ class TestSiteRecoveryManagementReplicationNetworkMappingsOperationsAsync(AzureM
     @recorded_by_proxy_async
     async def test_replication_network_mappings_list(self, resource_group):
         response = self.client.replication_network_mappings.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

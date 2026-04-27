@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_storage_classification_mappings_operations import (
     build_create_request,
     build_delete_request,
@@ -44,7 +44,8 @@ from ...operations._replication_storage_classification_mappings_operations impor
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=name-too-long
@@ -70,12 +71,22 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
     @distributed_trace
     def list_by_replication_storage_classifications(  # pylint: disable=name-too-long
-        self, fabric_name: str, storage_classification_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StorageClassificationMapping"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        storage_classification_name: str,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.StorageClassificationMapping"]:
         """Gets the list of storage classification mappings objects under a storage.
 
         Lists the storage classification mappings for the fabric.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -104,10 +115,10 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             if not next_link:
 
                 _request = build_list_by_replication_storage_classifications_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     storage_classification_name=storage_classification_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -159,6 +170,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
     @distributed_trace_async
     async def get(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -168,6 +181,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         Gets the details of the specified storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -193,11 +211,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cls: ClsType[_models.StorageClassificationMapping] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             storage_classification_name=storage_classification_name,
             storage_classification_mapping_name=storage_classification_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -225,6 +243,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
     async def _create_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -255,11 +275,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             _json = self._serialize.body(pairing_input, "StorageClassificationMappingInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             storage_classification_name=storage_classification_name,
             storage_classification_mapping_name=storage_classification_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -286,16 +306,23 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -308,6 +335,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to create a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -330,6 +362,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -342,6 +376,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to create a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -363,6 +402,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
     @distributed_trace_async
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -373,6 +414,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to create a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -400,6 +446,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 storage_classification_name=storage_classification_name,
                 storage_classification_mapping_name=storage_classification_mapping_name,
@@ -421,7 +469,9 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -439,6 +489,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
     async def _delete_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -459,11 +511,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             storage_classification_name=storage_classification_name,
             storage_classification_mapping_name=storage_classification_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -487,16 +539,23 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -506,6 +565,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to delete a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -526,6 +590,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 storage_classification_name=storage_classification_name,
                 storage_classification_mapping_name=storage_classification_mapping_name,
@@ -543,7 +609,9 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -558,11 +626,18 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.StorageClassificationMapping"]:
+    def list(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.StorageClassificationMapping"]:
         """Gets the list of storage classification mappings objects under a vault.
 
         Lists the storage classification mappings in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either StorageClassificationMapping or the result of
          cls(response)
         :rtype:
@@ -587,8 +662,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,

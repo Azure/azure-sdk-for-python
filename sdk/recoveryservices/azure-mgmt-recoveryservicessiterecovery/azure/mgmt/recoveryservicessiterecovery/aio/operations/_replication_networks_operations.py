@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_networks_operations import (
     build_get_request,
     build_list_by_replication_fabrics_request,
@@ -36,7 +36,8 @@ from ...operations._replication_networks_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationNetworksOperations:
@@ -61,11 +62,18 @@ class ReplicationNetworksOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_replication_fabrics(self, fabric_name: str, **kwargs: Any) -> AsyncIterable["_models.Network"]:
+    def list_by_replication_fabrics(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Network"]:
         """Gets the list of networks under a fabric.
 
         Lists the networks available for a fabric.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An iterator like instance of either Network or the result of cls(response)
@@ -91,9 +99,9 @@ class ReplicationNetworksOperations:
             if not next_link:
 
                 _request = build_list_by_replication_fabrics_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -143,12 +151,19 @@ class ReplicationNetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(self, fabric_name: str, network_name: str, **kwargs: Any) -> _models.Network:
+    async def get(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, network_name: str, **kwargs: Any
+    ) -> _models.Network:
         """Gets a network with specified server id and network name.
 
         Gets the details of a network.
 
-        :param fabric_name: Server Id. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -171,10 +186,10 @@ class ReplicationNetworksOperations:
         cls: ClsType[_models.Network] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             network_name=network_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -201,11 +216,16 @@ class ReplicationNetworksOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Network"]:
+    def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Network"]:
         """Gets the list of networks. View-only API.
 
         Lists the networks available in a vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either Network or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.Network]
@@ -229,8 +249,8 @@ class ReplicationNetworksOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,

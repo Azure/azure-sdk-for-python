@@ -24,9 +24,11 @@ class TestSiteRecoveryManagementReplicationStorageClassificationMappingsOperatio
         self, resource_group
     ):
         response = self.client.replication_storage_classification_mappings.list_by_replication_storage_classifications(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             storage_classification_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -36,10 +38,12 @@ class TestSiteRecoveryManagementReplicationStorageClassificationMappingsOperatio
     @recorded_by_proxy
     def test_replication_storage_classification_mappings_get(self, resource_group):
         response = self.client.replication_storage_classification_mappings.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             storage_classification_name="str",
             storage_classification_mapping_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -49,11 +53,13 @@ class TestSiteRecoveryManagementReplicationStorageClassificationMappingsOperatio
     @recorded_by_proxy
     def test_replication_storage_classification_mappings_begin_create(self, resource_group):
         response = self.client.replication_storage_classification_mappings.begin_create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             storage_classification_name="str",
             storage_classification_mapping_name="str",
             pairing_input={"properties": {"targetStorageClassificationId": "str"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -63,10 +69,12 @@ class TestSiteRecoveryManagementReplicationStorageClassificationMappingsOperatio
     @recorded_by_proxy
     def test_replication_storage_classification_mappings_begin_delete(self, resource_group):
         response = self.client.replication_storage_classification_mappings.begin_delete(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             storage_classification_name="str",
             storage_classification_mapping_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,7 +84,9 @@ class TestSiteRecoveryManagementReplicationStorageClassificationMappingsOperatio
     @recorded_by_proxy
     def test_replication_storage_classification_mappings_list(self, resource_group):
         response = self.client.replication_storage_classification_mappings.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

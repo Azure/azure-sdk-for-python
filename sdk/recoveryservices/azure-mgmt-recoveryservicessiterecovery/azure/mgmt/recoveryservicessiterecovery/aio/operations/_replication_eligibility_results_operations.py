@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -24,12 +24,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_eligibility_results_operations import build_get_request, build_list_request
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationEligibilityResultsOperations:
@@ -54,11 +55,16 @@ class ReplicationEligibilityResultsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def list(self, virtual_machine_name: str, **kwargs: Any) -> _models.ReplicationEligibilityResultsCollection:
+    async def list(
+        self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
+    ) -> _models.ReplicationEligibilityResultsCollection:
         """Gets the validation errors in case the VM is unsuitable for protection.
 
         Validates whether a given VM can be protected or not in which case returns list of errors.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param virtual_machine_name: Virtual Machine name. Required.
         :type virtual_machine_name: str
         :return: ReplicationEligibilityResultsCollection or the result of cls(response)
@@ -80,8 +86,8 @@ class ReplicationEligibilityResultsOperations:
         cls: ClsType[_models.ReplicationEligibilityResultsCollection] = kwargs.pop("cls", None)
 
         _request = build_list_request(
+            resource_group_name=resource_group_name,
             virtual_machine_name=virtual_machine_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -108,11 +114,16 @@ class ReplicationEligibilityResultsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, virtual_machine_name: str, **kwargs: Any) -> _models.ReplicationEligibilityResults:
+    async def get(
+        self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
+    ) -> _models.ReplicationEligibilityResults:
         """Gets the validation errors in case the VM is unsuitable for protection.
 
         Validates whether a given VM can be protected or not in which case returns list of errors.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param virtual_machine_name: Virtual Machine name. Required.
         :type virtual_machine_name: str
         :return: ReplicationEligibilityResults or the result of cls(response)
@@ -134,8 +145,8 @@ class ReplicationEligibilityResultsOperations:
         cls: ClsType[_models.ReplicationEligibilityResults] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
             virtual_machine_name=virtual_machine_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

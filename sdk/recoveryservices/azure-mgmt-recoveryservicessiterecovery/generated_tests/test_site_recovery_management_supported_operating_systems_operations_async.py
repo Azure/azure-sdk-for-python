@@ -23,7 +23,9 @@ class TestSiteRecoveryManagementSupportedOperatingSystemsOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_supported_operating_systems_get(self, resource_group):
         response = await self.client.supported_operating_systems.get(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

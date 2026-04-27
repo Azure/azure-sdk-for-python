@@ -23,8 +23,10 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     @recorded_by_proxy_async
     async def test_replication_protection_containers_list_by_replication_fabrics(self, resource_group):
         response = self.client.replication_protection_containers.list_by_replication_fabrics(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,9 +36,11 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     @recorded_by_proxy_async
     async def test_replication_protection_containers_get(self, resource_group):
         response = await self.client.replication_protection_containers.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -47,12 +51,14 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     async def test_replication_protection_containers_begin_create(self, resource_group):
         response = await (
             await self.client.replication_protection_containers.begin_create(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 creation_input={
                     "properties": {"providerSpecificInput": ["replication_provider_specific_container_creation_input"]}
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -64,12 +70,14 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     async def test_replication_protection_containers_begin_discover_protectable_item(self, resource_group):
         response = await (
             await self.client.replication_protection_containers.begin_discover_protectable_item(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 discover_protectable_item_request={
                     "properties": {"friendlyName": "str", "ipAddress": "str", "osType": "str"}
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -81,9 +89,11 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     async def test_replication_protection_containers_begin_delete(self, resource_group):
         response = await (
             await self.client.replication_protection_containers.begin_delete(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -95,6 +105,7 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     async def test_replication_protection_containers_begin_switch_cluster_protection(self, resource_group):
         response = await (
             await self.client.replication_protection_containers.begin_switch_cluster_protection(
+                resource_group_name=resource_group.name,
                 resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
@@ -104,7 +115,7 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
                         "replicationProtectionClusterName": "str",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,6 +127,8 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     async def test_replication_protection_containers_begin_switch_protection(self, resource_group):
         response = await (
             await self.client.replication_protection_containers.begin_switch_protection(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 switch_input={
@@ -124,7 +137,7 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
                         "replicationProtectedItemName": "str",
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -135,7 +148,9 @@ class TestSiteRecoveryManagementReplicationProtectionContainersOperationsAsync(A
     @recorded_by_proxy_async
     async def test_replication_protection_containers_list(self, resource_group):
         response = self.client.replication_protection_containers.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

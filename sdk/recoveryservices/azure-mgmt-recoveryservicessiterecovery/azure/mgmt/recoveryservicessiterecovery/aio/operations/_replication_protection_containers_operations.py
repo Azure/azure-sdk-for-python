@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_protection_containers_operations import (
     build_create_request,
     build_delete_request,
@@ -47,7 +47,8 @@ from ...operations._replication_protection_containers_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-long
@@ -73,12 +74,17 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
     @distributed_trace
     def list_by_replication_fabrics(
-        self, fabric_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ProtectionContainer"]:
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ProtectionContainer"]:
         """Gets the list of protection container for a fabric.
 
         Lists the protection containers in the specified fabric.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An iterator like instance of either ProtectionContainer or the result of cls(response)
@@ -104,9 +110,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             if not next_link:
 
                 _request = build_list_by_replication_fabrics_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -156,11 +162,23 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(self, fabric_name: str, protection_container_name: str, **kwargs: Any) -> _models.ProtectionContainer:
+    async def get(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        **kwargs: Any
+    ) -> _models.ProtectionContainer:
         """Gets the protection container details.
 
         Gets the details of a protection container.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -184,10 +202,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         cls: ClsType[_models.ProtectionContainer] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -215,6 +233,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
     async def _create_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         creation_input: Union[_models.CreateProtectionContainerInput, IO[bytes]],
@@ -244,10 +264,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             _json = self._serialize.body(creation_input, "CreateProtectionContainerInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -274,16 +294,23 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         creation_input: _models.CreateProtectionContainerInput,
@@ -295,9 +322,14 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         Operation to create a protection container.
 
-        :param fabric_name: Unique fabric ARM name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: Unique protection container ARM name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param creation_input: Creation input. Required.
         :type creation_input:
@@ -315,6 +347,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         creation_input: IO[bytes],
@@ -326,9 +360,14 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         Operation to create a protection container.
 
-        :param fabric_name: Unique fabric ARM name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: Unique protection container ARM name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param creation_input: Creation input. Required.
         :type creation_input: IO[bytes]
@@ -345,6 +384,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @distributed_trace_async
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         creation_input: Union[_models.CreateProtectionContainerInput, IO[bytes]],
@@ -354,9 +395,14 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         Operation to create a protection container.
 
-        :param fabric_name: Unique fabric ARM name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: Unique protection container ARM name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param creation_input: Creation input. Is either a CreateProtectionContainerInput type or a
          IO[bytes] type. Required.
@@ -379,6 +425,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 creation_input=creation_input,
@@ -399,7 +447,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -417,6 +467,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
     async def _discover_protectable_item_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         discover_protectable_item_request: Union[_models.DiscoverProtectableItemRequest, IO[bytes]],
@@ -446,10 +498,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             _json = self._serialize.body(discover_protectable_item_request, "DiscoverProtectableItemRequest")
 
         _request = build_discover_protectable_item_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -476,16 +528,23 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_discover_protectable_item(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         discover_protectable_item_request: _models.DiscoverProtectableItemRequest,
@@ -497,9 +556,14 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         The operation to a add a protectable item to a protection container(Add physical server).
 
-        :param fabric_name: The name of the fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: The name of the protection container. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param discover_protectable_item_request: The request object to add a protectable item.
          Required.
@@ -518,6 +582,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @overload
     async def begin_discover_protectable_item(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         discover_protectable_item_request: IO[bytes],
@@ -529,9 +595,14 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         The operation to a add a protectable item to a protection container(Add physical server).
 
-        :param fabric_name: The name of the fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: The name of the protection container. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param discover_protectable_item_request: The request object to add a protectable item.
          Required.
@@ -549,6 +620,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @distributed_trace_async
     async def begin_discover_protectable_item(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         discover_protectable_item_request: Union[_models.DiscoverProtectableItemRequest, IO[bytes]],
@@ -558,9 +631,14 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         The operation to a add a protectable item to a protection container(Add physical server).
 
-        :param fabric_name: The name of the fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: The name of the protection container. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :param discover_protectable_item_request: The request object to add a protectable item. Is
          either a DiscoverProtectableItemRequest type or a IO[bytes] type. Required.
@@ -583,6 +661,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._discover_protectable_item_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 discover_protectable_item_request=discover_protectable_item_request,
@@ -603,7 +683,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -620,7 +702,12 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         )
 
     async def _delete_initial(
-        self, fabric_name: str, protection_container_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -637,10 +724,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -664,24 +751,39 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_delete(
-        self, fabric_name: str, protection_container_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Removes a protection container.
 
         Operation to remove a protection container.
 
-        :param fabric_name: Unique fabric ARM name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: Unique protection container ARM name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -697,6 +799,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 api_version=api_version,
@@ -713,7 +817,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -729,6 +835,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
     async def _switch_cluster_protection_initial(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -759,10 +866,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             _json = self._serialize.body(switch_input, "SwitchClusterProtectionInput")
 
         _request = build_switch_cluster_protection_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -787,16 +894,19 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -808,6 +918,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @overload
     async def begin_switch_cluster_protection(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -820,6 +931,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         Operation to switch protection from one container to another.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -842,6 +956,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @overload
     async def begin_switch_cluster_protection(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -854,6 +969,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         Operation to switch protection from one container to another.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -875,6 +993,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @distributed_trace_async
     async def begin_switch_cluster_protection(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -885,6 +1004,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         Operation to switch protection from one container to another.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -912,6 +1034,7 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._switch_cluster_protection_initial(
+                resource_group_name=resource_group_name,
                 resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
@@ -953,6 +1076,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
     async def _switch_protection_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         switch_input: Union[_models.SwitchProtectionInput, IO[bytes]],
@@ -982,10 +1107,10 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             _json = self._serialize.body(switch_input, "SwitchProtectionInput")
 
         _request = build_switch_protection_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1014,11 +1139,11 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Azure-AsyncOperation"] = self._deserialize(
                 "str", response.headers.get("Azure-AsyncOperation")
             )
-            response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -1030,6 +1155,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @overload
     async def begin_switch_protection(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         switch_input: _models.SwitchProtectionInput,
@@ -1042,7 +1169,12 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         Operation to switch protection from one container to another or one replication provider to
         another.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -1061,6 +1193,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @overload
     async def begin_switch_protection(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         switch_input: IO[bytes],
@@ -1073,7 +1207,12 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         Operation to switch protection from one container to another or one replication provider to
         another.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -1092,6 +1231,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
     @distributed_trace_async
     async def begin_switch_protection(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         switch_input: Union[_models.SwitchProtectionInput, IO[bytes]],
@@ -1102,7 +1243,12 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         Operation to switch protection from one container to another or one replication provider to
         another.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -1127,6 +1273,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._switch_protection_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 switch_input=switch_input,
@@ -1147,7 +1295,9 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1164,11 +1314,18 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
         )
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ProtectionContainer"]:
+    def list(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ProtectionContainer"]:
         """Gets the list of all protection containers in a vault.
 
         Lists the protection containers in a vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either ProtectionContainer or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainer]
@@ -1192,8 +1349,8 @@ class ReplicationProtectionContainersOperations:  # pylint: disable=name-too-lon
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,

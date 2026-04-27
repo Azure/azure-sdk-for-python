@@ -23,7 +23,9 @@ class TestSiteRecoveryManagementReplicationAppliancesOperationsAsync(AzureMgmtRe
     @recorded_by_proxy_async
     async def test_replication_appliances_list(self, resource_group):
         response = self.client.replication_appliances.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

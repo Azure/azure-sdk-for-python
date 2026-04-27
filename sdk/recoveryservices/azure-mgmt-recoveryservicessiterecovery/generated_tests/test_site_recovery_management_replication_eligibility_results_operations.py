@@ -22,8 +22,9 @@ class TestSiteRecoveryManagementReplicationEligibilityResultsOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_eligibility_results_list(self, resource_group):
         response = self.client.replication_eligibility_results.list(
+            resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -33,8 +34,9 @@ class TestSiteRecoveryManagementReplicationEligibilityResultsOperations(AzureMgm
     @recorded_by_proxy
     def test_replication_eligibility_results_get(self, resource_group):
         response = self.client.replication_eligibility_results.get(
+            resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

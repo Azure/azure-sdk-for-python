@@ -23,7 +23,9 @@ class TestSiteRecoveryManagementReplicationVaultHealthOperationsAsync(AzureMgmtR
     @recorded_by_proxy_async
     async def test_replication_vault_health_get(self, resource_group):
         response = await self.client.replication_vault_health.get(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +36,9 @@ class TestSiteRecoveryManagementReplicationVaultHealthOperationsAsync(AzureMgmtR
     async def test_replication_vault_health_begin_refresh(self, resource_group):
         response = await (
             await self.client.replication_vault_health.begin_refresh(
-                api_version="2025-01-01",
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

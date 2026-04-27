@@ -22,10 +22,12 @@ class TestSiteRecoveryManagementTargetComputeSizesOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_target_compute_sizes_list_by_replication_protected_items(self, resource_group):
         response = self.client.target_compute_sizes.list_by_replication_protected_items(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replicated_protected_item_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

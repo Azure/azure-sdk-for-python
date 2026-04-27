@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._replication_alert_settings_operations import ReplicationAlertSettingsOperations  # type: ignore
 from ._replication_appliances_operations import ReplicationAppliancesOperations  # type: ignore
-from ._replication_eligibility_results_operations import ReplicationEligibilityResultsOperations  # type: ignore
 from ._replication_events_operations import ReplicationEventsOperations  # type: ignore
 from ._replication_fabrics_operations import ReplicationFabricsOperations  # type: ignore
 from ._replication_logical_networks_operations import ReplicationLogicalNetworksOperations  # type: ignore
@@ -44,6 +43,7 @@ from ._replication_recovery_plans_operations import ReplicationRecoveryPlansOper
 from ._supported_operating_systems_operations import SupportedOperatingSystemsOperations  # type: ignore
 from ._replication_vault_health_operations import ReplicationVaultHealthOperations  # type: ignore
 from ._replication_vault_setting_operations import ReplicationVaultSettingOperations  # type: ignore
+from ._replication_eligibility_results_operations import ReplicationEligibilityResultsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -53,7 +53,6 @@ __all__ = [
     "Operations",
     "ReplicationAlertSettingsOperations",
     "ReplicationAppliancesOperations",
-    "ReplicationEligibilityResultsOperations",
     "ReplicationEventsOperations",
     "ReplicationFabricsOperations",
     "ReplicationLogicalNetworksOperations",
@@ -81,6 +80,7 @@ __all__ = [
     "SupportedOperatingSystemsOperations",
     "ReplicationVaultHealthOperations",
     "ReplicationVaultSettingOperations",
+    "ReplicationEligibilityResultsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

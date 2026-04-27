@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -33,10 +33,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +49,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -57,9 +58,11 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -74,9 +77,9 @@ def build_list_request(
 
 
 def build_get_request(
-    fabric_name: str,
     resource_group_name: str,
     resource_name: str,
+    fabric_name: str,
     subscription_id: str,
     *,
     filter: Optional[str] = None,
@@ -85,7 +88,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -94,9 +97,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
     }
 
@@ -114,12 +119,12 @@ def build_get_request(
 
 
 def build_create_request(
-    fabric_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -129,9 +134,11 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
     }
 
@@ -149,20 +156,22 @@ def build_create_request(
 
 
 def build_purge_request(
-    fabric_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
     }
 
@@ -175,12 +184,12 @@ def build_purge_request(
 
 
 def build_check_consistency_request(
-    fabric_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,9 +198,11 @@ def build_check_consistency_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/checkConsistency",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
     }
 
@@ -207,20 +218,22 @@ def build_check_consistency_request(
 
 
 def build_migrate_to_aad_request(
-    fabric_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/migratetoaad",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
     }
 
@@ -233,12 +246,12 @@ def build_migrate_to_aad_request(
 
 
 def build_reassociate_gateway_request(
-    fabric_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -248,9 +261,11 @@ def build_reassociate_gateway_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/reassociateGateway",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
     }
 
@@ -268,20 +283,22 @@ def build_reassociate_gateway_request(
 
 
 def build_delete_request(
-    fabric_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/remove",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
     }
 
@@ -293,48 +310,13 @@ def build_delete_request(
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_renew_certificate_request(
-    fabric_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/renewCertificate",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_remove_infra_request(
-    resource_name: str, fabric_name: str, resource_group_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -343,8 +325,10 @@ def build_remove_infra_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/removeInfra",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "resourceName": _SERIALIZER.url(
             "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
         ),
@@ -364,6 +348,43 @@ def build_remove_infra_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_renew_certificate_request(
+    resource_group_name: str, resource_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/renewCertificate",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class ReplicationFabricsOperations:
     """
     .. warning::
@@ -376,7 +397,7 @@ class ReplicationFabricsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -386,11 +407,16 @@ class ReplicationFabricsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Fabric"]:
+    def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> ItemPaged["_models.Fabric"]:
         """Gets the list of ASR fabrics.
 
         Gets a list of the Azure Site Recovery fabrics in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either Fabric or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.Fabric]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -413,8 +439,8 @@ class ReplicationFabricsOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -464,11 +490,23 @@ class ReplicationFabricsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, fabric_name: str, filter: Optional[str] = None, **kwargs: Any) -> _models.Fabric:
+    def get(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Fabric:
         """Gets the details of an ASR fabric.
 
         Gets the details of an Azure Site Recovery fabric.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param filter: OData filter options. Default value is None.
@@ -492,9 +530,9 @@ class ReplicationFabricsOperations:
         cls: ClsType[_models.Fabric] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             filter=filter,
             api_version=api_version,
@@ -522,7 +560,12 @@ class ReplicationFabricsOperations:
         return deserialized  # type: ignore
 
     def _create_initial(
-        self, fabric_name: str, input: Union[_models.FabricCreationInput, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        input: Union[_models.FabricCreationInput, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -548,9 +591,9 @@ class ReplicationFabricsOperations:
             _json = self._serialize.body(input, "FabricCreationInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -577,16 +620,23 @@ class ReplicationFabricsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         input: _models.FabricCreationInput,
         *,
@@ -597,7 +647,12 @@ class ReplicationFabricsOperations:
 
         The operation to create an Azure Site Recovery fabric (for e.g. Hyper-V site).
 
-        :param fabric_name: Name of the ASR fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param input: Fabric creation input. Required.
         :type input: ~azure.mgmt.recoveryservicessiterecovery.models.FabricCreationInput
@@ -611,13 +666,25 @@ class ReplicationFabricsOperations:
 
     @overload
     def begin_create(
-        self, fabric_name: str, input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        input: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.Fabric]:
         """Creates an Azure Site Recovery fabric.
 
         The operation to create an Azure Site Recovery fabric (for e.g. Hyper-V site).
 
-        :param fabric_name: Name of the ASR fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param input: Fabric creation input. Required.
         :type input: IO[bytes]
@@ -631,13 +698,23 @@ class ReplicationFabricsOperations:
 
     @distributed_trace
     def begin_create(
-        self, fabric_name: str, input: Union[_models.FabricCreationInput, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        input: Union[_models.FabricCreationInput, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.Fabric]:
         """Creates an Azure Site Recovery fabric.
 
         The operation to create an Azure Site Recovery fabric (for e.g. Hyper-V site).
 
-        :param fabric_name: Name of the ASR fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param input: Fabric creation input. Is either a FabricCreationInput type or a IO[bytes] type.
          Required.
@@ -657,6 +734,8 @@ class ReplicationFabricsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 input=input,
                 api_version=api_version,
@@ -676,7 +755,9 @@ class ReplicationFabricsOperations:
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -692,7 +773,9 @@ class ReplicationFabricsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _purge_initial(self, fabric_name: str, **kwargs: Any) -> Iterator[bytes]:
+    def _purge_initial(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -708,9 +791,9 @@ class ReplicationFabricsOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_purge_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -734,20 +817,32 @@ class ReplicationFabricsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_purge(self, fabric_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_purge(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
         """Purges the site.
 
         The operation to purge(force delete) an Azure Site Recovery fabric.
 
-        :param fabric_name: ASR fabric to purge. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -763,6 +858,8 @@ class ReplicationFabricsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._purge_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -778,7 +875,9 @@ class ReplicationFabricsOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -792,7 +891,9 @@ class ReplicationFabricsOperations:
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _check_consistency_initial(self, fabric_name: str, **kwargs: Any) -> Iterator[bytes]:
+    def _check_consistency_initial(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -808,9 +909,9 @@ class ReplicationFabricsOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_check_consistency_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -834,19 +935,31 @@ class ReplicationFabricsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_check_consistency(self, fabric_name: str, **kwargs: Any) -> LROPoller[_models.Fabric]:
+    def begin_check_consistency(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> LROPoller[_models.Fabric]:
         """Checks the consistency of the ASR fabric.
 
         The operation to perform a consistency check on the fabric.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An instance of LROPoller that returns either Fabric or the result of cls(response)
@@ -863,6 +976,8 @@ class ReplicationFabricsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._check_consistency_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -880,7 +995,9 @@ class ReplicationFabricsOperations:
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -896,7 +1013,9 @@ class ReplicationFabricsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _migrate_to_aad_initial(self, fabric_name: str, **kwargs: Any) -> Iterator[bytes]:
+    def _migrate_to_aad_initial(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -912,9 +1031,9 @@ class ReplicationFabricsOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_migrate_to_aad_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -938,20 +1057,32 @@ class ReplicationFabricsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_migrate_to_aad(self, fabric_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_migrate_to_aad(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
         """Migrates the site to AAD.
 
         The operation to migrate an Azure Site Recovery fabric to AAD.
 
-        :param fabric_name: ASR fabric to migrate. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -967,6 +1098,8 @@ class ReplicationFabricsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._migrate_to_aad_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -982,7 +1115,9 @@ class ReplicationFabricsOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -998,6 +1133,8 @@ class ReplicationFabricsOperations:
 
     def _reassociate_gateway_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         failover_process_server_request: Union[_models.FailoverProcessServerRequest, IO[bytes]],
         **kwargs: Any
@@ -1026,9 +1163,9 @@ class ReplicationFabricsOperations:
             _json = self._serialize.body(failover_process_server_request, "FailoverProcessServerRequest")
 
         _request = build_reassociate_gateway_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1055,16 +1192,23 @@ class ReplicationFabricsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_reassociate_gateway(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         failover_process_server_request: _models.FailoverProcessServerRequest,
         *,
@@ -1075,7 +1219,12 @@ class ReplicationFabricsOperations:
 
         The operation to move replications from a process server to another process server.
 
-        :param fabric_name: The name of the fabric containing the process server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param failover_process_server_request: The input to the failover process server operation.
          Required.
@@ -1092,6 +1241,8 @@ class ReplicationFabricsOperations:
     @overload
     def begin_reassociate_gateway(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         failover_process_server_request: IO[bytes],
         *,
@@ -1102,7 +1253,12 @@ class ReplicationFabricsOperations:
 
         The operation to move replications from a process server to another process server.
 
-        :param fabric_name: The name of the fabric containing the process server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param failover_process_server_request: The input to the failover process server operation.
          Required.
@@ -1118,6 +1274,8 @@ class ReplicationFabricsOperations:
     @distributed_trace
     def begin_reassociate_gateway(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         failover_process_server_request: Union[_models.FailoverProcessServerRequest, IO[bytes]],
         **kwargs: Any
@@ -1126,7 +1284,12 @@ class ReplicationFabricsOperations:
 
         The operation to move replications from a process server to another process server.
 
-        :param fabric_name: The name of the fabric containing the process server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param failover_process_server_request: The input to the failover process server operation. Is
          either a FailoverProcessServerRequest type or a IO[bytes] type. Required.
@@ -1147,6 +1310,8 @@ class ReplicationFabricsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._reassociate_gateway_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 failover_process_server_request=failover_process_server_request,
                 api_version=api_version,
@@ -1166,7 +1331,9 @@ class ReplicationFabricsOperations:
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1182,7 +1349,9 @@ class ReplicationFabricsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _delete_initial(self, fabric_name: str, **kwargs: Any) -> Iterator[bytes]:
+    def _delete_initial(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1198,9 +1367,9 @@ class ReplicationFabricsOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -1224,20 +1393,32 @@ class ReplicationFabricsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_delete(self, fabric_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_delete(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes the site.
 
         The operation to delete or remove an Azure Site Recovery fabric.
 
-        :param fabric_name: ASR fabric to delete. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -1253,6 +1434,8 @@ class ReplicationFabricsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -1268,7 +1451,130 @@ class ReplicationFabricsOperations:
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    def _remove_infra_initial(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_remove_infra_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_remove_infra(
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Removes the appliance's infrastructure under the fabric.
+
+        Removes the appliance's infrastructure under the fabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._remove_infra_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1283,7 +1589,12 @@ class ReplicationFabricsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _renew_certificate_initial(
-        self, fabric_name: str, renew_certificate: Union[_models.RenewCertificateInput, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        renew_certificate: Union[_models.RenewCertificateInput, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1309,9 +1620,9 @@ class ReplicationFabricsOperations:
             _json = self._serialize.body(renew_certificate, "RenewCertificateInput")
 
         _request = build_renew_certificate_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1338,16 +1649,23 @@ class ReplicationFabricsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_renew_certificate(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         renew_certificate: _models.RenewCertificateInput,
         *,
@@ -1358,7 +1676,12 @@ class ReplicationFabricsOperations:
 
         Renews the connection certificate for the ASR replication fabric.
 
-        :param fabric_name: fabric name to renew certs for. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param renew_certificate: Renew certificate input. Required.
         :type renew_certificate: ~azure.mgmt.recoveryservicessiterecovery.models.RenewCertificateInput
@@ -1372,13 +1695,25 @@ class ReplicationFabricsOperations:
 
     @overload
     def begin_renew_certificate(
-        self, fabric_name: str, renew_certificate: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        renew_certificate: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.Fabric]:
         """Renews certificate for the fabric.
 
         Renews the connection certificate for the ASR replication fabric.
 
-        :param fabric_name: fabric name to renew certs for. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param renew_certificate: Renew certificate input. Required.
         :type renew_certificate: IO[bytes]
@@ -1392,13 +1727,23 @@ class ReplicationFabricsOperations:
 
     @distributed_trace
     def begin_renew_certificate(
-        self, fabric_name: str, renew_certificate: Union[_models.RenewCertificateInput, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        renew_certificate: Union[_models.RenewCertificateInput, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.Fabric]:
         """Renews certificate for the fabric.
 
         Renews the connection certificate for the ASR replication fabric.
 
-        :param fabric_name: fabric name to renew certs for. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param renew_certificate: Renew certificate input. Is either a RenewCertificateInput type or a
          IO[bytes] type. Required.
@@ -1419,6 +1764,8 @@ class ReplicationFabricsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._renew_certificate_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 renew_certificate=renew_certificate,
                 api_version=api_version,
@@ -1438,7 +1785,9 @@ class ReplicationFabricsOperations:
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1453,110 +1802,3 @@ class ReplicationFabricsOperations:
         return LROPoller[_models.Fabric](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-
-    def _remove_infra_initial(self, resource_name: str, fabric_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_remove_infra_request(
-            resource_name=resource_name,
-            fabric_name=fabric_name,
-            resource_group_name=self._config.resource_group_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_remove_infra(self, resource_name: str, fabric_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Removes the appliance's infrastructure under the fabric.
-
-        Removes the appliance's infrastructure under the fabric.
-
-        :param resource_name: Resource name. Required.
-        :type resource_name: str
-        :param fabric_name: Fabric name. Required.
-        :type fabric_name: str
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._remove_infra_initial(
-                resource_name=resource_name,
-                fabric_name=fabric_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

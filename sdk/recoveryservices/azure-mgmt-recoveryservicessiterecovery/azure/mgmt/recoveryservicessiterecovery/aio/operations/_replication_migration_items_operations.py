@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_migration_items_operations import (
     build_create_request,
     build_delete_request,
@@ -51,7 +51,8 @@ from ...operations._replication_migration_items_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-methods
@@ -78,17 +79,24 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def list_by_replication_protection_containers(  # pylint: disable=name-too-long
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         skip_token: Optional[str] = None,
         take_token: Optional[str] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.MigrationItem"]:
+    ) -> AsyncItemPaged["_models.MigrationItem"]:
         """Gets the list of migration items in the protection container.
 
         Gets the list of ASR migration items in the protection container.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -122,10 +130,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             if not next_link:
 
                 _request = build_list_by_replication_protection_containers_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     skip_token=skip_token,
                     take_token=take_token,
@@ -179,13 +187,24 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
     @distributed_trace_async
     async def get(
-        self, fabric_name: str, protection_container_name: str, migration_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        migration_item_name: str,
+        **kwargs: Any
     ) -> _models.MigrationItem:
         """Gets the details of a migration item.
 
         Gets the details of a migration item.
 
-        :param fabric_name: Fabric unique name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -210,11 +229,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cls: ClsType[_models.MigrationItem] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -242,6 +261,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
     async def _create_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -272,11 +293,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(input, "EnableMigrationInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -303,16 +324,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -325,6 +353,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to create an ASR migration item (enable migration).
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -346,6 +379,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -358,6 +393,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to create an ASR migration item (enable migration).
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -379,6 +419,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -389,6 +431,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to create an ASR migration item (enable migration).
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -415,6 +462,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -436,7 +485,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -452,134 +503,10 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        migration_item_name: str,
-        delete_option: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_delete_request(
-            fabric_name=fabric_name,
-            protection_container_name=protection_container_name,
-            migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
-            subscription_id=self._config.subscription_id,
-            delete_option=delete_option,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_delete(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        migration_item_name: str,
-        delete_option: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Delete the migration item.
-
-        The operation to delete an ASR migration item.
-
-        :param fabric_name: Fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param migration_item_name: Migration item name. Required.
-        :type migration_item_name: str
-        :param delete_option: The delete option. Default value is None.
-        :type delete_option: str
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                fabric_name=fabric_name,
-                protection_container_name=protection_container_name,
-                migration_item_name=migration_item_name,
-                delete_option=delete_option,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
     async def _update_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -610,11 +537,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(input, "UpdateMigrationItemInput")
 
         _request = build_update_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -641,16 +568,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -663,6 +597,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update the recovery settings of an ASR migration item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -684,6 +623,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -696,6 +637,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update the recovery settings of an ASR migration item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -717,6 +663,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -727,6 +675,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update the recovery settings of an ASR migration item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -754,6 +707,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -775,7 +730,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -791,8 +748,154 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        migration_item_name: str,
+        delete_option: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            protection_container_name=protection_container_name,
+            migration_item_name=migration_item_name,
+            subscription_id=self._config.subscription_id,
+            delete_option=delete_option,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        migration_item_name: str,
+        delete_option: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete the migration item.
+
+        The operation to delete an ASR migration item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param migration_item_name: Migration item name. Required.
+        :type migration_item_name: str
+        :param delete_option: The delete option. Default value is None.
+        :type delete_option: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                protection_container_name=protection_container_name,
+                migration_item_name=migration_item_name,
+                delete_option=delete_option,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
     async def _migrate_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -823,11 +926,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(migrate_input, "MigrateInput")
 
         _request = build_migrate_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -854,16 +957,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_migrate(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -876,6 +986,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate migration of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -897,6 +1012,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_migrate(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -909,6 +1026,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate migration of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -930,6 +1052,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_migrate(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -940,6 +1064,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate migration of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -966,6 +1095,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._migrate_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -987,7 +1118,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1005,6 +1138,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
     async def _pause_replication_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1035,11 +1170,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(pause_replication_input, "PauseReplicationInput")
 
         _request = build_pause_replication_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1066,16 +1201,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_pause_replication(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1088,6 +1230,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate pause replication of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1110,6 +1257,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_pause_replication(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1122,6 +1271,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate pause replication of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1143,6 +1297,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_pause_replication(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1153,6 +1309,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate pause replication of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1180,6 +1341,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._pause_replication_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -1201,7 +1364,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1219,6 +1384,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
     async def _resume_replication_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1249,11 +1416,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(resume_replication_input, "ResumeReplicationInput")
 
         _request = build_resume_replication_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1280,16 +1447,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_resume_replication(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1302,6 +1476,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate resume replication of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1324,6 +1503,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_resume_replication(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1336,6 +1517,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate resume replication of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1357,6 +1543,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_resume_replication(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1367,6 +1555,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate resume replication of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1394,6 +1587,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._resume_replication_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -1415,7 +1610,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1433,6 +1630,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
     async def _resync_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1463,11 +1662,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(input, "ResyncInput")
 
         _request = build_resync_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1494,16 +1693,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_resync(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1516,6 +1722,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to resynchronize replication of an ASR migration item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1537,6 +1748,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_resync(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1549,6 +1762,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to resynchronize replication of an ASR migration item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1570,6 +1788,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_resync(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1580,6 +1800,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to resynchronize replication of an ASR migration item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1605,6 +1830,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._resync_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -1626,7 +1853,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1644,6 +1873,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
     async def _test_migrate_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1674,11 +1905,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(test_migrate_input, "TestMigrateInput")
 
         _request = build_test_migrate_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1705,16 +1936,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_test_migrate(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1727,6 +1965,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate test migration of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1748,6 +1991,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_test_migrate(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1760,6 +2005,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate test migration of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1781,6 +2031,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_test_migrate(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1791,6 +2043,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate test migration of the item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1818,6 +2075,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._test_migrate_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -1839,7 +2098,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1857,6 +2118,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
     async def _test_migrate_cleanup_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1887,11 +2150,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(test_migrate_cleanup_input, "TestMigrateCleanupInput")
 
         _request = build_test_migrate_cleanup_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             migration_item_name=migration_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1918,16 +2181,23 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_test_migrate_cleanup(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1940,6 +2210,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate test migrate cleanup.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1962,6 +2237,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     async def begin_test_migrate_cleanup(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -1974,6 +2251,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate test migrate cleanup.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1995,6 +2277,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace_async
     async def begin_test_migrate_cleanup(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         migration_item_name: str,
@@ -2005,6 +2289,11 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to initiate test migrate cleanup.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -2032,6 +2321,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._test_migrate_cleanup_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 migration_item_name=migration_item_name,
@@ -2053,7 +2344,9 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -2072,15 +2365,22 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def list(
         self,
+        resource_group_name: str,
+        resource_name: str,
         skip_token: Optional[str] = None,
         take_token: Optional[str] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.MigrationItem"]:
+    ) -> AsyncItemPaged["_models.MigrationItem"]:
         """Gets the list of migration items in the vault.
 
         Gets the list of migration items in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param skip_token: The pagination token. Default value is None.
         :type skip_token: str
         :param take_token: The page size. Default value is None.
@@ -2110,8 +2410,8 @@ class ReplicationMigrationItemsOperations:  # pylint: disable=too-many-public-me
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     skip_token=skip_token,
                     take_token=take_token,

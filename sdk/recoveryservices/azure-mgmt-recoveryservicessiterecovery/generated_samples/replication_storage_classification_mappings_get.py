@@ -29,11 +29,11 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="9112a37f-0f3e-46ec-9c00-060c6edca071",
-        resource_group_name="resourceGroupPS1",
-        resource_name="vault1",
     )
 
     response = client.replication_storage_classification_mappings.get(
+        resource_group_name="resourceGroupPS1",
+        resource_name="vault1",
         fabric_name="2a48e3770ac08aa2be8bfbd94fcfb1cbf2dcc487b78fb9d3bd778304441b06a0",
         storage_classification_name="8891569e-aaef-4a46-a4a0-78c14f2d7b09",
         storage_classification_mapping_name="testStorageMapping",
@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationStorageClassificationMappings_Get.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationStorageClassificationMappings_Get.json
 if __name__ == "__main__":
     main()

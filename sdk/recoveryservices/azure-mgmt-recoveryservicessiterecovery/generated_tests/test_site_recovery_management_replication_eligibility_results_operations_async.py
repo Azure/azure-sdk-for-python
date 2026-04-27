@@ -23,8 +23,9 @@ class TestSiteRecoveryManagementReplicationEligibilityResultsOperationsAsync(Azu
     @recorded_by_proxy_async
     async def test_replication_eligibility_results_list(self, resource_group):
         response = await self.client.replication_eligibility_results.list(
+            resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -34,8 +35,9 @@ class TestSiteRecoveryManagementReplicationEligibilityResultsOperationsAsync(Azu
     @recorded_by_proxy_async
     async def test_replication_eligibility_results_get(self, resource_group):
         response = await self.client.replication_eligibility_results.get(
+            resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

@@ -29,11 +29,10 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="7c943c1b-5122-4097-90c8-861411bdd574",
-        resource_group_name="resourceGroupPS1",
-        resource_name="vault1",
     )
 
     response = client.replication_protection_clusters.begin_test_failover(
+        resource_group_name="resourceGroupPS1",
         resource_name="vault1",
         fabric_name="fabric-pri-eastus",
         protection_container_name="pri-cloud-eastus",
@@ -56,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationProtectionClusters_TestFailover.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationProtectionClusters_TestFailover.json
 if __name__ == "__main__":
     main()

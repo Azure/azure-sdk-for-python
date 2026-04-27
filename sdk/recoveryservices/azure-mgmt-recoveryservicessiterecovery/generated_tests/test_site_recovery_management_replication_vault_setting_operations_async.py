@@ -23,7 +23,9 @@ class TestSiteRecoveryManagementReplicationVaultSettingOperationsAsync(AzureMgmt
     @recorded_by_proxy_async
     async def test_replication_vault_setting_list(self, resource_group):
         response = self.client.replication_vault_setting.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,8 +35,10 @@ class TestSiteRecoveryManagementReplicationVaultSettingOperationsAsync(AzureMgmt
     @recorded_by_proxy_async
     async def test_replication_vault_setting_get(self, resource_group):
         response = await self.client.replication_vault_setting.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             vault_setting_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,9 +49,11 @@ class TestSiteRecoveryManagementReplicationVaultSettingOperationsAsync(AzureMgmt
     async def test_replication_vault_setting_begin_create(self, resource_group):
         response = await (
             await self.client.replication_vault_setting.begin_create(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 vault_setting_name="str",
                 input={"properties": {"migrationSolutionId": "str", "vmwareToAzureProviderType": "str"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

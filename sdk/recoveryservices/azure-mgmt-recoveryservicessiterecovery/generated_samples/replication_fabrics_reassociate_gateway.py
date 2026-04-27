@@ -29,11 +29,11 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="7c943c1b-5122-4097-90c8-861411bdd574",
-        resource_group_name="MadhaviVRG",
-        resource_name="MadhaviVault",
     )
 
     response = client.replication_fabrics.begin_reassociate_gateway(
+        resource_group_name="MadhaviVRG",
+        resource_name="MadhaviVault",
         fabric_name="GRACE-V2A-1",
         failover_process_server_request={
             "properties": {
@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationFabrics_ReassociateGateway.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationFabrics_ReassociateGateway.json
 if __name__ == "__main__":
     main()

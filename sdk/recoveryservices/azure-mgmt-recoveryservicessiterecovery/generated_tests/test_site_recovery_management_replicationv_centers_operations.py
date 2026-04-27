@@ -22,8 +22,10 @@ class TestSiteRecoveryManagementReplicationvCentersOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replicationv_centers_list_by_replication_fabrics(self, resource_group):
         response = self.client.replicationv_centers.list_by_replication_fabrics(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,9 +35,11 @@ class TestSiteRecoveryManagementReplicationvCentersOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replicationv_centers_get(self, resource_group):
         response = self.client.replicationv_centers.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             vcenter_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -45,6 +49,8 @@ class TestSiteRecoveryManagementReplicationvCentersOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replicationv_centers_begin_create(self, resource_group):
         response = self.client.replicationv_centers.begin_create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             vcenter_name="str",
             add_v_center_request={
@@ -56,19 +62,7 @@ class TestSiteRecoveryManagementReplicationvCentersOperations(AzureMgmtRecordedT
                     "runAsAccountId": "str",
                 }
             },
-            api_version="2025-01-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_replicationv_centers_begin_delete(self, resource_group):
-        response = self.client.replicationv_centers.begin_delete(
-            fabric_name="str",
-            vcenter_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,6 +72,8 @@ class TestSiteRecoveryManagementReplicationvCentersOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replicationv_centers_begin_update(self, resource_group):
         response = self.client.replicationv_centers.begin_update(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             vcenter_name="str",
             update_v_center_request={
@@ -89,7 +85,21 @@ class TestSiteRecoveryManagementReplicationvCentersOperations(AzureMgmtRecordedT
                     "runAsAccountId": "str",
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_replicationv_centers_begin_delete(self, resource_group):
+        response = self.client.replicationv_centers.begin_delete(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            fabric_name="str",
+            vcenter_name="str",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,7 +109,9 @@ class TestSiteRecoveryManagementReplicationvCentersOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replicationv_centers_list(self, resource_group):
         response = self.client.replicationv_centers.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

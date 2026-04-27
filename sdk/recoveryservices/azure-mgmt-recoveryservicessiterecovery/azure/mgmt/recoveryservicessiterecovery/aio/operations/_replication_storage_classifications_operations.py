@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_storage_classifications_operations import (
     build_get_request,
     build_list_by_replication_fabrics_request,
@@ -36,7 +36,8 @@ from ...operations._replication_storage_classifications_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-long
@@ -62,13 +63,18 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
 
     @distributed_trace
     def list_by_replication_fabrics(
-        self, fabric_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.StorageClassification"]:
+        self, resource_group_name: str, resource_name: str, fabric_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.StorageClassification"]:
         """Gets the list of storage classification objects under a fabric.
 
         Lists the storage classifications available in the specified fabric.
 
-        :param fabric_name: Site name of interest. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :return: An iterator like instance of either StorageClassification or the result of
          cls(response)
@@ -94,9 +100,9 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
             if not next_link:
 
                 _request = build_list_by_replication_fabrics_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -147,12 +153,22 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
 
     @distributed_trace_async
     async def get(
-        self, fabric_name: str, storage_classification_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        storage_classification_name: str,
+        **kwargs: Any
     ) -> _models.StorageClassification:
         """Gets the details of a storage classification.
 
         Gets the details of the specified storage classification.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -176,10 +192,10 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
         cls: ClsType[_models.StorageClassification] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             storage_classification_name=storage_classification_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -206,11 +222,18 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.StorageClassification"]:
+    def list(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.StorageClassification"]:
         """Gets the list of storage classification objects under a vault.
 
         Lists the storage classifications in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either StorageClassification or the result of
          cls(response)
         :rtype:
@@ -235,8 +258,8 @@ class ReplicationStorageClassificationsOperations:  # pylint: disable=name-too-l
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -24,12 +24,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._cluster_recovery_point_operations import build_get_request
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ClusterRecoveryPointOperations:
@@ -56,6 +57,7 @@ class ClusterRecoveryPointOperations:
     @distributed_trace_async
     async def get(
         self,
+        resource_group_name: str,
         resource_name: str,
         fabric_name: str,
         protection_container_name: str,
@@ -67,6 +69,9 @@ class ClusterRecoveryPointOperations:
 
         Get the details of specified recovery point.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param resource_name: The name of the recovery services vault. Required.
         :type resource_name: str
         :param fabric_name: Fabric name. Required.
@@ -96,12 +101,12 @@ class ClusterRecoveryPointOperations:
         cls: ClsType[_models.ClusterRecoveryPoint] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
             resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replication_protection_cluster_name=replication_protection_cluster_name,
             recovery_point_name=recovery_point_name,
-            resource_group_name=self._config.resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -118,7 +123,10 @@ class ClusterRecoveryPointOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ClusterRecoveryPoint", pipeline_response.http_response)

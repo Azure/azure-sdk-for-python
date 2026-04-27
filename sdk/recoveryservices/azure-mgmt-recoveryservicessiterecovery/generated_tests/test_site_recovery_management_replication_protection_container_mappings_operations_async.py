@@ -25,9 +25,11 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
         self, resource_group
     ):
         response = self.client.replication_protection_container_mappings.list_by_replication_protection_containers(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -37,10 +39,12 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
     @recorded_by_proxy_async
     async def test_replication_protection_container_mappings_get(self, resource_group):
         response = await self.client.replication_protection_container_mappings.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             mapping_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -51,6 +55,8 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
     async def test_replication_protection_container_mappings_begin_create(self, resource_group):
         response = await (
             await self.client.replication_protection_container_mappings.begin_create(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 mapping_name="str",
@@ -61,22 +67,7 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
                         "targetProtectionContainerId": "str",
                     }
                 },
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_protection_container_mappings_begin_purge(self, resource_group):
-        response = await (
-            await self.client.replication_protection_container_mappings.begin_purge(
-                fabric_name="str",
-                protection_container_name="str",
-                mapping_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,6 +79,8 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
     async def test_replication_protection_container_mappings_begin_update(self, resource_group):
         response = await (
             await self.client.replication_protection_container_mappings.begin_update(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 mapping_name="str",
@@ -96,7 +89,24 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
                         "providerSpecificInput": "replication_provider_specific_update_container_mapping_input"
                     }
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_protection_container_mappings_begin_purge(self, resource_group):
+        response = await (
+            await self.client.replication_protection_container_mappings.begin_purge(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                protection_container_name="str",
+                mapping_name="str",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -108,11 +118,13 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
     async def test_replication_protection_container_mappings_begin_delete(self, resource_group):
         response = await (
             await self.client.replication_protection_container_mappings.begin_delete(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 mapping_name="str",
                 removal_input={"properties": {"providerSpecificInput": {"instanceType": "str"}}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -123,7 +135,9 @@ class TestSiteRecoveryManagementReplicationProtectionContainerMappingsOperations
     @recorded_by_proxy_async
     async def test_replication_protection_container_mappings_list(self, resource_group):
         response = self.client.replication_protection_container_mappings.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

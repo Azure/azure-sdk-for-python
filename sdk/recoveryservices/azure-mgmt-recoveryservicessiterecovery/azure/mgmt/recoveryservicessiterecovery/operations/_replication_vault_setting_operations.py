@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -33,10 +33,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +49,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -57,9 +58,11 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationVaultSettings",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -74,12 +77,12 @@ def build_list_request(
 
 
 def build_get_request(
-    vault_setting_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, vault_setting_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -88,9 +91,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationVaultSettings/{vaultSettingName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "vaultSettingName": _SERIALIZER.url("vault_setting_name", vault_setting_name, "str"),
     }
 
@@ -106,12 +111,12 @@ def build_get_request(
 
 
 def build_create_request(
-    vault_setting_name: str, resource_group_name: str, resource_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, resource_name: str, vault_setting_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -121,9 +126,11 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationVaultSettings/{vaultSettingName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "vaultSettingName": _SERIALIZER.url("vault_setting_name", vault_setting_name, "str"),
     }
 
@@ -152,7 +159,7 @@ class ReplicationVaultSettingOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -162,11 +169,16 @@ class ReplicationVaultSettingOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.VaultSetting"]:
+    def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> ItemPaged["_models.VaultSetting"]:
         """Gets the list of vault setting.
 
         Gets the list of vault setting. This includes the Migration Hub connection settings.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either VaultSetting or the result of cls(response)
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.VaultSetting]
@@ -190,8 +202,8 @@ class ReplicationVaultSettingOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -241,11 +253,18 @@ class ReplicationVaultSettingOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get(self, vault_setting_name: str, **kwargs: Any) -> _models.VaultSetting:
+    def get(
+        self, resource_group_name: str, resource_name: str, vault_setting_name: str, **kwargs: Any
+    ) -> _models.VaultSetting:
         """Gets the vault setting.
 
         Gets the vault setting. This includes the Migration Hub connection settings.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param vault_setting_name: Vault setting name. Required.
         :type vault_setting_name: str
         :return: VaultSetting or the result of cls(response)
@@ -267,9 +286,9 @@ class ReplicationVaultSettingOperations:
         cls: ClsType[_models.VaultSetting] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             vault_setting_name=vault_setting_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -296,7 +315,12 @@ class ReplicationVaultSettingOperations:
         return deserialized  # type: ignore
 
     def _create_initial(
-        self, vault_setting_name: str, input: Union[_models.VaultSettingCreationInput, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        vault_setting_name: str,
+        input: Union[_models.VaultSettingCreationInput, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -322,9 +346,9 @@ class ReplicationVaultSettingOperations:
             _json = self._serialize.body(input, "VaultSettingCreationInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             vault_setting_name=vault_setting_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -351,16 +375,22 @@ class ReplicationVaultSettingOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         vault_setting_name: str,
         input: _models.VaultSettingCreationInput,
         *,
@@ -372,6 +402,11 @@ class ReplicationVaultSettingOperations:
 
         The operation to configure vault setting.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param vault_setting_name: Vault setting name. Required.
         :type vault_setting_name: str
         :param input: Vault setting creation input. Required.
@@ -388,13 +423,25 @@ class ReplicationVaultSettingOperations:
 
     @overload
     def begin_create(
-        self, vault_setting_name: str, input: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        vault_setting_name: str,
+        input: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.VaultSetting]:
         """Updates vault setting. A vault setting object is a singleton per vault and it is always present
         by default.
 
         The operation to configure vault setting.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param vault_setting_name: Vault setting name. Required.
         :type vault_setting_name: str
         :param input: Vault setting creation input. Required.
@@ -411,13 +458,23 @@ class ReplicationVaultSettingOperations:
 
     @distributed_trace
     def begin_create(
-        self, vault_setting_name: str, input: Union[_models.VaultSettingCreationInput, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        vault_setting_name: str,
+        input: Union[_models.VaultSettingCreationInput, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.VaultSetting]:
         """Updates vault setting. A vault setting object is a singleton per vault and it is always present
         by default.
 
         The operation to configure vault setting.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param vault_setting_name: Vault setting name. Required.
         :type vault_setting_name: str
         :param input: Vault setting creation input. Is either a VaultSettingCreationInput type or a
@@ -441,6 +498,8 @@ class ReplicationVaultSettingOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 vault_setting_name=vault_setting_name,
                 input=input,
                 api_version=api_version,
@@ -454,13 +513,20 @@ class ReplicationVaultSettingOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
             deserialized = self._deserialize("VaultSetting", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:

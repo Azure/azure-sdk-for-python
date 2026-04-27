@@ -29,16 +29,15 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="d90d145a-4cdd-45a3-b2c4-971d69775278",
-        resource_group_name="testRg1",
-        resource_name="RESOURCE_NAME",
     )
 
     response = client.replication_eligibility_results.get(
+        resource_group_name="testRg1",
         virtual_machine_name="testVm1",
     )
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationEligibilityResults_Get.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationEligibilityResults_Get.json
 if __name__ == "__main__":
     main()

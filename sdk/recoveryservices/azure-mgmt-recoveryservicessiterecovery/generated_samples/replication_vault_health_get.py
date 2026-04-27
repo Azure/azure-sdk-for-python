@@ -29,14 +29,15 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="c183865e-6077-46f2-a3b1-deb0f4f4650a",
+    )
+
+    response = client.replication_vault_health.get(
         resource_group_name="resourceGroupPS1",
         resource_name="vault1",
     )
-
-    response = client.replication_vault_health.get()
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationVaultHealth_Get.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationVaultHealth_Get.json
 if __name__ == "__main__":
     main()

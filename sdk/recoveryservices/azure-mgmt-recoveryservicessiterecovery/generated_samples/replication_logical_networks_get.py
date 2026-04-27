@@ -29,17 +29,17 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="c183865e-6077-46f2-a3b1-deb0f4f4650a",
-        resource_group_name="resourceGroupPS1",
-        resource_name="vault1",
     )
 
     response = client.replication_logical_networks.get(
+        resource_group_name="resourceGroupPS1",
+        resource_name="vault1",
         fabric_name="cloud1",
         logical_network_name="87ab394f-165f-4aa9-bd84-b018500b4509",
     )
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationLogicalNetworks_Get.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationLogicalNetworks_Get.json
 if __name__ == "__main__":
     main()

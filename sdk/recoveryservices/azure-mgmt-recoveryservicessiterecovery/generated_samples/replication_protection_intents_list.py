@@ -29,15 +29,16 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="509099b2-9d2c-4636-b43e-bd5cafb6be69",
+    )
+
+    response = client.replication_protection_intents.list(
         resource_group_name="resourceGroupPS1",
         resource_name="2007vttp",
     )
-
-    response = client.replication_protection_intents.list()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationProtectionIntents_List.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationProtectionIntents_List.json
 if __name__ == "__main__":
     main()

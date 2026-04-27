@@ -23,9 +23,11 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_replication_migration_items_list_by_replication_protection_containers(self, resource_group):
         response = self.client.replication_migration_items.list_by_replication_protection_containers(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,10 +37,12 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_replication_migration_items_get(self, resource_group):
         response = await self.client.replication_migration_items.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             migration_item_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -49,6 +53,8 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_create(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_create(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
@@ -58,22 +64,7 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
                         "providerSpecificDetails": "enable_migration_provider_specific_input",
                     }
                 },
-                api_version="2025-01-01",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_replication_migration_items_begin_delete(self, resource_group):
-        response = await (
-            await self.client.replication_migration_items.begin_delete(
-                fabric_name="str",
-                protection_container_name="str",
-                migration_item_name="str",
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -85,11 +76,30 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_update(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_update(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
                 input={"properties": {"providerSpecificDetails": "update_migration_item_provider_specific_input"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_replication_migration_items_begin_delete(self, resource_group):
+        response = await (
+            await self.client.replication_migration_items.begin_delete(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                fabric_name="str",
+                protection_container_name="str",
+                migration_item_name="str",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,11 +111,13 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_migrate(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_migrate(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
                 migrate_input={"properties": {"providerSpecificDetails": "migrate_provider_specific_input"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,11 +129,13 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_pause_replication(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_pause_replication(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
                 pause_replication_input={"properties": {"instanceType": "str"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -133,13 +147,15 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_resume_replication(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_resume_replication(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
                 resume_replication_input={
                     "properties": {"providerSpecificDetails": "resume_replication_provider_specific_input"}
                 },
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -151,11 +167,13 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_resync(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_resync(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
                 input={"properties": {"providerSpecificDetails": "resync_provider_specific_input"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -167,11 +185,13 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_test_migrate(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_test_migrate(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
                 test_migrate_input={"properties": {"providerSpecificDetails": "test_migrate_provider_specific_input"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -183,11 +203,13 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     async def test_replication_migration_items_begin_test_migrate_cleanup(self, resource_group):
         response = await (
             await self.client.replication_migration_items.begin_test_migrate_cleanup(
+                resource_group_name=resource_group.name,
+                resource_name="str",
                 fabric_name="str",
                 protection_container_name="str",
                 migration_item_name="str",
                 test_migrate_cleanup_input={"properties": {"comments": "str"}},
-                api_version="2025-01-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -198,7 +220,9 @@ class TestSiteRecoveryManagementReplicationMigrationItemsOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_replication_migration_items_list(self, resource_group):
         response = self.client.replication_migration_items.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterator, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Iterator, Optional, TypeVar, Union, cast
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,10 +30,11 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -43,7 +44,7 @@ def build_get_request(resource_group_name: str, resource_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -52,9 +53,11 @@ def build_get_request(resource_group_name: str, resource_name: str, subscription
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationVaultHealth",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -74,7 +77,7 @@ def build_refresh_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -83,9 +86,11 @@ def build_refresh_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationVaultHealth/default/refresh",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -111,7 +116,7 @@ class ReplicationVaultHealthOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -121,11 +126,16 @@ class ReplicationVaultHealthOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, **kwargs: Any) -> _models.VaultHealthDetails:
+    def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.VaultHealthDetails:
         """Gets the health summary for the vault.
 
         Gets the health details of the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: VaultHealthDetails or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicessiterecovery.models.VaultHealthDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -145,8 +155,8 @@ class ReplicationVaultHealthOperations:
         cls: ClsType[_models.VaultHealthDetails] = kwargs.pop("cls", None)
 
         _request = build_get_request(
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -172,7 +182,7 @@ class ReplicationVaultHealthOperations:
 
         return deserialized  # type: ignore
 
-    def _refresh_initial(self, **kwargs: Any) -> Iterator[bytes]:
+    def _refresh_initial(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -188,8 +198,8 @@ class ReplicationVaultHealthOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_refresh_request(
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -213,19 +223,31 @@ class ReplicationVaultHealthOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_refresh(self, **kwargs: Any) -> LROPoller[_models.VaultHealthDetails]:
+    def begin_refresh(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> LROPoller[_models.VaultHealthDetails]:
         """Refreshes health summary of the vault.
 
         Refreshes health summary of the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An instance of LROPoller that returns either VaultHealthDetails or the result of
          cls(response)
         :rtype:
@@ -242,7 +264,13 @@ class ReplicationVaultHealthOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._refresh_initial(
-                api_version=api_version, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -254,7 +282,9 @@ class ReplicationVaultHealthOperations:
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:

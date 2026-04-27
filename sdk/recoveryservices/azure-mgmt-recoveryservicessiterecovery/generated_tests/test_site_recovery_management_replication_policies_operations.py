@@ -22,7 +22,9 @@ class TestSiteRecoveryManagementReplicationPoliciesOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replication_policies_list(self, resource_group):
         response = self.client.replication_policies.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,8 +34,10 @@ class TestSiteRecoveryManagementReplicationPoliciesOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replication_policies_get(self, resource_group):
         response = self.client.replication_policies.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             policy_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -43,20 +47,11 @@ class TestSiteRecoveryManagementReplicationPoliciesOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replication_policies_begin_create(self, resource_group):
         response = self.client.replication_policies.begin_create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             policy_name="str",
             input={"properties": {"providerSpecificInput": "policy_provider_specific_input"}},
-            api_version="2025-01-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_replication_policies_begin_delete(self, resource_group):
-        response = self.client.replication_policies.begin_delete(
-            policy_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,9 +61,24 @@ class TestSiteRecoveryManagementReplicationPoliciesOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_replication_policies_begin_update(self, resource_group):
         response = self.client.replication_policies.begin_update(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             policy_name="str",
             input={"properties": {"replicationProviderSettings": "policy_provider_specific_input"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_replication_policies_begin_delete(self, resource_group):
+        response = self.client.replication_policies.begin_delete(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            policy_name="str",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

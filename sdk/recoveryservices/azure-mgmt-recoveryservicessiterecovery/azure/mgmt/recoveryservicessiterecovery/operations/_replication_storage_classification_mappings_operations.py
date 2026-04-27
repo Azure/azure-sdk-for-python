@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -33,27 +33,28 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_list_by_replication_storage_classifications_request(  # pylint: disable=name-too-long
-    fabric_name: str,
-    storage_classification_name: str,
     resource_group_name: str,
     resource_name: str,
+    fabric_name: str,
+    storage_classification_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,9 +63,11 @@ def build_list_by_replication_storage_classifications_request(  # pylint: disabl
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationStorageClassifications/{storageClassificationName}/replicationStorageClassificationMappings",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "storageClassificationName": _SERIALIZER.url("storage_classification_name", storage_classification_name, "str"),
     }
@@ -81,18 +84,18 @@ def build_list_by_replication_storage_classifications_request(  # pylint: disabl
 
 
 def build_get_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     storage_classification_name: str,
     storage_classification_mapping_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,9 +104,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationStorageClassifications/{storageClassificationName}/replicationStorageClassificationMappings/{storageClassificationMappingName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "storageClassificationName": _SERIALIZER.url("storage_classification_name", storage_classification_name, "str"),
         "storageClassificationMappingName": _SERIALIZER.url(
@@ -123,18 +128,18 @@ def build_get_request(
 
 
 def build_create_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     storage_classification_name: str,
     storage_classification_mapping_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -144,9 +149,11 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationStorageClassifications/{storageClassificationName}/replicationStorageClassificationMappings/{storageClassificationMappingName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "storageClassificationName": _SERIALIZER.url("storage_classification_name", storage_classification_name, "str"),
         "storageClassificationMappingName": _SERIALIZER.url(
@@ -168,26 +175,28 @@ def build_create_request(
 
 
 def build_delete_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     storage_classification_name: str,
     storage_classification_mapping_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationStorageClassifications/{storageClassificationName}/replicationStorageClassificationMappings/{storageClassificationMappingName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "storageClassificationName": _SERIALIZER.url("storage_classification_name", storage_classification_name, "str"),
         "storageClassificationMappingName": _SERIALIZER.url(
@@ -209,7 +218,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -218,9 +227,11 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationStorageClassificationMappings",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -246,7 +257,7 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -257,12 +268,22 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
     @distributed_trace
     def list_by_replication_storage_classifications(  # pylint: disable=name-too-long
-        self, fabric_name: str, storage_classification_name: str, **kwargs: Any
-    ) -> Iterable["_models.StorageClassificationMapping"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        storage_classification_name: str,
+        **kwargs: Any
+    ) -> ItemPaged["_models.StorageClassificationMapping"]:
         """Gets the list of storage classification mappings objects under a storage.
 
         Lists the storage classification mappings for the fabric.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -291,10 +312,10 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             if not next_link:
 
                 _request = build_list_by_replication_storage_classifications_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     storage_classification_name=storage_classification_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -346,6 +367,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
     @distributed_trace
     def get(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -355,6 +378,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         Gets the details of the specified storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -380,11 +408,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cls: ClsType[_models.StorageClassificationMapping] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             storage_classification_name=storage_classification_name,
             storage_classification_mapping_name=storage_classification_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -412,6 +440,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
     def _create_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -442,11 +472,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             _json = self._serialize.body(pairing_input, "StorageClassificationMappingInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             storage_classification_name=storage_classification_name,
             storage_classification_mapping_name=storage_classification_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -473,16 +503,23 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -495,6 +532,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to create a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -517,6 +559,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -529,6 +573,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to create a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -550,6 +599,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
     @distributed_trace
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -560,6 +611,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to create a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -587,6 +643,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 storage_classification_name=storage_classification_name,
                 storage_classification_mapping_name=storage_classification_mapping_name,
@@ -608,7 +666,9 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -626,6 +686,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
     def _delete_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -646,11 +708,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             storage_classification_name=storage_classification_name,
             storage_classification_mapping_name=storage_classification_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -674,16 +736,23 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         storage_classification_name: str,
         storage_classification_mapping_name: str,
@@ -693,6 +762,11 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
 
         The operation to delete a storage classification mapping.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param storage_classification_name: Storage classification name. Required.
@@ -713,6 +787,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 storage_classification_name=storage_classification_name,
                 storage_classification_mapping_name=storage_classification_mapping_name,
@@ -730,7 +806,9 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
                 return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -745,11 +823,18 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.StorageClassificationMapping"]:
+    def list(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.StorageClassificationMapping"]:
         """Gets the list of storage classification mappings objects under a vault.
 
         Lists the storage classification mappings in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either StorageClassificationMapping or the result of
          cls(response)
         :rtype:
@@ -774,8 +859,8 @@ class ReplicationStorageClassificationMappingsOperations:  # pylint: disable=nam
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,

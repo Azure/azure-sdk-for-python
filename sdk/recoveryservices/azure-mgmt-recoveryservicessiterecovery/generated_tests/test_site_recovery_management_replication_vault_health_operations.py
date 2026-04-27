@@ -22,7 +22,9 @@ class TestSiteRecoveryManagementReplicationVaultHealthOperations(AzureMgmtRecord
     @recorded_by_proxy
     def test_replication_vault_health_get(self, resource_group):
         response = self.client.replication_vault_health.get(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -32,7 +34,9 @@ class TestSiteRecoveryManagementReplicationVaultHealthOperations(AzureMgmtRecord
     @recorded_by_proxy
     def test_replication_vault_health_begin_refresh(self, resource_group):
         response = self.client.replication_vault_health.begin_refresh(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

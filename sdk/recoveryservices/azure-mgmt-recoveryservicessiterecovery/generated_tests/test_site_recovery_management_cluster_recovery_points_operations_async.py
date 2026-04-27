@@ -23,11 +23,12 @@ class TestSiteRecoveryManagementClusterRecoveryPointsOperationsAsync(AzureMgmtRe
     @recorded_by_proxy_async
     async def test_cluster_recovery_points_list_by_replication_protection_cluster(self, resource_group):
         response = self.client.cluster_recovery_points.list_by_replication_protection_cluster(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
             protection_container_name="str",
             replication_protection_cluster_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

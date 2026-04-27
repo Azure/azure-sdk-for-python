@@ -22,7 +22,9 @@ class TestSiteRecoveryManagementReplicationJobsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_replication_jobs_list(self, resource_group):
         response = self.client.replication_jobs.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,8 +34,10 @@ class TestSiteRecoveryManagementReplicationJobsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_replication_jobs_get(self, resource_group):
         response = self.client.replication_jobs.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -43,8 +47,10 @@ class TestSiteRecoveryManagementReplicationJobsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_replication_jobs_begin_cancel(self, resource_group):
         response = self.client.replication_jobs.begin_cancel(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -54,8 +60,10 @@ class TestSiteRecoveryManagementReplicationJobsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_replication_jobs_begin_restart(self, resource_group):
         response = self.client.replication_jobs.begin_restart(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             job_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -65,9 +73,11 @@ class TestSiteRecoveryManagementReplicationJobsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_replication_jobs_begin_resume(self, resource_group):
         response = self.client.replication_jobs.begin_resume(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             job_name="str",
             resume_job_params={"properties": {"comments": "str"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -77,6 +87,8 @@ class TestSiteRecoveryManagementReplicationJobsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_replication_jobs_begin_export(self, resource_group):
         response = self.client.replication_jobs.begin_export(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             job_query_parameter={
                 "affectedObjectTypes": "str",
                 "endTime": "str",
@@ -87,7 +99,7 @@ class TestSiteRecoveryManagementReplicationJobsOperations(AzureMgmtRecordedTestC
                 "startTime": "str",
                 "timezoneOffset": 0.0,
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

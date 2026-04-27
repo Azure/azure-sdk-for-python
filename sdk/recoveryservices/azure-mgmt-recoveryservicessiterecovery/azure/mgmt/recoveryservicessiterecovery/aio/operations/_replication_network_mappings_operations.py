@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -32,7 +32,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_network_mappings_operations import (
     build_create_request,
     build_delete_request,
@@ -44,7 +44,8 @@ from ...operations._replication_network_mappings_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationNetworkMappingsOperations:
@@ -70,13 +71,18 @@ class ReplicationNetworkMappingsOperations:
 
     @distributed_trace
     def list_by_replication_networks(
-        self, fabric_name: str, network_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkMapping"]:
+        self, resource_group_name: str, resource_name: str, fabric_name: str, network_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.NetworkMapping"]:
         """Gets all the network mappings under a network.
 
         Lists all ASR network mappings for the specified network.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -103,10 +109,10 @@ class ReplicationNetworkMappingsOperations:
             if not next_link:
 
                 _request = build_list_by_replication_networks_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     network_name=network_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -157,13 +163,24 @@ class ReplicationNetworkMappingsOperations:
 
     @distributed_trace_async
     async def get(
-        self, fabric_name: str, network_name: str, network_mapping_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        network_name: str,
+        network_mapping_name: str,
+        **kwargs: Any
     ) -> _models.NetworkMapping:
         """Gets network mapping by name.
 
         Gets the details of an ASR network mapping.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -188,11 +205,11 @@ class ReplicationNetworkMappingsOperations:
         cls: ClsType[_models.NetworkMapping] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             network_name=network_name,
             network_mapping_name=network_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -220,6 +237,8 @@ class ReplicationNetworkMappingsOperations:
 
     async def _create_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -250,11 +269,11 @@ class ReplicationNetworkMappingsOperations:
             _json = self._serialize.body(input, "CreateNetworkMappingInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             network_name=network_name,
             network_mapping_name=network_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -281,16 +300,23 @@ class ReplicationNetworkMappingsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -303,7 +329,12 @@ class ReplicationNetworkMappingsOperations:
 
         The operation to create an ASR network mapping.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -324,6 +355,8 @@ class ReplicationNetworkMappingsOperations:
     @overload
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -336,7 +369,12 @@ class ReplicationNetworkMappingsOperations:
 
         The operation to create an ASR network mapping.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -357,6 +395,8 @@ class ReplicationNetworkMappingsOperations:
     @distributed_trace_async
     async def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -367,7 +407,12 @@ class ReplicationNetworkMappingsOperations:
 
         The operation to create an ASR network mapping.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -394,6 +439,8 @@ class ReplicationNetworkMappingsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 network_name=network_name,
                 network_mapping_name=network_mapping_name,
@@ -415,7 +462,9 @@ class ReplicationNetworkMappingsOperations:
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -431,120 +480,10 @@ class ReplicationNetworkMappingsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _delete_initial(
-        self, fabric_name: str, network_name: str, network_mapping_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_delete_request(
-            fabric_name=fabric_name,
-            network_name=network_name,
-            network_mapping_name=network_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_delete(
-        self, fabric_name: str, network_name: str, network_mapping_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Delete network mapping.
-
-        The operation to delete a network mapping.
-
-        :param fabric_name: Primary fabric name. Required.
-        :type fabric_name: str
-        :param network_name: Primary network name. Required.
-        :type network_name: str
-        :param network_mapping_name: ARM Resource Name for network mapping. Required.
-        :type network_mapping_name: str
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                fabric_name=fabric_name,
-                network_name=network_name,
-                network_mapping_name=network_mapping_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
     async def _update_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -575,11 +514,11 @@ class ReplicationNetworkMappingsOperations:
             _json = self._serialize.body(input, "UpdateNetworkMappingInput")
 
         _request = build_update_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             network_name=network_name,
             network_mapping_name=network_mapping_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -606,16 +545,23 @@ class ReplicationNetworkMappingsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     async def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -628,7 +574,12 @@ class ReplicationNetworkMappingsOperations:
 
         The operation to update an ASR network mapping.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -649,6 +600,8 @@ class ReplicationNetworkMappingsOperations:
     @overload
     async def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -661,7 +614,12 @@ class ReplicationNetworkMappingsOperations:
 
         The operation to update an ASR network mapping.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -682,6 +640,8 @@ class ReplicationNetworkMappingsOperations:
     @distributed_trace_async
     async def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         network_name: str,
         network_mapping_name: str,
@@ -692,7 +652,12 @@ class ReplicationNetworkMappingsOperations:
 
         The operation to update an ASR network mapping.
 
-        :param fabric_name: Primary fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param network_name: Primary network name. Required.
         :type network_name: str
@@ -719,6 +684,8 @@ class ReplicationNetworkMappingsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 network_name=network_name,
                 network_mapping_name=network_mapping_name,
@@ -740,7 +707,9 @@ class ReplicationNetworkMappingsOperations:
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -756,12 +725,157 @@ class ReplicationNetworkMappingsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        network_name: str,
+        network_mapping_name: str,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            network_name=network_name,
+            network_mapping_name=network_mapping_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        network_name: str,
+        network_mapping_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete network mapping.
+
+        The operation to delete a network mapping.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param network_name: Primary network name. Required.
+        :type network_name: str
+        :param network_mapping_name: Network mapping name. Required.
+        :type network_mapping_name: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                network_name=network_name,
+                network_mapping_name=network_mapping_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.NetworkMapping"]:
+    def list(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.NetworkMapping"]:
         """Gets all the network mappings under a vault.
 
         Lists all ASR network mappings in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either NetworkMapping or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.NetworkMapping]
@@ -785,8 +899,8 @@ class ReplicationNetworkMappingsOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,

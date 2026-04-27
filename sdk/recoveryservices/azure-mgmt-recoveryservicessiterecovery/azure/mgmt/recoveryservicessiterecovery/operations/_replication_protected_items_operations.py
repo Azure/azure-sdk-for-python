@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -33,27 +33,28 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_list_by_replication_protection_containers_request(  # pylint: disable=name-too-long
-    fabric_name: str,
-    protection_container_name: str,
     resource_group_name: str,
     resource_name: str,
+    fabric_name: str,
+    protection_container_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,9 +63,11 @@ def build_list_by_replication_protection_containers_request(  # pylint: disable=
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
     }
@@ -81,18 +84,18 @@ def build_list_by_replication_protection_containers_request(  # pylint: disable=
 
 
 def build_get_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,9 +104,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -123,18 +128,18 @@ def build_get_request(
 
 
 def build_create_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -144,9 +149,11 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -167,55 +174,19 @@ def build_create_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purge_request(
-    fabric_name: str,
-    protection_container_name: str,
-    replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
-        "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
-        "replicatedProtectedItemName": _SERIALIZER.url(
-            "replicated_protected_item_name", replicated_protected_item_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
 def build_update_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -225,9 +196,11 @@ def build_update_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -248,19 +221,57 @@ def build_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_add_disks_request(
+def build_purge_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
+        "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
+        "replicatedProtectedItemName": _SERIALIZER.url(
+            "replicated_protected_item_name", replicated_protected_item_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_add_disks_request(
     resource_group_name: str,
     resource_name: str,
+    fabric_name: str,
+    protection_container_name: str,
+    replicated_protected_item_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -270,9 +281,11 @@ def build_add_disks_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/addDisks",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -294,18 +307,18 @@ def build_add_disks_request(
 
 
 def build_apply_recovery_point_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -315,9 +328,11 @@ def build_apply_recovery_point_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/applyRecoveryPoint",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -339,18 +354,18 @@ def build_apply_recovery_point_request(
 
 
 def build_failover_cancel_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -359,9 +374,11 @@ def build_failover_cancel_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/failoverCancel",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -381,18 +398,18 @@ def build_failover_cancel_request(
 
 
 def build_failover_commit_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -401,9 +418,11 @@ def build_failover_commit_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/failoverCommit",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -423,18 +442,18 @@ def build_failover_commit_request(
 
 
 def build_planned_failover_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -444,9 +463,11 @@ def build_planned_failover_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/plannedFailover",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -467,19 +488,122 @@ def build_planned_failover_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_request(
+def build_reprotect_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/reProtect",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
+        "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
+        "replicatedProtectedItemName": _SERIALIZER.url(
+            "replicated_protected_item_name", replicated_protected_item_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_reinstall_mobility_service_request(
+    resource_group_name: str,
+    resource_name: str,
+    fabric_name: str,
+    protection_container_name: str,
+    replicated_protected_item_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/reinstallMobilityService",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url(
+            "resource_name", resource_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
+        ),
+        "fabricName": _SERIALIZER.url(
+            "fabric_name", fabric_name, "str", pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$"
+        ),
+        "protectionContainerName": _SERIALIZER.url(
+            "protection_container_name", protection_container_name, "str", pattern=r".*"
+        ),
+        "replicatedProtectedItemName": _SERIALIZER.url(
+            "replicated_protected_item_name",
+            replicated_protected_item_name,
+            "str",
+            pattern=r"^[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9]$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_delete_request(
+    resource_group_name: str,
+    resource_name: str,
+    fabric_name: str,
+    protection_container_name: str,
+    replicated_protected_item_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -487,9 +611,11 @@ def build_delete_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/remove",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -510,18 +636,18 @@ def build_delete_request(
 
 
 def build_remove_disks_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -531,9 +657,11 @@ def build_remove_disks_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/removeDisks",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -555,18 +683,18 @@ def build_remove_disks_request(
 
 
 def build_repair_replication_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -575,9 +703,11 @@ def build_repair_replication_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/repairReplication",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -591,69 +721,24 @@ def build_repair_replication_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_reprotect_request(
-    fabric_name: str,
-    protection_container_name: str,
-    replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/reProtect",
-    )
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
-        "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
-        "replicatedProtectedItemName": _SERIALIZER.url(
-            "replicated_protected_item_name", replicated_protected_item_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_resolve_health_errors_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -663,9 +748,11 @@ def build_resolve_health_errors_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/resolveHealthErrors",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -687,18 +774,18 @@ def build_resolve_health_errors_request(
 
 
 def build_switch_provider_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -708,9 +795,11 @@ def build_switch_provider_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/switchProvider",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -732,18 +821,18 @@ def build_switch_provider_request(
 
 
 def build_test_failover_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -753,9 +842,11 @@ def build_test_failover_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/testFailover",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -777,18 +868,18 @@ def build_test_failover_request(
 
 
 def build_test_failover_cleanup_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -798,9 +889,11 @@ def build_test_failover_cleanup_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/testFailoverCleanup",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -822,18 +915,18 @@ def build_test_failover_cleanup_request(
 
 
 def build_unplanned_failover_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -843,9 +936,11 @@ def build_unplanned_failover_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/unplannedFailover",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -867,18 +962,18 @@ def build_unplanned_failover_request(
 
 
 def build_update_appliance_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -888,9 +983,11 @@ def build_update_appliance_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/updateAppliance",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -912,18 +1009,18 @@ def build_update_appliance_request(
 
 
 def build_update_mobility_service_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     replicated_protected_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -933,9 +1030,11 @@ def build_update_mobility_service_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectedItems/{replicatedProtectedItemName}/updateMobilityService",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "replicatedProtectedItemName": _SERIALIZER.url(
@@ -968,7 +1067,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -977,9 +1076,11 @@ def build_list_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationProtectedItems",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1009,7 +1110,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -1020,12 +1121,22 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def list_by_replication_protection_containers(  # pylint: disable=name-too-long
-        self, fabric_name: str, protection_container_name: str, **kwargs: Any
-    ) -> Iterable["_models.ReplicationProtectedItem"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ReplicationProtectedItem"]:
         """Gets the list of Replication protected items.
 
         Gets the list of ASR replication protected items in the protection container.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1054,10 +1165,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             if not next_link:
 
                 _request = build_list_by_replication_protection_containers_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -1108,13 +1219,24 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def get(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
     ) -> _models.ReplicationProtectedItem:
         """Gets the details of a Replication protected item.
 
         Gets the details of an ASR replication protected item.
 
-        :param fabric_name: Fabric unique name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -1139,11 +1261,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -1171,6 +1293,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _create_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1201,11 +1325,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(input, "EnableProtectionInput")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1232,16 +1356,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1254,11 +1385,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to create an ASR replication protected item (Enable replication).
 
-        :param fabric_name: Name of the fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: A name for the replication protected item. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param input: Enable Protection Input. Required.
         :type input: ~azure.mgmt.recoveryservicessiterecovery.models.EnableProtectionInput
@@ -1275,6 +1411,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1287,11 +1425,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to create an ASR replication protected item (Enable replication).
 
-        :param fabric_name: Name of the fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: A name for the replication protected item. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param input: Enable Protection Input. Required.
         :type input: IO[bytes]
@@ -1308,6 +1451,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1318,11 +1463,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to create an ASR replication protected item (Enable replication).
 
-        :param fabric_name: Name of the fabric. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: A name for the replication protected item. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param input: Enable Protection Input. Is either a EnableProtectionInput type or a IO[bytes]
          type. Required.
@@ -1344,6 +1494,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -1365,7 +1517,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1381,122 +1535,10 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _purge_initial(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_purge_request(
-            fabric_name=fabric_name,
-            protection_container_name=protection_container_name,
-            replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_purge(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Purges protection.
-
-        The operation to delete or purge a replication protected item. This operation will force delete
-        the replication protected item. Use the remove operation on replication protected item to
-        perform a clean disable replication for the item.
-
-        :param fabric_name: Fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: Replication protected item name. Required.
-        :type replicated_protected_item_name: str
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._purge_initial(
-                fabric_name=fabric_name,
-                protection_container_name=protection_container_name,
-                replicated_protected_item_name=replicated_protected_item_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
     def _update_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1527,11 +1569,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(update_protection_input, "UpdateReplicationProtectedItemInput")
 
         _request = build_update_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1558,16 +1600,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1580,6 +1629,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update the recovery settings of an ASR replication protected item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1602,6 +1656,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1614,6 +1670,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update the recovery settings of an ASR replication protected item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1635,6 +1696,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_update(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1645,6 +1708,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update the recovery settings of an ASR replication protected item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -1673,6 +1741,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -1694,7 +1764,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1710,8 +1782,150 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    def _purge_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_purge_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            protection_container_name=protection_container_name,
+            replicated_protected_item_name=replicated_protected_item_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_purge(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Purges protection.
+
+        The operation to delete or purge a replication protected item. This operation will force delete
+        the replication protected item. Use the remove operation on replication protected item to
+        perform a clean disable replication for the item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._purge_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                protection_container_name=protection_container_name,
+                replicated_protected_item_name=replicated_protected_item_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
     def _add_disks_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1742,11 +1956,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(add_disks_input, "AddDisksInput")
 
         _request = build_add_disks_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1773,16 +1987,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_add_disks(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1795,7 +2016,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to add disks(s) to the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -1816,6 +2042,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_add_disks(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1828,7 +2056,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to add disks(s) to the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -1849,6 +2082,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_add_disks(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1859,7 +2094,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to add disks(s) to the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -1886,6 +2126,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._add_disks_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -1907,7 +2149,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1925,6 +2169,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _apply_recovery_point_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -1955,11 +2201,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(apply_recovery_point_input, "ApplyRecoveryPointInput")
 
         _request = build_apply_recovery_point_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -1986,16 +2232,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_apply_recovery_point(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -2008,11 +2261,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to change the recovery point of a failed over replication protected item.
 
-        :param fabric_name: The ARM fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: The protection container name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: The replicated protected item name. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param apply_recovery_point_input: The ApplyRecoveryPointInput. Required.
         :type apply_recovery_point_input:
@@ -2030,6 +2288,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_apply_recovery_point(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -2042,11 +2302,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to change the recovery point of a failed over replication protected item.
 
-        :param fabric_name: The ARM fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: The protection container name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: The replicated protected item name. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param apply_recovery_point_input: The ApplyRecoveryPointInput. Required.
         :type apply_recovery_point_input: IO[bytes]
@@ -2063,6 +2328,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_apply_recovery_point(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -2073,11 +2340,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to change the recovery point of a failed over replication protected item.
 
-        :param fabric_name: The ARM fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
-        :param protection_container_name: The protection container name. Required.
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: The replicated protected item name. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param apply_recovery_point_input: The ApplyRecoveryPointInput. Is either a
          ApplyRecoveryPointInput type or a IO[bytes] type. Required.
@@ -2100,6 +2372,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._apply_recovery_point_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -2121,7 +2395,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2138,7 +2414,13 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         )
 
     def _failover_cancel_initial(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2155,11 +2437,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_failover_cancel_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -2183,22 +2465,38 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
     def begin_failover_cancel(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute cancel failover.
 
         Operation to cancel the failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -2220,6 +2518,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._failover_cancel_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -2239,7 +2539,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2256,7 +2558,13 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         )
 
     def _failover_commit_initial(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2273,11 +2581,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_failover_commit_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -2301,22 +2609,38 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
     def begin_failover_commit(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
     ) -> LROPoller[_models.ReplicationProtectedItem]:
         """Execute commit failover.
 
         Operation to commit the failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -2338,6 +2662,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._failover_commit_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -2357,7 +2683,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2375,6 +2703,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _planned_failover_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -2405,11 +2735,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(failover_input, "PlannedFailoverInput")
 
         _request = build_planned_failover_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -2436,16 +2766,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_planned_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -2458,7 +2795,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a planned failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -2479,6 +2821,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_planned_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -2491,7 +2835,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a planned failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -2512,6 +2861,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_planned_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -2522,7 +2873,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a planned failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -2549,6 +2905,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._planned_failover_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -2570,546 +2928,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.ReplicationProtectedItem].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
             )
-        return LROPoller[_models.ReplicationProtectedItem](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _delete_initial(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        disable_protection_input: Union[_models.DisableProtectionInput, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(disable_protection_input, (IOBase, bytes)):
-            _content = disable_protection_input
-        else:
-            _json = self._serialize.body(disable_protection_input, "DisableProtectionInput")
-
-        _request = build_delete_request(
-            fabric_name=fabric_name,
-            protection_container_name=protection_container_name,
-            replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_delete(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        disable_protection_input: _models.DisableProtectionInput,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Disables protection.
-
-        The operation to disable replication on a replication protected item. This will also remove the
-        item.
-
-        :param fabric_name: Fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: Replication protected item name. Required.
-        :type replicated_protected_item_name: str
-        :param disable_protection_input: Disable protection input. Required.
-        :type disable_protection_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.DisableProtectionInput
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_delete(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        disable_protection_input: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Disables protection.
-
-        The operation to disable replication on a replication protected item. This will also remove the
-        item.
-
-        :param fabric_name: Fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: Replication protected item name. Required.
-        :type replicated_protected_item_name: str
-        :param disable_protection_input: Disable protection input. Required.
-        :type disable_protection_input: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_delete(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        disable_protection_input: Union[_models.DisableProtectionInput, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Disables protection.
-
-        The operation to disable replication on a replication protected item. This will also remove the
-        item.
-
-        :param fabric_name: Fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: Replication protected item name. Required.
-        :type replicated_protected_item_name: str
-        :param disable_protection_input: Disable protection input. Is either a DisableProtectionInput
-         type or a IO[bytes] type. Required.
-        :type disable_protection_input:
-         ~azure.mgmt.recoveryservicessiterecovery.models.DisableProtectionInput or IO[bytes]
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                fabric_name=fabric_name,
-                protection_container_name=protection_container_name,
-                replicated_protected_item_name=replicated_protected_item_name,
-                disable_protection_input=disable_protection_input,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    def _remove_disks_initial(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        remove_disks_input: Union[_models.RemoveDisksInput, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(remove_disks_input, (IOBase, bytes)):
-            _content = remove_disks_input
-        else:
-            _json = self._serialize.body(remove_disks_input, "RemoveDisksInput")
-
-        _request = build_remove_disks_request(
-            fabric_name=fabric_name,
-            protection_container_name=protection_container_name,
-            replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_remove_disks(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        remove_disks_input: _models.RemoveDisksInput,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ReplicationProtectedItem]:
-        """Removes disk(s).
-
-        Operation to remove disk(s) from the replication protected item.
-
-        :param fabric_name: Unique fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: Replication protected item name. Required.
-        :type replicated_protected_item_name: str
-        :param remove_disks_input: Remove disks input. Required.
-        :type remove_disks_input: ~azure.mgmt.recoveryservicessiterecovery.models.RemoveDisksInput
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_remove_disks(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        remove_disks_input: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ReplicationProtectedItem]:
-        """Removes disk(s).
-
-        Operation to remove disk(s) from the replication protected item.
-
-        :param fabric_name: Unique fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: Replication protected item name. Required.
-        :type replicated_protected_item_name: str
-        :param remove_disks_input: Remove disks input. Required.
-        :type remove_disks_input: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_remove_disks(
-        self,
-        fabric_name: str,
-        protection_container_name: str,
-        replicated_protected_item_name: str,
-        remove_disks_input: Union[_models.RemoveDisksInput, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.ReplicationProtectedItem]:
-        """Removes disk(s).
-
-        Operation to remove disk(s) from the replication protected item.
-
-        :param fabric_name: Unique fabric name. Required.
-        :type fabric_name: str
-        :param protection_container_name: Protection container name. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: Replication protected item name. Required.
-        :type replicated_protected_item_name: str
-        :param remove_disks_input: Remove disks input. Is either a RemoveDisksInput type or a IO[bytes]
-         type. Required.
-        :type remove_disks_input: ~azure.mgmt.recoveryservicessiterecovery.models.RemoveDisksInput or
-         IO[bytes]
-        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._remove_disks_initial(
-                fabric_name=fabric_name,
-                protection_container_name=protection_container_name,
-                replicated_protected_item_name=replicated_protected_item_name,
-                remove_disks_input=remove_disks_input,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ReplicationProtectedItem", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.ReplicationProtectedItem].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.ReplicationProtectedItem](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _repair_replication_initial(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_repair_replication_request(
-            fabric_name=fabric_name,
-            protection_container_name=protection_container_name,
-            replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_repair_replication(
-        self, fabric_name: str, protection_container_name: str, replicated_protected_item_name: str, **kwargs: Any
-    ) -> LROPoller[_models.ReplicationProtectedItem]:
-        """Resynchronize or repair replication.
-
-        The operation to start resynchronize/repair replication for a replication protected item
-        requiring resynchronization.
-
-        :param fabric_name: The name of the fabric. Required.
-        :type fabric_name: str
-        :param protection_container_name: The name of the container. Required.
-        :type protection_container_name: str
-        :param replicated_protected_item_name: The name of the replication protected item. Required.
-        :type replicated_protected_item_name: str
-        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._repair_replication_initial(
-                fabric_name=fabric_name,
-                protection_container_name=protection_container_name,
-                replicated_protected_item_name=replicated_protected_item_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ReplicationProtectedItem", pipeline_response.http_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3127,6 +2948,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _reprotect_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3157,11 +2980,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(reprotect_input, "ReverseReplicationInput")
 
         _request = build_reprotect_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -3188,16 +3011,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_reprotect(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3210,7 +3040,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to reprotect or reverse replicate a failed over replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3231,6 +3066,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_reprotect(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3243,7 +3080,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to reprotect or reverse replicate a failed over replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3264,6 +3106,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_reprotect(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3274,7 +3118,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to reprotect or reverse replicate a failed over replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3301,6 +3150,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._reprotect_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -3322,7 +3173,896 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ReplicationProtectedItem].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ReplicationProtectedItem](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    def _reinstall_mobility_service_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        update_mobility_service_request: Union[_models.ReinstallMobilityServiceRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(update_mobility_service_request, (IOBase, bytes)):
+            _content = update_mobility_service_request
+        else:
+            _json = self._serialize.body(update_mobility_service_request, "ReinstallMobilityServiceRequest")
+
+        _request = build_reinstall_mobility_service_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            protection_container_name=protection_container_name,
+            replicated_protected_item_name=replicated_protected_item_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_reinstall_mobility_service(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        update_mobility_service_request: _models.ReinstallMobilityServiceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ReplicationProtectedItem]:
+        """Reinstall the mobility service on a protected item.
+
+        The operation to reinstall the installed mobility service software on a replication protected
+        item to the latest available version.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: The name of the protected item on which the agent is to
+         be updated. Required.
+        :type replicated_protected_item_name: str
+        :param update_mobility_service_request: Request to update the mobility service on the protected
+         item. Required.
+        :type update_mobility_service_request:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ReinstallMobilityServiceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_reinstall_mobility_service(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        update_mobility_service_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ReplicationProtectedItem]:
+        """Reinstall the mobility service on a protected item.
+
+        The operation to reinstall the installed mobility service software on a replication protected
+        item to the latest available version.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: The name of the protected item on which the agent is to
+         be updated. Required.
+        :type replicated_protected_item_name: str
+        :param update_mobility_service_request: Request to update the mobility service on the protected
+         item. Required.
+        :type update_mobility_service_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_reinstall_mobility_service(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        update_mobility_service_request: Union[_models.ReinstallMobilityServiceRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ReplicationProtectedItem]:
+        """Reinstall the mobility service on a protected item.
+
+        The operation to reinstall the installed mobility service software on a replication protected
+        item to the latest available version.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: The name of the protected item on which the agent is to
+         be updated. Required.
+        :type replicated_protected_item_name: str
+        :param update_mobility_service_request: Request to update the mobility service on the protected
+         item. Is either a ReinstallMobilityServiceRequest type or a IO[bytes] type. Required.
+        :type update_mobility_service_request:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ReinstallMobilityServiceRequest or IO[bytes]
+        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._reinstall_mobility_service_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                protection_container_name=protection_container_name,
+                replicated_protected_item_name=replicated_protected_item_name,
+                update_mobility_service_request=update_mobility_service_request,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("ReplicationProtectedItem", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ReplicationProtectedItem].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ReplicationProtectedItem](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    def _delete_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        disable_protection_input: Union[_models.DisableProtectionInput, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(disable_protection_input, (IOBase, bytes)):
+            _content = disable_protection_input
+        else:
+            _json = self._serialize.body(disable_protection_input, "DisableProtectionInput")
+
+        _request = build_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            protection_container_name=protection_container_name,
+            replicated_protected_item_name=replicated_protected_item_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_delete(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        disable_protection_input: _models.DisableProtectionInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Disables protection.
+
+        The operation to disable replication on a replication protected item. This will also remove the
+        item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :param disable_protection_input: Disable protection input. Required.
+        :type disable_protection_input:
+         ~azure.mgmt.recoveryservicessiterecovery.models.DisableProtectionInput
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_delete(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        disable_protection_input: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Disables protection.
+
+        The operation to disable replication on a replication protected item. This will also remove the
+        item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :param disable_protection_input: Disable protection input. Required.
+        :type disable_protection_input: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_delete(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        disable_protection_input: Union[_models.DisableProtectionInput, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Disables protection.
+
+        The operation to disable replication on a replication protected item. This will also remove the
+        item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :param disable_protection_input: Disable protection input. Is either a DisableProtectionInput
+         type or a IO[bytes] type. Required.
+        :type disable_protection_input:
+         ~azure.mgmt.recoveryservicessiterecovery.models.DisableProtectionInput or IO[bytes]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                protection_container_name=protection_container_name,
+                replicated_protected_item_name=replicated_protected_item_name,
+                disable_protection_input=disable_protection_input,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    def _remove_disks_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        remove_disks_input: Union[_models.RemoveDisksInput, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(remove_disks_input, (IOBase, bytes)):
+            _content = remove_disks_input
+        else:
+            _json = self._serialize.body(remove_disks_input, "RemoveDisksInput")
+
+        _request = build_remove_disks_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            protection_container_name=protection_container_name,
+            replicated_protected_item_name=replicated_protected_item_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_remove_disks(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        remove_disks_input: _models.RemoveDisksInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ReplicationProtectedItem]:
+        """Removes disk(s).
+
+        Operation to remove disk(s) from the replication protected item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :param remove_disks_input: Remove disks input. Required.
+        :type remove_disks_input: ~azure.mgmt.recoveryservicessiterecovery.models.RemoveDisksInput
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_remove_disks(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        remove_disks_input: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ReplicationProtectedItem]:
+        """Removes disk(s).
+
+        Operation to remove disk(s) from the replication protected item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :param remove_disks_input: Remove disks input. Required.
+        :type remove_disks_input: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_remove_disks(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        remove_disks_input: Union[_models.RemoveDisksInput, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ReplicationProtectedItem]:
+        """Removes disk(s).
+
+        Operation to remove disk(s) from the replication protected item.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :param remove_disks_input: Remove disks input. Is either a RemoveDisksInput type or a IO[bytes]
+         type. Required.
+        :type remove_disks_input: ~azure.mgmt.recoveryservicessiterecovery.models.RemoveDisksInput or
+         IO[bytes]
+        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._remove_disks_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                protection_container_name=protection_container_name,
+                replicated_protected_item_name=replicated_protected_item_name,
+                remove_disks_input=remove_disks_input,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("ReplicationProtectedItem", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ReplicationProtectedItem].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ReplicationProtectedItem](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    def _repair_replication_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_repair_replication_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            fabric_name=fabric_name,
+            protection_container_name=protection_container_name,
+            replicated_protected_item_name=replicated_protected_item_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_repair_replication(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        replicated_protected_item_name: str,
+        **kwargs: Any
+    ) -> LROPoller[_models.ReplicationProtectedItem]:
+        """Resynchronize or repair replication.
+
+        The operation to start resynchronize/repair replication for a replication protected item
+        requiring resynchronization.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
+        :type protection_container_name: str
+        :param replicated_protected_item_name: Replication protected item name. Required.
+        :type replicated_protected_item_name: str
+        :return: An instance of LROPoller that returns either ReplicationProtectedItem or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationProtectedItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._repair_replication_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                fabric_name=fabric_name,
+                protection_container_name=protection_container_name,
+                replicated_protected_item_name=replicated_protected_item_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("ReplicationProtectedItem", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3340,6 +4080,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _resolve_health_errors_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3370,11 +4112,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(resolve_health_input, "ResolveHealthInput")
 
         _request = build_resolve_health_errors_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -3401,16 +4143,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_resolve_health_errors(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3423,7 +4172,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to resolve health issues of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3444,6 +4198,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_resolve_health_errors(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3456,7 +4212,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to resolve health issues of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3477,6 +4238,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_resolve_health_errors(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3487,7 +4250,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to resolve health issues of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3514,6 +4282,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._resolve_health_errors_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -3535,7 +4305,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3553,6 +4325,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _switch_provider_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3583,11 +4357,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(switch_provider_input, "SwitchProviderInput")
 
         _request = build_switch_provider_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -3614,16 +4388,25 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_switch_provider(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3636,7 +4419,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a switch provider of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3658,6 +4446,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_switch_provider(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3670,7 +4460,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a switch provider of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3691,6 +4486,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_switch_provider(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3701,7 +4498,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a switch provider of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3728,6 +4530,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._switch_provider_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -3769,6 +4573,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _test_failover_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3799,11 +4605,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(testfailover_input, "TestFailoverInput")
 
         _request = build_test_failover_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -3830,16 +4636,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_test_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3852,7 +4665,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to perform a test failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3873,6 +4691,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_test_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3885,7 +4705,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to perform a test failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3906,6 +4731,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_test_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -3916,7 +4743,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to perform a test failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -3943,6 +4775,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._test_failover_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -3964,7 +4798,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3982,6 +4818,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _test_failover_cleanup_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4012,11 +4850,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(cleanup_input, "TestFailoverCleanupInput")
 
         _request = build_test_failover_cleanup_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -4043,16 +4881,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_test_failover_cleanup(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4065,7 +4910,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to clean up the test failover of a replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -4086,6 +4936,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_test_failover_cleanup(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4098,7 +4950,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to clean up the test failover of a replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -4119,6 +4976,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_test_failover_cleanup(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4129,7 +4988,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to clean up the test failover of a replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -4156,6 +5020,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._test_failover_cleanup_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -4177,7 +5043,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4195,6 +5063,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _unplanned_failover_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4225,11 +5095,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(failover_input, "UnplannedFailoverInput")
 
         _request = build_unplanned_failover_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -4256,16 +5126,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_unplanned_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4278,7 +5155,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -4299,6 +5181,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_unplanned_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4311,7 +5195,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -4332,6 +5221,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_unplanned_failover(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4342,7 +5233,12 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         Operation to initiate a failover of the replication protected item.
 
-        :param fabric_name: Unique fabric name. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
@@ -4369,6 +5265,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._unplanned_failover_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -4390,7 +5288,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4408,6 +5308,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _update_appliance_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4438,11 +5340,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(appliance_update_input, "UpdateApplianceForReplicationProtectedItemInput")
 
         _request = build_update_appliance_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -4469,16 +5371,23 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @overload
     def begin_update_appliance(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4491,6 +5400,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update appliance of an ASR replication protected item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -4513,6 +5427,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_update_appliance(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4525,6 +5441,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update appliance of an ASR replication protected item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -4546,6 +5467,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_update_appliance(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4556,6 +5479,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
         The operation to update appliance of an ASR replication protected item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -4584,6 +5512,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._update_appliance_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -4605,7 +5535,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4623,6 +5555,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     def _update_mobility_service_initial(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4653,11 +5587,11 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             _json = self._serialize.body(update_mobility_service_request, "UpdateMobilityServiceRequest")
 
         _request = build_update_mobility_service_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             replicated_protected_item_name=replicated_protected_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -4687,6 +5621,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         response_headers = {}
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -4698,6 +5633,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_update_mobility_service(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4711,13 +5648,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         The operation to update(push update) the installed mobility service software on a replication
         protected item to the latest available version.
 
-        :param fabric_name: The name of the fabric containing the protected item. Required.
-        :type fabric_name: str
-        :param protection_container_name: The name of the container containing the protected item.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: The name of the protected item on which the agent is to
-         be updated. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param update_mobility_service_request: Request to update the mobility service on the protected
          item. Required.
@@ -4736,6 +5676,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @overload
     def begin_update_mobility_service(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4749,13 +5691,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         The operation to update(push update) the installed mobility service software on a replication
         protected item to the latest available version.
 
-        :param fabric_name: The name of the fabric containing the protected item. Required.
-        :type fabric_name: str
-        :param protection_container_name: The name of the container containing the protected item.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: The name of the protected item on which the agent is to
-         be updated. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param update_mobility_service_request: Request to update the mobility service on the protected
          item. Required.
@@ -4773,6 +5718,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
     @distributed_trace
     def begin_update_mobility_service(
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         replicated_protected_item_name: str,
@@ -4784,13 +5731,16 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         The operation to update(push update) the installed mobility service software on a replication
         protected item to the latest available version.
 
-        :param fabric_name: The name of the fabric containing the protected item. Required.
-        :type fabric_name: str
-        :param protection_container_name: The name of the container containing the protected item.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param fabric_name: Fabric name. Required.
+        :type fabric_name: str
+        :param protection_container_name: Protection container name. Required.
         :type protection_container_name: str
-        :param replicated_protected_item_name: The name of the protected item on which the agent is to
-         be updated. Required.
+        :param replicated_protected_item_name: Replication protected item name. Required.
         :type replicated_protected_item_name: str
         :param update_mobility_service_request: Request to update the mobility service on the protected
          item. Is either a UpdateMobilityServiceRequest type or a IO[bytes] type. Required.
@@ -4813,6 +5763,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._update_mobility_service_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
                 fabric_name=fabric_name,
                 protection_container_name=protection_container_name,
                 replicated_protected_item_name=replicated_protected_item_name,
@@ -4854,12 +5806,22 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
 
     @distributed_trace
     def list(
-        self, skip_token: Optional[str] = None, filter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.ReplicationProtectedItem"]:
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        skip_token: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ReplicationProtectedItem"]:
         """Gets the list of replication protected items.
 
         Gets the list of ASR replication protected items in the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :param skip_token: The pagination token. Possible values: "FabricId" or "FabricId_CloudId" or
          null. Default value is None.
         :type skip_token: str
@@ -4889,8 +5851,8 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     skip_token=skip_token,
                     filter=filter,

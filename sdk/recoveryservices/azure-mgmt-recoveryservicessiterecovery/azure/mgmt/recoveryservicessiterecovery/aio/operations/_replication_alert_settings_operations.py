@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -28,7 +28,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_alert_settings_operations import (
     build_create_request,
     build_get_request,
@@ -37,7 +37,8 @@ from ...operations._replication_alert_settings_operations import (
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationAlertSettingsOperations:
@@ -62,11 +63,16 @@ class ReplicationAlertSettingsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Alert"]:
+    def list(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Alert"]:
         """Gets the list of configured email notification(alert) configurations.
 
         Gets the list of email notification(alert) configurations for the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :return: An iterator like instance of either Alert or the result of cls(response)
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.recoveryservicessiterecovery.models.Alert]
@@ -90,8 +96,8 @@ class ReplicationAlertSettingsOperations:
             if not next_link:
 
                 _request = build_list_request(
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -141,11 +147,18 @@ class ReplicationAlertSettingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(self, alert_setting_name: str, **kwargs: Any) -> _models.Alert:
+    async def get(
+        self, resource_group_name: str, resource_name: str, alert_setting_name: str, **kwargs: Any
+    ) -> _models.Alert:
         """Gets an email notification(alert) configuration.
 
         Gets the details of the specified email notification(alert) configuration.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param alert_setting_name: The name of the email notification configuration. Required.
         :type alert_setting_name: str
         :return: Alert or the result of cls(response)
@@ -167,9 +180,9 @@ class ReplicationAlertSettingsOperations:
         cls: ClsType[_models.Alert] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             alert_setting_name=alert_setting_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -198,6 +211,8 @@ class ReplicationAlertSettingsOperations:
     @overload
     async def create(
         self,
+        resource_group_name: str,
+        resource_name: str,
         alert_setting_name: str,
         request: _models.ConfigureAlertRequest,
         *,
@@ -208,7 +223,12 @@ class ReplicationAlertSettingsOperations:
 
         Create or update an email notification(alert) configuration.
 
-        :param alert_setting_name: The name of the email notification(alert) configuration. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param alert_setting_name: The name of the email notification configuration. Required.
         :type alert_setting_name: str
         :param request: The input to configure the email notification(alert). Required.
         :type request: ~azure.mgmt.recoveryservicessiterecovery.models.ConfigureAlertRequest
@@ -222,13 +242,25 @@ class ReplicationAlertSettingsOperations:
 
     @overload
     async def create(
-        self, alert_setting_name: str, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        alert_setting_name: str,
+        request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Alert:
         """Configures email notifications for this vault.
 
         Create or update an email notification(alert) configuration.
 
-        :param alert_setting_name: The name of the email notification(alert) configuration. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param alert_setting_name: The name of the email notification configuration. Required.
         :type alert_setting_name: str
         :param request: The input to configure the email notification(alert). Required.
         :type request: IO[bytes]
@@ -242,13 +274,23 @@ class ReplicationAlertSettingsOperations:
 
     @distributed_trace_async
     async def create(
-        self, alert_setting_name: str, request: Union[_models.ConfigureAlertRequest, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        alert_setting_name: str,
+        request: Union[_models.ConfigureAlertRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Alert:
         """Configures email notifications for this vault.
 
         Create or update an email notification(alert) configuration.
 
-        :param alert_setting_name: The name of the email notification(alert) configuration. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
+        :param alert_setting_name: The name of the email notification configuration. Required.
         :type alert_setting_name: str
         :param request: The input to configure the email notification(alert). Is either a
          ConfigureAlertRequest type or a IO[bytes] type. Required.
@@ -282,9 +324,9 @@ class ReplicationAlertSettingsOperations:
             _json = self._serialize.body(request, "ConfigureAlertRequest")
 
         _request = build_create_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             alert_setting_name=alert_setting_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,

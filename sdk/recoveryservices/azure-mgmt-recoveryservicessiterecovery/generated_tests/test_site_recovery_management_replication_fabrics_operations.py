@@ -22,7 +22,9 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_list(self, resource_group):
         response = self.client.replication_fabrics.list(
-            api_version="2025-01-01",
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,8 +34,10 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_get(self, resource_group):
         response = self.client.replication_fabrics.get(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -43,9 +47,11 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_begin_create(self, resource_group):
         response = self.client.replication_fabrics.begin_create(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             input={"properties": {"customDetails": "fabric_specific_creation_input"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -55,8 +61,10 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_begin_purge(self, resource_group):
         response = self.client.replication_fabrics.begin_purge(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,8 +74,10 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_begin_check_consistency(self, resource_group):
         response = self.client.replication_fabrics.begin_check_consistency(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -77,8 +87,10 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_begin_migrate_to_aad(self, resource_group):
         response = self.client.replication_fabrics.begin_migrate_to_aad(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -88,6 +100,8 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_begin_reassociate_gateway(self, resource_group):
         response = self.client.replication_fabrics.begin_reassociate_gateway(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
             failover_process_server_request={
                 "properties": {
@@ -98,7 +112,7 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
                     "vmsToMigrate": ["str"],
                 }
             },
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -108,20 +122,10 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_begin_delete(self, resource_group):
         response = self.client.replication_fabrics.begin_delete(
+            resource_group_name=resource_group.name,
+            resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_replication_fabrics_begin_renew_certificate(self, resource_group):
-        response = self.client.replication_fabrics.begin_renew_certificate(
-            fabric_name="str",
-            renew_certificate={"properties": {"renewCertificateType": "str"}},
-            api_version="2025-01-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -131,9 +135,24 @@ class TestSiteRecoveryManagementReplicationFabricsOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_replication_fabrics_begin_remove_infra(self, resource_group):
         response = self.client.replication_fabrics.begin_remove_infra(
+            resource_group_name=resource_group.name,
             resource_name="str",
             fabric_name="str",
-            api_version="2025-01-01",
+            api_version="2026-01-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_replication_fabrics_begin_renew_certificate(self, resource_group):
+        response = self.client.replication_fabrics.begin_renew_certificate(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            fabric_name="str",
+            renew_certificate={"properties": {"renewCertificateType": "str"}},
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

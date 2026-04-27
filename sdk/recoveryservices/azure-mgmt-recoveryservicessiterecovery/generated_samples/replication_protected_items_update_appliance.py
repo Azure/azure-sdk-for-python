@@ -29,11 +29,11 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="7c943c1b-5122-4097-90c8-861411bdd574",
-        resource_group_name="Ayan-0106-SA-RG",
-        resource_name="Ayan-0106-SA-Vault",
     )
 
     response = client.replication_protected_items.begin_update_appliance(
+        resource_group_name="Ayan-0106-SA-RG",
+        resource_name="Ayan-0106-SA-Vault",
         fabric_name="Ayan-0106-SA-Vaultreplicationfabric",
         protection_container_name="Ayan-0106-SA-Vaultreplicationcontainer",
         replicated_protected_item_name="idclab-vcen67_50158124-8857-3e08-0893-2ddf8ebb8c1f",
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationProtectedItems_UpdateAppliance.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationProtectedItems_UpdateAppliance.json
 if __name__ == "__main__":
     main()

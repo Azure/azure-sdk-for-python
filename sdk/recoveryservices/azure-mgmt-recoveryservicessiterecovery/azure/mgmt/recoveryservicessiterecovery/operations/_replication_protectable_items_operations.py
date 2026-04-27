@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -28,20 +28,21 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._configuration import SiteRecoveryManagementClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_list_by_replication_protection_containers_request(  # pylint: disable=name-too-long
-    fabric_name: str,
-    protection_container_name: str,
     resource_group_name: str,
     resource_name: str,
+    fabric_name: str,
+    protection_container_name: str,
     subscription_id: str,
     *,
     filter: Optional[str] = None,
@@ -52,7 +53,7 @@ def build_list_by_replication_protection_containers_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -61,9 +62,11 @@ def build_list_by_replication_protection_containers_request(  # pylint: disable=
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectableItems",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
     }
@@ -86,18 +89,18 @@ def build_list_by_replication_protection_containers_request(  # pylint: disable=
 
 
 def build_get_request(
+    resource_group_name: str,
+    resource_name: str,
     fabric_name: str,
     protection_container_name: str,
     protectable_item_name: str,
-    resource_group_name: str,
-    resource_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,9 +109,11 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RecoveryServices/vaults/{resourceName}/replicationFabrics/{fabricName}/replicationProtectionContainers/{protectionContainerName}/replicationProtectableItems/{protectableItemName}",
     )
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
         "fabricName": _SERIALIZER.url("fabric_name", fabric_name, "str"),
         "protectionContainerName": _SERIALIZER.url("protection_container_name", protection_container_name, "str"),
         "protectableItemName": _SERIALIZER.url("protectable_item_name", protectable_item_name, "str"),
@@ -137,7 +142,7 @@ class ReplicationProtectableItemsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: SiteRecoveryManagementClientConfiguration = (
@@ -149,17 +154,24 @@ class ReplicationProtectableItemsOperations:
     @distributed_trace
     def list_by_replication_protection_containers(  # pylint: disable=name-too-long
         self,
+        resource_group_name: str,
+        resource_name: str,
         fabric_name: str,
         protection_container_name: str,
         filter: Optional[str] = None,
         take: Optional[str] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ProtectableItem"]:
+    ) -> ItemPaged["_models.ProtectableItem"]:
         """Gets the list of protectable items.
 
         Lists the protectable items in a protection container.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -193,10 +205,10 @@ class ReplicationProtectableItemsOperations:
             if not next_link:
 
                 _request = build_list_by_replication_protection_containers_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
                     fabric_name=fabric_name,
                     protection_container_name=protection_container_name,
-                    resource_group_name=self._config.resource_group_name,
-                    resource_name=self._config.resource_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     take=take,
@@ -250,12 +262,23 @@ class ReplicationProtectableItemsOperations:
 
     @distributed_trace
     def get(
-        self, fabric_name: str, protection_container_name: str, protectable_item_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        fabric_name: str,
+        protection_container_name: str,
+        protectable_item_name: str,
+        **kwargs: Any
     ) -> _models.ProtectableItem:
         """Gets the details of a protectable item.
 
         The operation to get the details of a protectable item.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the Vault. Required.
+        :type resource_name: str
         :param fabric_name: Fabric name. Required.
         :type fabric_name: str
         :param protection_container_name: Protection container name. Required.
@@ -281,11 +304,11 @@ class ReplicationProtectableItemsOperations:
         cls: ClsType[_models.ProtectableItem] = kwargs.pop("cls", None)
 
         _request = build_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             fabric_name=fabric_name,
             protection_container_name=protection_container_name,
             protectable_item_name=protectable_item_name,
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

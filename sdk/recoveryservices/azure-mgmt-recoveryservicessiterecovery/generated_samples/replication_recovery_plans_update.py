@@ -29,11 +29,11 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="c183865e-6077-46f2-a3b1-deb0f4f4650a",
-        resource_group_name="resourceGroupPS1",
-        resource_name="vault1",
     )
 
     response = client.replication_recovery_plans.begin_update(
+        resource_group_name="resourceGroupPS1",
+        resource_name="vault1",
         recovery_plan_name="RPtest1",
         input={
             "properties": {
@@ -79,6 +79,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationRecoveryPlans_Update.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationRecoveryPlans_Update.json
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterator, Callable, Dict, Optional, TypeVar, Union, cast
+from typing import Any, AsyncIterator, Callable, Optional, TypeVar, Union, cast
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -28,12 +28,13 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._serialization import Deserializer, Serializer
+from ..._utils.serialization import Deserializer, Serializer
 from ...operations._replication_vault_health_operations import build_get_request, build_refresh_request
 from .._configuration import SiteRecoveryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ReplicationVaultHealthOperations:
@@ -58,11 +59,16 @@ class ReplicationVaultHealthOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, **kwargs: Any) -> _models.VaultHealthDetails:
+    async def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.VaultHealthDetails:
         """Gets the health summary for the vault.
 
         Gets the health details of the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: VaultHealthDetails or the result of cls(response)
         :rtype: ~azure.mgmt.recoveryservicessiterecovery.models.VaultHealthDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -82,8 +88,8 @@ class ReplicationVaultHealthOperations:
         cls: ClsType[_models.VaultHealthDetails] = kwargs.pop("cls", None)
 
         _request = build_get_request(
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -109,7 +115,9 @@ class ReplicationVaultHealthOperations:
 
         return deserialized  # type: ignore
 
-    async def _refresh_initial(self, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def _refresh_initial(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -125,8 +133,8 @@ class ReplicationVaultHealthOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_refresh_request(
-            resource_group_name=self._config.resource_group_name,
-            resource_name=self._config.resource_name,
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -150,19 +158,31 @@ class ReplicationVaultHealthOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_refresh(self, **kwargs: Any) -> AsyncLROPoller[_models.VaultHealthDetails]:
+    async def begin_refresh(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.VaultHealthDetails]:
         """Refreshes health summary of the vault.
 
         Refreshes health summary of the vault.
 
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the recovery services vault. Required.
+        :type resource_name: str
         :return: An instance of AsyncLROPoller that returns either VaultHealthDetails or the result of
          cls(response)
         :rtype:
@@ -179,7 +199,13 @@ class ReplicationVaultHealthOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._refresh_initial(
-                api_version=api_version, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -191,7 +217,9 @@ class ReplicationVaultHealthOperations:
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:

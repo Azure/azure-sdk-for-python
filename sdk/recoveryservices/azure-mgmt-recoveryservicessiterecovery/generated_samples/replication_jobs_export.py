@@ -29,11 +29,11 @@ def main():
     client = SiteRecoveryManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="c183865e-6077-46f2-a3b1-deb0f4f4650a",
-        resource_group_name="resourceGroupPS1",
-        resource_name="vault1",
     )
 
     response = client.replication_jobs.begin_export(
+        resource_group_name="resourceGroupPS1",
+        resource_name="vault1",
         job_query_parameter={
             "affectedObjectTypes": "",
             "endTime": "2017-05-04T14:26:51.9161395Z",
@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2025-01-01/examples/ReplicationJobs_Export.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery/stable/2026-01-01/examples/ReplicationJobs_Export.json
 if __name__ == "__main__":
     main()
