@@ -120,13 +120,6 @@
   - Method `SiteRecoveryManagementClient.__init__` deleted or renamed its parameter `resource_group_name` of kind `positional_or_keyword`
   - Method `SiteRecoveryManagementClient.__init__` deleted or renamed its parameter `resource_name` of kind `positional_or_keyword`
   - Model `Resource` deleted or renamed its instance variable `location`
-  - Deleted or renamed model `ApplianceQueryParameter`
-  - Deleted or renamed model `EventQueryParameter`
-  - Deleted or renamed model `FabricQueryParameter`
-  - Deleted or renamed model `MigrationItemsQueryParameter`
-  - Deleted or renamed model `ProtectableItemQueryParameter`
-  - Deleted or renamed model `ProtectedClustersQueryParameter`
-  - Deleted or renamed model `ProtectedItemsQueryParameter`
   - Deleted or renamed model `RoleAssignment`
   - Method `ClusterRecoveryPointOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ClusterRecoveryPointsOperations.list_by_replication_protection_cluster` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -428,7 +421,7 @@
 
 ### Other Changes
 
-  - Deleted model `AlertCollection`/`ApplianceCollection`/`ClusterRecoveryPointCollection`/`EventCollection`/`FabricCollection`/`JobCollection`/`LogicalNetworkCollection`/`MigrationItemCollection`/`MigrationRecoveryPointCollection`/`NetworkCollection`/`NetworkMappingCollection`/`OperationsDiscoveryCollection`/`PolicyCollection`/`ProtectableItemCollection`/`ProtectionContainerCollection`/`ProtectionContainerMappingCollection`/`RecoveryPlanCollection`/`RecoveryPointCollection`/`RecoveryServicesProviderCollection`/`ReplicationProtectedItemCollection`/`ReplicationProtectionClusterCollection`/`ReplicationProtectionIntentCollection`/`StorageClassificationCollection`/`StorageClassificationMappingCollection`/`TargetComputeSizeCollection`/`VCenterCollection`/`VaultSettingCollection` which actually were not used by SDK users
+  - Deleted model `ApplianceQueryParameter`/`EventQueryParameter`/`FabricQueryParameter`/`MigrationItemsQueryParameter`/`ProtectableItemQueryParameter`/`ProtectedClustersQueryParameter`/`ProtectedItemsQueryParameter`/`AlertCollection`/`ApplianceCollection`/`ClusterRecoveryPointCollection`/`EventCollection`/`FabricCollection`/`JobCollection`/`LogicalNetworkCollection`/`MigrationItemCollection`/`MigrationRecoveryPointCollection`/`NetworkCollection`/`NetworkMappingCollection`/`OperationsDiscoveryCollection`/`PolicyCollection`/`ProtectableItemCollection`/`ProtectionContainerCollection`/`ProtectionContainerMappingCollection`/`RecoveryPlanCollection`/`RecoveryPointCollection`/`RecoveryServicesProviderCollection`/`ReplicationProtectedItemCollection`/`ReplicationProtectionClusterCollection`/`ReplicationProtectionIntentCollection`/`StorageClassificationCollection`/`StorageClassificationMappingCollection`/`TargetComputeSizeCollection`/`VCenterCollection`/`VaultSettingCollection` which actually were not used by SDK users
 
 ## 1.3.0 (2025-04-23)
 
