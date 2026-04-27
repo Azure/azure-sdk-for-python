@@ -70,7 +70,7 @@ class TestLiveApiCoverage(WebpubsubTest):
 
         ws = None
         try:
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
 
             assert client.get_service_status()
 
@@ -165,28 +165,28 @@ class TestLiveApiCoverage(WebpubsubTest):
 
             # close_group_connections (connection auto-joins group_1 via token)
             ws.close()
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_group_connections(group=group_1, reason="live-coverage")
             assert not client.connection_exists(connection_id=conn)
 
             # close_user_connections
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_user_connections(user_id=user_id, reason="live-coverage")
             assert not client.connection_exists(connection_id=conn)
 
             # close_connection
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_connection(connection_id=conn, reason="live-coverage")
             assert not client.connection_exists(connection_id=conn)
 
             # close_all_connections
-            ws = ws_connect(access_token["url"])
+            ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_all_connections(reason="live-coverage")
