@@ -120,7 +120,7 @@
         "azure.search.documents.knowledgebases.models.KnowledgeBaseMessageContent": "Search.KnowledgeBaseMessageContent",
         "azure.search.documents.knowledgebases.models.KnowledgeBaseMessageImageContent": "Search.KnowledgeBaseMessageImageContent",
         "azure.search.documents.knowledgebases.models.KnowledgeBaseMessageTextContent": "Search.KnowledgeBaseMessageTextContent",
-        "search.models.KnowledgeBaseModelWebSummarizationActivityRecord": "Search.KnowledgeBaseModelWebSummarizationActivityRecord",
+        "azure.search.documents.knowledgebases.models.KnowledgeBaseModelWebSummarizationActivityRecord": "Search.KnowledgeBaseModelWebSummarizationActivityRecord",
         "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest": "Search.KnowledgeBaseRetrievalRequest",
         "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse": "Search.KnowledgeBaseRetrievalResponse",
         "azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexReference": "Search.KnowledgeBaseSearchIndexReference",
