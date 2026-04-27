@@ -106,4 +106,4 @@ def test_get_version_info_does_not_filter_0_0_0_1():
 
         result = pu.get_version_info("azure-some-package", tag_is_stable=False)
 
-    assert result != ("", "")
+    assert result == ("0.0.0.1", "0.0.0.1")
