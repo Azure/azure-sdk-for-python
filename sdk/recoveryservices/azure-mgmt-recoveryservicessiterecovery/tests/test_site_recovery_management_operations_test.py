@@ -25,4 +25,4 @@ class TestSiteRecoveryManagementOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0

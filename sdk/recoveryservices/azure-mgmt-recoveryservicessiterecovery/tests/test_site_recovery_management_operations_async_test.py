@@ -26,4 +26,4 @@ class TestSiteRecoveryManagementOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
-        assert len(result)
+        assert len(result) == 0
