@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.monitorslis import MonitorClient
+from azure.mgmt.monitorslis import MonitorSlisMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.monitorslis import MonitorClient
 
 
 def main():
-    client = MonitorClient(
+    client = MonitorSlisMgmtClient(
         credential=DefaultAzureCredential(),
     )
 

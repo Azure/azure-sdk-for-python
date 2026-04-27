@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.monitorslis import MonitorClient
+from azure.mgmt.monitorslis import MonitorSlisMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = MonitorClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = MonitorSlisMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

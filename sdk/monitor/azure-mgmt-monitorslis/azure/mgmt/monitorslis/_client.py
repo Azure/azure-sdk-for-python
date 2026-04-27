@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import MonitorClientConfiguration
+from ._configuration import MonitorSlisMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import SlisOperations
 
@@ -26,8 +26,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MonitorClient:
-    """MonitorClient.
+class MonitorSlisMgmtClient:
+    """MonitorSlisMgmtClient.
 
     :ivar slis: SlisOperations operations
     :vartype slis: azure.mgmt.monitorslis.operations.SlisOperations
@@ -58,7 +58,7 @@ class MonitorClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = MonitorClientConfiguration(
+        self._config = MonitorSlisMgmtClientConfiguration(
             credential=credential,
             base_url=cast(str, base_url),
             cloud_setting=cloud_setting,

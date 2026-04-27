@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MonitorClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for MonitorClient.
+class MonitorSlisMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for MonitorSlisMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

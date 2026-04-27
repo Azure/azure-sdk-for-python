@@ -39,7 +39,7 @@ from ...operations._operations import (
     build_slis_get_request,
     build_slis_list_by_parent_request,
 )
-from .._configuration import MonitorClientConfiguration
+from .._configuration import MonitorSlisMgmtClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -52,14 +52,14 @@ class SlisOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.monitorslis.aio.MonitorClient`'s
+        :class:`~azure.mgmt.monitorslis.aio.MonitorSlisMgmtClient`'s
         :attr:`slis` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: MonitorClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MonitorSlisMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Monitor": "2025-03-01-preview"
   },
-  "commit": "d32a3f6cc49c6dd6604161f8c7cee7c95a84c578",
+  "commit": "1346e6b895a9091a6adbeec3505ee47f55d3ecee",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/monitoringservice/resource-manager/Microsoft.Monitor/Slis",
   "emitterVersion": "0.61.3"
