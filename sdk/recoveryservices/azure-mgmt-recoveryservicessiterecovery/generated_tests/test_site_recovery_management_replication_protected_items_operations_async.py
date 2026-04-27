@@ -346,7 +346,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperationsAsync(AzureMg
                 replicated_protected_item_name="str",
                 switch_provider_input={
                     "properties": {
-                        "providerSpecificDetails": "switch_provider_provider_specific_input",
+                        "providerSpecificDetails": "switch_provider_specific_input",
                         "targetInstanceType": "str",
                     }
                 },

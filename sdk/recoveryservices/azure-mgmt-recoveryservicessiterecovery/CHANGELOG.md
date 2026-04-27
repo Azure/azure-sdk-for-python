@@ -1,10 +1,10 @@
 # Release History
 
-## 2.0.0b1 (2026-04-13)
+## 2.0.0b1 (2026-04-27)
 
 ### Features Added
 
-  - Client `SiteRecoveryManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `SiteRecoveryManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `SiteRecoveryManagementClient` added method `send_request`
   - Model `A2AEnableProtectionInput` added property `platform_fault_domain`
   - Model `A2AReplicationDetails` added property `agent_reinstall_attempt_to_version`
@@ -111,19 +111,48 @@
   - Added model `ReinstallMobilityServiceRequest`
   - Added model `ReinstallMobilityServiceRequestProperties`
   - Added model `SystemData`
-  - Operation group `ReplicationProtectedItemsOperations` added method `begin_reinstall_mobility_service`
+  - Model `ReplicationProtectedItemsOperations` added method `begin_reinstall_mobility_service`
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Renamed model `ExistingRecoveryResourceGroup` to `ExistingRecoveryRecoveryResourceGroup`
-  - Renamed model `InMageAzureV2SwitchProviderInput` to `InMageAzureV2SwitchProviderProviderInput`
-  - Renamed model `SwitchProviderSpecificInput` to `SwitchProviderProviderSpecificInput`
   - Method `SiteRecoveryManagementClient.__init__` deleted or renamed its parameter `resource_group_name` of kind `positional_or_keyword`
   - Method `SiteRecoveryManagementClient.__init__` deleted or renamed its parameter `resource_name` of kind `positional_or_keyword`
   - Model `Resource` deleted or renamed its instance variable `location`
+  - Deleted or renamed model `AlertCollection`
+  - Deleted or renamed model `ApplianceCollection`
+  - Deleted or renamed model `ApplianceQueryParameter`
+  - Deleted or renamed model `ClusterRecoveryPointCollection`
+  - Deleted or renamed model `EventCollection`
+  - Deleted or renamed model `EventQueryParameter`
+  - Deleted or renamed model `FabricCollection`
+  - Deleted or renamed model `FabricQueryParameter`
+  - Deleted or renamed model `JobCollection`
+  - Deleted or renamed model `LogicalNetworkCollection`
+  - Deleted or renamed model `MigrationItemCollection`
+  - Deleted or renamed model `MigrationItemsQueryParameter`
+  - Deleted or renamed model `MigrationRecoveryPointCollection`
+  - Deleted or renamed model `NetworkCollection`
+  - Deleted or renamed model `NetworkMappingCollection`
+  - Deleted or renamed model `OperationsDiscoveryCollection`
+  - Deleted or renamed model `PolicyCollection`
+  - Deleted or renamed model `ProtectableItemCollection`
+  - Deleted or renamed model `ProtectableItemQueryParameter`
+  - Deleted or renamed model `ProtectedClustersQueryParameter`
+  - Deleted or renamed model `ProtectedItemsQueryParameter`
+  - Deleted or renamed model `ProtectionContainerCollection`
+  - Deleted or renamed model `ProtectionContainerMappingCollection`
+  - Deleted or renamed model `RecoveryPlanCollection`
+  - Deleted or renamed model `RecoveryPointCollection`
+  - Deleted or renamed model `RecoveryServicesProviderCollection`
+  - Deleted or renamed model `ReplicationProtectedItemCollection`
+  - Deleted or renamed model `ReplicationProtectionClusterCollection`
+  - Deleted or renamed model `ReplicationProtectionIntentCollection`
   - Deleted or renamed model `RoleAssignment`
+  - Deleted or renamed model `StorageClassificationCollection`
+  - Deleted or renamed model `StorageClassificationMappingCollection`
+  - Deleted or renamed model `TargetComputeSizeCollection`
+  - Deleted or renamed model `VCenterCollection`
+  - Deleted or renamed model `VaultSettingCollection`
   - Method `ClusterRecoveryPointOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ClusterRecoveryPointsOperations.list_by_replication_protection_cluster` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `MigrationRecoveryPointsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -186,6 +215,7 @@
   - Method `ReplicationLogicalNetworksOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationMigrationItemsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationMigrationItemsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.begin_delete` changed its parameter `delete_option` from `positional_or_keyword` to `keyword_only`
   - Method `ReplicationMigrationItemsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationMigrationItemsOperations.begin_delete` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationMigrationItemsOperations.begin_migrate` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -204,8 +234,12 @@
   - Method `ReplicationMigrationItemsOperations.begin_update` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationMigrationItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationMigrationItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationMigrationItemsOperations.list` changed its parameter `take_token` from `positional_or_keyword` to `keyword_only`
   - Method `ReplicationMigrationItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationMigrationItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` changed its parameter `take_token` from `positional_or_keyword` to `keyword_only`
   - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationNetworkMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -238,6 +272,8 @@
   - Method `ReplicationPoliciesOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationProtectableItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectableItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` changed its parameter `take` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationProtectedItemsOperations.begin_add_disks` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -280,6 +316,7 @@
   - Method `ReplicationProtectedItemsOperations.begin_update_mobility_service` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationProtectedItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectedItemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectedItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `ReplicationProtectedItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectedItemsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationProtectedItemsOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -296,6 +333,7 @@
   - Method `ReplicationProtectionClustersOperations.begin_unplanned_failover` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectionClustersOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectionClustersOperations.get_operation_results` inserted a `positional_or_keyword` parameter `resource_group_name`
+  - Method `ReplicationProtectionClustersOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `ReplicationProtectionClustersOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectionClustersOperations.list_by_replication_protection_containers` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectionContainerMappingsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -331,6 +369,8 @@
   - Method `ReplicationProtectionIntentsOperations.create` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationProtectionIntentsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectionIntentsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `ReplicationProtectionIntentsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ReplicationProtectionIntentsOperations.list` changed its parameter `take_token` from `positional_or_keyword` to `keyword_only`
   - Method `ReplicationProtectionIntentsOperations.list` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationProtectionIntentsOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationRecoveryPlansOperations.begin_create` inserted a `positional_or_keyword` parameter `resource_group_name`
@@ -409,22 +449,11 @@
   - Method `ReplicationvCentersOperations.list` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `ReplicationvCentersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `ReplicationvCentersOperations.list_by_replication_fabrics` inserted a `positional_or_keyword` parameter `resource_name`
+  - Method `SupportedOperatingSystemsOperations.get` changed its parameter `instance_type` from `positional_or_keyword` to `keyword_only`
   - Method `SupportedOperatingSystemsOperations.get` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `SupportedOperatingSystemsOperations.get` inserted a `positional_or_keyword` parameter `resource_name`
   - Method `TargetComputeSizesOperations.list_by_replication_protected_items` inserted a `positional_or_keyword` parameter `resource_group_name`
   - Method `TargetComputeSizesOperations.list_by_replication_protected_items` inserted a `positional_or_keyword` parameter `resource_name`
-  - Method `ReplicationMigrationItemsOperations.begin_delete` changed its parameter `delete_option` from `positional_or_keyword` to `keyword_only`
-  - Method `ReplicationMigrationItemsOperations.list` changed its parameter `skip_token`/`take_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ReplicationMigrationItemsOperations.list_by_replication_protection_containers` changed its parameter `skip_token`/`take_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ReplicationProtectableItemsOperations.list_by_replication_protection_containers` changed its parameter `take`/`skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ReplicationProtectedItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ReplicationProtectionClustersOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `ReplicationProtectionIntentsOperations.list` changed its parameter `skip_token`/`take_token` from `positional_or_keyword` to `keyword_only`
-  - Method `SupportedOperatingSystemsOperations.get` changed its parameter `instance_type` from `positional_or_keyword` to `keyword_only`
-
-### Other Changes
-
-  - Deleted model `AlertCollection`/`ApplianceCollection`/`ClusterRecoveryPointCollection`/`EventCollection`/`FabricCollection`/`JobCollection`/`LogicalNetworkCollection`/`MigrationItemCollection`/`MigrationRecoveryPointCollection`/`NetworkCollection`/`NetworkMappingCollection`/`OperationsDiscoveryCollection`/`PolicyCollection`/`ProtectableItemCollection`/`ProtectionContainerCollection`/`ProtectionContainerMappingCollection`/`RecoveryPlanCollection`/`RecoveryPointCollection`/`RecoveryServicesProviderCollection`/`ReplicationProtectedItemCollection`/`ReplicationProtectionClusterCollection`/`ReplicationProtectionIntentCollection`/`StorageClassificationCollection`/`StorageClassificationMappingCollection`/`TargetComputeSizeCollection`/`VCenterCollection`/`VaultSettingCollection`/`ApplianceQueryParameter`/`EventQueryParameter`/`FabricQueryParameter`/`MigrationItemsQueryParameter`/`ProtectableItemQueryParameter`/`ProtectedClustersQueryParameter`/`ProtectedItemsQueryParameter` which actually were not used by SDK users
 
 ## 1.3.0 (2025-04-23)
 

@@ -8735,7 +8735,7 @@ class RecoveryResourceGroupCustomDetails(_Model):
     """Recovery Resource Group custom input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ExistingRecoveryRecoveryResourceGroup
+    ExistingRecoveryResourceGroup
 
     :ivar resource_type: The class type. Required. Default value is None.
     :vartype resource_type: str
@@ -8765,7 +8765,7 @@ class RecoveryResourceGroupCustomDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExistingRecoveryRecoveryResourceGroup(RecoveryResourceGroupCustomDetails, discriminator="Existing"):
+class ExistingRecoveryResourceGroup(RecoveryResourceGroupCustomDetails, discriminator="Existing"):
     """Existing recovery resource group input.
 
     :ivar recovery_resource_group_id: The recovery resource group Id. Valid for V2 scenarios.
@@ -14002,11 +14002,11 @@ class InMageAzureV2SwitchProviderDetails(_Model):
     """The target appliance Id."""
 
 
-class SwitchProviderProviderSpecificInput(_Model):
+class SwitchProviderSpecificInput(_Model):
     """Provider specific switch provider input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    InMageAzureV2SwitchProviderProviderInput
+    InMageAzureV2SwitchProviderInput
 
     :ivar instance_type: The class type. Required. Default value is None.
     :vartype instance_type: str
@@ -14036,7 +14036,7 @@ class SwitchProviderProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageAzureV2SwitchProviderProviderInput(SwitchProviderProviderSpecificInput, discriminator="InMageAzureV2"):
+class InMageAzureV2SwitchProviderInput(SwitchProviderSpecificInput, discriminator="InMageAzureV2"):
     """Provider specific input for InMageAzureV2 switch provider.
 
     :ivar target_vault_id: The target vault Id. Required.
@@ -26610,14 +26610,14 @@ class SwitchProviderInputProperties(_Model):
     :vartype target_instance_type: str
     :ivar provider_specific_details: Provider specific settings.
     :vartype provider_specific_details:
-     ~azure.mgmt.recoveryservicessiterecovery.models.SwitchProviderProviderSpecificInput
+     ~azure.mgmt.recoveryservicessiterecovery.models.SwitchProviderSpecificInput
     """
 
     target_instance_type: Optional[str] = rest_field(
         name="targetInstanceType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Target provider type."""
-    provider_specific_details: Optional["_models.SwitchProviderProviderSpecificInput"] = rest_field(
+    provider_specific_details: Optional["_models.SwitchProviderSpecificInput"] = rest_field(
         name="providerSpecificDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """Provider specific settings."""
@@ -26627,7 +26627,7 @@ class SwitchProviderInputProperties(_Model):
         self,
         *,
         target_instance_type: Optional[str] = None,
-        provider_specific_details: Optional["_models.SwitchProviderProviderSpecificInput"] = None,
+        provider_specific_details: Optional["_models.SwitchProviderSpecificInput"] = None,
     ) -> None: ...
 
     @overload

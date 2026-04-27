@@ -317,10 +317,7 @@ class TestSiteRecoveryManagementReplicationProtectedItemsOperations(AzureMgmtRec
             protection_container_name="str",
             replicated_protected_item_name="str",
             switch_provider_input={
-                "properties": {
-                    "providerSpecificDetails": "switch_provider_provider_specific_input",
-                    "targetInstanceType": "str",
-                }
+                "properties": {"providerSpecificDetails": "switch_provider_specific_input", "targetInstanceType": "str"}
             },
         ).result()  # call '.result()' to poll until service return final result
 
