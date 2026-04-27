@@ -27,6 +27,7 @@ from ._base import AgentServerHost
 from ._config import AgentConfig
 from ._errors import create_error_response
 from ._middleware import InboundRequestLoggingMiddleware
+from ._request_id import RequestIdMiddleware
 from ._server_version import build_server_version
 from ._tracing import (
     configure_observability,
@@ -43,6 +44,7 @@ __all__ = [
     "AgentConfig",
     "AgentServerHost",
     "InboundRequestLoggingMiddleware",
+    "RequestIdMiddleware",
     "build_server_version",
     "configure_observability",
     "create_error_response",
