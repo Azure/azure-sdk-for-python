@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_create_crg.py
+    python managed_clusters_create_enable_ai_toolchain_operator.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -40,7 +39,6 @@ def main():
                 "addonProfiles": {},
                 "agentPoolProfiles": [
                     {
-                        "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/capacityReservationGroups/crg1",
                         "count": 3,
                         "enableNodePublicIP": True,
                         "mode": "System",
@@ -50,8 +48,7 @@ def main():
                         "vmSize": "Standard_DS2_v2",
                     }
                 ],
-                "autoScalerProfile": {"scale-down-delay-after-add": "15m", "scan-interval": "20s"},
-                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
+                "aiToolchainOperatorProfile": {"enabled": True},
                 "dnsPrefix": "dnsprefix1",
                 "enableRBAC": True,
                 "kubernetesVersion": "",
@@ -59,10 +56,12 @@ def main():
                 "networkProfile": {
                     "loadBalancerProfile": {"managedOutboundIPs": {"count": 2}},
                     "loadBalancerSku": "standard",
+                    "networkDataplane": "cilium",
+                    "networkPlugin": "azure",
+                    "networkPluginMode": "overlay",
                     "outboundType": "loadBalancer",
                 },
                 "servicePrincipalProfile": {"clientId": "clientid", "secret": "secret"},
-                "windowsProfile": {"adminPassword": "replacePassword1234$", "adminUsername": "azureuser"},
             },
             "sku": {"name": "Basic", "tier": "Free"},
             "tags": {"archv2": "", "tier": "production"},
@@ -71,6 +70,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/ManagedClustersCreate_CRG.json
+# x-ms-original-file: 2026-02-02-preview/ManagedClustersCreate_EnableAIToolchainOperator.json
 if __name__ == "__main__":
     main()
