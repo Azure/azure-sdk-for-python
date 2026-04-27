@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,39 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
+
+
+class DataDisk(_serialization.Model):
+    """Data disk properties.
+
+    :ivar size_gb: Size of the data disk in GB.
+    :vartype size_gb: int
+    """
+
+    _validation = {
+        "size_gb": {"minimum": 0},
+    }
+
+    _attribute_map = {
+        "size_gb": {"key": "sizeGB", "type": "int"},
+    }
+
+    def __init__(self, *, size_gb: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword size_gb: Size of the data disk in GB.
+        :paramtype size_gb: int
+        """
+        super().__init__(**kwargs)
+        self.size_gb = size_gb
 
 
 class DistributeVersioner(_serialization.Model):
@@ -132,8 +150,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -172,11 +190,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -206,7 +224,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -235,10 +253,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class TrackedResource(Resource):
@@ -250,7 +268,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -283,7 +301,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -295,7 +313,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class ImageTemplate(TrackedResource):
     """Image template is an ARM resource managed by Microsoft.VirtualMachineImages provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -303,7 +321,7 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -346,6 +364,8 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
     :vartype build_timeout_in_minutes: int
     :ivar vm_profile: Describes how virtual machine is set up to build images.
     :vartype vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
+    :ivar additional_data_disks: Optional array of additional data disks to be added to the image.
+    :vartype additional_data_disks: list[~azure.mgmt.imagebuilder.models.DataDisk]
     :ivar staging_resource_group: The staging resource group id in the same subscription as the
      image template that will be used to build the image. If this field is empty, a resource group
      with a random name will be created. If the resource group specified in this field doesn't
@@ -401,6 +421,7 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         "last_run_status": {"key": "properties.lastRunStatus", "type": "ImageTemplateLastRunStatus"},
         "build_timeout_in_minutes": {"key": "properties.buildTimeoutInMinutes", "type": "int"},
         "vm_profile": {"key": "properties.vmProfile", "type": "ImageTemplateVmProfile"},
+        "additional_data_disks": {"key": "properties.additionalDataDisks", "type": "[DataDisk]"},
         "staging_resource_group": {"key": "properties.stagingResourceGroup", "type": "str"},
         "exact_staging_resource_group": {"key": "properties.exactStagingResourceGroup", "type": "str"},
         "auto_run": {"key": "properties.autoRun", "type": "ImageTemplateAutoRun"},
@@ -412,18 +433,19 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         *,
         location: str,
         identity: "_models.ImageTemplateIdentity",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         source: Optional["_models.ImageTemplateSource"] = None,
-        customize: Optional[List["_models.ImageTemplateCustomizer"]] = None,
+        customize: Optional[list["_models.ImageTemplateCustomizer"]] = None,
         optimize: Optional["_models.ImageTemplatePropertiesOptimize"] = None,
         validate: Optional["_models.ImageTemplatePropertiesValidate"] = None,
-        distribute: Optional[List["_models.ImageTemplateDistributor"]] = None,
+        distribute: Optional[list["_models.ImageTemplateDistributor"]] = None,
         error_handling: Optional["_models.ImageTemplatePropertiesErrorHandling"] = None,
         build_timeout_in_minutes: int = 0,
         vm_profile: Optional["_models.ImageTemplateVmProfile"] = None,
+        additional_data_disks: Optional[list["_models.DataDisk"]] = None,
         staging_resource_group: Optional[str] = None,
         auto_run: Optional["_models.ImageTemplateAutoRun"] = None,
-        managed_resource_tags: Optional[Dict[str, str]] = None,
+        managed_resource_tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -453,6 +475,9 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         :paramtype build_timeout_in_minutes: int
         :keyword vm_profile: Describes how virtual machine is set up to build images.
         :paramtype vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
+        :keyword additional_data_disks: Optional array of additional data disks to be added to the
+         image.
+        :paramtype additional_data_disks: list[~azure.mgmt.imagebuilder.models.DataDisk]
         :keyword staging_resource_group: The staging resource group id in the same subscription as the
          image template that will be used to build the image. If this field is empty, a resource group
          with a random name will be created. If the resource group specified in this field doesn't
@@ -477,13 +502,14 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.validate = validate
         self.distribute = distribute
         self.error_handling = error_handling
-        self.provisioning_state = None
-        self.provisioning_error = None
-        self.last_run_status = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.provisioning_error: Optional["_models.ProvisioningError"] = None
+        self.last_run_status: Optional["_models.ImageTemplateLastRunStatus"] = None
         self.build_timeout_in_minutes = build_timeout_in_minutes
         self.vm_profile = vm_profile
+        self.additional_data_disks = additional_data_disks
         self.staging_resource_group = staging_resource_group
-        self.exact_staging_resource_group = None
+        self.exact_staging_resource_group: Optional[str] = None
         self.auto_run = auto_run
         self.managed_resource_tags = managed_resource_tags
 
@@ -592,7 +618,7 @@ class ImageTemplateDistributor(_serialization.Model):
         }
     }
 
-    def __init__(self, *, run_output_name: str, artifact_tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, run_output_name: str, artifact_tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword run_output_name: The name to be used for the associated RunOutput. Required.
         :paramtype run_output_name: str
@@ -777,7 +803,7 @@ class ImageTemplateIdentity(_serialization.Model):
     :vartype type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
     :ivar user_assigned_identities: The set of user assigned identities associated with the
      resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
      The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.imagebuilder.models.UserAssignedIdentity]
@@ -792,7 +818,7 @@ class ImageTemplateIdentity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -801,7 +827,7 @@ class ImageTemplateIdentity(_serialization.Model):
         :paramtype type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
         :keyword user_assigned_identities: The set of user assigned identities associated with the
          resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.  # pylint: disable=line-too-long
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
          The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.imagebuilder.models.UserAssignedIdentity]
@@ -883,7 +909,7 @@ class ImageTemplateListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ImageTemplate"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ImageTemplate"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: An array of image templates.
@@ -935,7 +961,7 @@ class ImageTemplateManagedImageDistributor(ImageTemplateDistributor):
         run_output_name: str,
         image_id: str,
         location: str,
-        artifact_tags: Optional[Dict[str, str]] = None,
+        artifact_tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1104,7 +1130,7 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
         self.offer = offer
         self.sku = sku
         self.version = version
-        self.exact_version = None
+        self.exact_version: Optional[str] = None
         self.plan_info = plan_info
 
 
@@ -1157,10 +1183,10 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
         name: Optional[str] = None,
         script_uri: Optional[str] = None,
         sha256_checksum: str = "",
-        inline: Optional[List[str]] = None,
+        inline: Optional[list[str]] = None,
         run_elevated: bool = False,
         run_as_system: bool = False,
-        valid_exit_codes: Optional[List[int]] = None,
+        valid_exit_codes: Optional[list[int]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1243,10 +1269,10 @@ class ImageTemplatePowerShellValidator(ImageTemplateInVMValidator):
         name: Optional[str] = None,
         script_uri: Optional[str] = None,
         sha256_checksum: str = "",
-        inline: Optional[List[str]] = None,
+        inline: Optional[list[str]] = None,
         run_elevated: bool = False,
         run_as_system: bool = False,
-        valid_exit_codes: Optional[List[int]] = None,
+        valid_exit_codes: Optional[list[int]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1329,21 +1355,31 @@ class ImageTemplatePropertiesOptimize(_serialization.Model):
 
     :ivar vm_boot: Optimization is applied on the image for a faster VM boot.
     :vartype vm_boot: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimizeVmBoot
+    :ivar workload: Optimization is applied on the image for specific workloads.
+    :vartype workload: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimizeWorkload
     """
 
     _attribute_map = {
         "vm_boot": {"key": "vmBoot", "type": "ImageTemplatePropertiesOptimizeVmBoot"},
+        "workload": {"key": "workload", "type": "ImageTemplatePropertiesOptimizeWorkload"},
     }
 
     def __init__(
-        self, *, vm_boot: Optional["_models.ImageTemplatePropertiesOptimizeVmBoot"] = None, **kwargs: Any
+        self,
+        *,
+        vm_boot: Optional["_models.ImageTemplatePropertiesOptimizeVmBoot"] = None,
+        workload: Optional["_models.ImageTemplatePropertiesOptimizeWorkload"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword vm_boot: Optimization is applied on the image for a faster VM boot.
         :paramtype vm_boot: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimizeVmBoot
+        :keyword workload: Optimization is applied on the image for specific workloads.
+        :paramtype workload: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimizeWorkload
         """
         super().__init__(**kwargs)
         self.vm_boot = vm_boot
+        self.workload = workload
 
 
 class ImageTemplatePropertiesOptimizeVmBoot(_serialization.Model):
@@ -1366,6 +1402,49 @@ class ImageTemplatePropertiesOptimizeVmBoot(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.state = state
+
+
+class ImageTemplatePropertiesOptimizeWorkload(_serialization.Model):
+    """Optimization is applied on the image for specific workloads.
+
+    :ivar state: Enabling this field will optimize vm images for specific workloads. Known values
+     are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.imagebuilder.models.WorkloadOptimizationState
+    :ivar script_uri: URI of the script to be run for workload optimization. It can be a github
+     link, SAS URI for Azure Storage, etc.
+    :vartype script_uri: str
+    :ivar sha256_checksum: SHA256 checksum of the script provided in the scriptUri field.
+    :vartype sha256_checksum: str
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "script_uri": {"key": "scriptUri", "type": "str"},
+        "sha256_checksum": {"key": "sha256Checksum", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.WorkloadOptimizationState"]] = None,
+        script_uri: Optional[str] = None,
+        sha256_checksum: str = "",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Enabling this field will optimize vm images for specific workloads. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.imagebuilder.models.WorkloadOptimizationState
+        :keyword script_uri: URI of the script to be run for workload optimization. It can be a github
+         link, SAS URI for Azure Storage, etc.
+        :paramtype script_uri: str
+        :keyword sha256_checksum: SHA256 checksum of the script provided in the scriptUri field.
+        :paramtype sha256_checksum: str
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.script_uri = script_uri
+        self.sha256_checksum = sha256_checksum
 
 
 class ImageTemplatePropertiesValidate(_serialization.Model):
@@ -1397,7 +1476,7 @@ class ImageTemplatePropertiesValidate(_serialization.Model):
         *,
         continue_distribute_on_failure: bool = False,
         source_validation_only: bool = False,
-        in_vm_validations: Optional[List["_models.ImageTemplateInVMValidator"]] = None,
+        in_vm_validations: Optional[list["_models.ImageTemplateInVMValidator"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1515,6 +1594,9 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
     :vartype target_regions: list[~azure.mgmt.imagebuilder.models.TargetRegion]
     :ivar versioning: Describes how to generate new x.y.z version number for distribution.
     :vartype versioning: ~azure.mgmt.imagebuilder.models.DistributeVersioner
+    :ivar replication_mode: Describes replication mode for distribution in Azure Compute Gallery.
+     Omit to use the default (Full). Known values are: "Full" and "Shallow".
+    :vartype replication_mode: str or ~azure.mgmt.imagebuilder.models.ReplicationMode
     """
 
     _validation = {
@@ -1533,6 +1615,7 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
         "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
         "versioning": {"key": "versioning", "type": "DistributeVersioner"},
+        "replication_mode": {"key": "replicationMode", "type": "str"},
     }
 
     def __init__(
@@ -1540,12 +1623,13 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         *,
         run_output_name: str,
         gallery_image_id: str,
-        artifact_tags: Optional[Dict[str, str]] = None,
-        replication_regions: Optional[List[str]] = None,
+        artifact_tags: Optional[dict[str, str]] = None,
+        replication_regions: Optional[list[str]] = None,
         exclude_from_latest: bool = False,
         storage_account_type: Optional[Union[str, "_models.SharedImageStorageAccountType"]] = None,
-        target_regions: Optional[List["_models.TargetRegion"]] = None,
+        target_regions: Optional[list["_models.TargetRegion"]] = None,
         versioning: Optional["_models.DistributeVersioner"] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1575,6 +1659,9 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         :paramtype target_regions: list[~azure.mgmt.imagebuilder.models.TargetRegion]
         :keyword versioning: Describes how to generate new x.y.z version number for distribution.
         :paramtype versioning: ~azure.mgmt.imagebuilder.models.DistributeVersioner
+        :keyword replication_mode: Describes replication mode for distribution in Azure Compute
+         Gallery. Omit to use the default (Full). Known values are: "Full" and "Shallow".
+        :paramtype replication_mode: str or ~azure.mgmt.imagebuilder.models.ReplicationMode
         """
         super().__init__(run_output_name=run_output_name, artifact_tags=artifact_tags, **kwargs)
         self.type: str = "SharedImage"
@@ -1584,6 +1671,7 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         self.storage_account_type = storage_account_type
         self.target_regions = target_regions
         self.versioning = versioning
+        self.replication_mode = replication_mode
 
 
 class ImageTemplateSharedImageVersionSource(ImageTemplateSource):
@@ -1626,7 +1714,7 @@ class ImageTemplateSharedImageVersionSource(ImageTemplateSource):
         super().__init__(**kwargs)
         self.type: str = "SharedImageVersion"
         self.image_version_id = image_version_id
-        self.exact_version = None
+        self.exact_version: Optional[str] = None
 
 
 class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
@@ -1667,7 +1755,7 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
         name: Optional[str] = None,
         script_uri: Optional[str] = None,
         sha256_checksum: str = "",
-        inline: Optional[List[str]] = None,
+        inline: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1726,7 +1814,7 @@ class ImageTemplateShellValidator(ImageTemplateInVMValidator):
         name: Optional[str] = None,
         script_uri: Optional[str] = None,
         sha256_checksum: str = "",
-        inline: Optional[List[str]] = None,
+        inline: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1768,7 +1856,7 @@ class ImageTemplateUpdateParameters(_serialization.Model):
         self,
         *,
         identity: Optional["_models.ImageTemplateIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ImageTemplateUpdateParametersProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -1803,7 +1891,7 @@ class ImageTemplateUpdateParametersProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        distribute: Optional[List["_models.ImageTemplateDistributor"]] = None,
+        distribute: Optional[list["_models.ImageTemplateDistributor"]] = None,
         vm_profile: Optional["_models.ImageTemplateVmProfile"] = None,
         **kwargs: Any
     ) -> None:
@@ -1852,7 +1940,7 @@ class ImageTemplateVhdDistributor(ImageTemplateDistributor):
         self,
         *,
         run_output_name: str,
-        artifact_tags: Optional[Dict[str, str]] = None,
+        artifact_tags: Optional[dict[str, str]] = None,
         uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1907,7 +1995,7 @@ class ImageTemplateVmProfile(_serialization.Model):
         *,
         vm_size: str = "",
         os_disk_size_gb: int = 0,
-        user_assigned_identities: Optional[List[str]] = None,
+        user_assigned_identities: Optional[list[str]] = None,
         vnet_config: Optional["_models.VirtualNetworkConfig"] = None,
         **kwargs: Any
     ) -> None:
@@ -1975,7 +2063,7 @@ class ImageTemplateWindowsUpdateCustomizer(ImageTemplateCustomizer):
         *,
         name: Optional[str] = None,
         search_criteria: Optional[str] = None,
-        filters: Optional[List[str]] = None,
+        filters: Optional[list[str]] = None,
         update_limit: int = 0,
         **kwargs: Any
     ) -> None:
@@ -2115,7 +2203,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of operations supported by the resource provider.
@@ -2216,7 +2304,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2235,7 +2323,7 @@ class RunOutput(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2282,7 +2370,7 @@ class RunOutput(ProxyResource):
         super().__init__(**kwargs)
         self.artifact_id = artifact_id
         self.artifact_uri = artifact_uri
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class RunOutputCollection(_serialization.Model):
@@ -2300,7 +2388,7 @@ class RunOutputCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RunOutput"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.RunOutput"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: An array of run outputs.
@@ -2350,8 +2438,8 @@ class TriggerProperties(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.kind: Optional[str] = None
-        self.status = None
-        self.provisioning_state = None
+        self.status: Optional["_models.TriggerStatus"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class SourceImageTriggerProperties(TriggerProperties):
@@ -2512,7 +2600,7 @@ class Trigger(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2554,8 +2642,8 @@ class Trigger(ProxyResource):
         """ """
         super().__init__(**kwargs)
         self.kind: Optional[str] = None
-        self.status = None
-        self.provisioning_state = None
+        self.status: Optional["_models.TriggerStatus"] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class TriggerCollection(_serialization.Model):
@@ -2578,7 +2666,7 @@ class TriggerCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Trigger"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Trigger"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of triggers. Required.
         :paramtype value: list[~azure.mgmt.imagebuilder.models.Trigger]
@@ -2618,9 +2706,9 @@ class TriggerStatus(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.time = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.time: Optional[datetime.datetime] = None
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -2647,8 +2735,8 @@ class UserAssignedIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class VirtualNetworkConfig(_serialization.Model):

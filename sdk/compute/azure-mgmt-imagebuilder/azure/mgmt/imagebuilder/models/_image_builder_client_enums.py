@@ -66,6 +66,17 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
+class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes replication mode for distribution in Azure Compute Gallery. Omit to use the default
+    (Full).
+    """
+
+    FULL = "Full"
+    """Full replication mode"""
+    SHALLOW = "Shallow"
+    """Shallow replication mode"""
+
+
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the image template. The type 'None' will remove any identities
     from the image template.
@@ -112,3 +123,12 @@ class VMBootOptimizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class WorkloadOptimizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enabling this field will optimize vm images for specific workloads."""
+
+    ENABLED = "Enabled"
+    """Workload optimization is enabled"""
+    DISABLED = "Disabled"
+    """Workload optimization is disabled"""
