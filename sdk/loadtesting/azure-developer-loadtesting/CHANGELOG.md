@@ -1,5 +1,15 @@
 # Release History
 
+## 1.2.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.2.0b1 (2026-03-06)
 
 Updated the client library to use API Version 2025-11-01-preview. This adds all the capabilities that were introduced until this API version.
