@@ -122,27 +122,25 @@ class TestAppInsightsConnectionString:
 
 
 class TestSetupAzureMonitor:
-    """Verify _configure_tracing calls the right exporter setup functions."""
+    """Verify _configure_tracing calls the distro with the right args."""
 
-    def test_setup_azure_monitor_called_when_conn_str_provided(self) -> None:
-        with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
-            with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
-                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
-                        from azure.ai.agentserver.core import _tracing
-                        _tracing._configure_tracing(connection_string="InstrumentationKey=test")
-                        mock_trace.assert_called_once()
-                        args = mock_trace.call_args[0]
-                        assert args[1] == "InstrumentationKey=test"
+    def test_distro_called_when_conn_str_provided(self) -> None:
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
+            from azure.ai.agentserver.core import _tracing
+            _tracing._configure_tracing(connection_string="InstrumentationKey=test")
+            mock_distro.assert_called_once()
+            kwargs = mock_distro.call_args[1]
+            assert kwargs["connection_string"] == "InstrumentationKey=test"
+            assert len(kwargs["span_processors"]) >= 1
+            assert len(kwargs["log_record_processors"]) >= 1
 
-    def test_setup_azure_monitor_not_called_when_no_conn_str(self) -> None:
-        with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
-            with mock.patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
-                    with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
-                        from azure.ai.agentserver.core import _tracing
-                        _tracing._configure_tracing(connection_string=None)
-                        mock_trace.assert_not_called()
+    def test_distro_called_without_conn_str(self) -> None:
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
+            from azure.ai.agentserver.core import _tracing
+            _tracing._configure_tracing(connection_string=None)
+            mock_distro.assert_called_once()
+            kwargs = mock_distro.call_args[1]
+            assert kwargs["connection_string"] is None
 
 
 # ------------------------------------------------------------------ #
