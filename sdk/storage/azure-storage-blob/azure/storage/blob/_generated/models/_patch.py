@@ -89,9 +89,7 @@ def _patched_new(cls, *args, **kwargs):
         }
 
         # Reverse mapping: REST wire name → Python attribute name
-        cls._rest_name_to_attr = {
-            rf._rest_name: attr for attr, rf in attr_to_rest_field.items()
-        }
+        cls._rest_name_to_attr = {rf._rest_name: attr for attr, rf in attr_to_rest_field.items()}
 
         cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
@@ -122,10 +120,7 @@ _original_as_dict = _Model.as_dict
 def _remap_keys(d, rest_name_to_attr):
     """Recursively remap REST wire-name keys to Python attribute names."""
     if isinstance(d, dict):
-        return {
-            rest_name_to_attr.get(k, k): _remap_keys(v, rest_name_to_attr)
-            for k, v in d.items()
-        }
+        return {rest_name_to_attr.get(k, k): _remap_keys(v, rest_name_to_attr) for k, v in d.items()}
     if isinstance(d, list):
         return [_remap_keys(item, rest_name_to_attr) for item in d]
     return d

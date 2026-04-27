@@ -2517,8 +2517,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         encryption_key_sha256: Optional[str] = None,
         encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
         if_tags: Optional[str] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2575,12 +2575,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
          matching value. Default value is None.
         :paramtype if_tags: str
-        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
-         after this time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_modified_since: The request should only proceed if the entity was modified after
-         this time. Default value is None.
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2622,8 +2622,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             encryption_key_sha256=encryption_key_sha256,
             encryption_algorithm=encryption_algorithm,
             if_tags=if_tags,
-            if_unmodified_since=if_unmodified_since,
             if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             etag=etag,
             match_condition=match_condition,
             version=self._config.version,
@@ -8324,13 +8324,11 @@ class PageBlobOperations:
 
         :keyword source_url: Specify a URL to the copy source. Required.
         :paramtype source_url: str
-        :keyword source_range: Bytes of source data in the specified range. The length of this range
-         should match the ContentLength header and x-ms-range/Range destination range header. Required.
+        :keyword source_range: Bytes of source data in the specified range. Required.
         :paramtype source_range: str
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
-        :keyword range: Bytes of source data in the specified range. The length of this range should
-         match the ContentLength header and x-ms-range/Range destination range header. Required.
+        :keyword range: Bytes of data in the specified range. Required.
         :paramtype range: str
         :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
          read from the copy source. Default value is None.

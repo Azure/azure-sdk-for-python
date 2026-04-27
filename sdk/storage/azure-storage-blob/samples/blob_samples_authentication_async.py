@@ -101,9 +101,7 @@ class AuthSamplesAsync(object):
 
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
         if blob_service_client.account_name is None:
-            print(
-                "Connection string did not provide an account name.\nTest: auth_shared_access_signature_async"
-            )
+            print("Connection string did not provide an account name.\nTest: auth_shared_access_signature_async")
             sys.exit(1)
 
         # [START create_sas_token]
