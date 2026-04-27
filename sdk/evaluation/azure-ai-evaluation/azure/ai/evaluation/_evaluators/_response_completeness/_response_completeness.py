@@ -11,8 +11,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
-from azure.ai.evaluation._model_configurations import Conversation, Message
+from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -185,13 +184,15 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         score = math.nan
         llm_output_is_dict = isinstance(llm_output, dict)
-        if llm_output_is_dict or isinstance(llm_output, str):
-            reason = ""
-            if llm_output_is_dict:
-                score = float(llm_output.get("score", math.nan))
-                reason = llm_output.get("explanation", "")
-            else:
-                score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
+        if llm_output_is_dict:
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._not_applicable_result(reason, self._threshold)
+
+            score = float(llm_output.get("score", math.nan))
+            reason = llm_output.get("reason", "")
 
             binary_result = self._get_binary_result(score)
 

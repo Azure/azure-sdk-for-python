@@ -11,7 +11,7 @@ model:
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: text
+      type: json_object
 
 inputs:
   response:
@@ -32,6 +32,8 @@ user:
 # Definition
 **Completeness** refers to how accurately and thoroughly a response represents the information provided in the ground truth. It considers both the inclusion of all relevant statements and the correctness of those statements. Each statement in the ground truth should be evaluated individually to determine if it is accurately reflected in the response without missing any key information. The scale ranges from 1 to 5, with higher numbers indicating greater completeness.
 
+**Note:** When the ground truth is a short entity or phrase, the response is fully complete (Score 5) if it semantically includes that entity. Additional accurate context is not a penalty.
+
 # Ratings
 ## [Completeness: 1] (Fully Incomplete)
 **Definition:** A response that does not contain any of the necessary and relevant information with respect to the ground truth. It completely misses all the information, especially claims and statements, established in the ground truth.
@@ -39,6 +41,9 @@ user:
 **Examples:**
   **Response:** "Flu shot cannot cure cancer. Stay healthy requires sleeping exactly 8 hours a day. A few hours of exercise per week will have little benefits for physical and mental health. Physical and mental health benefits are separate topics. Scientists have not studied any of them."
   **Ground Truth:** "Flu shot can prevent flu-related illnesses. Staying healthy requires proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
+
+  **Response:** "Mount Kilimanjaro is the tallest peak in Africa."
+  **Ground Truth:** "Everest"
 
 ## [Completeness: 2] (Barely Complete)
 **Definition:** A response that contains only a small percentage of all the necessary and relevant information with respect to the ground truth. It misses almost all the information, especially claims and statements, established in the ground truth.
@@ -68,6 +73,9 @@ user:
   **Response:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
   **Ground Truth:** "Flu shot can prevent flu-related illnesses. Stay healthy by proper hydration and moderate exercise. Even a few hours of exercise per week can have long-term benefits for physical and mental health. This is because physical and mental health benefits have intricate relationships through behavioral changes. Scientists are starting to discover them through rigorous studies."
 
+  **Response:** "The Amazon River is the longest river in South America, stretching over 6,400 kilometers."
+  **Ground Truth:** "Amazon River"
+
 
 # Data
 Response: {{response}}
@@ -75,10 +83,12 @@ Ground Truth: {{ground_truth}}
 
 
 # Tasks
-## Please provide your assessment Score for the previous RESPONSE in relation to the GROUND TRUTH based on the Definitions above. Your output should include the following information:
-- **ThoughtChain**: To improve the reasoning process, think step by step and include a step-by-step explanation of your thought process as you analyze the data based on the definitions. Keep it brief and start your ThoughtChain with "Let's think step by step:".
-- **Explanation**: a very short explanation of why you think the input data should get that Score.
-- **Score**: based on your previous analysis, provide your Score. The Score you give MUST be an integer score (i.e., "1", "2"...) based on the levels of the definitions.
+## Please provide your assessment for the previous RESPONSE in relation to the GROUND TRUTH based on the Definitions above.
+Your output must be a valid JSON object with exactly these keys:
+  - reason: a string explaining your thought process and assessment. Start with "Let's think step by step:". When status is "skipped", explain why evaluation was skipped.
+  - score: an integer value between 1 and 5 based on the level definitions above. The score you give MUST be an integer score (i.e., 1, 2...) based on the levels of the definitions. Set to null when status is "skipped".
+  - status: a string indicating the evaluation status. Must be one of:
+      - "completed": evaluation was performed normally.
+      - "skipped": evaluation was not performed because the Response or Ground Truth is empty or not provided. When skipped, set score to null.
 
-## Please provide your answers between the tags: <S0>your chain of thoughts</S0>, <S1>your explanation</S1>, <S2>your score</S2>.
 # Output
