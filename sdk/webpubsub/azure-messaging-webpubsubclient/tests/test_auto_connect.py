@@ -42,8 +42,12 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
                 if client.is_connected() and client._connection_id != conn_id0:
                     break
                 time.sleep(1)
-            client.send_to_group(group_name, name, "text")
-            time.sleep(1)  # wait for on_group_message to be called
+            # retry send_to_group to allow async group rejoin to complete
+            for _ in range(10):
+                client.send_to_group(group_name, name, "text")
+                time.sleep(1)
+                if name in TEST_RESULT:
+                    break
             conn_id1 = client._connection_id
         assert conn_id0 is not None
         assert conn_id1 is not None
