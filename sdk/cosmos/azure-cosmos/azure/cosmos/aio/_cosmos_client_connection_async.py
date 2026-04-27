@@ -24,6 +24,7 @@
 """Document client class for the Azure Cosmos database service.
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
+import copy
 import logging
 import os
 from urllib.parse import urlparse
@@ -3150,7 +3151,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             max_degree = options.get("maxConcurrency")
             num_ranges = len(over_lapping_ranges)
             if max_degree is not None and max_degree != 0 and num_ranges > 1:
-                effective_concurrency = _resolve_max_degree(max_degree, num_ranges)
+                effective_concurrency = _resolve_max_degree(max_degree)
             else:
                 effective_concurrency = 0
 
@@ -3160,20 +3161,24 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 semaphore = asyncio.Semaphore(effective_concurrency)
 
                 async def _query_range(overlapping_range):
-                    """Query a single partition range with its own header copy.
+                    """Query a single partition range with its own header and request_params copy.
 
                     :param dict overlapping_range: The partition key range to query.
                     :returns: A tuple of partial results and response headers.
                     :rtype: tuple
                     """
                     task_headers = dict(req_headers)
+                    # request_params is mutated by the request pipeline (e.g. availability_strategy,
+                    # location_endpoint_to_route, location_index_to_route, is_hedging_request),
+                    # so each concurrent task needs its own deep copy to avoid races.
+                    task_request_params = copy.deepcopy(request_params)
                     single_range = routing_range.Range.PartitionKeyRangeToRange(overlapping_range)
                     EPK_sub_range = routing_range.Range(
                         range_min=max(single_range.min, feed_range_epk.min),
                         range_max=min(single_range.max, feed_range_epk.max),
                         isMinInclusive=True, isMaxInclusive=False)
                     # set the session token for this specific partition to avoid sending compound token
-                    await base.set_session_token_header_async(self, task_headers, path, request_params,
+                    await base.set_session_token_header_async(self, task_headers, path, task_request_params,
                                                               options, overlapping_range["id"])
                     if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                         task_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = overlapping_range["id"]
@@ -3184,7 +3189,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     task_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
                     async with semaphore:
                         partial_result, resp_headers = await self.__Post(
-                            path, request_params, query, task_headers, **kwargs)
+                            path, task_request_params, query, task_headers, **kwargs)
                     return partial_result, resp_headers
 
                 tasks = [asyncio.create_task(_query_range(r)) for r in over_lapping_ranges]

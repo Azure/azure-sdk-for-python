@@ -235,9 +235,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):  # pylint: d
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
 
-        effective_concurrency = _resolve_max_degree(
-            self._max_concurrency, len(targetPartitionQueryExecutionContextList)
-        )
+        effective_concurrency = _resolve_max_degree(self._max_concurrency)
 
         if effective_concurrency > 0 and len(targetPartitionQueryExecutionContextList) > 1:
             # Parallel initialization: peek all producers concurrently

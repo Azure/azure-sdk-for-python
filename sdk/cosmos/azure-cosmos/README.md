@@ -629,12 +629,6 @@ async def parallel_query_example():
             max_concurrency=4  # up to 4 concurrent partition requests
         )
 
-        # Auto mode - system decides based on partition count and CPU
-        results = container.query_items(
-            query='SELECT * FROM c ORDER BY c.timestamp',
-            max_concurrency=-1
-        )
-
         async for item in results:
             print(item)
 ```
@@ -643,7 +637,6 @@ async def parallel_query_example():
 |-------|----------|
 | `0` (default) | Serial execution — current behavior, backward-compatible |
 | `> 0` | That many concurrent partition requests |
-| `-1` | System decides (bounded by partition count and CPU count) |
 
 ### Using Integrated Cache
 An integrated cache is an in-memory cache that helps you ensure manageable costs and low latency as your request volume grows. The integrated cache has two parts: an item cache for point reads and a query cache for queries. The code snippet below shows you how to use this feature with the point read and query cache methods.

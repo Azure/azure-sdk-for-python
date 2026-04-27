@@ -25,7 +25,6 @@ These tests use mocks to validate concurrency behavior without requiring a live 
 """
 
 import asyncio
-import sys
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -33,6 +32,45 @@ from azure.cosmos._execution_context.aio._concurrent_helpers import (
     _resolve_max_degree,
     concurrent_peek_producers,
 )
+
+
+class _MockDocProducer:
+    """Mock document producer used by aggregator tests.
+
+    Exposes the same peek/__anext__/get_target_range surface that the
+    aggregator's drain logic relies on.
+    """
+
+    def __init__(self, items_list, range_id):
+        self._items = list(items_list)
+        self._index = 0
+        self._cur_item = None
+        rng = {"id": str(range_id), "minInclusive": str(range_id), "maxExclusive": str(range_id + 1)}
+        self._partition_key_target_range = rng
+
+    def get_target_range(self):
+        return self._partition_key_target_range
+
+    async def peek(self):
+        if self._cur_item is not None:
+            return self._cur_item
+        if self._index < len(self._items):
+            self._cur_item = self._items[self._index]
+            return self._cur_item
+        raise StopAsyncIteration
+
+    async def __anext__(self):
+        if self._cur_item is not None:
+            res = self._cur_item
+            self._cur_item = None
+            self._index += 1
+            return res
+        if self._index < len(self._items):
+            res = self._items[self._index]
+            self._index += 1
+            return res
+        raise StopAsyncIteration
+
 
 # Lazy-import aggregators to avoid circular import issues when running tests in isolation.
 # The circular chain is: base_execution_context -> aio.__init__ -> ContainerProxy ->
@@ -66,22 +104,22 @@ class TestResolveMaxDegree:
     """Tests for the _resolve_max_degree helper."""
 
     def test_none_returns_serial(self):
-        assert _resolve_max_degree(None, 10) == 0
+        assert _resolve_max_degree(None) == 0
 
     def test_zero_returns_serial(self):
-        assert _resolve_max_degree(0, 10) == 0
+        assert _resolve_max_degree(0) == 0
 
     def test_positive_returns_value(self):
-        assert _resolve_max_degree(4, 10) == 4
+        assert _resolve_max_degree(4) == 4
 
     def test_positive_exceeding_partitions_returns_value(self):
         # The user explicitly asked for 100, we respect that
-        assert _resolve_max_degree(100, 5) == 100
+        assert _resolve_max_degree(100) == 100
 
     @pytest.mark.parametrize("bad_value", [-1, -2, -5, -100])
     def test_negative_raises(self, bad_value):
         with pytest.raises(ValueError, match="max_concurrency"):
-            _resolve_max_degree(bad_value, 10)
+            _resolve_max_degree(bad_value)
 
 
 # ---------------------------------------------------------------------------
@@ -332,37 +370,7 @@ class TestNonStreamingOrderByParallel:
                  {"id": "b", "orderByItems": [{"item": 2}]},
                  {"id": "c", "orderByItems": [{"item": 3}]}]
 
-        class MockDocProducer:
-            def __init__(self, items_list):
-                self._items = list(items_list)
-                self._index = 0
-                self._cur_item = None
-                self._partition_key_target_range = {"id": "0", "minInclusive": "", "maxExclusive": "FF"}
-
-            def get_target_range(self):
-                return self._partition_key_target_range
-
-            async def peek(self):
-                if self._cur_item is not None:
-                    return self._cur_item
-                if self._index < len(self._items):
-                    self._cur_item = self._items[self._index]
-                    return self._cur_item
-                raise StopAsyncIteration
-
-            async def __anext__(self):
-                if self._cur_item is not None:
-                    res = self._cur_item
-                    self._cur_item = None
-                    self._index += 1
-                    return res
-                if self._index < len(self._items):
-                    res = self._items[self._index]
-                    self._index += 1
-                    return res
-                raise StopAsyncIteration
-
-        mp = MockDocProducer(items)
+        mp = _MockDocProducer(items, range_id=0)
 
         with patch.object(aggregator, '_createTargetPartitionQueryExecutionContext', return_value=mp):
             await aggregator._configure_partition_ranges()
@@ -405,48 +413,17 @@ class TestNonStreamingOrderByParallel:
             options, query_ex_info, None, None
         )
 
-        class MockDocProducer:
-            def __init__(self, items_list, range_id):
-                self._items = list(items_list)
-                self._index = 0
-                self._cur_item = None
-                rng = {"id": str(range_id), "minInclusive": str(range_id), "maxExclusive": str(range_id + 1)}
-                self._partition_key_target_range = rng
-
-            def get_target_range(self):
-                return self._partition_key_target_range
-
-            async def peek(self):
-                if self._cur_item is not None:
-                    return self._cur_item
-                if self._index < len(self._items):
-                    self._cur_item = self._items[self._index]
-                    return self._cur_item
-                raise StopAsyncIteration
-
-            async def __anext__(self):
-                if self._cur_item is not None:
-                    res = self._cur_item
-                    self._cur_item = None
-                    self._index += 1
-                    return res
-                if self._index < len(self._items):
-                    res = self._items[self._index]
-                    self._index += 1
-                    return res
-                raise StopAsyncIteration
-
         # Three producers with interleaved sort values
-        p0 = MockDocProducer([
+        p0 = _MockDocProducer([
             {"id": "a1", "orderByItems": [{"item": 1}]},
             {"id": "a5", "orderByItems": [{"item": 5}]},
             {"id": "a9", "orderByItems": [{"item": 9}]},
         ], range_id=0)
-        p1 = MockDocProducer([
+        p1 = _MockDocProducer([
             {"id": "b2", "orderByItems": [{"item": 2}]},
             {"id": "b6", "orderByItems": [{"item": 6}]},
         ], range_id=1)
-        p2 = MockDocProducer([
+        p2 = _MockDocProducer([
             {"id": "c3", "orderByItems": [{"item": 3}]},
             {"id": "c4", "orderByItems": [{"item": 4}]},
             {"id": "c7", "orderByItems": [{"item": 7}]},
@@ -502,43 +479,12 @@ class TestNonStreamingOrderByParallel:
             options, query_ex_info, None, None
         )
 
-        class MockDocProducer:
-            def __init__(self, items_list, range_id):
-                self._items = list(items_list)
-                self._index = 0
-                self._cur_item = None
-                rng = {"id": str(range_id), "minInclusive": str(range_id), "maxExclusive": str(range_id + 1)}
-                self._partition_key_target_range = rng
-
-            def get_target_range(self):
-                return self._partition_key_target_range
-
-            async def peek(self):
-                if self._cur_item is not None:
-                    return self._cur_item
-                if self._index < len(self._items):
-                    self._cur_item = self._items[self._index]
-                    return self._cur_item
-                raise StopAsyncIteration
-
-            async def __anext__(self):
-                if self._cur_item is not None:
-                    res = self._cur_item
-                    self._cur_item = None
-                    self._index += 1
-                    return res
-                if self._index < len(self._items):
-                    res = self._items[self._index]
-                    self._index += 1
-                    return res
-                raise StopAsyncIteration
-
-        p0 = MockDocProducer([
+        p0 = _MockDocProducer([
             {"id": "a1", "orderByItems": [{"item": 1}]},
             {"id": "a3", "orderByItems": [{"item": 3}]},
             {"id": "a5", "orderByItems": [{"item": 5}]},
         ], range_id=0)
-        p1 = MockDocProducer([
+        p1 = _MockDocProducer([
             {"id": "b2", "orderByItems": [{"item": 2}]},
             {"id": "b4", "orderByItems": [{"item": 4}]},
             {"id": "b6", "orderByItems": [{"item": 6}]},
@@ -674,44 +620,13 @@ class TestNonStreamingOrderByParallel:
             options, query_ex_info, None, None
         )
 
-        class MockDocProducer:
-            def __init__(self, items_list, range_id):
-                self._items = list(items_list)
-                self._index = 0
-                self._cur_item = None
-                rng = {"id": str(range_id), "minInclusive": str(range_id), "maxExclusive": str(range_id + 1)}
-                self._partition_key_target_range = rng
-
-            def get_target_range(self):
-                return self._partition_key_target_range
-
-            async def peek(self):
-                if self._cur_item is not None:
-                    return self._cur_item
-                if self._index < len(self._items):
-                    self._cur_item = self._items[self._index]
-                    return self._cur_item
-                raise StopAsyncIteration
-
-            async def __anext__(self):
-                if self._cur_item is not None:
-                    res = self._cur_item
-                    self._cur_item = None
-                    self._index += 1
-                    return res
-                if self._index < len(self._items):
-                    res = self._items[self._index]
-                    self._index += 1
-                    return res
-                raise StopAsyncIteration
-
         # p0 has items, p1 is empty (will be filtered during peek), p2 has items
-        p0 = MockDocProducer([
+        p0 = _MockDocProducer([
             {"id": "a1", "orderByItems": [{"item": 1}]},
             {"id": "a3", "orderByItems": [{"item": 3}]},
         ], range_id=0)
-        p1 = MockDocProducer([], range_id=1)  # empty
-        p2 = MockDocProducer([
+        p1 = _MockDocProducer([], range_id=1)  # empty
+        p2 = _MockDocProducer([
             {"id": "c2", "orderByItems": [{"item": 2}]},
             {"id": "c4", "orderByItems": [{"item": 4}]},
         ], range_id=2)
@@ -741,17 +656,22 @@ class TestNonStreamingOrderByParallel:
 class TestOptionsThreading:
     """Test that new kwargs properly flow through the options pipeline."""
 
-    def test_base_build_options_includes_new_keys(self):
-        """Verify build_options extracts max_concurrency."""
+    def test_base_build_options_does_not_consume_max_concurrency(self):
+        """Verify build_options does NOT extract max_concurrency.
+
+        max_concurrency must remain in kwargs so that the explicit handler in
+        ``aio/_container.py::query_items`` and ``read_items`` can pop and act on it.
+        Adding it to ``_COMMON_OPTIONS`` regresses ``read_items(..., max_concurrency=N)``.
+        """
         from azure.cosmos._base import build_options
 
         kwargs = {
             "max_concurrency": 4,
         }
         options = build_options(kwargs)
-        assert options["maxConcurrency"] == 4
-        # kwargs should have been consumed
-        assert "max_concurrency" not in kwargs
+        assert "maxConcurrency" not in options
+        # kwargs must still contain max_concurrency for downstream explicit handlers
+        assert kwargs["max_concurrency"] == 4
 
     def test_base_build_options_without_new_keys(self):
         """Verify build_options works fine without the new kwargs."""
@@ -932,10 +852,10 @@ class TestPrefixQueryParallelFanOut:
     def test_resolve_max_degree_controls_fan_out_decision(self):
         """_resolve_max_degree determines serial vs parallel for prefix query fan-out."""
         # Serial: None and 0 both yield 0 (serial)
-        assert _resolve_max_degree(None, 5) == 0
-        assert _resolve_max_degree(0, 5) == 0
+        assert _resolve_max_degree(None) == 0
+        assert _resolve_max_degree(0) == 0
         # Parallel: positive value yields that value
-        assert _resolve_max_degree(3, 5) == 3
+        assert _resolve_max_degree(3) == 3
         # Negative values are rejected
         with pytest.raises(ValueError):
-            _resolve_max_degree(-1, 5)
+            _resolve_max_degree(-1)

@@ -133,9 +133,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):  # pyli
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
 
-        effective_concurrency = _resolve_max_degree(
-            self._max_concurrency, len(targetPartitionQueryExecutionContextList)
-        )
+        effective_concurrency = _resolve_max_degree(self._max_concurrency)
 
         if effective_concurrency > 0 and len(targetPartitionQueryExecutionContextList) > 1:
             # Parallel initialization: peek all producers concurrently
@@ -191,33 +189,43 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):  # pyli
                         break
 
     async def _parallel_drain_producers(self, sort_orders, pq_size, effective_concurrency):
-        """Drain all document producers concurrently, collecting results into the priority queue.
+        """Drain all document producers concurrently, pushing results into the priority queue
+        incrementally and trimming to ``pq_size`` so memory stays bounded.
 
-        Each producer is drained in its own task, bounded by a semaphore.
-        After all tasks complete, the priority queue is trimmed to pq_size.
+        Each producer is drained in its own task. The semaphore is acquired/released around
+        each individual page (peek + ``__anext__``) rather than around the entire multi-page
+        drain, so a slow producer doesn't head-of-line block other producers from progressing.
 
         :param list sort_orders: The sort orders for the query.
         :param int pq_size: The maximum number of items to keep in the priority queue.
         :param int effective_concurrency: The effective concurrency limit.
         """
         semaphore = asyncio.Semaphore(effective_concurrency)
-        all_items = []
-        lock = asyncio.Lock()
+        pq_lock = asyncio.Lock()
 
         async def _drain_one(dp):
-            local_items = []
-            async with semaphore:
-                while True:
+            while True:
+                # Acquire the semaphore per page so other producers can progress
+                # between this producer's pages instead of waiting for it to fully drain.
+                async with semaphore:
                     try:
                         result = await dp.peek()
-                        local_items.append(
-                            document_producer._NonStreamingItemResultProducer(result, sort_orders)
-                        )
+                        item = document_producer._NonStreamingItemResultProducer(result, sort_orders)
                         await dp.__anext__()
                     except StopAsyncIteration:
                         break
-            async with lock:
-                all_items.extend(local_items)
+                # Push and trim under a lock to keep the priority queue bounded
+                # (avoids materializing the full cross-partition result set in memory).
+                async with pq_lock:
+                    await self._orderByPQ.push_async(item, self._document_producer_comparator)
+                    if len(self._orderByPQ._heap) > pq_size:
+                        new_heap = []
+                        for _ in range(pq_size):
+                            new_heap.append(
+                                await self._orderByPQ.pop_async(self._document_producer_comparator)
+                            )
+                        del self._orderByPQ._heap
+                        self._orderByPQ._heap = new_heap
 
         tasks = [asyncio.create_task(_drain_one(dp)) for dp in self._doc_producers]
         try:
@@ -228,15 +236,3 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):  # pyli
                     t.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
             raise
-
-        # Push all items into priority queue
-        for item in all_items:
-            await self._orderByPQ.push_async(item, self._document_producer_comparator)
-
-        # Trim the priority queue to pq_size
-        if len(self._orderByPQ._heap) > pq_size:
-            new_heap = []
-            for _ in range(pq_size):
-                new_heap.append(await self._orderByPQ.pop_async(self._document_producer_comparator))
-            del self._orderByPQ._heap
-            self._orderByPQ._heap = new_heap

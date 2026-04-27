@@ -30,13 +30,12 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 # pylint: disable=protected-access
 
 
-def _resolve_max_degree(max_concurrency, num_partitions):
+def _resolve_max_degree(max_concurrency):
     """Resolve the effective concurrency limit from the user-supplied value.
 
     :param int max_concurrency: The user-configured value.
         * 0 or None -> serial (no concurrency)
         * >0        -> use that value
-    :param int num_partitions: Number of target partition key ranges.
     :returns: The effective concurrency limit, or 0 for serial execution.
     :rtype: int
     """

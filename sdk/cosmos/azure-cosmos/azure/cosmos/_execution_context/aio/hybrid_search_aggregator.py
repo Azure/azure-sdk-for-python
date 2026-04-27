@@ -81,7 +81,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
 
 
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements, too-many-locals
-        effective_concurrency = _resolve_max_degree(self._max_concurrency, 1)
+        effective_concurrency = _resolve_max_degree(self._max_concurrency)
 
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
@@ -90,9 +90,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             full_text_score_scope = self._options.get(_FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_DEFAULT)
             use_all_ranges = full_text_score_scope != _FULL_TEXT_SCORE_SCOPE_LOCAL
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=use_all_ranges)
-            effective_concurrency = _resolve_max_degree(
-                self._max_concurrency, len(target_partition_key_ranges)
-            )
+            effective_concurrency = _resolve_max_degree(self._max_concurrency)
             global_statistics_doc_producers = []
             global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
 
@@ -154,9 +152,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         component_query_execution_list = []
         # for each of the query infos, run the component queries for the target partitions
         target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=False)
-        effective_concurrency = _resolve_max_degree(
-            self._max_concurrency, len(target_partition_key_ranges) * len(rewritten_query_infos)
-        )
+        effective_concurrency = _resolve_max_degree(self._max_concurrency)
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
                 if self._parameters:
