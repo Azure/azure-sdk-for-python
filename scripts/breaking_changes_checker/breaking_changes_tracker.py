@@ -294,10 +294,12 @@ class BreakingChangesTracker:
                         diff[diff_type], stable_default
                     )
                 elif diff_type == "param_type":
+                    # Check if the parameter kind (positional vs keyword) has changed
                     self.check_parameter_type_changed(
                         diff["param_type"], stable_parameters_node
                     )
                 elif diff_type == "type":
+                    # Check if the parameter type annotation has changed
                     self.check_parameter_annotation_type_changed(
                         diff["type"], stable_parameters_node
                     )
