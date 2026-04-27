@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import VirtualMachineImagesClientConfiguration
+from ._configuration import ImageBuilderClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import Operations, TriggersOperations, VirtualMachineImageTemplatesOperations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class VirtualMachineImagesClient:
+class ImageBuilderClient:
     """Virtual Machine Image Template.
 
     :ivar operations: Operations operations
@@ -68,7 +68,7 @@ class VirtualMachineImagesClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = VirtualMachineImagesClientConfiguration(
+        self._config = ImageBuilderClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

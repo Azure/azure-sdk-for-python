@@ -1,7 +1,7 @@
 {
   "azure.mgmt.imagebuilder": {
     "class_nodes": {
-      "VirtualMachineImagesClient": {
+      "ImageBuilderClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -13884,7 +13884,7 @@
   },
   "azure.mgmt.imagebuilder.aio": {
     "class_nodes": {
-      "VirtualMachineImagesClient": {
+      "ImageBuilderClient": {
         "type": null,
         "methods": {
           "__init__": {

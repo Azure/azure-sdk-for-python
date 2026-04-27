@@ -53,7 +53,7 @@ from ...operations._operations import (
     build_virtual_machine_image_templates_run_request,
     build_virtual_machine_image_templates_update_request,
 )
-from .._configuration import VirtualMachineImagesClientConfiguration
+from .._configuration import ImageBuilderClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -67,16 +67,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.imagebuilder.aio.VirtualMachineImagesClient`'s
+        :class:`~azure.mgmt.imagebuilder.aio.ImageBuilderClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualMachineImagesClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: ImageBuilderClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -176,16 +174,14 @@ class TriggersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.imagebuilder.aio.VirtualMachineImagesClient`'s
+        :class:`~azure.mgmt.imagebuilder.aio.ImageBuilderClient`'s
         :attr:`triggers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualMachineImagesClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: ImageBuilderClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -745,16 +741,14 @@ class VirtualMachineImageTemplatesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.imagebuilder.aio.VirtualMachineImagesClient`'s
+        :class:`~azure.mgmt.imagebuilder.aio.ImageBuilderClient`'s
         :attr:`virtual_machine_image_templates` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualMachineImagesClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: ImageBuilderClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

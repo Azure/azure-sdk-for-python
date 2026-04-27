@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.imagebuilder import VirtualMachineImagesClient
+from azure.mgmt.imagebuilder import ImageBuilderClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.imagebuilder import VirtualMachineImagesClient
 
 
 def main():
-    client = VirtualMachineImagesClient(
+    client = ImageBuilderClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
