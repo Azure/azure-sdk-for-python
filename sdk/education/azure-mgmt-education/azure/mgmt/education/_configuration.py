@@ -6,26 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
 
 from ._version import VERSION
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class EducationManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class EducationManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for EducationManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,22 +26,28 @@ class EducationManagementClientConfiguration(Configuration):  # pylint: disable=
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: Api Version. Default value is "2021-12-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
-        super(EducationManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2021-12-01-preview"] = kwargs.pop("api_version", "2021-12-01-preview")
+    def __init__(
+        self, credential: "TokenCredential", cloud_setting: Optional["AzureClouds"] = None, **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop("api_version", "2021-12-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.credential = credential
+        self.cloud_setting = cloud_setting
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-education/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -57,9 +56,9 @@ class EducationManagementClientConfiguration(Configuration):  # pylint: disable=
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or ARMHttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = ARMChallengeAuthenticationPolicy(

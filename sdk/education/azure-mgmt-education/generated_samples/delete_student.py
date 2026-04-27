@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.education import EducationManagementClient
 
 """
@@ -28,15 +30,14 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.students.delete(
+    client.students.delete(
         billing_account_name="{billingAccountName}",
         billing_profile_name="{billingProfileName}",
         invoice_section_name="{invoiceSectionName}",
         student_alias="{studentAlias}",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/education/resource-manager/Microsoft.Education/preview/2021-12-01-preview/examples/DeleteStudent.json
+# x-ms-original-file: specification/education/resource-manager/Microsoft.Education/Education/preview/2021-12-01-preview/examples/DeleteStudent.json
 if __name__ == "__main__":
     main()

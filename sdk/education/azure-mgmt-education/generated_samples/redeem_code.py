@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.education import EducationManagementClient
 
 """
@@ -28,12 +30,11 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.redeem_invitation_code(
+    client.redeem_invitation_code(
         parameters={"firstName": "test", "lastName": "user", "redeemCode": "exampleRedeemCode"},
     )
-    print(response)
 
 
-# x-ms-original-file: specification/education/resource-manager/Microsoft.Education/preview/2021-12-01-preview/examples/RedeemCode.json
+# x-ms-original-file: specification/education/resource-manager/Microsoft.Education/Education/preview/2021-12-01-preview/examples/RedeemCode.json
 if __name__ == "__main__":
     main()

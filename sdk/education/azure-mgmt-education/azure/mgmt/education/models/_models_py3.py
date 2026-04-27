@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,12 +8,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -31,7 +30,7 @@ class Amount(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, currency: Optional[str] = None, value: Optional[float] = None, **kwargs):
+    def __init__(self, *, currency: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword currency: The type of currency being used for the value.
         :paramtype currency: str
@@ -57,7 +56,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -70,7 +69,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class ErrorResponseBody(_serialization.Model):
-    """Error response indicates that the service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates that the service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     :ivar error: The details of the error.
     :vartype error: ~azure.mgmt.education.models.ErrorResponse
@@ -80,7 +80,7 @@ class ErrorResponseBody(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The details of the error.
         :paramtype error: ~azure.mgmt.education.models.ErrorResponse
@@ -121,13 +121,13 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class GrantDetails(Resource):
@@ -186,15 +186,15 @@ class GrantDetails(Resource):
         "allocated_budget": {"key": "properties.allocatedBudget", "type": "Amount"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.offer_cap = None
-        self.effective_date = None
-        self.offer_type = None
-        self.expiration_date = None
-        self.status = None
-        self.allocated_budget = None
+        self.offer_cap: Optional["_models.Amount"] = None
+        self.effective_date: Optional[datetime.datetime] = None
+        self.offer_type: Optional[Union[str, "_models.GrantType"]] = None
+        self.expiration_date: Optional[datetime.datetime] = None
+        self.status: Optional[Union[str, "_models.GrantStatus"]] = None
+        self.allocated_budget: Optional["_models.Amount"] = None
 
 
 class GrantListResponse(_serialization.Model):
@@ -218,11 +218,11 @@ class GrantListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.GrantDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
 class InviteCodeGenerateRequest(_serialization.Model):
@@ -236,7 +236,7 @@ class InviteCodeGenerateRequest(_serialization.Model):
         "max_student_count": {"key": "maxStudentCount", "type": "float"},
     }
 
-    def __init__(self, *, max_student_count: Optional[float] = None, **kwargs):
+    def __init__(self, *, max_student_count: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword max_student_count: the total number of students that can be accepted to the lab.
         :paramtype max_student_count: float
@@ -296,8 +296,8 @@ class JoinRequestDetails(Resource):
         last_name: Optional[str] = None,
         email: Optional[str] = None,
         status: Optional[Union[str, "_models.JoinRequestStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First Name.
         :paramtype first_name: str
@@ -336,14 +336,14 @@ class JoinRequestList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.JoinRequestDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
-class LabDetails(Resource):  # pylint: disable=too-many-instance-attributes
+class LabDetails(Resource):
     """Lab details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -433,8 +433,8 @@ class LabDetails(Resource):  # pylint: disable=too-many-instance-attributes
         value_properties_total_allocated_budget_value: Optional[float] = None,
         currency_properties_total_budget_currency: Optional[str] = None,
         value_properties_total_budget_value: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: Lab Display Name.
         :paramtype display_name: str
@@ -460,10 +460,10 @@ class LabDetails(Resource):  # pylint: disable=too-many-instance-attributes
         self.budget_per_student = budget_per_student
         self.description = description
         self.expiration_date = expiration_date
-        self.effective_date = None
-        self.status = None
-        self.max_student_count = None
-        self.invitation_code = None
+        self.effective_date: Optional[datetime.datetime] = None
+        self.status: Optional[Union[str, "_models.LabStatus"]] = None
+        self.max_student_count: Optional[float] = None
+        self.invitation_code: Optional[str] = None
         self.currency_properties_total_allocated_budget_currency = currency_properties_total_allocated_budget_currency
         self.value_properties_total_allocated_budget_value = value_properties_total_allocated_budget_value
         self.currency_properties_total_budget_currency = currency_properties_total_budget_currency
@@ -491,11 +491,11 @@ class LabListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.LabDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
 class Operation(_serialization.Model):
@@ -535,17 +535,17 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.education.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -581,17 +581,18 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -611,17 +612,17 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class RedeemRequest(_serialization.Model):
     """redeem request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar redeem_code: redeem code. Required.
     :vartype redeem_code: str
@@ -643,7 +644,7 @@ class RedeemRequest(_serialization.Model):
         "last_name": {"key": "lastName", "type": "str"},
     }
 
-    def __init__(self, *, redeem_code: str, first_name: str, last_name: str, **kwargs):
+    def __init__(self, *, redeem_code: str, first_name: str, last_name: str, **kwargs: Any) -> None:
         """
         :keyword redeem_code: redeem code. Required.
         :paramtype redeem_code: str
@@ -658,7 +659,7 @@ class RedeemRequest(_serialization.Model):
         self.last_name = last_name
 
 
-class StudentDetails(Resource):  # pylint: disable=too-many-instance-attributes
+class StudentDetails(Resource):
     """Student details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -738,8 +739,8 @@ class StudentDetails(Resource):  # pylint: disable=too-many-instance-attributes
         expiration_date: Optional[datetime.datetime] = None,
         subscription_alias: Optional[str] = None,
         subscription_invite_last_sent_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First Name.
         :paramtype first_name: str
@@ -764,15 +765,15 @@ class StudentDetails(Resource):  # pylint: disable=too-many-instance-attributes
         self.email = email
         self.role = role
         self.budget = budget
-        self.subscription_id = None
+        self.subscription_id: Optional[str] = None
         self.expiration_date = expiration_date
-        self.status = None
-        self.effective_date = None
+        self.status: Optional[Union[str, "_models.StudentLabStatus"]] = None
+        self.effective_date: Optional[datetime.datetime] = None
         self.subscription_alias = subscription_alias
         self.subscription_invite_last_sent_date = subscription_invite_last_sent_date
 
 
-class StudentLabDetails(Resource):  # pylint: disable=too-many-instance-attributes
+class StudentLabDetails(Resource):
     """Student lab details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -843,18 +844,18 @@ class StudentLabDetails(Resource):  # pylint: disable=too-many-instance-attribut
         "lab_scope": {"key": "properties.labScope", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.display_name = None
-        self.description = None
-        self.expiration_date = None
-        self.role = None
-        self.budget = None
-        self.subscription_id = None
-        self.status = None
-        self.effective_date = None
-        self.lab_scope = None
+        self.display_name: Optional[str] = None
+        self.description: Optional[str] = None
+        self.expiration_date: Optional[datetime.datetime] = None
+        self.role: Optional[Union[str, "_models.StudentRole"]] = None
+        self.budget: Optional["_models.Amount"] = None
+        self.subscription_id: Optional[str] = None
+        self.status: Optional[Union[str, "_models.StudentLabStatus"]] = None
+        self.effective_date: Optional[datetime.datetime] = None
+        self.lab_scope: Optional[str] = None
 
 
 class StudentLabListResult(_serialization.Model):
@@ -878,11 +879,11 @@ class StudentLabListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.StudentLabDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
 class StudentListResult(_serialization.Model):
@@ -906,11 +907,11 @@ class StudentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.StudentDetails"]] = None
+        self.next_link: Optional[str] = None
 
 
 class SystemData(_serialization.Model):
@@ -950,8 +951,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
