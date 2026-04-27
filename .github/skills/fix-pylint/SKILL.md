@@ -116,6 +116,8 @@ git diff --cached --name-only | Select-String "<package-path>"
 
 ### Step 4: Run Pylint (within activated venv)
 
+**Important: Do not run black as part of the pylint fix workflow.** Running black will reformat the code and may mask or change the pylint warnings you are trying to fix. Only run pylint to identify and fix the specific warnings.
+
 **⚠️ Ensure virtual environment is still activated before running:**
 
 ```powershell
