@@ -85,9 +85,9 @@ class _SessionBrowser(BaseHandler):
     ) -> List[str]:
         """List session IDs for this entity.
 
-        :keyword ~datetime.datetime updated_since: If specified, only sessions whose state was
-            updated after this time are returned. If not specified, returns sessions with
-            active messages in the entity.
+        :keyword ~datetime.datetime updated_since: If specified, only sessions whose last update
+            (state change or message activity) is after this time are returned. If not specified,
+            returns sessions with active messages in the entity.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: A list of session ID strings.
         :rtype: list[str]

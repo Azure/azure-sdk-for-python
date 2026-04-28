@@ -737,13 +737,13 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
     ) -> List[str]:
         """List session IDs with active messages in a session-enabled queue.
 
-        If ``updated_since`` is specified, only sessions whose state was updated
-        after that time are returned. If not specified, returns sessions with
-        active messages in the queue.
+        If ``updated_since`` is specified, only sessions whose last update (state change
+        or message activity) is after that time are returned. If not specified, returns
+        sessions with active messages in the queue.
 
         :param str queue_name: The name of the session-enabled queue.
-        :keyword ~datetime.datetime updated_since: If specified, only sessions whose state was
-            updated after this time are returned.
+        :keyword ~datetime.datetime updated_since: If specified, only sessions whose last update
+            (state change or message activity) is after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: A list of session ID strings.
         :rtype: list[str]
@@ -769,14 +769,14 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
     ) -> List[str]:
         """List session IDs with active messages in a session-enabled subscription.
 
-        If ``updated_since`` is specified, only sessions whose state was updated
-        after that time are returned. If not specified, returns sessions with
-        active messages in the subscription.
+        If ``updated_since`` is specified, only sessions whose last update (state change
+        or message activity) is after that time are returned. If not specified, returns
+        sessions with active messages in the subscription.
 
         :param str topic_name: The name of the topic.
         :param str subscription_name: The name of the subscription.
-        :keyword ~datetime.datetime updated_since: If specified, only sessions whose state was
-            updated after this time are returned.
+        :keyword ~datetime.datetime updated_since: If specified, only sessions whose last update
+            (state change or message activity) is after this time are returned.
         :keyword float timeout: The total operation timeout in seconds.
         :returns: A list of session ID strings.
         :rtype: list[str]
