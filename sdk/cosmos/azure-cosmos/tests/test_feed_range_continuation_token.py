@@ -35,6 +35,7 @@ from azure.cosmos._query_aggregate_utils import _get_select_value_aggregate_func
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
     _MAX_CONSECUTIVE_NO_PROGRESS_PAGES,
+    _MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS,
     _FeedRangePaginationState,
     _apply_feedrange_request_headers,
     _build_outbound_token,
@@ -47,6 +48,7 @@ from azure.cosmos._routing.feed_range_continuation import (
     _hash_query_spec,
     _stable_hash_128,
     _normalize_max_item_count,
+    _increment_explode_iterations_or_raise,
     _update_no_progress_page_count,
     _validate_token_identity,
     _FIELD_BACKEND_CONTINUATION,
@@ -217,6 +219,29 @@ class TestTokenRoundTrip:
         assert _FIELD_BACKEND_CONTINUATION not in decoded
         assert "cf" not in decoded
         assert "rf" not in decoded
+
+    def test_build_outbound_token_uses_precomputed_hashes_without_rehash(self, monkeypatch):
+        monkeypatch.setattr(
+            "azure.cosmos._routing.feed_range_continuation._hash_query_spec",
+            lambda _query: (_ for _ in ()).throw(AssertionError("query hash should not be recomputed")),
+        )
+        monkeypatch.setattr(
+            "azure.cosmos._routing.feed_range_continuation._hash_feed_range",
+            lambda _feed_range: (_ for _ in ()).throw(AssertionError("feed_range hash should not be recomputed")),
+        )
+
+        wire = _build_outbound_token(
+            resource_id=_RID,
+            query=_QUERY,
+            feed_range_epk=_FEED_RANGE,
+            entries=[(_HEAD_FEEDRANGE, _BACKEND_CONT)],
+            query_hash="precomputed-query-hash",
+            feedrange_hash="precomputed-feedrange-hash",
+        )
+        decoded = _decode_token(wire)
+        assert decoded is not None
+        assert decoded[_FIELD_QUERY_HASH] == "precomputed-query-hash"
+        assert decoded[_FIELD_FEEDRANGE_HASH] == "precomputed-feedrange-hash"
 
     def test_per_entry_backend_continuations_coexist(self):
         # The shape that motivated the flat ``c`` list: a future
@@ -437,6 +462,21 @@ class TestIdentityFingerprintMismatch:
         h2 = _hash_feed_range(_FEED_RANGE)
         assert h1 == h2
 
+    def test_feed_range_inclusivity_change_changes_hash(self):
+        inclusive_exclusive = routing_range.Range(
+            range_min="0000000000000000",
+            range_max="7FFFFFFFFFFFFFFF",
+            isMinInclusive=True,
+            isMaxInclusive=False,
+        )
+        exclusive_inclusive = routing_range.Range(
+            range_min="0000000000000000",
+            range_max="7FFFFFFFFFFFFFFF",
+            isMinInclusive=False,
+            isMaxInclusive=True,
+        )
+        assert _hash_feed_range(inclusive_exclusive) != _hash_feed_range(exclusive_inclusive)
+
     def test_call_site_replay_against_other_collection_raises(self):
         """Drive the production validator (``_validate_token_identity``)
         with a token built for ``_RID`` and resume against a different
@@ -489,6 +529,29 @@ class TestIdentityFingerprintMismatch:
                 feed_range_epk=other_feed_range,
             )
         assert "feed_range" in str(excinfo.value).lower()
+
+    def test_validate_token_identity_uses_precomputed_hashes_without_rehash(self, monkeypatch):
+        payload = _make_valid_token_payload()
+        inbound = _decode_token(_encode_token(payload))
+        assert inbound is not None
+
+        monkeypatch.setattr(
+            "azure.cosmos._routing.feed_range_continuation._hash_query_spec",
+            lambda _query: (_ for _ in ()).throw(AssertionError("query hash should not be recomputed")),
+        )
+        monkeypatch.setattr(
+            "azure.cosmos._routing.feed_range_continuation._hash_feed_range",
+            lambda _feed_range: (_ for _ in ()).throw(AssertionError("feed_range hash should not be recomputed")),
+        )
+
+        _validate_token_identity(
+            inbound,
+            resource_id=_RID,
+            query=_QUERY,
+            feed_range_epk=_FEED_RANGE,
+            expected_query_hash=inbound[_FIELD_QUERY_HASH],
+            expected_feedrange_hash=inbound[_FIELD_FEEDRANGE_HASH],
+        )
 
 
 # ---------------------------------------------------------------------- #
@@ -1014,6 +1077,16 @@ class TestEmptyPageStallCounter:
         ) == 0
 
 
+class TestExplodeIterationGuard:
+    def test_increments_under_limit(self):
+        assert _increment_explode_iterations_or_raise(0) == 1
+
+    def test_raises_over_limit(self):
+        with pytest.raises(RuntimeError) as excinfo:
+            _increment_explode_iterations_or_raise(_MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS)
+        assert "split re-resolution" in str(excinfo.value)
+
+
 class TestFeedRangePaginationState:
     """Unit tests for the shared pagination state machine.
 
@@ -1191,13 +1264,13 @@ class TestFeedRangePaginationState:
         )
 
         assert did_explode is True
-        # Java parity: parent is dequeued, children prepended in order;
-        # children start with no backend continuation (parent's bc was
-        # tied to the now-retired physical partition).
+        # Parent is dequeued and children are appended at the queue tail
+        # in EPK order (Java/.NET parity). Children start with no backend
+        # continuation (parent's bc was tied to the retired partition).
         assert self._queue_bounds(state) == [
+            ("80", "C0", None),
             ("00", "40", None),
             ("40", "80", None),
-            ("80", "C0", None),
         ]
         assert state.head_bc is None
 

@@ -70,6 +70,11 @@ def _extract_outer_select_value_projection(normalized_query: str) -> Optional[st
 
     Uses a lightweight parenthesis-depth scan so nested subqueries do not
     influence outer aggregate detection.
+
+    :param normalized_query: Uppercased, whitespace-normalized query text.
+    :type normalized_query: str
+    :returns: Outer ``SELECT VALUE`` projection when found; otherwise ``None``.
+    :rtype: Optional[str]
     """
     select_value = "SELECT VALUE"
     start_idx = normalized_query.find(select_value)

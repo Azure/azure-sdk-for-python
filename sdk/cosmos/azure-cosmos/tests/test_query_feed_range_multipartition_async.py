@@ -15,6 +15,7 @@ import pytest
 import pytest_asyncio
 
 import test_config
+from azure.cosmos import _base
 from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos._routing.feed_range_continuation import _decode_token
@@ -72,6 +73,15 @@ async def _ids_via_per_partition_scan(container, partition_ranges: Iterable[Tupl
         async for item in container.query_items(query="SELECT c.id FROM c", feed_range=fr):
             ground_truth.add(item["id"])
     return ground_truth
+
+
+async def _values_via_per_partition_scan(container, partition_ranges: Iterable[Tuple[str, str]]):
+    values = []
+    for (mn, mx) in partition_ranges:
+        fr = _crossing_feed_range(mn, mx)
+        async for value in container.query_items(query='SELECT VALUE c["value"] FROM c', feed_range=fr):
+            values.append(value)
+    return values
 
 
 async def _drain_pages(pager) -> Tuple[List[List[dict]], List[str]]:
@@ -268,6 +278,181 @@ class TestFeedRangeMultiPartitionAsync:
             assert merged_rows[0] == expected_count, (
                 "merged COUNT result mismatch for two-partition crossing feed_range; "
                 f"returned={merged_rows[0]}, expected={expected_count}")
+            assert pager.continuation_token in (None, "", b""), (
+                f"expected empty continuation after draining aggregate query; got "
+                f"{pager.continuation_token!r}")
+        finally:
+            await client.close()
+
+    @pytest.mark.parametrize("merge_error_type", [TypeError, KeyError])
+    async def test_two_partition_feed_range_merge_fallback_preserves_rows_async(
+        self, monkeypatch, caplog, merge_error_type
+    ):
+        """Force merge failures and verify fallback extends docs without loss."""
+        client = _client()
+        try:
+            container = _get_container(client)
+            partitions = await _sorted_partition_ranges(container)
+            if len(partitions) < 2:
+                pytest.skip("Need a container with >= 2 physical partitions")
+
+            chosen = None
+            for i in range(len(partitions) - 1):
+                p0, p1 = partitions[i], partitions[i + 1]
+                if (await _count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                        and await _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                    chosen = (p0, p1)
+                    break
+            if chosen is None:
+                pytest.skip("No adjacent partition pair both populated with >= "
+                            f"{MIN_DOCS_PER_PARTITION} docs")
+
+            (p0_min, _), (_, p1_max) = chosen
+            crossing = _crossing_feed_range(p0_min, p1_max)
+            ground_truth = await _ids_via_per_partition_scan(container, [chosen[0], chosen[1]])
+
+            merge_call_count = 0
+
+            def _raising_merge(*_args, **_kwargs):
+                nonlocal merge_call_count
+                merge_call_count += 1
+                raise merge_error_type("injected-merge-failure")
+
+            monkeypatch.setattr(_base, "_merge_query_results", _raising_merge)
+
+            with caplog.at_level("WARNING", logger="azure.cosmos.aio._cosmos_client_connection_async"):
+                pager = container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=crossing,
+                    max_item_count=PAGE_SIZE,
+                ).by_page()
+                pages, all_ids = await _drain_pages(pager)
+
+            assert merge_call_count > 0
+            assert any(
+                "Falling back to non-aggregate merge after aggregate merge failure" in record.getMessage()
+                for record in caplog.records
+            ), "Expected warning log for merge fallback path"
+
+            oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
+            assert not oversized, (
+                f"page-size limit violated (max_item_count={PAGE_SIZE}); "
+                f"got pages with sizes {[len(p) for p in pages]}; "
+                f"oversized pages (index, size): {oversized}.")
+
+            unique = set(all_ids)
+            assert len(all_ids) == len(unique), (
+                f"fallback path produced duplicates: {len(all_ids)} items returned, "
+                f"{len(unique)} distinct, "
+                f"{len(all_ids) - len(unique)} duplicate(s).")
+            assert unique == ground_truth, (
+                f"fallback path dropped/added items: returned={len(unique)} ids, "
+                f"ground_truth={len(ground_truth)} ids, "
+                f"missing={len(ground_truth - unique)}, "
+                f"unexpected={len(unique - ground_truth)}.")
+        finally:
+            await client.close()
+
+    async def test_two_partition_feed_range_min_aggregate_pagination_async(self):
+        client = _client()
+        try:
+            container = _get_container(client)
+            partitions = await _sorted_partition_ranges(container)
+            if len(partitions) < 2:
+                pytest.skip("Need a container with ≥ 2 physical partitions")
+
+            chosen = None
+            for i in range(len(partitions) - 1):
+                p0, p1 = partitions[i], partitions[i + 1]
+                if (await _count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                        and await _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                    chosen = (p0, p1)
+                    break
+            if chosen is None:
+                pytest.skip("No adjacent partition pair both populated with ≥ "
+                            f"{MIN_DOCS_PER_PARTITION} docs")
+
+            (p0_min, _), (_, p1_max) = chosen
+            crossing = _crossing_feed_range(p0_min, p1_max)
+            expected_values = await _values_via_per_partition_scan(container, [chosen[0], chosen[1]])
+            expected_min = min(expected_values)
+
+            pager = container.query_items(
+                query='SELECT VALUE MIN(c["value"]) FROM c',
+                feed_range=crossing,
+                max_item_count=1,
+            ).by_page()
+
+            pages: List[List[object]] = []
+            merged_rows: List[object] = []
+            async for page in pager:
+                items = [it async for it in page]
+                pages.append(items)
+                merged_rows.extend(items)
+
+            oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > 1]
+            assert not oversized, (
+                "aggregate page-size limit violated (max_item_count=1); "
+                f"page sizes={[len(p) for p in pages]}, oversized={oversized}.")
+            assert len(merged_rows) == 1, (
+                "aggregate merge leaked partial fragments or dropped final value; "
+                f"expected one merged row, got {len(merged_rows)} rows: {merged_rows}")
+            assert merged_rows[0] == expected_min, (
+                "merged MIN result mismatch for two-partition crossing feed_range; "
+                f"returned={merged_rows[0]}, expected={expected_min}")
+            assert pager.continuation_token in (None, "", b""), (
+                f"expected empty continuation after draining aggregate query; got "
+                f"{pager.continuation_token!r}")
+        finally:
+            await client.close()
+
+    async def test_two_partition_feed_range_max_aggregate_pagination_async(self):
+        client = _client()
+        try:
+            container = _get_container(client)
+            partitions = await _sorted_partition_ranges(container)
+            if len(partitions) < 2:
+                pytest.skip("Need a container with ≥ 2 physical partitions")
+
+            chosen = None
+            for i in range(len(partitions) - 1):
+                p0, p1 = partitions[i], partitions[i + 1]
+                if (await _count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                        and await _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                    chosen = (p0, p1)
+                    break
+            if chosen is None:
+                pytest.skip("No adjacent partition pair both populated with ≥ "
+                            f"{MIN_DOCS_PER_PARTITION} docs")
+
+            (p0_min, _), (_, p1_max) = chosen
+            crossing = _crossing_feed_range(p0_min, p1_max)
+            expected_values = await _values_via_per_partition_scan(container, [chosen[0], chosen[1]])
+            expected_max = max(expected_values)
+
+            pager = container.query_items(
+                query='SELECT VALUE MAX(c["value"]) FROM c',
+                feed_range=crossing,
+                max_item_count=1,
+            ).by_page()
+
+            pages: List[List[object]] = []
+            merged_rows: List[object] = []
+            async for page in pager:
+                items = [it async for it in page]
+                pages.append(items)
+                merged_rows.extend(items)
+
+            oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > 1]
+            assert not oversized, (
+                "aggregate page-size limit violated (max_item_count=1); "
+                f"page sizes={[len(p) for p in pages]}, oversized={oversized}.")
+            assert len(merged_rows) == 1, (
+                "aggregate merge leaked partial fragments or dropped final value; "
+                f"expected one merged row, got {len(merged_rows)} rows: {merged_rows}")
+            assert merged_rows[0] == expected_max, (
+                "merged MAX result mismatch for two-partition crossing feed_range; "
+                f"returned={merged_rows[0]}, expected={expected_max}")
             assert pager.continuation_token in (None, "", b""), (
                 f"expected empty continuation after draining aggregate query; got "
                 f"{pager.continuation_token!r}")

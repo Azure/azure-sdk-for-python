@@ -82,6 +82,9 @@ from ._routing.feed_range_continuation import (
     _count_page_items_from_partial_result,
     _decode_token,
     _derive_initial_feedranges,
+    _hash_feed_range,
+    _hash_query_spec,
+    _increment_explode_iterations_or_raise,
     _normalize_max_item_count,
     _update_no_progress_page_count,
     _validate_token_identity,
@@ -3385,9 +3388,18 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # so the sync and async loops below remain twin code paths
             # — change one, change the other.
             items_left_in_page = _normalize_max_item_count(options.get("maxItemCount"))
+            query_hash = _hash_query_spec(query)
+            feedrange_hash = _hash_feed_range(feed_range_epk)
             inbound_token_payload = _decode_token(options.get("continuation"))
             if inbound_token_payload is not None:
-                _validate_token_identity(inbound_token_payload, resource_id_str, query, feed_range_epk)
+                _validate_token_identity(
+                    inbound_token_payload,
+                    resource_id_str,
+                    query,
+                    feed_range_epk,
+                    expected_query_hash=query_hash,
+                    expected_feedrange_hash=feedrange_hash,
+                )
                 pagination_state = _FeedRangePaginationState.from_inbound(
                     inbound_token_payload, items_left_in_page
                 )
@@ -3419,6 +3431,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 consecutive_no_progress_pages = 0
 
+                # NOTE: Keep this feed_range pagination loop in sync with
+                # ``azure/cosmos/aio/_cosmos_client_connection_async.py::__QueryFeed``.
                 while pagination_state.can_issue_request():
                     head_feedrange = pagination_state.head_range
                     if head_feedrange is None:
@@ -3438,7 +3452,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     # that occurred after the token was created. Re-slice and re-resolve until
                     # each head maps to one partition. See
                     # ``_FeedRangePaginationState.explode_on_multi_overlap`` for details.
+                    explode_iterations = 0
                     while pagination_state.explode_on_multi_overlap(overlapping):
+                        explode_iterations = _increment_explode_iterations_or_raise(explode_iterations)
                         head_feedrange = pagination_state.head_range
                         if head_feedrange is None:
                             break
@@ -3448,6 +3464,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         overlapping, partition_scope = _build_scope_from_overlaps(
                             overlapping, head_feedrange
                         )
+
+                    head_feedrange = pagination_state.head_range
+                    if head_feedrange is None:
+                        continue
 
                     # Populate request headers for this single backend POST.
                     # The shared helper handles partition routing (PKR id +
@@ -3472,7 +3492,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             path, request_params, query, req_headers, **kwargs
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
-                        # Preserve resume progress if a later POST fails mid-page.
+                        # Intentionally broad: stamp the latest resumable checkpoint
+                        # for any mid-page failure, then re-raise the original error.
                         self.last_response_headers = feedrange_response_headers
                         try:
                             pagination_state.write_outbound_continuation(
@@ -3480,6 +3501,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                 resource_id_str,
                                 query,
                                 feed_range_epk,
+                                query_hash=query_hash,
+                                feedrange_hash=feedrange_hash,
                             )
                         except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
                             _LOGGER.warning(
@@ -3535,6 +3558,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             resource_id_str,
                             query,
                             feed_range_epk,
+                            query_hash=query_hash,
+                            feedrange_hash=feedrange_hash,
                         )
                         self.last_response_headers = feedrange_response_headers
                         raise RuntimeError(
@@ -3552,7 +3577,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     resource_id_str,
                     query,
                     feed_range_epk,
+                    query_hash=query_hash,
+                    feedrange_hash=feedrange_hash,
                 )
+                # End keep-in-sync block (see async ``__QueryFeed`` counterpart).
                 self.last_response_headers = feedrange_response_headers
 
                 # if the prefix partition query has results lets return it

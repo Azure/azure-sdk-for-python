@@ -31,6 +31,7 @@ from typing import Iterable, List, Optional, Tuple
 import pytest
 
 import test_config
+from azure.cosmos import _base
 from azure.cosmos import CosmosClient, http_constants
 from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.partition_key import PartitionKey
@@ -353,6 +354,71 @@ class TestFeedRangeMultiPartition:
         assert pager.continuation_token in (None, "", b""), (
             f"expected empty continuation after draining aggregate query; got "
             f"{pager.continuation_token!r}")
+
+    @pytest.mark.parametrize("merge_error_type", [TypeError, KeyError])
+    def test_two_partition_feed_range_merge_fallback_preserves_rows(
+        self, monkeypatch, caplog, merge_error_type
+    ):
+        """Force merge failures and verify fallback extends docs without loss."""
+        container = _get_container()
+        partitions = _sorted_partition_ranges(container)
+        if len(partitions) < 2:
+            pytest.skip("Need a container with ≥ 2 physical partitions")
+
+        chosen = None
+        for i in range(len(partitions) - 1):
+            p0, p1 = partitions[i], partitions[i + 1]
+            if (_count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                    and _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                chosen = (p0, p1)
+                break
+        if chosen is None:
+            pytest.skip("No adjacent partition pair both populated with ≥ "
+                        f"{MIN_DOCS_PER_PARTITION} docs")
+
+        (p0_min, _), (_, p1_max) = chosen
+        crossing = _crossing_feed_range(p0_min, p1_max)
+        ground_truth = _ids_via_per_partition_scan(container, [chosen[0], chosen[1]])
+
+        merge_call_count = 0
+
+        def _raising_merge(*_args, **_kwargs):
+            nonlocal merge_call_count
+            merge_call_count += 1
+            raise merge_error_type("injected-merge-failure")
+
+        monkeypatch.setattr(_base, "_merge_query_results", _raising_merge)
+
+        with caplog.at_level("WARNING", logger="azure.cosmos._cosmos_client_connection"):
+            pager = container.query_items(
+                query="SELECT * FROM c",
+                feed_range=crossing,
+                max_item_count=PAGE_SIZE,
+            ).by_page()
+            pages, all_ids = _drain_pages(pager)
+
+        assert merge_call_count > 0
+        assert any(
+            "Falling back to non-aggregate merge after aggregate merge failure" in record.getMessage()
+            for record in caplog.records
+        ), "Expected warning log for merge fallback path"
+
+        oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
+        assert not oversized, (
+            f"page-size limit violated (max_item_count={PAGE_SIZE}); "
+            f"got pages with sizes {[len(p) for p in pages]}; "
+            f"oversized pages (index, size): {oversized}.")
+
+        unique = set(all_ids)
+        assert len(all_ids) == len(unique), (
+            f"fallback path produced duplicates: {len(all_ids)} items returned, "
+            f"{len(unique)} distinct, "
+            f"{len(all_ids) - len(unique)} duplicate(s).")
+        assert unique == ground_truth, (
+            f"fallback path dropped/added items: returned={len(unique)} ids, "
+            f"ground_truth={len(ground_truth)} ids, "
+            f"missing={len(ground_truth - unique)}, "
+            f"unexpected={len(unique - ground_truth)}.")
 
     def test_exception_during_post_preserves_resume_checkpoint(self):
         """Inject a POST failure mid-query and verify the call site stamps

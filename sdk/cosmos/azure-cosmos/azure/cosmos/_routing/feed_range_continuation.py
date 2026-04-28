@@ -66,6 +66,8 @@ _FIELD_CONTINUATIONS = "c"
 _FIELD_BACKEND_CONTINUATION = "bc"
 # Safety guard for repeated empty pages with no continuation/feedrange movement.
 _MAX_CONSECUTIVE_NO_PROGRESS_PAGES = 1000
+# Safety guard for pathological split re-resolution loops.
+_MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS = 50
 
 
 # ----- Hash helpers ------------------------------------------------------
@@ -133,8 +135,8 @@ def _hash_feed_range(feed_range: routing_range.Range) -> str:
         {
             "min": feed_range.min,
             "max": feed_range.max,
-            "isMinInclusive": True,
-            "isMaxInclusive": False,
+            "isMinInclusive": bool(feed_range.isMinInclusive),
+            "isMaxInclusive": bool(feed_range.isMaxInclusive),
         },
         sort_keys=True,
         separators=(",", ":"),
@@ -286,6 +288,8 @@ def _validate_token_identity(
     resource_id: str,
     query: Any,
     feed_range_epk: routing_range.Range,
+    expected_query_hash: Optional[str] = None,
+    expected_feedrange_hash: Optional[str] = None,
 ) -> None:
     """Confirm the inbound token was created for the same collection,
     query, and feed_range the current call is using. If any of the
@@ -302,8 +306,8 @@ def _validate_token_identity(
     :param feed_range_epk: Current feed range scope.
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     """
-    expected_qh = _hash_query_spec(query)
-    expected_frh = _hash_feed_range(feed_range_epk)
+    expected_qh = expected_query_hash or _hash_query_spec(query)
+    expected_frh = expected_feedrange_hash or _hash_feed_range(feed_range_epk)
     if inbound[_FIELD_COLLECTION_RID] != resource_id:
         raise ValueError(
             "Continuation token was created for a different collection "
@@ -417,8 +421,7 @@ class _FeedRangePaginationState:
     """Tracks where a feed_range query is up to between page calls.
 
     Holds a single ordered queue of ``(sub-range, backend continuation)``
-    pairs — modeled on Java's ``Queue<CompositeContinuationToken>`` in
-    ``FeedRangeCompositeContinuationImpl``. The pagination loop:
+    pairs. The pagination loop:
 
       * peeks the queue head to learn the next sub-range to POST and
         the backend continuation (if any) to send with it,
@@ -434,6 +437,11 @@ class _FeedRangePaginationState:
     structure scale uniformly to non-sequential merges / parallel
     fan-out: every entry is structurally equal, and any subset of
     entries may carry a non-null backend continuation simultaneously.
+
+    Split-child insertion is tail-based so pre-existing queued ranges
+    remain ahead of newly discovered children. This matches Java/.NET
+    composite-continuation scheduling and keeps continuation ordering
+    behavior aligned across SDKs.
 
     Not thread-safe. One instance is created per ``query_items`` call
     and is mutated only by that call's pagination loop (sync or async)
@@ -516,11 +524,12 @@ class _FeedRangePaginationState:
         replace the head with one entry per child sub-range and drop
         the stale parent backend continuation.
 
-        Mirrors Java's ``FeedRangeCompositeContinuationImpl`` split
-        handling: dequeue the parent and enqueue child entries at the
-        front of the queue. Each child starts with ``bc = None``
-        because the parent's backend continuation referenced the old
-        partition id and would be rejected by the new children.
+        Dequeue the parent and append child entries at the tail
+        (preserving child EPK order). This matches Java/.NET queue
+        behavior for composite continuations. Each child starts with
+        ``bc = None`` because the parent's backend continuation
+        referenced the old partition id and would be rejected by the
+        new children.
 
         :param overlapping: Routing overlaps for the head sub-range.
         :type overlapping: list[dict]
@@ -534,10 +543,9 @@ class _FeedRangePaginationState:
         if not sub_feedranges:
             return False
         self.queue.popleft()
-        # Prepend children at the head, in order. ``extendleft`` reverses
-        # iteration order, so reverse the input first to preserve order.
-        for sub in reversed(sub_feedranges):
-            self.queue.appendleft((sub, None))
+        # Java/.NET parity: keep existing tail entries ahead of split children.
+        for sub in sub_feedranges:
+            self.queue.append((sub, None))
         return True
 
     def apply_post_result(self, items_returned: int, backend_continuation: Optional[str]) -> None:
@@ -567,6 +575,8 @@ class _FeedRangePaginationState:
         resource_id: str,
         query: Any,
         feed_range_epk: routing_range.Range,
+        query_hash: Optional[str] = None,
+        feedrange_hash: Optional[str] = None,
     ) -> None:
         """Set or clear the outbound continuation header from the queue.
 
@@ -592,6 +602,8 @@ class _FeedRangePaginationState:
             query,
             feed_range_epk,
             self.queue,
+            query_hash=query_hash,
+            feedrange_hash=feedrange_hash,
         )
 
 
@@ -600,6 +612,8 @@ def _build_outbound_token(
     query: Any,
     feed_range_epk: routing_range.Range,
     entries: Iterable[Tuple[routing_range.Range, Optional[str]]],
+    query_hash: Optional[str] = None,
+    feedrange_hash: Optional[str] = None,
 ) -> str:
     """Build and base64-encode the outbound continuation token from a
     queue of ``(range, backend_continuation)`` entries.
@@ -625,8 +639,8 @@ def _build_outbound_token(
     payload = {
         _FIELD_VERSION: _TOKEN_VERSION,
         _FIELD_COLLECTION_RID: resource_id,
-        _FIELD_QUERY_HASH: _hash_query_spec(query),
-        _FIELD_FEEDRANGE_HASH: _hash_feed_range(feed_range_epk),
+        _FIELD_QUERY_HASH: query_hash or _hash_query_spec(query),
+        _FIELD_FEEDRANGE_HASH: feedrange_hash or _hash_feed_range(feed_range_epk),
         _FIELD_CONTINUATIONS: [
             {"min": r.min, "max": r.max, _FIELD_BACKEND_CONTINUATION: bc}
             for r, bc in entries
@@ -738,6 +752,24 @@ def _update_no_progress_page_count(
 
     # No logical rows and no cursor/feedrange movement: caller made no progress.
     return current_no_progress_count + 1
+
+
+def _increment_explode_iterations_or_raise(current_explode_iterations: int) -> int:
+    """Increment split re-resolution iteration count or raise on overflow.
+
+    :param current_explode_iterations: Current explode-loop iteration count.
+    :type current_explode_iterations: int
+    :returns: Incremented explode-loop iteration count.
+    :rtype: int
+    """
+    updated_iterations = current_explode_iterations + 1
+    if updated_iterations > _MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS:
+        raise RuntimeError(
+            "Exceeded {} split re-resolution iterations while expanding overlapping "
+            "feed ranges. This indicates a stale/corrupted routing map response."
+            .format(_MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS)
+        )
+    return updated_iterations
 
 
 def _apply_feedrange_request_headers(
