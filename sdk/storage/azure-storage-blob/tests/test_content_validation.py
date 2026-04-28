@@ -567,3 +567,47 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         content = downloader.read()
         assert download_call_count == 2  # Original + retry
         assert content == data
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_streaming_with_retry(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Setup with retry enabled
+        token_credential = self.get_credential(BlobServiceClient)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            token_credential,
+            retry_total=1,
+            initial_backoff=0.1,
+            increment_base=0.1,
+            logging_enable=True
+        )
+        self.container = self.bsc.get_container_client(self.get_resource_name('utcontainer'))
+        try:
+            self.container.create_container()
+        except ResourceExistsError:
+            pass
+        blob = self.container.get_blob_client(self._get_blob_reference())
+
+        content = b'abc' * 512
+        assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
+
+        call_count = 0
+        def hook_fail_once(response):
+            nonlocal call_count
+            call_count += 1
+            # Assert content validation headers are present on both attempts
+            assert_method(response)
+            if call_count == 1:
+                response.http_response.status_code = 408  # Request Timeout - triggers retry
+
+        # Use stage_block to test structured message streaming
+        blob.stage_block('1', BytesIO(content), validate_content=a, raw_response_hook=hook_fail_once)
+        assert call_count == 2  # Original + retry
+        
+        blob.commit_block_list([BlobBlock('1')])
+        result = blob.download_blob()
+        assert result.read() == content
