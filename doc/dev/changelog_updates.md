@@ -108,7 +108,7 @@ Or using raw Chronus:
 npx chronus verify
 ```
 
-> **Note:** The CI workflow (`Chronus Verify`) runs `chronus verify` automatically on every pull request that modifies files under `sdk/`. If it fails, add a change description with `azpysdk changelog add`.
+> **Note:** The CI workflow (`Chronus Verify`) runs `chronus verify` automatically on every pull request that modifies source files under `sdk/` (specifically files matching `sdk/*/*/**`). If it fails, add a change description with `azpysdk changelog add`.
 
 If your changes don't need a changelog entry (e.g., pure documentation or test-only changes unrelated to package behavior), you can add an `internal` change kind entry to satisfy the requirement without bumping the version.
 
