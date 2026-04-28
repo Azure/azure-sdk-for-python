@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-cosmos-fabric-mapper"
+description = "Optional mapper that translates Azure Cosmos DB query shapes to Fabric mirror SQL and maps results back."
+keywords = ["azure", "cosmosdb", "fabric", "mirroring", "sql"]
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+  "lark>=1.1.9",
+  "azure-identity>=1.16.0",
+  "azure-core>=1.30.0",
+]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+sql = ["mssql-python>=1.0.0"]
+odbc = ["pyodbc>=5.1.0"]
+cosmos = ["azure-cosmos>=4.7.0"]
+dev = [
+  "pytest>=8.2.0",
+  "pytest-cov>=5.0.0",
+  "pytest-asyncio>=0.23.0",
+]
+
+[project.urls]
+Repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos-fabric-mapper"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.cosmos.fabric_mapper._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "tests.*", "samples", "specs", "specs.*"]
+
+[tool.setuptools.package-data]
+"azure.cosmos.fabric_mapper" = ["py.typed"]
+
+[tool.azure-sdk-build]
+mypy = false
+pyright = false
+pylint = false
+
+[tool.azure-sdk-conda]
+in_bundle = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers"
+markers = [
+  "integration: marks tests as integration tests",
+  "e2e: marks tests as end-to-end tests requiring live services",
+]

@@ -1,0 +1,6 @@
+include *.md
+include LICENSE
+include azure/__init__.py
+include azure/cosmos/__init__.py
+include azure/cosmos/fabric_mapper/py.typed
+recursive-include tests *.py *.json
