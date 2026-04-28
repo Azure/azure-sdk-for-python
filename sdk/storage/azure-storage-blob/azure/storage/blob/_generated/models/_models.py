@@ -9,10 +9,32 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
+import functools
 from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import (
+    Model as _Model,
+    rest_field,
+    _xml_deser_str,
+    _xml_deser_int,
+    _xml_deser_float,
+    _xml_deser_bool,
+    _xml_deser_datetime_rfc7231,
+    _xml_deser_bytes,
+    _xml_deser_enum_or_str,
+)
 from .._utils.utils import FileType
+from ._enums import (
+    AccessTier,
+    ArchiveStatus,
+    BlobType,
+    CopyStatus,
+    ImmutabilityPolicyMode,
+    LeaseDuration,
+    LeaseState,
+    LeaseStatus,
+    RehydratePriority,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -32,16 +54,19 @@ class AccessPolicy(_Model):
     start: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the policy is active."""
     expiry: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the policy expires."""
     permission: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Permission", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The permissions for acl the policy."""
 
@@ -116,21 +141,25 @@ class ArrowField(_Model):
     type: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Type", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The arrow field type. Required."""
     name: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The arrow field name."""
     precision: Optional[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Precision", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The arrow field precision."""
     scale: Optional[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Scale", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The arrow field scale."""
 
@@ -268,23 +297,27 @@ class BlobItemInternal(_Model):
     deleted: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Deleted", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether the blob is deleted. Required."""
     snapshot: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Snapshot", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The snapshot of the blob. Required."""
     version_id: Optional[str] = rest_field(
         name="versionId",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "VersionId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The version id of the blob."""
     is_current_version: Optional[bool] = rest_field(
         name="isCurrentVersion",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "IsCurrentVersion", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether the blob is the current version."""
     properties: "_models.BlobProperties" = rest_field(
@@ -313,6 +346,7 @@ class BlobItemInternal(_Model):
         name="hasVersionsOnly",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "HasVersionsOnly", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether the blob has versions only."""
 
@@ -355,6 +389,7 @@ class BlobMetadata(_Model):
     encrypted: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "Encrypted", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Whether the blob metadata is encrypted."""
 
@@ -390,11 +425,13 @@ class BlobName(_Model):
     encoded: Optional[bool] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "Encoded", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether the blob name is encoded."""
     content: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "content", "text": True, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The blob name."""
 
@@ -554,6 +591,7 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "Creation-Time", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The date-time the blob was created in RFC1123 format."""
     last_modified: datetime.datetime = rest_field(
@@ -561,35 +599,41 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The date-time the blob was last modified in RFC1123 format. Required."""
     etag: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The blob ETag. Required."""
     content_length: Optional[int] = rest_field(
         name="contentLength",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Content-Length", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The content length of the blob."""
     content_type: Optional[str] = rest_field(
         name="contentType",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Content-Type", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The content type of the blob."""
     content_encoding: Optional[str] = rest_field(
         name="contentEncoding",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Content-Encoding", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The content encoding of the blob."""
     content_language: Optional[str] = rest_field(
         name="contentLanguage",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Content-Language", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The content language of the blob."""
     content_md5: Optional[bytes] = rest_field(
@@ -597,42 +641,49 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="base64",
         xml={"attribute": False, "name": "Content-MD5", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bytes,
     )
     """The content MD5 of the blob."""
     content_disposition: Optional[str] = rest_field(
         name="contentDisposition",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Content-Disposition", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The content disposition of the blob."""
     cache_control: Optional[str] = rest_field(
         name="cacheControl",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Cache-Control", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The cache control of the blob."""
     blob_sequence_number: Optional[int] = rest_field(
         name="blobSequenceNumber",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "x-ms-blob-sequence-number", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The sequence number of the blob."""
     blob_type: Optional[Union[str, "_models.BlobType"]] = rest_field(
         name="blobType",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "BlobType", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, BlobType)
     )
     """The blob type. Known values are: \"BlockBlob\", \"PageBlob\", and \"AppendBlob\"."""
     lease_status: Optional[Union[str, "_models.LeaseStatus"]] = rest_field(
         name="leaseStatus",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "LeaseStatus", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, LeaseStatus)
     )
     """The lease status of the blob. Known values are: \"unlocked\" and \"locked\"."""
     lease_state: Optional[Union[str, "_models.LeaseState"]] = rest_field(
         name="leaseState",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "LeaseState", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, LeaseState)
     )
     """The lease state of the blob. Known values are: \"available\", \"leased\", \"expired\",
      \"breaking\", and \"broken\"."""
@@ -640,18 +691,21 @@ class BlobProperties(_Model):
         name="leaseDuration",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "LeaseDuration", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, LeaseDuration)
     )
     """The lease duration of the blob. Known values are: \"infinite\" and \"fixed\"."""
     copy_id: Optional[str] = rest_field(
         name="copyId",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopyId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """The copy ID of the blob."""
     copy_status: Optional[Union[str, "_models.CopyStatus"]] = rest_field(
         name="copyStatus",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopyStatus", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, CopyStatus)
     )
     """The copy status of the blob. Known values are: \"pending\", \"success\", \"failed\", and
      \"aborted\"."""
@@ -659,12 +713,14 @@ class BlobProperties(_Model):
         name="copySource",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopySource", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """The copy source of the blob."""
     copy_progress: Optional[str] = rest_field(
         name="copyProgress",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopyProgress", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """The copy progress of the blob."""
     copy_completion_time: Optional[datetime.datetime] = rest_field(
@@ -672,30 +728,35 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "CopyCompletionTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231
     )
     """The copy completion time of the blob."""
     copy_status_description: Optional[str] = rest_field(
         name="copyStatusDescription",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopyStatusDescription", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """The copy status description of the blob."""
     server_encrypted: Optional[bool] = rest_field(
         name="serverEncrypted",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ServerEncrypted", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool
     )
     """Whether the blob is encrypted on the server."""
     incremental_copy: Optional[bool] = rest_field(
         name="incrementalCopy",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "IncrementalCopy", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool
     )
     """Whether the blob is incremental copy."""
     destination_snapshot: Optional[str] = rest_field(
         name="destinationSnapshot",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DestinationSnapshot", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """The name of the destination snapshot."""
     deleted_time: Optional[datetime.datetime] = rest_field(
@@ -703,18 +764,21 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "DeletedTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231
     )
     """The time the blob was deleted."""
     remaining_retention_days: Optional[int] = rest_field(
         name="remainingRetentionDays",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "RemainingRetentionDays", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int
     )
     """The remaining retention days of the blob."""
     access_tier: Optional[Union[str, "_models.AccessTier"]] = rest_field(
         name="accessTier",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AccessTier", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, AccessTier)
     )
     """The access tier of the blob. Known values are: \"P4\", \"P6\", \"P10\", \"P15\", \"P20\",
      \"P30\", \"P40\", \"P50\", \"P60\", \"P70\", \"P80\", \"Hot\", \"Cool\", \"Archive\",
@@ -723,12 +787,14 @@ class BlobProperties(_Model):
         name="accessTierInferred",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AccessTierInferred", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool
     )
     """Whether the access tier is inferred."""
     archive_status: Optional[Union[str, "_models.ArchiveStatus"]] = rest_field(
         name="archiveStatus",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ArchiveStatus", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, ArchiveStatus)
     )
     """The archive status of the blob. Known values are: \"rehydrate-pending-to-hot\",
      \"rehydrate-pending-to-cool\", \"rehydrate-pending-to-cold\", and
@@ -737,6 +803,7 @@ class BlobProperties(_Model):
         name="smartAccessTier",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SmartAccessTier", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, AccessTier)
     )
     """The smart access tier of the blob. Known values are: \"P4\", \"P6\", \"P10\", \"P15\", \"P20\",
      \"P30\", \"P40\", \"P50\", \"P60\", \"P70\", \"P80\", \"Hot\", \"Cool\", \"Archive\",
@@ -745,12 +812,14 @@ class BlobProperties(_Model):
         name="customerProvidedKeySha256",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CustomerProvidedKeySha256", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """Customer provided key sha256."""
     encryption_scope: Optional[str] = rest_field(
         name="encryptionScope",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "EncryptionScope", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """The encryption scope of the blob."""
     access_tier_change_time: Optional[datetime.datetime] = rest_field(
@@ -758,12 +827,14 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "AccessTierChangeTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231
     )
     """The access tier change time of the blob."""
     tag_count: Optional[int] = rest_field(
         name="tagCount",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "TagCount", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int
     )
     """The number of tags for the blob."""
     expires_on: Optional[datetime.datetime] = rest_field(
@@ -771,18 +842,21 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "Expiry-Time", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231
     )
     """The expire time of the blob."""
     is_sealed: Optional[bool] = rest_field(
         name="isSealed",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Sealed", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool
     )
     """Whether the blob is sealed."""
     rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = rest_field(
         name="rehydratePriority",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "RehydratePriority", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, RehydratePriority)
     )
     """The rehydrate priority of the blob. Known values are: \"High\" and \"Standard\"."""
     last_accessed_on: Optional[datetime.datetime] = rest_field(
@@ -790,6 +864,7 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "LastAccessTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231
     )
     """The last access time of the blob."""
     immutability_policy_expires_on: Optional[datetime.datetime] = rest_field(
@@ -797,12 +872,14 @@ class BlobProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ImmutabilityPolicyUntilDate", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231
     )
     """The immutability policy until time of the blob."""
     immutability_policy_mode: Optional[Union[str, "_models.ImmutabilityPolicyMode"]] = rest_field(
         name="immutabilityPolicyMode",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ImmutabilityPolicyMode", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, ImmutabilityPolicyMode)
     )
     """The immutability policy mode of the blob. Known values are: \"mutable\", \"locked\", and
      \"unlocked\"."""
@@ -810,6 +887,7 @@ class BlobProperties(_Model):
         name="legalHold",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "LegalHold", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool
     )
     """Whether the blob is under legal hold."""
 
@@ -885,11 +963,13 @@ class BlobTag(_Model):
     key: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Key", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The key of the tag. Required."""
     value: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Value", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The value of the tag. Required."""
 
@@ -960,11 +1040,13 @@ class Block(_Model):
     name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The base64 encoded block ID. Required."""
     size: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Size", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The block size in bytes. Required."""
 
@@ -1096,11 +1178,13 @@ class ClearRange(_Model):
     start: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The start of the byte range. Required."""
     end: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "End", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The end of the byte range. Required."""
 
@@ -1143,16 +1227,19 @@ class ContainerItem(_Model):
     name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The name of the container. Required."""
     deleted: Optional[bool] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Deleted", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether the container is deleted."""
     version: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The version of the container."""
     properties: "_models.ContainerProperties" = rest_field(
@@ -1231,23 +1318,27 @@ class ContainerProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The date-time the container was last modified in RFC1123 format. Required."""
     etag: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The ETag of the container. Required."""
     lease_status: Optional[Union[str, "_models.LeaseStatus"]] = rest_field(
         name="leaseStatus",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "LeaseStatus", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, LeaseStatus),
     )
     """The lease status of the container. Known values are: \"unlocked\" and \"locked\"."""
     lease_state: Optional[Union[str, "_models.LeaseState"]] = rest_field(
         name="leaseState",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "LeaseState", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, LeaseState),
     )
     """The lease state of the container. Known values are: \"available\", \"leased\", \"expired\",
      \"breaking\", and \"broken\"."""
@@ -1255,36 +1346,42 @@ class ContainerProperties(_Model):
         name="leaseDuration",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "LeaseDuration", "text": False, "unwrapped": False},
+        deserializer=functools.partial(_xml_deser_enum_or_str, LeaseDuration),
     )
     """The lease duration of the container. Known values are: \"infinite\" and \"fixed\"."""
     public_access: Optional[Union[str, "_models.PublicAccessType"]] = rest_field(
         name="publicAccess",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "PublicAccess", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The public access type of the container. Known values are: \"blob\" and \"container\"."""
     has_immutability_policy: Optional[bool] = rest_field(
         name="hasImmutabilityPolicy",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "HasImmutabilityPolicy", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether it has an immutability policy."""
     has_legal_hold: Optional[bool] = rest_field(
         name="hasLegalHold",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "HasLegalHold", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """The has legal hold status of the container."""
     default_encryption_scope: Optional[str] = rest_field(
         name="defaultEncryptionScope",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DefaultEncryptionScope", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The default encryption scope of the container."""
     prevent_encryption_scope_override: Optional[bool] = rest_field(
         name="preventEncryptionScopeOverride",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DenyEncryptionScopeOverride", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether to prevent encryption scope override."""
     deleted_time: Optional[datetime.datetime] = rest_field(
@@ -1292,18 +1389,21 @@ class ContainerProperties(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "DeletedTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """The deleted time of the container."""
     remaining_retention_days: Optional[int] = rest_field(
         name="remainingRetentionDays",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "RemainingRetentionDays", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The remaining retention days of the container."""
     is_immutable_storage_with_versioning_enabled: Optional[bool] = rest_field(
         name="isImmutableStorageWithVersioningEnabled",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ImmutableStorageWithVersioningEnabled", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether immutable storage with versioning is enabled."""
 
@@ -1361,30 +1461,35 @@ class CorsRule(_Model):
         name="allowedOrigins",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedOrigins", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The allowed origins. Required."""
     allowed_methods: str = rest_field(
         name="allowedMethods",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedMethods", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The allowed methods. Required."""
     allowed_headers: str = rest_field(
         name="allowedHeaders",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowedHeaders", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The allowed headers. Required."""
     exposed_headers: str = rest_field(
         name="exposedHeaders",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ExposedHeaders", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The exposed headers. Required."""
     max_age_in_seconds: int = rest_field(
         name="maxAgeInSeconds",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxAgeInSeconds", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The maximum age in seconds. Required."""
 
@@ -1431,30 +1536,35 @@ class DelimitedTextConfiguration(_Model):
         name="columnSeparator",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ColumnSeparator", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The string used to separate columns."""
     field_quote: Optional[str] = rest_field(
         name="fieldQuote",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "FieldQuote", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The string used to quote a specific field."""
     record_separator: Optional[str] = rest_field(
         name="recordSeparator",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "RecordSeparator", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The string used to separate records."""
     escape_char: Optional[str] = rest_field(
         name="escapeChar",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "EscapeChar", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The string used to escape a quote character in a field."""
     headers_present: Optional[bool] = rest_field(
         name="headersPresent",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "HasHeaders", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Represents whether the data has headers."""
 
@@ -1539,6 +1649,7 @@ class Error(_Model):
     code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
      \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
@@ -1585,24 +1696,28 @@ class Error(_Model):
     message: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The error message."""
     copy_source_status_code: Optional[int] = rest_field(
         name="copySourceStatusCode",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopySourceStatusCode", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """Copy source status code."""
     copy_source_error_code: Optional[str] = rest_field(
         name="copySourceErrorCode",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopySourceErrorCode", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Copy source error code."""
     copy_source_error_message: Optional[str] = rest_field(
         name="copySourceErrorMessage",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "CopySourceErrorMessage", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Copy source error message."""
 
@@ -1648,12 +1763,14 @@ class FilterBlobItem(_Model):
     name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The name of the blob. Required."""
     container_name: str = rest_field(
         name="containerName",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ContainerName", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The properties of the blob. Required."""
     tags: Optional["_models.BlobTags"] = rest_field(
@@ -1665,12 +1782,14 @@ class FilterBlobItem(_Model):
         name="versionId",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "VersionId", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The version ID of the blob."""
     is_current_version: Optional[bool] = rest_field(
         name="isCurrentVersion",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "IsCurrentVersion", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether it is the current version of the blob."""
 
@@ -1715,11 +1834,13 @@ class FilterBlobSegment(_Model):
         name="serviceEndpoint",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service endpoint. Required."""
     where: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Where", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The filter for the blobs. Required."""
     blobs: list["_models.FilterBlobItem"] = rest_field(
@@ -1731,6 +1852,7 @@ class FilterBlobSegment(_Model):
         name="nextMarker",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The next marker of the blobs."""
 
@@ -1772,6 +1894,7 @@ class GeoReplication(_Model):
     status: Union[str, "_models.GeoReplicationStatusType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Status", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The status of the secondary location. Required. Known values are: \"live\", \"bootstrap\", and
      \"unavailable\"."""
@@ -1780,6 +1903,7 @@ class GeoReplication(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "LastSyncTime", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_datetime_rfc7231,
     )
     """A GMT date/time value, to the second. All primary writes preceding this value are guaranteed to
      be available for read operations at the secondary. Primary writes after this point in time may
@@ -1817,6 +1941,7 @@ class JsonTextConfiguration(_Model):
         name="recordSeparator",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "RecordSeparator", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The string used to separate records."""
 
@@ -1854,17 +1979,20 @@ class KeyInfo(_Model):
     start: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key is active. Required."""
     expiry: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key expires. Required."""
     delegated_user_tid: Optional[str] = rest_field(
         name="delegatedUserTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DelegatedUserTid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The delegated user tenant id in Azure AD."""
 
@@ -1915,33 +2043,39 @@ class ListBlobsHierarchySegmentResponse(_Model):
         name="serviceEndpoint",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service endpoint. Required."""
     container_name: str = rest_field(
         name="containerName",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "ContainerName", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The container name. Required."""
     delimiter: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Delimiter", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The delimiter of the blobs."""
     prefix: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The prefix of the blobs."""
     marker: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The marker of the blobs."""
     max_results: Optional[int] = rest_field(
         name="maxResults",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The max results of the blobs."""
     segment: "_models.BlobHierarchyListSegment" = rest_field(
@@ -1953,6 +2087,7 @@ class ListBlobsHierarchySegmentResponse(_Model):
         name="nextMarker",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The next marker of the blobs."""
 
@@ -2006,28 +2141,33 @@ class ListBlobsResponse(_Model):
         name="serviceEndpoint",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service endpoint. Required."""
     container_name: str = rest_field(
         name="containerName",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "ContainerName", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The container name. Required."""
     prefix: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The prefix of the blobs."""
     marker: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The marker of the blobs."""
     max_results: Optional[int] = rest_field(
         name="maxResults",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The max results of the blobs."""
     segment: "_models.BlobFlatListSegment" = rest_field(
@@ -2039,6 +2179,7 @@ class ListBlobsResponse(_Model):
         name="nextMarker",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The next marker of the blobs."""
 
@@ -2089,22 +2230,26 @@ class ListContainersSegmentResponse(_Model):
         name="serviceEndpoint",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service endpoint. Required."""
     prefix: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The prefix of the containers."""
     marker: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The marker of the containers."""
     max_results: Optional[int] = rest_field(
         name="maxResults",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The max results of the containers."""
     container_items: list["_models.ContainerItem"] = rest_field(
@@ -2117,6 +2262,7 @@ class ListContainersSegmentResponse(_Model):
         name="NextMarker",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The next marker of the containers."""
 
@@ -2163,21 +2309,25 @@ class Logging(_Model):
     version: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The version of the logging properties. Required."""
     delete: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Delete", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether delete operation is logged. Required."""
     read: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Read", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether read operation is logged. Required."""
     write: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Write", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether write operation is logged. Required."""
     retention_policy: "_models.RetentionPolicy" = rest_field(
@@ -2227,17 +2377,20 @@ class Metrics(_Model):
     version: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Version", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The version of the metrics properties."""
     enabled: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether it is enabled. Required."""
     include_apis: Optional[bool] = rest_field(
         name="includeApis",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "IncludeAPIs", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether to include API in the metrics."""
     retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
@@ -2303,6 +2456,7 @@ class PageList(_Model):
         name="nextMarker",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str
     )
     """The next marker."""
 
@@ -2340,11 +2494,13 @@ class PageRange(_Model):
     start: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The start of the byte range. Required."""
     end: int = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "End", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The end of the byte range. Required."""
 
@@ -2395,6 +2551,7 @@ class QueryFormat(_Model):
     type: Union[str, "_models.QueryFormatType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Type", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The query type. Required. Known values are: \"delimited\", \"json\", \"arrow\", and
      \"parquet\"."""
@@ -2465,11 +2622,13 @@ class QueryRequest(_Model):
         name="queryType",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "QueryType", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Required. The type of the provided query expression. Required. \"SQL\""""
     expression: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Expression", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The query expression in SQL. The maximum size of the query expression is 256KiB. Required."""
     input_serialization: Optional["_models.QuerySerialization"] = rest_field(
@@ -2555,17 +2714,20 @@ class RetentionPolicy(_Model):
     enabled: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether to enable the retention policy. Required."""
     days: Optional[int] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Days", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_int,
     )
     """The number of days to retain the logs."""
     allow_permanent_delete: Optional[bool] = rest_field(
         name="allowPermanentDelete",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "AllowPermanentDelete", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Whether to allow permanent delete."""
 
@@ -2603,6 +2765,7 @@ class SignedIdentifier(_Model):
     id: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Id", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The unique ID for the signed identifier. Required."""
     access_policy: Optional["_models.AccessPolicy"] = rest_field(
@@ -2690,24 +2853,28 @@ class StaticWebsite(_Model):
     enabled: bool = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Enabled", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_bool,
     )
     """Indicates whether this account is hosting a static website. Required."""
     index_document: Optional[str] = rest_field(
         name="indexDocument",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "IndexDocument", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The index document."""
     error_document404_path: Optional[str] = rest_field(
         name="errorDocument404Path",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ErrorDocument404Path", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The error document."""
     default_index_document_path: Optional[str] = rest_field(
         name="defaultIndexDocumentPath",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DefaultIndexDocumentPath", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Absolute path of the default index page."""
 
@@ -2779,6 +2946,7 @@ class StorageServiceProperties(_Model):
         name="defaultServiceVersion",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DefaultServiceVersion", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The default service version."""
     delete_retention_policy: Optional["_models.RetentionPolicy"] = rest_field(
@@ -2910,47 +3078,55 @@ class UserDelegationKey(_Model):
         name="signedOid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedOid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The Azure Active Directory object ID in GUID format. Required."""
     signed_tid: str = rest_field(
         name="signedTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The Azure Active Directory tenant ID in GUID format. Required."""
     signed_start: str = rest_field(
         name="signedStart",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key is active. Required."""
     signed_expiry: str = rest_field(
         name="signedExpiry",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The date-time the key expires. Required."""
     signed_service: str = rest_field(
         name="signedService",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedService", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """Abbreviation of the Azure Storage service that accepts the key. Required."""
     signed_version: str = rest_field(
         name="signedVersion",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedVersion", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The service version that created the key. Required."""
     signed_delegated_user_tid: Optional[str] = rest_field(
         name="signedDelegatedUserTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedDelegatedUserTid", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The delegated user tenant id in Azure AD. Return if DelegatedUserTid is specified."""
     value: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Value", "text": False, "unwrapped": False},
+        deserializer=_xml_deser_str,
     )
     """The key as a base64 string. Required."""
 
@@ -2979,3 +3155,4 @@ class UserDelegationKey(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+

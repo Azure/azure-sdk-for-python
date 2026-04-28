@@ -11,7 +11,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import xml.etree.ElementTree as ET
 from typing import Any, Callable, List, Optional
 
-from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, _deserialize
+from .._utils.model_base import (
+    Model as _Model,
+    _MyMutableMapping,
+    _RestField,
+    _deserialize,
+    _build_xml_field_plan,
+)
 
 
 def _patched_getattr(self, name):
@@ -92,6 +98,10 @@ def _patched_new(cls, *args, **kwargs):
         cls._rest_name_to_attr = {
             rf._rest_name: attr for attr, rf in attr_to_rest_field.items()
         }
+
+        # Build XML field plan for fast _init_from_xml (only for XML models)
+        if getattr(cls, "_xml", None):
+            cls._xml_field_plan = _build_xml_field_plan(cls, attr_to_rest_field)
 
         cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 

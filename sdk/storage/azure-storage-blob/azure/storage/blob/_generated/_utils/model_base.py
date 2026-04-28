@@ -578,11 +578,226 @@ def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typin
         return _serialize(value, None)
     if rf._is_multipart_file_input:
         return value
+    if _is_model(rf._type):
+        return typing.cast(Model, rf._type)._deserialize(value, [])
     if rf._is_model:
         return _deserialize(rf._type, value)
     if isinstance(value, ET.Element):
         value = _deserialize(rf._type, value)
     return _serialize(value, rf._format)
+
+
+# ============================================================================
+# Fast-path XML deserializer functions
+# These are referenced from rest_field declarations as {"deserializer": _xml_deser_*}
+# to bypass the generic _deserialize -> _deserialize_with_callable chain.
+# Only simple/primitive types — no models or container types.
+# ============================================================================
+
+
+def _xml_deser_str(value):
+    if isinstance(value, ET.Element):
+        return value.text or ""
+    return str(value) if value is not None else None
+
+
+def _xml_deser_int(value):
+    if isinstance(value, ET.Element):
+        return int(value.text) if value.text else None
+    return int(value) if value is not None else None
+
+
+def _xml_deser_float(value):
+    if isinstance(value, ET.Element):
+        return float(value.text) if value.text else None
+    return float(value) if value is not None else None
+
+
+def _xml_deser_bool(value):
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    if text in (True, False):
+        return text
+    return text.lower() == "true"
+
+
+def _xml_deser_bytes(value):
+    """Deserialize bytes from XML (base64)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_bytes(text)
+
+
+def _xml_deser_bytes_base64url(value):
+    """Deserialize bytes from XML (base64url)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_bytes_base64(text)
+
+
+def _xml_deser_datetime(value):
+    """Deserialize a datetime from XML (ISO 8601 / rfc3339)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_datetime(text)
+
+
+def _xml_deser_datetime_rfc7231(value):
+    """Deserialize a datetime from XML (RFC7231 format)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_datetime_rfc7231(text)
+
+
+def _xml_deser_datetime_unix_timestamp(value):
+    """Deserialize a datetime from XML (Unix timestamp)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_datetime_unix_timestamp(float(text))
+
+
+def _xml_deser_date(value):
+    """Deserialize a date from XML (ISO 8601)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_date(text)
+
+
+def _xml_deser_time(value):
+    """Deserialize a time from XML (ISO 8601)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_time(text)
+
+
+def _xml_deser_duration(value):
+    """Deserialize a timedelta from XML (ISO 8601 duration)."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_duration(text)
+
+
+def _xml_deser_decimal(value):
+    """Deserialize a Decimal from XML."""
+    if isinstance(value, ET.Element):
+        text = value.text
+    else:
+        text = value
+    if text is None:
+        return None
+    return _deserialize_decimal(text)
+
+
+def _xml_deser_enum_or_str(enum_cls, value):
+    """Deserialize a Union[EnumType, str] from XML."""
+    text = value.text if isinstance(value, ET.Element) else value
+    if text is None:
+        return None
+    try:
+        return enum_cls(text)
+    except ValueError:
+        return text
+
+
+def _build_xml_field_plan(cls, attr_to_rest_field: dict) -> list:
+    """Build a precomputed XML field plan for fast _init_from_xml iteration.
+
+    Called once per model class in __new__. Returns a list of tuples:
+        (rest_name, xml_name, kind, deser, rf_type, is_optional, items_name, model_cls)
+
+    kind: 0=wrapped, 1=attribute, 2=unwrapped, 3=text
+    model_cls: Model subclass for direct instantiation (bypasses generic _deserialize chain)
+    """
+    model_meta = getattr(cls, "_xml", {})
+    model_ns = model_meta.get("ns") or model_meta.get("namespace")
+    model_has_prefix = model_meta.get("prefix")
+    plan = []
+
+    for rf in attr_to_rest_field.values():
+        prop_meta = getattr(rf, "_xml", {})
+        deser = rf._deserializer
+
+        # Detect model class for direct deserialization shortcut
+        model_cls = None
+        if deser is None and isinstance(rf._type, functools.partial):
+            if rf._type.func is _deserialize_model and rf._type.args:
+                candidate = rf._type.args[0]
+                if _is_model(candidate):
+                    model_cls = candidate
+            elif rf._type.func is _deserialize_with_optional and rf._type.args:
+                inner = rf._type.args[0]
+                if isinstance(inner, functools.partial) and inner.func is _deserialize_model and inner.args:
+                    candidate = inner.args[0]
+                    if _is_model(candidate):
+                        model_cls = candidate
+            elif rf._type.func is _deserialize_sequence and rf._type.args:
+                inner = rf._type.args[0]
+                if isinstance(inner, functools.partial) and inner.func is _deserialize_model and inner.args:
+                    candidate = inner.args[0]
+                    if _is_model(candidate):
+                        model_cls = candidate
+
+        xml_name = prop_meta.get("name", rf._rest_name)
+
+        # Resolve namespace
+        ns = prop_meta.get("ns") or prop_meta.get("namespace")
+        if ns is None and not model_has_prefix:
+            ns = model_ns
+        if ns:
+            xml_name = "{" + ns + "}" + xml_name
+
+        if prop_meta.get("attribute", False):
+            plan.append((rf._rest_name, xml_name, 1, deser, rf._type, rf._is_optional, None, model_cls))
+        elif prop_meta.get("unwrapped", False):
+            items_name = prop_meta.get("itemsName") or xml_name
+            items_ns = prop_meta.get("itemsNs")
+            if items_ns is not None:
+                ns = items_ns
+            if ns and prop_meta.get("itemsName"):
+                items_name = "{" + ns + "}" + items_name
+            plan.append((rf._rest_name, xml_name, 2, deser, rf._type, rf._is_optional, items_name, model_cls))
+        elif prop_meta.get("text", False):
+            plan.append((rf._rest_name, xml_name, 3, deser, rf._type, rf._is_optional, None, model_cls))
+        else:
+            plan.append((rf._rest_name, xml_name, 0, deser, rf._type, rf._is_optional, None, model_cls))
+
+    return plan
 
 
 class Model(_MyMutableMapping):
@@ -628,6 +843,63 @@ class Model(_MyMutableMapping):
         :returns: A dictionary of rest_name to deserialized value pairs.
         :rtype: dict
         """
+        field_plan = getattr(self, "_xml_field_plan", None)
+        if field_plan:
+            return self._init_from_xml_fast(element, field_plan)
+        return self._init_from_xml_generic(element)
+
+    def _init_from_xml_fast(self, element: ET.Element, field_plan: list) -> dict[str, typing.Any]:
+        """Fast path using precomputed field plan."""
+        result: dict[str, typing.Any] = {}
+        existed_attr_keys: list[str] = []
+
+        for rest_name, xml_name, kind, deser, rf_type, is_optional, items_name, model_cls in field_plan:
+            if kind == 0:  # wrapped element (most common)
+                item = element.find(xml_name)
+                if item is not None:
+                    existed_attr_keys.append(xml_name)
+                    if deser:
+                        result[rest_name] = deser(item)
+                    elif model_cls is not None:
+                        result[rest_name] = model_cls(item)
+                    else:
+                        result[rest_name] = _deserialize(rf_type, item)
+            elif kind == 1:  # attribute
+                attr_val = element.get(xml_name)
+                if attr_val is not None:
+                    existed_attr_keys.append(xml_name)
+                    if deser:
+                        result[rest_name] = deser(attr_val)
+                    elif model_cls is not None:
+                        result[rest_name] = model_cls(attr_val)
+                    else:
+                        result[rest_name] = _deserialize(rf_type, attr_val)
+            elif kind == 2:  # unwrapped array
+                items = element.findall(items_name)  # pyright: ignore
+                if len(items) > 0:
+                    existed_attr_keys.append(items_name)
+                    if deser:
+                        result[rest_name] = deser(items)
+                    elif model_cls is not None:
+                        result[rest_name] = [model_cls(i) for i in items]
+                    else:
+                        result[rest_name] = _deserialize(rf_type, items)
+                elif not is_optional:
+                    existed_attr_keys.append(items_name)
+                    result[rest_name] = []
+            elif kind == 3:  # text
+                if element.text is not None:
+                    result[rest_name] = deser(element.text) if deser else _deserialize(rf_type, element.text)
+
+        # rest thing is additional properties
+        for e in element:
+            if e.tag not in existed_attr_keys:
+                result[e.tag] = _convert_element(e)
+
+        return result
+
+    def _init_from_xml_generic(self, element: ET.Element) -> dict[str, typing.Any]:
+        """Generic fallback for models without a precomputed field plan."""
         result: dict[str, typing.Any] = {}
         model_meta = getattr(self, "_xml", {})
         existed_attr_keys: list[str] = []
@@ -712,6 +984,9 @@ class Model(_MyMutableMapping):
                 Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
                 for attr, rf in cls._attr_to_rest_field.items()
             }
+            # Build XML field plan for fast _init_from_xml (only useful for XML models)
+            if getattr(cls, "_xml", None):
+                cls._xml_field_plan = _build_xml_field_plan(cls, attr_to_rest_field)
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
         return super().__new__(cls)
@@ -1049,6 +1324,8 @@ def _deserialize(
         value = value.http_response.json()
     if rf is None and format:
         rf = _RestField(format=format)
+    if rf is not None and rf._deserializer:
+        return rf._deserializer(value)
     if not isinstance(deserializer, functools.partial):
         deserializer = _get_deserialize_callable_from_annotation(deserializer, module, rf)
     return _deserialize_with_callable(deserializer, value)
@@ -1097,6 +1374,7 @@ class _RestField:
         is_multipart_file_input: bool = False,
         xml: typing.Optional[dict[str, typing.Any]] = None,
         original_tsp_name: typing.Optional[str] = None,
+        deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]] = None,
     ):
         self._type = type
         self._rest_name_input = name
@@ -1110,6 +1388,7 @@ class _RestField:
         self._is_multipart_file_input = is_multipart_file_input
         self._xml = xml if xml is not None else {}
         self._original_tsp_name = original_tsp_name
+        self._deserializer = deserializer
 
     @property
     def _class_type(self) -> typing.Any:
@@ -1189,6 +1468,7 @@ def rest_field(
     is_multipart_file_input: bool = False,
     xml: typing.Optional[dict[str, typing.Any]] = None,
     original_tsp_name: typing.Optional[str] = None,
+    deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]] = None,
 ) -> typing.Any:
     return _RestField(
         name=name,
@@ -1199,6 +1479,7 @@ def rest_field(
         is_multipart_file_input=is_multipart_file_input,
         xml=xml,
         original_tsp_name=original_tsp_name,
+        deserializer=deserializer,
     )
 
 
@@ -1432,6 +1713,8 @@ def _deserialize_xml(
     value: str,
 ) -> typing.Any:
     element = ET.fromstring(value)  # nosec
+    if _is_model(deserializer):
+        return deserializer._deserialize(element, [])
     return _deserialize(deserializer, element)
 
 
