@@ -32,6 +32,11 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
             await client.subscribe("group-message", on_group_message)
             await client.join_group(group_name)
             await client._ws.session.close()  # close connection
+            # wait for client to detect disconnection so send raises SendMessageError
+            for _ in range(30):
+                if not client.is_connected():
+                    break
+                await asyncio.sleep(1)
             with pytest.raises(SendMessageError):
                 await client.send_to_group(group_name, name, "text")
             await asyncio.sleep(3)  # wait to confirm message was NOT received

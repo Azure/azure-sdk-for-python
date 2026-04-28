@@ -37,6 +37,11 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
             client.subscribe("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection
+            # wait for client to detect disconnection so send raises SendMessageError
+            for _ in range(30):
+                if not client.is_connected():
+                    break
+                time.sleep(1)
             with pytest.raises(SendMessageError):
                 client.send_to_group(group_name, name, "text")
             time.sleep(3)  # wait to confirm message was NOT received

@@ -195,7 +195,8 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
 
                 # close_group_connections (connection auto-joins group_1 via token)
                 await ws.close()
-                ws = await ws_connect(access_token["url"])
+                await asyncio.sleep(2)  # wait for server to finish cleaning up before reconnecting
+                ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_group_connections(group=group_1, reason="live-coverage")
@@ -206,7 +207,8 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_user_connections
-                ws = await ws_connect(access_token["url"])
+                await asyncio.sleep(2)
+                ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_user_connections(user_id=user_id, reason="live-coverage")
@@ -217,7 +219,8 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_connection
-                ws = await ws_connect(access_token["url"])
+                await asyncio.sleep(2)
+                ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_connection(connection_id=conn, reason="live-coverage")
@@ -228,7 +231,8 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_all_connections
-                ws = await ws_connect(access_token["url"])
+                await asyncio.sleep(2)
+                ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_all_connections(reason="live-coverage")

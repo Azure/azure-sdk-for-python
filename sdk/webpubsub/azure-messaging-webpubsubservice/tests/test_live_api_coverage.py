@@ -165,6 +165,7 @@ class TestLiveApiCoverage(WebpubsubTest):
 
             # close_group_connections (connection auto-joins group_1 via token)
             ws.close()
+            time.sleep(2)  # wait for server to finish cleaning up before reconnecting
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
@@ -176,6 +177,7 @@ class TestLiveApiCoverage(WebpubsubTest):
             assert not client.connection_exists(connection_id=conn)
 
             # close_user_connections
+            time.sleep(2)
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
@@ -187,6 +189,7 @@ class TestLiveApiCoverage(WebpubsubTest):
             assert not client.connection_exists(connection_id=conn)
 
             # close_connection
+            time.sleep(2)
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
@@ -198,6 +201,7 @@ class TestLiveApiCoverage(WebpubsubTest):
             assert not client.connection_exists(connection_id=conn)
 
             # close_all_connections
+            time.sleep(2)
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
