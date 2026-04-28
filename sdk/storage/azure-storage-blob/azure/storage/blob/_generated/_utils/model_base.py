@@ -578,8 +578,6 @@ def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typin
         return _serialize(value, None)
     if rf._is_multipart_file_input:
         return value
-    if _is_model(rf._type):
-        return typing.cast(Model, rf._type)._deserialize(value, [])
     if rf._is_model:
         return _deserialize(rf._type, value)
     if isinstance(value, ET.Element):
@@ -589,7 +587,7 @@ def _create_value(rf: typing.Optional["_RestField"], value: typing.Any) -> typin
 
 # ============================================================================
 # Fast-path XML deserializer functions
-# These are referenced from rest_field declarations as {"deserializer": _xml_deser_*}
+# These are referenced from rest_field declarations as `deserializer=_xml_deser_*``
 # to bypass the generic _deserialize -> _deserialize_with_callable chain.
 # Only simple/primitive types — no models or container types.
 # ============================================================================
