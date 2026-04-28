@@ -19,7 +19,7 @@ from testcase_async import WebpubsubAsyncTest
 @pytest.mark.asyncio
 class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
     async def _find_connection_id(self, client, group_name, user_id):
-        for _ in range(10):
+        for _ in range(30):
             members = [member async for member in client.list_connections(group=group_name, top=20)]
             for member in members:
                 if member.user_id == user_id and member.connection_id:
@@ -199,6 +199,10 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_group_connections(group=group_1, reason="live-coverage")
+                for _ in range(30):
+                    if not await client.connection_exists(connection_id=conn):
+                        break
+                    await asyncio.sleep(1)
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_user_connections
@@ -206,6 +210,10 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_user_connections(user_id=user_id, reason="live-coverage")
+                for _ in range(30):
+                    if not await client.connection_exists(connection_id=conn):
+                        break
+                    await asyncio.sleep(1)
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_connection
@@ -213,6 +221,10 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_connection(connection_id=conn, reason="live-coverage")
+                for _ in range(30):
+                    if not await client.connection_exists(connection_id=conn):
+                        break
+                    await asyncio.sleep(1)
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_all_connections
@@ -220,6 +232,10 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
                 await client.close_all_connections(reason="live-coverage")
+                for _ in range(30):
+                    if not await client.connection_exists(connection_id=conn):
+                        break
+                    await asyncio.sleep(1)
                 assert not await client.connection_exists(connection_id=conn)
                 ws = None
 

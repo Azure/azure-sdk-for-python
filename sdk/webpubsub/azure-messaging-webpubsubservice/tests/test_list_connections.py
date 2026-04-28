@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import asyncio
 from websockets import connect as ws_connect
 from testcase import WebpubsubTest, WebpubsubPowerShellPreparer
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
@@ -50,6 +51,7 @@ class TestListConnections(WebpubsubTest):
                 for _ in range(test_case["total_connection_count"]):
                     ws = await ws_connect(client_url)
                     ws_clients.append(ws)
+                await asyncio.sleep(3)  # wait for server to register connections
 
             # List connections with pagination
             actual_page_count = 0

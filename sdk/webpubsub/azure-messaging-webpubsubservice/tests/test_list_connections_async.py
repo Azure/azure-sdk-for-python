@@ -46,6 +46,7 @@ class TestListConnectionsAsync(WebpubsubAsyncTest):
                     for _ in range(test_case["total_connection_count"]):
                         ws = await ws_connect(client_url)
                         ws_clients.append(ws)
+                    await asyncio.sleep(3)  # wait for server to register connections
 
                 # List connections with pagination
                 actual_page_count = 0

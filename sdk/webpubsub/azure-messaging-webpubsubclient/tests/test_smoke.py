@@ -50,7 +50,10 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             group_name = "test_context_manager"
             client.join_group(group_name)
             client.send_to_group(group_name, "test_context_manager", "text")
-            time.sleep(2.0)
+            for _ in range(30):
+                if client._sequence_id.sequence_id > 0:
+                    break
+                time.sleep(1)
             assert client._sequence_id.sequence_id > 0
 
     # test on_stop
@@ -65,7 +68,10 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         with client:
             # open client again after close
             client.subscribe("stopped", on_stop)
-            time.sleep(0.1)
+            for _ in range(30):
+                if client.is_connected():
+                    break
+                time.sleep(1)
             assert client.is_connected()
             client.close()
             # wait for on_stop callback to reconnect

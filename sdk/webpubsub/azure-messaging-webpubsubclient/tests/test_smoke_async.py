@@ -50,7 +50,10 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             group_name = "test_context_manager_async"
             await client.join_group(group_name)
             await client.send_to_group(group_name, "test_context_manager", "text")
-            await asyncio.sleep(2.0)
+            for _ in range(30):
+                if client._sequence_id.sequence_id > 0:
+                    break
+                await asyncio.sleep(1)
             assert client._sequence_id.sequence_id > 0
 
     # test on_stop
@@ -65,7 +68,10 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
         async with client:
             # open client again after close
             await client.subscribe("stopped", on_stop)
-            await asyncio.sleep(0.1)
+            for _ in range(30):
+                if client.is_connected():
+                    break
+                await asyncio.sleep(1)
             assert client.is_connected()
             await client.close()
             # wait for on_stop callback to reconnect
@@ -134,7 +140,11 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
                     await asyncio.sleep(1)
                 await asyncio.sleep(2)  # extra time for auto-rejoin
                 await client.send_to_group(group_name, group_name, "text")
-                await asyncio.sleep(1)  # wait for on_group_message to be called
+                # wait for on_group_message callback to fire
+                for _ in range(10):
+                    if assert_func(test_group_name):
+                        break
+                    await asyncio.sleep(1)
                 assert assert_func(test_group_name)
 
         await _test(

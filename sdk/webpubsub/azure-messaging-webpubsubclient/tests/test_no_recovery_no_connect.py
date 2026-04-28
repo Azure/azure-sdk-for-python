@@ -39,7 +39,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
             client._ws.sock.close(1001)  # close connection
             with pytest.raises(SendMessageError):
                 client.send_to_group(group_name, name, "text")
-            time.sleep(1)  # wait for on_group_message to be called
+            time.sleep(3)  # wait to confirm message was NOT received
 
         assert name not in TEST_RESULT
 

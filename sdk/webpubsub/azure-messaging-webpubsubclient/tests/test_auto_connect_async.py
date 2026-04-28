@@ -45,7 +45,11 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
                     break
                 await asyncio.sleep(1)
             await client.send_to_group(group_name, name, "text")
-            await asyncio.sleep(1)  # wait for on_group_message to be called
+            # wait for on_group_message callback to fire
+            for _ in range(10):
+                if name in TEST_RESULT_ASYNC:
+                    break
+                await asyncio.sleep(1)
             conn_id1 = client._connection_id
         assert conn_id0 is not None
         assert conn_id1 is not None

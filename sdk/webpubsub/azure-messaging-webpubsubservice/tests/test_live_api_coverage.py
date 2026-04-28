@@ -17,7 +17,7 @@ from testcase import WebpubsubPowerShellPreparer, WebpubsubTest
 @pytest.mark.live_test_only
 class TestLiveApiCoverage(WebpubsubTest):
     def _find_connection_id(self, client, group_name, user_id):
-        for _ in range(10):
+        for _ in range(30):
             members = list(client.list_connections(group=group_name, top=20))
             for member in members:
                 if member.user_id == user_id and member.connection_id:
@@ -169,6 +169,10 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_group_connections(group=group_1, reason="live-coverage")
+            for _ in range(30):
+                if not client.connection_exists(connection_id=conn):
+                    break
+                time.sleep(1)
             assert not client.connection_exists(connection_id=conn)
 
             # close_user_connections
@@ -176,6 +180,10 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_user_connections(user_id=user_id, reason="live-coverage")
+            for _ in range(30):
+                if not client.connection_exists(connection_id=conn):
+                    break
+                time.sleep(1)
             assert not client.connection_exists(connection_id=conn)
 
             # close_connection
@@ -183,6 +191,10 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_connection(connection_id=conn, reason="live-coverage")
+            for _ in range(30):
+                if not client.connection_exists(connection_id=conn):
+                    break
+                time.sleep(1)
             assert not client.connection_exists(connection_id=conn)
 
             # close_all_connections
@@ -190,6 +202,10 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_all_connections(reason="live-coverage")
+            for _ in range(30):
+                if not client.connection_exists(connection_id=conn):
+                    break
+                time.sleep(1)
             assert not client.connection_exists(connection_id=conn)
             ws = None
 

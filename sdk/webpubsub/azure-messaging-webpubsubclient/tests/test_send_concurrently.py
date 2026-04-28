@@ -19,7 +19,11 @@ class TestWebpubsubClientSendConcurrently(WebpubsubClientTest):
         with client:
             group_name = "test_send_concurrently"
             client.join_group(group_name)
-            time.sleep(1)  # wait for connection to stabilize before concurrent sends
+            # wait for connection to stabilize before concurrent sends
+            for _ in range(30):
+                if client.is_connected():
+                    break
+                time.sleep(1)
 
             def send(idx):
                 client.send_to_group(group_name, f"hello_{idx}", "text")
