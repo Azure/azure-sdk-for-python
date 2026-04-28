@@ -3,23 +3,20 @@ import os
 import shutil
 import subprocess
 import sys
-from typing import Optional, List
+from typing import NoReturn, Optional, List
 
 from .Check import Check, REPO_ROOT
-from ci_tools.functions import discover_targeted_packages
+from ci_tools.functions import get_package_from_repo
 from ci_tools.logging import logger
-from ci_tools.parsing import ParsedSetup
 
-# The expected Chronus package name and on-disk install location.
 # Chronus is pinned as a dev dependency in .github/chronus/package.json with
 # a committed lockfile so both the top-level version and all transitive
 # dependencies are reproducible.
-_CHRONUS_PACKAGE = "@chronus/chronus"
 _CHRONUS_INSTALL_DIR = os.path.join(".github", "chronus")
 _CHRONUS_BIN_NAME = "chronus.cmd" if os.name == "nt" else "chronus"
 _CHRONUS_BIN_PATH = os.path.join(_CHRONUS_INSTALL_DIR, "node_modules", ".bin", _CHRONUS_BIN_NAME)
 
-_FALLBACK_CHANGE_KINDS = ["breaking", "feature", "deprecation", "fix", "dependencies", "internal"]
+_FALLBACK_CHANGE_KINDS = ["breaking changes", "features added", "deprecation", "fix", "dependencies", "internal"]
 
 
 def _load_change_kinds() -> List[str]:
@@ -45,6 +42,17 @@ def _load_change_kinds() -> List[str]:
 _CHANGE_KINDS = _load_change_kinds()
 
 
+def _add_package_argument(parser: argparse.ArgumentParser, action: str) -> None:
+    """Add the common ``package`` positional argument to a subparser."""
+    parser.add_argument(
+        "package",
+        nargs="?",
+        default=None,
+        help=(
+            f"Package path (e.g. sdk/storage/azure-storage-blob) to {action}. "
+        ),
+    )
+
 class changelog(Check):
     """Manage changelogs with Chronus.
 
@@ -61,143 +69,114 @@ class changelog(Check):
     def register(
         self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
     ) -> None:
-        """Register the ``changelog`` command group.
-
-        The *parent_parsers* (common args like ``target``, ``--isolate``) are
-        intentionally **not** used here because changelog commands operate at
-        the repository level via Chronus, not on individual packages.
-        """
+        # parent_parsers intentionally unused — changelog commands operate at
+        # the repository level via Chronus, not on individual packages.
         p = subparsers.add_parser(
             "changelog",
             help="Manage changelogs with Chronus (add, verify, create, status)",
         )
         self._parser = p
-
-        changelog_sub = p.add_subparsers(title="changelog commands", dest="changelog_command")
+        sub = p.add_subparsers(title="changelog commands", dest="changelog_command")
 
         # changelog add
-        add_p = changelog_sub.add_parser("add", help="Add a chronus change entry for modified packages")
+        add_p = sub.add_parser("add", help="Add a chronus change entry for modified packages")
+        _add_package_argument(add_p, "add an entry for")
         add_p.add_argument(
-            "package",
-            nargs="?",
-            default=None,
-            help=(
-                "Package path (e.g. sdk/storage/azure-storage-blob) to add an entry for. "
-                "If omitted and CWD is inside a package directory, the package is detected "
-                "automatically. Otherwise chronus detects modified packages interactively."
-            ),
-        )
-        add_p.add_argument(
-            "--kind",
-            "-k",
+            "--kind", "-k",
             choices=_CHANGE_KINDS,
             default=None,
-            help=("Kind of change (e.g. breaking, feature, fix). " "If omitted, chronus will prompt interactively."),
+            help="Kind of change (e.g. breaking changes, features added, fix). If omitted, chronus will prompt interactively.",
         )
         add_p.add_argument(
-            "--message",
-            "-m",
+            "--message", "-m",
             default=None,
-            help=("Short description of the change. " "If omitted, chronus will prompt interactively."),
+            help="Short description of the change. If omitted, chronus will prompt interactively.",
         )
         add_p.set_defaults(func=self._run_add)
 
         # changelog verify
-        verify_p = changelog_sub.add_parser("verify", help="Verify all modified packages have change entries")
+        verify_p = sub.add_parser("verify", help="Verify all modified packages have change entries")
         verify_p.set_defaults(func=self._run_verify)
 
         # changelog create
-        create_p = changelog_sub.add_parser("create", help="Generate CHANGELOG.md from pending chronus entries")
-        create_p.add_argument(
-            "package",
-            nargs="?",
-            default=None,
-            help=(
-                "Package path (e.g. sdk/storage/azure-storage-blob) to generate changelog for. "
-                "If omitted and CWD is inside a package directory, the package is detected "
-                "automatically. Otherwise chronus generates changelogs for all packages."
-            ),
-        )
+        create_p = sub.add_parser("create", help="Generate CHANGELOG.md from pending chronus entries")
+        _add_package_argument(create_p, "generate changelog for")
         create_p.set_defaults(func=self._run_create)
 
         # changelog status
-        status_p = changelog_sub.add_parser(
-            "status", help="Show a summary of pending changes and resulting version bumps"
-        )
-        status_p.add_argument(
-            "package",
-            nargs="?",
-            default=None,
-            help=(
-                "Package path (e.g. sdk/storage/azure-storage-blob) to show status for. "
-                "If omitted and CWD is inside a package directory, the package is detected "
-                "automatically. Otherwise chronus shows status for all packages."
-            ),
-        )
+        status_p = sub.add_parser("status", help="Show a summary of pending changes and resulting version bumps")
+        _add_package_argument(status_p, "show status for")
         status_p.set_defaults(func=self._run_status)
 
-        # Default behaviour when no subcommand is given
         p.set_defaults(func=self._no_subcommand)
 
-    # ------------------------------------------------------------------
     # Internal helpers
-    # ------------------------------------------------------------------
 
     def _no_subcommand(self, args: argparse.Namespace) -> int:
         """Print help when no changelog subcommand is provided."""
-        if self._parser is not None:
+        if self._parser:
             self._parser.print_help()
         return 1
 
-    def _is_chronus_installed(self) -> bool:
+    @staticmethod
+    def _is_chronus_installed() -> bool:
         """Return ``True`` if Chronus is installed locally in *node_modules*."""
         return os.path.isfile(os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH))
 
     def _ensure_chronus_installed(self) -> None:
-        """Verify that Chronus is installed locally, offering to install if not.
+        """Verify Chronus is installed locally, offering to install if not.
 
-        Security: we **never** allow ``npx`` to silently download packages
-        from the npm registry.  Instead we check for a local installation
-        and, when missing, run ``npm ci`` against ``.github/chronus`` so
-        only the exact versions recorded in ``package-lock.json`` are
-        installed (with integrity-hash verification).
-
+        Runs ``npm ci`` against ``.github/chronus`` so only the exact
+        versions recorded in ``package-lock.json`` are installed.
         Raises ``SystemExit`` if the user declines or installation fails.
         """
         if self._is_chronus_installed():
             return
 
         install_dir = os.path.join(REPO_ROOT, _CHRONUS_INSTALL_DIR)
+
         npm = shutil.which("npm")
         if not npm:
-            logger.error(
-                "Chronus is not installed and npm was not found on PATH.\n"
-                "Please install Node.js (LTS) from https://nodejs.org/ then run:\n\n"
-                f"    cd {install_dir}\n"
-                "    npm ci\n"
-            )
-            raise SystemExit(1)
+            self._fail_no_npm(install_dir)
 
+        self._prompt_or_autoinstall(install_dir)
+        self._npm_ci(npm, install_dir)
+
+    @staticmethod
+    def _fail_no_npm(install_dir: str) -> NoReturn:
+        logger.error(
+            "Chronus is not installed and npm was not found on PATH.\n"
+            "Please install Node.js (LTS) from https://nodejs.org/ then run:\n\n"
+            f"    cd {install_dir}\n"
+            "    npm ci\n"
+        )
+        raise SystemExit(1)
+
+    @staticmethod
+    def _prompt_or_autoinstall(install_dir: str) -> None:
+        """Prompt for installation interactively, or check env var in CI."""
         if sys.stdin.isatty():
             print(
-                "\nChronus is not installed locally. It is pinned as a dev dependency\n"
+                f"\nChronus is not installed locally. It is pinned as a dev dependency\n"
                 f"in {os.path.join(install_dir, 'package.json')}.\n"
             )
             answer = input(f"Run 'npm ci' in {_CHRONUS_INSTALL_DIR} to install it? [Y/n] ").strip().lower()
             if answer not in ("", "y", "yes"):
                 logger.info("Skipped Chronus installation.")
                 raise SystemExit(1)
+        elif not os.environ.get("AZPYSDK_AUTO_INSTALL"):
+            logger.error(
+                "Chronus is not installed and running in non-interactive mode.\n"
+                "Set AZPYSDK_AUTO_INSTALL=1 to allow automatic installation, or run:\n\n"
+                f"    cd {install_dir}\n"
+                "    npm ci\n"
+            )
+            raise SystemExit(1)
         else:
-            if not os.environ.get("AZPYSDK_AUTO_INSTALL"):
-                logger.error(
-                    "Chronus is not installed and running in non-interactive mode.\n"
-                    "Set AZPYSDK_AUTO_INSTALL=1 to allow automatic installation, or run:\n\n"
-                    f"    cd {install_dir}\n"
-                    "    npm ci\n"
-                )
-                raise SystemExit(1)
             logger.info("AZPYSDK_AUTO_INSTALL set — running 'npm ci' automatically.")
 
+    def _npm_ci(self, npm: str, install_dir: str) -> None:
+        """Run ``npm ci`` and verify Chronus was installed."""
         logger.info(f"Running: npm ci  (cwd: {install_dir})")
         rc = subprocess.call([npm, "ci"], cwd=install_dir)
         if rc != 0:
@@ -213,103 +192,39 @@ class changelog(Check):
             )
             raise SystemExit(1)
 
-    def _find_package_root_from_cwd(self) -> Optional[str]:
-        """Find the package root directory when CWD is at or below ``sdk/<service>/<package>``.
-
-        Walks up from the current directory to locate the package root,
-        unlike ``get_targeted_directories(target=".")`` which only works
-        when CWD is exactly the package root.  This lets developers run
-        changelog commands from subdirectories such as
-        ``sdk/core/azure-core/tests/``.
-
-        Returns the absolute path to the package root, or ``None`` if CWD
-        is not inside an ``sdk/<service>/<package>`` tree.
-        """
-        try:
-            cwd = os.path.abspath(os.getcwd())
-            repo = os.path.abspath(REPO_ROOT)
-            rel = os.path.relpath(cwd, repo)
-        except ValueError:
-            # On Windows, relpath raises ValueError when paths are on different drives
+    @staticmethod
+    def _resolve_package(package_arg: Optional[str]) -> Optional[str]:
+        """Resolve a package argument to a Chronus package name."""
+        if not package_arg:
             return None
-
-        parts = rel.replace("\\", "/").split("/")
-        if len(parts) >= 3 and parts[0] == "sdk":
-            return os.path.join(repo, parts[0], parts[1], parts[2])
-        return None
-
-    def _resolve_package(self, package_arg: Optional[str]) -> Optional[str]:
-        """Resolve a package argument or CWD to a Chronus package name.
-
-        Uses ``discover_targeted_packages`` — the same discovery function
-        that powers ``get_targeted_directories`` — to locate packages by
-        path or bare name.  When *package_arg* is ``None``, the method
-        detects the package from CWD by walking up to the nearest
-        ``sdk/<service>/<package>`` directory.
-        """
-        if package_arg:
-            found = discover_targeted_packages(package_arg, REPO_ROOT)
-            if found:
-                try:
-                    return ParsedSetup.from_path(found[0]).name
-                except Exception:
-                    return os.path.basename(found[0])
-            # Not found by discovery — pass through as-is
-            return package_arg
-
-        # No explicit package — detect from CWD
-        pkg_root = self._find_package_root_from_cwd()
-        if pkg_root is None:
-            return None
+        # Resolve relative paths (e.g. ".") to absolute so get_package_from_repo
+        # doesn't accidentally glob against the repo root.
+        target = os.path.abspath(package_arg) if os.path.exists(package_arg) else package_arg
         try:
-            return ParsedSetup.from_path(pkg_root).name
-        except Exception:
-            return os.path.basename(os.path.normpath(pkg_root))
+            parsed = get_package_from_repo(target, REPO_ROOT)
+            return parsed.name if parsed else package_arg
+        except RuntimeError:
+            return package_arg  # passthrough for unresolvable names
 
     def _run_chronus(self, chronus_args: List[str]) -> int:
-        """Run a chronus command from the repository root.
-
-        Before execution the method verifies that Chronus is installed in
-        ``.github/chronus/node_modules`` and invokes the pinned binary
-        directly (rather than via ``npx``) to avoid any registry lookup or
-        ambient resolution.  stdin/stdout/stderr are inherited so that
-        interactive prompts (e.g. ``chronus add``) work transparently.
-        """
+        """Run a chronus command from the repository root."""
         self._ensure_chronus_installed()
-        chronus_bin = os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH)
-        cmd = [chronus_bin] + chronus_args
+        cmd = [os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH), *chronus_args]
         logger.info(f"Running: {' '.join(cmd)}")
         return subprocess.call(cmd, cwd=REPO_ROOT)
 
-    # ------------------------------------------------------------------
     # Subcommand handlers
-    # ------------------------------------------------------------------
 
     def _run_add(self, args: argparse.Namespace) -> int:
-        """Run ``chronus add`` to interactively add a change entry.
-
-        When no *package* argument is given but CWD is inside a package
-        directory (``sdk/<service>/<package>``), the package path is detected
-        automatically so the developer doesn't have to specify it.
-
-        Optional ``--kind`` and ``--message`` flags are forwarded to chronus
-        so the developer can skip the interactive prompts (e.g.
-        ``azpysdk changelog add --kind breaking -m "Removed foo API"``).
-        """
+        """Run ``chronus add`` to interactively add a change entry."""
         chronus_args = ["add"]
-        detected_from_cwd = not args.package
         package = self._resolve_package(args.package)
-        if package and detected_from_cwd:
-            logger.info(f"Detected package from current directory: {package}")
         if package:
             chronus_args.append(package)
-
         if args.kind:
             chronus_args.extend(["--kind", args.kind])
-
         if args.message:
             chronus_args.extend(["--message", args.message])
-
         return self._run_chronus(chronus_args)
 
     def _run_verify(self, args: argparse.Namespace) -> int:
@@ -317,17 +232,8 @@ class changelog(Check):
         return self._run_chronus(["verify"])
 
     def _run_create(self, args: argparse.Namespace) -> int:
-        """Run ``chronus changelog`` to generate CHANGELOG.md files.
-
-        When no *package* argument is given but CWD is inside a package
-        directory, the package path is detected automatically and passed
-        via ``--package`` so only that package's changelog is generated.
-        """
-        chronus_args = ["changelog"]
-        detected_from_cwd = not args.package
+        """Run ``chronus changelog`` to generate CHANGELOG.md files."""
         package = self._resolve_package(args.package)
-        if package and detected_from_cwd:
-            logger.info(f"Detected package from current directory: {package}")
         if not package:
             logger.error(
                 "No package specified and could not detect one from the current directory.\n"
@@ -336,8 +242,8 @@ class changelog(Check):
                 "    azpysdk changelog create sdk/core/azure-core\n"
             )
             return 1
-        chronus_args.extend(["--package", package])
-        rc = self._run_chronus(chronus_args)
+
+        rc = self._run_chronus(["changelog", "--package", package])
         if rc != 0:
             logger.info(
                 "Hint: if Chronus reported 'No release action found', it means there are no\n"
@@ -347,17 +253,9 @@ class changelog(Check):
         return rc
 
     def _run_status(self, args: argparse.Namespace) -> int:
-        """Run ``chronus status`` to show pending changes.
-
-        When no *package* argument is given but CWD is inside a package
-        directory, the package path is detected automatically and passed
-        via ``--only`` so only that package's status is shown.
-        """
+        """Run ``chronus status`` to show pending changes."""
         chronus_args = ["status"]
-        detected_from_cwd = not args.package
         package = self._resolve_package(args.package)
-        if package and detected_from_cwd:
-            logger.info(f"Detected package from current directory: {package}")
         if package:
             chronus_args.extend(["--only", package])
         return self._run_chronus(chronus_args)
