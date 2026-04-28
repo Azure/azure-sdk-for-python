@@ -24,6 +24,86 @@ from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HE
 logger = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# Shared helpers used by both the sync and async AIProjectClient.get_openai_client()
+# implementations. Defined at module level so the async client can import and reuse
+# them without duplicating the logic.
+# ---------------------------------------------------------------------------
+
+
+def _resolve_openai_base_url(config: Any, agent_name: Optional[str], kwargs: dict) -> str:
+    """Resolve the base URL for the (Async)OpenAI client.
+
+    :param config: Generated client configuration carrying ``endpoint`` and ``allow_preview``.
+    :type config: Any
+    :param agent_name: Optional hosted-agent name.
+    :type agent_name: str or None
+    :param kwargs: Caller keyword arguments; ``base_url`` is popped when present.
+    :type kwargs: dict
+    :return: The base URL to use for the (Async)OpenAI client.
+    :rtype: str
+    :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set.
+    """
+    if "base_url" in kwargs:
+        return kwargs.pop("base_url")
+    if agent_name is not None:
+        if config.allow_preview:
+            return config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
+        raise ValueError(
+            "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
+            "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
+            "\nsubject to change. They should not be used in production environments."
+        )
+    return config.endpoint.rstrip("/") + "/openai/v1"
+
+
+def _resolve_openai_query_params(config: Any, agent_name: Optional[str], kwargs: dict) -> dict:
+    """Build the ``default_query`` dict for the (Async)OpenAI client.
+
+    :param config: Generated client configuration carrying ``api_version``.
+    :type config: Any
+    :param agent_name: Optional hosted-agent name.
+    :type agent_name: str or None
+    :param kwargs: Caller keyword arguments; ``default_query`` is popped when present.
+    :type kwargs: dict
+    :return: Query parameters to forward to the (Async)OpenAI client.
+    :rtype: dict
+    """
+    default_query = dict[str, str](kwargs.pop("default_query", None) or {})
+    if agent_name is not None and "api-version" not in default_query:
+        default_query["api-version"] = config.api_version
+    return default_query
+
+
+def _resolve_openai_default_headers(agent_name: Optional[str], kwargs: dict) -> dict:
+    """Build the ``default_headers`` dict for the (Async)OpenAI client.
+
+    :param agent_name: Optional hosted-agent name.
+    :type agent_name: str or None
+    :param kwargs: Caller keyword arguments; ``default_headers`` is popped when present.
+    :type kwargs: dict
+    :return: Headers to forward to the (Async)OpenAI client.
+    :rtype: dict
+    """
+    default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
+    if agent_name is not None and not _has_header_case_insensitive(default_headers, _FOUNDRY_FEATURES_HEADER_NAME):
+        default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _BETA_OPERATION_FEATURE_HEADERS["agents"]
+    return default_headers
+
+
+def _build_openai_user_agent(custom_user_agent: Optional[str], openai_default_user_agent: str) -> str:
+    """Build the SDK-prefixed User-Agent string for the (Async)OpenAI client.
+
+    :param custom_user_agent: Caller-supplied user_agent kwarg captured at construction time.
+    :type custom_user_agent: str or None
+    :param openai_default_user_agent: The OpenAI client's own default user-agent.
+    :type openai_default_user_agent: str
+    :return: Combined User-Agent string.
+    :rtype: str
+    """
+    return "-".join(ua for ua in [custom_user_agent, "AIProjectClient"] if ua) + " " + openai_default_user_agent
+
+
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
@@ -101,46 +181,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
-    def _get_openai_base_url(self, agent_name: Optional[str], kwargs: dict) -> str:
-        """Resolve the base URL for the OpenAI client.
-
-        :param agent_name: Optional hosted-agent name.
-        :type agent_name: str or None
-        :param kwargs: Caller keyword arguments; ``base_url`` is popped when present.
-        :type kwargs: dict
-        :return: The base URL to use for the OpenAI client.
-        :rtype: str
-        :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set.
-        """
-        if "base_url" in kwargs:
-            return kwargs.pop("base_url")
-        if agent_name is not None:
-            if self._config.allow_preview:  # pylint: disable=protected-access
-                return (
-                    self._config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
-                )  # pylint: disable=protected-access
-            raise ValueError(
-                "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
-                "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
-                "\nsubject to change. They should not be used in production environments."
-            )
-        return self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
-
-    def _get_openai_query_params(self, agent_name: Optional[str], kwargs: dict) -> dict:
-        """Build the ``default_query`` dict for the OpenAI client.
-
-        :param agent_name: Optional hosted-agent name.
-        :type agent_name: str or None
-        :param kwargs: Caller keyword arguments; ``default_query`` is popped when present.
-        :type kwargs: dict
-        :return: Query parameters to forward to the OpenAI client.
-        :rtype: dict
-        """
-        default_query = dict[str, str](kwargs.pop("default_query", None) or {})
-        if agent_name is not None and "api-version" not in default_query:
-            default_query["api-version"] = self._config.api_version  # pylint: disable=protected-access
-        return default_query
-
     def _get_openai_api_key(self, kwargs: dict):
         """Resolve the API key for the OpenAI client.
 
@@ -169,21 +209,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         if self._console_logging_enabled:
             return httpx.Client(transport=_OpenAILoggingTransport())
         return None
-
-    def _prepare_openai_headers(self, agent_name: Optional[str], kwargs: dict) -> dict:
-        """Build the ``default_headers`` dict for the OpenAI client.
-
-        :param agent_name: Optional hosted-agent name.
-        :type agent_name: str or None
-        :param kwargs: Caller keyword arguments; ``default_headers`` is popped when present.
-        :type kwargs: dict
-        :return: Headers to forward to the OpenAI client.
-        :rtype: dict
-        """
-        default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
-        if agent_name is not None and not _has_header_case_insensitive(default_headers, _FOUNDRY_FEATURES_HEADER_NAME):
-            default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _BETA_OPERATION_FEATURE_HEADERS["agents"]
-        return default_headers
 
     @distributed_trace
     def get_openai_client(self, *, agent_name: Optional[str] = None, **kwargs: Any) -> OpenAI:
@@ -215,8 +240,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         kwargs = kwargs.copy() if kwargs else {}
 
-        base_url = self._get_openai_base_url(agent_name, kwargs)
-        default_query = self._get_openai_query_params(agent_name, kwargs)
+        base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
+        default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
@@ -225,7 +250,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         api_key = self._get_openai_api_key(kwargs)
         http_client = self._get_openai_http_client(kwargs)
-        default_headers = self._prepare_openai_headers(agent_name, kwargs)
+        default_headers = _resolve_openai_default_headers(agent_name, kwargs)
 
         openai_custom_user_agent = default_headers.get("User-Agent", None)
 
@@ -245,11 +270,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         if openai_custom_user_agent:
             final_user_agent = openai_custom_user_agent
         else:
-            final_user_agent = (
-                "-".join(ua for ua in [self._custom_user_agent, "AIProjectClient"] if ua)
-                + " "
-                + openai_default_user_agent
-            )
+            final_user_agent = _build_openai_user_agent(self._custom_user_agent, openai_default_user_agent)
 
         default_headers["User-Agent"] = final_user_agent
 
