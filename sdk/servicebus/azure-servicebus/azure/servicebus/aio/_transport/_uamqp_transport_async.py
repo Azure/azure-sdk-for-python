@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator,
 try:
     from uamqp import (
         constants,
+        AMQPClientAsync,
         SendClientAsync,
         ReceiveClientAsync,
     )
@@ -63,6 +64,28 @@ try:
             :param ~uamqp.async_ops.ConnectionAsync connection: uamqp Connection.
             """
             await connection.destroy_async()
+
+        @staticmethod
+        def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync":
+            """Creates and returns an async uamqp AMQPClient for management-only operations.
+
+            :param ~azure.servicebus._common._configuration.Configuration config: The configuration.
+            :keyword JWTTokenAuthAsync auth: Required.
+            :keyword retry_policy: Required.
+            :keyword str client_name: Required.
+            :keyword dict properties: Required.
+            :return: AMQPClientAsync
+            :rtype: ~uamqp.AMQPClientAsync
+            """
+            retry_policy = kwargs.pop("retry_policy")
+            return AMQPClientAsync(
+                "amqps://" + config.hostname,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
+            )
 
         @staticmethod
         def create_send_client_async(config: "Configuration", **kwargs: Any) -> "SendClientAsync": # pylint:disable=docstring-keyword-should-match-keyword-only
