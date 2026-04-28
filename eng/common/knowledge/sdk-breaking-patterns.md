@@ -20,7 +20,7 @@ When generating an authoring plan for TypeSpec changes, check if the planned cha
 
 **Mitigation:**
 ```typespec
-// In client.tsp — Define a new enum with all original enum values, then use @@alternateType to map to the new enum type for affacted languages.
+// In client.tsp — Define a new enum with all original enum values, then use @@alternateType to map to the new enum type for affected languages.
 enum FooStatusEnum
 {
  // ... all values from original FooStatus Enum
