@@ -53,11 +53,11 @@ class TestTracingToggle:
             mock_configure.assert_called_once()
 
     def test_observability_receives_appinsights_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_observability=mock_configure)
             mock_configure.assert_called_once()
-            assert mock_configure.call_args[1]["connection_string"] == "InstrumentationKey=test"
+            assert mock_configure.call_args[1]["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
 
     def test_observability_receives_otlp_env_var(self) -> None:
         with mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}):
@@ -78,7 +78,7 @@ class TestTracingToggle:
 
     def test_observability_disabled_when_none(self) -> None:
         """Passing configure_observability=None disables all SDK-managed observability."""
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_observability=None)
 
@@ -127,10 +127,10 @@ class TestSetupDistroExport:
     def test_distro_called_when_conn_str_provided(self) -> None:
         with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
             from azure.ai.agentserver.core import _tracing
-            _tracing._configure_tracing(connection_string="InstrumentationKey=test")
+            _tracing._configure_tracing(connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000")
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
-            assert kwargs["connection_string"] == "InstrumentationKey=test"
+            assert kwargs["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
             assert len(kwargs["span_processors"]) >= 1
             assert len(kwargs["log_record_processors"]) >= 1
 
