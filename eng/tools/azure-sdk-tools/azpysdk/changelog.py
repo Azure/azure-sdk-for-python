@@ -48,10 +48,9 @@ def _add_package_argument(parser: argparse.ArgumentParser, action: str) -> None:
         "package",
         nargs="?",
         default=None,
-        help=(
-            f"Package path (e.g. sdk/storage/azure-storage-blob) to {action}. "
-        ),
+        help=(f"Package path (e.g. sdk/storage/azure-storage-blob) to {action}. "),
     )
+
 
 class changelog(Check):
     """Manage changelogs with Chronus.
@@ -82,13 +81,15 @@ class changelog(Check):
         add_p = sub.add_parser("add", help="Add a chronus change entry for modified packages")
         _add_package_argument(add_p, "add an entry for")
         add_p.add_argument(
-            "--kind", "-k",
+            "--kind",
+            "-k",
             choices=_CHANGE_KINDS,
             default=None,
             help="Kind of change (e.g. breaking changes, features added, fix). If omitted, chronus will prompt interactively.",
         )
         add_p.add_argument(
-            "--message", "-m",
+            "--message",
+            "-m",
             default=None,
             help="Short description of the change. If omitted, chronus will prompt interactively.",
         )
