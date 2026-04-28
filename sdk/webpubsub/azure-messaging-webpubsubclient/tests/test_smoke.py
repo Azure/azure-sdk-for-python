@@ -6,6 +6,7 @@
 # -------------------------------------------------------------------------
 from typing import List, Any
 import time
+import threading
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import (
@@ -62,6 +63,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     def test_on_stop(self, webpubsubclient_endpoint):
         client = self.create_client(endpoint=webpubsubclient_endpoint)
         reopen_error = None
+        reopen_complete = threading.Event()
 
         def on_stop():
             nonlocal reopen_error
@@ -69,6 +71,8 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 client.open()
             except Exception as e:
                 reopen_error = e
+            finally:
+                reopen_complete.set()
 
         with client:
             # open client again after close
@@ -79,11 +83,9 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 time.sleep(1)
             assert client.is_connected()
             client.close()
-            # wait for on_stop callback to reconnect
-            for _ in range(60):
-                if client.is_connected():
-                    break
-                time.sleep(1)
+            # wait for on_stop callback to finish reopening
+            if not reopen_complete.wait(timeout=60):
+                pytest.fail("on_stop callback failed to complete within 60 seconds")
             assert reopen_error is None, f"on_stop callback failed: {reopen_error}"
             assert client.is_connected()
 
