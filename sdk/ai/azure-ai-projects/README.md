@@ -1,6 +1,6 @@
 # Azure AI Projects client library for Python
 
-The AI Projects client library (in preview) is part of the Microsoft Foundry SDK, and provides easy access to
+The AI Projects client library is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
@@ -55,8 +55,7 @@ To report an issue with the client library, or request additional features, plea
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
-* To authenticate using API key, you will need the "Project API key" as shown in your Microsoft Foundry Project home page.
-* To authenticate using Entra ID, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
+* Client authentication is done using Entra ID. To authenticate, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
@@ -116,12 +115,12 @@ async with (
 
 For comprehensive examples covering Agents, tool usage, evaluation, fine-tuning, datasets, indexes, and more, see:
 
-* **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quickstarts.
+* **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
 * **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
 * **[SDK samples folder][samples]** — fully runnable Python code for synchronous and asynchronous clients covering all operations below.
 
-The sections below cover SDK-specific behaviours (authentication variants, exception handling, logging, tracing) that are not documented in the above Learn pages.
+The sections below cover SDK-specific behaviors (authentication variants, exception handling, logging, tracing) that are not documented in the above Learn pages.
 
 ### Performing Responses operations using OpenAI client
 
