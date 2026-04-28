@@ -15,9 +15,14 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
 # ---------------------------------------------------------------------------
-# Module-level OTel setup with in-memory exporter
+# Lazy OTel setup with in-memory exporter
 # ---------------------------------------------------------------------------
 # We use the real OTel SDK to capture spans in memory.
+# IMPORTANT: Provider setup is deferred to a fixture so that
+# set_tracer_provider() is NOT called at import time.  When pytest collects
+# tests it imports every module — module-level set_tracer_provider() would
+# consume the global Once guard and break e2e tests that rely on the
+# microsoft-opentelemetry distro to set the provider.
 
 try:
     from opentelemetry import trace
@@ -29,26 +34,27 @@ try:
 except ImportError:
     _HAS_OTEL = False
 
-# Module-level provider so all tests share the same exporter
-if _HAS_OTEL:
-    _existing = trace.get_tracer_provider()
-    if hasattr(_existing, "add_span_processor"):
-        _MODULE_PROVIDER = _existing
-    else:
-        _MODULE_PROVIDER = SdkTracerProvider()
-        trace.set_tracer_provider(_MODULE_PROVIDER)
-    _MODULE_EXPORTER = InMemorySpanExporter()
-    _MODULE_PROVIDER.add_span_processor(SimpleSpanProcessor(_MODULE_EXPORTER))
-else:
-    _MODULE_EXPORTER = None
-    _MODULE_PROVIDER = None
+_MODULE_PROVIDER = None
+_MODULE_EXPORTER = None
+_MODULE_SETUP_DONE = False
 
 pytestmark = pytest.mark.skipif(not _HAS_OTEL, reason="opentelemetry not installed")
 
 
 @pytest.fixture(autouse=True)
 def _clear_spans():
-    """Clear exported spans before each test."""
+    """Set up the OTel provider on first use, then clear spans before each test."""
+    global _MODULE_PROVIDER, _MODULE_EXPORTER, _MODULE_SETUP_DONE
+    if _HAS_OTEL and not _MODULE_SETUP_DONE:
+        _existing = trace.get_tracer_provider()
+        if hasattr(_existing, "add_span_processor"):
+            _MODULE_PROVIDER = _existing
+        else:
+            _MODULE_PROVIDER = SdkTracerProvider()
+            trace.set_tracer_provider(_MODULE_PROVIDER)
+        _MODULE_EXPORTER = InMemorySpanExporter()
+        _MODULE_PROVIDER.add_span_processor(SimpleSpanProcessor(_MODULE_EXPORTER))
+        _MODULE_SETUP_DONE = True
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
