@@ -49,6 +49,7 @@ class TestSecurityManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
                             "description": "str",
                             "status": "str",
                         },
+                        "groupIds": ["str"],
                         "privateEndpoint": {"id": "str"},
                         "provisioningState": "str",
                     },

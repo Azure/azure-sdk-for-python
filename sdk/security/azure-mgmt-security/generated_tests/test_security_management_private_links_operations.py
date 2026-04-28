@@ -61,6 +61,7 @@ class TestSecurityManagementPrivateLinksOperations(AzureMgmtRecordedTestCase):
                                     "description": "str",
                                     "status": "str",
                                 },
+                                "groupIds": ["str"],
                                 "privateEndpoint": {"id": "str"},
                                 "provisioningState": "str",
                             },

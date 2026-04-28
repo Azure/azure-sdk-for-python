@@ -178,7 +178,49 @@ class AadExternalSecuritySolution(ExternalSecuritySolution, discriminator="AAD")
         self.kind = ExternalSecuritySolutionKindEnum.AAD  # type: ignore
 
 
-class AadSolutionProperties(_Model):
+class ExternalSecuritySolutionProperties(_Model):
+    """The solution properties (correspond to the solution kind).
+
+    :ivar device_vendor:
+    :vartype device_vendor: str
+    :ivar device_type:
+    :vartype device_type: str
+    :ivar workspace: Represents an OMS workspace to which the solution is connected.
+    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+    """
+
+    device_vendor: Optional[str] = rest_field(
+        name="deviceVendor", visibility=["read", "create", "update", "delete", "query"]
+    )
+    device_type: Optional[str] = rest_field(
+        name="deviceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    workspace: Optional["_models.ConnectedWorkspace"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Represents an OMS workspace to which the solution is connected."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_vendor: Optional[str] = None,
+        device_type: Optional[str] = None,
+        workspace: Optional["_models.ConnectedWorkspace"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AadSolutionProperties(ExternalSecuritySolutionProperties):
     """The external security solution properties for AAD solutions.
 
     :ivar device_vendor:
@@ -192,16 +234,6 @@ class AadSolutionProperties(_Model):
     :vartype connectivity_state: str or ~azure.mgmt.security.models.AadConnectivityStateEnum
     """
 
-    device_vendor: Optional[str] = rest_field(
-        name="deviceVendor", visibility=["read", "create", "update", "delete", "query"]
-    )
-    device_type: Optional[str] = rest_field(
-        name="deviceType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    workspace: Optional["_models.ConnectedWorkspace"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents an OMS workspace to which the solution is connected."""
     connectivity_state: Optional[Union[str, "_models.AadConnectivityStateEnum"]] = rest_field(
         name="connectivityState", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -376,7 +408,8 @@ class AdditionalData(_Model):
     SqlServerVulnerabilityProperties
 
     :ivar assessed_resource_type: Sub-assessment resource type. Required. Known values are:
-     "SqlServerVulnerability", "ContainerRegistryVulnerability", and "ServerVulnerability".
+     "SqlServerVulnerability", "ContainerRegistryVulnerability", "ServerVulnerability", and
+     "ServerVulnerabilityAssessment".
     :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     """
 
@@ -385,7 +418,8 @@ class AdditionalData(_Model):
         name="assessedResourceType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Sub-assessment resource type. Required. Known values are: \"SqlServerVulnerability\",
-     \"ContainerRegistryVulnerability\", and \"ServerVulnerability\"."""
+     \"ContainerRegistryVulnerability\", \"ServerVulnerability\", and
+     \"ServerVulnerabilityAssessment\"."""
 
     @overload
     def __init__(
@@ -2357,48 +2391,6 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution, discriminator="ATA")
         self.kind = ExternalSecuritySolutionKindEnum.ATA  # type: ignore
 
 
-class ExternalSecuritySolutionProperties(_Model):
-    """The solution properties (correspond to the solution kind).
-
-    :ivar device_vendor:
-    :vartype device_vendor: str
-    :ivar device_type:
-    :vartype device_type: str
-    :ivar workspace: Represents an OMS workspace to which the solution is connected.
-    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
-    """
-
-    device_vendor: Optional[str] = rest_field(
-        name="deviceVendor", visibility=["read", "create", "update", "delete", "query"]
-    )
-    device_type: Optional[str] = rest_field(
-        name="deviceType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    workspace: Optional["_models.ConnectedWorkspace"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents an OMS workspace to which the solution is connected."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        device_vendor: Optional[str] = None,
-        device_type: Optional[str] = None,
-        workspace: Optional["_models.ConnectedWorkspace"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AtaSolutionProperties(ExternalSecuritySolutionProperties):
     """The external security solution properties for ATA solutions.
 
@@ -3905,17 +3897,17 @@ class CommonResourceDetails(_Model):
     """Details of the resource that was assessed.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureResourceDetails
+    AzureResourceDetails, OnPremiseResourceDetails, OnPremiseSqlResourceDetails
 
     :ivar source: The platform where the assessed resource resides. Required. Known values are:
-     "Azure", "OnPremise", "OnPremiseSql", "Aws", and "Gcp".
+     "Azure", "OnPremise", "OnPremiseSql", "Aws", "Gcp", and "OnPremiseResourceDetails".
     :vartype source: str or ~azure.mgmt.security.models.Source
     """
 
     __mapping__: dict[str, _Model] = {}
     source: str = rest_discriminator(name="source", visibility=["read", "create", "update", "delete", "query"])
     """The platform where the assessed resource resides. Required. Known values are: \"Azure\",
-     \"OnPremise\", \"OnPremiseSql\", \"Aws\", and \"Gcp\"."""
+     \"OnPremise\", \"OnPremiseSql\", \"Aws\", \"Gcp\", and \"OnPremiseResourceDetails\"."""
 
     @overload
     def __init__(
@@ -10651,10 +10643,18 @@ class HealthReportProperties(_Model):
 class Identity(_Model):
     """Identity for the resource.
 
+    :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource. The value must be an UUID.
+    :vartype tenant_id: str
     :ivar type: The identity type. "SystemAssigned"
     :vartype type: str or ~azure.mgmt.security.models.ResourceIdentityType
     """
 
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of resource identity. The value must be an UUID."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of resource. The value must be an UUID."""
     type: Optional[Union[str, "_models.ResourceIdentityType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12878,6 +12878,112 @@ class NotificationsSourceAttackPath(NotificationsSource, discriminator="AttackPa
         self.source_type = SourceType.ATTACK_PATH  # type: ignore
 
 
+class OnPremiseResourceDetails(CommonResourceDetails, discriminator="OnPremiseResourceDetails"):
+    """Details of the On Premise resource that was assessed.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OnPremiseSqlResourceDetails
+
+    :ivar workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
+    :vartype workspace_id: str
+    :ivar vmuuid: The unique Id of the machine. Required.
+    :vartype vmuuid: str
+    :ivar source_computer_id: The oms agent Id installed on the machine. Required.
+    :vartype source_computer_id: str
+    :ivar machine_name: The name of the machine. Required.
+    :vartype machine_name: str
+    :ivar source: Required. On premise resource details.
+    :vartype source: str or ~azure.mgmt.security.models.ON_PREMISE_RESOURCE_DETAILS
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    workspace_id: str = rest_field(name="workspaceId", visibility=["read", "create", "update", "delete", "query"])
+    """Azure resource Id of the workspace the machine is attached to. Required."""
+    vmuuid: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique Id of the machine. Required."""
+    source_computer_id: str = rest_field(
+        name="sourceComputerId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The oms agent Id installed on the machine. Required."""
+    machine_name: str = rest_field(name="machineName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the machine. Required."""
+    source: Literal[Source.ON_PREMISE_RESOURCE_DETAILS] = rest_discriminator(name="source", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. On premise resource details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        workspace_id: str,
+        vmuuid: str,
+        source_computer_id: str,
+        machine_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source = Source.ON_PREMISE_RESOURCE_DETAILS  # type: ignore
+
+
+class OnPremiseSqlResourceDetails(OnPremiseResourceDetails, discriminator="OnPremiseSql"):
+    """Details of the On Premise Sql resource that was assessed.
+
+    :ivar workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
+    :vartype workspace_id: str
+    :ivar vmuuid: The unique Id of the machine. Required.
+    :vartype vmuuid: str
+    :ivar source_computer_id: The oms agent Id installed on the machine. Required.
+    :vartype source_computer_id: str
+    :ivar machine_name: The name of the machine. Required.
+    :vartype machine_name: str
+    :ivar server_name: The Sql server name installed on the machine. Required.
+    :vartype server_name: str
+    :ivar database_name: The Sql database name installed on the machine. Required.
+    :vartype database_name: str
+    :ivar source: The platform where the assessed resource resides. Required. SQL Resource in an on
+     premise machine connected to Azure cloud.
+    :vartype source: str or ~azure.mgmt.security.models.ON_PREMISE_SQL
+    """
+
+    server_name: str = rest_field(name="serverName", visibility=["read", "create", "update", "delete", "query"])
+    """The Sql server name installed on the machine. Required."""
+    database_name: str = rest_field(name="databaseName", visibility=["read", "create", "update", "delete", "query"])
+    """The Sql database name installed on the machine. Required."""
+    source: Literal[Source.ON_PREMISE_SQL] = rest_discriminator(name="source", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The platform where the assessed resource resides. Required. SQL Resource in an on premise
+     machine connected to Azure cloud."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        workspace_id: str,
+        vmuuid: str,
+        source_computer_id: str,
+        machine_name: str,
+        server_name: str,
+        database_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source = Source.ON_PREMISE_SQL  # type: ignore
+
+
 class OnUploadFilters(_Model):
     """Optional. Determine which blobs get scanned by On Upload malware scanning. An Or operation is
     performed between each filter type.
@@ -13138,6 +13244,9 @@ class OperationStatusResult(_Model):
     :vartype operations: list[~azure.mgmt.security.models.OperationStatusResult]
     :ivar error: If present, details of the operation error.
     :vartype error: ~azure.mgmt.security.models.ErrorDetail
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -13164,6 +13273,8 @@ class OperationStatusResult(_Model):
     """The operations list."""
     error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If present, details of the operation error."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Fully qualified ID of the resource against which the original async operation was started."""
 
     @overload
     def __init__(
@@ -13491,7 +13602,7 @@ class PrivateEndpointConnection(Resource):
     )
     """Resource properties."""
 
-    __flattened_items = ["private_endpoint", "private_link_service_connection_state", "provisioning_state"]
+    __flattened_items = ["group_ids", "private_endpoint", "private_link_service_connection_state", "provisioning_state"]
 
     @overload
     def __init__(
@@ -13532,6 +13643,8 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionProperties(_Model):
     """Properties of the private endpoint connection.
 
+    :ivar group_ids: The group ids for the private endpoint resource.
+    :vartype group_ids: list[str]
     :ivar private_endpoint: The private endpoint resource.
     :vartype private_endpoint: ~azure.mgmt.security.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
@@ -13544,6 +13657,8 @@ class PrivateEndpointConnectionProperties(_Model):
      ~azure.mgmt.security.models.PrivateEndpointConnectionProvisioningState
     """
 
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
+    """The group ids for the private endpoint resource."""
     private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
         name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -14474,7 +14589,7 @@ class ResourceDetails(_Model):
     """The resource details of the health report.
 
     :ivar source: The status of the health report. Known values are: "Azure", "OnPremise",
-     "OnPremiseSql", "Aws", and "Gcp".
+     "OnPremiseSql", "Aws", "Gcp", and "OnPremiseResourceDetails".
     :vartype source: str or ~azure.mgmt.security.models.Source
     :ivar id: The azure id of the resource.
     :vartype id: str
@@ -14486,7 +14601,7 @@ class ResourceDetails(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The status of the health report. Known values are: \"Azure\", \"OnPremise\", \"OnPremiseSql\",
-     \"Aws\", and \"Gcp\"."""
+     \"Aws\", \"Gcp\", and \"OnPremiseResourceDetails\"."""
     id: Optional[str] = rest_field(visibility=["read"])
     """The azure id of the resource."""
     connector_id: Optional[str] = rest_field(name="connectorId", visibility=["read"])
@@ -17522,9 +17637,10 @@ class ServerVulnerabilityProperties(AdditionalData, discriminator="ServerVulnera
     :vartype published_time: ~datetime.datetime
     :ivar vendor_references:
     :vartype vendor_references: list[~azure.mgmt.security.models.VendorReference]
-    :ivar assessed_resource_type: Sub-assessment resource type. Required. Default value is
-     "ServerVulnerabilityAssessment".
-    :vartype assessed_resource_type: str
+    :ivar assessed_resource_type: Sub-assessment resource type. Required.
+     ServerVulnerabilityAssessment.
+    :vartype assessed_resource_type: str or
+     ~azure.mgmt.security.models.SERVER_VULNERABILITY_ASSESSMENT
     """
 
     type: Optional[str] = rest_field(visibility=["read"])
@@ -17544,8 +17660,8 @@ class ServerVulnerabilityProperties(AdditionalData, discriminator="ServerVulnera
     vendor_references: Optional[list["_models.VendorReference"]] = rest_field(
         name="vendorReferences", visibility=["read"]
     )
-    assessed_resource_type: Literal["ServerVulnerabilityAssessment"] = rest_discriminator(name="assessedResourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Sub-assessment resource type. Required. Default value is \"ServerVulnerabilityAssessment\"."""
+    assessed_resource_type: Literal[AssessedResourceType.SERVER_VULNERABILITY_ASSESSMENT] = rest_discriminator(name="assessedResourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Sub-assessment resource type. Required. ServerVulnerabilityAssessment."""
 
     @overload
     def __init__(
@@ -17561,7 +17677,7 @@ class ServerVulnerabilityProperties(AdditionalData, discriminator="ServerVulnera
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.assessed_resource_type = "ServerVulnerabilityAssessment"  # type: ignore
+        self.assessed_resource_type = AssessedResourceType.SERVER_VULNERABILITY_ASSESSMENT  # type: ignore
 
 
 class SqlServerVulnerabilityProperties(AdditionalData, discriminator="SqlServerVulnerability"):

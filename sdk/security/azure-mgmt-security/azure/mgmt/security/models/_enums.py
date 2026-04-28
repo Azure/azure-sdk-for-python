@@ -142,6 +142,8 @@ class AssessedResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ContainerRegistryVulnerability."""
     SERVER_VULNERABILITY = "ServerVulnerability"
     """ServerVulnerability."""
+    SERVER_VULNERABILITY_ASSESSMENT = "ServerVulnerabilityAssessment"
+    """ServerVulnerabilityAssessment."""
 
 
 class AssessmentStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1360,6 +1362,8 @@ class Source(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aws."""
     GCP = "Gcp"
     """Gcp."""
+    ON_PREMISE_RESOURCE_DETAILS = "OnPremiseResourceDetails"
+    """On premise resource details."""
 
 
 class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
