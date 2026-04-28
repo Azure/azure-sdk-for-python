@@ -5,9 +5,10 @@
 
 * ``TestTokenRoundTrip`` - ``_decode_token(_encode_token(p))`` returns
   a structurally-equivalent dict; the wire form is valid base64 of
-  valid JSON; the JSON contains the six envelope keys (``v`` / ``cr`` /
-  ``qh`` / ``frh`` / ``cf`` / ``rf``) and a per-slice ``bc`` inside
-  ``cf`` and inside each ``rf[i]``.
+  valid JSON; the JSON contains the five envelope keys (``v`` / ``cr`` /
+  ``qh`` / ``frh`` / ``c``) and a per-entry ``bc`` inside each
+  ``c[i]``. The wire format has NO privileged "current" slot — iteration
+  position is reconstructed in memory from ``c[0]``.
 * ``TestVersionMismatchRejected`` - a token whose ``v`` field is set
   but is not the SDK's current version raises ``ValueError`` with a
   message naming both the offending and the supported version.
@@ -50,10 +51,9 @@ from azure.cosmos._routing.feed_range_continuation import (
     _validate_token_identity,
     _FIELD_BACKEND_CONTINUATION,
     _FIELD_COLLECTION_RID,
-    _FIELD_CURRENT_FEEDRANGE,
+    _FIELD_CONTINUATIONS,
     _FIELD_FEEDRANGE_HASH,
     _FIELD_QUERY_HASH,
-    _FIELD_REMAINING_FEEDRANGES,
     _FIELD_VERSION,
     _TOKEN_VERSION,
 )
@@ -71,7 +71,7 @@ _FEED_RANGE = routing_range.Range(
     isMinInclusive=True,
     isMaxInclusive=False,
 )
-_CURRENT_FEEDRANGE = routing_range.Range(
+_HEAD_FEEDRANGE = routing_range.Range(
     range_min="3FFFFFFFFFFFFFFF",
     range_max="7FFFFFFFFFFFFFFF",
     isMinInclusive=True,
@@ -93,27 +93,28 @@ def _mk_range(mn: str, mx: str) -> routing_range.Range:
 def _make_valid_token_payload() -> dict:
     """Build a structurally-complete v=1 token payload over the fixtures.
 
-    ``bc`` lives INSIDE each feedrange entry (``cf`` and each
-    ``rf[i]``) — not at the envelope level. The sequential loop only
-    ever sets a non-null ``bc`` for the slice currently in ``cf``;
-    remaining slices carry ``bc=null``.
+    The wire format is a single ordered ``c`` list of
+    ``{min, max, bc}`` entries with no privileged "current" slot —
+    iteration position is reconstructed in memory from ``c[0]``. Each
+    entry carries its own ``bc``; the sequential loop only ever sets a
+    non-null ``bc`` for ``c[0]`` and leaves later entries' ``bc`` null.
     """
     return {
         _FIELD_VERSION: _TOKEN_VERSION,
         _FIELD_COLLECTION_RID: _RID,
         _FIELD_QUERY_HASH: _hash_query_spec(_QUERY),
         _FIELD_FEEDRANGE_HASH: _hash_feed_range(_FEED_RANGE),
-        _FIELD_CURRENT_FEEDRANGE: {
-            "min": _CURRENT_FEEDRANGE.min,
-            "max": _CURRENT_FEEDRANGE.max,
-            _FIELD_BACKEND_CONTINUATION: _BACKEND_CONT,
-        },
-        _FIELD_REMAINING_FEEDRANGES: [
+        _FIELD_CONTINUATIONS: [
+            {
+                "min": _HEAD_FEEDRANGE.min,
+                "max": _HEAD_FEEDRANGE.max,
+                _FIELD_BACKEND_CONTINUATION: _BACKEND_CONT,
+            },
             {
                 "min": _REMAINING_FEEDRANGE.min,
                 "max": _REMAINING_FEEDRANGE.max,
                 _FIELD_BACKEND_CONTINUATION: None,
-            }
+            },
         ],
     }
 
@@ -153,11 +154,12 @@ class TestTokenRoundTrip:
         as_json = json.loads(raw.decode("utf-8"))
         assert isinstance(as_json, dict)
 
-    def test_wire_form_contains_six_envelope_keys_and_per_slice_bc(self):
-        # The envelope itself has SIX top-level keys (no top-level
-        # ``bc``); ``bc`` lives inside ``cf`` and inside each ``rf[i]``
-        # so a future parallel loop can record one backend continuation
-        # per slice without a wire-format bump.
+    def test_wire_form_contains_five_envelope_keys_and_per_entry_bc(self):
+        # The envelope itself has FIVE top-level keys (no top-level
+        # ``bc``, no privileged ``cf``/``rf`` split); ``bc`` lives
+        # inside each ``c[i]`` so a future non-sequential / parallel
+        # loop can record one backend continuation per sub-range
+        # without a wire-format bump.
         payload = _make_valid_token_payload()
         wire = _encode_token(payload)
         decoded_json = json.loads(base64.b64decode(wire, validate=True).decode("utf-8"))
@@ -166,15 +168,21 @@ class TestTokenRoundTrip:
             _FIELD_COLLECTION_RID,
             _FIELD_QUERY_HASH,
             _FIELD_FEEDRANGE_HASH,
-            _FIELD_CURRENT_FEEDRANGE,
-            _FIELD_REMAINING_FEEDRANGES,
+            _FIELD_CONTINUATIONS,
         }
         assert envelope_required == set(decoded_json.keys())
         assert _FIELD_BACKEND_CONTINUATION not in decoded_json, (
-            "envelope must NOT carry a top-level 'bc'; bc is per-slice"
+            "envelope must NOT carry a top-level 'bc'; bc is per-entry"
         )
-        assert _FIELD_BACKEND_CONTINUATION in decoded_json[_FIELD_CURRENT_FEEDRANGE]
-        for entry in decoded_json[_FIELD_REMAINING_FEEDRANGES]:
+        assert "cf" not in decoded_json, (
+            "envelope must NOT carry a privileged 'cf' slot (legacy PR-review shape)"
+        )
+        assert "rf" not in decoded_json, (
+            "envelope must NOT carry a 'rf' tail; sub-ranges live in a single 'c' list"
+        )
+        assert isinstance(decoded_json[_FIELD_CONTINUATIONS], list)
+        assert len(decoded_json[_FIELD_CONTINUATIONS]) >= 1
+        for entry in decoded_json[_FIELD_CONTINUATIONS]:
             assert _FIELD_BACKEND_CONTINUATION in entry
 
     def test_build_outbound_token_emits_valid_token(self):
@@ -182,8 +190,8 @@ class TestTokenRoundTrip:
             resource_id=_RID,
             query=_QUERY,
             feed_range_epk=_FEED_RANGE,
-            current_feedrange=_CURRENT_FEEDRANGE,
-            remaining_feedranges=[_REMAINING_FEEDRANGE],
+            head_feedrange=_HEAD_FEEDRANGE,
+            pending_feedranges=[_REMAINING_FEEDRANGE],
             backend_continuation=_BACKEND_CONT,
         )
         decoded = _decode_token(wire)
@@ -192,40 +200,44 @@ class TestTokenRoundTrip:
         assert decoded[_FIELD_COLLECTION_RID] == _RID
         assert decoded[_FIELD_QUERY_HASH] == _hash_query_spec(_QUERY)
         assert decoded[_FIELD_FEEDRANGE_HASH] == _hash_feed_range(_FEED_RANGE)
-        assert decoded[_FIELD_CURRENT_FEEDRANGE] == {
-            "min": _CURRENT_FEEDRANGE.min,
-            "max": _CURRENT_FEEDRANGE.max,
-            _FIELD_BACKEND_CONTINUATION: _BACKEND_CONT,
-        }
-        assert decoded[_FIELD_REMAINING_FEEDRANGES] == [
+        # Head of the ``c`` list == the in-flight slice; tail == queued.
+        assert decoded[_FIELD_CONTINUATIONS] == [
+            {
+                "min": _HEAD_FEEDRANGE.min,
+                "max": _HEAD_FEEDRANGE.max,
+                _FIELD_BACKEND_CONTINUATION: _BACKEND_CONT,
+            },
             {
                 "min": _REMAINING_FEEDRANGE.min,
                 "max": _REMAINING_FEEDRANGE.max,
                 _FIELD_BACKEND_CONTINUATION: None,
-            }
+            },
         ]
         assert _FIELD_BACKEND_CONTINUATION not in decoded
+        assert "cf" not in decoded
+        assert "rf" not in decoded
 
-    def test_per_slice_backend_continuations_coexist(self):
-        # The shape that motivated per-slice ``bc``: a future
-        # parallel-fetch loop emits a token where slice A (in rf) and
-        # slice B (in cf) each carry their own non-null backend
+    def test_per_entry_backend_continuations_coexist(self):
+        # The shape that motivated the flat ``c`` list: a future
+        # non-sequential / parallel-fetch loop emits a token where
+        # multiple entries each carry their own non-null backend
         # continuation. Today's sequential loop never produces this
-        # state, but the wire shape must already support it so when
-        # parallel fetch lands no version bump is needed.
+        # state, but the wire shape must already support it so that
+        # when parallel fetch lands no version bump is needed.
         wire = _build_outbound_token(
             resource_id=_RID,
             query=_QUERY,
             feed_range_epk=_FEED_RANGE,
-            current_feedrange=_CURRENT_FEEDRANGE,
-            remaining_feedranges=[_REMAINING_FEEDRANGE],
+            head_feedrange=_HEAD_FEEDRANGE,
+            pending_feedranges=[_REMAINING_FEEDRANGE],
             backend_continuation="B-cont-5",
-            remaining_backend_continuations=["A-cont-5"],
+            pending_backend_continuations=["A-cont-5"],
         )
         decoded = _decode_token(wire)
         assert decoded is not None
-        assert decoded[_FIELD_CURRENT_FEEDRANGE][_FIELD_BACKEND_CONTINUATION] == "B-cont-5"
-        assert decoded[_FIELD_REMAINING_FEEDRANGES][0][_FIELD_BACKEND_CONTINUATION] == "A-cont-5"
+        entries = decoded[_FIELD_CONTINUATIONS]
+        assert entries[0][_FIELD_BACKEND_CONTINUATION] == "B-cont-5"
+        assert entries[1][_FIELD_BACKEND_CONTINUATION] == "A-cont-5"
 
     def test_none_and_empty_inputs_decode_to_none(self):
         # An empty / missing continuation must NOT raise - the call site
@@ -258,21 +270,24 @@ class TestVersionMismatchRejected:
         with pytest.raises(ValueError):
             _decode_token(wire)
 
-    def test_missing_cf_raises(self):
+    def test_missing_continuations_list_raises(self):
         payload = _make_valid_token_payload()
-        del payload[_FIELD_CURRENT_FEEDRANGE]
+        del payload[_FIELD_CONTINUATIONS]
         wire = _encode_token(payload)
         with pytest.raises(ValueError) as excinfo:
             _decode_token(wire)
-        assert "cf" in str(excinfo.value)
+        assert _FIELD_CONTINUATIONS in str(excinfo.value)
 
-    def test_missing_rf_raises(self):
+    def test_empty_continuations_list_raises(self):
+        # An empty ``c`` list cannot legitimately appear on the wire:
+        # the producer clears the outbound continuation header in the
+        # drained case rather than emitting a token with no entries.
         payload = _make_valid_token_payload()
-        del payload[_FIELD_REMAINING_FEEDRANGES]
+        payload[_FIELD_CONTINUATIONS] = []
         wire = _encode_token(payload)
         with pytest.raises(ValueError) as excinfo:
             _decode_token(wire)
-        assert "rf" in str(excinfo.value)
+        assert _FIELD_CONTINUATIONS in str(excinfo.value)
 
 
 class TestMalformedV1TokenRejected:
@@ -303,32 +318,31 @@ class TestMalformedV1TokenRejected:
             _decode_token(_encode_token(payload))
         assert "frh" in str(excinfo.value)
 
-    def test_missing_current_feedrange_min_raises(self):
+    def test_missing_head_min_raises(self):
         payload = _make_valid_token_payload()
-        del payload[_FIELD_CURRENT_FEEDRANGE]["min"]
+        del payload[_FIELD_CONTINUATIONS][0]["min"]
         with pytest.raises(ValueError) as excinfo:
             _decode_token(_encode_token(payload))
-        assert "cf.min" in str(excinfo.value)
+        assert "{}[0].min".format(_FIELD_CONTINUATIONS) in str(excinfo.value)
 
-    def test_malformed_remaining_feedrange_entry_raises(self):
+    def test_malformed_tail_entry_raises(self):
         payload = _make_valid_token_payload()
-        payload[_FIELD_REMAINING_FEEDRANGES] = ["not-an-object"]
+        payload[_FIELD_CONTINUATIONS] = [payload[_FIELD_CONTINUATIONS][0], "not-an-object"]
         with pytest.raises(ValueError) as excinfo:
             _decode_token(_encode_token(payload))
-        assert "rf[0]" in str(excinfo.value)
+        assert "{}[1]".format(_FIELD_CONTINUATIONS) in str(excinfo.value)
 
     def test_non_string_backend_continuation_raises(self):
-        # ``bc`` now lives inside each feedrange entry; a non-string
-        # value in ``cf.bc`` must raise.
+        # ``bc`` lives inside each ``c[i]``; a non-string value must raise.
         payload = _make_valid_token_payload()
-        payload[_FIELD_CURRENT_FEEDRANGE][_FIELD_BACKEND_CONTINUATION] = 123
+        payload[_FIELD_CONTINUATIONS][0][_FIELD_BACKEND_CONTINUATION] = 123
         with pytest.raises(ValueError) as excinfo:
             _decode_token(_encode_token(payload))
         assert "bc" in str(excinfo.value)
 
     def test_envelope_level_backend_continuation_is_rejected(self):
         # An older shape carried ``bc`` at the envelope root. The
-        # current shape moves ``bc`` inside each feedrange entry; a
+        # current shape moves ``bc`` inside each ``c[i]`` entry; a
         # top-level ``bc`` must be rejected so a token from any earlier
         # build fails loudly instead of being silently dropped.
         payload = _make_valid_token_payload()
@@ -337,12 +351,13 @@ class TestMalformedV1TokenRejected:
             _decode_token(_encode_token(payload))
         assert "bc" in str(excinfo.value)
 
-    def test_missing_per_slice_backend_continuation_raises(self):
+
+    def test_missing_per_entry_backend_continuation_raises(self):
         payload = _make_valid_token_payload()
-        del payload[_FIELD_CURRENT_FEEDRANGE][_FIELD_BACKEND_CONTINUATION]
+        del payload[_FIELD_CONTINUATIONS][0][_FIELD_BACKEND_CONTINUATION]
         with pytest.raises(ValueError) as excinfo:
             _decode_token(_encode_token(payload))
-        assert "cf.bc" in str(excinfo.value)
+        assert "bc" in str(excinfo.value)
 
 
 # ---------------------------------------------------------------------- #
@@ -497,8 +512,8 @@ class TestExplodeOnMultiOverlap:
     ``len(overlapping) > 1``, hand the saved feedrange and the new
     children to ``_derive_initial_feedranges`` to get one sub-feedrange
     per child (each the intersection of the child's range with the
-    saved feedrange). The first becomes the new ``current_feedrange``,
-    the rest are prepended to ``remaining_feedranges``, and the
+    saved feedrange). The first becomes the new ``head_feedrange``,
+    the rest are prepended to ``pending_feedranges``, and the
     parent's backend continuation is dropped (it referenced the old
     partition's id). The next loop iteration sees a single overlap and
     falls through to the normal single-partition POST.
@@ -578,7 +593,7 @@ class TestExplodeOnMultiOverlap:
     def test_sub_feedranges_are_deterministically_ordered(self):
         # The routing map provider doesn't promise any particular order
         # when it returns the children. The call site prepends the
-        # leftover sub-feedranges to remaining_feedranges, so if the
+        # leftover sub-feedranges to pending_feedranges, so if the
         # order depended on what the provider happened to return, two
         # different SDK processes resuming the same token could end up
         # walking the children in different orders - and emit different
@@ -600,7 +615,7 @@ class TestExplodeOnMultiOverlap:
 
     def test_each_sub_feedrange_resolves_to_a_single_child(self):
         # Why the slice is correct end-to-end: after slicing, the
-        # NEW current_feedrange is X1's slice, and the next iteration
+        # NEW head_feedrange is X1's slice, and the next iteration
         # of the __QueryFeed loop re-resolves it against the routing
         # map. That re-resolution must come back with exactly one
         # overlap (X1) - otherwise we'd loop into the slice branch a
@@ -714,7 +729,7 @@ class TestApplyFeedrangeRequestHeaders:
     headers correctly for both full-partition and sub-range requests."""
 
     @pytest.mark.parametrize(
-        "current_feedrange,expect_epk_headers",
+        "head_feedrange,expect_epk_headers",
         [
             # full-partition request -> EPK headers must be cleared
             (_mk_range("10", "20"), False),
@@ -722,7 +737,7 @@ class TestApplyFeedrangeRequestHeaders:
             (_mk_range("12", "18"), True),
         ],
     )
-    def test_epk_headers_match_full_vs_subrange(self, current_feedrange, expect_epk_headers):
+    def test_epk_headers_match_full_vs_subrange(self, head_feedrange, expect_epk_headers):
         req_headers = {
             # pre-populate with stale values to prove clear behavior
             http_constants.HttpHeaders.StartEpkString: "stale-start",
@@ -735,7 +750,7 @@ class TestApplyFeedrangeRequestHeaders:
             req_headers=req_headers,
             overlapping=overlapping,
             partition_scope=partition_scope,
-            current_feedrange=current_feedrange,
+            head_feedrange=head_feedrange,
             remaining_page_item_count=None,
             inbound_continuation=None,
         )
@@ -743,8 +758,8 @@ class TestApplyFeedrangeRequestHeaders:
         assert req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] == "7"
         assert req_headers[http_constants.HttpHeaders.ReadFeedKeyType] == "EffectivePartitionKeyRange"
         if expect_epk_headers:
-            assert req_headers[http_constants.HttpHeaders.StartEpkString] == current_feedrange.min
-            assert req_headers[http_constants.HttpHeaders.EndEpkString] == current_feedrange.max
+            assert req_headers[http_constants.HttpHeaders.StartEpkString] == head_feedrange.min
+            assert req_headers[http_constants.HttpHeaders.EndEpkString] == head_feedrange.max
         else:
             assert http_constants.HttpHeaders.StartEpkString not in req_headers
             assert http_constants.HttpHeaders.EndEpkString not in req_headers
@@ -772,13 +787,13 @@ class TestApplyFeedrangeRequestHeaders:
         }
         overlapping = [{"id": "9", "minInclusive": "30", "maxExclusive": "40"}]
         partition_scope = _mk_range("30", "40")
-        current_feedrange = _mk_range("30", "40")
+        head_feedrange = _mk_range("30", "40")
 
         _apply_feedrange_request_headers(
             req_headers=req_headers,
             overlapping=overlapping,
             partition_scope=partition_scope,
-            current_feedrange=current_feedrange,
+            head_feedrange=head_feedrange,
             remaining_page_item_count=remaining_page_item_count,
             inbound_continuation=inbound_continuation,
         )
@@ -873,14 +888,14 @@ class TestEmptyPageStallCounter:
     """No-progress guard only counts empty pages that still carry continuation."""
 
     def test_increments_on_empty_page_with_continuation(self):
-        current_feedrange = _mk_range("10", "20")
+        head_feedrange = _mk_range("10", "20")
         assert _update_no_progress_page_count(
             3,
             page_items_returned=0,
-            previous_feedrange=current_feedrange,
+            previous_feedrange=head_feedrange,
             previous_backend_continuation="token",
-            current_feedrange=current_feedrange,
-            current_backend_continuation="token",
+            head_feedrange=head_feedrange,
+            head_backend_continuation="token",
         ) == 4
 
     def test_increments_when_equal_bounds_are_different_objects(self):
@@ -891,19 +906,19 @@ class TestEmptyPageStallCounter:
             page_items_returned=0,
             previous_feedrange=_mk_range("10", "20"),
             previous_backend_continuation="token",
-            current_feedrange=_mk_range("10", "20"),
-            current_backend_continuation="token",
+            head_feedrange=_mk_range("10", "20"),
+            head_backend_continuation="token",
         ) == 4
 
     def test_resets_when_items_are_returned(self):
-        current_feedrange = _mk_range("10", "20")
+        head_feedrange = _mk_range("10", "20")
         assert _update_no_progress_page_count(
             5,
             page_items_returned=1,
-            previous_feedrange=current_feedrange,
+            previous_feedrange=head_feedrange,
             previous_backend_continuation="token",
-            current_feedrange=current_feedrange,
-            current_backend_continuation="token",
+            head_feedrange=head_feedrange,
+            head_backend_continuation="token",
         ) == 0
 
     def test_resets_when_continuation_is_none(self):
@@ -912,19 +927,19 @@ class TestEmptyPageStallCounter:
             page_items_returned=0,
             previous_feedrange=_mk_range("10", "20"),
             previous_backend_continuation="token",
-            current_feedrange=_mk_range("20", "30"),
-            current_backend_continuation=None,
+            head_feedrange=_mk_range("20", "30"),
+            head_backend_continuation=None,
         ) == 0
 
     def test_resets_when_continuation_advances(self):
-        current_feedrange = _mk_range("10", "20")
+        head_feedrange = _mk_range("10", "20")
         assert _update_no_progress_page_count(
             8,
             page_items_returned=0,
-            previous_feedrange=current_feedrange,
+            previous_feedrange=head_feedrange,
             previous_backend_continuation="token-1",
-            current_feedrange=current_feedrange,
-            current_backend_continuation="token-2",
+            head_feedrange=head_feedrange,
+            head_backend_continuation="token-2",
         ) == 0
 
 
@@ -941,8 +956,8 @@ class TestFeedRangePaginationState:
 
     def test_from_derived_feedranges_empty_initializes_done_state(self):
         state = _FeedRangePaginationState.from_derived_feedranges([], remaining_page_item_count=5)
-        assert state.current_feedrange is None
-        assert list(state.remaining_feedranges) == []
+        assert state.head_feedrange is None
+        assert list(state.pending_feedranges) == []
         assert state.backend_continuation is None
         assert state.remaining_page_item_count == 5
 
@@ -950,13 +965,13 @@ class TestFeedRangePaginationState:
         a = _mk_range("00", "40")
         b = _mk_range("40", "80")
         state = _FeedRangePaginationState.from_derived_feedranges([a, b], remaining_page_item_count=7)
-        assert self._bounds(state.current_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80")]
+        assert self._bounds(state.head_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80")]
         assert state.backend_continuation is None
         assert state.remaining_page_item_count == 7
 
     @pytest.mark.parametrize(
-        "current_feedrange,remaining_page_item_count,expected",
+        "head_feedrange,remaining_page_item_count,expected",
         [
             (None, None, False),
             (_mk_range("00", "40"), 0, False),
@@ -965,69 +980,69 @@ class TestFeedRangePaginationState:
             (_mk_range("00", "40"), 1, True),
         ],
     )
-    def test_can_issue_request_boundaries(self, current_feedrange, remaining_page_item_count, expected):
+    def test_can_issue_request_boundaries(self, head_feedrange, remaining_page_item_count, expected):
         state = _FeedRangePaginationState(
-            current_feedrange=current_feedrange,
-            remaining_feedranges=[],
+            head_feedrange=head_feedrange,
+            pending_feedranges=[],
             backend_continuation=None,
             remaining_page_item_count=remaining_page_item_count,
         )
         assert state.can_issue_request() is expected
 
-    def test_from_inbound_parses_current_remaining_and_continuation(self):
-        # ``bc`` lives inside each feedrange entry, not at the envelope
-        # level. ``from_inbound`` reads ``cf.bc`` for the in-flight
-        # slice and (for parallel-loop scenarios) any non-null
-        # ``rf[i].bc`` for slices waiting their turn.
+    def test_from_inbound_parses_head_tail_and_continuation(self):
+        # The wire format is a single ordered ``c`` list. The state
+        # machine treats ``c[0]`` as the in-flight slice (its ``bc``
+        # becomes ``backend_continuation``) and ``c[1:]`` as queued
+        # (their ``bc`` values populate ``pending_backend_continuations``).
         inbound = {
-            _FIELD_CURRENT_FEEDRANGE: {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "token-1"},
-            _FIELD_REMAINING_FEEDRANGES: [
+            _FIELD_CONTINUATIONS: [
+                {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "token-1"},
                 {"min": "40", "max": "80", _FIELD_BACKEND_CONTINUATION: None},
             ],
         }
         state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=9)
-        assert self._bounds(state.current_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80")]
+        assert self._bounds(state.head_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80")]
         assert state.backend_continuation == "token-1"
-        assert list(state.remaining_backend_continuations) == [None]
+        assert list(state.pending_backend_continuations) == [None]
         assert state.remaining_page_item_count == 9
 
-    def test_from_inbound_preserves_per_slice_backend_continuations(self):
-        # Future parallel-loop case: a saved token where slice in cf and
-        # the slice in rf each carry their own non-null backend
-        # continuation. Both must round-trip into the state machine
-        # untouched.
+    def test_from_inbound_preserves_per_entry_backend_continuations(self):
+        # Future non-sequential / parallel-loop case: a saved token
+        # where multiple ``c[i]`` entries each carry their own non-null
+        # backend continuation. All must round-trip into the state
+        # machine untouched.
         inbound = {
-            _FIELD_CURRENT_FEEDRANGE: {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "B-cont-5"},
-            _FIELD_REMAINING_FEEDRANGES: [
+            _FIELD_CONTINUATIONS: [
+                {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "B-cont-5"},
                 {"min": "40", "max": "80", _FIELD_BACKEND_CONTINUATION: "A-cont-5"},
             ],
         }
         state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=None)
         assert state.backend_continuation == "B-cont-5"
-        assert list(state.remaining_backend_continuations) == ["A-cont-5"]
+        assert list(state.pending_backend_continuations) == ["A-cont-5"]
 
-        # When the loop drains the current slice, the next slice's saved
+        # When the loop drains the head slice, the next entry's saved
         # backend continuation becomes the new live one.
         state.apply_post_result(items_returned=0, backend_continuation=None)
-        assert self._bounds(state.current_feedrange) == ("40", "80")
+        assert self._bounds(state.head_feedrange) == ("40", "80")
         assert state.backend_continuation == "A-cont-5"
-        assert list(state.remaining_backend_continuations) == []
+        assert list(state.pending_backend_continuations) == []
 
     def test_apply_post_result_with_continuation_does_not_advance_feedrange(self):
         current = _mk_range("00", "40")
         next_range = _mk_range("40", "80")
         state = _FeedRangePaginationState(
-            current_feedrange=current,
-            remaining_feedranges=[next_range],
+            head_feedrange=current,
+            pending_feedranges=[next_range],
             backend_continuation=None,
             remaining_page_item_count=5,
         )
 
         state.apply_post_result(items_returned=2, backend_continuation="token-2")
 
-        assert self._bounds(state.current_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80")]
+        assert self._bounds(state.head_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80")]
         assert state.backend_continuation == "token-2"
         assert state.remaining_page_item_count == 3
 
@@ -1035,40 +1050,40 @@ class TestFeedRangePaginationState:
         current = _mk_range("00", "40")
         next_range = _mk_range("40", "80")
         state = _FeedRangePaginationState(
-            current_feedrange=current,
-            remaining_feedranges=[next_range],
+            head_feedrange=current,
+            pending_feedranges=[next_range],
             backend_continuation="token-1",
             remaining_page_item_count=6,
         )
 
         state.apply_post_result(items_returned=1, backend_continuation=None)
 
-        assert self._bounds(state.current_feedrange) == ("40", "80")
-        assert list(state.remaining_feedranges) == []
+        assert self._bounds(state.head_feedrange) == ("40", "80")
+        assert list(state.pending_feedranges) == []
         assert state.backend_continuation is None
         assert state.remaining_page_item_count == 5
 
     def test_apply_post_result_with_none_and_no_remaining_marks_done(self):
         current = _mk_range("00", "40")
         state = _FeedRangePaginationState(
-            current_feedrange=current,
-            remaining_feedranges=[],
+            head_feedrange=current,
+            pending_feedranges=[],
             backend_continuation="token-1",
             remaining_page_item_count=None,
         )
 
         state.apply_post_result(items_returned=1, backend_continuation=None)
 
-        assert state.current_feedrange is None
-        assert list(state.remaining_feedranges) == []
+        assert state.head_feedrange is None
+        assert list(state.pending_feedranges) == []
         assert state.backend_continuation is None
 
     def test_explode_on_multi_overlap_single_overlap_keeps_state(self):
         current = _mk_range("00", "80")
         tail = _mk_range("80", "C0")
         state = _FeedRangePaginationState(
-            current_feedrange=current,
-            remaining_feedranges=[tail],
+            head_feedrange=current,
+            pending_feedranges=[tail],
             backend_continuation="token-1",
             remaining_page_item_count=4,
         )
@@ -1076,16 +1091,16 @@ class TestFeedRangePaginationState:
         did_explode = state.explode_on_multi_overlap([self._pkr("X", "00", "80")])
 
         assert did_explode is False
-        assert self._bounds(state.current_feedrange) == ("00", "80")
-        assert [self._bounds(r) for r in state.remaining_feedranges] == [("80", "C0")]
+        assert self._bounds(state.head_feedrange) == ("00", "80")
+        assert [self._bounds(r) for r in state.pending_feedranges] == [("80", "C0")]
         assert state.backend_continuation == "token-1"
 
     def test_explode_on_multi_overlap_multi_overlap_splits_and_clears_continuation(self):
         current = _mk_range("00", "80")
         tail = _mk_range("80", "C0")
         state = _FeedRangePaginationState(
-            current_feedrange=current,
-            remaining_feedranges=[tail],
+            head_feedrange=current,
+            pending_feedranges=[tail],
             backend_continuation="token-1",
             remaining_page_item_count=4,
         )
@@ -1098,6 +1113,6 @@ class TestFeedRangePaginationState:
         )
 
         assert did_explode is True
-        assert self._bounds(state.current_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80"), ("80", "C0")]
+        assert self._bounds(state.head_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80"), ("80", "C0")]
         assert state.backend_continuation is None

@@ -3204,23 +3204,23 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 consecutive_no_progress_pages = 0
 
                 while pagination_state.can_issue_request():
-                    current_feedrange = pagination_state.current_feedrange
-                    if current_feedrange is None:
+                    head_feedrange = pagination_state.head_feedrange
+                    if head_feedrange is None:
                         break
 
                     # Look up the live routing map for the current feedrange.
                     # Doing this every iteration is what makes the token
                     # split-safe.
                     overlapping = await self._routing_map_provider.get_overlapping_ranges(
-                        id_, [current_feedrange], dict(options)
+                        id_, [head_feedrange], dict(options)
                     )
                     overlapping, partition_scope = _build_scope_from_overlaps(
-                        overlapping, current_feedrange
+                        overlapping, head_feedrange
                     )
 
                     # Handle the case where Cosmos split a partition between the
                     # previous run and this one. Example: the saved
-                    # current_feedrange used to live inside one partition X, but X
+                    # head_feedrange used to live inside one partition X, but X
                     # has since been split into children X1 and X2. The routing
                     # map now returns two partitions for the same feedrange. If
                     # we sent one POST to X1 with X's full range as the EPK
@@ -3243,14 +3243,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     # once more after resume when children X1/X2 restart from the
                     # start of their slices.
                     while pagination_state.explode_on_multi_overlap(overlapping):
-                        current_feedrange = pagination_state.current_feedrange
-                        if current_feedrange is None:
+                        head_feedrange = pagination_state.head_feedrange
+                        if head_feedrange is None:
                             break
                         overlapping = await self._routing_map_provider.get_overlapping_ranges(
-                            id_, [current_feedrange], dict(options)
+                            id_, [head_feedrange], dict(options)
                         )
                         overlapping, partition_scope = _build_scope_from_overlaps(
-                            overlapping, current_feedrange
+                            overlapping, head_feedrange
                         )
 
                     backend_request_options = dict(options)
@@ -3265,12 +3265,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     # The shared helper handles partition routing (PKR id +
                     # optional EPK filter), page-size cap, and continuation
                     # set/clear so the same rules apply to sync and async.
-                    assert current_feedrange is not None  # narrowed by the loop guards above
+                    assert head_feedrange is not None  # narrowed by the loop guards above
                     _apply_feedrange_request_headers(
                         req_headers,
                         overlapping,
                         partition_scope,
-                        current_feedrange,
+                        head_feedrange,
                         pagination_state.remaining_page_item_count,
                         backend_request_options.get("continuation"),
                     )
@@ -3327,7 +3327,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         elif backend_query_result:
                             results = backend_query_result
 
-                    previous_feedrange = pagination_state.current_feedrange
+                    previous_feedrange = pagination_state.head_feedrange
                     previous_backend_continuation = pagination_state.backend_continuation
                     page_items_returned = _count_page_items_from_partial_result(backend_query_result, query)
                     if response_headers_list is not None:
@@ -3343,7 +3343,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         page_items_returned,
                         previous_feedrange,
                         previous_backend_continuation,
-                        pagination_state.current_feedrange,
+                        pagination_state.head_feedrange,
                         pagination_state.backend_continuation,
                     )
                     if consecutive_no_progress_pages >= _MAX_CONSECUTIVE_NO_PROGRESS_PAGES:
