@@ -15,6 +15,12 @@
         }
       },
       "EmulatorConfig": {
+        "Emulator Tests Python 3.10 Standard": {
+            "PythonVersion": "3.10",
+            "CoverageArg": "--disablecov",
+            "TestSamples": "false",
+            "ChecksOverride": "whl,sdist"
+        },
         "Emulator Tests Python 3.11 Standard": {
             "PythonVersion": "3.11",
             "CoverageArg": "--disablecov",
