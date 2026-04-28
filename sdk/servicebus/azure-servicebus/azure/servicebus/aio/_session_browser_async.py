@@ -105,6 +105,8 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             if not result:
                 break
             all_session_ids.extend(result)
+            if len(result) < _PAGE_SIZE:
+                break
             skip += len(result)
 
         return all_session_ids
