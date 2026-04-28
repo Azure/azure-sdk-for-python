@@ -7,6 +7,7 @@ Tests for the HTTP challenge authentication implementation. These tests aren't p
 the challenge cache is global to the process.
 """
 import asyncio
+import functools
 from itertools import product
 import os
 import time
@@ -30,7 +31,6 @@ from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
 from test_challenge_auth import (
-    empty_challenge_cache,
     get_random_url,
     add_url_port,
     CAE_CHALLENGE_RESPONSE,
@@ -80,6 +80,16 @@ class TestChallengeAuth(KeyVaultTestCase):
             os.environ["AZURE_TENANT_ID"] = original_tenant
         else:
             os.environ.pop("AZURE_TENANT_ID")
+
+
+def empty_challenge_cache(fn):
+    @functools.wraps(fn)
+    async def wrapper(**kwargs):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        return await fn(**kwargs)
+
+    return wrapper
 
 
 @pytest.mark.asyncio
