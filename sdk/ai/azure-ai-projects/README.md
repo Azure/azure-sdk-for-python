@@ -13,6 +13,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * Browser Automation (Preview)
   * Code Interpreter
   * Computer Use (Preview)
+  * Fabric IQ (Preview)
   * File Search
   * Function Tool
   * Image Generation
@@ -23,6 +24,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * OpenAPI
   * Web Search
   * Web Search (Preview)
+  * Work IQ (Preview)
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
 * **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
 * **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,

@@ -4,13 +4,12 @@
 
 ### Features Added
 
-* New `FabricIQPreviewTool` and `FabricIQPreviewToolParameters` model classes, supporting the new `fabric_iq_preview` tool type.
-* New `ToolType.FABRIC_IQ_PREVIEW` enum value added to the `ToolType` enum.
+* New `FabricIQPreviewTool`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 
 ### Breaking Changes
 
-* Agent Endpoint beta operations: Remove required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
+* Agent Endpoint beta operations: Removed required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
 
 ### Bugs Fixed
 
@@ -24,6 +23,7 @@
 
 ### Features Added
 
+* New `WorkIQPreviewTool`.
 * `get_openai_client()` on `AIProjectClient` now takes an optional input argument `agent_name`. If provided, the returned OpenAI
 client will use a base URL of Agent endpoint instead of Foundry Project endpoint. As Agent endpoints are a preview feature, you
 need to set `allow_preview=True` on the `AIProjectClient` constructor.
