@@ -1,17 +1,11 @@
 # Release History
 
-## 1.0.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.2 (2026-05-05)
 
 ### Bugs Fixed
 
 - Removed dependency on `DefaultAzureCredential` in source library
 - Fixed `get_entra_conninfo_async` and `get_entra_token_async` closing the credential by using it as a context manager
-
-### Other Changes
 
 ## 1.0.1 (2025-11-26)
 
