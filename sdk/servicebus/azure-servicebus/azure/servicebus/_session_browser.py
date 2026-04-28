@@ -113,9 +113,9 @@ class _SessionBrowser(BaseHandler):
 
         while True:
             message = {
-                b"last-updated-time": {TYPE: AMQPTypes.timestamp, VALUE: last_updated_time_ms},
-                b"skip": _amqp_int_value(skip),
-                b"top": _amqp_int_value(_PAGE_SIZE),
+                "last-updated-time": {TYPE: AMQPTypes.timestamp, VALUE: last_updated_time_ms},
+                "skip": _amqp_int_value(skip),
+                "top": _amqp_int_value(_PAGE_SIZE),
             }
             result = self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,

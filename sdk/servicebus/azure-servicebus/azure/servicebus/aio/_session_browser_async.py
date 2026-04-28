@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
@@ -96,9 +96,9 @@ class _SessionBrowserAsync(AsyncBaseHandler):
 
         while True:
             message = {
-                b"last-updated-time": {TYPE: AMQPTypes.timestamp, VALUE: last_updated_time_ms},
-                b"skip": _amqp_int_value(skip),
-                b"top": _amqp_int_value(_PAGE_SIZE),
+                "last-updated-time": {TYPE: AMQPTypes.timestamp, VALUE: last_updated_time_ms},
+                "skip": _amqp_int_value(skip),
+                "top": _amqp_int_value(_PAGE_SIZE),
             }
             result = await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
