@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.domainregistration import DomainRegistrationClient
+from azure.mgmt.domainregistration.aio import DomainRegistrationMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDomainRegistrationDomainRegistrationProviderOperations(AzureMgmtRecordedTestCase):
+class TestDomainRegistrationMgmtDomainRegistrationProviderOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DomainRegistrationClient)
+        self.client = self.create_mgmt_client(DomainRegistrationMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_domain_registration_provider_list_operations(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_domain_registration_provider_list_operations(self, resource_group):
         response = self.client.domain_registration_provider.list_operations()
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

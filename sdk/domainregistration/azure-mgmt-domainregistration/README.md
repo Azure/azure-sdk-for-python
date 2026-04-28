@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.domainregistration import DomainRegistrationClient
+from azure.mgmt.domainregistration import DomainRegistrationMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = DomainRegistrationClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = DomainRegistrationMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

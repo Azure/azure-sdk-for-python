@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
-from .._configuration import DomainRegistrationClientConfiguration
+from .._configuration import DomainRegistrationMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
@@ -602,14 +602,16 @@ class DomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.domainregistration.DomainRegistrationClient`'s
+        :class:`~azure.mgmt.domainregistration.DomainRegistrationMgmtClient`'s
         :attr:`domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DomainRegistrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DomainRegistrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2524,14 +2526,16 @@ class TopLevelDomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.domainregistration.DomainRegistrationClient`'s
+        :class:`~azure.mgmt.domainregistration.DomainRegistrationMgmtClient`'s
         :attr:`top_level_domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DomainRegistrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DomainRegistrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2877,14 +2881,16 @@ class DomainRegistrationProviderOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.domainregistration.DomainRegistrationClient`'s
+        :class:`~azure.mgmt.domainregistration.DomainRegistrationMgmtClient`'s
         :attr:`domain_registration_provider` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DomainRegistrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DomainRegistrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

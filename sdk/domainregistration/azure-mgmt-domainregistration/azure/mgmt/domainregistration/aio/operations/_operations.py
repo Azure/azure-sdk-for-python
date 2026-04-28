@@ -58,7 +58,7 @@ from ...operations._operations import (
     build_top_level_domains_list_agreements_request,
     build_top_level_domains_list_request,
 )
-from .._configuration import DomainRegistrationClientConfiguration
+from .._configuration import DomainRegistrationMgmtClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -72,14 +72,16 @@ class DomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.domainregistration.aio.DomainRegistrationClient`'s
+        :class:`~azure.mgmt.domainregistration.aio.DomainRegistrationMgmtClient`'s
         :attr:`domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DomainRegistrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DomainRegistrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1996,14 +1998,16 @@ class TopLevelDomainsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.domainregistration.aio.DomainRegistrationClient`'s
+        :class:`~azure.mgmt.domainregistration.aio.DomainRegistrationMgmtClient`'s
         :attr:`top_level_domains` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DomainRegistrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DomainRegistrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2354,14 +2358,16 @@ class DomainRegistrationProviderOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.domainregistration.aio.DomainRegistrationClient`'s
+        :class:`~azure.mgmt.domainregistration.aio.DomainRegistrationMgmtClient`'s
         :attr:`domain_registration_provider` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DomainRegistrationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DomainRegistrationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import DomainRegistrationClientConfiguration
+from ._configuration import DomainRegistrationMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import DomainRegistrationProviderOperations, DomainsOperations, TopLevelDomainsOperations
 
@@ -26,8 +26,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DomainRegistrationClient:
-    """DomainRegistrationClient.
+class DomainRegistrationMgmtClient:
+    """DomainRegistrationMgmtClient.
 
     :ivar domains: DomainsOperations operations
     :vartype domains: azure.mgmt.domainregistration.operations.DomainsOperations
@@ -68,7 +68,7 @@ class DomainRegistrationClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = DomainRegistrationClientConfiguration(
+        self._config = DomainRegistrationMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

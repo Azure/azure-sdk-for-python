@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.domainregistration import DomainRegistrationClient
+from azure.mgmt.domainregistration import DomainRegistrationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.domainregistration import DomainRegistrationClient
 
 
 def main():
-    client = DomainRegistrationClient(
+    client = DomainRegistrationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
