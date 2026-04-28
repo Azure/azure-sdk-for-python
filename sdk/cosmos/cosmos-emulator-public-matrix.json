@@ -15,8 +15,8 @@
         }
       },
       "EmulatorConfig": {
-        "Emulator Tests Python 3.10 Standard": {
-            "PythonVersion": "3.10",
+        "Emulator Tests Python 3.11 Standard": {
+            "PythonVersion": "3.11",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "whl,sdist"
@@ -40,14 +40,14 @@
             "ChecksOverride": "whl,sdist"
         },
 
-        "Emulator Tests Python 3.9 Dependency Checks": {
-            "PythonVersion": "3.9",
+        "Emulator Tests Python 3.10 Dependency Checks": {
+            "PythonVersion": "3.10",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "mindependency"
         },
-        "Emulator Tests Python 3.10 Dependency Checks": {
-            "PythonVersion": "3.10",
+        "Emulator Tests Python 3.11 Dependency Checks": {
+            "PythonVersion": "3.11",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "ChecksOverride": "mindependency"
