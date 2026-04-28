@@ -56,7 +56,7 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=azure_managedhsm_url, value="https://managedhsmvaultname.managedhsm.azure.net")
     add_general_string_sanitizer(target=azure_attestation_uri, value="https://fakeattestation.azurewebsites.net")
     add_oauth_response_sanitizer()
-    set_custom_default_matcher(compare_bodies=False, ignore_query_ordering=True)
+    set_custom_default_matcher(compare_bodies=False, ignore_query_ordering=True, ignored_headers="Accept")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
@@ -97,6 +97,10 @@ def patch_sleep():
 
 @pytest.fixture(scope="session")
 def event_loop(request):
-    loop = asyncio.get_event_loop()
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
     yield loop
     loop.close()
