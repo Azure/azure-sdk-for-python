@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
 from typing import Any, Union, Optional, TYPE_CHECKING, Type
+from datetime import datetime
 import logging
 import warnings
 from weakref import WeakSet
@@ -17,6 +18,7 @@ from ._base_handler import (
 )
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
+from ._session_browser import _SessionBrowser
 from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common._configuration import Configuration
 from ._common.utils import (
@@ -699,3 +701,90 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             )
         self._handlers.add(handler)
         return handler
+
+    def _create_session_browser(self, entity_name, subscription_name=None, **kwargs):
+        """Create an internal _SessionBrowser for management-only operations."""
+        browser = _SessionBrowser(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            entity_name=entity_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
+            retry_total=self._config.retry_total,
+            retry_backoff_factor=self._config.retry_backoff_factor,
+            retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
+            amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
+            subscription_name=subscription_name,
+            **kwargs,
+        )
+        return browser
+
+    def list_queue_sessions(
+        self,
+        queue_name: str,
+        *,
+        updated_since: Optional["datetime"] = None,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
+    ):
+        # type: (...) -> list[str]
+        """List session IDs with active messages in a session-enabled queue.
+
+        If ``updated_since`` is specified, only sessions whose state was updated
+        after that time are returned. If not specified, returns sessions with
+        active messages in the queue.
+
+        :param str queue_name: The name of the session-enabled queue.
+        :keyword ~datetime.datetime updated_since: If specified, only sessions whose state was
+            updated after this time are returned.
+        :keyword float timeout: The total operation timeout in seconds.
+        :returns: A list of session ID strings.
+        :rtype: list[str]
+        """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
+        browser = self._create_session_browser(queue_name)
+        try:
+            return browser.list_sessions(updated_since=updated_since, timeout=timeout)
+        finally:
+            browser.close()
+
+    def list_subscription_sessions(
+        self,
+        topic_name: str,
+        subscription_name: str,
+        *,
+        updated_since: Optional["datetime"] = None,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
+    ):
+        # type: (...) -> list[str]
+        """List session IDs with active messages in a session-enabled subscription.
+
+        If ``updated_since`` is specified, only sessions whose state was updated
+        after that time are returned. If not specified, returns sessions with
+        active messages in the subscription.
+
+        :param str topic_name: The name of the topic.
+        :param str subscription_name: The name of the subscription.
+        :keyword ~datetime.datetime updated_since: If specified, only sessions whose state was
+            updated after this time are returned.
+        :keyword float timeout: The total operation timeout in seconds.
+        :returns: A list of session ID strings.
+        :rtype: list[str]
+        """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
+        browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
+        try:
+            return browser.list_sessions(updated_since=updated_since, timeout=timeout)
+        finally:
+            browser.close()

@@ -508,6 +508,28 @@ try:
             connection.destroy()
 
         @staticmethod
+        def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient":
+            """Creates and returns a uamqp AMQPClient for management-only operations.
+
+            :param ~azure.servicebus._common._configuration.Configuration config: The configuration.
+            :keyword JWTTokenAuth auth: Required.
+            :keyword retry_policy: Required.
+            :keyword str client_name: Required.
+            :keyword dict properties: Required.
+            :return: AMQPClient
+            :rtype: ~uamqp.AMQPClient
+            """
+            retry_policy = kwargs.pop("retry_policy")
+            return AMQPClient(
+                "amqps://" + config.hostname,
+                debug=config.logging_enable,
+                error_policy=retry_policy,
+                keep_alive_interval=config.keep_alive,
+                encoding=config.encoding,
+                **kwargs,
+            )
+
+        @staticmethod
         def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint:disable=docstring-keyword-should-match-keyword-only
             """
             Creates and returns the uamqp SendClient.

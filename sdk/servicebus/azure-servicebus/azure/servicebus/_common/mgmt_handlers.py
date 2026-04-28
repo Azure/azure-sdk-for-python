@@ -76,6 +76,9 @@ def list_sessions_op(  # pylint: disable=inconsistent-return-statements
         return parsed
     if status_code in [202, 204]:
         return []
+    # 404 + SessionNotFound means no sessions exist for this entity.
+    if status_code == 404:
+        return []
 
     amqp_transport.handle_amqp_mgmt_error(_LOGGER, "List sessions failed.", condition, description, status_code)
 

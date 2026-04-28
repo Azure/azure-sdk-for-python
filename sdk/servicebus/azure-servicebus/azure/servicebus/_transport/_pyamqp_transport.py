@@ -14,6 +14,7 @@ import logging
 
 from .._pyamqp import (
     utils,
+    AMQPClient,
     SendClient,
     constants,
     ReceiveClient,
@@ -441,6 +442,36 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :param ~pyamqp.Connection Connection connection: uamqp or pyamqp Connection.
         """
         connection.close()
+
+    @staticmethod
+    def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient":
+        """Creates and returns a pyamqp AMQPClient for management-only operations.
+
+        Unlike SendClient/ReceiveClient, this client does not create a sender or
+        receiver link. It only opens a connection and authenticates, suitable for
+        management requests that don't need an associated link.
+
+        :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict properties: Required.
+        :return: AMQPClient
+        :rtype: ~pyamqp.AMQPClient
+        """
+        return AMQPClient(
+            config.hostname,
+            network_trace=config.logging_enable,
+            keep_alive_interval=config.keep_alive,
+            custom_endpoint_address=config.custom_endpoint_address,
+            connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
+            transport_type=config.transport_type,
+            http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
+            **kwargs,
+        )
 
     @staticmethod
     def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint: disable=docstring-keyword-should-match-keyword-only
