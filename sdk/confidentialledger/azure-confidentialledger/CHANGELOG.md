@@ -1,5 +1,15 @@
 # Release History
 
+## 2.0.0b3 (Unreleased)
+
+### Features Added
+
+- Added redirect URL caching for write operations (POST/PUT/PATCH/DELETE). After the first redirect from the load balancer, subsequent writes go directly to the primary node, significantly reducing latency.
+
+### Bugs Fixed
+
+- Fixed missing `disable_redirect_cleanup=True` in the async client, which could cause authentication failures on redirects.
+
 ## 2.0.0b2 (2026-01-29)
 
 ### Bugs Fixed
