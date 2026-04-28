@@ -751,6 +751,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(queue_name)
         try:
             return browser.list_sessions(updated_since=updated_since, timeout=timeout)
@@ -783,6 +785,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         """
         if kwargs:
             warnings.warn(f"Unsupported keyword args: {kwargs}")
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
         browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
         try:
             return browser.list_sessions(updated_since=updated_since, timeout=timeout)
