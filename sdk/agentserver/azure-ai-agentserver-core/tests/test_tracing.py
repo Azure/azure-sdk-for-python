@@ -117,11 +117,11 @@ class TestAppInsightsConnectionString:
 
 
 # ------------------------------------------------------------------ #
-# _setup_azure_monitor (mocked)
+# _setup_distro_export (mocked)
 # ------------------------------------------------------------------ #
 
 
-class TestSetupAzureMonitor:
+class TestSetupDistroExport:
     """Verify _configure_tracing calls the distro with the right args."""
 
     def test_distro_called_when_conn_str_provided(self) -> None:

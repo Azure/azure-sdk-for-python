@@ -13,7 +13,7 @@ tracing exporters, and span operations:
 
   - Console ``StreamHandler`` on the **root** logger (so both SDK and
     user ``logging.info()`` calls are visible).
-  - Suppression of noisy Azure SDK / OTel exporter loggers.
+  - Suppression of noisy Azure Core HTTP logging policy output.
   - Trace and log export via ``microsoft-opentelemetry`` distro (auto-detects
     Azure Monitor from ``APPLICATIONINSIGHTS_CONNECTION_STRING`` and OTLP
     from ``OTEL_EXPORTER_OTLP_ENDPOINT``).
@@ -131,7 +131,7 @@ def configure_observability(
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
-    # Suppress noisy Azure SDK and OTel exporter logs
+    # Suppress the noisy Azure Core HTTP logging policy logger.
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
     # Tracing and OTel export
@@ -568,8 +568,10 @@ def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] =
     else:
         provider = SdkTracerProvider(resource=resource)
         trace.set_tracer_provider(provider)
-    for proc in (span_processors or []):
-        provider.add_span_processor(proc)
+    if span_processors and not getattr(provider, "_agentserver_processors_added", False):
+        for proc in span_processors:
+            provider.add_span_processor(proc)
+        provider._agentserver_processors_added = True  # type: ignore[attr-defined]
     return provider
 
 
