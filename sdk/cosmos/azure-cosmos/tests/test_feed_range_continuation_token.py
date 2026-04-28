@@ -190,9 +190,10 @@ class TestTokenRoundTrip:
             resource_id=_RID,
             query=_QUERY,
             feed_range_epk=_FEED_RANGE,
-            head_feedrange=_HEAD_FEEDRANGE,
-            pending_feedranges=[_REMAINING_FEEDRANGE],
-            backend_continuation=_BACKEND_CONT,
+            entries=[
+                (_HEAD_FEEDRANGE, _BACKEND_CONT),
+                (_REMAINING_FEEDRANGE, None),
+            ],
         )
         decoded = _decode_token(wire)
         assert decoded is not None
@@ -228,10 +229,10 @@ class TestTokenRoundTrip:
             resource_id=_RID,
             query=_QUERY,
             feed_range_epk=_FEED_RANGE,
-            head_feedrange=_HEAD_FEEDRANGE,
-            pending_feedranges=[_REMAINING_FEEDRANGE],
-            backend_continuation="B-cont-5",
-            pending_backend_continuations=["A-cont-5"],
+            entries=[
+                (_HEAD_FEEDRANGE, "B-cont-5"),
+                (_REMAINING_FEEDRANGE, "A-cont-5"),
+            ],
         )
         decoded = _decode_token(wire)
         assert decoded is not None
@@ -944,7 +945,14 @@ class TestEmptyPageStallCounter:
 
 
 class TestFeedRangePaginationState:
-    """Unit tests for the shared pagination state machine."""
+    """Unit tests for the shared pagination state machine.
+
+    The state machine holds a single ordered queue of
+    ``(sub-range, backend continuation)`` pairs — modeled on Java's
+    ``Queue<CompositeContinuationToken>``. There is no "current vs.
+    remaining" split; the head is just ``queue[0]`` and the tail is
+    ``queue[1:]`` by virtue of being later in the same deque.
+    """
 
     @staticmethod
     def _pkr(pkr_id: str, mn: str, mx: str) -> dict:
@@ -954,46 +962,49 @@ class TestFeedRangePaginationState:
     def _bounds(rng: routing_range.Range) -> tuple[str, str]:
         return rng.min, rng.max
 
+    @classmethod
+    def _queue_bounds(cls, state) -> list:
+        """All ``(min, max, bc)`` triples in the queue, in head-first order."""
+        return [(r.min, r.max, bc) for r, bc in state.queue]
+
     def test_from_derived_feedranges_empty_initializes_done_state(self):
         state = _FeedRangePaginationState.from_derived_feedranges([], remaining_page_item_count=5)
-        assert state.head_feedrange is None
-        assert list(state.pending_feedranges) == []
-        assert state.backend_continuation is None
+        assert list(state.queue) == []
+        assert state.head_range is None
+        assert state.head_bc is None
         assert state.remaining_page_item_count == 5
 
-    def test_from_derived_feedranges_sets_current_and_remaining(self):
+    def test_from_derived_feedranges_seeds_queue_with_no_continuations(self):
         a = _mk_range("00", "40")
         b = _mk_range("40", "80")
         state = _FeedRangePaginationState.from_derived_feedranges([a, b], remaining_page_item_count=7)
-        assert self._bounds(state.head_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80")]
-        assert state.backend_continuation is None
+        assert self._queue_bounds(state) == [("00", "40", None), ("40", "80", None)]
+        assert self._bounds(state.head_range) == ("00", "40")
+        assert state.head_bc is None
         assert state.remaining_page_item_count == 7
 
     @pytest.mark.parametrize(
-        "head_feedrange,remaining_page_item_count,expected",
+        "queue,remaining_page_item_count,expected",
         [
-            (None, None, False),
-            (_mk_range("00", "40"), 0, False),
-            (_mk_range("00", "40"), -1, False),
-            (_mk_range("00", "40"), None, True),
-            (_mk_range("00", "40"), 1, True),
+            ([], None, False),
+            ([(_mk_range("00", "40"), None)], 0, False),
+            ([(_mk_range("00", "40"), None)], -1, False),
+            ([(_mk_range("00", "40"), None)], None, True),
+            ([(_mk_range("00", "40"), None)], 1, True),
         ],
     )
-    def test_can_issue_request_boundaries(self, head_feedrange, remaining_page_item_count, expected):
+    def test_can_issue_request_boundaries(self, queue, remaining_page_item_count, expected):
         state = _FeedRangePaginationState(
-            head_feedrange=head_feedrange,
-            pending_feedranges=[],
-            backend_continuation=None,
+            queue=queue,
             remaining_page_item_count=remaining_page_item_count,
         )
         assert state.can_issue_request() is expected
 
-    def test_from_inbound_parses_head_tail_and_continuation(self):
+    def test_from_inbound_parses_queue_and_continuations(self):
         # The wire format is a single ordered ``c`` list. The state
-        # machine treats ``c[0]`` as the in-flight slice (its ``bc``
-        # becomes ``backend_continuation``) and ``c[1:]`` as queued
-        # (their ``bc`` values populate ``pending_backend_continuations``).
+        # machine loads it as a single queue of ``(range, bc)`` pairs
+        # — ``c[0]`` becomes the head, with no privileged "current vs.
+        # remaining" split.
         inbound = {
             _FIELD_CONTINUATIONS: [
                 {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "token-1"},
@@ -1001,17 +1012,19 @@ class TestFeedRangePaginationState:
             ],
         }
         state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=9)
-        assert self._bounds(state.head_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80")]
-        assert state.backend_continuation == "token-1"
-        assert list(state.pending_backend_continuations) == [None]
+        assert self._queue_bounds(state) == [
+            ("00", "40", "token-1"),
+            ("40", "80", None),
+        ]
+        assert self._bounds(state.head_range) == ("00", "40")
+        assert state.head_bc == "token-1"
         assert state.remaining_page_item_count == 9
 
     def test_from_inbound_preserves_per_entry_backend_continuations(self):
         # Future non-sequential / parallel-loop case: a saved token
         # where multiple ``c[i]`` entries each carry their own non-null
-        # backend continuation. All must round-trip into the state
-        # machine untouched.
+        # backend continuation. All must round-trip into the queue
+        # untouched.
         inbound = {
             _FIELD_CONTINUATIONS: [
                 {"min": "00", "max": "40", _FIELD_BACKEND_CONTINUATION: "B-cont-5"},
@@ -1019,89 +1032,84 @@ class TestFeedRangePaginationState:
             ],
         }
         state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=None)
-        assert state.backend_continuation == "B-cont-5"
-        assert list(state.pending_backend_continuations) == ["A-cont-5"]
+        assert self._queue_bounds(state) == [
+            ("00", "40", "B-cont-5"),
+            ("40", "80", "A-cont-5"),
+        ]
 
         # When the loop drains the head slice, the next entry's saved
-        # backend continuation becomes the new live one.
+        # backend continuation is naturally exposed as the new head_bc.
         state.apply_post_result(items_returned=0, backend_continuation=None)
-        assert self._bounds(state.head_feedrange) == ("40", "80")
-        assert state.backend_continuation == "A-cont-5"
-        assert list(state.pending_backend_continuations) == []
+        assert self._bounds(state.head_range) == ("40", "80")
+        assert state.head_bc == "A-cont-5"
+        assert self._queue_bounds(state) == [("40", "80", "A-cont-5")]
 
-    def test_apply_post_result_with_continuation_does_not_advance_feedrange(self):
+    def test_apply_post_result_with_continuation_updates_head_bc_in_place(self):
         current = _mk_range("00", "40")
         next_range = _mk_range("40", "80")
         state = _FeedRangePaginationState(
-            head_feedrange=current,
-            pending_feedranges=[next_range],
-            backend_continuation=None,
+            queue=[(current, None), (next_range, None)],
             remaining_page_item_count=5,
         )
 
         state.apply_post_result(items_returned=2, backend_continuation="token-2")
 
-        assert self._bounds(state.head_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80")]
-        assert state.backend_continuation == "token-2"
+        assert self._queue_bounds(state) == [
+            ("00", "40", "token-2"),
+            ("40", "80", None),
+        ]
+        assert state.head_bc == "token-2"
         assert state.remaining_page_item_count == 3
 
-    def test_apply_post_result_with_none_advances_to_next_feedrange(self):
+    def test_apply_post_result_with_none_pops_head(self):
         current = _mk_range("00", "40")
         next_range = _mk_range("40", "80")
         state = _FeedRangePaginationState(
-            head_feedrange=current,
-            pending_feedranges=[next_range],
-            backend_continuation="token-1",
+            queue=[(current, "token-1"), (next_range, None)],
             remaining_page_item_count=6,
         )
 
         state.apply_post_result(items_returned=1, backend_continuation=None)
 
-        assert self._bounds(state.head_feedrange) == ("40", "80")
-        assert list(state.pending_feedranges) == []
-        assert state.backend_continuation is None
+        assert self._queue_bounds(state) == [("40", "80", None)]
+        assert self._bounds(state.head_range) == ("40", "80")
+        assert state.head_bc is None
         assert state.remaining_page_item_count == 5
 
-    def test_apply_post_result_with_none_and_no_remaining_marks_done(self):
+    def test_apply_post_result_with_none_and_no_tail_drains_queue(self):
         current = _mk_range("00", "40")
         state = _FeedRangePaginationState(
-            head_feedrange=current,
-            pending_feedranges=[],
-            backend_continuation="token-1",
+            queue=[(current, "token-1")],
             remaining_page_item_count=None,
         )
 
         state.apply_post_result(items_returned=1, backend_continuation=None)
 
-        assert state.head_feedrange is None
-        assert list(state.pending_feedranges) == []
-        assert state.backend_continuation is None
+        assert list(state.queue) == []
+        assert state.head_range is None
+        assert state.head_bc is None
 
     def test_explode_on_multi_overlap_single_overlap_keeps_state(self):
         current = _mk_range("00", "80")
         tail = _mk_range("80", "C0")
         state = _FeedRangePaginationState(
-            head_feedrange=current,
-            pending_feedranges=[tail],
-            backend_continuation="token-1",
+            queue=[(current, "token-1"), (tail, None)],
             remaining_page_item_count=4,
         )
 
         did_explode = state.explode_on_multi_overlap([self._pkr("X", "00", "80")])
 
         assert did_explode is False
-        assert self._bounds(state.head_feedrange) == ("00", "80")
-        assert [self._bounds(r) for r in state.pending_feedranges] == [("80", "C0")]
-        assert state.backend_continuation == "token-1"
+        assert self._queue_bounds(state) == [
+            ("00", "80", "token-1"),
+            ("80", "C0", None),
+        ]
 
-    def test_explode_on_multi_overlap_multi_overlap_splits_and_clears_continuation(self):
+    def test_explode_on_multi_overlap_replaces_head_with_children(self):
         current = _mk_range("00", "80")
         tail = _mk_range("80", "C0")
         state = _FeedRangePaginationState(
-            head_feedrange=current,
-            pending_feedranges=[tail],
-            backend_continuation="token-1",
+            queue=[(current, "token-1"), (tail, None)],
             remaining_page_item_count=4,
         )
 
@@ -1113,6 +1121,12 @@ class TestFeedRangePaginationState:
         )
 
         assert did_explode is True
-        assert self._bounds(state.head_feedrange) == ("00", "40")
-        assert [self._bounds(r) for r in state.pending_feedranges] == [("40", "80"), ("80", "C0")]
-        assert state.backend_continuation is None
+        # Java parity: parent is dequeued, children prepended in order;
+        # children start with no backend continuation (parent's bc was
+        # tied to the now-retired physical partition).
+        assert self._queue_bounds(state) == [
+            ("00", "40", None),
+            ("40", "80", None),
+            ("80", "C0", None),
+        ]
+        assert state.head_bc is None

@@ -3418,7 +3418,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 consecutive_no_progress_pages = 0
 
                 while pagination_state.can_issue_request():
-                    head_feedrange = pagination_state.head_feedrange
+                    head_feedrange = pagination_state.head_range
                     if head_feedrange is None:
                         break
 
@@ -3457,7 +3457,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     # once more after resume when children X1/X2 restart from the
                     # start of their slices.
                     while pagination_state.explode_on_multi_overlap(overlapping):
-                        head_feedrange = pagination_state.head_feedrange
+                        head_feedrange = pagination_state.head_range
                         if head_feedrange is None:
                             break
                         overlapping = self._routing_map_provider.get_overlapping_ranges(
@@ -3470,8 +3470,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     backend_request_options = dict(options)
                     if pagination_state.remaining_page_item_count is not None:
                         backend_request_options["maxItemCount"] = pagination_state.remaining_page_item_count
-                    if pagination_state.backend_continuation is not None:
-                        backend_request_options["continuation"] = pagination_state.backend_continuation
+                    if pagination_state.head_bc is not None:
+                        backend_request_options["continuation"] = pagination_state.head_bc
                     else:
                         backend_request_options.pop("continuation", None)
 
@@ -3537,8 +3537,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         elif backend_query_result:
                             results = backend_query_result
 
-                    previous_feedrange = pagination_state.head_feedrange
-                    previous_backend_continuation = pagination_state.backend_continuation
+                    previous_feedrange = pagination_state.head_range
+                    previous_backend_continuation = pagination_state.head_bc
                     page_items_returned = _count_page_items_from_partial_result(backend_query_result, query)
                     if response_headers_list is not None:
                         response_headers_list.append(backend_response_headers.copy())
@@ -3553,8 +3553,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         page_items_returned,
                         previous_feedrange,
                         previous_backend_continuation,
-                        pagination_state.head_feedrange,
-                        pagination_state.backend_continuation,
+                        pagination_state.head_range,
+                        pagination_state.head_bc,
                     )
                     if consecutive_no_progress_pages >= _MAX_CONSECUTIVE_NO_PROGRESS_PAGES:
                         pagination_state.write_outbound_continuation(
