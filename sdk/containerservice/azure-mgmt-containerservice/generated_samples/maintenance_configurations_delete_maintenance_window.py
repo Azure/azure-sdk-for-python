@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-02-01/MaintenanceConfigurationsDelete_MaintenanceWindow.json
+# x-ms-original-file: 2026-02-02-preview/MaintenanceConfigurationsDelete_MaintenanceWindow.json
 if __name__ == "__main__":
     main()

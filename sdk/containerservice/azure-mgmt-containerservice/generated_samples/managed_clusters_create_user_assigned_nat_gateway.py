@@ -66,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/ManagedClustersCreate_UserAssignedNATGateway.json
+# x-ms-original-file: 2026-02-02-preview/ManagedClustersCreate_UserAssignedNATGateway.json
 if __name__ == "__main__":
     main()
