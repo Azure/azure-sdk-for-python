@@ -33,7 +33,7 @@
     "SubAssessmentsAPI": "2019-01-01-preview",
     "TasksAPI": "2015-06-01-preview"
   },
-  "commit": "c78a35ef7283d87fa3eb7568f109d42384696fc5",
+  "commit": "c648e72f715a1e6eca643d10a284493f8dcac9ce",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/security/resource-manager/Microsoft.Security/Security",
   "emitterVersion": "0.61.3"

@@ -763,7 +763,7 @@ class OnboardingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NotOnboarded."""
 
 
-class OperationResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the long run operation result of governance rule."""
 
     SUCCEEDED = "Succeeded"
@@ -1433,7 +1433,7 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Don't send notification on new alerts to the subscription's admins."""
 
 
-class StatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the port."""
 
     REVOKED = "Revoked"
