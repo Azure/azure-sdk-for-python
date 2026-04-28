@@ -731,7 +731,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         self,
         queue_name: str,
         *,
-        updated_since: Optional["datetime"] = None,
+        updated_since: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ):
@@ -762,7 +762,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         topic_name: str,
         subscription_name: str,
         *,
-        updated_since: Optional["datetime"] = None,
+        updated_since: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
     ):

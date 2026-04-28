@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import time
-import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Any, List, Optional, Union
+from typing import List, Optional
 
 from ._base_handler import BaseHandler
 from ._common.utils import create_authentication
@@ -16,25 +15,17 @@ from ._common.constants import (
 from ._common import mgmt_handlers
 from ._pyamqp.types import AMQPTypes, TYPE, VALUE
 
-_LOGGER = logging.getLogger(__name__)
-
 # The service checks for DateTime.MaxValue (C# 9999-12-31T23:59:59.9999999) to switch
 # between "active messages" mode and "updated since" mode. On the AMQP wire, timestamps
 # have millisecond precision, so DateTime.MaxValue becomes 253402300799999 ms from epoch.
 # Python's datetime.timestamp() float math rounds this up by 1ms, so we use the
 # pre-computed constant directly for the sentinel.
 _MAX_DATETIME_MS = 253402300799999
-_MAX_DATETIME = datetime(9999, 12, 31, 23, 59, 59, 999999, tzinfo=timezone.utc)
 _PAGE_SIZE = 100
 
 
 def _amqp_int_value(value):
     return {TYPE: AMQPTypes.int, VALUE: value}
-
-
-def _amqp_timestamp_value(value):
-    """Convert a datetime to an AMQP timestamp (milliseconds since epoch)."""
-    return {TYPE: AMQPTypes.timestamp, VALUE: int(value.timestamp() * 1000)}
 
 
 class _SessionBrowser(BaseHandler):
@@ -55,7 +46,7 @@ class _SessionBrowser(BaseHandler):
             credential=credential,
             **kwargs,
         )
-        self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_name}"
+        self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_path}"
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = f"SBSessionBrowser-{uuid.uuid4()}"
         self._connection = kwargs.get("connection")
@@ -103,11 +94,19 @@ class _SessionBrowser(BaseHandler):
         """
         # DateTime.MaxValue triggers "active messages" mode on the service side.
         # A real timestamp triggers "sessions updated since" mode.
-        use_sentinel = updated_since is None
-        last_updated_time_ms = (
-            _MAX_DATETIME_MS if use_sentinel
-            else int(updated_since.timestamp() * 1000)
-        )
+        if updated_since is None:
+            last_updated_time_ms = _MAX_DATETIME_MS
+        else:
+            # Normalize naive datetimes to UTC. Python's datetime.timestamp()
+            # interprets naive values as local time, which would make the wire
+            # value depend on the host's timezone. Treat naive values as UTC
+            # (consistent with how naive datetimes are handled elsewhere in
+            # this SDK) and convert aware values to UTC before serializing.
+            if updated_since.tzinfo is None:
+                normalized = updated_since.replace(tzinfo=timezone.utc)
+            else:
+                normalized = updated_since.astimezone(timezone.utc)
+            last_updated_time_ms = int(normalized.timestamp() * 1000)
 
         all_session_ids: List[str] = []
         skip = 0

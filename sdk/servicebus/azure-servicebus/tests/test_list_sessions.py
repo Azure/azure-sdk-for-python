@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import logging
 import pytest
 import uuid
 from datetime import datetime, timezone
@@ -23,11 +22,9 @@ from servicebus_preparer import (
     ServiceBusTopicPreparer,
     ServiceBusSubscriptionPreparer,
 )
-from utilities import get_logger, uamqp_transport as get_uamqp_transport, ArgPasser
+from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
 
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
-
-_logger = get_logger(logging.DEBUG)
 
 
 class TestServiceBusListSessions(AzureMgmtRecordedTestCase):

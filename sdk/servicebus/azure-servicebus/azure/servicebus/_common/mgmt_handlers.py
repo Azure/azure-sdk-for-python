@@ -7,7 +7,11 @@
 import logging
 
 from .message import ServiceBusReceivedMessage
-from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
+from .constants import (
+    ServiceBusReceiveMode,
+    MGMT_RESPONSE_MESSAGE_ERROR_CONDITION,
+    ERROR_CODE_MESSAGE_NOT_FOUND,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -76,8 +80,10 @@ def list_sessions_op(  # pylint: disable=inconsistent-return-statements
         return parsed
     if status_code in [202, 204]:
         return []
-    # 404 + SessionNotFound means no sessions exist for this entity.
-    if status_code == 404:
+    # The service returns 404 with com.microsoft:message-not-found when there are
+    # no sessions matching the query. Other 404 conditions (entity not found,
+    # auth failures, etc.) should propagate as errors.
+    if status_code == 404 and condition == ERROR_CODE_MESSAGE_NOT_FOUND:
         return []
 
     amqp_transport.handle_amqp_mgmt_error(_LOGGER, "List sessions failed.", condition, description, status_code)

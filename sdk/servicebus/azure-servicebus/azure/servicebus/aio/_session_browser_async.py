@@ -3,22 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import asyncio
-import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Any, List, Optional, Union
+from typing import List, Optional
 
-from .._base_handler import BaseHandler
 from ._base_handler_async import BaseHandler as AsyncBaseHandler
 from .._common.constants import (
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
 )
 from .._common import mgmt_handlers
-from .._session_browser import _amqp_int_value, _amqp_timestamp_value, _MAX_DATETIME_MS, _PAGE_SIZE
+from .._session_browser import _amqp_int_value, _MAX_DATETIME_MS, _PAGE_SIZE
 from .._pyamqp.types import AMQPTypes, TYPE, VALUE
 from ._async_utils import create_authentication
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class _SessionBrowserAsync(AsyncBaseHandler):
@@ -36,7 +32,7 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             credential=credential,
             **kwargs,
         )
-        self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_name}"
+        self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_path}"
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = f"SBSessionBrowser-{uuid.uuid4()}"
         self._connection = kwargs.get("connection")
@@ -81,10 +77,19 @@ class _SessionBrowserAsync(AsyncBaseHandler):
         :returns: A list of session ID strings.
         :rtype: list[str]
         """
-        last_updated_time_ms = (
-            _MAX_DATETIME_MS if updated_since is None
-            else int(updated_since.timestamp() * 1000)
-        )
+        if updated_since is None:
+            last_updated_time_ms = _MAX_DATETIME_MS
+        else:
+            # Normalize naive datetimes to UTC. Python's datetime.timestamp()
+            # interprets naive values as local time, which would make the wire
+            # value depend on the host's timezone. Treat naive values as UTC
+            # (consistent with how naive datetimes are handled elsewhere in
+            # this SDK) and convert aware values to UTC before serializing.
+            if updated_since.tzinfo is None:
+                normalized = updated_since.replace(tzinfo=timezone.utc)
+            else:
+                normalized = updated_since.astimezone(timezone.utc)
+            last_updated_time_ms = int(normalized.timestamp() * 1000)
 
         all_session_ids: List[str] = []
         skip = 0
