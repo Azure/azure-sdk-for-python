@@ -849,7 +849,7 @@
 
 /scripts/                                                            @scbedd @mccoyp
 /scripts/breaking_changes_checker/                                   @catalinaperalta
-/doc/                                                                @scbedd @mccoyp
+/doc/                                                                @scbedd @Azure/azure-python-sdk
 /conda/                                                              @scbedd @xiangyan99 @lmazuel
 
 # Add owners for notifications for specific pipelines
