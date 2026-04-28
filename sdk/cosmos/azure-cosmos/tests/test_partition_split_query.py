@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import random
@@ -36,12 +36,12 @@ def run_queries(container, iterations):
 @pytest.mark.cosmosSplit
 # @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestPartitionSplitQuery(unittest.TestCase):
-    # AAD client/database â€” data-plane (create_item, query_items, _routing_map_provider introspection,
+    # AAD client/database  -  data-plane (create_item, query_items, _routing_map_provider introspection,
     # patch.object on client_connection._ReadPartitionKeyRanges)
     database: DatabaseProxy = None
     container: ContainerProxy = None
     client: cosmos_client.CosmosClient = None
-    # Key-auth client/database â€” control-plane (create_container, delete_container, replace_throughput,
+    # Key-auth client/database  -  control-plane (create_container, delete_container, replace_throughput,
     # get_throughput, read_offer)
     key_database: DatabaseProxy = None
     key_container: ContainerProxy = None
@@ -144,7 +144,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache by running a query
             run_queries(container, 1)
 
-            # Trigger split (1 -> 2 partitions) â€” control-plane
+            # Trigger split (1 -> 2 partitions)  -  control-plane
             key_container.replace_throughput(11000)
             pending = True
             while pending:
@@ -186,7 +186,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
             print(f"Validated: Single partition split into {len(child_partitions)} children")
 
-            # Verify final throughput â€” control-plane
+            # Verify final throughput  -  control-plane
             final_offer = key_container.get_throughput()
             assert final_offer.offer_throughput == 11000
 
@@ -235,7 +235,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             # Force initial routing map cache
             run_queries(container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split) â€” control-plane
+            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)  -  control-plane
             key_container.replace_throughput(25000)
             pending = True
             while pending:
@@ -283,7 +283,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
             print(f"Validated: {len(stable_partitions)} stable + {len(child_partitions)} split partitions")
 
-            # Verify final throughput â€” control-plane
+            # Verify final throughput  -  control-plane
             final_offer = key_container.get_throughput()
             assert final_offer.offer_throughput == 25000
 
@@ -298,7 +298,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         - Create 2 containers: container_A and container_B
         - Both start with 1 partition (400 RU/s)
         - Run queries on both to populate routing map cache
-        - Split ONLY container_A (400 â†’ 11000 RU/s)
+        - Split ONLY container_A (400 -> 11000 RU/s)
         - Verify:
           1. container_A's routing map is refreshed (2 partitions)
           2. container_B's routing map is unchanged (1 partition)
@@ -355,7 +355,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # Split only Container A â€” control-plane
+            # Split only Container A  -  control-plane
             key_container_a.replace_throughput(11000)
             pending = True
             while pending:
@@ -546,7 +546,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
     def test_etag_staleness_detection_across_all_scenarios(self):
         """Verifies that the cache correctly detects whether a refresh is needed by
-        comparing ETags. The ETag is a version stamp from the change feed â€” when two
+        comparing ETags. The ETag is a version stamp from the change feed  -  when two
         maps have the same ETag, it means nobody has refreshed yet (stale). This test
         checks all four scenarios:
 
@@ -608,7 +608,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         the service returns an incomplete set of partition ranges.
 
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map must return None immediately â€”
+        returns gapped ranges, _fetch_routing_map must return None immediately  - 
         there is no incremental state to fall back from, and repeating the
         identical request would produce the same result."""
         container_id = 'test_fallback_guard_' + str(uuid.uuid4())
@@ -667,7 +667,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
         This flag exists to break a specific infinite loop: if the PK range fetch itself
         gets a 410 (partition gone) error, the retry logic would normally try to refresh
-        the routing map â€” which would call the PK range fetch again â€” creating an endless
+        the routing map  -  which would call the PK range fetch again  -  creating an endless
         cycle. The flag tells the retry logic to skip the refresh and let the 410 propagate."""
         container_id = 'test_pk_flag_' + str(uuid.uuid4())
         self.key_database.create_container(
@@ -755,7 +755,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
                 return original_get_lock(*args, **kwargs)
 
             with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
-                # This should hit the fast path â€” no lock acquisition
+                # This should hit the fast path  -  no lock acquisition
                 result = provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={}
@@ -935,7 +935,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
         retry policy does after a partition split), and confirms that queries still return
         correct results afterward.
 
-        This is the most important refresh path in production â€” it's how the SDK recovers
+        This is the most important refresh path in production  -  it's how the SDK recovers
         from partition splits without disrupting the user's queries."""
         container_id = 'test_force_refresh_' + str(uuid.uuid4())
         self.key_database.create_container(
@@ -961,7 +961,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert stale_map is not None
             original_etag = stale_map.change_feed_etag
 
-            # Force refresh with the stale map â€” simulates what the gone retry policy does
+            # Force refresh with the stale map  -  simulates what the gone retry policy does
             refreshed_map = provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={},

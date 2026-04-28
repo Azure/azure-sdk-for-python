@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -1883,7 +1883,7 @@ class TestCRUDOperations(unittest.TestCase):
         read_item = created_container.read_item(item=created_item, partition_key=created_item['pk'])
         self.assertEqual(read_item['id'], created_item['id'])
 
-        # Sproc/trigger/UDF creation is control-plane â€” route through key_container
+        # Sproc/trigger/UDF creation is control-plane  -  route through key_container
         created_sproc = key_container.scripts.create_stored_procedure({
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': 'function () { }'
@@ -1925,7 +1925,7 @@ class TestCRUDOperations(unittest.TestCase):
         read_udf = key_container.scripts.get_user_defined_function(created_udf)
         self.assertEqual(created_udf['id'], read_udf['id'])
 
-        # User/permission operations are control-plane â€” route through key_db
+        # User/permission operations are control-plane  -  route through key_db
         created_user = key_db.create_user({
             'id': 'user' + str(uuid.uuid4())
         })

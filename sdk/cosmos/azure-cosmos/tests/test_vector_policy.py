@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -71,7 +71,7 @@ class TestVectorPolicy(unittest.TestCase):
                 "tests.")
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.key_client = cls.client  # alias â€” control-plane operations stay on key-auth (Batch 17 prep)
+        cls.key_client = cls.client  # alias  -  control-plane operations stay on key-auth (Batch 17 prep)
         # AAD data client added for parity with the dual-client convention. Not exercised
         # here because every runnable test in this file is control-plane (vector indexing/
         # embedding policy validation via create_container / replace_container / read).

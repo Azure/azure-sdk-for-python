@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import pytest
 import pytest_asyncio

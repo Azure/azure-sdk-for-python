@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import time
 import unittest
@@ -15,8 +15,8 @@ class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
     """Tests the behavior of read_items in scenarios involving partition splits (sync)."""
 
     created_db: DatabaseProxy = None
-    client: cosmos_client.CosmosClient = None  # AAD â€” data-plane (create_item / read_items)
-    key_client: cosmos_client.CosmosClient = None  # key-auth â€” control-plane (create/delete container, trigger_split)
+    client: cosmos_client.CosmosClient = None  # AAD  -  data-plane (create_item / read_items)
+    key_client: cosmos_client.CosmosClient = None  # key-auth  -  control-plane (create/delete container, trigger_split)
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     configs = test_config.TestConfig

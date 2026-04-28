@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import time
@@ -34,11 +34,11 @@ async def run_queries(container, iterations):
 @pytest.mark.cosmosSplit
 # @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
-    # AAD client/database â€” data-plane (create_item, query_items, _routing_map_provider introspection)
+    # AAD client/database  -  data-plane (create_item, query_items, _routing_map_provider introspection)
     database: DatabaseProxy = None
     container: ContainerProxy = None
     client: CosmosClient = None
-    # Key-auth client/database â€” control-plane (create_container, delete_container, replace_throughput,
+    # Key-auth client/database  -  control-plane (create_container, delete_container, replace_throughput,
     # get_throughput, read_offer)
     key_client: CosmosClient = None
     key_database: DatabaseProxy = None
@@ -141,7 +141,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Force initial routing map cache by running a query
         await run_queries(self.container, 1)
 
-        # Trigger split (1 -> 2 partitions) â€” control-plane via key-auth key_container
+        # Trigger split (1 -> 2 partitions)  -  control-plane via key-auth key_container
         await self.key_container.replace_throughput(11000)
         pending = True
         while pending:
@@ -183,7 +183,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         print(f"Validated: Single partition split into {len(child_partitions)} children")
 
-        # Verify final throughput â€” control-plane
+        # Verify final throughput  -  control-plane
         final_offer = await self.key_container.get_throughput()
         assert final_offer.offer_throughput == 11000
 
@@ -228,7 +228,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             # Force initial routing map cache
             await run_queries(new_container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split) â€” control-plane
+            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)  -  control-plane
             await new_setup_container.replace_throughput(25000)
             pending = True
             while pending:
@@ -276,7 +276,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
             print(f"Validated: {len(stable_partitions)} stable + {len(child_partitions)} split partitions")
 
-            # Verify final throughput â€” control-plane
+            # Verify final throughput  -  control-plane
             final_offer = await new_setup_container.get_throughput()
             assert final_offer.offer_throughput == 25000
 
@@ -348,7 +348,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # SPLIT ONLY CONTAINER A â€” control-plane
+            # SPLIT ONLY CONTAINER A  -  control-plane
             await key_container_a.replace_throughput(11000)
             pending = True
             while pending:
@@ -596,7 +596,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         """
         Validates that a full load with incomplete ranges returns None immediately.
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map should return None without retrying â€”
+        returns gapped ranges, _fetch_routing_map should return None without retrying  - 
         there is no incremental state to fall back from.
         """
         container_id = 'test_fallback_guard_async_' + str(uuid.uuid4())
@@ -738,7 +738,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 return await original_get_lock(*args, **kwargs)
 
             with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
-                # This should hit the fast path â€” no lock acquisition
+                # This should hit the fast path  -  no lock acquisition
                 result = await provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={}
@@ -944,7 +944,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert stale_map is not None
             original_etag = stale_map.change_feed_etag
 
-            # Force refresh with the stale map â€” simulates what the gone retry policy does
+            # Force refresh with the stale map  -  simulates what the gone retry policy does
             refreshed_map = await provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={},

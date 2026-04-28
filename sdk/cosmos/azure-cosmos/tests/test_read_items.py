@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
@@ -79,7 +79,7 @@ class TestReadItems(unittest.TestCase):
 
     def _setup_fault_injection(self, error_to_inject, inject_once=False):
         """Helper to set up a client with fault injection for read_items queries."""
-        # Fault injection needs its own key-auth client with custom transport â€” stays as-is
+        # Fault injection needs its own key-auth client with custom transport  -  stays as-is
         fault_injection_transport = FaultInjectionTransport()
         client_with_faults = cosmos_client.CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
         container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(

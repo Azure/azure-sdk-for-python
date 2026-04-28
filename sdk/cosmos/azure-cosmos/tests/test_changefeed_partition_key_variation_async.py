@@ -1,4 +1,4 @@
-﻿import unittest
+import unittest
 import uuid
 import pytest
 from azure.cosmos.aio import CosmosClient

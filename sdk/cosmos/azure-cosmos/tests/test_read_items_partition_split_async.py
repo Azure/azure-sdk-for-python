@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
@@ -14,8 +14,8 @@ class TestReadItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
     """Tests the behavior of read_items in scenarios involving partition splits."""
 
     created_db: DatabaseProxy = None
-    client: CosmosClient = None  # AAD â€” data-plane
-    key_client: CosmosClient = None  # key-auth â€” control-plane
+    client: CosmosClient = None  # AAD  -  data-plane
+    key_client: CosmosClient = None  # key-auth  -  control-plane
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
     configs = test_config.TestConfig

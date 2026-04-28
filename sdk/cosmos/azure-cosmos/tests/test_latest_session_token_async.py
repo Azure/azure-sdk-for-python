@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import random
 import unittest
@@ -110,7 +110,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
 
         assert session_token.global_lsn >= pre_split_session_token.global_lsn
         assert '2' in pk_range_id
-        # Cleanup: control-plane â†’ key_database (key-auth)
+        # Cleanup: control-plane -> key_database (key-auth)
         await self.key_database.delete_container(container.id)
 
     async def test_latest_session_token_hpk(self):
@@ -132,7 +132,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
 
         session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
-        # Cleanup: control-plane â†’ key_database (key-auth)
+        # Cleanup: control-plane -> key_database (key-auth)
         await self.key_database.delete_container(container.id)
 
 
@@ -154,7 +154,7 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         session_token = await container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
-        # Cleanup: control-plane â†’ key_database (key-auth)
+        # Cleanup: control-plane -> key_database (key-auth)
         await self.key_database.delete_container(container.id)
 
     @staticmethod

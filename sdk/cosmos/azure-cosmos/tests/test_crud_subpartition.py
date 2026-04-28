@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -90,7 +90,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         self.key_databaseForTest.delete_container(cid)
 
     def test_collection_crud_subpartition(self):
-        # Container CRUD is all control-plane â€” route through setup
+        # Container CRUD is all control-plane  -  route through setup
         created_db = self.key_databaseForTest
         collections = list(created_db.list_containers())
         # create a collection

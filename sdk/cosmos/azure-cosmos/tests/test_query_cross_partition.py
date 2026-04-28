@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import os
@@ -641,7 +641,7 @@ class TestCrossPartitionQuery(unittest.TestCase):
     # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
     @pytest.mark.skipif(
         test_config.TestConfig.data_auth_mode == 'aad',
-        reason="post-create RBAC activation window (403/5302) â€” migrate after service-side fix",
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
     )
     def test_cross_partition_query_pagination_counting_results(self):
         """Test counting total results while paginating across partitions."""

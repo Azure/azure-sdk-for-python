@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import time
@@ -81,7 +81,7 @@ class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
             actual_ids.append(item['id'])
 
         assert actual_ids == expected_ids
-        # Cleanup: control-plane â†’ key_database (key-auth)
+        # Cleanup: control-plane -> key_database (key-auth)
         await self.key_database.delete_container(created_collection.id)
 
 if __name__ == '__main__':

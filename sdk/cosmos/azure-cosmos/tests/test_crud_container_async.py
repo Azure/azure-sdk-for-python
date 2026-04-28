@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -89,7 +89,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         # Dual-client AAD scaffolding (prep state, mirrors Batch 2 sync `test_crud_container.py`):
         # - `key_client`/`key_databaseForTest` (key-auth) for control-plane operations.
-        # - `client`/`data_databaseForTest` (AAD) â€” staged for per-test data-plane migration.
+        # - `client`/`data_databaseForTest` (AAD)  -  staged for per-test data-plane migration.
         # Tests currently keep `database_for_test = key_databaseForTest` for stability;
         # this file is control-plane heavy (trigger/udf/sproc/indexing-policy), so per-test
         # AAD migration is deferred until those control-plane ops can run under AAD.

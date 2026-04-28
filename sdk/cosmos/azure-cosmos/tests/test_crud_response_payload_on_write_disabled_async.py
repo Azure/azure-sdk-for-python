@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -70,10 +70,10 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
     """Python CRUD Tests.
     """
     # Dual-client AAD migration (Batch 24):
-    #   `client` â†’ AAD data-plane client (created via TestConfig.create_data_client_async),
+    #   `client` -> AAD data-plane client (created via TestConfig.create_data_client_async),
     #              also carries `no_response_on_write=True` for behavioral parity with the
     #              original test scope.
-    #   `key_client` â†’ key-auth client used for every control-plane operation
+    #   `key_client` -> key-auth client used for every control-plane operation
     #              (database/container CRUD, throughput / offer ops, account metadata).
     # Tests routed through both clients still exercise the SDK's no_response_on_write
     # behavior on each path while gaining real AAD data-plane coverage.

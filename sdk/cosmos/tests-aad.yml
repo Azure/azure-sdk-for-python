@@ -1,0 +1,26 @@
+# Sibling of tests.yml. Same archetype, same service connection, same matrix
+# shape — but reads a separate matrix file and sets COSMOS_TEST_DATA_AUTH_MODE=aad
+# stage-wide so test_config.create_data_client() returns an AAD-credentialed
+# CosmosClient. UseFederatedAuth is inherited (default true) from
+# archetype-sdk-tests.yml; the wrapper task pre-collects the service principal's
+# token and DefaultAzureCredential picks it up automatically.
+trigger: none
+
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      CloudConfig:
+        Public:
+          ServiceConnection: azure-sdk-tests-cosmos
+      MatrixConfigs:
+        - Name: Cosmos_live_test_aad
+          Path: sdk/cosmos/live-platform-matrix-aad.json
+          Selection: all
+          GenerateVMJobs: true
+      MaxParallel: 1
+      BuildTargetingString: azure-cosmos
+      ServiceDirectory: cosmos
+      JobName: AAD
+      EnvVars:
+        COSMOS_TEST_DATA_AUTH_MODE: aad
+

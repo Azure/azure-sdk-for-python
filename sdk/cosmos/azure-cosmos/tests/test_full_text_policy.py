@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import re
@@ -60,12 +60,12 @@ class TestFullTextPolicy(unittest.TestCase):
                 "tests.")
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.key_client = cls.client  # alias â€” control-plane operations stay on key-auth (Batch 16 prep)
+        cls.key_client = cls.client  # alias  -  control-plane operations stay on key-auth (Batch 16 prep)
         # AAD data client added for parity with the dual-client convention. Not exercised
         # here because every runnable test in this file is control-plane (full-text policy
         # validation via create_container / replace_container / read). The 4 data-plane
         # tests in this file are all @pytest.mark.skip until the multi-language test
-        # pipeline is set up â€” when those are unblocked, route the create_item / query_items
+        # pipeline is set up  -  when those are unblocked, route the create_item / query_items
         # calls through cls.data_client.get_database_client(...).get_container_client(...).
         cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)

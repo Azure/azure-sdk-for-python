@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import unittest
@@ -247,7 +247,7 @@ class TestChangeFeed:
     # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
     @pytest.mark.skipif(
         test_config.TestConfig.data_auth_mode == 'aad',
-        reason="post-create RBAC activation window (403/5302) â€” migrate after service-side fix",
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
     )
     def test_query_change_feed_with_multi_partition(self, setup):
         created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),

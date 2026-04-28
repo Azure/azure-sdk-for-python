@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import os
@@ -49,7 +49,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         # key_client is a sync key-auth client used for control-plane operations
-        # (create/delete containers) inside async tests. This works but is not ideal â€” a future
+        # (create/delete containers) inside async tests. This works but is not ideal  -  a future
         # cleanup could use an async key-auth client instead once the project decides on async
         # key-auth client handling.
         # NOTE: pass ``multiple_write_locations`` so circuit-breaker runs route writes the same
@@ -471,7 +471,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
     @pytest.mark.skipif(
         test_config.TestConfig.data_auth_mode == 'aad',
-        reason="post-create RBAC activation window (403/5302) â€” migrate after service-side fix",
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
     )
     async def test_distinct_on_different_types_and_field_orders_async(self):
         container_id = "test-distinct-container-" + str(uuid.uuid4())
