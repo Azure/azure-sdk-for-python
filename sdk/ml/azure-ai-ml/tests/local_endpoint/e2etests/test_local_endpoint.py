@@ -298,7 +298,7 @@ def run_local_endpoint_tests_e2e_create(
         assert get_obj.scoring_uri != ""
 
         data = client.online_endpoints.invoke(endpoint_name=endpoint_name, request_file=request_file, local=True)
-        assert type(data) is str
+        assert isinstance(data, str)
         if is_sklearn:
             assert "5215" in data
             assert "3726" in data

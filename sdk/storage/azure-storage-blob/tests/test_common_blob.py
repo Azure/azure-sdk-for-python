@@ -1473,6 +1473,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         copy_content = copyblob.download_blob().readall()
         assert copy_content == self.byte_data
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_copy_blob_with_immutability_policy(self, **kwargs):
@@ -2091,6 +2092,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert container_props is not None
         assert blob_props is not None
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_service_sas(self, **kwargs):
@@ -2160,7 +2162,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert 'ss=bf' in token
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
     @BlobPreparer()
     def test_set_immutability_policy_using_sas(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
@@ -2714,7 +2716,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert info.get('sku_name') is not None
         assert info.get('account_kind') is not None
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
     @BlobPreparer()
     def test_get_account_information_with_container_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -3109,6 +3111,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert that the token attempts to refresh 4 times (i.e, get_token called 4 times)
         assert token_credential.get_token_count == 4
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_immutability_policy(self, **kwargs):
@@ -3161,6 +3164,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_legal_hold(self, **kwargs):
@@ -3204,6 +3208,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.delete_blob()
             mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_download_blob_with_immutability_policy(self, **kwargs):
@@ -3253,6 +3258,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_list_blobs_with_immutability_policy(self, **kwargs):
@@ -3298,6 +3304,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_snapshot_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3347,6 +3354,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3810,5 +3818,108 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
         content = identity_blob.download_blob().readall()
         assert content == data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_smart_rehydrate(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(b"abc123", overwrite=True)
+        blob.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.ARCHIVE)
+        blob.set_standard_blob_tier(
+            standard_blob_tier=StandardBlobTier.SMART,
+            rehydrate_priority=RehydratePriority.HIGH
+        )
+
+        props = blob.get_blob_properties()
+        assert props is not None
+        assert props.archive_status == "rehydrate-pending-to-smart"
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_blob_fns_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        container_name = self.get_resource_name("directorysascontainer")
+
+        try:
+            service.create_container(container_name)
+
+            start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+            expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+            user_delegation_key = service.get_user_delegation_key(start, expiry)
+
+            for blob_name in ["foo", "foo/bar", "foo/bar/hello"]:
+                token = self.generate_sas(
+                    generate_blob_sas,
+                    account_name=storage_account_name,
+                    container_name=container_name,
+                    blob_name=blob_name,
+                    user_delegation_key=user_delegation_key,
+                    permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                    expiry=expiry,
+                    is_directory=True,
+                )
+
+                exact_blob = service.get_blob_client(container_name, blob_name)
+                BlobClient.from_blob_url(exact_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+
+                # Blob whose name has the SAS directory name as a prefix should also succeed
+                child_blob = service.get_blob_client(container_name, blob_name + "/test")
+                BlobClient.from_blob_url(child_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+        finally:
+            service.delete_container(container_name)
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_blob_fns_directory_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        container_name = self.get_resource_name("directorysascontainer")
+
+        try:
+            service.create_container(container_name)
+
+            start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+            expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+            user_delegation_key = service.get_user_delegation_key(start, expiry)
+
+            blob_name = "foo/bar/baz/"
+            token = self.generate_sas(
+                generate_blob_sas,
+                account_name=storage_account_name,
+                container_name=container_name,
+                blob_name=blob_name,
+                user_delegation_key=user_delegation_key,
+                permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                expiry=expiry,
+                is_directory=True,
+            )
+
+            non_prefix_blob = service.get_blob_client(container_name, "foo/bar")
+            non_prefix_blob_with_sas = BlobClient.from_blob_url(non_prefix_blob.url, credential=token)
+            with pytest.raises(HttpResponseError):
+                non_prefix_blob_with_sas.upload_blob(b"data", overwrite=True)
+        finally:
+            service.delete_container(container_name)
+
+        return variables
 
     # ------------------------------------------------------------------------------

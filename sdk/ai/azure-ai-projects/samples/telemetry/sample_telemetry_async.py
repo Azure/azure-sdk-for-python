@@ -17,7 +17,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
 """
 
@@ -32,7 +32,7 @@ load_dotenv()
 
 async def main() -> None:
 
-    endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
     async with (
         DefaultAzureCredential() as credential,

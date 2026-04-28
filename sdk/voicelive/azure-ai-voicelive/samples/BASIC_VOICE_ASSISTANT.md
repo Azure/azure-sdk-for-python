@@ -10,6 +10,7 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 - **High-Quality Audio Processing**: 24kHz PCM16 mono audio for optimal quality
 - **Robust Error Handling**: Connection error recovery and graceful shutdown
 - **Async Architecture**: Non-blocking operations for responsive interaction
+- **Optional Telemetry Tracing**: Built-in OpenTelemetry support via `--enable-tracing` flag
 
 ## Prerequisites
 
@@ -50,7 +51,7 @@ Create a `.env` file with your credentials:
 ```bash
 AZURE_VOICELIVE_API_KEY=your-api-key
 AZURE_VOICELIVE_ENDPOINT=your-endpoint
-AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
+AZURE_VOICELIVE_MODEL=gpt-realtime
 AZURE_VOICELIVE_VOICE=en-US-AvaNeural
 AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful AI assistant. Respond naturally and conversationally.
 ```
@@ -65,7 +66,7 @@ Optional command-line arguments:
 
 ```bash
 python basic_voice_assistant_async.py \
-    --model gpt-4o-realtime-preview \
+    --model gpt-realtime \
     --voice en-US-AvaNeural \
     --instructions "You are a helpful assistant" \
     --verbose
@@ -194,6 +195,31 @@ Enable verbose logging for troubleshooting:
 python basic_voice_assistant_async.py --verbose
 ```
 
+### Telemetry Tracing
+Enable OpenTelemetry tracing to emit spans for all connection, send, and receive operations:
+
+```bash
+# Console tracing (spans printed to stdout)
+python basic_voice_assistant_async.py --enable-tracing
+
+# With full message content in traces (may contain personal data)
+python basic_voice_assistant_async.py --enable-tracing --enable-content-recording
+```
+
+This requires additional dependencies:
+```bash
+pip install opentelemetry-sdk azure-core-tracing-opentelemetry
+```
+
+When enabled, the following are traced automatically:
+- **connect** span covering the entire WebSocket session lifetime
+- **send** spans for each message sent (session.update, response.create, etc.)
+- **recv** spans for each message received (session.created, response.done, etc.)
+- **close** span when the session ends
+- Session-level metrics: turn count, audio bytes, first-token latency, interruptions
+
+See the `telemetry/` folder for more advanced tracing examples (Azure Monitor export, custom attributes, OTLP).
+
 ## Code Structure
 
 ```
@@ -208,6 +234,7 @@ basic_voice_assistant_async.py
 │   └── Event processing
 └── Main execution
     ├── Argument parsing
+    ├── Telemetry setup (optional, --enable-tracing)
     ├── Environment setup
     └── Assistant initialization
 ```

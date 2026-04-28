@@ -66,9 +66,9 @@ class TestEvaluate:
                 }
             ],
         )
-        assert (
-            result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        )
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_score"] is None
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_result"] == "pass"
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_status"] == "skipped"
         assert (
             "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"].lower()
             and ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE

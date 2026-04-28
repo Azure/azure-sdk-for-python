@@ -19,10 +19,10 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_AGENT_NAME - The name of the AI agent to use for evaluation.
-    3) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_AGENT_NAME - The name of the AI agent to use for evaluation.
+    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -31,16 +31,22 @@ import time
 from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition
+from openai.types.evals.create_eval_completions_run_data_source_param import SourceFileContent, SourceFileContentContent
 from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import (
+    TestingCriterionAzureAIEvaluator,
+    PromptAgentDefinition,
+    TargetCompletionEvalRunDataSource,
+    AzureAIAgentTargetParam,
+)
 
 load_dotenv()
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
 # [START agent_evaluation_basic]
 with (
@@ -49,7 +55,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     agent = project_client.agents.create_version(
-        agent_name=os.environ["AZURE_AI_AGENT_NAME"],
+        agent_name=os.environ["FOUNDRY_AGENT_NAME"],
         definition=PromptAgentDefinition(
             model=model_deployment_name,
             instructions="You are a helpful assistant that answers general questions",
@@ -66,55 +72,55 @@ with (
     # sample.output_text is the string output of the agent
     # sample.output_items is the structured JSON output of the agent, including tool calls information
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "violence_detection",
-            "evaluator_name": "builtin.violence",
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "fluency",
-            "evaluator_name": "builtin.fluency",
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "task_adherence",
-            "evaluator_name": "builtin.task_adherence",
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-            "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
-        },
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="violence_detection",
+            evaluator_name="builtin.violence",
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="fluency",
+            evaluator_name="builtin.fluency",
+            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="task_adherence",
+            evaluator_name="builtin.task_adherence",
+            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            data_mapping={"query": "{{item.query}}", "response": "{{sample.output_items}}"},
+        ),
     ]
     eval_object = openai_client.evals.create(
         name="Agent Evaluation",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    data_source = {
-        "type": "azure_ai_target_completions",
-        "source": {
-            "type": "file_content",
-            "content": [
-                {"item": {"query": "What is the capital of France?"}},
-                {"item": {"query": "How do I reverse a string in Python?"}},
+    data_source = TargetCompletionEvalRunDataSource(
+        type="azure_ai_target_completions",
+        source=SourceFileContent(
+            type="file_content",
+            content=[
+                SourceFileContentContent(item={"query": "What is the capital of France?"}),
+                SourceFileContentContent(item={"query": "How do I reverse a string in Python?"}),
             ],
-        },
-        "input_messages": {
-            "type": "template",
+        ),
+        input_messages={
+            "type": "template",  # type: ignore  # TODO: This is not an option based on our TypeSpec..
             "template": [
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        "target": {
-            "type": "azure_ai_agent",
-            "name": agent.name,
-            "version": agent.version,  # Version is optional. Defaults to latest version if not specified
-        },
-    }
+        target=AzureAIAgentTargetParam(
+            type="azure_ai_agent",
+            name=agent.name,
+            version=agent.version,  # Version is optional. Defaults to latest version if not specified
+        ),
+    )
 
     agent_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
