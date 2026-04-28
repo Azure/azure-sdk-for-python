@@ -7,6 +7,10 @@
 - Removed dependency on `DefaultAzureCredential` in source library
 - Fixed `get_entra_conninfo_async` and `get_entra_token_async` closing the credential by using it as a context manager
 
+### Other Changes
+
+- Bumped minimum dependency on `azure-core` to `>=1.31.0`
+
 ## 1.0.1 (2025-11-26)
 
 ### Other Changes
