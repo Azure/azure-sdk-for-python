@@ -149,6 +149,7 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
     """
     resource = _create_resource()
     if resource is None:
+        logger.warning("Failed to create OTel resource — tracing will not be configured.")
         return
 
     # Build custom processors
