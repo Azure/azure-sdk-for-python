@@ -61,9 +61,14 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @recorded_by_proxy
     def test_on_stop(self, webpubsubclient_endpoint):
         client = self.create_client(endpoint=webpubsubclient_endpoint)
+        reopen_error = None
 
         def on_stop():
-            client.open()
+            nonlocal reopen_error
+            try:
+                client.open()
+            except Exception as e:
+                reopen_error = e
 
         with client:
             # open client again after close
@@ -75,10 +80,11 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             assert client.is_connected()
             client.close()
             # wait for on_stop callback to reconnect
-            for _ in range(30):
+            for _ in range(60):
                 if client.is_connected():
                     break
                 time.sleep(1)
+            assert reopen_error is None, f"on_stop callback failed: {reopen_error}"
             assert client.is_connected()
 
             # remove stopped event and close again

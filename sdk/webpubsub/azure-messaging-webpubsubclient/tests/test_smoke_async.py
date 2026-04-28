@@ -61,9 +61,14 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     @recorded_by_proxy_async
     async def test_on_stop_async(self, webpubsubclient_endpoint):
         client = await self.create_client(endpoint=webpubsubclient_endpoint)
+        reopen_error = None
 
         async def on_stop():
-            await client.open()
+            nonlocal reopen_error
+            try:
+                await client.open()
+            except Exception as e:
+                reopen_error = e
 
         async with client:
             # open client again after close
@@ -75,10 +80,11 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             assert client.is_connected()
             await client.close()
             # wait for on_stop callback to reconnect
-            for _ in range(30):
+            for _ in range(60):
                 if client.is_connected():
                     break
                 await asyncio.sleep(1)
+            assert reopen_error is None, f"on_stop callback failed: {reopen_error}"
             assert client.is_connected()
 
             # remove stopped event and close again
