@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
-from typing import Any, Union, Optional, TYPE_CHECKING, Type
+from typing import Any, List, Union, Optional, TYPE_CHECKING, Type
 from datetime import datetime
 import logging
 import warnings
@@ -723,8 +723,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         updated_since: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
-    ):
-        # type: (...) -> list[str]
+    ) -> List[str]:
         """List session IDs with active messages in a session-enabled queue.
 
         If ``updated_since`` is specified, only sessions whose state was updated
@@ -756,8 +755,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         updated_since: Optional[datetime] = None,
         timeout: Optional[float] = None,
         **kwargs: Any,
-    ):
-        # type: (...) -> list[str]
+    ) -> List[str]:
         """List session IDs with active messages in a session-enabled subscription.
 
         If ``updated_since`` is specified, only sessions whose state was updated
