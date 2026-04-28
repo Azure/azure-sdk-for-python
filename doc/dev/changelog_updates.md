@@ -10,21 +10,23 @@ The repository configuration lives in [`.chronus/config.yaml`](https://github.co
 
 ## Prerequisites
 
-Chronus is distributed as an npm package. To use it, you need [Node.js](https://nodejs.org/) installed (LTS version recommended). You can then run Chronus without a global install using `npx`:
+The recommended way to interact with Chronus is through the `azpysdk` CLI, which is already available in this repository's developer environment and handles installing Chronus automatically.
+
+If you prefer to invoke Chronus directly, it is distributed as an npm package and requires [Node.js](https://nodejs.org/) (LTS version recommended). You can run it without a global install using `npx`:
 
 ```bash
 npx chronus <command>
 ```
 
-Alternatively, install it globally:
-
-```bash
-npm install -g @chronus/chronus
-```
-
 ## Adding a Change Description
 
-When you make changes to a package that has a `pyproject.toml`, run `chronus add` from the root of the repository:
+When you make changes to a package that has a `pyproject.toml`, add a change description by running the following from the repository root or from within the package directory:
+
+```bash
+azpysdk changelog add
+```
+
+Alternatively, using raw Chronus:
 
 ```bash
 npx chronus add
@@ -55,7 +57,13 @@ The following change kinds are defined for this repository:
 
 ### Specifying a Package Directly
 
-You can skip the interactive prompt by passing the package path(s) directly:
+You can skip the interactive prompt by passing the package path and change details directly:
+
+```bash
+azpysdk changelog add sdk/storage/azure-storage-blob --kind fix --message "Fixed upload failure on large files"
+```
+
+Or using raw Chronus:
 
 ```bash
 npx chronus add sdk/storage/azure-storage-blob
@@ -65,9 +73,9 @@ npx chronus add sdk/storage/azure-storage-blob
 
 ```bash
 # After making changes to azure-storage-blob, add a change description
-npx chronus add sdk/storage/azure-storage-blob
+azpysdk changelog add sdk/storage/azure-storage-blob
 
-# Chronus will prompt you:
+# You will be prompted to select:
 # ? What kind of change is this? › fix
 # ? Describe the change: › Fixed an issue where upload would fail on large files
 ```
@@ -91,15 +99,28 @@ You commit this file along with your code changes.
 To check whether all modified packages have a corresponding change description (e.g., before opening a PR), run:
 
 ```bash
+azpysdk changelog verify
+```
+
+Or using raw Chronus:
+
+```bash
 npx chronus verify
 ```
 
+> **Note:** The CI workflow (`Chronus Verify`) runs `chronus verify` automatically on every pull request that modifies files under `sdk/`. If it fails, add a change description with `azpysdk changelog add`.
 
 If your changes don't need a changelog entry (e.g., pure documentation or test-only changes unrelated to package behavior), you can add an `internal` change kind entry to satisfy the requirement without bumping the version.
 
 ## Viewing the Current Status
 
 To see a summary of all pending changes and the resulting version bumps:
+
+```bash
+azpysdk changelog status
+```
+
+Or using raw Chronus:
 
 ```bash
 npx chronus status
@@ -109,7 +130,7 @@ npx chronus status
 
 Packages in this repository that use `pyproject.toml` (instead of or alongside `setup.py`) are fully supported by Chronus. The `pyproject.toml` is used for package metadata, while the `CHANGELOG.md` in the package directory remains the canonical user-facing changelog.
 
-Chronus reads the package version from the Python package metadata and writes changelog entries into the `CHANGELOG.md` file with `npx chronus changelog`. You do not need to manually edit `CHANGELOG.md` for your changes.
+Chronus reads the package version from the Python package metadata and writes changelog entries into the `CHANGELOG.md` file with `azpysdk changelog create` (or `npx chronus changelog`). You do not need to manually edit `CHANGELOG.md` for your changes.
 
 ## Further Reading
 
