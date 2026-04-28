@@ -1,11 +1,10 @@
 {
-  "commit": "a41799da220be570a0fed686bf08e98ee2738424",
+  "apiVersions": {
+    "PolicyInsightsApi": "2024-10-01",
+    "PolicyTrackedResourcesApi": "2018-07-01-preview"
+  },
+  "commit": "6595cfdf0df33c33842fe345b640b4b6db37c62c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/policyinsights/resource-manager/Microsoft.PolicyInsights/PolicyInsights/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/v-chenjiang/worktrees/sdk-azure-mgmt-policyinsights/sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/policyinsights/resource-manager/Microsoft.PolicyInsights/PolicyInsights/readme.md"
+  "typespec_src": "specification/policyinsights/resource-manager/Microsoft.PolicyInsights/PolicyInsights",
+  "emitterVersion": "0.61.1"
 }
