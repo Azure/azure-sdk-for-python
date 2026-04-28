@@ -7,6 +7,13 @@
         "./eng/common/mcp/azure-sdk-mcp.ps1",
         "-Run"
       ]
+    },
+    "github-agentic-workflows": {
+      "command": "gh",
+      "args": [
+        "aw",
+        "mcp-server"
+      ]
     }
   }
 }
