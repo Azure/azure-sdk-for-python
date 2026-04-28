@@ -60,7 +60,7 @@ def _get_spans():
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export"):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
@@ -75,7 +75,7 @@ def _make_server_with_child_span():
 def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export"):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
