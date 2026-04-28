@@ -451,7 +451,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         receiver link. It only opens a connection and authenticates, suitable for
         management requests that don't need an associated link.
 
-        :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
+        :param ~azure.servicebus._common._configuration.Configuration config: The configuration. Required.
         :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword retry_policy: Required.
         :keyword str client_name: Required.

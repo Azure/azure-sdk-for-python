@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 import uuid
 from datetime import datetime, timedelta, timezone
+
+import pytest
 
 from azure.servicebus import (
     ServiceBusClient,
