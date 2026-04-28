@@ -6,7 +6,7 @@
 
 import pytest
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from azure.servicebus import ServiceBusMessage
 from azure.servicebus.aio import ServiceBusClient
@@ -102,7 +102,8 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            before_send = datetime.now(timezone.utc)
+            # Use a 1-minute buffer to absorb client/server clock skew.
+            before_send = datetime.now(timezone.utc) - timedelta(minutes=1)
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -199,7 +200,8 @@ class TestServiceBusListSessionsAsync(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            before_send = datetime.now(timezone.utc)
+            # Use a 1-minute buffer to absorb client/server clock skew.
+            before_send = datetime.now(timezone.utc) - timedelta(minutes=1)
 
             session_id = str(uuid.uuid4())
             async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
