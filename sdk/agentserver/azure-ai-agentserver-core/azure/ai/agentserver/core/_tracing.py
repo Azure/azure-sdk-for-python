@@ -200,12 +200,19 @@ def _setup_distro_export(
     """
     from microsoft.opentelemetry import use_microsoft_opentelemetry
 
-    use_microsoft_opentelemetry(
+    kwargs: dict[str, Any] = dict(
         resource=resource,
         span_processors=span_processors,
         log_record_processors=log_record_processors,
-        connection_string=connection_string,
     )
+
+    # Azure Monitor export is off by default in the distro — enable it
+    # when a connection string is available.
+    if connection_string:
+        kwargs["enable_azure_monitor"] = True
+        kwargs["azure_monitor_connection_string"] = connection_string
+
+    use_microsoft_opentelemetry(**kwargs)
 
 
 # ======================================================================
