@@ -18795,7 +18795,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "maximum_duration": {
-                    "type": "str",
+                    "type": "timedelta",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -18984,7 +18984,7 @@
           }
         },
         "properties": {
-          "maximum_duration": null,
+          "maximum_duration": "datetime",
           "reboot_setting": "Union",
           "windows_parameters": "Optional",
           "linux_parameters": "Optional"

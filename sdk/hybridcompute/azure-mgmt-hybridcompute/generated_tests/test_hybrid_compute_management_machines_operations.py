@@ -431,7 +431,7 @@ class TestHybridComputeManagementMachinesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             install_patches_input={
-                "maximumDuration": "str",
+                "maximumDuration": "1 day, 0:00:00",
                 "rebootSetting": "str",
                 "linuxParameters": {
                     "classificationsToInclude": ["str"],

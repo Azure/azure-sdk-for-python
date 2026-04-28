@@ -3051,7 +3051,7 @@ class MachineInstallPatchesParameters(_Model):
 
     :ivar maximum_duration: Specifies the maximum amount of time that the operation will run. It
      must be an ISO 8601-compliant duration string such as PT4H (4 hours). Required.
-    :vartype maximum_duration: str
+    :vartype maximum_duration: ~datetime.timedelta
     :ivar reboot_setting: Defines when it is acceptable to reboot a VM during a software update
      operation. Required. Known values are: "IfRequired", "Never", and "Always".
     :vartype reboot_setting: str or ~azure.mgmt.hybridcompute.models.VMGuestPatchRebootSetting
@@ -3063,7 +3063,7 @@ class MachineInstallPatchesParameters(_Model):
     :vartype linux_parameters: ~azure.mgmt.hybridcompute.models.LinuxParameters
     """
 
-    maximum_duration: str = rest_field(
+    maximum_duration: datetime.timedelta = rest_field(
         name="maximumDuration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the maximum amount of time that the operation will run. It must be an ISO
@@ -3086,7 +3086,7 @@ class MachineInstallPatchesParameters(_Model):
     def __init__(
         self,
         *,
-        maximum_duration: str,
+        maximum_duration: datetime.timedelta,
         reboot_setting: Union[str, "_models.VMGuestPatchRebootSetting"],
         windows_parameters: Optional["_models.WindowsParameters"] = None,
         linux_parameters: Optional["_models.LinuxParameters"] = None,
