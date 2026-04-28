@@ -17,10 +17,6 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 
 def get_build_info(service_directory: str, package_name: str) -> str:
     """Get the pylint build info from the CI build logs.
-
-    Parses the Azure DevOps build timeline to find the "Run Tests" task,
-    then extracts next-pylint output for the given package from the
-    dispatch_checks.py log format.
     """
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
@@ -33,7 +29,7 @@ def get_build_info(service_directory: str, package_name: str) -> str:
         response_json = json.loads(response.text)
 
         for task in response_json["records"]:
-            if "Run Tests" in task.get("name", ""):
+            if "Run Pylint Next" in task.get("name", ""):
                 log_link = task["log"]["url"] + "?api-version=6.0"
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
