@@ -857,6 +857,33 @@ class TestAggregateMergeConsistency:
         merged = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, query)
         assert merged["Documents"] == [10]
 
+    def test_value_min_numeric_fragments_are_merged_with_min(self):
+        query = "SELECT VALUE MIN(c.score) FROM c"
+        partial_result = {"Documents": [7]}
+        assert _count_page_items_from_partial_result(partial_result, query) == 0
+
+        merged = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, query)
+        assert merged["Documents"] == [3]
+
+    def test_value_max_numeric_fragments_are_merged_with_max(self):
+        query = "SELECT VALUE MAX(c.score) FROM c"
+        partial_result = {"Documents": [7]}
+        assert _count_page_items_from_partial_result(partial_result, query) == 0
+
+        merged = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, query)
+        assert merged["Documents"] == [7]
+
+    def test_value_min_max_three_way_merge(self):
+        min_query = "SELECT VALUE MIN(c.score) FROM c"
+        merged_min = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, min_query)
+        merged_min = _base._merge_query_results(merged_min, {"Documents": [11]}, min_query)
+        assert merged_min["Documents"] == [3]
+
+        max_query = "SELECT VALUE MAX(c.score) FROM c"
+        merged_max = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, max_query)
+        merged_max = _base._merge_query_results(merged_max, {"Documents": [11]}, max_query)
+        assert merged_max["Documents"] == [11]
+
     def test_value_boolean_non_aggregate_fragments_are_concatenated(self):
         query = "SELECT VALUE c.flag FROM c"
         partial_result = {"Documents": [True]}
@@ -864,6 +891,33 @@ class TestAggregateMergeConsistency:
 
         merged = _base._merge_query_results({"Documents": [True]}, {"Documents": [True]}, query)
         assert merged["Documents"] == [True, True]
+
+    def test_value_numeric_non_aggregate_fragments_are_concatenated(self):
+        """Regression: numeric VALUE rows must concatenate across partitions, not sum."""
+        query = "SELECT VALUE c.score FROM c"
+
+        assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 1
+        assert _get_select_value_aggregate_function(query) is None
+
+        merged = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, query)
+        assert merged["Documents"] == [7, 3]
+
+    def test_value_float_non_aggregate_fragments_are_concatenated(self):
+        """Same regression for floats; they must concatenate, not collapse."""
+        query = "SELECT VALUE c.ratio FROM c"
+
+        assert _count_page_items_from_partial_result({"Documents": [1.5]}, query) == 1
+        merged = _base._merge_query_results(
+            {"Documents": [1.5]}, {"Documents": [2.25]}, query,
+        )
+        assert merged["Documents"] == [1.5, 2.25]
+
+    def test_value_numeric_non_aggregate_three_way_merge_is_concatenated(self):
+        """Three-partition fan-in must preserve order and avoid numeric collapse."""
+        query = "SELECT VALUE c.score FROM c"
+        merged = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, query)
+        merged = _base._merge_query_results(merged, {"Documents": [11]}, query)
+        assert merged["Documents"] == [7, 3, 11]
 
     def test_value_merge_raises_if_aggregate_function_detection_is_missing(self, monkeypatch):
         query = "SELECT VALUE COUNT(1) FROM c"
@@ -874,6 +928,14 @@ class TestAggregateMergeConsistency:
 
         assert "VALUE aggregate classification" in str(excinfo.value)
 
+    def test_value_avg_merge_raises_as_unsupported(self):
+        query = "SELECT VALUE AVG(c.value) FROM c"
+
+        with pytest.raises(ValueError) as excinfo:
+            _base._merge_query_results({"Documents": [7.0]}, {"Documents": [3.0]}, query)
+
+        assert "VALUE AVG aggregate merge" in str(excinfo.value)
+
     def test_value_aggregate_detection_allows_space_before_open_paren(self):
         query = "SELECT VALUE COUNT (1) FROM c"
         assert _get_select_value_aggregate_function(query) == "COUNT"
@@ -882,6 +944,14 @@ class TestAggregateMergeConsistency:
     def test_value_aggregate_detection_does_not_match_function_substrings(self):
         query = "SELECT VALUE MYCOUNT(1) FROM c"
         assert _get_select_value_aggregate_function(query) is None
+        assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 1
+
+    def test_value_aggregate_detection_ignores_subquery_aggregate_tokens(self):
+        query = "SELECT VALUE c.name FROM c WHERE EXISTS(SELECT VALUE COUNT(1) FROM d)"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_numeric_value_row_with_subquery_aggregate_still_consumes_page_item(self):
+        query = "SELECT VALUE c.id FROM c WHERE EXISTS(SELECT VALUE COUNT(1) FROM d)"
         assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 1
 
 
@@ -1130,3 +1200,94 @@ class TestFeedRangePaginationState:
             ("80", "C0", None),
         ]
         assert state.head_bc is None
+
+
+class TestCheckpointRoundTripOnException:
+    """If the per-iteration POST raises mid-page, the call site stamps
+    the current pagination state into the outbound continuation header
+    before re-raising. That checkpoint must round-trip so the caller
+    can retry from exactly where the failed POST left off — never from
+    the start of the head sub-range, never skipping it.
+
+    These tests drive the state machine + token codec end-to-end
+    without standing up a live client: emit the checkpoint that the
+    sync/async loops would emit on exception, then resume from it and
+    assert the queue is intact.
+    """
+
+    @staticmethod
+    def _bounds(rng: routing_range.Range) -> tuple[str, str]:
+        return rng.min, rng.max
+
+    def test_checkpoint_emitted_mid_page_resumes_at_same_head(self):
+        # Simulate: queue is [A (in-flight, bc=cont-A), B, C]; the POST
+        # for A returned cont-A successfully on a previous iteration but
+        # the next POST (still on A) is about to raise. The call site
+        # writes the outbound continuation BEFORE re-raising — that
+        # token must put us back at (A, cont-A) on resume, with B and C
+        # still queued behind it untouched.
+        a, b, c = _mk_range("00", "40"), _mk_range("40", "80"), _mk_range("80", "C0")
+        state = _FeedRangePaginationState(
+            queue=[(a, "cont-A"), (b, None), (c, None)],
+            remaining_page_item_count=7,
+        )
+
+        headers: dict = {}
+        state.write_outbound_continuation(headers, _RID, _QUERY, _FEED_RANGE)
+
+        # The header carries an opaque, base64-encoded v=1 envelope.
+        wire = headers[http_constants.HttpHeaders.Continuation]
+        assert isinstance(wire, str) and wire
+
+        # Caller resumes from that exact wire token.
+        inbound = _decode_token(wire)
+        assert inbound is not None
+        _validate_token_identity(inbound, _RID, _QUERY, _FEED_RANGE)
+        resumed = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=7)
+
+        # Head is still A with its bc; tail (B, C) is intact and bc-free.
+        assert self._bounds(resumed.head_range) == ("00", "40")
+        assert resumed.head_bc == "cont-A"
+        assert [(r.min, r.max, bc) for r, bc in resumed.queue] == [
+            ("00", "40", "cont-A"),
+            ("40", "80", None),
+            ("80", "C0", None),
+        ]
+
+    def test_checkpoint_after_partial_drain_resumes_at_next_head(self):
+        # Simulate: A was fully drained (apply_post_result with bc=None
+        # popped it) and the POST for B is about to raise. The
+        # checkpoint must put us at (B, None) on resume with C still
+        # queued, and A must NOT reappear.
+        a, b, c = _mk_range("00", "40"), _mk_range("40", "80"), _mk_range("80", "C0")
+        state = _FeedRangePaginationState(
+            queue=[(a, "cont-A-final"), (b, None), (c, None)],
+            remaining_page_item_count=5,
+        )
+        state.apply_post_result(items_returned=3, backend_continuation=None)
+        # A is now drained; head should be B.
+        assert self._bounds(state.head_range) == ("40", "80")
+
+        headers: dict = {}
+        state.write_outbound_continuation(headers, _RID, _QUERY, _FEED_RANGE)
+
+        resumed = _FeedRangePaginationState.from_inbound(
+            _decode_token(headers[http_constants.HttpHeaders.Continuation]),
+            remaining_page_item_count=2,
+        )
+        assert [(r.min, r.max, bc) for r, bc in resumed.queue] == [
+            ("40", "80", None),
+            ("80", "C0", None),
+        ]
+
+    def test_drained_state_clears_continuation_header(self):
+        # When the entire queue is drained, the call site must clear
+        # the outbound continuation header (not leave a stale one
+        # behind) so the caller's by_page loop terminates.
+        headers = {http_constants.HttpHeaders.Continuation: "stale-from-prior-page"}
+        state = _FeedRangePaginationState(queue=[], remaining_page_item_count=None)
+
+        state.write_outbound_continuation(headers, _RID, _QUERY, _FEED_RANGE)
+
+        assert http_constants.HttpHeaders.Continuation not in headers
+

@@ -3166,19 +3166,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # feed_range helpers below read as ``resource_id_str`` instead
             # of the generic ``id_``.
             resource_id_str: str = id_
-            # (a) Look at the continuation the caller passed in.
-            #     - Empty or from a pre-fix SDK: start fresh.
-            #     - One of our v=1 envelopes: check the collection, query, and
-            #       feed_range still match before resuming from it.
-            #
-            # Shared state transitions (resume, split handling, page-item update,
-            # outbound token) live in _FeedRangePaginationState so sync/async
-            # stay behaviorally aligned.
+            # Decode the inbound continuation. Empty/legacy → start fresh
+            # (``_decode_token`` returns ``None``); a valid v=1 envelope
+            # is checked against the current collection/query/feed_range
+            # before we resume from it. The shared
+            # ``_FeedRangePaginationState`` owns all state transitions
+            # (resume, split handling, page-item update, outbound token)
+            # so the sync and async loops below remain twin code paths
+            # — change one, change the other.
             items_left_in_page = _normalize_max_item_count(options.get("maxItemCount"))
-            inbound = _decode_token(options.get("continuation"))
-            if inbound is not None:
-                _validate_token_identity(inbound, resource_id_str, query, feed_range_epk)
-                pagination_state = _FeedRangePaginationState.from_inbound(inbound, items_left_in_page)
+            inbound_token_payload = _decode_token(options.get("continuation"))
+            if inbound_token_payload is not None:
+                _validate_token_identity(inbound_token_payload, resource_id_str, query, feed_range_epk)
+                pagination_state = _FeedRangePaginationState.from_inbound(
+                    inbound_token_payload, items_left_in_page
+                )
             else:
                 first_overlaps = await self._routing_map_provider.get_overlapping_ranges(
                     id_, [feed_range_epk], dict(options)
@@ -3218,30 +3220,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         overlapping, head_feedrange
                     )
 
-                    # Handle the case where Cosmos split a partition between the
-                    # previous run and this one. Example: the saved
-                    # head_feedrange used to live inside one partition X, but X
-                    # has since been split into children X1 and X2. The routing
-                    # map now returns two partitions for the same feedrange. If
-                    # we sent one POST to X1 with X's full range as the EPK
-                    # filter, the backend would filter in-partition only and
-                    # silently drop every row living on X2 (resume after a
-                    # split would then come back short of ground truth).
-                    #
-                    # So when the lookup returns more than one partition, slice
-                    # the saved feedrange into one sub-feedrange per child
-                    # (intersection with the saved feedrange, ordered by EPK
-                    # min), make the first sub-feedrange the new current one,
-                    # put the rest in front of the remaining list, and clear the
-                    # saved backend continuation - it was issued by the old
-                    # parent partition and the children won't accept it. The next
-                    # loop iteration sees a single overlap and falls through to
-                    # the normal single-partition POST below.
-                    #
-                    # One edge case remains by design: if some rows were already
-                    # read from parent X before it split, those rows can show up
-                    # once more after resume when children X1/X2 restart from the
-                    # start of their slices.
+                    # If routing returns multiple overlaps, the head sub-range now spans a split
+                    # that occurred after the token was created. Re-slice and re-resolve until
+                    # each head maps to one partition. See
+                    # ``_FeedRangePaginationState.explode_on_multi_overlap`` for details.
                     while pagination_state.explode_on_multi_overlap(overlapping):
                         head_feedrange = pagination_state.head_range
                         if head_feedrange is None:
@@ -3253,31 +3235,22 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             overlapping, head_feedrange
                         )
 
-                    backend_request_options = dict(options)
-                    if pagination_state.remaining_page_item_count is not None:
-                        backend_request_options["maxItemCount"] = pagination_state.remaining_page_item_count
-                    if pagination_state.head_bc is not None:
-                        backend_request_options["continuation"] = pagination_state.head_bc
-                    else:
-                        backend_request_options.pop("continuation", None)
-
                     # Populate request headers for this single backend POST.
                     # The shared helper handles partition routing (PKR id +
                     # optional EPK filter), page-size cap, and continuation
                     # set/clear so the same rules apply to sync and async.
-                    assert head_feedrange is not None  # narrowed by the loop guards above
                     _apply_feedrange_request_headers(
                         req_headers,
                         overlapping,
                         partition_scope,
                         head_feedrange,
                         pagination_state.remaining_page_item_count,
-                        backend_request_options.get("continuation"),
+                        pagination_state.head_bc,
                     )
                     # Use the session token for this specific partition so we don't
                     # send a compound token covering all partitions.
                     await base.set_session_token_header_async(
-                        self, req_headers, path, request_params, backend_request_options, overlapping[0]["id"]
+                        self, req_headers, path, request_params, options, overlapping[0]["id"]
                     )
 
                     try:
@@ -3290,6 +3263,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
                         # Preserve resume progress if a later POST fails mid-page.
+                        self.last_response_headers = feedrange_response_headers
                         try:
                             pagination_state.write_outbound_continuation(
                                 feedrange_response_headers,
@@ -3297,7 +3271,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                 query,
                                 feed_range_epk,
                             )
-                            self.last_response_headers = feedrange_response_headers
                         except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
                             _LOGGER.warning(
                                 "Failed to write continuation while handling query POST failure: %s",
@@ -3333,7 +3306,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     if response_headers_list is not None:
                         response_headers_list.append(backend_response_headers.copy())
                     if response_hook:
-                        response_hook(self.last_response_headers, backend_query_result)
+                        response_hook(backend_response_headers, backend_query_result)
                     pagination_state.apply_post_result(
                         page_items_returned,
                         backend_response_headers.get(http_constants.HttpHeaders.Continuation),
@@ -3361,8 +3334,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             )
                         )
 
-                # (c) Build the outbound token. Clear the continuation header if
-                # there is no work left at all.
+                # Pagination loop is done — write the final outbound
+                # continuation (or clear the header if the queue is fully
+                # drained) so the caller's ``by_page`` loop terminates.
                 pagination_state.write_outbound_continuation(
                     feedrange_response_headers,
                     resource_id_str,

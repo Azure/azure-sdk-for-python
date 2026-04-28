@@ -31,7 +31,8 @@ from typing import Iterable, List, Optional, Tuple
 import pytest
 
 import test_config
-from azure.cosmos import CosmosClient
+from azure.cosmos import CosmosClient, http_constants
+from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.partition_key import PartitionKey
 
 CONFIG = test_config.TestConfig()
@@ -331,8 +332,8 @@ class TestFeedRangeMultiPartition:
             max_item_count=1,
         ).by_page()
 
-        pages: List[List[int]] = []
-        merged_rows: List[int] = []
+        pages: List[List[object]] = []
+        merged_rows: List[object] = []
         for page in pager:
             items = list(page)
             pages.append(items)
@@ -352,6 +353,61 @@ class TestFeedRangeMultiPartition:
         assert pager.continuation_token in (None, "", b""), (
             f"expected empty continuation after draining aggregate query; got "
             f"{pager.continuation_token!r}")
+
+    def test_exception_during_post_preserves_resume_checkpoint(self):
+        """Inject a POST failure mid-query and verify the call site stamps
+        an outbound continuation that resumes from the last successful slice.
+        """
+        container = _get_container()
+        partitions = _sorted_partition_ranges(container)
+        if len(partitions) < 2:
+            pytest.skip("Need a container with ≥ 2 physical partitions")
+
+        chosen = None
+        for i in range(len(partitions) - 1):
+            p0, p1 = partitions[i], partitions[i + 1]
+            if (_count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                    and _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                chosen = (p0, p1)
+                break
+        if chosen is None:
+            pytest.skip("No adjacent partition pair both populated with ≥ "
+                        f"{MIN_DOCS_PER_PARTITION} docs")
+
+        (p0_min, _), (_, p1_max) = chosen
+        crossing = _crossing_feed_range(p0_min, p1_max)
+
+        client_conn = container.client_connection
+        original_post = client_conn._CosmosClientConnection__Post
+        call_count = 0
+
+        def _failing_post(*args, **kwargs):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 2:
+                raise RuntimeError("injected-post-failure")
+            return original_post(*args, **kwargs)
+
+        client_conn._CosmosClientConnection__Post = _failing_post
+        try:
+            pager = container.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                feed_range=crossing,
+                max_item_count=1,
+            ).by_page()
+            with pytest.raises(RuntimeError, match="injected-post-failure"):
+                _ = list(next(pager))
+        finally:
+            client_conn._CosmosClientConnection__Post = original_post
+
+        token = client_conn.last_response_headers.get(http_constants.HttpHeaders.Continuation)
+        assert token, "Expected continuation checkpoint to be stamped on POST failure"
+        decoded = _decode_token(token)
+        assert decoded is not None
+        assert decoded["c"][0]["min"] == chosen[1][0], (
+            "Checkpoint should resume from the second sub-range after the first "
+            "sub-range completed successfully before failure."
+        )
 
     # ------------------------------------------------------------------ #
     # Three-way overlap (synthetic, wider fan-out)

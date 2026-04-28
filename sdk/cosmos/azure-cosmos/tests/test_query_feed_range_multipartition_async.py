@@ -15,7 +15,9 @@ import pytest
 import pytest_asyncio
 
 import test_config
+from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.partition_key import PartitionKey
 
 CONFIG = test_config.TestConfig()
@@ -217,6 +219,115 @@ class TestFeedRangeMultiPartitionAsync:
                 f"ground_truth={len(ground_truth)}, "
                 f"missing={len(ground_truth - unique)}, "
                 f"unexpected={len(unique - ground_truth)}.")
+        finally:
+            await client.close()
+
+    async def test_two_partition_feed_range_count_aggregate_pagination_async(self):
+        client = _client()
+        try:
+            container = _get_container(client)
+            partitions = await _sorted_partition_ranges(container)
+            if len(partitions) < 2:
+                pytest.skip("Need a container with ≥ 2 physical partitions")
+
+            chosen = None
+            for i in range(len(partitions) - 1):
+                p0, p1 = partitions[i], partitions[i + 1]
+                if (await _count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                        and await _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                    chosen = (p0, p1)
+                    break
+            if chosen is None:
+                pytest.skip("No adjacent partition pair both populated with ≥ "
+                            f"{MIN_DOCS_PER_PARTITION} docs")
+
+            (p0_min, _), (_, p1_max) = chosen
+            crossing = _crossing_feed_range(p0_min, p1_max)
+            expected_count = len(await _ids_via_per_partition_scan(container, [chosen[0], chosen[1]]))
+
+            pager = container.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                feed_range=crossing,
+                max_item_count=1,
+            ).by_page()
+
+            pages: List[List[object]] = []
+            merged_rows: List[object] = []
+            async for page in pager:
+                items = [it async for it in page]
+                pages.append(items)
+                merged_rows.extend(items)
+
+            oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > 1]
+            assert not oversized, (
+                "aggregate page-size limit violated (max_item_count=1); "
+                f"page sizes={[len(p) for p in pages]}, oversized={oversized}.")
+            assert len(merged_rows) == 1, (
+                "aggregate merge leaked partial fragments or dropped final value; "
+                f"expected one merged row, got {len(merged_rows)} rows: {merged_rows}")
+            assert merged_rows[0] == expected_count, (
+                "merged COUNT result mismatch for two-partition crossing feed_range; "
+                f"returned={merged_rows[0]}, expected={expected_count}")
+            assert pager.continuation_token in (None, "", b""), (
+                f"expected empty continuation after draining aggregate query; got "
+                f"{pager.continuation_token!r}")
+        finally:
+            await client.close()
+
+    async def test_exception_during_post_preserves_resume_checkpoint_async(self):
+        client = _client()
+        try:
+            container = _get_container(client)
+            partitions = await _sorted_partition_ranges(container)
+            if len(partitions) < 2:
+                pytest.skip("Need a container with ≥ 2 physical partitions")
+
+            chosen = None
+            for i in range(len(partitions) - 1):
+                p0, p1 = partitions[i], partitions[i + 1]
+                if (await _count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                        and await _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                    chosen = (p0, p1)
+                    break
+            if chosen is None:
+                pytest.skip("No adjacent partition pair both populated with ≥ "
+                            f"{MIN_DOCS_PER_PARTITION} docs")
+
+            (p0_min, _), (_, p1_max) = chosen
+            crossing = _crossing_feed_range(p0_min, p1_max)
+
+            client_conn = container.client_connection
+            original_post = client_conn._CosmosClientConnection__Post
+            call_count = 0
+
+            async def _failing_post(*args, **kwargs):
+                nonlocal call_count
+                call_count += 1
+                if call_count == 2:
+                    raise RuntimeError("injected-post-failure")
+                return await original_post(*args, **kwargs)
+
+            client_conn._CosmosClientConnection__Post = _failing_post
+            try:
+                pager = container.query_items(
+                    query="SELECT VALUE COUNT(1) FROM c",
+                    feed_range=crossing,
+                    max_item_count=1,
+                ).by_page()
+                with pytest.raises(RuntimeError, match="injected-post-failure"):
+                    page_iter = await pager.__anext__()
+                    _ = [it async for it in page_iter]
+            finally:
+                client_conn._CosmosClientConnection__Post = original_post
+
+            token = client_conn.last_response_headers.get(http_constants.HttpHeaders.Continuation)
+            assert token, "Expected continuation checkpoint to be stamped on POST failure"
+            decoded = _decode_token(token)
+            assert decoded is not None
+            assert decoded["c"][0]["min"] == chosen[1][0], (
+                "Checkpoint should resume from the second sub-range after the first "
+                "sub-range completed successfully before failure."
+            )
         finally:
             await client.close()
 

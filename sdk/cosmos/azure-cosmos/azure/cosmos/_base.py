@@ -211,8 +211,12 @@ def _merge_query_results(
             results_docs[0] = min(results_docs[0], partial_docs[0]) # type: ignore[index]
         elif aggregate_fn == "MAX":
             results_docs[0] = max(results_docs[0], partial_docs[0]) # type: ignore[index]
+        elif aggregate_fn == "AVG":
+            raise ValueError(
+                "VALUE AVG aggregate merge across partitions is not supported client-side."
+            )
         else:
-            # COUNT/SUM are additive; VALUE AVG is not fully supported client-side yet.
+            # COUNT/SUM are additive.
             results_docs[0] += partial_docs[0] # type: ignore[index]
         return results
 

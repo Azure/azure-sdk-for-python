@@ -434,6 +434,10 @@ class _FeedRangePaginationState:
     structure scale uniformly to non-sequential merges / parallel
     fan-out: every entry is structurally equal, and any subset of
     entries may carry a non-null backend continuation simultaneously.
+
+    Not thread-safe. One instance is created per ``query_items`` call
+    and is mutated only by that call's pagination loop (sync or async)
+    — never shared across threads or concurrent tasks.
     """
 
     def __init__(
@@ -790,4 +794,3 @@ def _apply_feedrange_request_headers(
         req_headers[http_constants.HttpHeaders.Continuation] = inbound_continuation
     else:
         req_headers.pop(http_constants.HttpHeaders.Continuation, None)
-
