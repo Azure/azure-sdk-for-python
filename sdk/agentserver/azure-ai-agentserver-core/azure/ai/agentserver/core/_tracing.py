@@ -179,6 +179,7 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
             log_record_processors=log_record_processors,
             connection_string=connection_string,
         )
+        logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
         logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
         # Still set up TracerProvider with enrichment processor so spans are created
