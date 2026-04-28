@@ -24,6 +24,7 @@ from typing import (
 
 try:
     from uamqp import (
+        AMQPClient,
         BatchMessage,
         constants,
         MessageBodyType,
@@ -508,7 +509,7 @@ try:
             connection.destroy()
 
         @staticmethod
-        def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient":
+        def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
             """Creates and returns a uamqp AMQPClient for management-only operations.
 
             :param ~azure.servicebus._common._configuration.Configuration config: The configuration.

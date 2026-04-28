@@ -101,7 +101,6 @@ if TYPE_CHECKING:
     from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
     from .._common._configuration import Configuration
     from .._pyamqp.performatives import AttachFrame, TransferFrame
-    from .._pyamqp.client import AMQPClient
     from .._pyamqp.message import MessageDict
 
 _LOGGER = logging.getLogger(__name__)
@@ -444,7 +443,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         connection.close()
 
     @staticmethod
-    def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient":
+    def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
         """Creates and returns a pyamqp AMQPClient for management-only operations.
 
         Unlike SendClient/ReceiveClient, this client does not create a sender or

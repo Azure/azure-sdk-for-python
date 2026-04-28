@@ -13,8 +13,7 @@ import random
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
 from ..._pyamqp.utils import amqp_string_value, amqp_uint_value
-from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
-from ..._pyamqp.aio._client_async import AMQPClientAsync as AMQPClientAsyncImpl
+from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync, AMQPClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
@@ -57,7 +56,6 @@ if TYPE_CHECKING:
     from .._servicebus_sender_async import ServiceBusSender
     from ..._pyamqp.performatives import AttachFrame
     from ..._pyamqp.message import Message
-    from ..._pyamqp.aio._client_async import AMQPClientAsync
 
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
@@ -88,14 +86,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync":
+    def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint: disable=docstring-keyword-should-match-keyword-only
         """Creates and returns an async pyamqp AMQPClient for management-only operations.
 
         :param Configuration config: The configuration. Required.
         :return: AMQPClientAsync
         :rtype: ~pyamqp.aio.AMQPClientAsync
         """
-        return AMQPClientAsyncImpl(
+        return AMQPClientAsync(
             config.hostname,
             network_trace=config.logging_enable,
             keep_alive_interval=config.keep_alive,

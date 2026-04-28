@@ -66,7 +66,7 @@ try:
             await connection.destroy_async()
 
         @staticmethod
-        def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync":
+        def create_mgmt_client_async(config: "Configuration", **kwargs: Any) -> "AMQPClientAsync": # pylint: disable=docstring-keyword-should-match-keyword-only
             """Creates and returns an async uamqp AMQPClient for management-only operations.
 
             :param ~azure.servicebus._common._configuration.Configuration config: The configuration.
