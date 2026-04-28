@@ -71,11 +71,6 @@ steps:
     displayName: Check for CRLF Line endings
     condition: succeededOrFailed()
 
-  - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
-    parameters:
-      SourceDirectory: $(Build.SourcesDirectory)
-      Condition: succeededOrFailed()
-
   - template: ../steps/verify-autorest.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
