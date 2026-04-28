@@ -36,7 +36,7 @@ def get_build_info(service_directory: str, package_name: str) -> str:
                 build_output = log_output.content.decode("utf-8")
                 new_output = (
                     build_output.split(
-                        f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/tox/run_pylint.py -t {service_directory} --next=True"
+                        f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/scripts/run_pylint.py -t {service_directory} --next=True"
                     )[1]
                 ).split(f"ERROR:root:{package_name} exited with linting error")[0]
                 return new_output
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         description="""
     This script is the single point for all checks invoked by CI within this repo. It works in two phases.
         1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
-        2. Invoke one or multiple `tox` environments for each package identified as in scope.
+        2. Invoke one or multiple checks for each package identified as in scope.
 
     In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
     """

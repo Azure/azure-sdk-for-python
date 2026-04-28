@@ -105,7 +105,7 @@ jobs:
           python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
         env:
-          TOX_PIP_IMPL: "uv"
+          AZPYSDK_PIP_IMPL: "uv"
 
       - name: Install azure-sdk-tools on global pip env
         run: |
@@ -117,4 +117,4 @@ jobs:
           python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
         env:
-          TOX_PIP_IMPL: "pip"
+          AZPYSDK_PIP_IMPL: "pip"
