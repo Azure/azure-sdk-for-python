@@ -677,6 +677,34 @@ class TestParameterCombinations:
         fields_idx = next(i for i, l in enumerate(lines) if l.strip() == "fields:")
         assert ct_idx < src_idx < fields_idx
 
+    @pytest.mark.parametrize(
+        "reserved_key",
+        ["contentType", "timeRange", "category", "pages", "fields", "rai_warnings"],
+    )
+    def test_reserved_metadata_key_raises(self, reserved_key):
+        doc = _make_invoice_doc()
+
+        with pytest.raises(ValueError, match="reserved front matter key"):
+            to_llm_input(_make_result([doc]), metadata={reserved_key: "custom"})
+
+    def test_non_classification_documents_preserve_input_order(self):
+        doc_page_2 = DocumentContent(
+            kind="document",
+            markdown="Second input document.",
+            start_page_number=2,
+            end_page_number=2,
+        )
+        doc_page_1 = DocumentContent(
+            kind="document",
+            markdown="First input document.",
+            start_page_number=1,
+            end_page_number=1,
+        )
+
+        output = to_llm_input(_make_result([doc_page_2, doc_page_1]))
+
+        assert output.index("Second input document.") < output.index("First input document.")
+
 
 # ===========================================================================
 # 9. YAML front matter structure

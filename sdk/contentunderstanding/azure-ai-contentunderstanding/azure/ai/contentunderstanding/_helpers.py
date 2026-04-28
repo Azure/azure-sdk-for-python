@@ -28,6 +28,18 @@ if TYPE_CHECKING:
     from azure.core.exceptions import ODataV4Format
 
 
+_RESERVED_METADATA_KEYS = frozenset(
+    {
+        "contentType",
+        "timeRange",
+        "category",
+        "pages",
+        "fields",
+        "rai_warnings",
+    }
+)
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -40,7 +52,7 @@ def to_llm_input(
     include_markdown: bool = True,
     metadata: Optional[Dict[str, Any]] = None,
 ) -> str:
-    """Convert a CU analysis result into LLM-friendly text.
+    """Convert a Content Understanding analysis result into LLM-friendly text.
 
     Produces a formatted text string from the analysis result,
     suitable for injecting into an LLM prompt, storing in a vector
@@ -49,11 +61,11 @@ def to_llm_input(
     For single-content results (documents, images), the output is a
     flat text block. For multi-segment results (video, audio), each
     segment is rendered with its time range. For document
-    classification results (parent + categorized children), the
-    helper automatically skips the parent and renders each child with
-    its category label.
+    classification results (parent with nested segments), the
+    helper automatically expands the parent into per-segment blocks
+    with category labels and markdown slices.
 
-    :param result: The ``AnalysisResult`` from a CU analyze operation.
+    :param result: The ``AnalysisResult`` from a Content Understanding analyze operation.
     :type result: ~azure.ai.contentunderstanding.models.AnalysisResult
     :keyword include_fields: Whether to include structured fields in the
         output. Defaults to True. Set to False for markdown-only
@@ -68,12 +80,14 @@ def to_llm_input(
         ``"source"`` (filename), ``"department"``,
         ``"batch_id"``, etc. Metadata keys are placed after
         ``contentType`` and before auto-detected keys
-        (``timeRange``, ``category``, ``pages``).
+        (``timeRange``, ``category``, ``pages``). Metadata keys must not
+        conflict with helper-generated front matter keys.
     :paramtype metadata: dict[str, Any] or None
     :returns: A formatted text string with YAML front matter followed
         by markdown content.
     :rtype: str
     :raises TypeError: If *result* is not an ``AnalysisResult``.
+    :raises ValueError: If *metadata* contains a reserved front matter key.
 
     Example::
 
@@ -95,6 +109,8 @@ def to_llm_input(
 
     if not isinstance(result, _AnalysisResult):
         raise TypeError(f"Expected AnalysisResult, got {type(result).__name__}")
+
+    _validate_metadata(metadata)
 
     if not result.contents:
         return ""
@@ -121,6 +137,25 @@ def to_llm_input(
             blocks.append(block)
 
     return "\n\n*****\n\n".join(blocks)
+
+
+def _validate_metadata(metadata: Optional[Dict[str, Any]]) -> None:
+    """Validate user-supplied front matter metadata.
+
+    :param metadata: Optional user-supplied metadata.
+    :type metadata: dict[str, Any] or None
+    :raises ValueError: If metadata contains helper-generated front matter keys.
+    """
+    if not metadata:
+        return
+
+    reserved = sorted(set(metadata).intersection(_RESERVED_METADATA_KEYS))
+    if reserved:
+        keys = ", ".join(reserved)
+        raise ValueError(
+            f"metadata contains reserved front matter key(s): {keys}. "
+            "Use custom keys such as 'source', 'documentId', or 'department' instead."
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -217,8 +252,10 @@ def _get_renderable_contents(
             routed_paths.add(c.path)
 
     result: List["AnalysisContent"] = []
+    expanded_classification = False
     for c in contents:
         if isinstance(c, DocumentContent) and c.segments and not c.category:
+            expanded_classification = True
             parent_path = c.path or ""
             # Expand parent into per-segment synthetic DocumentContent items,
             # but skip segments that have a routed top-level content.
@@ -242,15 +279,16 @@ def _get_renderable_contents(
         else:
             result.append(c)
 
-    # Sort by page number so output follows document order.
-    # This matters when routed segments (with fields) appear as
-    # separate top-level contents after expanded parent segments.
-    def _sort_key(c: "AnalysisContent") -> int:
-        if isinstance(c, DocumentContent) and c.start_page_number is not None:
-            return c.start_page_number
-        return 0
+    if expanded_classification:
+        # Sort classification blocks by page number so routed segments (with fields)
+        # appear in document order. Non-classification results preserve service order.
+        def _sort_key(c: "AnalysisContent") -> int:
+            if isinstance(c, DocumentContent) and c.start_page_number is not None:
+                return c.start_page_number
+            return 0
 
-    result.sort(key=_sort_key)
+        result.sort(key=_sort_key)
+
     return result
 
 
