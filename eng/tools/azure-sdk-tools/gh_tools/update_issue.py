@@ -16,7 +16,12 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 
 
 def get_build_info(service_directory: str, package_name: str) -> str:
-    """Get the build info from the build link."""
+    """Get the pylint build info from the CI build logs.
+
+    Parses the Azure DevOps build timeline to find the "Run Tests" task,
+    then extracts next-pylint output for the given package from the
+    dispatch_checks.py log format.
+    """
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
@@ -24,22 +29,25 @@ def get_build_info(service_directory: str, package_name: str) -> str:
     AUTH_HEADERS = {"Authorization": f"Bearer {token}"}
 
     try:
-        # Make the API request
         response = requests.get(timeline_link, headers=AUTH_HEADERS)
         response_json = json.loads(response.text)
 
         for task in response_json["records"]:
-            if "Run Pylint Next" in task["name"]:
+            if "Run Tests" in task.get("name", ""):
                 log_link = task["log"]["url"] + "?api-version=6.0"
-                # Get the log file from the build link
                 log_output = requests.get(log_link, headers=AUTH_HEADERS)
                 build_output = log_output.content.decode("utf-8")
-                new_output = (
-                    build_output.split(
-                        f"next-pylint: commands[3]> python /mnt/vss/_work/1/s/eng/scripts/run_pylint.py -t {service_directory} --next=True"
-                    )[1]
-                ).split(f"ERROR:root:{package_name} exited with linting error")[0]
-                return new_output
+
+                # Extract next-pylint output from the dispatch_checks.py grouped log format
+                group_marker = f"{package_name} :: next-pylint ::"
+                if group_marker in build_output:
+                    section = build_output.split(group_marker, 1)[1]
+                    # The section ends at the next ##[endgroup] or the end of the log
+                    if "##[endgroup]" in section:
+                        section = section.split("##[endgroup]", 1)[0]
+                    return section.strip()
+
+        return "No next-pylint output found in build logs."
     except Exception as e:
         logging.error(f"Exception occurred while getting build info: {e}")
         return "Error getting build info"
