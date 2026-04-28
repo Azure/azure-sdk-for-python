@@ -74,9 +74,9 @@ def _build_evaluator_config(name: str, evaluator_name: str) -> TestingCriterionA
         name=name,
         evaluator_name=evaluator_name,
         data_mapping={
-            "query": "{{query}}",
-            "response": "{{response}}",
-            "tool_definitions": "{{tool_definitions}}",
+            "query": "{{sample.query}}",
+            "response": "{{sample.response}}",
+            "tool_definitions": "{{sample.tool_definitions}}",
         },
         initialization_parameters={
             "deployment_name": model_deployment_name,

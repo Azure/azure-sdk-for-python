@@ -22,9 +22,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The Azure OpenAI deployment name to use as the judge model for
+    2) FOUNDRY_MODEL_NAME - Required. The Azure OpenAI deployment name to use as the judge model for
        built-in evaluators.
     3) AGENT_NAME - Required. The hosted agent name to evaluate.
     4) AGENT_VERSION - Optional. The agent version to evaluate. Defaults to "1".
@@ -33,19 +33,19 @@ USAGE:
 import os
 import time
 from datetime import datetime
+from pprint import pprint
 from typing import Any, Dict
 
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-
-from pprint import pprint
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
+from azure.identity import DefaultAzureCredential
 
 load_dotenv()
 
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 agent_name = os.environ["AGENT_NAME"]
 agent_version = os.environ.get("AGENT_VERSION", "1")
 
@@ -64,21 +64,25 @@ INPUT_QUERIES = [
 ]
 
 
-def _build_evaluator_config(name: str, evaluator_name: str) -> Dict[str, Any]:
+def _build_evaluator_config(
+    name: str,
+    evaluator_name: str,
+    response_mapping: str,
+) -> TestingCriterionAzureAIEvaluator:
     """Create a standard Azure AI evaluator configuration block."""
-    return {
-        "type": "azure_ai_evaluator",
-        "name": name,
-        "evaluator_name": evaluator_name,
-        "data_mapping": {
-            "query": "{{query}}",
-            "response": "{{response}}",
-            "tool_definitions": "{{tool_definitions}}",
+    return TestingCriterionAzureAIEvaluator(
+        type="azure_ai_evaluator",
+        name=name,
+        evaluator_name=evaluator_name,
+        data_mapping={
+            "query": "{{item.query}}",
+            "response": response_mapping,
+            "tool_definitions": "{{sample.tool_definitions}}",
         },
-        "initialization_parameters": {
+        initialization_parameters={
             "deployment_name": model_deployment_name,
         },
-    }
+    )
 
 
 def main() -> None:
@@ -86,10 +90,12 @@ def main() -> None:
         _build_evaluator_config(
             name="intent_resolution",
             evaluator_name="builtin.intent_resolution",
+            response_mapping="{{sample.output_text}}",
         ),
         _build_evaluator_config(
             name="task_adherence",
             evaluator_name="builtin.task_adherence",
+            response_mapping="{{sample.output_items}}",
         ),
     ]
 
