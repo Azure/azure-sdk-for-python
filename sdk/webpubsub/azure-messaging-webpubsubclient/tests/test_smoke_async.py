@@ -67,7 +67,21 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
         async def on_stop():
             nonlocal reopen_error
             try:
-                await client.open()
+                # close() can race with immediate reopen, so retry briefly before failing.
+                for _ in range(10):
+                    try:
+                        await client.open()
+                        break
+                    except OpenClientError:
+                        await asyncio.sleep(1)
+                else:
+                    raise RuntimeError("Failed to reopen client in stopped callback")
+
+                for _ in range(30):
+                    if client.is_connected():
+                        break
+                    await asyncio.sleep(1)
+                assert client.is_connected()
             except Exception as e:
                 reopen_error = e
             finally:
@@ -85,6 +99,11 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             # wait for on_stop callback to finish reopening
             await asyncio.wait_for(reopen_complete.wait(), timeout=60)
             assert reopen_error is None, f"on_stop callback failed: {reopen_error}"
+
+            for _ in range(30):
+                if client.is_connected():
+                    break
+                await asyncio.sleep(1)
             assert client.is_connected()
 
             # remove stopped event and close again
