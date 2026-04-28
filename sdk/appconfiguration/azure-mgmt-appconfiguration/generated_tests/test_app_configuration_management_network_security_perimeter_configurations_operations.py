@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAppConfigurationManagementSnapshotsOperations(AzureMgmtRecordedTestCase):
+class TestAppConfigurationManagementNetworkSecurityPerimeterConfigurationsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(AppConfigurationManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_snapshots_get(self, resource_group):
-        response = self.client.snapshots.get(
+    def test_network_security_perimeter_configurations_get(self, resource_group):
+        response = self.client.network_security_perimeter_configurations.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            snapshot_name="str",
+            network_security_perimeter_configuration_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,37 +32,22 @@ class TestAppConfigurationManagementSnapshotsOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_snapshots_begin_create(self, resource_group):
-        response = self.client.snapshots.begin_create(
+    def test_network_security_perimeter_configurations_list_by_configuration_store(self, resource_group):
+        response = self.client.network_security_perimeter_configurations.list_by_configuration_store(
             resource_group_name=resource_group.name,
             config_store_name="str",
-            snapshot_name="str",
-            body={
-                "properties": {
-                    "filters": [{"key": "str", "label": "str"}],
-                    "compositionType": "str",
-                    "created": "2020-02-20 00:00:00",
-                    "etag": "str",
-                    "expires": "2020-02-20 00:00:00",
-                    "itemsCount": 0,
-                    "provisioningState": "str",
-                    "retentionPeriod": 0,
-                    "size": 0,
-                    "status": "str",
-                    "tags": {"str": "str"},
-                },
-                "id": "str",
-                "name": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_network_security_perimeter_configurations_begin_reconcile(self, resource_group):
+        response = self.client.network_security_perimeter_configurations.begin_reconcile(
+            resource_group_name=resource_group.name,
+            config_store_name="str",
+            network_security_perimeter_configuration_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
