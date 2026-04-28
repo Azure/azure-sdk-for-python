@@ -4,7 +4,13 @@
 
 ### Features Added
 
+* New `FabricIQPreviewTool` and `FabricIQPreviewToolParameters` model classes, supporting the new `fabric_iq_preview` tool type.
+* New `ToolType.FABRIC_IQ_PREVIEW` enum value added to the `ToolType` enum.
+* New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+
 ### Breaking Changes
+
+* Agent Endpoint beta operations: Remove required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
 
 ### Bugs Fixed
 
