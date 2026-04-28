@@ -5,9 +5,9 @@
 # pylint: disable=protected-access,too-many-lines
 
 import hashlib
-import json
 import logging
 import os
+import json
 import uuid
 import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -16,7 +16,17 @@ from multiprocessing import cpu_count
 from os import PathLike
 from pathlib import Path
 from platform import system
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING, 
+    Any, 
+    Dict, 
+    Iterable, 
+    List, 
+    Optional,
+    Tuple, 
+    Union, 
+    cast,
+)
 
 from colorama import Fore
 from tqdm import TqdmWarning, tqdm
@@ -49,14 +59,19 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (
     ModelContainersOperations,
     ModelVersionsOperations,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    DataVersionBase as DataVersionBaseData,
-    ModelVersion as ModelVersionData,
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
+    ModelVersionData,
+    ModelVersionResourceArmPaginatedResult,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import PendingUploadRequestDto
+from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
-from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
+from azure.ai.ml.constants._common import (
+    MAX_AUTOINCREMENT_ATTEMPTS,
+    DefaultOpenEncoding,
+    OrderString,
+)
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -383,7 +398,14 @@ def get_upload_files_from_folder(
 ) -> List[str]:
     path = Path(path)
     upload_paths = []
-    for root, _, files in os.walk(path, followlinks=True):
+    for root, dirs, files in os.walk(path, followlinks=True, topdown=True):
+        # Skip ignored directories to avoid descending into them
+        # This significantly improves performance when large ignored folders (e.g., .venv) are present
+        dirs[:] = [
+            d for d in dirs
+            if not ignore_file.is_file_excluded(Path(root).joinpath(d).as_posix())
+        ]
+        
         upload_paths += list(
             traverse_directory(
                 root,
@@ -922,7 +944,7 @@ def _get_latest(
     except StopIteration:
         latest = None
 
-    if latest and isinstance(latest, ModelVersionData):
+    if latest and isinstance(latest, ModelVersionResourceArmPaginatedResult):
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:
