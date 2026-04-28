@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Set, Tuple, TypeVar, Union, Any, Type, Mapping, Dict
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict
 from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -84,7 +84,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     TRACING_CONTEXT = "TRACING_CONTEXT"
     _SUPPRESSION_TOKEN = "SUPPRESSION_TOKEN"
 
-    DEFAULT_QUERY_PARAMS_ALLOWLIST: Set[str] = set(["api-version"])
+    DEFAULT_QUERY_PARAMS_ALLOWLIST: set[str] = set(["api-version"])
     _REDACTED_PLACEHOLDER = "REDACTED"
 
     # Current stable HTTP semantic conventions
@@ -107,7 +107,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
         self._instrumentation_config = instrumentation_config
-        self.allowed_query_params: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
+        self.allowed_query_params: set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
         additional_params = kwargs.get("allowed_query_params")
         if additional_params:
             self.allowed_query_params.update(additional_params)

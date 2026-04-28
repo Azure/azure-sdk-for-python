@@ -176,37 +176,30 @@ class CaseInsensitiveSet(set):
     """
 
     def __init__(self, data: Optional[Iterable[str]] = None) -> None:
-        self._lower_cache: set = set()
+        self._lower_to_original: Dict[str, str] = {}
         self.update(data or [])
 
     def __contains__(self, item):
-        return item.lower() in self._lower_cache
-
-    def _find_original(self, item):
-        # Find the original-cased value stored in the set for a case-insensitive match.
-        item_lower = item.lower()
-        for stored in self:
-            if stored.lower() == item_lower:
-                return stored
-        return None
+        return item.lower() in self._lower_to_original
 
     def add(self, item):
-        if item.lower() not in self._lower_cache:
+        lower = item.lower()
+        if lower not in self._lower_to_original:
             super().add(item)
-            self._lower_cache.add(item.lower())
+            self._lower_to_original[lower] = item
 
     def discard(self, item):
-        original = self._find_original(item)
+        lower = item.lower()
+        original = self._lower_to_original.pop(lower, None)
         if original is not None:
             super().discard(original)
-            self._lower_cache.discard(item.lower())
 
     def remove(self, item):
-        original = self._find_original(item)
+        lower = item.lower()
+        original = self._lower_to_original.pop(lower, None)
         if original is None:
             raise KeyError(item)
         super().remove(original)
-        self._lower_cache.discard(item.lower())
 
     def update(self, *others):
         for other in others:
@@ -215,11 +208,11 @@ class CaseInsensitiveSet(set):
 
     def clear(self):
         super().clear()
-        self._lower_cache = set()
+        self._lower_to_original = {}
 
     def pop(self):
         result = super().pop()
-        self._lower_cache.discard(result.lower())
+        self._lower_to_original.pop(result.lower(), None)
         return result
 
 
