@@ -16,7 +16,7 @@ from azure.mgmt.computefleet import ComputeFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computefleet
 # USAGE
-    python fleets_update.py
+    python fleets_update_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -669,6 +669,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/Fleets_Update.json
+# x-ms-original-file: 2026-04-01-preview/Fleets_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

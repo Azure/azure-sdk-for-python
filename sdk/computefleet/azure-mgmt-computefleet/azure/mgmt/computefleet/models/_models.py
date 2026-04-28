@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -21,9 +21,9 @@ class AdditionalCapabilities(_Model):
     """AdditionalCapabilities for VM.
 
     :ivar ultra_ssd_enabled: The flag that enables or disables a capability to have one or more
-     managed data disks with UltraSSD_LRS storage account type on the VM or VMSS.
-     Managed disks with storage account type UltraSSD_LRS can be added to a virtual machine or
-     virtual machine scale set only if this property is enabled.
+     managed data disks with UltraSSD_LRS storage account type on the VM or VMSS. Managed disks with
+     storage account type UltraSSD_LRS can be added to a virtual machine or virtual machine scale
+     set only if this property is enabled.
     :vartype ultra_ssd_enabled: bool
     :ivar hibernation_enabled: The flag that enables or disables hibernation capability on the VM.
     :vartype hibernation_enabled: bool
@@ -33,9 +33,9 @@ class AdditionalCapabilities(_Model):
         name="ultraSSDEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """The flag that enables or disables a capability to have one or more managed data disks with
-     UltraSSD_LRS storage account type on the VM or VMSS.
-     Managed disks with storage account type UltraSSD_LRS can be added to a virtual machine or
-     virtual machine scale set only if this property is enabled."""
+     UltraSSD_LRS storage account type on the VM or VMSS. Managed disks with storage account type
+     UltraSSD_LRS can be added to a virtual machine or virtual machine scale set only if this
+     property is enabled."""
     hibernation_enabled: Optional[bool] = rest_field(
         name="hibernationEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -67,7 +67,7 @@ class AdditionalLocationsProfile(_Model):
     :vartype location_profiles: list[~azure.mgmt.computefleet.models.LocationProfile]
     """
 
-    location_profiles: List["_models.LocationProfile"] = rest_field(
+    location_profiles: list["_models.LocationProfile"] = rest_field(
         name="locationProfiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of location profiles. Required."""
@@ -76,7 +76,7 @@ class AdditionalLocationsProfile(_Model):
     def __init__(
         self,
         *,
-        location_profiles: List["_models.LocationProfile"],
+        location_profiles: list["_models.LocationProfile"],
     ) -> None: ...
 
     @overload
@@ -91,9 +91,9 @@ class AdditionalLocationsProfile(_Model):
 
 
 class AdditionalUnattendContent(_Model):
-    """Specifies additional XML formatted information that can be included in the
-    Unattend.xml file, which is used by Windows Setup. Contents are defined by
-    setting name, component name, and the pass in which the content is applied.
+    """Specifies additional XML formatted information that can be included in the Unattend.xml file,
+    which is used by Windows Setup. Contents are defined by setting name, component name, and the
+    pass in which the content is applied.
 
     :ivar pass_name: The pass name. Currently, the only allowable value is OobeSystem. Default
      value is "OobeSystem".
@@ -102,12 +102,12 @@ class AdditionalUnattendContent(_Model):
      Microsoft-Windows-Shell-Setup. Default value is "Microsoft-Windows-Shell-Setup".
     :vartype component_name: str
     :ivar setting_name: Specifies the name of the setting to which the content applies. Possible
-     values
-     are: FirstLogonCommands and AutoLogon. Known values are: "AutoLogon" and "FirstLogonCommands".
+     values are: FirstLogonCommands and AutoLogon. Known values are: "AutoLogon" and
+     "FirstLogonCommands".
     :vartype setting_name: str or ~azure.mgmt.computefleet.models.SettingNames
     :ivar content: Specifies the XML formatted content that is added to the unattend.xml file for
-     the specified path and component. The XML must be less than 4KB and must
-     include the root element for the setting or feature that is being inserted.
+     the specified path and component. The XML must be less than 4KB and must include the root
+     element for the setting or feature that is being inserted.
     :vartype content: str
     """
 
@@ -119,18 +119,17 @@ class AdditionalUnattendContent(_Model):
     component_name: Optional[Literal["Microsoft-Windows-Shell-Setup"]] = rest_field(
         name="componentName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The component name. Currently, the only allowable value is
-     Microsoft-Windows-Shell-Setup. Default value is \"Microsoft-Windows-Shell-Setup\"."""
+    """The component name. Currently, the only allowable value is Microsoft-Windows-Shell-Setup.
+     Default value is \"Microsoft-Windows-Shell-Setup\"."""
     setting_name: Optional[Union[str, "_models.SettingNames"]] = rest_field(
         name="settingName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the name of the setting to which the content applies. Possible values
-     are: FirstLogonCommands and AutoLogon. Known values are: \"AutoLogon\" and
-     \"FirstLogonCommands\"."""
+    """Specifies the name of the setting to which the content applies. Possible values are:
+     FirstLogonCommands and AutoLogon. Known values are: \"AutoLogon\" and \"FirstLogonCommands\"."""
     content: Optional[str] = rest_field(visibility=["create", "update"])
-    """Specifies the XML formatted content that is added to the unattend.xml file for
-     the specified path and component. The XML must be less than 4KB and must
-     include the root element for the setting or feature that is being inserted."""
+    """Specifies the XML formatted content that is added to the unattend.xml file for the specified
+     path and component. The XML must be less than 4KB and must include the root element for the
+     setting or feature that is being inserted."""
 
     @overload
     def __init__(
@@ -204,7 +203,7 @@ class ApiError(_Model):
     """The target of the particular error."""
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The error message."""
-    details: Optional[List["_models.ApiErrorBase"]] = rest_field(
+    details: Optional[list["_models.ApiErrorBase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The API error details."""
@@ -218,7 +217,7 @@ class ApiError(_Model):
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["_models.ApiErrorBase"]] = None,
+        details: Optional[list["_models.ApiErrorBase"]] = None,
         innererror: Optional["_models.InnerError"] = None,
     ) -> None: ...
 
@@ -272,15 +271,14 @@ class ApiErrorBase(_Model):
 
 
 class ApplicationProfile(_Model):
-    """Contains the list of gallery applications that should be made available to the
-    VM/VMSS.
+    """Contains the list of gallery applications that should be made available to the VM/VMSS.
 
     :ivar gallery_applications: Specifies the gallery applications that should be made available to
      the VM/VMSS.
     :vartype gallery_applications: list[~azure.mgmt.computefleet.models.VMGalleryApplication]
     """
 
-    gallery_applications: Optional[List["_models.VMGalleryApplication"]] = rest_field(
+    gallery_applications: Optional[list["_models.VMGalleryApplication"]] = rest_field(
         name="galleryApplications", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the gallery applications that should be made available to the VM/VMSS."""
@@ -289,7 +287,7 @@ class ApplicationProfile(_Model):
     def __init__(
         self,
         *,
-        gallery_applications: Optional[List["_models.VMGalleryApplication"]] = None,
+        gallery_applications: Optional[list["_models.VMGalleryApplication"]] = None,
     ) -> None: ...
 
     @overload
@@ -312,42 +310,34 @@ class BaseVirtualMachineProfile(_Model):
     :ivar storage_profile: Specifies the storage settings for the virtual machine disks.
     :vartype storage_profile: ~azure.mgmt.computefleet.models.VirtualMachineScaleSetStorageProfile
     :ivar network_profile: Specifies properties of the network interfaces of the virtual machines
-     in the
-     scale set.
+     in the scale set.
     :vartype network_profile: ~azure.mgmt.computefleet.models.VirtualMachineScaleSetNetworkProfile
     :ivar security_profile: Specifies the Security related profile settings for the virtual
-     machines in the
-     scale set.
+     machines in the scale set.
     :vartype security_profile: ~azure.mgmt.computefleet.models.SecurityProfile
     :ivar diagnostics_profile: Specifies the boot diagnostic settings state.
     :vartype diagnostics_profile: ~azure.mgmt.computefleet.models.DiagnosticsProfile
     :ivar extension_profile: Specifies a collection of settings for extensions installed on virtual
-     machines
-     in the scale set.
+     machines in the scale set.
     :vartype extension_profile:
      ~azure.mgmt.computefleet.models.VirtualMachineScaleSetExtensionProfile
     :ivar license_type: Specifies that the image or disk that is being used was licensed
-     on-premises.
-     <br><br> Possible values for Windows Server operating system are: <br><br>
-     Windows_Client <br><br> Windows_Server <br><br> Possible values for Linux
-     Server operating system are: <br><br> RHEL_BYOS (for RHEL) <br><br> SLES_BYOS
-     (for SUSE) <br><br> For more information, see `Azure Hybrid Use Benefit for
-     Windows
-     Server
+     on-premises. <br><br> Possible values for Windows Server operating system are: <br><br>
+     Windows_Client <br><br> Windows_Server <br><br> Possible values for Linux Server operating
+     system are: <br><br> RHEL_BYOS (for RHEL) <br><br> SLES_BYOS (for SUSE) <br><br> For more
+     information, see `Azure Hybrid Use Benefit for Windows Server
      <https://learn.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-     <br><br> `Azure Hybrid Use Benefit for Linux
-     Server <https://learn.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
+     <br><br> `Azure Hybrid Use Benefit for Linux Server
+     <https://learn.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
      <br><br> Minimum api-version: 2015-06-15.
     :vartype license_type: str
     :ivar scheduled_events_profile: Specifies Scheduled Event related configurations.
     :vartype scheduled_events_profile: ~azure.mgmt.computefleet.models.ScheduledEventsProfile
     :ivar user_data: UserData for the virtual machines in the scale set, which must be base-64
-     encoded. Customer should not pass any secrets in here. Minimum api-version:
-     2021-03-01.
+     encoded. Customer should not pass any secrets in here. Minimum api-version: 2021-03-01.
     :vartype user_data: str
     :ivar capacity_reservation: Specifies the capacity reservation related details of a scale set.
-     Minimum
-     api-version: 2021-04-01.
+     Minimum api-version: 2021-04-01.
     :vartype capacity_reservation: ~azure.mgmt.computefleet.models.CapacityReservationProfile
     :ivar application_profile: Specifies the gallery applications that should be made available to
      the VM/VMSS.
@@ -357,27 +347,23 @@ class BaseVirtualMachineProfile(_Model):
     :vartype hardware_profile:
      ~azure.mgmt.computefleet.models.VirtualMachineScaleSetHardwareProfile
     :ivar service_artifact_reference: Specifies the service artifact reference id used to set same
-     image version for
-     all virtual machines in the scale set when using 'latest' image version.
+     image version for all virtual machines in the scale set when using 'latest' image version.
      Minimum api-version: 2022-11-01.
     :vartype service_artifact_reference: ~azure.mgmt.computefleet.models.ServiceArtifactReference
     :ivar security_posture_reference: Specifies the security posture to be used for all virtual
-     machines in the scale
-     set. Minimum api-version: 2023-03-01.
+     machines in the scale set. Minimum api-version: 2023-03-01.
     :vartype security_posture_reference: ~azure.mgmt.computefleet.models.SecurityPostureReference
     :ivar time_created: Specifies the time in which this VM profile for the Virtual Machine Scale
-     Set
-     was created. Minimum API version for this property is 2023-09-01. This value
-     will be added to VMSS Flex VM tags when creating/updating the VMSS VM Profile
-     with minimum api-version 2023-09-01. Examples: "2024-07-01T00:00:01.1234567+00:00".
+     Set was created. Minimum API version for this property is 2023-09-01. This value will be added
+     to VMSS Flex VM tags when creating/updating the VMSS VM Profile with minimum api-version
+     2023-09-01. Examples: "2024-07-01T00:00:01.1234567+00:00".
     :vartype time_created: ~datetime.datetime
     """
 
     os_profile: Optional["_models.VirtualMachineScaleSetOSProfile"] = rest_field(
         name="osProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the operating system settings for the virtual machines in the scale
-     set."""
+    """Specifies the operating system settings for the virtual machines in the scale set."""
     storage_profile: Optional["_models.VirtualMachineScaleSetStorageProfile"] = rest_field(
         name="storageProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -385,13 +371,11 @@ class BaseVirtualMachineProfile(_Model):
     network_profile: Optional["_models.VirtualMachineScaleSetNetworkProfile"] = rest_field(
         name="networkProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies properties of the network interfaces of the virtual machines in the
-     scale set."""
+    """Specifies properties of the network interfaces of the virtual machines in the scale set."""
     security_profile: Optional["_models.SecurityProfile"] = rest_field(
         name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the Security related profile settings for the virtual machines in the
-     scale set."""
+    """Specifies the Security related profile settings for the virtual machines in the scale set."""
     diagnostics_profile: Optional["_models.DiagnosticsProfile"] = rest_field(
         name="diagnosticsProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -399,35 +383,32 @@ class BaseVirtualMachineProfile(_Model):
     extension_profile: Optional["_models.VirtualMachineScaleSetExtensionProfile"] = rest_field(
         name="extensionProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies a collection of settings for extensions installed on virtual machines
-     in the scale set."""
+    """Specifies a collection of settings for extensions installed on virtual machines in the scale
+     set."""
     license_type: Optional[str] = rest_field(
         name="licenseType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies that the image or disk that is being used was licensed on-premises.
-     <br><br> Possible values for Windows Server operating system are: <br><br>
-     Windows_Client <br><br> Windows_Server <br><br> Possible values for Linux
-     Server operating system are: <br><br> RHEL_BYOS (for RHEL) <br><br> SLES_BYOS
-     (for SUSE) <br><br> For more information, see `Azure Hybrid Use Benefit for
-     Windows
-     Server
+    """Specifies that the image or disk that is being used was licensed on-premises. <br><br> Possible
+     values for Windows Server operating system are: <br><br> Windows_Client <br><br> Windows_Server
+     <br><br> Possible values for Linux Server operating system are: <br><br> RHEL_BYOS (for RHEL)
+     <br><br> SLES_BYOS (for SUSE) <br><br> For more information, see `Azure Hybrid Use Benefit for
+     Windows Server
      <https://learn.microsoft.com/azure/virtual-machines/windows/hybrid-use-benefit-licensing>`_
-     <br><br> `Azure Hybrid Use Benefit for Linux
-     Server <https://learn.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
+     <br><br> `Azure Hybrid Use Benefit for Linux Server
+     <https://learn.microsoft.com/azure/virtual-machines/linux/azure-hybrid-benefit-linux>`_
      <br><br> Minimum api-version: 2015-06-15."""
     scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = rest_field(
         name="scheduledEventsProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies Scheduled Event related configurations."""
     user_data: Optional[str] = rest_field(name="userData", visibility=["read", "create", "update", "delete", "query"])
-    """UserData for the virtual machines in the scale set, which must be base-64
-     encoded. Customer should not pass any secrets in here. Minimum api-version:
-     2021-03-01."""
+    """UserData for the virtual machines in the scale set, which must be base-64 encoded. Customer
+     should not pass any secrets in here. Minimum api-version: 2021-03-01."""
     capacity_reservation: Optional["_models.CapacityReservationProfile"] = rest_field(
         name="capacityReservation", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the capacity reservation related details of a scale set. Minimum
-     api-version: 2021-04-01."""
+    """Specifies the capacity reservation related details of a scale set. Minimum api-version:
+     2021-04-01."""
     application_profile: Optional["_models.ApplicationProfile"] = rest_field(
         name="applicationProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -435,24 +416,22 @@ class BaseVirtualMachineProfile(_Model):
     hardware_profile: Optional["_models.VirtualMachineScaleSetHardwareProfile"] = rest_field(
         name="hardwareProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the hardware profile related details of a scale set. Minimum
-     api-version: 2021-11-01."""
+    """Specifies the hardware profile related details of a scale set. Minimum api-version: 2021-11-01."""
     service_artifact_reference: Optional["_models.ServiceArtifactReference"] = rest_field(
         name="serviceArtifactReference", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the service artifact reference id used to set same image version for
-     all virtual machines in the scale set when using 'latest' image version.
-     Minimum api-version: 2022-11-01."""
+    """Specifies the service artifact reference id used to set same image version for all virtual
+     machines in the scale set when using 'latest' image version. Minimum api-version: 2022-11-01."""
     security_posture_reference: Optional["_models.SecurityPostureReference"] = rest_field(
         name="securityPostureReference", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the security posture to be used for all virtual machines in the scale
-     set. Minimum api-version: 2023-03-01."""
+    """Specifies the security posture to be used for all virtual machines in the scale set. Minimum
+     api-version: 2023-03-01."""
     time_created: Optional[datetime.datetime] = rest_field(name="timeCreated", visibility=["read"], format="rfc3339")
-    """Specifies the time in which this VM profile for the Virtual Machine Scale Set
-     was created. Minimum API version for this property is 2023-09-01. This value
-     will be added to VMSS Flex VM tags when creating/updating the VMSS VM Profile
-     with minimum api-version 2023-09-01. Examples: \"2024-07-01T00:00:01.1234567+00:00\"."""
+    """Specifies the time in which this VM profile for the Virtual Machine Scale Set was created.
+     Minimum API version for this property is 2023-09-01. This value will be added to VMSS Flex VM
+     tags when creating/updating the VMSS VM Profile with minimum api-version 2023-09-01. Examples:
+     \"2024-07-01T00:00:01.1234567+00:00\"."""
 
     @overload
     def __init__(
@@ -486,16 +465,15 @@ class BaseVirtualMachineProfile(_Model):
 
 
 class BootDiagnostics(_Model):
-    """Boot Diagnostics is a debugging feature which allows you to view Console Output
-    and Screenshot to diagnose VM status. You can easily view the output of your
-    console log. Azure also enables you to see a screenshot of the VM from the
-    hypervisor.
+    """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot
+    to diagnose VM status. You can easily view the output of your console log. Azure also enables
+    you to see a screenshot of the VM from the hypervisor.
 
     :ivar enabled: Whether boot diagnostics should be enabled on the Virtual Machine.
     :vartype enabled: bool
     :ivar storage_uri: Uri of the storage account to use for placing the console output and
-     screenshot. If storageUri is not specified while enabling boot diagnostics,
-     managed storage will be used.
+     screenshot. If storageUri is not specified while enabling boot diagnostics, managed storage
+     will be used.
     :vartype storage_uri: str
     """
 
@@ -504,9 +482,8 @@ class BootDiagnostics(_Model):
     storage_uri: Optional[str] = rest_field(
         name="storageUri", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Uri of the storage account to use for placing the console output and
-     screenshot. If storageUri is not specified while enabling boot diagnostics,
-     managed storage will be used."""
+    """Uri of the storage account to use for placing the console output and screenshot. If storageUri
+     is not specified while enabling boot diagnostics, managed storage will be used."""
 
     @overload
     def __init__(
@@ -531,22 +508,19 @@ class CapacityReservationProfile(_Model):
     """The parameters of a capacity reservation Profile.
 
     :ivar capacity_reservation_group: Specifies the capacity reservation group resource id that
-     should be used for
-     allocating the virtual machine or scaleset vm instances provided enough
+     should be used for allocating the virtual machine or scaleset vm instances provided enough
      capacity has been reserved. Please refer to `https://aka.ms/CapacityReservation
-     <https://aka.ms/CapacityReservation>`_
-     for more details.
+     <https://aka.ms/CapacityReservation>`_ for more details.
     :vartype capacity_reservation_group: ~azure.mgmt.computefleet.models.SubResource
     """
 
     capacity_reservation_group: Optional["_models.SubResource"] = rest_field(
         name="capacityReservationGroup", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the capacity reservation group resource id that should be used for
-     allocating the virtual machine or scaleset vm instances provided enough
-     capacity has been reserved. Please refer to `https://aka.ms/CapacityReservation
-     <https://aka.ms/CapacityReservation>`_
-     for more details."""
+    """Specifies the capacity reservation group resource id that should be used for allocating the
+     virtual machine or scaleset vm instances provided enough capacity has been reserved. Please
+     refer to `https://aka.ms/CapacityReservation <https://aka.ms/CapacityReservation>`_ for more
+     details."""
 
     @overload
     def __init__(
@@ -576,22 +550,20 @@ class ComputeProfile(_Model):
     :vartype base_virtual_machine_profile:
      ~azure.mgmt.computefleet.models.BaseVirtualMachineProfile
     :ivar compute_api_version: Specifies the Microsoft.Compute API version to use when creating
-     underlying Virtual Machine scale sets and Virtual Machines.
-     The default value will be the latest supported computeApiVersion by Compute Fleet.
+     underlying Virtual Machine scale sets and Virtual Machines. The default value will be the
+     latest supported computeApiVersion by Compute Fleet.
     :vartype compute_api_version: str
     :ivar platform_fault_domain_count: Specifies the number of fault domains to use when creating
-     the underlying VMSS.
-     A fault domain is a logical group of hardware within an Azure datacenter.
-     VMs in the same fault domain share a common power source and network switch.
-     If not specified, defaults to 1, which represents "Max Spreading" (using as many fault domains
-     as possible).
-     This property cannot be updated.
+     the underlying VMSS. A fault domain is a logical group of hardware within an Azure datacenter.
+     VMs in the same fault domain share a common power source and network switch. If not specified,
+     defaults to 1, which represents "Max Spreading" (using as many fault domains as possible). This
+     property cannot be updated.
     :vartype platform_fault_domain_count: int
     :ivar additional_virtual_machine_capabilities: Specifies VMSS and VM API entity models support
      two additional capabilities as of today: ultraSSDEnabled and hibernationEnabled.
-     ultraSSDEnabled: Enables UltraSSD_LRS storage account type on the VMSS VMs.
-     hibernationEnabled: Enables the hibernation capability on the VMSS VMs.
-     Default value is null if not specified. This property cannot be updated once set.
+     ultraSSDEnabled: Enables UltraSSD_LRS storage account type on the VMSS VMs. hibernationEnabled:
+     Enables the hibernation capability on the VMSS VMs. Default value is null if not specified.
+     This property cannot be updated once set.
     :vartype additional_virtual_machine_capabilities:
      ~azure.mgmt.computefleet.models.AdditionalCapabilities
     """
@@ -606,24 +578,21 @@ class ComputeProfile(_Model):
         name="computeApiVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the Microsoft.Compute API version to use when creating underlying Virtual Machine
-     scale sets and Virtual Machines.
-     The default value will be the latest supported computeApiVersion by Compute Fleet."""
+     scale sets and Virtual Machines. The default value will be the latest supported
+     computeApiVersion by Compute Fleet."""
     platform_fault_domain_count: Optional[int] = rest_field(
         name="platformFaultDomainCount", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the number of fault domains to use when creating the underlying VMSS.
-     A fault domain is a logical group of hardware within an Azure datacenter.
-     VMs in the same fault domain share a common power source and network switch.
-     If not specified, defaults to 1, which represents \"Max Spreading\" (using as many fault
-     domains as possible).
-     This property cannot be updated."""
+    """Specifies the number of fault domains to use when creating the underlying VMSS. A fault domain
+     is a logical group of hardware within an Azure datacenter. VMs in the same fault domain share a
+     common power source and network switch. If not specified, defaults to 1, which represents \"Max
+     Spreading\" (using as many fault domains as possible). This property cannot be updated."""
     additional_virtual_machine_capabilities: Optional["_models.AdditionalCapabilities"] = rest_field(
         name="additionalVirtualMachineCapabilities", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies VMSS and VM API entity models support two additional capabilities as of today:
-     ultraSSDEnabled and hibernationEnabled.
-     ultraSSDEnabled: Enables UltraSSD_LRS storage account type on the VMSS VMs.
-     hibernationEnabled: Enables the hibernation capability on the VMSS VMs.
+     ultraSSDEnabled and hibernationEnabled. ultraSSDEnabled: Enables UltraSSD_LRS storage account
+     type on the VMSS VMs. hibernationEnabled: Enables the hibernation capability on the VMSS VMs.
      Default value is null if not specified. This property cannot be updated once set."""
 
     @overload
@@ -651,22 +620,20 @@ class DiagnosticsProfile(_Model):
     """Specifies the boot diagnostic settings state. Minimum api-version: 2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-     Console Output
-     and Screenshot to diagnose VM status. **NOTE**: If storageUri is being
-     specified then ensure that the storage account is in the same region and
-     subscription as the VM. You can easily view the output of your console log.
-     Azure also enables you to see a screenshot of the VM from the hypervisor.
+     Console Output and Screenshot to diagnose VM status. **NOTE**: If storageUri is being specified
+     then ensure that the storage account is in the same region and subscription as the VM. You can
+     easily view the output of your console log. Azure also enables you to see a screenshot of the
+     VM from the hypervisor.
     :vartype boot_diagnostics: ~azure.mgmt.computefleet.models.BootDiagnostics
     """
 
     boot_diagnostics: Optional["_models.BootDiagnostics"] = rest_field(
         name="bootDiagnostics", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Boot Diagnostics is a debugging feature which allows you to view Console Output
-     and Screenshot to diagnose VM status. **NOTE**: If storageUri is being
-     specified then ensure that the storage account is in the same region and
-     subscription as the VM. You can easily view the output of your console log.
-     Azure also enables you to see a screenshot of the VM from the hypervisor."""
+    """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot
+     to diagnose VM status. **NOTE**: If storageUri is being specified then ensure that the storage
+     account is in the same region and subscription as the VM. You can easily view the output of
+     your console log. Azure also enables you to see a screenshot of the VM from the hypervisor."""
 
     @overload
     def __init__(
@@ -687,21 +654,20 @@ class DiagnosticsProfile(_Model):
 
 
 class DiffDiskSettings(_Model):
-    """Describes the parameters of ephemeral disk settings that can be specified for
-    operating system disk. **Note:** The ephemeral disk settings can only be
-    specified for managed disk.
+    """Describes the parameters of ephemeral disk settings that can be specified for operating system
+    disk. **Note:** The ephemeral disk settings can only be specified for managed disk.
 
     :ivar option: Specifies the ephemeral disk settings for operating system disk. "Local"
     :vartype option: str or ~azure.mgmt.computefleet.models.DiffDiskOptions
     :ivar placement: Specifies the ephemeral disk placement for operating system disk. Possible
-     values are: **CacheDisk,** **ResourceDisk.** The defaulting behavior is:
-     **CacheDisk** if one is configured for the VM size otherwise **ResourceDisk**
-     is used. Refer to the VM size documentation for Windows VM at
+     values are: **CacheDisk,** **ResourceDisk.** The defaulting behavior is: **CacheDisk** if one
+     is configured for the VM size otherwise **ResourceDisk** is used. Refer to the VM size
+     documentation for Windows VM at
      `https://learn.microsoft.com/azure/virtual-machines/windows/sizes
      <https://learn.microsoft.com/azure/virtual-machines/windows/sizes>`_ and Linux VM at
      `https://learn.microsoft.com/azure/virtual-machines/linux/sizes
-     <https://learn.microsoft.com/azure/virtual-machines/linux/sizes>`_ to check which VM
-     sizes exposes a cache disk. Known values are: "CacheDisk", "ResourceDisk", and "NvmeDisk".
+     <https://learn.microsoft.com/azure/virtual-machines/linux/sizes>`_ to check which VM sizes
+     exposes a cache disk. Known values are: "CacheDisk", "ResourceDisk", and "NvmeDisk".
     :vartype placement: str or ~azure.mgmt.computefleet.models.DiffDiskPlacement
     """
 
@@ -712,16 +678,14 @@ class DiffDiskSettings(_Model):
     placement: Optional[Union[str, "_models.DiffDiskPlacement"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the ephemeral disk placement for operating system disk. Possible
-     values are: **CacheDisk,** **ResourceDisk.** The defaulting behavior is:
-     **CacheDisk** if one is configured for the VM size otherwise **ResourceDisk**
-     is used. Refer to the VM size documentation for Windows VM at
-     `https://learn.microsoft.com/azure/virtual-machines/windows/sizes
+    """Specifies the ephemeral disk placement for operating system disk. Possible values are:
+     **CacheDisk,** **ResourceDisk.** The defaulting behavior is: **CacheDisk** if one is configured
+     for the VM size otherwise **ResourceDisk** is used. Refer to the VM size documentation for
+     Windows VM at `https://learn.microsoft.com/azure/virtual-machines/windows/sizes
      <https://learn.microsoft.com/azure/virtual-machines/windows/sizes>`_ and Linux VM at
      `https://learn.microsoft.com/azure/virtual-machines/linux/sizes
-     <https://learn.microsoft.com/azure/virtual-machines/linux/sizes>`_ to check which VM
-     sizes exposes a cache disk. Known values are: \"CacheDisk\", \"ResourceDisk\", and
-     \"NvmeDisk\"."""
+     <https://learn.microsoft.com/azure/virtual-machines/linux/sizes>`_ to check which VM sizes
+     exposes a cache disk. Known values are: \"CacheDisk\", \"ResourceDisk\", and \"NvmeDisk\"."""
 
     @overload
     def __init__(
@@ -743,10 +707,10 @@ class DiffDiskSettings(_Model):
 
 
 class DiskEncryptionSetParameters(_Model):
-    """Describes the parameter of customer managed disk encryption set resource id
-    that can be specified for disk. **Note:** The disk encryption set resource id
-    can only be specified for managed disk. Please refer
-    `https://aka.ms/mdssewithcmkoverview <https://aka.ms/mdssewithcmkoverview>`_ for more details.
+    """Describes the parameter of customer managed disk encryption set resource id that can be
+    specified for disk. **Note:** The disk encryption set resource id can only be specified for
+    managed disk. Please refer `https://aka.ms/mdssewithcmkoverview
+    <https://aka.ms/mdssewithcmkoverview>`_ for more details.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -774,8 +738,7 @@ class DiskEncryptionSetParameters(_Model):
 
 
 class EncryptionIdentity(_Model):
-    """Specifies the Managed Identity used by ADE to get access token for keyvault
-    operations.
+    """Specifies the Managed Identity used by ADE to get access token for keyvault operations.
 
     :ivar user_assigned_identity_resource_id: Specifies ARM Resource ID of one of the user
      identities associated with the VM.
@@ -841,9 +804,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -925,7 +888,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -935,7 +898,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -981,7 +944,7 @@ class Fleet(TrackedResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
-    zones: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Zones in which the Compute Fleet is available."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -995,9 +958,9 @@ class Fleet(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FleetProperties"] = None,
-        zones: Optional[List[str]] = None,
+        zones: Optional[list[str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         plan: Optional["_models.Plan"] = None,
     ) -> None: ...
@@ -1037,8 +1000,11 @@ class FleetProperties(_Model):
     :vartype time_created: ~datetime.datetime
     :ivar unique_id: Specifies the ID which uniquely identifies a Compute Fleet.
     :vartype unique_id: str
-    :ivar mode: Mode of the Fleet. Known values are: "Managed" and "Instance".
+    :ivar mode: Mode of the Fleet. Known values are: "Managed" and "Launch".
     :vartype mode: str or ~azure.mgmt.computefleet.models.FleetMode
+    :ivar vm_name_prefix: VirtualMachine prefix to be used for the virtual machines launched by
+     Fleet. Can be used only with Launch mode.
+    :vartype vm_name_prefix: str
     :ivar capacity_type: Specifies capacity type for Fleet Regular and Spot priority profiles.
      capacityType is an immutable property. Once set during Fleet creation, it cannot be updated.
      Specifying different capacity type for Fleet Regular and Spot priority profiles is not allowed.
@@ -1061,7 +1027,7 @@ class FleetProperties(_Model):
         name="regularPriorityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Configuration Options for Regular instances in Compute Fleet."""
-    vm_sizes_profile: List["_models.VmSizeProfile"] = rest_field(
+    vm_sizes_profile: list["_models.VmSizeProfile"] = rest_field(
         name="vmSizesProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of VM sizes supported for Compute Fleet. Required."""
@@ -1084,14 +1050,19 @@ class FleetProperties(_Model):
     mode: Optional[Union[str, "_models.FleetMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Mode of the Fleet. Known values are: \"Managed\" and \"Instance\"."""
+    """Mode of the Fleet. Known values are: \"Managed\" and \"Launch\"."""
+    vm_name_prefix: Optional[str] = rest_field(
+        name="vmNamePrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """VirtualMachine prefix to be used for the virtual machines launched by Fleet. Can be used only
+     with Launch mode."""
     capacity_type: Optional[Union[str, "_models.CapacityType"]] = rest_field(
         name="capacityType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies capacity type for Fleet Regular and Spot priority profiles.
-     capacityType is an immutable property. Once set during Fleet creation, it cannot be updated.
-     Specifying different capacity type for Fleet Regular and Spot priority profiles is not allowed.
-     Known values are: \"VM\" and \"VCpu\"."""
+    """Specifies capacity type for Fleet Regular and Spot priority profiles. capacityType is an
+     immutable property. Once set during Fleet creation, it cannot be updated. Specifying different
+     capacity type for Fleet Regular and Spot priority profiles is not allowed. Known values are:
+     \"VM\" and \"VCpu\"."""
     zone_allocation_policy: Optional["_models.ZoneAllocationPolicy"] = rest_field(
         name="zoneAllocationPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1101,13 +1072,14 @@ class FleetProperties(_Model):
     def __init__(
         self,
         *,
-        vm_sizes_profile: List["_models.VmSizeProfile"],
+        vm_sizes_profile: list["_models.VmSizeProfile"],
         compute_profile: "_models.ComputeProfile",
         spot_priority_profile: Optional["_models.SpotPriorityProfile"] = None,
         regular_priority_profile: Optional["_models.RegularPriorityProfile"] = None,
         vm_attributes: Optional["_models.VMAttributes"] = None,
         additional_locations_profile: Optional["_models.AdditionalLocationsProfile"] = None,
         mode: Optional[Union[str, "_models.FleetMode"]] = None,
+        vm_name_prefix: Optional[str] = None,
         capacity_type: Optional[Union[str, "_models.CapacityType"]] = None,
         zone_allocation_policy: Optional["_models.ZoneAllocationPolicy"] = None,
     ) -> None: ...
@@ -1136,7 +1108,7 @@ class FleetUpdate(_Model):
     :vartype properties: ~azure.mgmt.computefleet.models.FleetProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     identity: Optional["_models.ManagedServiceIdentityUpdate"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1155,7 +1127,7 @@ class FleetUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentityUpdate"] = None,
         plan: Optional["_models.ResourcePlanUpdate"] = None,
         properties: Optional["_models.FleetProperties"] = None,
@@ -1173,43 +1145,40 @@ class FleetUpdate(_Model):
 
 
 class ImageReference(_Model):
-    """Specifies information about the image to use. You can specify information about
-    platform images, marketplace images, or virtual machine images. This element is
-    required when you want to use a platform image, marketplace image, or virtual
-    machine image, but is not used in other creation operations. NOTE: Image
-    reference publisher and offer can only be set when you create the scale set.
+    """Specifies information about the image to use. You can specify information about platform
+    images, marketplace images, or virtual machine images. This element is required when you want
+    to use a platform image, marketplace image, or virtual machine image, but is not used in other
+    creation operations. NOTE: Image reference publisher and offer can only be set when you create
+    the scale set.
 
     :ivar id: Resource Id.
     :vartype id: str
     :ivar publisher: The image publisher.
     :vartype publisher: str
-    :ivar offer: Specifies the offer of the platform image or marketplace image used to create
-     the virtual machine.
+    :ivar offer: Specifies the offer of the platform image or marketplace image used to create the
+     virtual machine.
     :vartype offer: str
     :ivar sku: The image SKU.
     :vartype sku: str
     :ivar version: Specifies the version of the platform image or marketplace image used to create
-     the virtual machine. The allowed formats are Major.Minor.Build or 'latest'.
-     Major, Minor, and Build are decimal numbers. Specify 'latest' to use the latest
-     version of an image available at deploy time. Even if you use 'latest', the VM
-     image will not automatically update after deploy time even if a new version
-     becomes available. Please do not use field 'version' for gallery image
-     deployment, gallery image should always use 'id' field for deployment, to use 'latest'
+     the virtual machine. The allowed formats are Major.Minor.Build or 'latest'. Major, Minor, and
+     Build are decimal numbers. Specify 'latest' to use the latest version of an image available at
+     deploy time. Even if you use 'latest', the VM image will not automatically update after deploy
+     time even if a new version becomes available. Please do not use field 'version' for gallery
+     image deployment, gallery image should always use 'id' field for deployment, to use 'latest'
      version of gallery image, just set
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
      in the 'id' field without version input.
     :vartype version: str
     :ivar exact_version: Specifies in decimal numbers, the version of platform image or marketplace
-     image used to create the virtual machine. This readonly field differs from 'version',
-     only if the value specified in 'version' field is 'latest'.
+     image used to create the virtual machine. This readonly field differs from 'version', only if
+     the value specified in 'version' field is 'latest'.
     :vartype exact_version: str
     :ivar shared_gallery_image_id: Specified the shared gallery image unique id for vm deployment.
-     This can be
-     fetched from shared gallery image GET call.
+     This can be fetched from shared gallery image GET call.
     :vartype shared_gallery_image_id: str
     :ivar community_gallery_image_id: Specified the community gallery image unique id for vm
-     deployment. This can be
-     fetched from community gallery image GET call.
+     deployment. This can be fetched from community gallery image GET call.
     :vartype community_gallery_image_id: str
     """
 
@@ -1218,35 +1187,34 @@ class ImageReference(_Model):
     publisher: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The image publisher."""
     offer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the offer of the platform image or marketplace image used to create
-     the virtual machine."""
+    """Specifies the offer of the platform image or marketplace image used to create the virtual
+     machine."""
     sku: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The image SKU."""
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the version of the platform image or marketplace image used to create
-     the virtual machine. The allowed formats are Major.Minor.Build or 'latest'.
-     Major, Minor, and Build are decimal numbers. Specify 'latest' to use the latest
-     version of an image available at deploy time. Even if you use 'latest', the VM
-     image will not automatically update after deploy time even if a new version
-     becomes available. Please do not use field 'version' for gallery image
-     deployment, gallery image should always use 'id' field for deployment, to use 'latest'
-     version of gallery image, just set
+    """Specifies the version of the platform image or marketplace image used to create the virtual
+     machine. The allowed formats are Major.Minor.Build or 'latest'. Major, Minor, and Build are
+     decimal numbers. Specify 'latest' to use the latest version of an image available at deploy
+     time. Even if you use 'latest', the VM image will not automatically update after deploy time
+     even if a new version becomes available. Please do not use field 'version' for gallery image
+     deployment, gallery image should always use 'id' field for deployment, to use 'latest' version
+     of gallery image, just set
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{imageName}'
      in the 'id' field without version input."""
     exact_version: Optional[str] = rest_field(name="exactVersion", visibility=["read"])
-    """Specifies in decimal numbers, the version of platform image or marketplace
-     image used to create the virtual machine. This readonly field differs from 'version',
-     only if the value specified in 'version' field is 'latest'."""
+    """Specifies in decimal numbers, the version of platform image or marketplace image used to create
+     the virtual machine. This readonly field differs from 'version', only if the value specified in
+     'version' field is 'latest'."""
     shared_gallery_image_id: Optional[str] = rest_field(
         name="sharedGalleryImageId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specified the shared gallery image unique id for vm deployment. This can be
-     fetched from shared gallery image GET call."""
+    """Specified the shared gallery image unique id for vm deployment. This can be fetched from shared
+     gallery image GET call."""
     community_gallery_image_id: Optional[str] = rest_field(
         name="communityGalleryImageId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specified the community gallery image unique id for vm deployment. This can be
-     fetched from community gallery image GET call."""
+    """Specified the community gallery image unique id for vm deployment. This can be fetched from
+     community gallery image GET call."""
 
     @overload
     def __init__(
@@ -1345,9 +1313,9 @@ class KeyVaultSecretReference(_Model):
 
 
 class LinuxConfiguration(_Model):
-    """Specifies the Linux operating system settings on the virtual machine. For a
-    list of supported Linux distributions, see `Linux on Azure-Endorsed
-    Distributions <https://learn.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
+    """Specifies the Linux operating system settings on the virtual machine. For a list of supported
+    Linux distributions, see `Linux on Azure-Endorsed Distributions
+    <https://learn.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
 
     :ivar disable_password_authentication: Specifies whether password authentication should be
      disabled.
@@ -1355,17 +1323,15 @@ class LinuxConfiguration(_Model):
     :ivar ssh: Specifies the ssh key configuration for a Linux OS.
     :vartype ssh: ~azure.mgmt.computefleet.models.SshConfiguration
     :ivar provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
-     virtual
-     machine. When this property is not specified in the request body, default
-     behavior is to set it to true. This will ensure that VM Agent is installed on
-     the VM so that extensions can be added to the VM later.
+     virtual machine. When this property is not specified in the request body, default behavior is
+     to set it to true. This will ensure that VM Agent is installed on the VM so that extensions can
+     be added to the VM later.
     :vartype provision_vm_agent: bool
     :ivar patch_settings: [Preview Feature] Specifies settings related to VM Guest Patching on
      Linux.
     :vartype patch_settings: ~azure.mgmt.computefleet.models.LinuxPatchSettings
     :ivar enable_vm_agent_platform_updates: Indicates whether VMAgent Platform Updates is enabled
-     for the Linux virtual
-     machine. Default value is false.
+     for the Linux virtual machine. Default value is false.
     :vartype enable_vm_agent_platform_updates: bool
     """
 
@@ -1378,10 +1344,9 @@ class LinuxConfiguration(_Model):
     provision_vm_agent: Optional[bool] = rest_field(
         name="provisionVMAgent", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether virtual machine agent should be provisioned on the virtual
-     machine. When this property is not specified in the request body, default
-     behavior is to set it to true. This will ensure that VM Agent is installed on
-     the VM so that extensions can be added to the VM later."""
+    """Indicates whether virtual machine agent should be provisioned on the virtual machine. When this
+     property is not specified in the request body, default behavior is to set it to true. This will
+     ensure that VM Agent is installed on the VM so that extensions can be added to the VM later."""
     patch_settings: Optional["_models.LinuxPatchSettings"] = rest_field(
         name="patchSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1389,8 +1354,8 @@ class LinuxConfiguration(_Model):
     enable_vm_agent_platform_updates: Optional[bool] = rest_field(
         name="enableVMAgentPlatformUpdates", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether VMAgent Platform Updates is enabled for the Linux virtual
-     machine. Default value is false."""
+    """Indicates whether VMAgent Platform Updates is enabled for the Linux virtual machine. Default
+     value is false."""
 
     @overload
     def __init__(
@@ -1418,23 +1383,20 @@ class LinuxPatchSettings(_Model):
     """Specifies settings related to VM Guest Patching on Linux.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-     machines associated to virtual machine scale set with OrchestrationMode as
-     Flexible.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - The
-     virtual machine's default patching configuration is used. <br /><br />
-     **AutomaticByPlatform** - The virtual machine will be automatically updated by
-     the platform. The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-     "AutomaticByPlatform".
+     machines associated to virtual machine scale set with OrchestrationMode as Flexible.<br /><br
+     /> Possible values are:<br /><br /> **ImageDefault** - The virtual machine's default patching
+     configuration is used. <br /><br /> **AutomaticByPlatform** - The virtual machine will be
+     automatically updated by the platform. The property provisionVMAgent must be true. Known values
+     are: "ImageDefault" and "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.computefleet.models.LinuxVMGuestPatchMode
     :ivar assessment_mode: Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
-     machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You
-     control the timing of patch assessments on a virtual machine. <br /><br />
-     **AutomaticByPlatform** - The platform will trigger periodic patch assessments.
-     The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-     "AutomaticByPlatform".
+     machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You control the timing
+     of patch assessments on a virtual machine. <br /><br /> **AutomaticByPlatform** - The platform
+     will trigger periodic patch assessments. The property provisionVMAgent must be true. Known
+     values are: "ImageDefault" and "AutomaticByPlatform".
     :vartype assessment_mode: str or ~azure.mgmt.computefleet.models.LinuxPatchAssessmentMode
     :ivar automatic_by_platform_settings: Specifies additional settings for patch mode
-     AutomaticByPlatform in VM Guest
-     Patching on Linux.
+     AutomaticByPlatform in VM Guest Patching on Linux.
     :vartype automatic_by_platform_settings:
      ~azure.mgmt.computefleet.models.LinuxVMGuestPatchAutomaticByPlatformSettings
     """
@@ -1442,27 +1404,24 @@ class LinuxPatchSettings(_Model):
     patch_mode: Optional[Union[str, "_models.LinuxVMGuestPatchMode"]] = rest_field(
         name="patchMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-     machines associated to virtual machine scale set with OrchestrationMode as
-     Flexible.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - The
-     virtual machine's default patching configuration is used. <br /><br />
-     **AutomaticByPlatform** - The virtual machine will be automatically updated by
-     the platform. The property provisionVMAgent must be true. Known values are: \"ImageDefault\"
+    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
+     to virtual machine scale set with OrchestrationMode as Flexible.<br /><br /> Possible values
+     are:<br /><br /> **ImageDefault** - The virtual machine's default patching configuration is
+     used. <br /><br /> **AutomaticByPlatform** - The virtual machine will be automatically updated
+     by the platform. The property provisionVMAgent must be true. Known values are: \"ImageDefault\"
      and \"AutomaticByPlatform\"."""
     assessment_mode: Optional[Union[str, "_models.LinuxPatchAssessmentMode"]] = rest_field(
         name="assessmentMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
-     machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You
-     control the timing of patch assessments on a virtual machine. <br /><br />
-     **AutomaticByPlatform** - The platform will trigger periodic patch assessments.
-     The property provisionVMAgent must be true. Known values are: \"ImageDefault\" and
-     \"AutomaticByPlatform\"."""
+    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.<br /><br />
+     Possible values are:<br /><br /> **ImageDefault** - You control the timing of patch assessments
+     on a virtual machine. <br /><br /> **AutomaticByPlatform** - The platform will trigger periodic
+     patch assessments. The property provisionVMAgent must be true. Known values are:
+     \"ImageDefault\" and \"AutomaticByPlatform\"."""
     automatic_by_platform_settings: Optional["_models.LinuxVMGuestPatchAutomaticByPlatformSettings"] = rest_field(
         name="automaticByPlatformSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies additional settings for patch mode AutomaticByPlatform in VM Guest
-     Patching on Linux."""
+    """Specifies additional settings for patch mode AutomaticByPlatform in VM Guest Patching on Linux."""
 
     @overload
     def __init__(
@@ -1485,12 +1444,11 @@ class LinuxPatchSettings(_Model):
 
 
 class LinuxVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=name-too-long
-    """Specifies additional settings to be applied when patch mode AutomaticByPlatform
-    is selected in Linux patch settings.
+    """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
+    Linux patch settings.
 
     :ivar reboot_setting: Specifies the reboot setting for all AutomaticByPlatform patch
-     installation
-     operations. Known values are: "Unknown", "IfRequired", "Never", and "Always".
+     installation operations. Known values are: "Unknown", "IfRequired", "Never", and "Always".
     :vartype reboot_setting: str or
      ~azure.mgmt.computefleet.models.LinuxVMGuestPatchAutomaticByPlatformRebootSetting
     :ivar bypass_platform_safety_checks_on_user_schedule: Enables customer to schedule patching
@@ -1501,8 +1459,8 @@ class LinuxVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=n
     reboot_setting: Optional[Union[str, "_models.LinuxVMGuestPatchAutomaticByPlatformRebootSetting"]] = rest_field(
         name="rebootSetting", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the reboot setting for all AutomaticByPlatform patch installation
-     operations. Known values are: \"Unknown\", \"IfRequired\", \"Never\", and \"Always\"."""
+    """Specifies the reboot setting for all AutomaticByPlatform patch installation operations. Known
+     values are: \"Unknown\", \"IfRequired\", \"Never\", and \"Always\"."""
     bypass_platform_safety_checks_on_user_schedule: Optional[bool] = rest_field(
         name="bypassPlatformSafetyChecksOnUserSchedule", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1535,9 +1493,9 @@ class LocationProfile(_Model):
      specified, then location is required. Required.
     :vartype location: str
     :ivar virtual_machine_profile_override: An override for
-     computeProfile.baseVirtualMachineProfile specific to this region.
-     This override is merged with the base virtual machine profile to define the final virtual
-     machine profile for the resources deployed in this location.
+     computeProfile.baseVirtualMachineProfile specific to this region. This override is merged with
+     the base virtual machine profile to define the final virtual machine profile for the resources
+     deployed in this location.
     :vartype virtual_machine_profile_override:
      ~azure.mgmt.computefleet.models.BaseVirtualMachineProfile
     """
@@ -1548,9 +1506,9 @@ class LocationProfile(_Model):
     virtual_machine_profile_override: Optional["_models.BaseVirtualMachineProfile"] = rest_field(
         name="virtualMachineProfileOverride", visibility=["read", "create", "update", "delete", "query"]
     )
-    """An override for computeProfile.baseVirtualMachineProfile specific to this region.
-     This override is merged with the base virtual machine profile to define the final virtual
-     machine profile for the resources deployed in this location."""
+    """An override for computeProfile.baseVirtualMachineProfile specific to this region. This override
+     is merged with the base virtual machine profile to define the final virtual machine profile for
+     the resources deployed in this location."""
 
     @overload
     def __init__(
@@ -1599,7 +1557,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -1609,7 +1567,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -1639,7 +1597,7 @@ class ManagedServiceIdentityUpdate(_Model):
     )
     """The type of managed identity assigned to this resource. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -1649,7 +1607,7 @@ class ManagedServiceIdentityUpdate(_Model):
         self,
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -1721,7 +1679,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -1755,10 +1713,9 @@ class OSImageNotificationProfile(_Model):
     """Specifies OS Image Scheduled Event related configurations.
 
     :ivar not_before_timeout: Length of time a Virtual Machine being reimaged or having its OS
-     upgraded will
-     have to potentially approve the OS Image Scheduled Event before the event is
-     auto approved (timed out). The configuration is specified in ISO 8601 format,
-     and the value must not exceed 15 minutes (PT15M).
+     upgraded will have to potentially approve the OS Image Scheduled Event before the event is auto
+     approved (timed out). The configuration is specified in ISO 8601 format, and the value must not
+     exceed 15 minutes (PT15M).
     :vartype not_before_timeout: str
     :ivar enable: Specifies whether the OS Image Scheduled event is enabled or disabled.
     :vartype enable: bool
@@ -1767,10 +1724,10 @@ class OSImageNotificationProfile(_Model):
     not_before_timeout: Optional[str] = rest_field(
         name="notBeforeTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Length of time a Virtual Machine being reimaged or having its OS upgraded will
-     have to potentially approve the OS Image Scheduled Event before the event is
-     auto approved (timed out). The configuration is specified in ISO 8601 format,
-     and the value must not exceed 15 minutes (PT15M)."""
+    """Length of time a Virtual Machine being reimaged or having its OS upgraded will have to
+     potentially approve the OS Image Scheduled Event before the event is auto approved (timed out).
+     The configuration is specified in ISO 8601 format, and the value must not exceed 15 minutes
+     (PT15M)."""
     enable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies whether the OS Image Scheduled event is enabled or disabled."""
 
@@ -1797,33 +1754,28 @@ class PatchSettings(_Model):
     """Specifies settings related to VM Guest Patching on Windows.
 
     :ivar patch_mode: Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-     machines associated to virtual machine scale set with OrchestrationMode as
-     Flexible.<br /><br /> Possible values are:<br /><br /> **Manual** - You
-     control the application of patches to a virtual machine. You do this by
-     applying patches manually inside the VM. In this mode, automatic updates are
-     disabled; the property WindowsConfiguration.enableAutomaticUpdates must be
-     false<br /><br /> **AutomaticByOS** - The virtual machine will automatically be
-     updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-     must be true. <br /><br /> **AutomaticByPlatform** - the virtual machine will
-     automatically updated by the platform. The properties provisionVMAgent and
-     WindowsConfiguration.enableAutomaticUpdates must be true. Known values are: "Manual",
-     "AutomaticByOS", and "AutomaticByPlatform".
+     machines associated to virtual machine scale set with OrchestrationMode as Flexible.<br /><br
+     /> Possible values are:<br /><br /> **Manual** - You control the application of patches to a
+     virtual machine. You do this by applying patches manually inside the VM. In this mode,
+     automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates must
+     be false<br /><br /> **AutomaticByOS** - The virtual machine will automatically be updated by
+     the OS. The property WindowsConfiguration.enableAutomaticUpdates must be true. <br /><br />
+     **AutomaticByPlatform** - the virtual machine will automatically updated by the platform. The
+     properties provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known
+     values are: "Manual", "AutomaticByOS", and "AutomaticByPlatform".
     :vartype patch_mode: str or ~azure.mgmt.computefleet.models.WindowsVMGuestPatchMode
     :ivar enable_hotpatching: Enables customers to patch their Azure VMs without requiring a
-     reboot. For
-     enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode'
-     must be set to 'AutomaticByPlatform'.
+     reboot. For enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode' must
+     be set to 'AutomaticByPlatform'.
     :vartype enable_hotpatching: bool
     :ivar assessment_mode: Specifies the mode of VM Guest patch assessment for the IaaS virtual
-     machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You
-     control the timing of patch assessments on a virtual machine.<br /><br />
-     **AutomaticByPlatform** - The platform will trigger periodic patch assessments.
-     The property provisionVMAgent must be true. Known values are: "ImageDefault" and
-     "AutomaticByPlatform".
+     machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You control the timing
+     of patch assessments on a virtual machine.<br /><br /> **AutomaticByPlatform** - The platform
+     will trigger periodic patch assessments. The property provisionVMAgent must be true. Known
+     values are: "ImageDefault" and "AutomaticByPlatform".
     :vartype assessment_mode: str or ~azure.mgmt.computefleet.models.WindowsPatchAssessmentMode
     :ivar automatic_by_platform_settings: Specifies additional settings for patch mode
-     AutomaticByPlatform in VM Guest
-     Patching on Windows.
+     AutomaticByPlatform in VM Guest Patching on Windows.
     :vartype automatic_by_platform_settings:
      ~azure.mgmt.computefleet.models.WindowsVMGuestPatchAutomaticByPlatformSettings
     """
@@ -1831,38 +1783,35 @@ class PatchSettings(_Model):
     patch_mode: Optional[Union[str, "_models.WindowsVMGuestPatchMode"]] = rest_field(
         name="patchMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-     machines associated to virtual machine scale set with OrchestrationMode as
-     Flexible.<br /><br /> Possible values are:<br /><br /> **Manual** - You
-     control the application of patches to a virtual machine. You do this by
-     applying patches manually inside the VM. In this mode, automatic updates are
-     disabled; the property WindowsConfiguration.enableAutomaticUpdates must be
-     false<br /><br /> **AutomaticByOS** - The virtual machine will automatically be
-     updated by the OS. The property WindowsConfiguration.enableAutomaticUpdates
-     must be true. <br /><br /> **AutomaticByPlatform** - the virtual machine will
-     automatically updated by the platform. The properties provisionVMAgent and
-     WindowsConfiguration.enableAutomaticUpdates must be true. Known values are: \"Manual\",
-     \"AutomaticByOS\", and \"AutomaticByPlatform\"."""
+    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
+     to virtual machine scale set with OrchestrationMode as Flexible.<br /><br /> Possible values
+     are:<br /><br /> **Manual** - You control the application of patches to a virtual machine. You
+     do this by applying patches manually inside the VM. In this mode, automatic updates are
+     disabled; the property WindowsConfiguration.enableAutomaticUpdates must be false<br /><br />
+     **AutomaticByOS** - The virtual machine will automatically be updated by the OS. The property
+     WindowsConfiguration.enableAutomaticUpdates must be true. <br /><br /> **AutomaticByPlatform**
+     - the virtual machine will automatically updated by the platform. The properties
+     provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true. Known values
+     are: \"Manual\", \"AutomaticByOS\", and \"AutomaticByPlatform\"."""
     enable_hotpatching: Optional[bool] = rest_field(
         name="enableHotpatching", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Enables customers to patch their Azure VMs without requiring a reboot. For
-     enableHotpatching, the 'provisionVMAgent' must be set to true and 'patchMode'
-     must be set to 'AutomaticByPlatform'."""
+    """Enables customers to patch their Azure VMs without requiring a reboot. For enableHotpatching,
+     the 'provisionVMAgent' must be set to true and 'patchMode' must be set to
+     'AutomaticByPlatform'."""
     assessment_mode: Optional[Union[str, "_models.WindowsPatchAssessmentMode"]] = rest_field(
         name="assessmentMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the mode of VM Guest patch assessment for the IaaS virtual
-     machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You
-     control the timing of patch assessments on a virtual machine.<br /><br />
-     **AutomaticByPlatform** - The platform will trigger periodic patch assessments.
-     The property provisionVMAgent must be true. Known values are: \"ImageDefault\" and
-     \"AutomaticByPlatform\"."""
+    """Specifies the mode of VM Guest patch assessment for the IaaS virtual machine.<br /><br />
+     Possible values are:<br /><br /> **ImageDefault** - You control the timing of patch assessments
+     on a virtual machine.<br /><br /> **AutomaticByPlatform** - The platform will trigger periodic
+     patch assessments. The property provisionVMAgent must be true. Known values are:
+     \"ImageDefault\" and \"AutomaticByPlatform\"."""
     automatic_by_platform_settings: Optional["_models.WindowsVMGuestPatchAutomaticByPlatformSettings"] = rest_field(
         name="automaticByPlatformSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies additional settings for patch mode AutomaticByPlatform in VM Guest
-     Patching on Windows."""
+    """Specifies additional settings for patch mode AutomaticByPlatform in VM Guest Patching on
+     Windows."""
 
     @overload
     def __init__(
@@ -1941,36 +1890,35 @@ class Plan(_Model):
 
 
 class ProxyAgentSettings(_Model):
-    """Specifies ProxyAgent settings while creating the virtual machine. Minimum
-    api-version: 2023-09-01.
+    """Specifies ProxyAgent settings while creating the virtual machine. Minimum api-version:
+    2023-09-01.
 
-    :ivar enabled: Specifies whether ProxyAgent feature should be enabled on the virtual machine
-     or virtual machine scale set.
+    :ivar enabled: Specifies whether ProxyAgent feature should be enabled on the virtual machine or
+     virtual machine scale set.
     :vartype enabled: bool
     :ivar mode: Specifies the mode that ProxyAgent will execute on if the feature is enabled.
-     ProxyAgent will start to audit or monitor but not enforce access control over
-     requests to host endpoints in Audit mode, while in Enforce mode it will enforce
-     access control. The default value is Enforce mode. Known values are: "Audit" and "Enforce".
+     ProxyAgent will start to audit or monitor but not enforce access control over requests to host
+     endpoints in Audit mode, while in Enforce mode it will enforce access control. The default
+     value is Enforce mode. Known values are: "Audit" and "Enforce".
     :vartype mode: str or ~azure.mgmt.computefleet.models.Mode
     :ivar key_incarnation_id: Increase the value of this property allows user to reset the key used
-     for
-     securing communication channel between guest and host.
+     for securing communication channel between guest and host.
     :vartype key_incarnation_id: int
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies whether ProxyAgent feature should be enabled on the virtual machine
-     or virtual machine scale set."""
+    """Specifies whether ProxyAgent feature should be enabled on the virtual machine or virtual
+     machine scale set."""
     mode: Optional[Union[str, "_models.Mode"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the mode that ProxyAgent will execute on if the feature is enabled.
-     ProxyAgent will start to audit or monitor but not enforce access control over
-     requests to host endpoints in Audit mode, while in Enforce mode it will enforce
-     access control. The default value is Enforce mode. Known values are: \"Audit\" and \"Enforce\"."""
+    """Specifies the mode that ProxyAgent will execute on if the feature is enabled. ProxyAgent will
+     start to audit or monitor but not enforce access control over requests to host endpoints in
+     Audit mode, while in Enforce mode it will enforce access control. The default value is Enforce
+     mode. Known values are: \"Audit\" and \"Enforce\"."""
     key_incarnation_id: Optional[int] = rest_field(
         name="keyIncarnationId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Increase the value of this property allows user to reset the key used for
-     securing communication channel between guest and host."""
+    """Increase the value of this property allows user to reset the key used for securing
+     communication channel between guest and host."""
 
     @overload
     def __init__(
@@ -1993,8 +1941,7 @@ class ProxyAgentSettings(_Model):
 
 
 class PublicIPAddressSku(_Model):
-    """Describes the public IP Sku. It can only be set with OrchestrationMode as
-    Flexible.
+    """Describes the public IP Sku. It can only be set with OrchestrationMode as Flexible.
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.computefleet.models.PublicIPAddressSkuName
@@ -2172,15 +2119,14 @@ class ScheduledEventsProfile(_Model):
 
 
 class SecurityPostureReference(_Model):
-    """Specifies the security posture to be used for all virtual machines in the scale
-    set. Minimum api-version: 2023-03-01.
+    """Specifies the security posture to be used for all virtual machines in the scale set. Minimum
+    api-version: 2023-03-01.
 
     :ivar id: The security posture reference id in the form of
      /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|{major.*}|latest.
     :vartype id: str
     :ivar exclude_extensions: List of virtual machine extension names to exclude when applying the
-     security
-     posture.
+     security posture.
     :vartype exclude_extensions: list[str]
     :ivar is_overridable: Whether the security posture can be overridden by the user.
     :vartype is_overridable: bool
@@ -2189,11 +2135,10 @@ class SecurityPostureReference(_Model):
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The security posture reference id in the form of
      /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|{major.*}|latest."""
-    exclude_extensions: Optional[List[str]] = rest_field(
+    exclude_extensions: Optional[list[str]] = rest_field(
         name="excludeExtensions", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of virtual machine extension names to exclude when applying the security
-     posture."""
+    """List of virtual machine extension names to exclude when applying the security posture."""
     is_overridable: Optional[bool] = rest_field(
         name="isOverridable", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2204,7 +2149,7 @@ class SecurityPostureReference(_Model):
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        exclude_extensions: Optional[List[str]] = None,
+        exclude_extensions: Optional[list[str]] = None,
         is_overridable: Optional[bool] = None,
     ) -> None: ...
 
@@ -2220,65 +2165,56 @@ class SecurityPostureReference(_Model):
 
 
 class SecurityProfile(_Model):
-    """Specifies the Security profile settings for the virtual machine or virtual
-    machine scale set.
+    """Specifies the Security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
-     creating
-     the virtual machine. Minimum api-version: 2020-12-01.
+     creating the virtual machine. Minimum api-version: 2020-12-01.
     :vartype uefi_settings: ~azure.mgmt.computefleet.models.UefiSettings
     :ivar encryption_at_host: This property can be used by user in the request to enable or disable
-     the Host
-     Encryption for the virtual machine or virtual machine scale set. This will
-     enable the encryption for all the disks including Resource/Temp disk at host
-     itself. The default behavior is: The Encryption at host will be disabled unless
-     this property is set to true for the resource.
+     the Host Encryption for the virtual machine or virtual machine scale set. This will enable the
+     encryption for all the disks including Resource/Temp disk at host itself. The default behavior
+     is: The Encryption at host will be disabled unless this property is set to true for the
+     resource.
     :vartype encryption_at_host: bool
     :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
-     specified value to enable UefiSettings. The default behavior is: UefiSettings
-     will not be enabled unless this property is set. Known values are: "TrustedLaunch" and
-     "ConfidentialVM".
+     specified value to enable UefiSettings. The default behavior is: UefiSettings will not be
+     enabled unless this property is set. Known values are: "TrustedLaunch" and "ConfidentialVM".
     :vartype security_type: str or ~azure.mgmt.computefleet.models.SecurityTypes
     :ivar encryption_identity: Specifies the Managed Identity used by ADE to get access token for
-     keyvault
-     operations.
+     keyvault operations.
     :vartype encryption_identity: ~azure.mgmt.computefleet.models.EncryptionIdentity
     :ivar proxy_agent_settings: Specifies ProxyAgent settings while creating the virtual machine.
-     Minimum
-     api-version: 2023-09-01.
+     Minimum api-version: 2023-09-01.
     :vartype proxy_agent_settings: ~azure.mgmt.computefleet.models.ProxyAgentSettings
     """
 
     uefi_settings: Optional["_models.UefiSettings"] = rest_field(
         name="uefiSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the security settings like secure boot and vTPM used while creating
-     the virtual machine. Minimum api-version: 2020-12-01."""
+    """Specifies the security settings like secure boot and vTPM used while creating the virtual
+     machine. Minimum api-version: 2020-12-01."""
     encryption_at_host: Optional[bool] = rest_field(
         name="encryptionAtHost", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This property can be used by user in the request to enable or disable the Host
-     Encryption for the virtual machine or virtual machine scale set. This will
-     enable the encryption for all the disks including Resource/Temp disk at host
-     itself. The default behavior is: The Encryption at host will be disabled unless
-     this property is set to true for the resource."""
+    """This property can be used by user in the request to enable or disable the Host Encryption for
+     the virtual machine or virtual machine scale set. This will enable the encryption for all the
+     disks including Resource/Temp disk at host itself. The default behavior is: The Encryption at
+     host will be disabled unless this property is set to true for the resource."""
     security_type: Optional[Union[str, "_models.SecurityTypes"]] = rest_field(
         name="securityType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the SecurityType of the virtual machine. It has to be set to any
-     specified value to enable UefiSettings. The default behavior is: UefiSettings
-     will not be enabled unless this property is set. Known values are: \"TrustedLaunch\" and
-     \"ConfidentialVM\"."""
+    """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
+     enable UefiSettings. The default behavior is: UefiSettings will not be enabled unless this
+     property is set. Known values are: \"TrustedLaunch\" and \"ConfidentialVM\"."""
     encryption_identity: Optional["_models.EncryptionIdentity"] = rest_field(
         name="encryptionIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the Managed Identity used by ADE to get access token for keyvault
-     operations."""
+    """Specifies the Managed Identity used by ADE to get access token for keyvault operations."""
     proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = rest_field(
         name="proxyAgentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies ProxyAgent settings while creating the virtual machine. Minimum
-     api-version: 2023-09-01."""
+    """Specifies ProxyAgent settings while creating the virtual machine. Minimum api-version:
+     2023-09-01."""
 
     @overload
     def __init__(
@@ -2303,9 +2239,8 @@ class SecurityProfile(_Model):
 
 
 class ServiceArtifactReference(_Model):
-    """Specifies the service artifact reference id used to set same image version for
-    all virtual machines in the scale set when using 'latest' image version.
-    Minimum api-version: 2022-11-01.
+    """Specifies the service artifact reference id used to set same image version for all virtual
+    machines in the scale set when using 'latest' image version. Minimum api-version: 2022-11-01.
 
     :ivar id: The service artifact reference id in the form of
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
@@ -2352,12 +2287,10 @@ class SpotPriorityProfile(_Model):
      "CapacityOptimized".
     :vartype allocation_strategy: str or ~azure.mgmt.computefleet.models.SpotAllocationStrategy
     :ivar maintain: Flag to enable/disable continuous goal seeking for the desired capacity and
-     restoration of evicted Spot VMs.
-     If maintain is enabled, AzureFleetRP will use all VM sizes in vmSizesProfile to create new VMs
-     (if VMs are evicted deleted)
-     or update existing VMs with new VM sizes (if VMs are evicted deallocated or failed to allocate
-     due to capacity constraint) in order to achieve the desired capacity.
-     Maintain is enabled by default.
+     restoration of evicted Spot VMs. If maintain is enabled, AzureFleetRP will use all VM sizes in
+     vmSizesProfile to create new VMs (if VMs are evicted deleted) or update existing VMs with new
+     VM sizes (if VMs are evicted deallocated or failed to allocate due to capacity constraint) in
+     order to achieve the desired capacity. Maintain is enabled by default.
     :vartype maintain: bool
     """
 
@@ -2384,12 +2317,10 @@ class SpotPriorityProfile(_Model):
      values are: \"PriceCapacityOptimized\", \"LowestPrice\", and \"CapacityOptimized\"."""
     maintain: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Flag to enable/disable continuous goal seeking for the desired capacity and restoration of
-     evicted Spot VMs.
-     If maintain is enabled, AzureFleetRP will use all VM sizes in vmSizesProfile to create new VMs
-     (if VMs are evicted deleted)
-     or update existing VMs with new VM sizes (if VMs are evicted deallocated or failed to allocate
-     due to capacity constraint) in order to achieve the desired capacity.
-     Maintain is enabled by default."""
+     evicted Spot VMs. If maintain is enabled, AzureFleetRP will use all VM sizes in vmSizesProfile
+     to create new VMs (if VMs are evicted deleted) or update existing VMs with new VM sizes (if VMs
+     are evicted deallocated or failed to allocate due to capacity constraint) in order to achieve
+     the desired capacity. Maintain is enabled by default."""
 
     @overload
     def __init__(
@@ -2421,7 +2352,7 @@ class SshConfiguration(_Model):
     :vartype public_keys: list[~azure.mgmt.computefleet.models.SshPublicKey]
     """
 
-    public_keys: Optional[List["_models.SshPublicKey"]] = rest_field(
+    public_keys: Optional[list["_models.SshPublicKey"]] = rest_field(
         name="publicKeys", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of SSH public keys used to authenticate with linux based VMs."""
@@ -2430,7 +2361,7 @@ class SshConfiguration(_Model):
     def __init__(
         self,
         *,
-        public_keys: Optional[List["_models.SshPublicKey"]] = None,
+        public_keys: Optional[list["_models.SshPublicKey"]] = None,
     ) -> None: ...
 
     @overload
@@ -2445,29 +2376,28 @@ class SshConfiguration(_Model):
 
 
 class SshPublicKey(_Model):
-    """Contains information about SSH certificate public key and the path on the Linux
-    VM where the public key is placed.
+    """Contains information about SSH certificate public key and the path on the Linux VM where the
+    public key is placed.
 
-    :ivar path: Specifies the full path on the created VM where ssh public key is stored. If
-     the file already exists, the specified key is appended to the file. Example:
+    :ivar path: Specifies the full path on the created VM where ssh public key is stored. If the
+     file already exists, the specified key is appended to the file. Example:
      /home/user/.ssh/authorized_keys.
     :vartype path: str
     :ivar key_data: SSH public key certificate used to authenticate with the VM through ssh. The
-     key needs to be at least 2048-bit and in ssh-rsa format. For creating ssh keys,
-     see [Create SSH keys on Linux and Mac for Linux VMs in
+     key needs to be at least 2048-bit and in ssh-rsa format. For creating ssh keys, see [Create SSH
+     keys on Linux and Mac for Linux VMs in
      Azure]`https://learn.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed
      <https://learn.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_).
     :vartype key_data: str
     """
 
     path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the full path on the created VM where ssh public key is stored. If
-     the file already exists, the specified key is appended to the file. Example:
-     /home/user/.ssh/authorized_keys."""
+    """Specifies the full path on the created VM where ssh public key is stored. If the file already
+     exists, the specified key is appended to the file. Example: /home/user/.ssh/authorized_keys."""
     key_data: Optional[str] = rest_field(name="keyData", visibility=["read", "create", "update", "delete", "query"])
-    """SSH public key certificate used to authenticate with the VM through ssh. The
-     key needs to be at least 2048-bit and in ssh-rsa format. For creating ssh keys,
-     see [Create SSH keys on Linux and Mac for Linux VMs in
+    """SSH public key certificate used to authenticate with the VM through ssh. The key needs to be at
+     least 2048-bit and in ssh-rsa format. For creating ssh keys, see [Create SSH keys on Linux and
+     Mac for Linux VMs in
      Azure]`https://learn.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed
      <https://learn.microsoft.com/azure/virtual-machines/linux/create-ssh-keys-detailed>`_)."""
 
@@ -2589,10 +2519,9 @@ class TerminateNotificationProfile(_Model):
     """Specifies Terminate Scheduled Event related configurations.
 
     :ivar not_before_timeout: Configurable length of time a Virtual Machine being deleted will have
-     to
-     potentially approve the Terminate Scheduled Event before the event is auto
-     approved (timed out). The configuration must be specified in ISO 8601 format,
-     the default value is 5 minutes (PT5M).
+     to potentially approve the Terminate Scheduled Event before the event is auto approved (timed
+     out). The configuration must be specified in ISO 8601 format, the default value is 5 minutes
+     (PT5M).
     :vartype not_before_timeout: str
     :ivar enable: Specifies whether the Terminate Scheduled event is enabled or disabled.
     :vartype enable: bool
@@ -2601,10 +2530,9 @@ class TerminateNotificationProfile(_Model):
     not_before_timeout: Optional[str] = rest_field(
         name="notBeforeTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Configurable length of time a Virtual Machine being deleted will have to
-     potentially approve the Terminate Scheduled Event before the event is auto
-     approved (timed out). The configuration must be specified in ISO 8601 format,
-     the default value is 5 minutes (PT5M)."""
+    """Configurable length of time a Virtual Machine being deleted will have to potentially approve
+     the Terminate Scheduled Event before the event is auto approved (timed out). The configuration
+     must be specified in ISO 8601 format, the default value is 5 minutes (PT5M)."""
     enable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies whether the Terminate Scheduled event is enabled or disabled."""
 
@@ -2628,12 +2556,11 @@ class TerminateNotificationProfile(_Model):
 
 
 class UefiSettings(_Model):
-    """Specifies the security settings like secure boot and vTPM used while creating
-    the virtual machine. Minimum api-version: 2020-12-01.
+    """Specifies the security settings like secure boot and vTPM used while creating the virtual
+    machine. Minimum api-version: 2020-12-01.
 
     :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
-     machine. Minimum
-     api-version: 2020-12-01.
+     machine. Minimum api-version: 2020-12-01.
     :vartype secure_boot_enabled: bool
     :ivar v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine. Minimum
      api-version: 2020-12-01.
@@ -2643,13 +2570,13 @@ class UefiSettings(_Model):
     secure_boot_enabled: Optional[bool] = rest_field(
         name="secureBootEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies whether secure boot should be enabled on the virtual machine. Minimum
-     api-version: 2020-12-01."""
+    """Specifies whether secure boot should be enabled on the virtual machine. Minimum api-version:
+     2020-12-01."""
     v_tpm_enabled: Optional[bool] = rest_field(
         name="vTpmEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies whether vTPM should be enabled on the virtual machine. Minimum
-     api-version: 2020-12-01."""
+    """Specifies whether vTPM should be enabled on the virtual machine. Minimum api-version:
+     2020-12-01."""
 
     @overload
     def __init__(
@@ -2686,61 +2613,51 @@ class UserAssignedIdentity(_Model):
 
 
 class VaultCertificate(_Model):
-    """Describes a single certificate reference in a Key Vault, and where the
-    certificate should reside on the VM.
+    """Describes a single certificate reference in a Key Vault, and where the certificate should
+    reside on the VM.
 
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
-     a
-     secret. For adding a secret to the Key Vault, see `Add a key or secret to the
-     key
-     vault <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_.
-     In this case, your certificate needs to be It is the Base64 encoding of the
-     following JSON Object which is encoded in UTF-8: <br><br> {<br>
-     "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
-     "password":"<pfx-file-password>"<br>} <br> To install certificates on a virtual
-     machine it is recommended to use the `Azure Key Vault virtual machine extension
-     for
-     Linux <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_
-     or the `Azure Key Vault virtual machine extension for
-     Windows <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
+     a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
+     <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
+     certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
+     in UTF-8: <br><br> {<br> "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
+     "password":"<pfx-file-password>"<br>} <br> To install certificates on a virtual machine it is
+     recommended to use the `Azure Key Vault virtual machine extension for Linux
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :vartype certificate_url: str
     :ivar certificate_store: For Windows VMs, specifies the certificate store on the Virtual
-     Machine to
-     which the certificate should be added. The specified certificate store is
-     implicitly in the LocalMachine account. For Linux VMs, the certificate file is
-     placed under the /var/lib/waagent directory, with the file name
-     &lt;UppercaseThumbprint&gt;.crt for the X509 certificate file and
-     &lt;UppercaseThumbprint&gt;.prv for private key. Both of these files are .pem
-     formatted.
+     Machine to which the certificate should be added. The specified certificate store is implicitly
+     in the LocalMachine account. For Linux VMs, the certificate file is placed under the
+     /var/lib/waagent directory, with the file name &lt;UppercaseThumbprint&gt;.crt for the X509
+     certificate file and &lt;UppercaseThumbprint&gt;.prv for private key. Both of these files are
+     .pem formatted.
     :vartype certificate_store: str
     """
 
     certificate_url: Optional[str] = rest_field(
         name="certificateUrl", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This is the URL of a certificate that has been uploaded to Key Vault as a
-     secret. For adding a secret to the Key Vault, see `Add a key or secret to the
-     key
-     vault <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_.
-     In this case, your certificate needs to be It is the Base64 encoding of the
-     following JSON Object which is encoded in UTF-8: <br><br> {<br>
-     \"data\":\"<Base64-encoded-certificate>\",<br>  \"dataType\":\"pfx\",<br>
-     \"password\":\"<pfx-file-password>\"<br>} <br> To install certificates on a virtual
-     machine it is recommended to use the `Azure Key Vault virtual machine extension
-     for
-     Linux <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_
-     or the `Azure Key Vault virtual machine extension for
-     Windows <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_."""
+    """This is the URL of a certificate that has been uploaded to Key Vault as a secret. For adding a
+     secret to the Key Vault, see `Add a key or secret to the key vault
+     <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
+     certificate needs to be It is the Base64 encoding of the following JSON Object which is encoded
+     in UTF-8: <br><br> {<br> \"data\":\"<Base64-encoded-certificate>\",<br>
+     \"dataType\":\"pfx\",<br> \"password\":\"<pfx-file-password>\"<br>} <br> To install
+     certificates on a virtual machine it is recommended to use the `Azure Key Vault virtual machine
+     extension for Linux
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_."""
     certificate_store: Optional[str] = rest_field(
         name="certificateStore", visibility=["read", "create", "update", "delete", "query"]
     )
-    """For Windows VMs, specifies the certificate store on the Virtual Machine to
-     which the certificate should be added. The specified certificate store is
-     implicitly in the LocalMachine account. For Linux VMs, the certificate file is
-     placed under the /var/lib/waagent directory, with the file name
-     &lt;UppercaseThumbprint&gt;.crt for the X509 certificate file and
-     &lt;UppercaseThumbprint&gt;.prv for private key. Both of these files are .pem
-     formatted."""
+    """For Windows VMs, specifies the certificate store on the Virtual Machine to which the
+     certificate should be added. The specified certificate store is implicitly in the LocalMachine
+     account. For Linux VMs, the certificate file is placed under the /var/lib/waagent directory,
+     with the file name &lt;UppercaseThumbprint&gt;.crt for the X509 certificate file and
+     &lt;UppercaseThumbprint&gt;.prv for private key. Both of these files are .pem formatted."""
 
     @overload
     def __init__(
@@ -2775,9 +2692,8 @@ class VaultSecretGroup(_Model):
     source_vault: Optional["_models.SubResource"] = rest_field(
         name="sourceVault", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The relative URL of the Key Vault containing all of the certificates in
-     VaultCertificates."""
-    vault_certificates: Optional[List["_models.VaultCertificate"]] = rest_field(
+    """The relative URL of the Key Vault containing all of the certificates in VaultCertificates."""
+    vault_certificates: Optional[list["_models.VaultCertificate"]] = rest_field(
         name="vaultCertificates", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of key vault references in SourceVault which contain certificates."""
@@ -2787,7 +2703,7 @@ class VaultSecretGroup(_Model):
         self,
         *,
         source_vault: Optional["_models.SubResource"] = None,
-        vault_certificates: Optional[List["_models.VaultCertificate"]] = None,
+        vault_certificates: Optional[list["_models.VaultCertificate"]] = None,
     ) -> None: ...
 
     @overload
@@ -2830,7 +2746,7 @@ class VirtualHardDisk(_Model):
 
 
 class VirtualMachine(_Model):
-    """An instant Fleet's virtual machine.
+    """A Launch mode Fleet's virtual machine.
 
     :ivar name: The name of the virtual machine. Required.
     :vartype name: str
@@ -2842,7 +2758,7 @@ class VirtualMachine(_Model):
     :vartype type: str
     :ivar operation_status: This represents the operationStatus of the virtual machine in response
      to the last operation that was performed on it by Azure Fleet resource. Required. Known values
-     are: "Creating", "Canceled", "CancelFailedStatusUnknown", "Failed", and "Succeeded".
+     are: "Launching", "Creating", "Failed", and "Succeeded".
     :vartype operation_status: str or ~azure.mgmt.computefleet.models.VMOperationStatus
     :ivar error: Error information when ``operationStatus`` is ``Failed``.
     :vartype error: ~azure.mgmt.computefleet.models.ApiError
@@ -2858,8 +2774,8 @@ class VirtualMachine(_Model):
     """Type of the virtual machine."""
     operation_status: Union[str, "_models.VMOperationStatus"] = rest_field(name="operationStatus", visibility=["read"])
     """This represents the operationStatus of the virtual machine in response to the last operation
-     that was performed on it by Azure Fleet resource. Required. Known values are: \"Creating\",
-     \"Canceled\", \"CancelFailedStatusUnknown\", \"Failed\", and \"Succeeded\"."""
+     that was performed on it by Azure Fleet resource. Required. Known values are: \"Launching\",
+     \"Creating\", \"Failed\", and \"Succeeded\"."""
     error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
     """Error information when ``operationStatus`` is ``Failed``."""
 
@@ -2904,14 +2820,13 @@ class VirtualMachineScaleSetDataDisk(_Model):
 
     :ivar name: The disk name.
     :vartype name: str
-    :ivar lun: Specifies the logical unit number of the data disk. This value is used to
-     identify data disks within the VM and therefore must be unique for each data
-     disk attached to a VM. Required.
+    :ivar lun: Specifies the logical unit number of the data disk. This value is used to identify
+     data disks within the VM and therefore must be unique for each data disk attached to a VM.
+     Required.
     :vartype lun: int
-    :ivar caching: Specifies the caching requirements. Possible values are: **None,**
-     **ReadOnly,** **ReadWrite.** The default values are: **None for Standard
-     storage. ReadOnly for Premium storage.**. Known values are: "None", "ReadOnly", and
-     "ReadWrite".
+    :ivar caching: Specifies the caching requirements. Possible values are: **None,** **ReadOnly,**
+     **ReadWrite.** The default values are: **None for Standard storage. ReadOnly for Premium
+     storage.**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.computefleet.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
@@ -2920,47 +2835,40 @@ class VirtualMachineScaleSetDataDisk(_Model):
      "Attach", "Copy", and "Restore".
     :vartype create_option: str or ~azure.mgmt.computefleet.models.DiskCreateOptionTypes
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
-     used
-     to overwrite the size of the disk in a virtual machine image. The property
-     diskSizeGB is the number of bytes x 1024^3 for the disk and the value cannot be
-     larger than 1023.
+     used to overwrite the size of the disk in a virtual machine image. The property diskSizeGB is
+     the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk:
      ~azure.mgmt.computefleet.models.VirtualMachineScaleSetManagedDiskParameters
     :ivar disk_iops_read_write: Specifies the Read-Write IOPS for the managed disk. Should be used
-     only when
-     StorageAccountType is UltraSSD_LRS. If not specified, a default value would be
+     only when StorageAccountType is UltraSSD_LRS. If not specified, a default value would be
      assigned based on diskSizeGB.
     :vartype disk_iops_read_write: int
     :ivar disk_m_bps_read_write: Specifies the bandwidth in MB per second for the managed disk.
-     Should be used
-     only when StorageAccountType is UltraSSD_LRS. If not specified, a default value
+     Should be used only when StorageAccountType is UltraSSD_LRS. If not specified, a default value
      would be assigned based on diskSizeGB.
     :vartype disk_m_bps_read_write: int
     :ivar delete_option: Specifies whether data disk should be deleted or detached upon VMSS Flex
-     deletion (This feature is available for VMSS with Flexible OrchestrationMode
-     only).<br><br> Possible values: <br><br> **Delete** If this value is used, the
-     data disk is deleted when the VMSS Flex VM is deleted.<br><br> **Detach** If
-     this value is used, the data disk is retained after VMSS Flex VM is
-     deleted.<br><br> The default value is set to **Delete**. Known values are: "Delete" and
-     "Detach".
+     deletion (This feature is available for VMSS with Flexible OrchestrationMode only).<br><br>
+     Possible values: <br><br> **Delete** If this value is used, the data disk is deleted when the
+     VMSS Flex VM is deleted.<br><br> **Detach** If this value is used, the data disk is retained
+     after VMSS Flex VM is deleted.<br><br> The default value is set to **Delete**. Known values
+     are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.computefleet.models.DiskDeleteOptionTypes
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The disk name."""
     lun: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the logical unit number of the data disk. This value is used to
-     identify data disks within the VM and therefore must be unique for each data
-     disk attached to a VM. Required."""
+    """Specifies the logical unit number of the data disk. This value is used to identify data disks
+     within the VM and therefore must be unique for each data disk attached to a VM. Required."""
     caching: Optional[Union[str, "_models.CachingTypes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the caching requirements. Possible values are: **None,**
-     **ReadOnly,** **ReadWrite.** The default values are: **None for Standard
-     storage. ReadOnly for Premium storage.**. Known values are: \"None\", \"ReadOnly\", and
-     \"ReadWrite\"."""
+    """Specifies the caching requirements. Possible values are: **None,** **ReadOnly,** **ReadWrite.**
+     The default values are: **None for Standard storage. ReadOnly for Premium storage.**. Known
+     values are: \"None\", \"ReadOnly\", and \"ReadWrite\"."""
     write_accelerator_enabled: Optional[bool] = rest_field(
         name="writeAcceleratorEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2973,10 +2881,9 @@ class VirtualMachineScaleSetDataDisk(_Model):
     disk_size_gb: Optional[int] = rest_field(
         name="diskSizeGB", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the size of an empty data disk in gigabytes. This element can be used
-     to overwrite the size of the disk in a virtual machine image. The property
-     diskSizeGB is the number of bytes x 1024^3 for the disk and the value cannot be
-     larger than 1023."""
+    """Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite
+     the size of the disk in a virtual machine image. The property diskSizeGB is the number of bytes
+     x 1024^3 for the disk and the value cannot be larger than 1023."""
     managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = rest_field(
         name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2984,24 +2891,22 @@ class VirtualMachineScaleSetDataDisk(_Model):
     disk_iops_read_write: Optional[int] = rest_field(
         name="diskIOPSReadWrite", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the Read-Write IOPS for the managed disk. Should be used only when
-     StorageAccountType is UltraSSD_LRS. If not specified, a default value would be
-     assigned based on diskSizeGB."""
+    """Specifies the Read-Write IOPS for the managed disk. Should be used only when StorageAccountType
+     is UltraSSD_LRS. If not specified, a default value would be assigned based on diskSizeGB."""
     disk_m_bps_read_write: Optional[int] = rest_field(
         name="diskMBpsReadWrite", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the bandwidth in MB per second for the managed disk. Should be used
-     only when StorageAccountType is UltraSSD_LRS. If not specified, a default value
-     would be assigned based on diskSizeGB."""
+    """Specifies the bandwidth in MB per second for the managed disk. Should be used only when
+     StorageAccountType is UltraSSD_LRS. If not specified, a default value would be assigned based
+     on diskSizeGB."""
     delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = rest_field(
         name="deleteOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies whether data disk should be deleted or detached upon VMSS Flex
-     deletion (This feature is available for VMSS with Flexible OrchestrationMode
-     only).<br><br> Possible values: <br><br> **Delete** If this value is used, the
-     data disk is deleted when the VMSS Flex VM is deleted.<br><br> **Detach** If
-     this value is used, the data disk is retained after VMSS Flex VM is
-     deleted.<br><br> The default value is set to **Delete**. Known values are: \"Delete\" and
+    """Specifies whether data disk should be deleted or detached upon VMSS Flex deletion (This feature
+     is available for VMSS with Flexible OrchestrationMode only).<br><br> Possible values: <br><br>
+     **Delete** If this value is used, the data disk is deleted when the VMSS Flex VM is
+     deleted.<br><br> **Detach** If this value is used, the data disk is retained after VMSS Flex VM
+     is deleted.<br><br> The default value is set to **Delete**. Known values are: \"Delete\" and
      \"Detach\"."""
 
     @overload
@@ -3080,30 +2985,27 @@ class VirtualMachineScaleSetExtensionProfile(_Model):
     :ivar extensions: The virtual machine scale set child extension resources.
     :vartype extensions: list[~azure.mgmt.computefleet.models.VirtualMachineScaleSetExtension]
     :ivar extensions_time_budget: Specifies the time alloted for all extensions to start. The time
-     duration
-     should be between 15 minutes and 120 minutes (inclusive) and should be
-     specified in ISO 8601 format. The default value is 90 minutes (PT1H30M).
-     Minimum api-version: 2020-06-01.
+     duration should be between 15 minutes and 120 minutes (inclusive) and should be specified in
+     ISO 8601 format. The default value is 90 minutes (PT1H30M). Minimum api-version: 2020-06-01.
     :vartype extensions_time_budget: str
     """
 
-    extensions: Optional[List["_models.VirtualMachineScaleSetExtension"]] = rest_field(
+    extensions: Optional[list["_models.VirtualMachineScaleSetExtension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The virtual machine scale set child extension resources."""
     extensions_time_budget: Optional[str] = rest_field(
         name="extensionsTimeBudget", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the time alloted for all extensions to start. The time duration
-     should be between 15 minutes and 120 minutes (inclusive) and should be
-     specified in ISO 8601 format. The default value is 90 minutes (PT1H30M).
-     Minimum api-version: 2020-06-01."""
+    """Specifies the time alloted for all extensions to start. The time duration should be between 15
+     minutes and 120 minutes (inclusive) and should be specified in ISO 8601 format. The default
+     value is 90 minutes (PT1H30M). Minimum api-version: 2020-06-01."""
 
     @overload
     def __init__(
         self,
         *,
-        extensions: Optional[List["_models.VirtualMachineScaleSetExtension"]] = None,
+        extensions: Optional[list["_models.VirtualMachineScaleSetExtension"]] = None,
         extensions_time_budget: Optional[str] = None,
     ) -> None: ...
 
@@ -3122,9 +3024,7 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
     """Describes the properties of a Virtual Machine Scale Set Extension.
 
     :ivar force_update_tag: If a value is provided and is different from the previous value, the
-     extension
-     handler will be forced to update even if the extension configuration has not
-     changed.
+     extension handler will be forced to update even if the extension configuration has not changed.
     :vartype force_update_tag: str
     :ivar publisher: The name of the extension handler publisher.
     :vartype publisher: str
@@ -3133,13 +3033,11 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
     :ivar type_handler_version: Specifies the version of the script handler.
     :vartype type_handler_version: str
     :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
-     version if one is
-     available at deployment time. Once deployed, however, the extension will not
+     version if one is available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true.
     :vartype auto_upgrade_minor_version: bool
     :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
-     upgraded by the
-     platform if there is a newer version of the extension available.
+     upgraded by the platform if there is a newer version of the extension available.
     :vartype enable_automatic_upgrade: bool
     :ivar settings: Json formatted public settings for the extension.
     :vartype settings: dict[str, any]
@@ -3149,17 +3047,14 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar provision_after_extensions: Collection of extension names after which this extension
-     needs to be
-     provisioned.
+     needs to be provisioned.
     :vartype provision_after_extensions: list[str]
     :ivar suppress_failures: Indicates whether failures stemming from the extension will be
-     suppressed
-     (Operational failures such as not connecting to the VM will not be suppressed
+     suppressed (Operational failures such as not connecting to the VM will not be suppressed
      regardless of this value). The default is false.
     :vartype suppress_failures: bool
     :ivar protected_settings_from_key_vault: The extensions protected settings that are passed by
-     reference, and consumed
-     from key vault.
+     reference, and consumed from key vault.
     :vartype protected_settings_from_key_vault:
      ~azure.mgmt.computefleet.models.KeyVaultSecretReference
     """
@@ -3167,9 +3062,8 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
     force_update_tag: Optional[str] = rest_field(
         name="forceUpdateTag", visibility=["read", "create", "update", "delete", "query"]
     )
-    """If a value is provided and is different from the previous value, the extension
-     handler will be forced to update even if the extension configuration has not
-     changed."""
+    """If a value is provided and is different from the previous value, the extension handler will be
+     forced to update even if the extension configuration has not changed."""
     publisher: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the extension handler publisher."""
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3181,37 +3075,35 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
     auto_upgrade_minor_version: Optional[bool] = rest_field(
         name="autoUpgradeMinorVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the extension should use a newer minor version if one is
-     available at deployment time. Once deployed, however, the extension will not
-     upgrade minor versions unless redeployed, even with this property set to true."""
+    """Indicates whether the extension should use a newer minor version if one is available at
+     deployment time. Once deployed, however, the extension will not upgrade minor versions unless
+     redeployed, even with this property set to true."""
     enable_automatic_upgrade: Optional[bool] = rest_field(
         name="enableAutomaticUpgrade", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether the extension should be automatically upgraded by the
-     platform if there is a newer version of the extension available."""
-    settings: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether the extension should be automatically upgraded by the platform if there is a
+     newer version of the extension available."""
+    settings: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Json formatted public settings for the extension."""
-    protected_settings: Optional[Dict[str, Any]] = rest_field(name="protectedSettings", visibility=["create", "update"])
-    """The extension can contain either protectedSettings or
-     protectedSettingsFromKeyVault or no protected settings at all."""
+    protected_settings: Optional[dict[str, Any]] = rest_field(name="protectedSettings", visibility=["create", "update"])
+    """The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no
+     protected settings at all."""
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
     """The provisioning state, which only appears in the response."""
-    provision_after_extensions: Optional[List[str]] = rest_field(
+    provision_after_extensions: Optional[list[str]] = rest_field(
         name="provisionAfterExtensions", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Collection of extension names after which this extension needs to be
-     provisioned."""
+    """Collection of extension names after which this extension needs to be provisioned."""
     suppress_failures: Optional[bool] = rest_field(
         name="suppressFailures", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether failures stemming from the extension will be suppressed
-     (Operational failures such as not connecting to the VM will not be suppressed
-     regardless of this value). The default is false."""
+    """Indicates whether failures stemming from the extension will be suppressed (Operational failures
+     such as not connecting to the VM will not be suppressed regardless of this value). The default
+     is false."""
     protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = rest_field(
         name="protectedSettingsFromKeyVault", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The extensions protected settings that are passed by reference, and consumed
-     from key vault."""
+    """The extensions protected settings that are passed by reference, and consumed from key vault."""
 
     @overload
     def __init__(
@@ -3223,9 +3115,9 @@ class VirtualMachineScaleSetExtensionProperties(_Model):  # pylint: disable=name
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        protected_settings: Optional[Dict[str, Any]] = None,
-        provision_after_extensions: Optional[List[str]] = None,
+        settings: Optional[dict[str, Any]] = None,
+        protected_settings: Optional[dict[str, Any]] = None,
+        provision_after_extensions: Optional[list[str]] = None,
         suppress_failures: Optional[bool] = None,
         protected_settings_from_key_vault: Optional["_models.KeyVaultSecretReference"] = None,
     ) -> None: ...
@@ -3245,18 +3137,17 @@ class VirtualMachineScaleSetHardwareProfile(_Model):
     """Specifies the hardware settings for the virtual machine scale set.
 
     :ivar vm_size_properties: Specifies the properties for customizing the size of the virtual
-     machine.
-     Minimum api-version: 2021-11-01. Please follow the instructions in `VM
-     Customization <https://aka.ms/vmcustomization>`_ for more details.
+     machine. Minimum api-version: 2021-11-01. Please follow the instructions in `VM Customization
+     <https://aka.ms/vmcustomization>`_ for more details.
     :vartype vm_size_properties: ~azure.mgmt.computefleet.models.VMSizeProperties
     """
 
     vm_size_properties: Optional["_models.VMSizeProperties"] = rest_field(
         name="vmSizeProperties", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the properties for customizing the size of the virtual machine.
-     Minimum api-version: 2021-11-01. Please follow the instructions in `VM
-     Customization <https://aka.ms/vmcustomization>`_ for more details."""
+    """Specifies the properties for customizing the size of the virtual machine. Minimum api-version:
+     2021-11-01. Please follow the instructions in `VM Customization
+     <https://aka.ms/vmcustomization>`_ for more details."""
 
     @overload
     def __init__(
@@ -3292,8 +3183,7 @@ class VirtualMachineScaleSetIPConfiguration(_Model):
     properties: Optional["_models.VirtualMachineScaleSetIPConfigurationProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes a virtual machine scale set network profile's IP configuration
-     properties."""
+    """Describes a virtual machine scale set network profile's IP configuration properties."""
 
     @overload
     def __init__(
@@ -3315,8 +3205,7 @@ class VirtualMachineScaleSetIPConfiguration(_Model):
 
 
 class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
-    """Describes a virtual machine scale set network profile's IP configuration
-    properties.
+    """Describes a virtual machine scale set network profile's IP configuration properties.
 
     :ivar subnet: Specifies the identifier of the subnet.
     :vartype subnet: ~azure.mgmt.computefleet.models.ApiEntityReference
@@ -3327,29 +3216,24 @@ class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disabl
     :vartype public_ip_address_configuration:
      ~azure.mgmt.computefleet.models.VirtualMachineScaleSetPublicIPAddressConfiguration
     :ivar private_ip_address_version: Available from Api-Version 2017-03-30 onwards, it represents
-     whether the
-     specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
+     whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.computefleet.models.IPVersion
     :ivar application_gateway_backend_address_pools: Specifies an array of references to backend
-     address pools of application
-     gateways. A scale set can reference backend address pools of multiple
-     application gateways. Multiple scale sets cannot use the same application
-     gateway.
+     address pools of application gateways. A scale set can reference backend address pools of
+     multiple application gateways. Multiple scale sets cannot use the same application gateway.
     :vartype application_gateway_backend_address_pools:
      list[~azure.mgmt.computefleet.models.SubResource]
     :ivar application_security_groups: Specifies an array of references to application security
      group.
     :vartype application_security_groups: list[~azure.mgmt.computefleet.models.SubResource]
     :ivar load_balancer_backend_address_pools: Specifies an array of references to backend address
-     pools of load balancers. A
-     scale set can reference backend address pools of one public and one internal
-     load balancer. Multiple scale sets cannot use the same basic sku load balancer.
+     pools of load balancers. A scale set can reference backend address pools of one public and one
+     internal load balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :vartype load_balancer_backend_address_pools: list[~azure.mgmt.computefleet.models.SubResource]
     :ivar load_balancer_inbound_nat_pools: Specifies an array of references to inbound Nat pools of
-     the load balancers. A
-     scale set can reference inbound nat pools of one public and one internal load
-     balancer. Multiple scale sets cannot use the same basic sku load balancer.
+     the load balancers. A scale set can reference inbound nat pools of one public and one internal
+     load balancer. Multiple scale sets cannot use the same basic sku load balancer.
     :vartype load_balancer_inbound_nat_pools: list[~azure.mgmt.computefleet.models.SubResource]
     """
 
@@ -3358,8 +3242,8 @@ class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disabl
     )
     """Specifies the identifier of the subnet."""
     primary: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the primary network interface in case the virtual machine has more
-     than 1 network interface."""
+    """Specifies the primary network interface in case the virtual machine has more than 1 network
+     interface."""
     public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfiguration"] = (
         rest_field(name="publicIPAddressConfiguration", visibility=["read", "create", "update", "delete", "query"])
     )
@@ -3367,32 +3251,31 @@ class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disabl
     private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = rest_field(
         name="privateIPAddressVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Available from Api-Version 2017-03-30 onwards, it represents whether the
-     specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-     values are: 'IPv4' and 'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
-    application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = rest_field(
+    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
+     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
+     'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationGatewayBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies an array of references to backend address pools of application
-     gateways. A scale set can reference backend address pools of multiple
-     application gateways. Multiple scale sets cannot use the same application
-     gateway."""
-    application_security_groups: Optional[List["_models.SubResource"]] = rest_field(
+    """Specifies an array of references to backend address pools of application gateways. A scale set
+     can reference backend address pools of multiple application gateways. Multiple scale sets
+     cannot use the same application gateway."""
+    application_security_groups: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationSecurityGroups", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies an array of references to application security group."""
-    load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = rest_field(
+    load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="loadBalancerBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies an array of references to backend address pools of load balancers. A
-     scale set can reference backend address pools of one public and one internal
-     load balancer. Multiple scale sets cannot use the same basic sku load balancer."""
-    load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = rest_field(
+    """Specifies an array of references to backend address pools of load balancers. A scale set can
+     reference backend address pools of one public and one internal load balancer. Multiple scale
+     sets cannot use the same basic sku load balancer."""
+    load_balancer_inbound_nat_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="loadBalancerInboundNatPools", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies an array of references to inbound Nat pools of the load balancers. A
-     scale set can reference inbound nat pools of one public and one internal load
-     balancer. Multiple scale sets cannot use the same basic sku load balancer."""
+    """Specifies an array of references to inbound Nat pools of the load balancers. A scale set can
+     reference inbound nat pools of one public and one internal load balancer. Multiple scale sets
+     cannot use the same basic sku load balancer."""
 
     @overload
     def __init__(
@@ -3402,10 +3285,10 @@ class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disabl
         primary: Optional[bool] = None,
         public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
         private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
-        application_gateway_backend_address_pools: Optional[List["_models.SubResource"]] = None,
-        application_security_groups: Optional[List["_models.SubResource"]] = None,
-        load_balancer_backend_address_pools: Optional[List["_models.SubResource"]] = None,
-        load_balancer_inbound_nat_pools: Optional[List["_models.SubResource"]] = None,
+        application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
+        application_security_groups: Optional[list["_models.SubResource"]] = None,
+        load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
+        load_balancer_inbound_nat_pools: Optional[list["_models.SubResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -3458,14 +3341,12 @@ class VirtualMachineScaleSetManagedDiskParameters(_Model):  # pylint: disable=na
     """Describes the parameters of a ScaleSet managed disk.
 
     :ivar storage_account_type: Specifies the storage account type for the managed disk. NOTE:
-     UltraSSD_LRS can
-     only be used with data disks, it cannot be used with OS Disk. Known values are: "Standard_LRS",
-     "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", "StandardSSD_ZRS", and
-     "PremiumV2_LRS".
+     UltraSSD_LRS can only be used with data disks, it cannot be used with OS Disk. Known values
+     are: "Standard_LRS", "Premium_LRS", "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS",
+     "StandardSSD_ZRS", and "PremiumV2_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.computefleet.models.StorageAccountTypes
     :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
-     the managed
-     disk.
+     the managed disk.
     :vartype disk_encryption_set: ~azure.mgmt.computefleet.models.DiskEncryptionSetParameters
     :ivar security_profile: Specifies the security profile for the managed disk.
     :vartype security_profile: ~azure.mgmt.computefleet.models.VMDiskSecurityProfile
@@ -3474,15 +3355,14 @@ class VirtualMachineScaleSetManagedDiskParameters(_Model):  # pylint: disable=na
     storage_account_type: Optional[Union[str, "_models.StorageAccountTypes"]] = rest_field(
         name="storageAccountType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can
-     only be used with data disks, it cannot be used with OS Disk. Known values are:
-     \"Standard_LRS\", \"Premium_LRS\", \"StandardSSD_LRS\", \"UltraSSD_LRS\", \"Premium_ZRS\",
-     \"StandardSSD_ZRS\", and \"PremiumV2_LRS\"."""
+    """Specifies the storage account type for the managed disk. NOTE: UltraSSD_LRS can only be used
+     with data disks, it cannot be used with OS Disk. Known values are: \"Standard_LRS\",
+     \"Premium_LRS\", \"StandardSSD_LRS\", \"UltraSSD_LRS\", \"Premium_ZRS\", \"StandardSSD_ZRS\",
+     and \"PremiumV2_LRS\"."""
     disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = rest_field(
         name="diskEncryptionSet", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the customer managed disk encryption set resource id for the managed
-     disk."""
+    """Specifies the customer managed disk encryption set resource id for the managed disk."""
     security_profile: Optional["_models.VMDiskSecurityProfile"] = rest_field(
         name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3551,7 +3431,7 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_Model):  # pylint: 
     :vartype dns_servers: list[str]
     """
 
-    dns_servers: Optional[List[str]] = rest_field(
+    dns_servers: Optional[list[str]] = rest_field(
         name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of DNS servers IP addresses."""
@@ -3560,7 +3440,7 @@ class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_Model):  # pylint: 
     def __init__(
         self,
         *,
-        dns_servers: Optional[List[str]] = None,
+        dns_servers: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -3610,8 +3490,8 @@ class VirtualMachineScaleSetNetworkConfigurationProperties(_Model):  # pylint: d
     """
 
     primary: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the primary network interface in case the virtual machine has more
-     than 1 network interface."""
+    """Specifies the primary network interface in case the virtual machine has more than 1 network
+     interface."""
     enable_accelerated_networking: Optional[bool] = rest_field(
         name="enableAcceleratedNetworking", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3632,7 +3512,7 @@ class VirtualMachineScaleSetNetworkConfigurationProperties(_Model):  # pylint: d
         name="dnsSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The dns settings to be applied on the network interfaces."""
-    ip_configurations: List["_models.VirtualMachineScaleSetIPConfiguration"] = rest_field(
+    ip_configurations: list["_models.VirtualMachineScaleSetIPConfiguration"] = rest_field(
         name="ipConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the IP configurations of the network interface. Required."""
@@ -3648,19 +3528,19 @@ class VirtualMachineScaleSetNetworkConfigurationProperties(_Model):  # pylint: d
     auxiliary_mode: Optional[Union[str, "_models.NetworkInterfaceAuxiliaryMode"]] = rest_field(
         name="auxiliaryMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies whether the Auxiliary mode is enabled for the Network Interface
-     resource. Known values are: \"None\", \"AcceleratedConnections\", and \"Floating\"."""
+    """Specifies whether the Auxiliary mode is enabled for the Network Interface resource. Known
+     values are: \"None\", \"AcceleratedConnections\", and \"Floating\"."""
     auxiliary_sku: Optional[Union[str, "_models.NetworkInterfaceAuxiliarySku"]] = rest_field(
         name="auxiliarySku", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies whether the Auxiliary sku is enabled for the Network Interface
-     resource. Known values are: \"None\", \"A1\", \"A2\", \"A4\", and \"A8\"."""
+    """Specifies whether the Auxiliary sku is enabled for the Network Interface resource. Known values
+     are: \"None\", \"A1\", \"A2\", \"A4\", and \"A8\"."""
 
     @overload
     def __init__(
         self,
         *,
-        ip_configurations: List["_models.VirtualMachineScaleSetIPConfiguration"],
+        ip_configurations: list["_models.VirtualMachineScaleSetIPConfiguration"],
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
         disable_tcp_state_tracking: Optional[bool] = None,
@@ -3695,35 +3575,34 @@ class VirtualMachineScaleSetNetworkProfile(_Model):
     :vartype network_interface_configurations:
      list[~azure.mgmt.computefleet.models.VirtualMachineScaleSetNetworkConfiguration]
     :ivar network_api_version: specifies the Microsoft.Network API version used when creating
-     networking
-     resources in the Network Interface Configurations for Virtual Machine Scale Set
-     with orchestration mode 'Flexible'. "2020-11-01"
+     networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
+     orchestration mode 'Flexible'. "2020-11-01"
     :vartype network_api_version: str or ~azure.mgmt.computefleet.models.NetworkApiVersion
     """
 
     health_probe: Optional["_models.ApiEntityReference"] = rest_field(
         name="healthProbe", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A reference to a load balancer probe used to determine the health of an
-     instance in the virtual machine scale set. The reference will be in the form:
+    """A reference to a load balancer probe used to determine the health of an instance in the virtual
+     machine scale set. The reference will be in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/loadBalancers/{loadBalancerName}/probes/{probeName}'."""
-    network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = rest_field(
+    network_interface_configurations: Optional[list["_models.VirtualMachineScaleSetNetworkConfiguration"]] = rest_field(
         name="networkInterfaceConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of network configurations."""
     network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = rest_field(
         name="networkApiVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """specifies the Microsoft.Network API version used when creating networking
-     resources in the Network Interface Configurations for Virtual Machine Scale Set
-     with orchestration mode 'Flexible'. \"2020-11-01\""""
+    """specifies the Microsoft.Network API version used when creating networking resources in the
+     Network Interface Configurations for Virtual Machine Scale Set with orchestration mode
+     'Flexible'. \"2020-11-01\""""
 
     @overload
     def __init__(
         self,
         *,
         health_probe: Optional["_models.ApiEntityReference"] = None,
-        network_interface_configurations: Optional[List["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
+        network_interface_configurations: Optional[list["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
         network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
     ) -> None: ...
 
@@ -3743,54 +3622,46 @@ class VirtualMachineScaleSetOSDisk(_Model):
 
     :ivar name: The disk name.
     :vartype name: str
-    :ivar caching: Specifies the caching requirements. Possible values are: **None,**
-     **ReadOnly,** **ReadWrite.** The default values are: **None for Standard
-     storage. ReadOnly for Premium storage.**. Known values are: "None", "ReadOnly", and
-     "ReadWrite".
+    :ivar caching: Specifies the caching requirements. Possible values are: **None,** **ReadOnly,**
+     **ReadWrite.** The default values are: **None for Standard storage. ReadOnly for Premium
+     storage.**. Known values are: "None", "ReadOnly", and "ReadWrite".
     :vartype caching: str or ~azure.mgmt.computefleet.models.CachingTypes
     :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
      disabled on the disk.
     :vartype write_accelerator_enabled: bool
     :ivar create_option: Specifies how the virtual machines in the scale set should be created. The
-     only
-     allowed value is: **FromImage.** This value is used when you are using an image
-     to create the virtual machine. If you are using a platform image, you also use
-     the imageReference element described above. If you are using a marketplace
-     image, you  also use the plan element previously described. Required. Known values are:
-     "FromImage", "Empty", "Attach", "Copy", and "Restore".
+     only allowed value is: **FromImage.** This value is used when you are using an image to create
+     the virtual machine. If you are using a platform image, you also use the imageReference element
+     described above. If you are using a marketplace image, you  also use the plan element
+     previously described. Required. Known values are: "FromImage", "Empty", "Attach", "Copy", and
+     "Restore".
     :vartype create_option: str or ~azure.mgmt.computefleet.models.DiskCreateOptionTypes
     :ivar diff_disk_settings: Specifies the ephemeral disk Settings for the operating system disk
-     used by the
-     virtual machine scale set.
+     used by the virtual machine scale set.
     :vartype diff_disk_settings: ~azure.mgmt.computefleet.models.DiffDiskSettings
     :ivar disk_size_gb: Specifies the size of an empty data disk in gigabytes. This element can be
-     used
-     to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB'
-     is the number of bytes x 1024^3 for the disk and the value cannot
-     be larger than 1023.
+     used to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB' is
+     the number of bytes x 1024^3 for the disk and the value cannot be larger than 1023.
     :vartype disk_size_gb: int
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
-     disk if creating a VM from user-image or a specialized VHD. Possible values
-     are: **Windows,** **Linux.**. Known values are: "Windows" and "Linux".
+     disk if creating a VM from user-image or a specialized VHD. Possible values are: **Windows,**
+     **Linux.**. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.computefleet.models.OperatingSystemTypes
     :ivar image: Specifies information about the unmanaged user image to base the scale set on.
     :vartype image: ~azure.mgmt.computefleet.models.VirtualHardDisk
     :ivar vhd_containers: Specifies the container urls that are used to store operating system
-     disks for
-     the scale set.
+     disks for the scale set.
     :vartype vhd_containers: list[str]
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk:
      ~azure.mgmt.computefleet.models.VirtualMachineScaleSetManagedDiskParameters
     :ivar delete_option: Specifies whether OS Disk should be deleted or detached upon VMSS Flex
-     deletion
-     (This feature is available for VMSS with Flexible OrchestrationMode only).
-     <br><br> Possible values: <br><br> **Delete** If this value is used, the OS
-     disk is deleted when VMSS Flex VM is deleted.<br><br> **Detach** If this value
-     is used, the OS disk is retained after VMSS Flex VM is deleted. <br><br> The
-     default value is set to **Delete**. For an Ephemeral OS Disk, the default value
-     is set to **Delete**. User cannot change the delete option for Ephemeral OS
-     Disk. Known values are: "Delete" and "Detach".
+     deletion (This feature is available for VMSS with Flexible OrchestrationMode only). <br><br>
+     Possible values: <br><br> **Delete** If this value is used, the OS disk is deleted when VMSS
+     Flex VM is deleted.<br><br> **Detach** If this value is used, the OS disk is retained after
+     VMSS Flex VM is deleted. <br><br> The default value is set to **Delete**. For an Ephemeral OS
+     Disk, the default value is set to **Delete**. User cannot change the delete option for
+     Ephemeral OS Disk. Known values are: "Delete" and "Detach".
     :vartype delete_option: str or ~azure.mgmt.computefleet.models.DiskDeleteOptionTypes
     """
 
@@ -3799,10 +3670,9 @@ class VirtualMachineScaleSetOSDisk(_Model):
     caching: Optional[Union[str, "_models.CachingTypes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the caching requirements. Possible values are: **None,**
-     **ReadOnly,** **ReadWrite.** The default values are: **None for Standard
-     storage. ReadOnly for Premium storage.**. Known values are: \"None\", \"ReadOnly\", and
-     \"ReadWrite\"."""
+    """Specifies the caching requirements. Possible values are: **None,** **ReadOnly,** **ReadWrite.**
+     The default values are: **None for Standard storage. ReadOnly for Premium storage.**. Known
+     values are: \"None\", \"ReadOnly\", and \"ReadWrite\"."""
     write_accelerator_enabled: Optional[bool] = rest_field(
         name="writeAcceleratorEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3810,37 +3680,35 @@ class VirtualMachineScaleSetOSDisk(_Model):
     create_option: Union[str, "_models.DiskCreateOptionTypes"] = rest_field(
         name="createOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies how the virtual machines in the scale set should be created. The only
-     allowed value is: **FromImage.** This value is used when you are using an image
-     to create the virtual machine. If you are using a platform image, you also use
-     the imageReference element described above. If you are using a marketplace
-     image, you  also use the plan element previously described. Required. Known values are:
-     \"FromImage\", \"Empty\", \"Attach\", \"Copy\", and \"Restore\"."""
+    """Specifies how the virtual machines in the scale set should be created. The only allowed value
+     is: **FromImage.** This value is used when you are using an image to create the virtual
+     machine. If you are using a platform image, you also use the imageReference element described
+     above. If you are using a marketplace image, you  also use the plan element previously
+     described. Required. Known values are: \"FromImage\", \"Empty\", \"Attach\", \"Copy\", and
+     \"Restore\"."""
     diff_disk_settings: Optional["_models.DiffDiskSettings"] = rest_field(
         name="diffDiskSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the ephemeral disk Settings for the operating system disk used by the
-     virtual machine scale set."""
+    """Specifies the ephemeral disk Settings for the operating system disk used by the virtual machine
+     scale set."""
     disk_size_gb: Optional[int] = rest_field(
         name="diskSizeGB", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the size of an empty data disk in gigabytes. This element can be used
-     to overwrite the size of the disk in a virtual machine image. The property 'diskSizeGB'
-     is the number of bytes x 1024^3 for the disk and the value cannot
-     be larger than 1023."""
+    """Specifies the size of an empty data disk in gigabytes. This element can be used to overwrite
+     the size of the disk in a virtual machine image. The property 'diskSizeGB' is the number of
+     bytes x 1024^3 for the disk and the value cannot be larger than 1023."""
     os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = rest_field(
         name="osType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This property allows you to specify the type of the OS that is included in the
-     disk if creating a VM from user-image or a specialized VHD. Possible values
-     are: **Windows,** **Linux.**. Known values are: \"Windows\" and \"Linux\"."""
+    """This property allows you to specify the type of the OS that is included in the disk if creating
+     a VM from user-image or a specialized VHD. Possible values are: **Windows,** **Linux.**. Known
+     values are: \"Windows\" and \"Linux\"."""
     image: Optional["_models.VirtualHardDisk"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Specifies information about the unmanaged user image to base the scale set on."""
-    vhd_containers: Optional[List[str]] = rest_field(
+    vhd_containers: Optional[list[str]] = rest_field(
         name="vhdContainers", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the container urls that are used to store operating system disks for
-     the scale set."""
+    """Specifies the container urls that are used to store operating system disks for the scale set."""
     managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = rest_field(
         name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3848,14 +3716,13 @@ class VirtualMachineScaleSetOSDisk(_Model):
     delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = rest_field(
         name="deleteOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies whether OS Disk should be deleted or detached upon VMSS Flex deletion
-     (This feature is available for VMSS with Flexible OrchestrationMode only).
-     <br><br> Possible values: <br><br> **Delete** If this value is used, the OS
-     disk is deleted when VMSS Flex VM is deleted.<br><br> **Detach** If this value
-     is used, the OS disk is retained after VMSS Flex VM is deleted. <br><br> The
-     default value is set to **Delete**. For an Ephemeral OS Disk, the default value
-     is set to **Delete**. User cannot change the delete option for Ephemeral OS
-     Disk. Known values are: \"Delete\" and \"Detach\"."""
+    """Specifies whether OS Disk should be deleted or detached upon VMSS Flex deletion (This feature
+     is available for VMSS with Flexible OrchestrationMode only). <br><br> Possible values: <br><br>
+     **Delete** If this value is used, the OS disk is deleted when VMSS Flex VM is deleted.<br><br>
+     **Detach** If this value is used, the OS disk is retained after VMSS Flex VM is deleted.
+     <br><br> The default value is set to **Delete**. For an Ephemeral OS Disk, the default value is
+     set to **Delete**. User cannot change the delete option for Ephemeral OS Disk. Known values
+     are: \"Delete\" and \"Detach\"."""
 
     @overload
     def __init__(
@@ -3869,7 +3736,7 @@ class VirtualMachineScaleSetOSDisk(_Model):
         disk_size_gb: Optional[int] = None,
         os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
         image: Optional["_models.VirtualHardDisk"] = None,
-        vhd_containers: Optional[List[str]] = None,
+        vhd_containers: Optional[list[str]] = None,
         managed_disk: Optional["_models.VirtualMachineScaleSetManagedDiskParameters"] = None,
         delete_option: Optional[Union[str, "_models.DiskDeleteOptionTypes"]] = None,
     ) -> None: ...
@@ -3889,61 +3756,53 @@ class VirtualMachineScaleSetOSProfile(_Model):
     """Describes a virtual machine scale set OS profile.
 
     :ivar computer_name_prefix: Specifies the computer name prefix for all of the virtual machines
-     in the scale
-     set. Computer name prefixes must be 1 to 15 characters long.
+     in the scale set. Computer name prefixes must be 1 to 15 characters long.
     :vartype computer_name_prefix: str
     :ivar admin_username: Specifies the name of the administrator account. <br><br> **Windows-only
-     restriction:** Cannot end in "." <br><br> **Disallowed values:**
-     "administrator", "admin", "user", "user1", "test", "user2", "test1", "user3",
-     "admin1", "1", "123", "a", "actuser", "adm", "admin2", "aspnet", "backup",
-     "console", "david", "guest", "john", "owner", "root", "server", "sql",
-     "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
-     <br><br> **Minimum-length (Linux):** 1  character <br><br> **Max-length
-     (Linux):** 64 characters <br><br> **Max-length (Windows):** 20 characters.
+     restriction:** Cannot end in "." <br><br> **Disallowed values:** "administrator", "admin",
+     "user", "user1", "test", "user2", "test1", "user3", "admin1", "1", "123", "a", "actuser",
+     "adm", "admin2", "aspnet", "backup", "console", "david", "guest", "john", "owner", "root",
+     "server", "sql", "support", "support_388945a0", "sys", "test2", "test3", "user4", "user5".
+     <br><br> **Minimum-length (Linux):** 1  character <br><br> **Max-length (Linux):** 64
+     characters <br><br> **Max-length (Windows):** 20 characters.
     :vartype admin_username: str
     :ivar admin_password: Specifies the password of the administrator account. <br><br>
-     **Minimum-length
-     (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters
-     <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length
-     (Linux):** 72 characters <br><br> **Complexity requirements:** 3 out of 4
-     conditions below need to be fulfilled <br> Has lower characters <br>Has upper
-     characters <br> Has a digit <br> Has a special character (Regex match [\\W_])
-     <br><br> **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd",
-     "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1",
-     "Password22", "iloveyou!" <br><br> For resetting the password, see `How to
-     reset the Remote Desktop service or its login password in a Windows
-     VM <https://learn.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-     <br><br> For resetting root password, see `Manage users, SSH, and check or
-     repair disks on Azure Linux VMs using the VMAccess
-     Extension
+     **Minimum-length (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters
+     <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length (Linux):** 72
+     characters <br><br> **Complexity requirements:** 3 out of 4 conditions below need to be
+     fulfilled <br> Has lower characters <br>Has upper characters <br> Has a digit <br> Has a
+     special character (Regex match [\\W_]) <br><br> **Disallowed values:** "abc@123", "P@$$w0rd",
+     "P@ssw0rd", "P@ssword123", "Pa$$word", "pass@word1", "Password!", "Password1", "Password22",
+     "iloveyou!" <br><br> For resetting the password, see `How to reset the Remote Desktop service
+     or its login password in a Windows VM
+     <https://learn.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_ <br><br> For
+     resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
+     using the VMAccess Extension
      <https://learn.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_.
     :vartype admin_password: str
     :ivar custom_data: Specifies a base-64 encoded string of custom data. The base-64 encoded
-     string
-     is decoded to a binary array that is saved as a file on the Virtual Machine.
-     The maximum length of the binary array is 65535 bytes. For using cloud-init for
-     your VM, see `Using cloud-init to customize a Linux VM during
-     creation <https://learn.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
+     string is decoded to a binary array that is saved as a file on the Virtual Machine. The maximum
+     length of the binary array is 65535 bytes. For using cloud-init for your VM, see `Using
+     cloud-init to customize a Linux VM during creation
+     <https://learn.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_.
     :vartype custom_data: str
     :ivar windows_configuration: Specifies Windows operating system settings on the virtual
      machine.
     :vartype windows_configuration: ~azure.mgmt.computefleet.models.WindowsConfiguration
     :ivar linux_configuration: Specifies the Linux operating system settings on the virtual
-     machine. For a
-     list of supported Linux distributions, see `Linux on Azure-Endorsed
+     machine. For a list of supported Linux distributions, see `Linux on Azure-Endorsed
      Distributions <https://learn.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_.
     :vartype linux_configuration: ~azure.mgmt.computefleet.models.LinuxConfiguration
-    :ivar secrets: Specifies set of certificates that should be installed onto the virtual
-     machines in the scale set. To install certificates on a virtual machine it is
-     recommended to use the `Azure Key Vault virtual machine extension for
-     Linux <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_
-     or the `Azure Key Vault virtual machine extension for
-     Windows <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
+    :ivar secrets: Specifies set of certificates that should be installed onto the virtual machines
+     in the scale set. To install certificates on a virtual machine it is recommended to use the
+     `Azure Key Vault virtual machine extension for Linux
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :vartype secrets: list[~azure.mgmt.computefleet.models.VaultSecretGroup]
     :ivar allow_extension_operations: Specifies whether extension operations should be allowed on
-     the virtual machine
-     scale set. This may only be set to False when no extensions are present on the
-     virtual machine scale set.
+     the virtual machine scale set. This may only be set to False when no extensions are present on
+     the virtual machine scale set.
     :vartype allow_extension_operations: bool
     :ivar require_guest_provision_signal: Optional property which must either be set to True or
      omitted.
@@ -3953,41 +3812,39 @@ class VirtualMachineScaleSetOSProfile(_Model):
     computer_name_prefix: Optional[str] = rest_field(
         name="computerNamePrefix", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the computer name prefix for all of the virtual machines in the scale
-     set. Computer name prefixes must be 1 to 15 characters long."""
+    """Specifies the computer name prefix for all of the virtual machines in the scale set. Computer
+     name prefixes must be 1 to 15 characters long."""
     admin_username: Optional[str] = rest_field(
         name="adminUsername", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the name of the administrator account. <br><br> **Windows-only
-     restriction:** Cannot end in \".\" <br><br> **Disallowed values:**
-     \"administrator\", \"admin\", \"user\", \"user1\", \"test\", \"user2\", \"test1\", \"user3\",
-     \"admin1\", \"1\", \"123\", \"a\", \"actuser\", \"adm\", \"admin2\", \"aspnet\", \"backup\",
-     \"console\", \"david\", \"guest\", \"john\", \"owner\", \"root\", \"server\", \"sql\",
-     \"support\", \"support_388945a0\", \"sys\", \"test2\", \"test3\", \"user4\", \"user5\".
-     <br><br> **Minimum-length (Linux):** 1  character <br><br> **Max-length
-     (Linux):** 64 characters <br><br> **Max-length (Windows):** 20 characters."""
+    """Specifies the name of the administrator account. <br><br> **Windows-only restriction:** Cannot
+     end in \".\" <br><br> **Disallowed values:** \"administrator\", \"admin\", \"user\", \"user1\",
+     \"test\", \"user2\", \"test1\", \"user3\", \"admin1\", \"1\", \"123\", \"a\", \"actuser\",
+     \"adm\", \"admin2\", \"aspnet\", \"backup\", \"console\", \"david\", \"guest\", \"john\",
+     \"owner\", \"root\", \"server\", \"sql\", \"support\", \"support_388945a0\", \"sys\",
+     \"test2\", \"test3\", \"user4\", \"user5\". <br><br> **Minimum-length (Linux):** 1  character
+     <br><br> **Max-length (Linux):** 64 characters <br><br> **Max-length (Windows):** 20
+     characters."""
     admin_password: Optional[str] = rest_field(name="adminPassword", visibility=["create", "update"])
-    """Specifies the password of the administrator account. <br><br> **Minimum-length
-     (Windows):** 8 characters <br><br> **Minimum-length (Linux):** 6 characters
-     <br><br> **Max-length (Windows):** 123 characters <br><br> **Max-length
-     (Linux):** 72 characters <br><br> **Complexity requirements:** 3 out of 4
-     conditions below need to be fulfilled <br> Has lower characters <br>Has upper
-     characters <br> Has a digit <br> Has a special character (Regex match [\W_])
-     <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\",
-     \"P@ssword123\", \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\",
-     \"Password22\", \"iloveyou!\" <br><br> For resetting the password, see `How to
-     reset the Remote Desktop service or its login password in a Windows
-     VM <https://learn.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_
-     <br><br> For resetting root password, see `Manage users, SSH, and check or
-     repair disks on Azure Linux VMs using the VMAccess
-     Extension
+    """Specifies the password of the administrator account. <br><br> **Minimum-length (Windows):** 8
+     characters <br><br> **Minimum-length (Linux):** 6 characters <br><br> **Max-length (Windows):**
+     123 characters <br><br> **Max-length (Linux):** 72 characters <br><br> **Complexity
+     requirements:** 3 out of 4 conditions below need to be fulfilled <br> Has lower characters
+     <br>Has upper characters <br> Has a digit <br> Has a special character (Regex match [\W_])
+     <br><br> **Disallowed values:** \"abc@123\", \"P@$$w0rd\", \"P@ssw0rd\", \"P@ssword123\",
+     \"Pa$$word\", \"pass@word1\", \"Password!\", \"Password1\", \"Password22\", \"iloveyou!\"
+     <br><br> For resetting the password, see `How to reset the Remote Desktop service or its login
+     password in a Windows VM
+     <https://learn.microsoft.com/troubleshoot/azure/virtual-machines/reset-rdp>`_ <br><br> For
+     resetting root password, see `Manage users, SSH, and check or repair disks on Azure Linux VMs
+     using the VMAccess Extension
      <https://learn.microsoft.com/troubleshoot/azure/virtual-machines/troubleshoot-ssh-connection>`_."""
     custom_data: Optional[str] = rest_field(name="customData", visibility=["create", "update"])
-    """Specifies a base-64 encoded string of custom data. The base-64 encoded string
-     is decoded to a binary array that is saved as a file on the Virtual Machine.
-     The maximum length of the binary array is 65535 bytes. For using cloud-init for
-     your VM, see `Using cloud-init to customize a Linux VM during
-     creation <https://learn.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_."""
+    """Specifies a base-64 encoded string of custom data. The base-64 encoded string is decoded to a
+     binary array that is saved as a file on the Virtual Machine. The maximum length of the binary
+     array is 65535 bytes. For using cloud-init for your VM, see `Using cloud-init to customize a
+     Linux VM during creation
+     <https://learn.microsoft.com/azure/virtual-machines/linux/using-cloud-init>`_."""
     windows_configuration: Optional["_models.WindowsConfiguration"] = rest_field(
         name="windowsConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3995,24 +3852,23 @@ class VirtualMachineScaleSetOSProfile(_Model):
     linux_configuration: Optional["_models.LinuxConfiguration"] = rest_field(
         name="linuxConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the Linux operating system settings on the virtual machine. For a
-     list of supported Linux distributions, see `Linux on Azure-Endorsed
-     Distributions <https://learn.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_."""
-    secrets: Optional[List["_models.VaultSecretGroup"]] = rest_field(
+    """Specifies the Linux operating system settings on the virtual machine. For a list of supported
+     Linux distributions, see `Linux on Azure-Endorsed Distributions
+     <https://learn.microsoft.com/azure/virtual-machines/linux/endorsed-distros>`_."""
+    secrets: Optional[list["_models.VaultSecretGroup"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies set of certificates that should be installed onto the virtual
-     machines in the scale set. To install certificates on a virtual machine it is
-     recommended to use the `Azure Key Vault virtual machine extension for
-     Linux <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_
-     or the `Azure Key Vault virtual machine extension for
-     Windows <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_."""
+    """Specifies set of certificates that should be installed onto the virtual machines in the scale
+     set. To install certificates on a virtual machine it is recommended to use the `Azure Key Vault
+     virtual machine extension for Linux
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_."""
     allow_extension_operations: Optional[bool] = rest_field(
         name="allowExtensionOperations", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies whether extension operations should be allowed on the virtual machine
-     scale set. This may only be set to False when no extensions are present on the
-     virtual machine scale set."""
+    """Specifies whether extension operations should be allowed on the virtual machine scale set. This
+     may only be set to False when no extensions are present on the virtual machine scale set."""
     require_guest_provision_signal: Optional[bool] = rest_field(
         name="requireGuestProvisionSignal", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4028,7 +3884,7 @@ class VirtualMachineScaleSetOSProfile(_Model):
         custom_data: Optional[str] = None,
         windows_configuration: Optional["_models.WindowsConfiguration"] = None,
         linux_configuration: Optional["_models.LinuxConfiguration"] = None,
-        secrets: Optional[List["_models.VaultSecretGroup"]] = None,
+        secrets: Optional[list["_models.VaultSecretGroup"]] = None,
         allow_extension_operations: Optional[bool] = None,
         require_guest_provision_signal: Optional[bool] = None,
     ) -> None: ...
@@ -4045,8 +3901,7 @@ class VirtualMachineScaleSetOSProfile(_Model):
 
 
 class VirtualMachineScaleSetPublicIPAddressConfiguration(_Model):  # pylint: disable=name-too-long
-    """Describes a virtual machines scale set IP Configuration's PublicIPAddress
-    configuration.
+    """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar name: The publicIP address configuration name. Required.
     :vartype name: str
@@ -4054,8 +3909,7 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_Model):  # pylint: dis
      configuration.
     :vartype properties:
      ~azure.mgmt.computefleet.models.VirtualMachineScaleSetPublicIPAddressConfigurationProperties
-    :ivar sku: Describes the public IP Sku. It can only be set with OrchestrationMode as
-     Flexible.
+    :ivar sku: Describes the public IP Sku. It can only be set with OrchestrationMode as Flexible.
     :vartype sku: ~azure.mgmt.computefleet.models.PublicIPAddressSku
     """
 
@@ -4064,11 +3918,9 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_Model):  # pylint: dis
     properties: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes a virtual machines scale set IP Configuration's PublicIPAddress
-     configuration."""
+    """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration."""
     sku: Optional["_models.PublicIPAddressSku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Describes the public IP Sku. It can only be set with OrchestrationMode as
-     Flexible."""
+    """Describes the public IP Sku. It can only be set with OrchestrationMode as Flexible."""
 
     @overload
     def __init__(
@@ -4094,16 +3946,13 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_Model):  # 
     """Describes a virtual machines scale sets network configuration's DNS settings.
 
     :ivar domain_name_label: The Domain name label.The concatenation of the domain name label and
-     vm index
-     will be the domain name labels of the PublicIPAddress resources that will be
-     created. Required.
+     vm index will be the domain name labels of the PublicIPAddress resources that will be created.
+     Required.
     :vartype domain_name_label: str
     :ivar domain_name_label_scope: The Domain name label scope.The concatenation of the hashed
-     domain name label
-     that generated according to the policy from domain name label scope and vm
-     index will be the domain name labels of the PublicIPAddress resources that will
-     be created. Known values are: "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and
-     "NoReuse".
+     domain name label that generated according to the policy from domain name label scope and vm
+     index will be the domain name labels of the PublicIPAddress resources that will be created.
+     Known values are: "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and "NoReuse".
     :vartype domain_name_label_scope: str or
      ~azure.mgmt.computefleet.models.DomainNameLabelScopeTypes
     """
@@ -4111,17 +3960,15 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_Model):  # 
     domain_name_label: str = rest_field(
         name="domainNameLabel", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The Domain name label.The concatenation of the domain name label and vm index
-     will be the domain name labels of the PublicIPAddress resources that will be
-     created. Required."""
+    """The Domain name label.The concatenation of the domain name label and vm index will be the
+     domain name labels of the PublicIPAddress resources that will be created. Required."""
     domain_name_label_scope: Optional[Union[str, "_models.DomainNameLabelScopeTypes"]] = rest_field(
         name="domainNameLabelScope", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The Domain name label scope.The concatenation of the hashed domain name label
-     that generated according to the policy from domain name label scope and vm
-     index will be the domain name labels of the PublicIPAddress resources that will
-     be created. Known values are: \"TenantReuse\", \"SubscriptionReuse\", \"ResourceGroupReuse\",
-     and \"NoReuse\"."""
+    """The Domain name label scope.The concatenation of the hashed domain name label that generated
+     according to the policy from domain name label scope and vm index will be the domain name
+     labels of the PublicIPAddress resources that will be created. Known values are:
+     \"TenantReuse\", \"SubscriptionReuse\", \"ResourceGroupReuse\", and \"NoReuse\"."""
 
     @overload
     def __init__(
@@ -4143,8 +3990,7 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_Model):  # 
 
 
 class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(_Model):  # pylint: disable=name-too-long
-    """Describes a virtual machines scale set IP Configuration's PublicIPAddress
-    configuration.
+    """Describes a virtual machines scale set IP Configuration's PublicIPAddress configuration.
 
     :ivar idle_timeout_in_minutes: The idle timeout of the public IP address.
     :vartype idle_timeout_in_minutes: int
@@ -4156,9 +4002,8 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(_Model):  # p
     :ivar public_ip_prefix: The PublicIPPrefix from which to allocate publicIP addresses.
     :vartype public_ip_prefix: ~azure.mgmt.computefleet.models.SubResource
     :ivar public_ip_address_version: Available from Api-Version 2019-07-01 onwards, it represents
-     whether the
-     specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible
-     values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
+     whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
+     are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype public_ip_address_version: str or ~azure.mgmt.computefleet.models.IPVersion
     :ivar delete_option: Specify what happens to the public IP when the VM is deleted. Known values
      are: "Delete" and "Detach".
@@ -4173,7 +4018,7 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(_Model):  # p
         name="dnsSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The dns settings to be applied on the publicIP addresses ."""
-    ip_tags: Optional[List["_models.VirtualMachineScaleSetIpTag"]] = rest_field(
+    ip_tags: Optional[list["_models.VirtualMachineScaleSetIpTag"]] = rest_field(
         name="ipTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of IP tags associated with the public IP address."""
@@ -4184,9 +4029,9 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(_Model):  # p
     public_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = rest_field(
         name="publicIPAddressVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Available from Api-Version 2019-07-01 onwards, it represents whether the
-     specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible
-     values are: 'IPv4' and 'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    """Available from Api-Version 2019-07-01 onwards, it represents whether the specific
+     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values are: 'IPv4' and
+     'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
     delete_option: Optional[Union[str, "_models.DeleteOptions"]] = rest_field(
         name="deleteOption", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4199,7 +4044,7 @@ class VirtualMachineScaleSetPublicIPAddressConfigurationProperties(_Model):  # p
         *,
         idle_timeout_in_minutes: Optional[int] = None,
         dns_settings: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings"] = None,
-        ip_tags: Optional[List["_models.VirtualMachineScaleSetIpTag"]] = None,
+        ip_tags: Optional[list["_models.VirtualMachineScaleSetIpTag"]] = None,
         public_ip_prefix: Optional["_models.SubResource"] = None,
         public_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
         delete_option: Optional[Union[str, "_models.DeleteOptions"]] = None,
@@ -4220,20 +4065,19 @@ class VirtualMachineScaleSetStorageProfile(_Model):
     """Describes a virtual machine scale set storage profile.
 
     :ivar image_reference: Specifies information about the image to use. You can specify
-     information about
-     platform images, marketplace images, or virtual machine images. This element is
-     required when you want to use a platform image, marketplace image, or virtual
-     machine image, but is not used in other creation operations.
+     information about platform images, marketplace images, or virtual machine images. This element
+     is required when you want to use a platform image, marketplace image, or virtual machine image,
+     but is not used in other creation operations.
     :vartype image_reference: ~azure.mgmt.computefleet.models.ImageReference
     :ivar os_disk: Specifies information about the operating system disk used by the virtual
-     machines in the scale set. For more information about disks, see `About disks
-     and VHDs for Azure virtual
-     machines <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
+     machines in the scale set. For more information about disks, see `About disks and VHDs for
+     Azure virtual machines
+     <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
     :vartype os_disk: ~azure.mgmt.computefleet.models.VirtualMachineScaleSetOSDisk
     :ivar data_disks: Specifies the parameters that are used to add data disks to the virtual
-     machines in the scale set. For more information about disks, see `About disks
-     and VHDs for Azure virtual
-     machines <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
+     machines in the scale set. For more information about disks, see `About disks and VHDs for
+     Azure virtual machines
+     <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_.
     :vartype data_disks: list[~azure.mgmt.computefleet.models.VirtualMachineScaleSetDataDisk]
     :ivar disk_controller_type: Specifies the disk controller type configured for the virtual
      machines in the scale set. Minimum api-version: 2022-08-01. Known values are: "SCSI" and
@@ -4244,24 +4088,22 @@ class VirtualMachineScaleSetStorageProfile(_Model):
     image_reference: Optional["_models.ImageReference"] = rest_field(
         name="imageReference", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies information about the image to use. You can specify information about
-     platform images, marketplace images, or virtual machine images. This element is
-     required when you want to use a platform image, marketplace image, or virtual
-     machine image, but is not used in other creation operations."""
+    """Specifies information about the image to use. You can specify information about platform
+     images, marketplace images, or virtual machine images. This element is required when you want
+     to use a platform image, marketplace image, or virtual machine image, but is not used in other
+     creation operations."""
     os_disk: Optional["_models.VirtualMachineScaleSetOSDisk"] = rest_field(
         name="osDisk", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies information about the operating system disk used by the virtual
-     machines in the scale set. For more information about disks, see `About disks
-     and VHDs for Azure virtual
-     machines <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_."""
-    data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = rest_field(
+    """Specifies information about the operating system disk used by the virtual machines in the scale
+     set. For more information about disks, see `About disks and VHDs for Azure virtual machines
+     <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_."""
+    data_disks: Optional[list["_models.VirtualMachineScaleSetDataDisk"]] = rest_field(
         name="dataDisks", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the parameters that are used to add data disks to the virtual
-     machines in the scale set. For more information about disks, see `About disks
-     and VHDs for Azure virtual
-     machines <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_."""
+    """Specifies the parameters that are used to add data disks to the virtual machines in the scale
+     set. For more information about disks, see `About disks and VHDs for Azure virtual machines
+     <https://learn.microsoft.com/azure/virtual-machines/managed-disks-overview>`_."""
     disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = rest_field(
         name="diskControllerType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4274,7 +4116,7 @@ class VirtualMachineScaleSetStorageProfile(_Model):
         *,
         image_reference: Optional["_models.ImageReference"] = None,
         os_disk: Optional["_models.VirtualMachineScaleSetOSDisk"] = None,
-        data_disks: Optional[List["_models.VirtualMachineScaleSetDataDisk"]] = None,
+        data_disks: Optional[list["_models.VirtualMachineScaleSetDataDisk"]] = None,
         disk_controller_type: Optional[Union[str, "_models.DiskControllerTypes"]] = None,
     ) -> None: ...
 
@@ -4369,17 +4211,15 @@ class VMAttributes(_Model):
      Optional parameter. Either Min or Max is required if specified.
     :vartype memory_in_gi_b_per_v_cpu: ~azure.mgmt.computefleet.models.VMAttributeMinMaxDouble
     :ivar local_storage_support: Specifies whether the VMSize supporting local storage should be
-     used to build Fleet or not.
-     Included - Default if not specified as most Azure VMs support local storage. Known values are:
-     "Excluded", "Included", and "Required".
+     used to build Fleet or not. Included - Default if not specified as most Azure VMs support local
+     storage. Known values are: "Excluded", "Included", and "Required".
     :vartype local_storage_support: str or ~azure.mgmt.computefleet.models.VMAttributeSupport
     :ivar local_storage_in_gi_b: LocalStorageSupport should be set to "Included" or "Required" to
-     use this VMAttribute.
-     If localStorageSupport is "Excluded", this VMAttribute can not be used.
+     use this VMAttribute. If localStorageSupport is "Excluded", this VMAttribute can not be used.
     :vartype local_storage_in_gi_b: ~azure.mgmt.computefleet.models.VMAttributeMinMaxDouble
     :ivar local_storage_disk_types: The local storage disk types specified as a list.
-     LocalStorageSupport should be set to "Included" or "Required" to use this VMAttribute.
-     If localStorageSupport is "Excluded", this VMAttribute can not be used.
+     LocalStorageSupport should be set to "Included" or "Required" to use this VMAttribute. If
+     localStorageSupport is "Excluded", this VMAttribute can not be used.
     :vartype local_storage_disk_types: list[str or
      ~azure.mgmt.computefleet.models.LocalStorageDiskType]
     :ivar data_disk_count: The range of data disk count specified from Min to Max. Optional
@@ -4396,29 +4236,27 @@ class VMAttributes(_Model):
     :vartype rdma_support: str or ~azure.mgmt.computefleet.models.VMAttributeSupport
     :ivar rdma_network_interface_count: The range of RDMA (Remote Direct Memory Access) network
      interface count specified from Min to Max. Optional parameter. Either Min or Max is required if
-     specified.
-     rdmaSupport should be set to "Included" or "Required" to use this VMAttribute.
-     If rdmaSupport is "Excluded", this VMAttribute can not be used.
+     specified. rdmaSupport should be set to "Included" or "Required" to use this VMAttribute. If
+     rdmaSupport is "Excluded", this VMAttribute can not be used.
     :vartype rdma_network_interface_count: ~azure.mgmt.computefleet.models.VMAttributeMinMaxInteger
     :ivar accelerator_support: Specifies whether the VMSize supporting accelerator should be used
-     to build Fleet or not.
-     acceleratorSupport should be set to "Included" or "Required" to use this VMAttribute.
-     If acceleratorSupport is "Excluded", this VMAttribute can not be used. Known values are:
-     "Excluded", "Included", and "Required".
+     to build Fleet or not. acceleratorSupport should be set to "Included" or "Required" to use this
+     VMAttribute. If acceleratorSupport is "Excluded", this VMAttribute can not be used. Known
+     values are: "Excluded", "Included", and "Required".
     :vartype accelerator_support: str or ~azure.mgmt.computefleet.models.VMAttributeSupport
     :ivar accelerator_manufacturers: The accelerator manufacturers specified as a list.
-     acceleratorSupport should be set to "Included" or "Required" to use this VMAttribute.
-     If acceleratorSupport is "Excluded", this VMAttribute can not be used.
+     acceleratorSupport should be set to "Included" or "Required" to use this VMAttribute. If
+     acceleratorSupport is "Excluded", this VMAttribute can not be used.
     :vartype accelerator_manufacturers: list[str or
      ~azure.mgmt.computefleet.models.AcceleratorManufacturer]
     :ivar accelerator_types: The accelerator types specified as a list. acceleratorSupport should
-     be set to "Included" or "Required" to use this VMAttribute.
-     If acceleratorSupport is "Excluded", this VMAttribute can not be used.
+     be set to "Included" or "Required" to use this VMAttribute. If acceleratorSupport is
+     "Excluded", this VMAttribute can not be used.
     :vartype accelerator_types: list[str or ~azure.mgmt.computefleet.models.AcceleratorType]
     :ivar accelerator_count: The range of accelerator count specified from min to max. Optional
-     parameter. Either Min or Max is required if specified.
-     acceleratorSupport should be set to "Included" or "Required" to use this VMAttribute.
-     If acceleratorSupport is "Excluded", this VMAttribute can not be used.
+     parameter. Either Min or Max is required if specified. acceleratorSupport should be set to
+     "Included" or "Required" to use this VMAttribute. If acceleratorSupport is "Excluded", this
+     VMAttribute can not be used.
     :vartype accelerator_count: ~azure.mgmt.computefleet.models.VMAttributeMinMaxInteger
     :ivar vm_categories: The VM category specified as a list. Optional parameter.
     :vartype vm_categories: list[str or ~azure.mgmt.computefleet.models.VMCategory]
@@ -4458,14 +4296,14 @@ class VMAttributes(_Model):
     local_storage_in_gi_b: Optional["_models.VMAttributeMinMaxDouble"] = rest_field(
         name="localStorageInGiB", visibility=["read", "create", "update", "delete", "query"]
     )
-    """LocalStorageSupport should be set to \"Included\" or \"Required\" to use this VMAttribute.
-     If localStorageSupport is \"Excluded\", this VMAttribute can not be used."""
-    local_storage_disk_types: Optional[List[Union[str, "_models.LocalStorageDiskType"]]] = rest_field(
+    """LocalStorageSupport should be set to \"Included\" or \"Required\" to use this VMAttribute. If
+     localStorageSupport is \"Excluded\", this VMAttribute can not be used."""
+    local_storage_disk_types: Optional[list[Union[str, "_models.LocalStorageDiskType"]]] = rest_field(
         name="localStorageDiskTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The local storage disk types specified as a list. LocalStorageSupport should be set to
-     \"Included\" or \"Required\" to use this VMAttribute.
-     If localStorageSupport is \"Excluded\", this VMAttribute can not be used."""
+     \"Included\" or \"Required\" to use this VMAttribute. If localStorageSupport is \"Excluded\",
+     this VMAttribute can not be used."""
     data_disk_count: Optional["_models.VMAttributeMinMaxInteger"] = rest_field(
         name="dataDiskCount", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4490,44 +4328,43 @@ class VMAttributes(_Model):
         name="rdmaNetworkInterfaceCount", visibility=["read", "create", "update", "delete", "query"]
     )
     """The range of RDMA (Remote Direct Memory Access) network interface count specified from Min to
-     Max. Optional parameter. Either Min or Max is required if specified.
-     rdmaSupport should be set to \"Included\" or \"Required\" to use this VMAttribute.
-     If rdmaSupport is \"Excluded\", this VMAttribute can not be used."""
+     Max. Optional parameter. Either Min or Max is required if specified. rdmaSupport should be set
+     to \"Included\" or \"Required\" to use this VMAttribute. If rdmaSupport is \"Excluded\", this
+     VMAttribute can not be used."""
     accelerator_support: Optional[Union[str, "_models.VMAttributeSupport"]] = rest_field(
         name="acceleratorSupport", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether the VMSize supporting accelerator should be used to build Fleet or not.
-     acceleratorSupport should be set to \"Included\" or \"Required\" to use this VMAttribute.
-     If acceleratorSupport is \"Excluded\", this VMAttribute can not be used. Known values are:
+     acceleratorSupport should be set to \"Included\" or \"Required\" to use this VMAttribute. If
+     acceleratorSupport is \"Excluded\", this VMAttribute can not be used. Known values are:
      \"Excluded\", \"Included\", and \"Required\"."""
-    accelerator_manufacturers: Optional[List[Union[str, "_models.AcceleratorManufacturer"]]] = rest_field(
+    accelerator_manufacturers: Optional[list[Union[str, "_models.AcceleratorManufacturer"]]] = rest_field(
         name="acceleratorManufacturers", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The accelerator manufacturers specified as a list.
-     acceleratorSupport should be set to \"Included\" or \"Required\" to use this VMAttribute.
-     If acceleratorSupport is \"Excluded\", this VMAttribute can not be used."""
-    accelerator_types: Optional[List[Union[str, "_models.AcceleratorType"]]] = rest_field(
+    """The accelerator manufacturers specified as a list. acceleratorSupport should be set to
+     \"Included\" or \"Required\" to use this VMAttribute. If acceleratorSupport is \"Excluded\",
+     this VMAttribute can not be used."""
+    accelerator_types: Optional[list[Union[str, "_models.AcceleratorType"]]] = rest_field(
         name="acceleratorTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The accelerator types specified as a list. acceleratorSupport should be set to \"Included\" or
-     \"Required\" to use this VMAttribute.
-     If acceleratorSupport is \"Excluded\", this VMAttribute can not be used."""
+     \"Required\" to use this VMAttribute. If acceleratorSupport is \"Excluded\", this VMAttribute
+     can not be used."""
     accelerator_count: Optional["_models.VMAttributeMinMaxInteger"] = rest_field(
         name="acceleratorCount", visibility=["read", "create", "update", "delete", "query"]
     )
     """The range of accelerator count specified from min to max. Optional parameter. Either Min or Max
-     is required if specified.
-     acceleratorSupport should be set to \"Included\" or \"Required\" to use this VMAttribute.
-     If acceleratorSupport is \"Excluded\", this VMAttribute can not be used."""
-    vm_categories: Optional[List[Union[str, "_models.VMCategory"]]] = rest_field(
+     is required if specified. acceleratorSupport should be set to \"Included\" or \"Required\" to
+     use this VMAttribute. If acceleratorSupport is \"Excluded\", this VMAttribute can not be used."""
+    vm_categories: Optional[list[Union[str, "_models.VMCategory"]]] = rest_field(
         name="vmCategories", visibility=["read", "create", "update", "delete", "query"]
     )
     """The VM category specified as a list. Optional parameter."""
-    architecture_types: Optional[List[Union[str, "_models.ArchitectureType"]]] = rest_field(
+    architecture_types: Optional[list[Union[str, "_models.ArchitectureType"]]] = rest_field(
         name="architectureTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The VM architecture types specified as a list. Optional parameter."""
-    cpu_manufacturers: Optional[List[Union[str, "_models.CpuManufacturer"]]] = rest_field(
+    cpu_manufacturers: Optional[list[Union[str, "_models.CpuManufacturer"]]] = rest_field(
         name="cpuManufacturers", visibility=["read", "create", "update", "delete", "query"]
     )
     """The VM CPU manufacturers specified as a list. Optional parameter."""
@@ -4536,7 +4373,7 @@ class VMAttributes(_Model):
     )
     """Specifies whether the VMSize supporting burstable capability should be used to build Fleet or
      not. Known values are: \"Excluded\", \"Included\", and \"Required\"."""
-    excluded_vm_sizes: Optional[List[str]] = rest_field(
+    excluded_vm_sizes: Optional[list[str]] = rest_field(
         name="excludedVMSizes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies which VMSizes should be excluded while building Fleet. Optional parameter."""
@@ -4550,21 +4387,21 @@ class VMAttributes(_Model):
         memory_in_gi_b_per_v_cpu: Optional["_models.VMAttributeMinMaxDouble"] = None,
         local_storage_support: Optional[Union[str, "_models.VMAttributeSupport"]] = None,
         local_storage_in_gi_b: Optional["_models.VMAttributeMinMaxDouble"] = None,
-        local_storage_disk_types: Optional[List[Union[str, "_models.LocalStorageDiskType"]]] = None,
+        local_storage_disk_types: Optional[list[Union[str, "_models.LocalStorageDiskType"]]] = None,
         data_disk_count: Optional["_models.VMAttributeMinMaxInteger"] = None,
         network_interface_count: Optional["_models.VMAttributeMinMaxInteger"] = None,
         network_bandwidth_in_mbps: Optional["_models.VMAttributeMinMaxDouble"] = None,
         rdma_support: Optional[Union[str, "_models.VMAttributeSupport"]] = None,
         rdma_network_interface_count: Optional["_models.VMAttributeMinMaxInteger"] = None,
         accelerator_support: Optional[Union[str, "_models.VMAttributeSupport"]] = None,
-        accelerator_manufacturers: Optional[List[Union[str, "_models.AcceleratorManufacturer"]]] = None,
-        accelerator_types: Optional[List[Union[str, "_models.AcceleratorType"]]] = None,
+        accelerator_manufacturers: Optional[list[Union[str, "_models.AcceleratorManufacturer"]]] = None,
+        accelerator_types: Optional[list[Union[str, "_models.AcceleratorType"]]] = None,
         accelerator_count: Optional["_models.VMAttributeMinMaxInteger"] = None,
-        vm_categories: Optional[List[Union[str, "_models.VMCategory"]]] = None,
-        architecture_types: Optional[List[Union[str, "_models.ArchitectureType"]]] = None,
-        cpu_manufacturers: Optional[List[Union[str, "_models.CpuManufacturer"]]] = None,
+        vm_categories: Optional[list[Union[str, "_models.VMCategory"]]] = None,
+        architecture_types: Optional[list[Union[str, "_models.ArchitectureType"]]] = None,
+        cpu_manufacturers: Optional[list[Union[str, "_models.CpuManufacturer"]]] = None,
         burstable_support: Optional[Union[str, "_models.VMAttributeSupport"]] = None,
-        excluded_vm_sizes: Optional[List[str]] = None,
+        excluded_vm_sizes: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -4579,20 +4416,19 @@ class VMAttributes(_Model):
 
 
 class VMDiskSecurityProfile(_Model):
-    """Specifies the security profile settings for the managed disk. **Note:** It can
-    only be set for Confidential VMs.
+    """Specifies the security profile settings for the managed disk. **Note:** It can only be set for
+    Confidential VMs.
 
     :ivar security_encryption_type: Specifies the EncryptionType of the managed disk. It is set to
-     DiskWithVMGuestState for encryption of the managed disk along with VMGuestState
-     blob, VMGuestStateOnly for encryption of just the VMGuestState blob, and
-     NonPersistedTPM for not persisting firmware state in the VMGuestState blob..
-     **Note:** It can be set for only Confidential VMs. Known values are: "VMGuestStateOnly",
-     "DiskWithVMGuestState", and "NonPersistedTPM".
+     DiskWithVMGuestState for encryption of the managed disk along with VMGuestState blob,
+     VMGuestStateOnly for encryption of just the VMGuestState blob, and NonPersistedTPM for not
+     persisting firmware state in the VMGuestState blob.. **Note:** It can be set for only
+     Confidential VMs. Known values are: "VMGuestStateOnly", "DiskWithVMGuestState", and
+     "NonPersistedTPM".
     :vartype security_encryption_type: str or
      ~azure.mgmt.computefleet.models.SecurityEncryptionTypes
     :ivar disk_encryption_set: Specifies the customer managed disk encryption set resource id for
-     the managed
-     disk that is used for Customer Managed Key encrypted ConfidentialVM OS Disk and
+     the managed disk that is used for Customer Managed Key encrypted ConfidentialVM OS Disk and
      VMGuest blob.
     :vartype disk_encryption_set: ~azure.mgmt.computefleet.models.DiskEncryptionSetParameters
     """
@@ -4600,18 +4436,16 @@ class VMDiskSecurityProfile(_Model):
     security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionTypes"]] = rest_field(
         name="securityEncryptionType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the EncryptionType of the managed disk. It is set to
-     DiskWithVMGuestState for encryption of the managed disk along with VMGuestState
-     blob, VMGuestStateOnly for encryption of just the VMGuestState blob, and
-     NonPersistedTPM for not persisting firmware state in the VMGuestState blob..
-     **Note:** It can be set for only Confidential VMs. Known values are: \"VMGuestStateOnly\",
-     \"DiskWithVMGuestState\", and \"NonPersistedTPM\"."""
+    """Specifies the EncryptionType of the managed disk. It is set to DiskWithVMGuestState for
+     encryption of the managed disk along with VMGuestState blob, VMGuestStateOnly for encryption of
+     just the VMGuestState blob, and NonPersistedTPM for not persisting firmware state in the
+     VMGuestState blob.. **Note:** It can be set for only Confidential VMs. Known values are:
+     \"VMGuestStateOnly\", \"DiskWithVMGuestState\", and \"NonPersistedTPM\"."""
     disk_encryption_set: Optional["_models.DiskEncryptionSetParameters"] = rest_field(
         name="diskEncryptionSet", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the customer managed disk encryption set resource id for the managed
-     disk that is used for Customer Managed Key encrypted ConfidentialVM OS Disk and
-     VMGuest blob."""
+    """Specifies the customer managed disk encryption set resource id for the managed disk that is
+     used for Customer Managed Key encrypted ConfidentialVM OS Disk and VMGuest blob."""
 
     @overload
     def __init__(
@@ -4633,8 +4467,7 @@ class VMDiskSecurityProfile(_Model):
 
 
 class VMGalleryApplication(_Model):
-    """Specifies the required information to reference a compute gallery application
-    version.
+    """Specifies the required information to reference a compute gallery application version.
 
     :ivar tags: Optional, Specifies a passthrough value for more generic context.
     :vartype tags: str
@@ -4645,16 +4478,13 @@ class VMGalleryApplication(_Model):
      Required.
     :vartype package_reference_id: str
     :ivar configuration_reference: Optional, Specifies the uri to an azure blob that will replace
-     the default
-     configuration for the package if provided.
+     the default configuration for the package if provided.
     :vartype configuration_reference: str
     :ivar treat_failure_as_deployment_failure: Optional, If true, any failure for any operation in
-     the VmApplication will fail
-     the deployment.
+     the VmApplication will fail the deployment.
     :vartype treat_failure_as_deployment_failure: bool
     :ivar enable_automatic_upgrade: If set to true, when a new Gallery Application version is
-     available in PIR/SIG,
-     it will be automatically updated for the VM/VMSS.
+     available in PIR/SIG, it will be automatically updated for the VM/VMSS.
     :vartype enable_automatic_upgrade: bool
     """
 
@@ -4671,18 +4501,17 @@ class VMGalleryApplication(_Model):
     configuration_reference: Optional[str] = rest_field(
         name="configurationReference", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional, Specifies the uri to an azure blob that will replace the default
-     configuration for the package if provided."""
+    """Optional, Specifies the uri to an azure blob that will replace the default configuration for
+     the package if provided."""
     treat_failure_as_deployment_failure: Optional[bool] = rest_field(
         name="treatFailureAsDeploymentFailure", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional, If true, any failure for any operation in the VmApplication will fail
-     the deployment."""
+    """Optional, If true, any failure for any operation in the VmApplication will fail the deployment."""
     enable_automatic_upgrade: Optional[bool] = rest_field(
         name="enableAutomaticUpgrade", visibility=["read", "create", "update", "delete", "query"]
     )
-    """If set to true, when a new Gallery Application version is available in PIR/SIG,
-     it will be automatically updated for the VM/VMSS."""
+    """If set to true, when a new Gallery Application version is available in PIR/SIG, it will be
+     automatically updated for the VM/VMSS."""
 
     @overload
     def __init__(
@@ -4714,16 +4543,16 @@ class VmSizeProfile(_Model):
     :ivar name: The Sku name (e.g. 'Standard_DS1_v2'). Required.
     :vartype name: str
     :ivar rank: The rank of the VM size. This is used with
-     'RegularPriorityAllocationStrategy.Prioritized'
-     The lower the number, the higher the priority. Starting with 0.
+     'RegularPriorityAllocationStrategy.Prioritized' The lower the number, the higher the priority.
+     Starting with 0.
     :vartype rank: int
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Sku name (e.g. 'Standard_DS1_v2'). Required."""
     rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The rank of the VM size. This is used with 'RegularPriorityAllocationStrategy.Prioritized'
-     The lower the number, the higher the priority. Starting with 0."""
+    """The rank of the VM size. This is used with 'RegularPriorityAllocationStrategy.Prioritized' The
+     lower the number, the higher the priority. Starting with 0."""
 
     @overload
     def __init__(
@@ -4748,39 +4577,33 @@ class VMSizeProperties(_Model):
     """Specifies VM Size Property settings on the virtual machine.
 
     :ivar v_cpus_available: Specifies the number of vCPUs available for the VM. When this property
-     is not
-     specified in the request body the default behavior is to set it to the value of
-     vCPUs available for that VM size exposed in api response of `List all available
-     virtual machine sizes in a
-     region <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_.
+     is not specified in the request body the default behavior is to set it to the value of vCPUs
+     available for that VM size exposed in api response of `List all available virtual machine sizes
+     in a region <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_.
     :vartype v_cpus_available: int
     :ivar v_cpus_per_core: Specifies the vCPU to physical core ratio. When this property is not
-     specified
-     in the request body the default behavior is set to the value of vCPUsPerCore
-     for the VM Size exposed in api response of `List all available virtual machine
-     sizes in a
-     region <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_.
-     **Setting this property to 1 also means that hyper-threading is disabled.**.
+     specified in the request body the default behavior is set to the value of vCPUsPerCore for the
+     VM Size exposed in api response of `List all available virtual machine sizes in a region
+     <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_. **Setting this
+     property to 1 also means that hyper-threading is disabled.**.
     :vartype v_cpus_per_core: int
     """
 
     v_cpus_available: Optional[int] = rest_field(
         name="vCPUsAvailable", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the number of vCPUs available for the VM. When this property is not
-     specified in the request body the default behavior is to set it to the value of
-     vCPUs available for that VM size exposed in api response of `List all available
-     virtual machine sizes in a
-     region <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_."""
+    """Specifies the number of vCPUs available for the VM. When this property is not specified in the
+     request body the default behavior is to set it to the value of vCPUs available for that VM size
+     exposed in api response of `List all available virtual machine sizes in a region
+     <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_."""
     v_cpus_per_core: Optional[int] = rest_field(
         name="vCPUsPerCore", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the vCPU to physical core ratio. When this property is not specified
-     in the request body the default behavior is set to the value of vCPUsPerCore
-     for the VM Size exposed in api response of `List all available virtual machine
-     sizes in a
-     region <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_.
-     **Setting this property to 1 also means that hyper-threading is disabled.**."""
+    """Specifies the vCPU to physical core ratio. When this property is not specified in the request
+     body the default behavior is set to the value of vCPUsPerCore for the VM Size exposed in api
+     response of `List all available virtual machine sizes in a region
+     <https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list>`_. **Setting this
+     property to 1 also means that hyper-threading is disabled.**."""
 
     @overload
     def __init__(
@@ -4805,27 +4628,22 @@ class WindowsConfiguration(_Model):
     """Specifies Windows operating system settings on the virtual machine.
 
     :ivar provision_vm_agent: Indicates whether virtual machine agent should be provisioned on the
-     virtual
-     machine. When this property is not specified in the request body, it is set to
-     true by default. This will ensure that VM Agent is installed on the VM so that
-     extensions can be added to the VM later.
+     virtual machine. When this property is not specified in the request body, it is set to true by
+     default. This will ensure that VM Agent is installed on the VM so that extensions can be added
+     to the VM later.
     :vartype provision_vm_agent: bool
     :ivar enable_automatic_updates: Indicates whether Automatic Updates is enabled for the Windows
-     virtual machine.
-     Default value is true. For virtual machine scale sets, this property can be
+     virtual machine. Default value is true. For virtual machine scale sets, this property can be
      updated and updates will take effect on OS reprovisioning.
     :vartype enable_automatic_updates: bool
     :ivar time_zone: Specifies the time zone of the virtual machine. e.g. "Pacific Standard Time".
-     Possible values can be
-     `TimeZoneInfo.Id
-     <https://learn.microsoft.com/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_
-     value from time zones returned by
-     `TimeZoneInfo.GetSystemTimeZones
+     Possible values can be `TimeZoneInfo.Id
+     <https://learn.microsoft.com/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_ value
+     from time zones returned by `TimeZoneInfo.GetSystemTimeZones
      <https://learn.microsoft.com/dotnet/api/system.timezoneinfo.getsystemtimezones>`_.
     :vartype time_zone: str
     :ivar additional_unattend_content: Specifies additional base-64 encoded XML formatted
-     information that can be
-     included in the Unattend.xml file, which is used by Windows Setup.
+     information that can be included in the Unattend.xml file, which is used by Windows Setup.
     :vartype additional_unattend_content:
      list[~azure.mgmt.computefleet.models.AdditionalUnattendContent]
     :ivar patch_settings: [Preview Feature] Specifies settings related to VM Guest Patching on
@@ -4835,37 +4653,33 @@ class WindowsConfiguration(_Model):
      PowerShell.
     :vartype win_rm: ~azure.mgmt.computefleet.models.WinRMConfiguration
     :ivar enable_vm_agent_platform_updates: Indicates whether VMAgent Platform Updates is enabled
-     for the Windows virtual
-     machine. Default value is false.
+     for the Windows virtual machine. Default value is false.
     :vartype enable_vm_agent_platform_updates: bool
     """
 
     provision_vm_agent: Optional[bool] = rest_field(
         name="provisionVMAgent", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether virtual machine agent should be provisioned on the virtual
-     machine. When this property is not specified in the request body, it is set to
-     true by default. This will ensure that VM Agent is installed on the VM so that
-     extensions can be added to the VM later."""
+    """Indicates whether virtual machine agent should be provisioned on the virtual machine. When this
+     property is not specified in the request body, it is set to true by default. This will ensure
+     that VM Agent is installed on the VM so that extensions can be added to the VM later."""
     enable_automatic_updates: Optional[bool] = rest_field(
         name="enableAutomaticUpdates", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether Automatic Updates is enabled for the Windows virtual machine.
-     Default value is true. For virtual machine scale sets, this property can be
-     updated and updates will take effect on OS reprovisioning."""
+    """Indicates whether Automatic Updates is enabled for the Windows virtual machine. Default value
+     is true. For virtual machine scale sets, this property can be updated and updates will take
+     effect on OS reprovisioning."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the time zone of the virtual machine. e.g. \"Pacific Standard Time\".
-     Possible values can be
-     `TimeZoneInfo.Id
-     <https://learn.microsoft.com/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_
-     value from time zones returned by
-     `TimeZoneInfo.GetSystemTimeZones
+    """Specifies the time zone of the virtual machine. e.g. \"Pacific Standard Time\". Possible values
+     can be `TimeZoneInfo.Id
+     <https://learn.microsoft.com/dotnet/api/system.timezoneinfo.id?#System_TimeZoneInfo_Id>`_ value
+     from time zones returned by `TimeZoneInfo.GetSystemTimeZones
      <https://learn.microsoft.com/dotnet/api/system.timezoneinfo.getsystemtimezones>`_."""
-    additional_unattend_content: Optional[List["_models.AdditionalUnattendContent"]] = rest_field(
+    additional_unattend_content: Optional[list["_models.AdditionalUnattendContent"]] = rest_field(
         name="additionalUnattendContent", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies additional base-64 encoded XML formatted information that can be
-     included in the Unattend.xml file, which is used by Windows Setup."""
+    """Specifies additional base-64 encoded XML formatted information that can be included in the
+     Unattend.xml file, which is used by Windows Setup."""
     patch_settings: Optional["_models.PatchSettings"] = rest_field(
         name="patchSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4873,13 +4687,12 @@ class WindowsConfiguration(_Model):
     win_rm: Optional["_models.WinRMConfiguration"] = rest_field(
         name="winRM", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the Windows Remote Management listeners. This enables remote Windows
-     PowerShell."""
+    """Specifies the Windows Remote Management listeners. This enables remote Windows PowerShell."""
     enable_vm_agent_platform_updates: Optional[bool] = rest_field(
         name="enableVMAgentPlatformUpdates", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Indicates whether VMAgent Platform Updates is enabled for the Windows virtual
-     machine. Default value is false."""
+    """Indicates whether VMAgent Platform Updates is enabled for the Windows virtual machine. Default
+     value is false."""
 
     @overload
     def __init__(
@@ -4888,7 +4701,7 @@ class WindowsConfiguration(_Model):
         provision_vm_agent: Optional[bool] = None,
         enable_automatic_updates: Optional[bool] = None,
         time_zone: Optional[str] = None,
-        additional_unattend_content: Optional[List["_models.AdditionalUnattendContent"]] = None,
+        additional_unattend_content: Optional[list["_models.AdditionalUnattendContent"]] = None,
         patch_settings: Optional["_models.PatchSettings"] = None,
         win_rm: Optional["_models.WinRMConfiguration"] = None,
         enable_vm_agent_platform_updates: Optional[bool] = None,
@@ -4906,12 +4719,11 @@ class WindowsConfiguration(_Model):
 
 
 class WindowsVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable=name-too-long
-    """Specifies additional settings to be applied when patch mode AutomaticByPlatform
-    is selected in Windows patch settings.
+    """Specifies additional settings to be applied when patch mode AutomaticByPlatform is selected in
+    Windows patch settings.
 
     :ivar reboot_setting: Specifies the reboot setting for all AutomaticByPlatform patch
-     installation
-     operations. Known values are: "Unknown", "IfRequired", "Never", and "Always".
+     installation operations. Known values are: "Unknown", "IfRequired", "Never", and "Always".
     :vartype reboot_setting: str or
      ~azure.mgmt.computefleet.models.WindowsVMGuestPatchAutomaticByPlatformRebootSetting
     :ivar bypass_platform_safety_checks_on_user_schedule: Enables customer to schedule patching
@@ -4922,8 +4734,8 @@ class WindowsVMGuestPatchAutomaticByPlatformSettings(_Model):  # pylint: disable
     reboot_setting: Optional[Union[str, "_models.WindowsVMGuestPatchAutomaticByPlatformRebootSetting"]] = rest_field(
         name="rebootSetting", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the reboot setting for all AutomaticByPlatform patch installation
-     operations. Known values are: \"Unknown\", \"IfRequired\", \"Never\", and \"Always\"."""
+    """Specifies the reboot setting for all AutomaticByPlatform patch installation operations. Known
+     values are: \"Unknown\", \"IfRequired\", \"Never\", and \"Always\"."""
     bypass_platform_safety_checks_on_user_schedule: Optional[bool] = rest_field(
         name="bypassPlatformSafetyChecksOnUserSchedule", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4955,7 +4767,7 @@ class WinRMConfiguration(_Model):
     :vartype listeners: list[~azure.mgmt.computefleet.models.WinRMListener]
     """
 
-    listeners: Optional[List["_models.WinRMListener"]] = rest_field(
+    listeners: Optional[list["_models.WinRMListener"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Windows Remote Management listeners."""
@@ -4964,7 +4776,7 @@ class WinRMConfiguration(_Model):
     def __init__(
         self,
         *,
-        listeners: Optional[List["_models.WinRMListener"]] = None,
+        listeners: Optional[list["_models.WinRMListener"]] = None,
     ) -> None: ...
 
     @overload
@@ -4985,43 +4797,36 @@ class WinRMListener(_Model):
      **https.**. Known values are: "Http" and "Https".
     :vartype protocol: str or ~azure.mgmt.computefleet.models.ProtocolTypes
     :ivar certificate_url: This is the URL of a certificate that has been uploaded to Key Vault as
-     a
-     secret. For adding a secret to the Key Vault, see `Add a key or secret to the
-     key
-     vault <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_.
-     In this case, your certificate needs to be the Base64 encoding of the following
-     JSON Object which is encoded in UTF-8: <br><br> {<br>
-     "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
-     "password":"<pfx-file-password>"<br>} <br> To install certificates on a virtual
-     machine it is recommended to use the `Azure Key Vault virtual machine extension
-     for
-     Linux <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_
-     or the `Azure Key Vault virtual machine extension for
-     Windows <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
+     a secret. For adding a secret to the Key Vault, see `Add a key or secret to the key vault
+     <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
+     certificate needs to be the Base64 encoding of the following JSON Object which is encoded in
+     UTF-8: <br><br> {<br> "data":"<Base64-encoded-certificate>",<br>  "dataType":"pfx",<br>
+     "password":"<pfx-file-password>"<br>} <br> To install certificates on a virtual machine it is
+     recommended to use the `Azure Key Vault virtual machine extension for Linux
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_.
     :vartype certificate_url: str
     """
 
     protocol: Optional[Union[str, "_models.ProtocolTypes"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies the protocol of WinRM listener. Possible values are: **http,**
-     **https.**. Known values are: \"Http\" and \"Https\"."""
+    """Specifies the protocol of WinRM listener. Possible values are: **http,** **https.**. Known
+     values are: \"Http\" and \"Https\"."""
     certificate_url: Optional[str] = rest_field(
         name="certificateUrl", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This is the URL of a certificate that has been uploaded to Key Vault as a
-     secret. For adding a secret to the Key Vault, see `Add a key or secret to the
-     key
-     vault <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_.
-     In this case, your certificate needs to be the Base64 encoding of the following
-     JSON Object which is encoded in UTF-8: <br><br> {<br>
-     \"data\":\"<Base64-encoded-certificate>\",<br>  \"dataType\":\"pfx\",<br>
-     \"password\":\"<pfx-file-password>\"<br>} <br> To install certificates on a virtual
-     machine it is recommended to use the `Azure Key Vault virtual machine extension
-     for
-     Linux <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_
-     or the `Azure Key Vault virtual machine extension for
-     Windows <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_."""
+    """This is the URL of a certificate that has been uploaded to Key Vault as a secret. For adding a
+     secret to the Key Vault, see `Add a key or secret to the key vault
+     <https://learn.microsoft.com/azure/key-vault/key-vault-get-started/#add>`_. In this case, your
+     certificate needs to be the Base64 encoding of the following JSON Object which is encoded in
+     UTF-8: <br><br> {<br> \"data\":\"<Base64-encoded-certificate>\",<br>  \"dataType\":\"pfx\",<br>
+     \"password\":\"<pfx-file-password>\"<br>} <br> To install certificates on a virtual machine it
+     is recommended to use the `Azure Key Vault virtual machine extension for Linux
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-linux>`_ or the `Azure
+     Key Vault virtual machine extension for Windows
+     <https://learn.microsoft.com/azure/virtual-machines/extensions/key-vault-windows>`_."""
 
     @overload
     def __init__(
@@ -5058,7 +4863,7 @@ class ZoneAllocationPolicy(_Model):
     )
     """Distribution strategy used for zone allocation policy. Required. Known values are:
      \"BestEffortSingleZone\" and \"Prioritized\"."""
-    zone_preferences: Optional[List["_models.ZonePreference"]] = rest_field(
+    zone_preferences: Optional[list["_models.ZonePreference"]] = rest_field(
         name="zonePreferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """Zone preferences, required when zone distribution strategy is Prioritized."""
@@ -5068,7 +4873,7 @@ class ZoneAllocationPolicy(_Model):
         self,
         *,
         distribution_strategy: Union[str, "_models.ZoneDistributionStrategy"],
-        zone_preferences: Optional[List["_models.ZonePreference"]] = None,
+        zone_preferences: Optional[list["_models.ZonePreference"]] = None,
     ) -> None: ...
 
     @overload
@@ -5087,18 +4892,18 @@ class ZonePreference(_Model):
 
     :ivar zone: Name of the zone. Required.
     :vartype zone: str
-    :ivar rank: The rank of the zone. This is used with 'Prioritized' ZoneDistributionStrategy.
-     The lower the number, the higher the priority, starting with 0.
-     0 is the highest rank. If not specified, defaults to lowest rank.
+    :ivar rank: The rank of the zone. This is used with 'Prioritized' ZoneDistributionStrategy. The
+     lower the number, the higher the priority, starting with 0. 0 is the highest rank. If not
+     specified, defaults to lowest rank.
     :vartype rank: int
     """
 
     zone: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the zone. Required."""
     rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The rank of the zone. This is used with 'Prioritized' ZoneDistributionStrategy.
-     The lower the number, the higher the priority, starting with 0.
-     0 is the highest rank. If not specified, defaults to lowest rank."""
+    """The rank of the zone. This is used with 'Prioritized' ZoneDistributionStrategy. The lower the
+     number, the higher the priority, starting with 0. 0 is the highest rank. If not specified,
+     defaults to lowest rank."""
 
     @overload
     def __init__(

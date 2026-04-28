@@ -15,20 +15,20 @@ class AcceleratorManufacturer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Accelerator manufacturers supported by Azure VMs."""
 
     AMD = "AMD"
-    """AMD GpuType"""
+    """AMD GpuType."""
     NVIDIA = "Nvidia"
-    """Nvidia GpuType"""
+    """Nvidia GpuType."""
     XILINX = "Xilinx"
-    """Xilinx GpuType"""
+    """Xilinx GpuType."""
 
 
 class AcceleratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Accelerator types supported by Azure VMs."""
 
     GPU = "GPU"
-    """GPU Accelerator"""
+    """GPU Accelerator."""
     FPGA = "FPGA"
-    """FPGA Accelerator"""
+    """FPGA Accelerator."""
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -44,20 +44,20 @@ class ArchitectureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Architecture types supported by Azure VMs."""
 
     ARM64 = "ARM64"
-    """ARM64 Architecture"""
+    """ARM64 Architecture."""
     X64 = "X64"
-    """X64 Architecture"""
+    """X64 Architecture."""
 
 
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the caching requirements."""
 
     NONE = "None"
-    """'None' is default for Standard Storage"""
+    """'None' is default for Standard Storage."""
     READ_ONLY = "ReadOnly"
-    """'ReadOnly' is default for Premium Storage"""
+    """'ReadOnly' is default for Premium Storage."""
     READ_WRITE = "ReadWrite"
-    """'ReadWrite' is default for OS Disk"""
+    """'ReadWrite' is default for OS Disk."""
 
 
 class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -68,9 +68,8 @@ class CapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     in terms of VMs."""
     V_CPU = "VCpu"
     """VCpu is the capacity type for Compute Fleet where Fleet capacity is provisioned in terms of
-    VCpus.
-    If VCpu capacity is not exactly divisible by VCpu count in VMSizes, Fleet capacity in VCpus
-    will be overprovisioned by default."""
+    VCpus. If VCpu capacity is not exactly divisible by VCpu count in VMSizes, Fleet capacity in
+    VCpus will be overprovisioned by default."""
 
 
 class CpuManufacturer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -103,9 +102,9 @@ class DeleteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify what happens to the network interface when the VM is deleted."""
 
     DELETE = "Delete"
-    """Delete Option"""
+    """Delete Option."""
     DETACH = "Detach"
-    """Detach Option"""
+    """Detach Option."""
 
 
 class DiffDiskOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -116,11 +115,10 @@ class DiffDiskOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the ephemeral disk placement for operating system disk. This property
-    can be used by user in the request to choose the location i.e, cache disk or
-    resource disk space for Ephemeral OS disk provisioning. For more information on
-    Ephemeral OS disk size requirements, please refer Ephemeral OS disk size
-    requirements for Windows VM at
+    """Specifies the ephemeral disk placement for operating system disk. This property can be used by
+    user in the request to choose the location i.e, cache disk or resource disk space for Ephemeral
+    OS disk provisioning. For more information on Ephemeral OS disk size requirements, please refer
+    Ephemeral OS disk size requirements for Windows VM at
     `https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements
     <https://learn.microsoft.com/azure/virtual-machines/windows/ephemeral-os-disks#size-requirements>`_
     and Linux VM at
@@ -138,33 +136,31 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the disk controller type configured for the VM and
-    VirtualMachineScaleSet. This property is only supported for virtual machines
-    whose operating system disk and VM sku supports Generation 2
-    (`https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2
-    <https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2>`_), please
-    check the HyperVGenerations capability returned as part of VM sku capabilities
-    in the response of Microsoft.Compute SKUs api for the region contains V2
+    """Specifies the disk controller type configured for the VM and VirtualMachineScaleSet. This
+    property is only supported for virtual machines whose operating system disk and VM sku supports
+    Generation 2 (`https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2
+    <https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2>`_), please check the
+    HyperVGenerations capability returned as part of VM sku capabilities in the response of
+    Microsoft.Compute SKUs api for the region contains V2
     (`https://learn.microsoft.com/rest/api/compute/resourceskus/list
-    <https://learn.microsoft.com/rest/api/compute/resourceskus/list>`_). For more
-    information about Disk Controller Types supported please refer to
-    `https://aka.ms/azure-diskcontrollertypes <https://aka.ms/azure-diskcontrollertypes>`_.
+    <https://learn.microsoft.com/rest/api/compute/resourceskus/list>`_). For more information about
+    Disk Controller Types supported please refer to `https://aka.ms/azure-diskcontrollertypes
+    <https://aka.ms/azure-diskcontrollertypes>`_.
     """
 
     SCSI = "SCSI"
-    """SCSI disk type"""
+    """SCSI disk type."""
     NV_ME = "NVMe"
-    """NVMe disk type"""
+    """NVMe disk type."""
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how the virtual machine should be created."""
 
     FROM_IMAGE = "FromImage"
-    """This value is used when you are using an image to create the virtual machine.
-    If you are using a platform image, you also use the imageReference element
-    described above. If you are using a marketplace image, you also use the
-    plan element previously described."""
+    """This value is used when you are using an image to create the virtual machine. If you are using
+    a platform image, you also use the imageReference element described above. If you are using a
+    marketplace image, you also use the plan element previously described."""
     EMPTY = "Empty"
     """This value is used when creating an empty data disk."""
     ATTACH = "Attach"
@@ -176,11 +172,10 @@ class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskDeleteOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the behavior of the managed disk when the VM gets deleted, for
-    example whether the managed disk is deleted or detached. Supported values are:
-    **Delete.** If this value is used, the managed disk is deleted when VM gets
-    deleted. **Detach.** If this value is used, the managed disk is retained after
-    VM gets deleted. Minimum api-version: 2021-03-01.
+    """Specifies the behavior of the managed disk when the VM gets deleted, for example whether the
+    managed disk is deleted or detached. Supported values are: **Delete.** If this value is used,
+    the managed disk is deleted when VM gets deleted. **Detach.** If this value is used, the
+    managed disk is retained after VM gets deleted. Minimum api-version: 2021-03-01.
     """
 
     DELETE = "Delete"
@@ -190,20 +185,19 @@ class DiskDeleteOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DomainNameLabelScopeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Domain name label scope.The concatenation of the hashed domain name label
-    that generated according to the policy from domain name label scope and vm
-    index will be the domain name labels of the PublicIPAddress resources that will
-    be created.
+    """The Domain name label scope.The concatenation of the hashed domain name label that generated
+    according to the policy from domain name label scope and vm index will be the domain name
+    labels of the PublicIPAddress resources that will be created.
     """
 
     TENANT_REUSE = "TenantReuse"
-    """TenantReuse type"""
+    """TenantReuse type."""
     SUBSCRIPTION_REUSE = "SubscriptionReuse"
-    """SubscriptionReuse type"""
+    """SubscriptionReuse type."""
     RESOURCE_GROUP_REUSE = "ResourceGroupReuse"
-    """ResourceGroupReuse type"""
+    """ResourceGroupReuse type."""
     NO_REUSE = "NoReuse"
-    """NoReuse type"""
+    """NoReuse type."""
 
 
 class EvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -213,36 +207,36 @@ class EvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """When evicted, the Spot VM will be deleted and the corresponding capacity will be updated to
     reflect this."""
     DEALLOCATE = "Deallocate"
-    """When evicted, the Spot VM will be deallocated/stopped"""
+    """When evicted, the Spot VM will be deallocated/stopped."""
 
 
 class FleetMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Modes for Compute Fleet."""
 
     MANAGED = "Managed"
-    """Default. Managed is the default mode for Compute Fleet where VMs are provisioned via VMSS."""
-    INSTANCE = "Instance"
-    """Instance mode for Compute Fleet will directly provision VM instances."""
+    """Default. Managed is the default mode for Compute Fleet where VMs are provisioned via virtual
+    machine scale sets."""
+    LAUNCH = "Launch"
+    """Launch mode for Compute Fleet will directly launch VM instances to be managed by the customer."""
 
 
 class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Available from Api-Version 2017-03-30 onwards, it represents whether the
-    specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
-    values are: 'IPv4' and 'IPv6'.
+    """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
+    ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
+    'IPv6'.
     """
 
     I_PV4 = "IPv4"
-    """IPv4 version"""
+    """IPv4 version."""
     I_PV6 = "IPv6"
-    """IPv6 version"""
+    """IPv6 version."""
 
 
 class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual
-    machine.<br /><br /> Possible values are:<br /><br /> **ImageDefault** - You
-    control the timing of patch assessments on a virtual machine. <br /><br />
-    **AutomaticByPlatform** - The platform will trigger periodic patch assessments.
-    The property provisionVMAgent must be true.
+    """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.<br /><br />
+    Possible values are:<br /><br /> **ImageDefault** - You control the timing of patch assessments
+    on a virtual machine. <br /><br /> **AutomaticByPlatform** - The platform will trigger periodic
+    patch assessments. The property provisionVMAgent must be true.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -252,25 +246,24 @@ class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     true."""
 
 
-class LinuxVMGuestPatchAutomaticByPlatformRebootSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the reboot setting for all AutomaticByPlatform patch installation
-    operations.
-    """
+class LinuxVMGuestPatchAutomaticByPlatformRebootSetting(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Specifies the reboot setting for all AutomaticByPlatform patch installation operations."""
 
     UNKNOWN = "Unknown"
-    """Unknown Reboot setting"""
+    """Unknown Reboot setting."""
     IF_REQUIRED = "IfRequired"
-    """IfRequired Reboot setting"""
+    """IfRequired Reboot setting."""
     NEVER = "Never"
-    """Never Reboot setting"""
+    """Never Reboot setting."""
     ALWAYS = "Always"
-    """Always Reboot setting"""
+    """Always Reboot setting."""
 
 
 class LinuxVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-    machines associated to virtual machine scale set with OrchestrationMode as
-    Flexible.
+    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
+    to virtual machine scale set with OrchestrationMode as Flexible.
     """
 
     IMAGE_DEFAULT = "ImageDefault"
@@ -305,22 +298,22 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode that ProxyAgent will execute on if the feature is enabled.
-    ProxyAgent will start to audit or monitor but not enforce access control over
-    requests to host endpoints in Audit mode, while in Enforce mode it will enforce
-    access control. The default value is Enforce mode.
+    """Specifies the mode that ProxyAgent will execute on if the feature is enabled. ProxyAgent will
+    start to audit or monitor but not enforce access control over requests to host endpoints in
+    Audit mode, while in Enforce mode it will enforce access control. The default value is Enforce
+    mode.
     """
 
     AUDIT = "Audit"
-    """Audit Mode"""
+    """Audit Mode."""
     ENFORCE = "Enforce"
-    """Enforce Mode"""
+    """Enforce Mode."""
 
 
 class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """specifies the Microsoft.Network API version used when creating networking
-    resources in the Network Interface Configurations for Virtual Machine Scale Set
-    with orchestration mode 'Flexible'.
+    """specifies the Microsoft.Network API version used when creating networking resources in the
+    Network Interface Configurations for Virtual Machine Scale Set with orchestration mode
+    'Flexible'.
     """
 
     V2020_11_01 = "2020-11-01"
@@ -328,45 +321,40 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class NetworkInterfaceAuxiliaryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies whether the Auxiliary mode is enabled for the Network Interface
-    resource.
-    """
+    """Specifies whether the Auxiliary mode is enabled for the Network Interface resource."""
 
     NONE = "None"
-    """None Mode"""
+    """None Mode."""
     ACCELERATED_CONNECTIONS = "AcceleratedConnections"
-    """AcceleratedConnections Mode"""
+    """AcceleratedConnections Mode."""
     FLOATING = "Floating"
-    """Floating Mode"""
+    """Floating Mode."""
 
 
 class NetworkInterfaceAuxiliarySku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies whether the Auxiliary sku is enabled for the Network Interface
-    resource.
-    """
+    """Specifies whether the Auxiliary sku is enabled for the Network Interface resource."""
 
     NONE = "None"
-    """no sku"""
+    """no sku."""
     A1 = "A1"
-    """A1 sku"""
+    """A1 sku."""
     A2 = "A2"
-    """A2 sku"""
+    """A2 sku."""
     A4 = "A4"
-    """A4 sku"""
+    """A4 sku."""
     A8 = "A8"
-    """A8 sku"""
+    """A8 sku."""
 
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This property allows you to specify the type of the OS that is included in the
-    disk if creating a VM from user-image or a specialized VHD. Possible values
-    are: **Windows,** **Linux.**.
+    """This property allows you to specify the type of the OS that is included in the disk if creating
+    a VM from user-image or a specialized VHD. Possible values are: **Windows,** **Linux.**.
     """
 
     WINDOWS = "Windows"
-    """Windows OS type"""
+    """Windows OS type."""
     LINUX = "Linux"
-    """Linux OS type"""
+    """Linux OS type."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -383,14 +371,12 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the protocol of WinRM listener. Possible values are: **http,**
-    **https.**.
-    """
+    """Specifies the protocol of WinRM listener. Possible values are: **http,** **https.**."""
 
     HTTP = "Http"
-    """Http protocol"""
+    """Http protocol."""
     HTTPS = "Https"
-    """Https protocol"""
+    """Https protocol."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -416,18 +402,18 @@ class PublicIPAddressSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify public IP sku name."""
 
     BASIC = "Basic"
-    """Basic sku name"""
+    """Basic sku name."""
     STANDARD = "Standard"
-    """Standard sku name"""
+    """Standard sku name."""
 
 
 class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specify public IP sku tier."""
 
     REGIONAL = "Regional"
-    """Regional sku tier"""
+    """Regional sku tier."""
     GLOBAL = "Global"
-    """Global sku tier"""
+    """Global sku tier."""
 
 
 class RegularPriorityAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -441,42 +427,42 @@ class RegularPriorityAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnum
 
 
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the EncryptionType of the managed disk.
-    **Note:** It can be set for only Confidential VMs.
+    """Specifies the EncryptionType of the managed disk. **Note:** It can be set for only Confidential
+    VMs.
     """
 
     VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
-    """EncryptionType of the managed disk is set to VMGuestStateOnly for encryption
-    of just the VMGuestState blob."""
+    """EncryptionType of the managed disk is set to VMGuestStateOnly for encryption of just the
+    VMGuestState blob."""
     DISK_WITH_VM_GUEST_STATE = "DiskWithVMGuestState"
-    """EncryptionType of the managed disk is set to DiskWithVMGuestState for encryption
-    of the managed disk along with VMGuestState blob."""
+    """EncryptionType of the managed disk is set to DiskWithVMGuestState for encryption of the managed
+    disk along with VMGuestState blob."""
     NON_PERSISTED_TPM = "NonPersistedTPM"
-    """EncryptionType of the managed disk is set to NonPersistedTPM for not persisting
-    firmware state in the VMGuestState blob."""
+    """EncryptionType of the managed disk is set to NonPersistedTPM for not persisting firmware state
+    in the VMGuestState blob."""
 
 
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the SecurityType of the virtual machine. It has to be set to any
-    specified value to enable UefiSettings. The default behavior is: UefiSettings
-    will not be enabled unless this property is set.
+    """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
+    enable UefiSettings. The default behavior is: UefiSettings will not be enabled unless this
+    property is set.
     """
 
     TRUSTED_LAUNCH = "TrustedLaunch"
-    """TrustedLaunch security type"""
+    """TrustedLaunch security type."""
     CONFIDENTIAL_VM = "ConfidentialVM"
-    """ConfidentialVM security type"""
+    """ConfidentialVM security type."""
 
 
 class SettingNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the name of the setting to which the content applies. Possible values
-    are: FirstLogonCommands and AutoLogon.
+    """Specifies the name of the setting to which the content applies. Possible values are:
+    FirstLogonCommands and AutoLogon.
     """
 
     AUTO_LOGON = "AutoLogon"
-    """AutoLogon setting"""
+    """AutoLogon setting."""
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
-    """FirstLogonCommands setting"""
+    """FirstLogonCommands setting."""
 
 
 class SpotAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -492,17 +478,15 @@ class SpotAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the storage account type for the managed disk. Managed OS disk
-    storage account type can only be set when you create the scale set. NOTE:
-    UltraSSD_LRS can only be used with data disks. It cannot be used with OS Disk.
-    Standard_LRS uses Standard HDD. StandardSSD_LRS uses Standard SSD. Premium_LRS
-    uses Premium SSD. UltraSSD_LRS uses Ultra disk. Premium_ZRS uses Premium SSD
-    zone redundant storage. StandardSSD_ZRS uses Standard SSD zone redundant
-    storage. For more information regarding disks supported for Windows Virtual
-    Machines, refer to
+    """Specifies the storage account type for the managed disk. Managed OS disk storage account type
+    can only be set when you create the scale set. NOTE: UltraSSD_LRS can only be used with data
+    disks. It cannot be used with OS Disk. Standard_LRS uses Standard HDD. StandardSSD_LRS uses
+    Standard SSD. Premium_LRS uses Premium SSD. UltraSSD_LRS uses Ultra disk. Premium_ZRS uses
+    Premium SSD zone redundant storage. StandardSSD_ZRS uses Standard SSD zone redundant storage.
+    For more information regarding disks supported for Windows Virtual Machines, refer to
     `https://learn.microsoft.com/azure/virtual-machines/windows/disks-types
-    <https://learn.microsoft.com/azure/virtual-machines/windows/disks-types>`_ and, for
-    Linux Virtual Machines, refer to
+    <https://learn.microsoft.com/azure/virtual-machines/windows/disks-types>`_ and, for Linux
+    Virtual Machines, refer to
     `https://learn.microsoft.com/azure/virtual-machines/linux/disks-types
     <https://learn.microsoft.com/azure/virtual-machines/linux/disks-types>`_.
     """
@@ -536,8 +520,7 @@ class VMAttributeSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class VMCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VMCategories defined for Azure VMs.
-    See:
+    """VMCategories defined for Azure VMs. See:
     `https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist#general-purpose
     <https://learn.microsoft.com/en-us/azure/virtual-machines/sizes/overview?tabs=breakdownseries%2Cgeneralsizelist%2Ccomputesizelist%2Cmemorysizelist%2Cstoragesizelist%2Cgpusizelist%2Cfpgasizelist%2Chpcsizelist#general-purpose>`_.
     """
@@ -557,34 +540,28 @@ class VMCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Examples include Cassandra, MongoDB, Cloudera, and Redis."""
     GPU_ACCELERATED = "GpuAccelerated"
     """GPU optimized VM sizes are specialized virtual machines available with single, multiple, or
-    fractional GPUs.
-    These sizes are designed for compute-intensive, graphics-intensive, and visualization
-    workloads."""
+    fractional GPUs. These sizes are designed for compute-intensive, graphics-intensive, and
+    visualization workloads."""
     FPGA_ACCELERATED = "FpgaAccelerated"
     """FPGA optimized VM sizes are specialized virtual machines available with single or multiple
-    FPGA.
-    These sizes are designed for compute-intensive workloads. This article provides information
-    about the number and type of FPGA, vCPUs, data disks, and NICs.
-    Storage throughput and network bandwidth are also included for each size in this grouping."""
+    FPGA. These sizes are designed for compute-intensive workloads. This article provides
+    information about the number and type of FPGA, vCPUs, data disks, and NICs. Storage throughput
+    and network bandwidth are also included for each size in this grouping."""
     HIGH_PERFORMANCE_COMPUTE = "HighPerformanceCompute"
     """Azure High Performance Compute VMs are optimized for various HPC workloads such as
-    computational fluid dynamics, finite element analysis, frontend and backend EDA,
-    rendering, molecular dynamics, computational geo science, weather simulation, and financial
-    risk analysis."""
+    computational fluid dynamics, finite element analysis, frontend and backend EDA, rendering,
+    molecular dynamics, computational geo science, weather simulation, and financial risk analysis."""
 
 
 class VMOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Virtual Machine operation status values."""
 
+    LAUNCHING = "Launching"
+    """Indicates that the virtual machine has not been accepted by Compute yet and is still scheduled
+    to be created."""
     CREATING = "Creating"
     """Indicates that the virtual machine is either in the process of being created or is scheduled to
     be created."""
-    CANCELED = "Canceled"
-    """Indicates that the cancellation request was successful because the virtual machine had not been
-    created yet."""
-    CANCEL_FAILED_STATUS_UNKNOWN = "CancelFailedStatusUnknown"
-    """Indicates that the cancellation request could not be applied because the virtual machine had
-    already been created."""
     FAILED = "Failed"
     """Indicates that the virtual machine operation failed."""
     SUCCEEDED = "Succeeded"
@@ -601,36 +578,36 @@ class WindowsPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     true."""
 
 
-class WindowsVMGuestPatchAutomaticByPlatformRebootSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class WindowsVMGuestPatchAutomaticByPlatformRebootSetting(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Specifies the reboot setting for all AutomaticByPlatform patch installation operations."""
 
     UNKNOWN = "Unknown"
-    """Unknown Reboot setting"""
+    """Unknown Reboot setting."""
     IF_REQUIRED = "IfRequired"
-    """IfRequired Reboot setting"""
+    """IfRequired Reboot setting."""
     NEVER = "Never"
-    """Never Reboot setting"""
+    """Never Reboot setting."""
     ALWAYS = "Always"
-    """Always Reboot setting"""
+    """Always Reboot setting."""
 
 
 class WindowsVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual
-    machines associated to virtual machine scale set with OrchestrationMode as
-    Flexible.
+    """Specifies the mode of VM Guest Patching to IaaS virtual machine or virtual machines associated
+    to virtual machine scale set with OrchestrationMode as Flexible.
     """
 
     MANUAL = "Manual"
-    """You control the application of patches to a virtual machine.
-    You do this by applying patches manually inside the VM. In this mode,
-    automatic updates are disabled; the property WindowsConfiguration.enableAutomaticUpdates
-    must be false"""
+    """You control the application of patches to a virtual machine. You do this by applying patches
+    manually inside the VM. In this mode, automatic updates are disabled; the property
+    WindowsConfiguration.enableAutomaticUpdates must be false."""
     AUTOMATIC_BY_OS = "AutomaticByOS"
-    """The virtual machine will automatically be updated by the OS.
-    The property WindowsConfiguration.enableAutomaticUpdates must be true."""
+    """The virtual machine will automatically be updated by the OS. The property
+    WindowsConfiguration.enableAutomaticUpdates must be true."""
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
-    """The virtual machine will automatically updated by the platform. The properties
-    provisionVMAgent and WindowsConfiguration.enableAutomaticUpdates must be true."""
+    """The virtual machine will automatically updated by the platform. The properties provisionVMAgent
+    and WindowsConfiguration.enableAutomaticUpdates must be true."""
 
 
 class ZoneDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -640,5 +617,5 @@ class ZoneDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Default. Compute Fleet allocates all Fleet capacity within a single zone based on best effort.
     If capacity is not available, Compute Fleet can allocate capacity in different zones."""
     PRIORITIZED = "Prioritized"
-    """Compute Fleet allocates capacity based on zone preferences.
-    Higher priority zones are filled first before allocating to lower priority zones."""
+    """Compute Fleet allocates capacity based on zone preferences. Higher priority zones are filled
+    first before allocating to lower priority zones."""

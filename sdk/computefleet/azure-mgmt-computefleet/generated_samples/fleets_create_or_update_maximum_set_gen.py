@@ -16,7 +16,7 @@ from azure.mgmt.computefleet import ComputeFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computefleet
 # USAGE
-    python fleets_create_or_update.py
+    python fleets_create_or_update_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -333,7 +333,7 @@ def main():
                         }
                     ]
                 },
-                "capacityType": "VCpu",
+                "capacityType": "VM",
                 "computeProfile": {
                     "additionalVirtualMachineCapabilities": {"hibernationEnabled": True, "ultraSSDEnabled": True},
                     "baseVirtualMachineProfile": {
@@ -625,7 +625,7 @@ def main():
                     "computeApiVersion": "2023-07-01",
                     "platformFaultDomainCount": 1,
                 },
-                "mode": "Instance",
+                "mode": "Launch",
                 "regularPriorityProfile": {"allocationStrategy": "Prioritized", "capacity": 20, "minCapacity": 10},
                 "spotPriorityProfile": {
                     "allocationStrategy": "PriceCapacityOptimized",
@@ -670,6 +670,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/Fleets_CreateOrUpdate.json
+# x-ms-original-file: 2026-04-01-preview/Fleets_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0b2 (2026-04-28)
+
+### Features Added
+
+  - Model `ComputeFleetMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Enum `FleetMode` added member `LAUNCH`
+  - Model `FleetProperties` added property `vm_name_prefix`
+  - Enum `VMOperationStatus` added member `LAUNCHING`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `FleetMode.INSTANCE`
+  - Deleted or renamed enum value `VMOperationStatus.CANCELED`
+  - Deleted or renamed enum value `VMOperationStatus.CANCEL_FAILED_STATUS_UNKNOWN`
+  - Deleted or renamed method `FleetsOperations.begin_cancel`
+
 ## 2.0.0b1 (2025-08-21)
 
 ### Features Added

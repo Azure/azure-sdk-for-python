@@ -15,7 +15,7 @@ from azure.mgmt.computefleet import ComputeFleetMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computefleet
 # USAGE
-    python fleets_get.py
+    python operations_list_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.fleets.get(
-        resource_group_name="rgazurefleet",
-        fleet_name="myFleet",
-    )
-    print(response)
+    response = client.operations.list()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-07-01-preview/Fleets_Get.json
+# x-ms-original-file: 2026-04-01-preview/Operations_List_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
