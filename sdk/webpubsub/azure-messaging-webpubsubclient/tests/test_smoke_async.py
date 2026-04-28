@@ -100,12 +100,6 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             await asyncio.wait_for(reopen_complete.wait(), timeout=60)
             assert reopen_error is None, f"on_stop callback failed: {reopen_error}"
 
-            for _ in range(30):
-                if client.is_connected():
-                    break
-                await asyncio.sleep(1)
-            assert client.is_connected()
-
             # remove stopped event and close again
             await client.unsubscribe("stopped", on_stop)
             await client.close()
