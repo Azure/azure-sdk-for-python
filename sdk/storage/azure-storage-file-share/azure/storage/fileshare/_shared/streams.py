@@ -7,7 +7,7 @@
 import math
 import sys
 from enum import auto, Enum, IntFlag
-from io import BytesIO, IOBase, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
+from io import BytesIO, IOBase, UnsupportedOperation, SEEK_SET
 from typing import IO, Iterator, Optional
 
 from .validation import calculate_crc64
