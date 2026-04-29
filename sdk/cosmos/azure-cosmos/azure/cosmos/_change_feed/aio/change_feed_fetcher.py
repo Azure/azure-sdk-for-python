@@ -25,7 +25,9 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Tuple, Awaitable, cast
+from typing import Any, Awaitable, Callable, List, Optional, Tuple, cast
+
+from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import http_constants, exceptions
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromType
@@ -53,7 +55,8 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
             client,
             resource_link: str,
             feed_options: dict[str, Any],
-            fetch_function: Callable[[dict[str, Any]], Awaitable[Tuple[list[dict[str, Any]], dict[str, Any]]]]
+            fetch_function: Callable[[dict[str, Any]], Awaitable[Tuple[list[dict[str, Any]], dict[str, Any]]]],
+            response_headers_list: Optional[List[CaseInsensitiveDict]] = None,
     ) -> None:
 
         self._client = client
@@ -66,6 +69,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function
+        self._response_headers_list = response_headers_list
 
     async def fetch_next_block(self) -> list[dict[str, Any]]:
         """Returns a block of results.
@@ -83,6 +87,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
 
         self._change_feed_state.populate_feed_options(self._feed_options)
         is_s_time_first_fetch = self._change_feed_state._continuation is None
+        response_headers: dict[str, Any] = {}
         while True:
             (fetched_items, response_headers) = await self._fetch_function(self._feed_options)
             continuation_key = http_constants.HttpHeaders.ETag
@@ -102,6 +107,8 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
                 is_s_time_first_fetch = False
             else:
                 break
+        if self._response_headers_list is not None and response_headers:
+            self._response_headers_list.append(CaseInsensitiveDict(response_headers))
         return fetched_items
 
 
@@ -114,7 +121,8 @@ class ChangeFeedFetcherV2(object):
             client,
             resource_link: str,
             feed_options: dict[str, Any],
-            fetch_function: Callable[[dict[str, Any]], Awaitable[Tuple[list[dict[str, Any]], dict[str, Any]]]]
+            fetch_function: Callable[[dict[str, Any]], Awaitable[Tuple[list[dict[str, Any]], dict[str, Any]]]],
+            response_headers_list: Optional[List[CaseInsensitiveDict]] = None,
     ) -> None:
 
         self._client = client
@@ -127,6 +135,7 @@ class ChangeFeedFetcherV2(object):
 
         self._resource_link = resource_link
         self._fetch_function = fetch_function
+        self._response_headers_list = response_headers_list
 
     async def fetch_next_block(self) -> list[dict[str, Any]]:
         """Returns a block of results.
@@ -163,6 +172,7 @@ class ChangeFeedFetcherV2(object):
         self._change_feed_state.populate_feed_options(self._feed_options)
 
         is_s_time_first_fetch = True
+        response_headers: dict[str, Any] = {}
         while True:
             (fetched_items, response_headers) = await self._fetch_function(self._feed_options)
 
@@ -198,6 +208,8 @@ class ChangeFeedFetcherV2(object):
             if not should_retry:
                 break
 
+        if self._response_headers_list is not None and response_headers:
+            self._response_headers_list.append(CaseInsensitiveDict(response_headers))
         return fetched_items
 
     def _get_base64_encoded_continuation(self) -> str:
