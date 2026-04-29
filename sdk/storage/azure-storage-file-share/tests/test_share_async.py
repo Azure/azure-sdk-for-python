@@ -3,20 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import jwt
+
 import os
 import time
 from datetime import datetime, timedelta
 
+import jwt
 import pytest
 import requests
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage import LogCaptured
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import FileSharePreparer
+
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
-    ResourceNotFoundError
+    ResourceNotFoundError,
 )
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 from azure.storage.fileshare import (
     AccessPolicy,
     AccountSasPermissions,
@@ -29,15 +36,11 @@ from azure.storage.fileshare import (
     ShareProtocols,
     ShareRootSquash,
     ShareSasPermissions,
-    ShareServiceClient,
-    StorageErrorCode
+    StorageErrorCode,
 )
 from azure.storage.fileshare.aio import ShareClient, ShareFileClient, ShareServiceClient
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage import LogCaptured
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import FileSharePreparer
+
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = 'share'
 TEST_INTENT = "backup"
@@ -58,12 +61,13 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             except:
                 pass
 
-    async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
+    async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):  # pylint: disable=unused-argument
         async for l in self.fsc.list_shares(include_snapshots=True):
             try:
                 await self.fsc.delete_share(l.name, delete_snapshots=True)
             except:
                 pass
+
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
         share_name = self.get_resource_name(prefix)
@@ -721,7 +725,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share_name = u'啊齄丂狛狜'
+        share_name = '啊齄丂狛狜'
 
         # Act
         with pytest.raises(HttpResponseError):
@@ -759,7 +763,12 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
 
         self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
-        share = await self._create_share(protocols="NFS", headers={'x-ms-enable-snapshot-virtual-directory-access': "False"})
+        share = await self._create_share(
+            protocols="NFS",
+            headers={
+                'x-ms-enable-snapshot-virtual-directory-access': "False"
+            }
+        )
 
         # Act
         list_props = []
@@ -1307,7 +1316,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         await share.create_share()
 
         # Act
-        resp = await share.set_share_access_policy(signed_identifiers=dict())
+        resp = await share.set_share_access_policy(signed_identifiers={})
 
         # Assert
         acl = await share.get_share_access_policy()
@@ -1325,7 +1334,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         await share.create_share()
 
         # Act
-        resp = await share.set_share_access_policy(dict())
+        resp = await share.set_share_access_policy({})
 
         # Assert
         acl = await share.get_share_access_policy()
@@ -1383,7 +1392,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             await share.set_share_access_policy(identifiers)
-        assert str(e.value.args[0]) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+        assert str(e.value.args[0]) == ('Too many access policies provided. The server does not '
+                                        'support setting more than 5 access policies on a single resource.')
         await self._delete_shares(share.share_name)
 
     @FileSharePreparer()
@@ -1575,7 +1585,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         )
 
         # Act
-        response = requests.get(sas_client.url)
+        response = requests.get(sas_client.url, timeout=15)
 
         # Assert
         assert response.ok
@@ -1943,7 +1953,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
-    async def test_share_cross_tenant_sas(self, **kwargs):
+    async def test_share_cross_tenant_sas(self, **kwargs):  # pylint: disable=too-many-locals
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1957,7 +1967,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
         token = await token_credential.get_token("https://storage.azure.com/.default")
-        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        decoded = jwt.decode(token.token, options={"verify_signature": False})  # pylint: disable=no-member
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = await service.get_user_delegation_key(
