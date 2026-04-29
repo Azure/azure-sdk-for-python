@@ -2,7 +2,173 @@
 
 ## 1.1.0b6 (2026-04-29)
 
-skip changelog generation
+### Features Added
+
+  - Client `PolicyInsightsClient` added method `send_request`
+  - Model `FieldRestriction` added property `values_property`
+  - Model `PendingField` added property `values_property`
+  - Model `PolicyMetadata` added property `properties`
+  - Model `PolicyMetadata` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `SlimPolicyMetadata` added property `properties`
+  - Added model `AttestationsListForResourceGroupQueryOptions`
+  - Added model `AttestationsListForResourceQueryOptions`
+  - Added model `AttestationsListForSubscriptionQueryOptions`
+  - Added model `ComponentPolicyStatesListQueryResultsForPolicyDefinitionQueryOptions`
+  - Added model `ComponentPolicyStatesListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions`
+  - Added model `ComponentPolicyStatesListQueryResultsForResourceGroupQueryOptions`
+  - Added model `ComponentPolicyStatesListQueryResultsForResourceQueryOptions`
+  - Added model `ComponentPolicyStatesListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions`
+  - Added model `ComponentPolicyStatesListQueryResultsForSubscriptionQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForManagementGroupQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForPolicyDefinitionQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForPolicySetDefinitionQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForResourceGroupQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForResourceQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions`
+  - Added model `PolicyEventsListQueryResultsForSubscriptionQueryOptions`
+  - Added model `PolicyMetadataListQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForManagementGroupQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForPolicyDefinitionQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForPolicySetDefinitionQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForResourceGroupQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForResourceQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions`
+  - Added model `PolicyStatesListQueryResultsForSubscriptionQueryOptions`
+  - Added model `PolicyStatesSummarizeForManagementGroupQueryOptions`
+  - Added model `PolicyStatesSummarizeForPolicyDefinitionQueryOptions`
+  - Added model `PolicyStatesSummarizeForPolicySetDefinitionQueryOptions`
+  - Added model `PolicyStatesSummarizeForResourceGroupLevelPolicyAssignmentQueryOptions`
+  - Added model `PolicyStatesSummarizeForResourceGroupQueryOptions`
+  - Added model `PolicyStatesSummarizeForResourceQueryOptions`
+  - Added model `PolicyStatesSummarizeForSubscriptionLevelPolicyAssignmentQueryOptions`
+  - Added model `PolicyStatesSummarizeForSubscriptionQueryOptions`
+  - Added model `PolicyTrackedResourcesListQueryResultsForManagementGroupQueryOptions`
+  - Added model `PolicyTrackedResourcesListQueryResultsForResourceGroupQueryOptions`
+  - Added model `PolicyTrackedResourcesListQueryResultsForResourceQueryOptions`
+  - Added model `PolicyTrackedResourcesListQueryResultsForSubscriptionQueryOptions`
+  - Added model `ProxyResource`
+  - Added model `RemediationsListDeploymentsAtManagementGroupQueryOptions`
+  - Added model `RemediationsListDeploymentsAtResourceGroupQueryOptions`
+  - Added model `RemediationsListDeploymentsAtResourceQueryOptions`
+  - Added model `RemediationsListDeploymentsAtSubscriptionQueryOptions`
+  - Added model `RemediationsListForManagementGroupQueryOptions`
+  - Added model `RemediationsListForResourceGroupQueryOptions`
+  - Added model `RemediationsListForResourceQueryOptions`
+  - Added model `RemediationsListForSubscriptionQueryOptions`
+
+### Breaking Changes
+
+  - Model `FieldRestriction` deleted or renamed its instance variable `values`
+  - Model `PendingField` deleted or renamed its instance variable `values`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `metadata_id`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `category`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `title`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `owner`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `additional_content_url`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `metadata`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `description`
+  - Model `PolicyMetadata` deleted or renamed its instance variable `requirements`
+  - Model `SlimPolicyMetadata` deleted or renamed its instance variable `metadata_id`
+  - Model `SlimPolicyMetadata` deleted or renamed its instance variable `category`
+  - Model `SlimPolicyMetadata` deleted or renamed its instance variable `title`
+  - Model `SlimPolicyMetadata` deleted or renamed its instance variable `owner`
+  - Model `SlimPolicyMetadata` deleted or renamed its instance variable `additional_content_url`
+  - Model `SlimPolicyMetadata` deleted or renamed its instance variable `metadata`
+  - Deleted or renamed model `ErrorDefinitionAutoGenerated`
+  - Deleted or renamed model `ErrorDefinitionAutoGenerated2`
+  - Deleted or renamed model `ErrorResponseAutoGenerated`
+  - Deleted or renamed model `ErrorResponseAutoGenerated2`
+  - Deleted or renamed model `PolicyEventsQueryResults`
+  - Deleted or renamed model `PolicyMetadataCollection`
+  - Deleted or renamed model `PolicyStatesQueryResults`
+  - Deleted or renamed model `PolicyTrackedResourcesQueryResults`
+  - Deleted or renamed model `QueryOptions`
+  - Method `AttestationsOperations.list_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `AttestationsOperations.list_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `AttestationsOperations.list_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `top` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `order_by` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `select` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `from_parameter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `to` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `apply` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `top` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `order_by` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `select` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `from_parameter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `to` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `apply` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `expand` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `top` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `order_by` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `select` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `from_parameter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `to` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `apply` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `top` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `order_by` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `select` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `from_parameter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `to` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `apply` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `top` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `order_by` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `select` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `from_parameter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `to` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `apply` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `top` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `order_by` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `select` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `from_parameter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `to` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `ComponentPolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `apply` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_policy_set_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyEventsOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyMetadataOperations.list` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_policy_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_policy_set_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_resource_group_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.list_query_results_for_subscription_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_policy_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_policy_set_definition` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_resource_group_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyStatesOperations.summarize_for_subscription_level_policy_assignment` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `PolicyTrackedResourcesOperations.list_query_results_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_deployments_at_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_deployments_at_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_deployments_at_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_deployments_at_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_for_management_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_for_resource` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_for_resource_group` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
+  - Method `RemediationsOperations.list_for_subscription` deleted or renamed its parameter `query_options` of kind `positional_or_keyword`
 
 ## 1.1.0b5 (2025-07-21)
 
