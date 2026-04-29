@@ -223,7 +223,7 @@ def start_span(
         schema_version=GEN_AI_SEMANTIC_CONVENTIONS_SCHEMA_VERSION,
     )
 
-    if span and span.span_instance.is_recording:
+    if span and span.span_instance.is_recording():
         span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
         span.add_attribute(GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER)
 
