@@ -17,6 +17,7 @@ with dotted tool names), we own the entire MCP interaction and register
 tools as regular Copilot SDK custom tools.
 """
 import asyncio
+import contextvars
 import json
 import logging
 import pathlib
@@ -34,8 +35,24 @@ logger.info("Toolbox module loaded: %s", _TOOLBOX_BUILD_TAG)
 
 _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
 _FOUNDRY_TOOLBOX_SERVER_KEY = "foundry-toolbox"
+_FOUNDRY_MCP_SERVER_KEY = "foundry-mcp"
+_FOUNDRY_MCP_HOST = "mcp.ai.azure.com"
+_FOUNDRY_MCP_URL = f"https://{_FOUNDRY_MCP_HOST}"
 _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
+_FOUNDRY_MCP_SCOPE = "https://mcp.ai.azure.com/.default"
 
+# ContextVar to thread the caller's Bearer token into MCP call_tool at request time.
+# Set by the adapter when handling a cross-tenant request (Tenant B → Agent in Tenant A).
+_current_user_token: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
+    "_current_user_token", default=None
+)
+
+
+def _scope_for_endpoint(endpoint: str) -> str:
+    """Return the correct OAuth scope for a given MCP endpoint URL."""
+    if _FOUNDRY_MCP_HOST in endpoint:
+        return _FOUNDRY_MCP_SCOPE
+    return _FOUNDRY_SCOPE
 
 
 # ---------------------------------------------------------------------------
@@ -46,15 +63,17 @@ def discover_mcp_servers(
     project_root: pathlib.Path,
     toolbox_endpoint: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Discover MCP server configs from ``mcp.json`` and an optional toolbox endpoint.
+    """Discover MCP server configs from ``mcp.json``, environment, and explicit endpoints.
 
     Sources (merged in order, later wins on key collision):
 
     1. ``mcp.json`` in the project root — static config checked into the repo.
-    2. *toolbox_endpoint* — an explicit URL for the Foundry toolbox MCP
-       server.  When provided and ``mcp.json`` does not already define a
-       ``"foundry-toolbox"`` entry, one is added automatically with the
-       required ``Foundry-Features`` header and ``_auto_auth`` marker.
+    2. **Auto-detected Foundry MCP** — when ``FOUNDRY_PROJECT_ENDPOINT`` or
+       ``AZURE_AI_PROJECT_ENDPOINT`` is set and no ``mcp.json`` defines a
+       ``"foundry-mcp"`` entry, the Foundry MCP server at
+       ``https://mcp.ai.azure.com`` is registered automatically.
+    3. *toolbox_endpoint* — an explicit URL for a Foundry toolbox MCP
+       server.
 
     For servers without an explicit ``Authorization`` header, the adapter
     will inject a fresh token automatically before each session.  The
@@ -90,7 +109,23 @@ def discover_mcp_servers(
         }
         logger.info("Added toolbox MCP server: %s", toolbox_endpoint)
 
-    # Auto-inject headers for toolbox endpoints
+    # 3. Auto-register Foundry MCP when a project endpoint is configured
+    #    and no explicit foundry-mcp entry exists.  This means FAB agents
+    #    don't need an mcp.json — the Foundry MCP endpoint is well-known.
+    import os
+    has_project = os.getenv("FOUNDRY_PROJECT_ENDPOINT") or os.getenv("AZURE_AI_PROJECT_ENDPOINT")
+    if has_project and _FOUNDRY_MCP_SERVER_KEY not in servers:
+        servers[_FOUNDRY_MCP_SERVER_KEY] = {
+            "type": "http",
+            "url": _FOUNDRY_MCP_URL,
+            "tools": ["*"],
+            "headers": {
+                "_auto_auth": True,
+            },
+        }
+        logger.info("Auto-registered Foundry MCP server: %s", _FOUNDRY_MCP_URL)
+
+    # Auto-inject headers for Foundry MCP endpoints
     for server in servers.values():
         if not isinstance(server, dict):
             continue
@@ -99,7 +134,8 @@ def discover_mcp_servers(
             headers["_auto_auth"] = True
         url = server.get("url", "").strip()
         server["url"] = url
-        if "/toolboxes/" in url and "Foundry-Features" not in headers:
+        is_foundry_mcp = _FOUNDRY_MCP_HOST in url or "/toolboxes/" in url
+        if is_foundry_mcp and "Foundry-Features" not in headers:
             headers["Foundry-Features"] = _FOUNDRY_TOOLBOX_FEATURE_HEADER
 
     return servers
@@ -109,19 +145,33 @@ def discover_mcp_servers(
 # Auth helpers
 # ---------------------------------------------------------------------------
 
-def refresh_mcp_auth(servers: Dict[str, Any], credential: Any) -> None:
+def refresh_mcp_auth(servers: Dict[str, Any], credential: Any, user_token: Optional[str] = None) -> None:
     """Refresh ``Authorization`` headers on MCP servers that opted in to auto-auth.
+
+    When *user_token* is provided (e.g. from the incoming request's
+    ``Authorization`` header), it is used directly — enabling cross-tenant
+    scenarios where a customer in Tenant B invokes an agent in Tenant A and
+    the agent calls Foundry MCP APIs on behalf of the customer.
+
+    Falls back to *credential* (the agent's own identity) when no user token
+    is available.
 
     :param servers: The ``mcp_servers`` dict from session config (mutated in place).
     :param credential: An Azure credential with a ``get_token()`` method.
+    :param user_token: Optional Bearer token from the incoming request headers.
     """
-    token = credential.get_token(_FOUNDRY_SCOPE).token
+    # Prefer the caller's token for OBO / cross-tenant; fall back to agent identity.
     for server in servers.values():
         if not isinstance(server, dict):
             continue
         headers = server.get("headers", {})
-        if headers.get("_auto_auth"):
-            headers["Authorization"] = f"Bearer {token}"
+        if headers.pop("_auto_auth", None):
+            if user_token:
+                headers["Authorization"] = f"Bearer {user_token}"
+            else:
+                scope = _scope_for_endpoint(server.get("url", ""))
+                token = credential.get_token(scope).token
+                headers["Authorization"] = f"Bearer {token}"
 
 
 # ---------------------------------------------------------------------------
@@ -170,11 +220,31 @@ class McpBridge:
         self._req_id += 1
         return self._req_id
 
+    @staticmethod
+    def _parse_response(resp) -> dict:
+        """Parse response body — handles both JSON and SSE (text/event-stream) formats."""
+        content_type = resp.headers.get("content-type", "")
+        if "text/event-stream" in content_type:
+            # SSE format: extract JSON from "data:" lines
+            for line in resp.text.splitlines():
+                if line.startswith("data: "):
+                    return json.loads(line[6:])
+                elif line.startswith("data:"):
+                    return json.loads(line[5:])
+            # Fallback: try parsing the whole body
+            return json.loads(resp.text)
+        return resp.json()
+
     def _request_headers(self) -> Dict[str, str]:
         headers = dict(self._headers)
-        if self._credential:
+        # Prefer caller's token for cross-tenant (Tenant B customer → Tenant A agent → MCP).
+        user_token = _current_user_token.get()
+        if user_token:
+            headers["Authorization"] = f"Bearer {user_token}"
+        elif self._credential:
             try:
-                token = self._credential.get_token(_FOUNDRY_SCOPE).token
+                scope = _scope_for_endpoint(self._endpoint)
+                token = self._credential.get_token(scope).token
                 headers["Authorization"] = f"Bearer {token}"
             except Exception:
                 logger.warning("Failed to refresh token for MCP bridge", exc_info=True)
@@ -218,7 +288,7 @@ class McpBridge:
             resp.status_code, diag,
         )
         resp.raise_for_status()
-        data = resp.json()
+        data = self._parse_response(resp)
         self._session_id = resp.headers.get("mcp-session-id")
 
         # Send initialized notification
@@ -256,7 +326,7 @@ class McpBridge:
             self._session_id, diag,
         )
         resp.raise_for_status()
-        data = resp.json()
+        data = self._parse_response(resp)
         if "error" in data:
             logger.warning("MCP tools/list error: %s diagnostics=%s", data["error"], diag)
         tools = data.get("result", {}).get("tools", [])
@@ -294,7 +364,7 @@ class McpBridge:
             },
         )
         resp.raise_for_status()
-        data = resp.json()
+        data = self._parse_response(resp)
         if "error" in data:
             err = data["error"]
             logger.warning("MCP tools/call error for %s: %s", name, err)
@@ -451,7 +521,8 @@ async def connect_toolbox(
 
     # Auto-inject auth from credential if not already set
     if "Authorization" not in h and credential is not None:
-        token = credential.get_token(_FOUNDRY_SCOPE).token
+        scope = _scope_for_endpoint(endpoint)
+        token = credential.get_token(scope).token
         h["Authorization"] = f"Bearer {token}"
 
     # Auto-inject toolbox feature header

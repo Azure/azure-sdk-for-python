@@ -308,8 +308,13 @@ class CopilotAdapter:
 
         return _on_permission
 
-    async def _get_or_create_session(self, conversation_id=None):
-        """Get existing session or create new one."""
+    async def _get_or_create_session(self, conversation_id=None, user_token=None):
+        """Get existing session or create new one.
+
+        :param conversation_id: Conversation ID for multi-turn session reuse.
+        :param user_token: Bearer token from the incoming request headers.
+            Used for cross-tenant MCP calls (OBO flow).
+        """
         if conversation_id and conversation_id in self._sessions:
             logger.info(f"Reusing session for conversation {conversation_id!r}")
             return self._sessions[conversation_id]
@@ -323,9 +328,12 @@ class CopilotAdapter:
         # automatically — no need to pass them as separate kwargs.
         sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
 
-        # MCP servers are no longer passed to the SDK — toolbox tools are
-        # registered as regular custom tools via the McpBridge approach.
-        sdk_config.pop("mcp_servers", None)
+        # Resolve auth tokens on MCP servers before passing to SDK.
+        # user_token enables cross-tenant: customer's token is forwarded to
+        # Foundry MCP so APIs execute in the customer's tenant context.
+        if "mcp_servers" in sdk_config and (self._credential or user_token):
+            from ._toolbox import refresh_mcp_auth
+            refresh_mcp_auth(sdk_config["mcp_servers"], self._credential, user_token=user_token)
 
         session = await client.create_session(
             **sdk_config,
@@ -388,9 +396,22 @@ class CopilotAdapter:
 
         response_id = getattr(context, "response_id", None) or "unknown"
 
+        # Extract user's Bearer token from incoming request headers for
+        # cross-tenant MCP calls (customer in Tenant B → FAB agent in Tenant A
+        # → Foundry MCP APIs on behalf of the customer).
+        user_token = None
+        client_headers = getattr(context, "client_headers", None) or {}
+        auth_header = client_headers.get("authorization") or client_headers.get("Authorization") or ""
+        if auth_header.lower().startswith("bearer "):
+            user_token = auth_header[len("bearer "):]
+
+        # Thread user token into MCP bridge for cross-tenant tool calls.
+        from ._toolbox import _current_user_token
+        _current_user_token.set(user_token)
+
         logger.info(f"Request: input={input_text[:100]!r} conversation_id={conversation_id}")
 
-        session = await self._get_or_create_session(conversation_id)
+        session = await self._get_or_create_session(conversation_id, user_token=user_token)
 
         # Set up event queue
         queue: asyncio.Queue = asyncio.Queue()
@@ -677,10 +698,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
         super().__init__(**kwargs)
         root = pathlib.Path(project_root or os.getcwd())
 
-        # Track MCP bridges for cleanup
+        # Track MCP bridges for dynamic toolbox connections (e.g. toolboxes
+        # attached to agents created by FAB in the customer's tenant).
         self._toolbox_bridges: list = []
-        self._toolboxes_connected = False
-        self._toolbox_lock = asyncio.Lock()
 
         # AGENTS.md persona injection — load the project's AGENTS.md and use it
         # as the system message so the agent fully embodies its persona
@@ -716,9 +736,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 self._session_config.setdefault("tools", []).extend(discovered_tools)
                 logger.info("Discovered %d tools from .github/tools/", len(discovered_tools))
 
-        # MCP toolbox discovery — find endpoints from mcp.json and/or explicit param.
-        # Servers are stored in _session_config["mcp_servers"] so that
-        # connect_toolboxes() can iterate them later during async init.
+        # MCP server discovery — find endpoints from mcp.json and/or explicit param.
+        # Servers are stored in _session_config["mcp_servers"] and passed
+        # directly to the Copilot SDK's create_session.
         if "mcp_servers" not in self._session_config:
             mcp_servers = discover_mcp_servers(root, toolbox_endpoint=toolbox_endpoint)
             if mcp_servers:
@@ -737,6 +757,54 @@ class GitHubCopilotAdapter(CopilotAdapter):
                     logger.info("Created credential for MCP server auto-auth")
                 except Exception:
                     logger.warning("Failed to create credential for MCP auto-auth", exc_info=True)
+
+    async def connect_toolboxes(self, toolbox_endpoints: list[dict], user_token: Optional[str] = None):
+        """Connect to dynamic toolbox MCP endpoints and register their tools.
+
+        Called when agents created by FAB have associated toolboxes that
+        need to be connected at runtime.  The customer's token is forwarded
+        so toolbox calls execute in the customer's tenant.
+
+        :param toolbox_endpoints: List of dicts with ``url`` and optional
+            ``name`` / ``headers`` keys.
+        :param user_token: Bearer token from the incoming request, forwarded
+            to the toolbox endpoint for cross-tenant auth.
+        """
+        from ._toolbox import _current_user_token
+
+        for ep in toolbox_endpoints:
+            url = ep.get("url")
+            if not url:
+                continue
+            name = ep.get("name", url)
+            headers = dict(ep.get("headers", {}))
+
+            # Inject customer's token for cross-tenant toolbox access
+            if user_token and "Authorization" not in headers:
+                headers["Authorization"] = f"Bearer {user_token}"
+            elif self._credential and "Authorization" not in headers:
+                from ._toolbox import _scope_for_endpoint
+                token = self._credential.get_token(_scope_for_endpoint(url)).token
+                headers["Authorization"] = f"Bearer {token}"
+
+            try:
+                # Set the user token context var so call_tool also uses it
+                token_reset = _current_user_token.set(user_token)
+                try:
+                    bridge, tools = await connect_toolbox(
+                        url, headers=headers, credential=self._credential, name=name,
+                    )
+                finally:
+                    _current_user_token.reset(token_reset)
+
+                self._toolbox_bridges.append(bridge)
+                self._session_config.setdefault("tools", []).extend(tools)
+                logger.info(
+                    "Connected toolbox %r: %d tools registered",
+                    name, len(tools),
+                )
+            except Exception:
+                logger.warning("Failed to connect toolbox %r at %s", name, url, exc_info=True)
 
     @staticmethod
     def _load_agents_md(project_root: pathlib.Path) -> Optional[str]:
@@ -793,66 +861,6 @@ class GitHubCopilotAdapter(CopilotAdapter):
         root = pathlib.Path(project_path).resolve()
         return cls(project_root=str(root), **kwargs)
 
-    async def connect_toolboxes(self):
-        """Connect to toolbox MCP servers and register their tools.
-
-        Iterates over servers discovered at ``__init__`` time, connects to each
-        via :func:`connect_toolbox`, and appends the resulting SDK ``Tool``
-        objects to the session config.  Each :class:`McpBridge` is stored on
-        ``self._toolbox_bridges`` for lifecycle management.
-        """
-        mcp_servers = self._session_config.get("mcp_servers")
-        if not mcp_servers:
-            return
-
-        for name, server_cfg in list(mcp_servers.items()):
-            if not isinstance(server_cfg, dict):
-                continue
-            url = server_cfg.get("url")
-            if not url:
-                continue
-
-            headers = dict(server_cfg.get("headers", {}))
-
-            # Resolve auto-auth token
-            if headers.pop("_auto_auth", None) and self._credential:
-                try:
-                    token = self._credential.get_token("https://ai.azure.com/.default").token
-                    headers["Authorization"] = f"Bearer {token}"
-                except Exception:
-                    logger.warning("Failed to acquire token for toolbox %r", name, exc_info=True)
-                    continue
-
-            try:
-                bridge, tools = await connect_toolbox(
-                    url, headers=headers, credential=self._credential, name=name,
-                )
-                self._toolbox_bridges.append(bridge)
-                self._session_config.setdefault("tools", []).extend(tools)
-                logger.info(
-                    "Connected toolbox %r: %d tools registered",
-                    name, len(tools),
-                )
-            except Exception:
-                logger.warning("Failed to connect toolbox %r at %s", name, url, exc_info=True)
-
-    async def _ensure_toolboxes(self):
-        """Lazily connect to toolbox MCP servers on first request.
-
-        Deferred from ``initialize()`` to the first request so that user
-        context (auth tokens injected by the platform) is available when
-        the MCP ``initialize`` and ``tools/list`` calls are made.  An
-        ``asyncio.Lock`` prevents concurrent initialization from parallel
-        requests.
-        """
-        if self._toolboxes_connected:
-            return
-        async with self._toolbox_lock:
-            if self._toolboxes_connected:
-                return
-            await self.connect_toolboxes()
-            self._toolboxes_connected = True
-
     async def initialize(self):
         """Discover deployments and configure the model.
 
@@ -862,10 +870,6 @@ class GitHubCopilotAdapter(CopilotAdapter):
         capabilities.  If ``AZURE_AI_FOUNDRY_MODEL`` is set, the configured
         model is matched against discovered deployments; if not found, the
         best available model is auto-selected.
-
-        Toolbox MCP connections are deferred to the first request
-        (via ``_ensure_toolboxes``) so that platform-injected user context
-        is available.
         """
 
         resource_url = self._session_config.get("_foundry_resource_url")
@@ -1064,18 +1068,18 @@ class GitHubCopilotAdapter(CopilotAdapter):
             logger.warning("Failed to load conversation history for %s", conversation_id, exc_info=True)
             return None
 
-    async def _get_or_create_session(self, conversation_id=None):
-        """Override to add lazy toolbox init and conversation history bootstrap."""
-        # Lazy-connect toolboxes on first request (deferred from initialize)
-        await self._ensure_toolboxes()
-
+    async def _get_or_create_session(self, conversation_id=None, user_token=None):
+        """Override to add conversation history bootstrap."""
         if conversation_id and conversation_id not in self._sessions:
             history = await self._load_conversation_history(conversation_id)
             if history:
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
                 sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
-                sdk_config.pop("mcp_servers", None)
+                # Resolve auth tokens on MCP servers before passing to SDK
+                if "mcp_servers" in sdk_config and (self._credential or user_token):
+                    from ._toolbox import refresh_mcp_auth
+                    refresh_mcp_auth(sdk_config["mcp_servers"], self._credential, user_token=user_token)
                 session = await client.create_session(
                     **sdk_config,
                     on_permission_request=self._make_permission_handler(),
@@ -1090,7 +1094,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 self._sessions[conversation_id] = session
                 logger.info("Bootstrapped session %s with %d chars of history", conversation_id, len(history))
 
-        return await super()._get_or_create_session(conversation_id)
+        return await super()._get_or_create_session(conversation_id, user_token=user_token)
 
     def get_model(self) -> Optional[str]:
         """Get the currently configured model.
