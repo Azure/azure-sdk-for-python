@@ -1,5 +1,9 @@
 # Release History
 
+## 2.2.0 (2026-04-29)
+
+skip changelog generation for data-plane package and please add changelog manually.
+
 ## 2.1.0 (2026-04-20)
 
 ### Features Added
