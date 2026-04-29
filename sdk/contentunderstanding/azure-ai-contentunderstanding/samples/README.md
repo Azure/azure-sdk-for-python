@@ -63,6 +63,7 @@ Extracts structured fields from invoices using `prebuilt-invoice` analyzer. Show
 - Extracting structured fields (customer name, totals, dates, line items)
 - Working with field confidence scores and source locations
 - Accessing object fields and array fields
+- Accessing usage details (billing metrics, token consumption per model)
 - Financial document processing (invoices, receipts, credit cards, bank statements, checks)
 
 ### Sample 04: Create Analyzer

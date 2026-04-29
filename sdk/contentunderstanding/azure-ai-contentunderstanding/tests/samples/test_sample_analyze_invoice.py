@@ -215,4 +215,26 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
         else:
             print("[INFO] LineItems field not found in this document")
 
+        # Verify usage details (available after result() completes)
+        usage = poller.usage
+        assert usage is not None, "Usage details should be available after analysis"
+        print("[PASS] Usage details available")
+
+        # Verify at least one page metric is set
+        has_pages = (
+            (usage.document_pages_standard is not None and usage.document_pages_standard > 0)
+            or (usage.document_pages_basic is not None and usage.document_pages_basic > 0)
+            or (usage.document_pages_minimal is not None and usage.document_pages_minimal > 0)
+        )
+        assert has_pages, "Usage should report at least one document page metric"
+        print(f"[PASS] Usage reports document pages (standard={usage.document_pages_standard}, basic={usage.document_pages_basic}, minimal={usage.document_pages_minimal})")
+
+        # Verify token usage is reported
+        if usage.tokens:
+            assert len(usage.tokens) > 0, "Token usage should have at least one model entry"
+            for model, count in usage.tokens.items():
+                assert count > 0, f"Token count for {model} should be positive"
+                print(f"[INFO] Token usage: {model} = {count}")
+            print(f"[PASS] Token usage reported for {len(usage.tokens)} model(s)")
+
         print("\n[SUCCESS] All test_sample_analyze_invoice assertions passed")
