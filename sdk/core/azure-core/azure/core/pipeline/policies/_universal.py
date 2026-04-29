@@ -398,9 +398,9 @@ class HttpLoggingPolicy(
     :keyword int http_logging_level: The logging level to use for HTTP request and response logs.
      Defaults to logging.INFO.
     :type http_logging_level: int
-    :keyword allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
+    :keyword additional_allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
         These are added to the default set which includes "api-version".
-    :type allowed_query_params: Iterable[str]
+    :type additional_allowed_query_params: Iterable[str]
 
     Environment variables:
 
@@ -449,7 +449,7 @@ class HttpLoggingPolicy(
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.http_logging_level: int = http_logging_level
         self.allowed_query_params: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
-        additional_query_params = kwargs.get("allowed_query_params")
+        additional_query_params = kwargs.get("additional_allowed_query_params")
         if additional_query_params:
             self.allowed_query_params.update(additional_query_params)
         self.allowed_header_names: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_HEADERS_ALLOWLIST)

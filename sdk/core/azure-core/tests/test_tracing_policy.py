@@ -690,9 +690,9 @@ class TestTracingPolicyNativeTracing:
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
     def test_url_full_sanitized_custom_allowed(self, tracing_helper, http_request, http_response):
-        """Test that custom allowed_query_params are additive to the default allowlist."""
+        """Test that custom additional_allowed_query_params are additive to the default allowlist."""
         with tracing_helper.tracer.start_as_current_span("Root"):
-            policy = DistributedTracingPolicy(allowed_query_params=["token"])
+            policy = DistributedTracingPolicy(additional_allowed_query_params=["token"])
 
             request = http_request("GET", "http://localhost/temp?api-version=2024-01-01&secret=mysecret&token=abc")
             pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -711,9 +711,9 @@ class TestTracingPolicyNativeTracing:
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
     def test_url_full_sanitized_case_insensitive(self, tracing_helper, http_request, http_response):
-        """Test that allowed_query_params matching is case-insensitive."""
+        """Test that additional_allowed_query_params matching is case-insensitive."""
         with tracing_helper.tracer.start_as_current_span("Root"):
-            policy = DistributedTracingPolicy(allowed_query_params=["MyParam"])
+            policy = DistributedTracingPolicy(additional_allowed_query_params=["MyParam"])
 
             request = http_request("GET", "http://localhost/temp?myparam=value1&other=value2")
             pipeline_request = PipelineRequest(request, PipelineContext(None))
@@ -772,7 +772,7 @@ class TestTracingPolicyNativeTracing:
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
     def test_client_pipeline_respects_allowed_query_params(self, tracing_helper, http_request, http_response):
         """Test that both HttpLoggingPolicy and DistributedTracingPolicy respect
-        allowed_query_params when constructed via a client that propagates **kwargs,
+        additional_allowed_query_params when constructed via a client that propagates **kwargs,
         mirroring how generated SDK clients work."""
 
         class MockTransport(HttpTransport):
@@ -814,15 +814,15 @@ class TestTracingPolicyNativeTracing:
             def make_request(self, request, **kwargs):
                 return self._pipeline.run(request, **kwargs)
 
-        # User passes allowed_query_params once at the client level.
-        client = MockClient(allowed_query_params=["customParam", "token"])
+        # User passes additional_allowed_query_params once at the client level.
+        client = MockClient(additional_allowed_query_params=["customParam", "token"])
 
         url = "http://localhost/temp?api-version=2024-01-01&customParam=myvalue&token=abc123&secret=hidden"
 
         with tracing_helper.tracer.start_as_current_span("Root"):
             client.make_request(http_request("GET", url))
 
-        # Verify DistributedTracingPolicy respected allowed_query_params.
+        # Verify DistributedTracingPolicy respected additional_allowed_query_params.
         finished_spans = tracing_helper.exporter.get_finished_spans()
         assert len(finished_spans) == 2
         assert finished_spans[0].name == "GET"
@@ -831,7 +831,7 @@ class TestTracingPolicyNativeTracing:
             == "http://localhost/temp?api-version=2024-01-01&customParam=myvalue&token=abc123&secret=REDACTED"
         )
 
-        # Verify HttpLoggingPolicy respected allowed_query_params.
+        # Verify HttpLoggingPolicy respected additional_allowed_query_params.
         logged_messages = [call.args[0].message for call in mock_handler.emit.call_args_list]
         request_log = logged_messages[0]
         assert "api-version=2024-01-01" in request_log

@@ -370,7 +370,7 @@ def test_http_logger_allowed_query_params_via_constructor(http_request, http_res
     logger.addHandler(mock_handler)
     logger.setLevel(logging.DEBUG)
 
-    policy = HttpLoggingPolicy(logger=logger, allowed_query_params=["country"])
+    policy = HttpLoggingPolicy(logger=logger, additional_allowed_query_params=["country"])
 
     universal_request = http_request("GET", "http://localhost/?api-version=1.0&country=france&city=aix")
     http_response = create_http_response(http_response, universal_request, None)

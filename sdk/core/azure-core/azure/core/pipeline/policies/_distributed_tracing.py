@@ -76,9 +76,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :type tracing_attributes: dict[str, str]
     :keyword instrumentation_config: Configuration for the instrumentation providers
     :type instrumentation_config: dict[str, Any]
-    :keyword allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
+    :keyword additional_allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
         These are added to the default set which includes "api-version".
-    :type allowed_query_params: Iterable[str]
+    :type additional_allowed_query_params: Iterable[str]
     """
 
     TRACING_CONTEXT = "TRACING_CONTEXT"
@@ -108,7 +108,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
         self._instrumentation_config = instrumentation_config
         self.allowed_query_params: set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
-        additional_params = kwargs.get("allowed_query_params")
+        additional_params = kwargs.get("additional_allowed_query_params")
         if additional_params:
             self.allowed_query_params.update(additional_params)
 
