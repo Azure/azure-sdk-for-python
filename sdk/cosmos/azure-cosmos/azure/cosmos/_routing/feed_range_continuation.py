@@ -2,26 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 """Shared helpers for the structured ``feed_range`` continuation token.
 
-Both the sync (``azure.cosmos._cosmos_client_connection``) and async
-(``azure.cosmos.aio._cosmos_client_connection_async``) ``__QueryFeed``
-implementations import from this module so that there is exactly one
-source of truth for token wire-format, hash fingerprinting, and
-routing-scope resolution. Only the pagination loop differs between the
-two paths (sync vs. ``await``); the token logic does not.
+Both sync and async ``__QueryFeed`` implementations use this module for
+token wire format, request fingerprinting, and feed-range routing helpers.
 
-The saved continuation is a single ordered queue of sub-ranges,
-each entry pairing a ``routing_range.Range`` with its own backend
-continuation. There is **no** "current vs. remaining" split — neither
-on the wire (single ``c`` list) nor in memory (single
-``_FeedRangePaginationState.queue`` deque). The loop peeks the head
-of the queue to issue the next request, updates the head's continuation
-when the backend returns one, and pops the head when that sub-range
-is drained — exactly like Java's
-``FeedRangeCompositeContinuationImpl`` (a single
-``Queue<CompositeContinuationToken>`` of ``{range, token}`` entries).
-This shape scales to non-sequential merges / parallel fan-out without
-a wire-format version bump: any subset of entries may carry a non-null
-backend continuation simultaneously.
+The token stores an ordered ``c`` list of ``{min, max, bc}`` entries.
+Pagination reads and updates the queue head, then advances when the head
+is drained.
 """
 
 import base64
@@ -48,17 +34,9 @@ _FIELD_COLLECTION_RID = "cr"
 _FIELD_QUERY_HASH = "qh"
 # Fingerprint of the caller's input feed_range to prevent wrong-scope resume.
 _FIELD_FEEDRANGE_HASH = "frh"
-# Ordered list of {min, max, bc} entries — one per sub-range of the
-# caller's input feed_range. The wire format intentionally has NO
-# privileged "current" slot: iteration position ("which slice am I on")
-# is an in-memory concern of ``_FeedRangePaginationState`` and is
-# reconstructed from the head of this list on resume. Modeled on the
-# Java SDK's ``FeedRangeCompositeContinuationImpl`` (which persists a
-# single ``Queue<CompositeContinuationToken>`` and likewise has no
-# "current" field). This shape scales to non-sequential merges /
-# parallel fan-out without a wire-format version bump: any subset of
-# entries may carry a non-null ``bc`` simultaneously, all entries are
-# structurally equal, and drain order is whatever the producer chooses.
+# Ordered list of {min, max, bc} entries for the requested feed range.
+# Iteration state comes from the list order; there is no separate
+# top-level "current" field.
 _FIELD_CONTINUATIONS = "c"
 # Backend continuation for ONE entry. Lives INSIDE each ``c[i]`` entry,
 # never at the envelope level. ``null`` means "this sub-range has not
@@ -170,13 +148,9 @@ def _decode_token(serialized: Optional[str]) -> Optional[dict]:
     """Decode a continuation string into our token dict, or ``None``.
 
     Returns ``None`` when ``serialized`` is empty or not in our shape.
-    A pre-fix opaque continuation falls into that bucket and the caller
-    treats it as ``continuation_token=None`` (start fresh).
 
-    Raises ``ValueError`` only when the input parses as our shape but
-    is structurally invalid - an unknown ``v`` value or a missing
-    required field. We fail loudly there so a token from a future SDK
-    or a corrupted blob is not silently coerced into "start fresh".
+    Raises ``ValueError`` only when the input parses as our shape but is
+    structurally invalid (for example unknown ``v`` or missing fields).
 
     :param serialized: Encoded continuation token from the caller.
     :type serialized: Optional[str]
@@ -215,9 +189,7 @@ def _validate_v1_token_structure(decoded: dict) -> None:
         raise ValueError("Malformed feed_range continuation token: 'qh' is required.")
     if not isinstance(decoded.get(_FIELD_FEEDRANGE_HASH), str):
         raise ValueError("Malformed feed_range continuation token: 'frh' is required.")
-    # Reject pre-fix shape that carried ``bc`` at the envelope level.
-    # ``bc`` now lives INSIDE each ``c[i]`` entry; accepting an
-    # envelope-level ``bc`` here would silently drop it on the floor.
+    # ``bc`` must be per-entry inside ``c[i]``; top-level ``bc`` is invalid.
     if _FIELD_BACKEND_CONTINUATION in decoded:
         raise ValueError(
             "Malformed feed_range continuation token: top-level 'bc' is not "
@@ -226,11 +198,8 @@ def _validate_v1_token_structure(decoded: dict) -> None:
 
     entries = decoded.get(_FIELD_CONTINUATIONS)
     if not isinstance(entries, list) or not entries:
-        # An empty list would mean "drained" — but the producer clears
-        # the outbound continuation header in that case (see
-        # ``_FeedRangePaginationState.write_outbound_continuation``),
-        # so a token whose ``c`` list is empty cannot legitimately
-        # exist on the wire.
+        # Producers clear the continuation header when drained, so
+        # an on-wire token must contain at least one entry.
         raise ValueError(
             "Malformed feed_range continuation token: '{}' is required and "
             "must be a non-empty list.".format(_FIELD_CONTINUATIONS)
@@ -342,11 +311,8 @@ def _extract_resume_queue(
 ) -> List[Tuple[routing_range.Range, Optional[str]]]:
     """Decode the ``c`` list into an ordered list of ``(range, bc)`` pairs.
 
-    The wire format persists a single ordered list ``c`` of
-    ``{min, max, bc}`` entries with no privileged "current" slot.
-    The pagination loop treats the head as the in-flight slice; a
-    future parallel / non-sequential merge loop is free to drain
-    entries in any order because every entry is structurally equal.
+    The wire format stores a single ordered ``c`` list of
+    ``{min, max, bc}`` entries.
 
     :param inbound: Decoded inbound token payload.
     :type inbound: dict
@@ -443,17 +409,11 @@ class _FeedRangePaginationState:
       * on a partition split, replaces the head with one entry per
         child sub-range (each starting with no backend continuation).
 
-    There is intentionally no "current vs. remaining" split. The head
-    is just ``queue[0]``; everything else is "queued behind it" by
-    virtue of being later in the same deque. This is what makes the
-    structure scale uniformly to non-sequential merges / parallel
-    fan-out: every entry is structurally equal, and any subset of
-    entries may carry a non-null backend continuation simultaneously.
+    There is no separate "current vs. remaining" split. The head is
+    ``queue[0]`` and later entries are queued behind it.
 
-    Split-child insertion is tail-based so pre-existing queued ranges
-    remain ahead of newly discovered children. This matches Java/.NET
-    composite-continuation scheduling and keeps continuation ordering
-    behavior aligned across SDKs.
+    Split-child insertion is tail-based so existing queued ranges
+    remain ahead of newly discovered children.
 
     Not thread-safe. One instance is created per ``query_items`` call
     and is mutated only by that call's pagination loop (sync or async)
@@ -537,11 +497,9 @@ class _FeedRangePaginationState:
         the stale parent backend continuation.
 
         Dequeue the parent and append child entries at the tail
-        (preserving child EPK order). This matches Java/.NET queue
-        behavior for composite continuations. Each child starts with
-        ``bc = None`` because the parent's backend continuation
-        referenced the old partition id and would be rejected by the
-        new children.
+        (preserving child EPK order). Each child starts with
+        ``bc = None`` because parent continuation is not valid for
+        child partitions.
 
         :param overlapping: Routing overlaps for the head sub-range.
         :type overlapping: list[dict]
@@ -555,7 +513,7 @@ class _FeedRangePaginationState:
         if not sub_feedranges:
             return False
         self.queue.popleft()
-        # Java/.NET parity: keep existing tail entries ahead of split children.
+        # Keep existing tail entries ahead of split children.
         for sub in sub_feedranges:
             self.queue.append((sub, None))
         return True
@@ -634,12 +592,7 @@ def _build_outbound_token(
     """Build and base64-encode the outbound continuation token from a
     queue of ``(range, backend_continuation)`` entries.
 
-    Persists the queue as the wire-format ``c`` list — head first, in
-    iteration order. There is no privileged "current" slot on the wire
-    (matches Java's ``FeedRangeCompositeContinuationImpl``). A future
-    parallel-fetch / non-sequential merge loop can record per-slice
-    progress simply by setting more entries' ``bc`` non-null, without
-    any wire-format version bump.
+    Persists the queue as the wire-format ``c`` list in head-first order.
 
     :param resource_id: Collection resource ID.
     :type resource_id: str
@@ -675,8 +628,8 @@ def _normalize_max_item_count(raw_max_item_count: Any) -> Optional[int]:
     ``None`` (unbounded).
 
     Three rules, applied in order:
-      * ``None`` (caller did not set one) -> ``None`` (unbounded - the
-        backend decides page size; preserves pre-fix behavior).
+      * ``None`` (caller did not set one) -> ``None`` (unbounded; backend
+        decides page size).
       * Non-numeric values (e.g. a malformed string) -> ``None``. Raising
         here would change the error surface for callers that previously
         worked by accident; ``None`` keeps them working.

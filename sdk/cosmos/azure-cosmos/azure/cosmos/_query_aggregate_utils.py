@@ -70,6 +70,11 @@ def _find_top_level_aggregate_function(projection: str) -> Optional[str]:
 
     This prevents nested projection expressions (for example ARRAY(SELECT VALUE
     COUNT(...))) from being misclassified as outer VALUE aggregates.
+
+    :param projection: SELECT VALUE projection text to inspect.
+    :type projection: str
+    :returns: Aggregate function name when matched at top level; otherwise ``None``.
+    :rtype: Optional[str]
     """
     aggregate_fns = {"COUNT", "SUM", "MIN", "MAX", "AVG"}
     depth = 0
@@ -109,7 +114,13 @@ def _find_top_level_aggregate_function(projection: str) -> Optional[str]:
 
 
 def _unwrap_outer_parentheses(text: str) -> str:
-    """Strip redundant outer parentheses while preserving inner structure."""
+    """Strip redundant outer parentheses while preserving inner structure.
+
+    :param text: Projection text to normalize.
+    :type text: str
+    :returns: Projection text with only redundant outer parentheses removed.
+    :rtype: str
+    """
     candidate = text.strip()
     while candidate.startswith("(") and candidate.endswith(")"):
         depth = 0

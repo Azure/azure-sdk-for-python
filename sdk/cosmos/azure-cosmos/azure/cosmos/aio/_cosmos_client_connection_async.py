@@ -3169,18 +3169,19 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # feed_range helpers below read as ``resource_id_str`` instead
             # of the generic ``id_``.
             resource_id_str: str = id_
-            # Decode the inbound continuation. Empty/legacy → start fresh
-            # (``_decode_token`` returns ``None``); a valid v=1 envelope
-            # is checked against the current collection/query/feed_range
-            # before we resume from it. The shared
-            # ``_FeedRangePaginationState`` owns all state transitions
-            # (resume, split handling, page-item update, outbound token)
-            # so the sync and async loops below remain twin code paths
-            # — change one, change the other.
+            # Decode and validate inbound continuation for this request.
+            # ``None`` means start from the beginning of the requested
+            # feed range.
             items_left_in_page = _normalize_max_item_count(options.get("maxItemCount"))
             query_hash = _hash_query_spec(query)
             feedrange_hash = _hash_feed_range(feed_range_epk)
-            inbound_token_payload = _decode_token(options.get("continuation"))
+            inbound_serialized_continuation = options.get("continuation")
+            inbound_token_payload = _decode_token(inbound_serialized_continuation)
+            if inbound_serialized_continuation and inbound_token_payload is None:
+                _LOGGER.warning(
+                    "Feed-range query continuation token is not in the supported structured format; "
+                    "restarting this feed_range query from the beginning."
+                )
             if inbound_token_payload is not None:
                 _validate_token_identity(
                     inbound_token_payload,
@@ -3369,7 +3370,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     query_hash=query_hash,
                     feedrange_hash=feedrange_hash,
                 )
-                # End keep-in-sync block (see sync ``__QueryFeed`` counterpart).
+                # End feed_range pagination block.
                 self.last_response_headers = feedrange_response_headers
 
                 # if the prefix partition query has results lets return it

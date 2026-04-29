@@ -711,10 +711,9 @@ class TestFeedRangeMultiPartition:
     # ------------------------------------------------------------------ #
     # Legacy opaque token compatibility
     # ------------------------------------------------------------------ #
-    def test_legacy_opaque_token_compat(self):
-        """Hand the new code a continuation produced by the OLD code
-        (opaque, neither base64-of-JSON nor v=1). The new code treats it
-        as ``continuation_token=None``.
+    def test_legacy_opaque_token_compat(self, caplog):
+        """Use an opaque continuation token (not base64 JSON, not v=1).
+        The query restarts from the beginning.
 
         Asserts:
           (a) no exception is raised on the resume call,
@@ -742,21 +741,28 @@ class TestFeedRangeMultiPartition:
         crossing = _crossing_feed_range(p0_min, p1_max)
         ground_truth = _ids_via_per_partition_scan(container, [chosen[0], chosen[1]])
 
-        # An opaque legacy token from an older SDK: a backend RID:~
-        # continuation string that is NOT base64-of-our-JSON. The new
-        # _decode_token must return None for this and the call site must
-        # restart from offset 0.
+        # Opaque continuation string that does not match the structured
+        # token format.
         # cspell:ignore AOXB BAAAAAAAAAA EAAAAFAAAA
         legacy_token = "+RID:~Yxs1AOXBSp4BAAAAAAAAAA==#RT:1#TRC:5#ISV:2#IEO:65567#FPC:AgEAAAAFAAAA"
 
-        pager = container.query_items(
-            query="SELECT * FROM c",
-            feed_range=crossing,
-            max_item_count=PAGE_SIZE,
-        ).by_page(continuation_token=legacy_token)
+        with caplog.at_level("WARNING", logger="azure.cosmos._cosmos_client_connection"):
+            pager = container.query_items(
+                query="SELECT * FROM c",
+                feed_range=crossing,
+                max_item_count=PAGE_SIZE,
+            ).by_page(continuation_token=legacy_token)
 
-        # (a) no exception on iteration
-        pages, all_ids = _drain_pages(pager)
+            # (a) no exception on iteration
+            pages, all_ids = _drain_pages(pager)
+
+        assert any(
+            "not in the supported structured format" in record.getMessage()
+            for record in caplog.records
+        ), "Expected warning log when a non-structured continuation token is supplied"
+        assert all(
+            legacy_token not in record.getMessage() for record in caplog.records
+        ), "Warning log must not include raw continuation token text"
 
         # (c) page-size limit respected
         oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]

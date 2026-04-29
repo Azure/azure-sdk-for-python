@@ -1,10 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Async parity for the multi-partition feed_range tests.
-
-Async mirror of ``test_query_feed_range_multipartition.py``; assertions
-are identical, only the I/O is ``async``/``await``.
-"""
+"""Async multi-partition feed_range tests."""
 
 import asyncio
 import unittest
@@ -127,8 +123,7 @@ class TestFeedRangeMultiPartitionAsync:
     # Single-partition control
     # ------------------------------------------------------------------ #
     async def test_single_partition_feed_range_async(self):
-        """Async parity for the no-fan-out regression guard. See the sync
-        ``test_single_partition_feed_range`` for the assertion contract."""
+        """Single-partition regression guard."""
         client = _client()
         try:
             container = _get_container(client)
@@ -665,10 +660,8 @@ class TestFeedRangeMultiPartitionAsync:
     # ------------------------------------------------------------------ #
     # Legacy opaque token compatibility
     # ------------------------------------------------------------------ #
-    async def test_legacy_opaque_token_compat_async(self):
-        """Async parity for the legacy-opaque-token compatibility test.
-        See the sync ``test_legacy_opaque_token_compat`` for the assertion
-        contract."""
+    async def test_legacy_opaque_token_compat_async(self, caplog):
+        """Use an opaque continuation token and verify restart behavior."""
         client = _client()
         try:
             container = _get_container(client)
@@ -694,12 +687,21 @@ class TestFeedRangeMultiPartitionAsync:
             # cspell:ignore AOXB BAAAAAAAAAA EAAAAFAAAA
             legacy_token = "+RID:~Yxs1AOXBSp4BAAAAAAAAAA==#RT:1#TRC:5#ISV:2#IEO:65567#FPC:AgEAAAAFAAAA"
 
-            pager = container.query_items(
-                query="SELECT * FROM c",
-                feed_range=crossing,
-                max_item_count=PAGE_SIZE,
-            ).by_page(continuation_token=legacy_token)
-            pages, all_ids = await _drain_pages(pager)
+            with caplog.at_level("WARNING", logger="azure.cosmos.aio._cosmos_client_connection_async"):
+                pager = container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=crossing,
+                    max_item_count=PAGE_SIZE,
+                ).by_page(continuation_token=legacy_token)
+                pages, all_ids = await _drain_pages(pager)
+
+            assert any(
+                "not in the supported structured format" in record.getMessage()
+                for record in caplog.records
+            ), "Expected warning log when a non-structured continuation token is supplied"
+            assert all(
+                legacy_token not in record.getMessage() for record in caplog.records
+            ), "Warning log must not include raw continuation token text"
 
             oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
             assert not oversized, (
@@ -726,9 +728,7 @@ class TestFeedRangeMultiPartitionAsync:
     # Identity-fingerprint mismatch rejection (live half)
     # ------------------------------------------------------------------ #
     async def test_token_identity_mismatch_rejected_async(self):
-        """Async parity for the live identity-mismatch test. See the
-        sync ``test_token_identity_mismatch_rejected`` for the assertion
-        contract."""
+        """Live identity-mismatch rejection test."""
         client = _client()
         try:
             container = _get_container(client)
