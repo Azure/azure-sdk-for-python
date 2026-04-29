@@ -1,6 +1,6 @@
 # Release History
 
-## 11.0.0 (2026-03-31)
+## 11.0.0 (2026-04-29)
 
 ### Features Added
 
@@ -87,6 +87,7 @@
 
 ### Breaking Changes
 
+  - This version moved some APIs to [azure-mgmt-certificateregistration](https://pypi.org/project/azure-mgmt-certificateregistration) and [azure-mgmt-domainregistration](https://pypi.org/project/azure-mgmt-domainregistration). Please follow https://aka.ms/azsdk/python/migrate/azure-mgmt-web for migration.
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Deleted or renamed client operation group `WebSiteManagementClient.app_service_certificate_orders`
