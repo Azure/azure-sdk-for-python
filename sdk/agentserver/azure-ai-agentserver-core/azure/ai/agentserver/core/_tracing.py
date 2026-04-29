@@ -570,7 +570,9 @@ def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] =
     Used as a fallback when the microsoft-opentelemetry distro is not installed.
 
     :param resource: OTel resource describing this service.
+    :type resource: ~typing.Any
     :param span_processors: Optional span processors to register.
+    :type span_processors: list[~typing.Any] or None
     """
     if resource is None:
         return None
