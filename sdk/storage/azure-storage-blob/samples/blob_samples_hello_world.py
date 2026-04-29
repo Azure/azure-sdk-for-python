@@ -49,7 +49,7 @@ class BlobSamples(object):
             # Create new container in the service
             container_client.create_container()
             # List containers in the storage account
-            list_response = blob_service_client.list_containers()
+            _list_response = blob_service_client.list_containers()
 
         finally:
             # Delete the container

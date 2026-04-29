@@ -55,7 +55,7 @@ class ContainerSamplesAsync(object):
                 "st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&"
                 "sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
             )
-            container = ContainerClient.from_container_url(sas_url)
+            _container = ContainerClient.from_container_url(sas_url)
             # [END create_container_client_sasurl]
 
             try:
@@ -64,7 +64,7 @@ class ContainerSamplesAsync(object):
                 # [END create_container]
 
                 # [START get_container_properties]
-                properties = await container_client.get_container_properties()
+                _properties = await container_client.get_container_properties()
                 # [END get_container_properties]
 
             finally:
@@ -124,7 +124,7 @@ class ContainerSamplesAsync(object):
                 # [END set_container_metadata]
 
                 # Get container properties
-                properties = (await container_client.get_container_properties()).metadata
+                _properties = (await container_client.get_container_properties()).metadata
 
             finally:
                 # Delete container
@@ -165,7 +165,7 @@ class ContainerSamplesAsync(object):
                 # [END set_container_access_policy]
 
                 # [START get_container_access_policy]
-                policy = await container_client.get_container_access_policy()
+                _policy = await container_client.get_container_access_policy()
                 # [END get_container_access_policy]
 
                 # [START generate_sas_token]
@@ -183,7 +183,7 @@ class ContainerSamplesAsync(object):
                 # Use the sas token to authenticate a new client
                 # [START create_container_client_sastoken]
                 from azure.storage.blob.aio import ContainerClient
-                container = ContainerClient.from_container_url(
+                _container = ContainerClient.from_container_url(
                     container_url="https://account.blob.core.windows.net/mycontainerasync",
                     credential=sas_token,
                 )
@@ -214,7 +214,7 @@ class ContainerSamplesAsync(object):
             with open(SOURCE_FILE, "rb") as data:
                 blob_client = await container_client.upload_blob(name="myblob", data=data)
 
-            properties = await blob_client.get_blob_properties()
+            _properties = await blob_client.get_blob_properties()
             # [END upload_blob_to_container]
 
             # [START list_blobs_in_container]
@@ -245,13 +245,13 @@ class ContainerSamplesAsync(object):
 
             # [START get_blob_client]
             # Get the BlobClient from the ContainerClient to interact with a specific blob
-            blob_client = container_client.get_blob_client("mynewblob")
+            _blob_client = container_client.get_blob_client("mynewblob")
             # [END get_blob_client]
 
             # Delete container
             await container_client.delete_container()
 
-    async def get_container_client_from_blob_client_async(self):
+    async def get_container_client_from_blob_async(self):
         if self.connection_string is None:
             print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_container_client_from_blob_client_async")
@@ -268,7 +268,7 @@ class ContainerSamplesAsync(object):
             blob_client1 = container_client1.get_blob_client("blob1")
             await blob_client1.upload_blob("hello")
 
-            container_client2 = blob_client1._get_container_client()
+            container_client2 = blob_client1._get_container_client()  # pylint: disable=protected-access
             print(await container_client2.get_container_properties())
             await container_client2.delete_container()
             # [END get_container_client_from_blob_client]
@@ -282,7 +282,7 @@ async def main():
     await sample.container_access_policy_async()
     await sample.list_blobs_in_container_async()
     await sample.get_blob_client_from_container_async()
-    await sample.get_container_client_from_blob_client_async()
+    await sample.get_container_client_from_blob_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

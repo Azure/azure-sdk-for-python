@@ -36,7 +36,7 @@ def main():
     copied_blob = blob_service_client.get_blob_client("mycontainer", '59466-0.txt')
     # Copy started
     copied_blob.start_copy_from_url(source_blob)
-    for i in range(10):
+    for _ in range(10):
         props = copied_blob.get_blob_properties()
         if props.copy.status is not None:
             status = props.copy.status

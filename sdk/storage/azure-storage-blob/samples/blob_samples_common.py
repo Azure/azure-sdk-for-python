@@ -20,8 +20,7 @@ USAGE:
 import os
 import sys
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import ResourceExistsError
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
@@ -113,7 +112,7 @@ class CommonBlobSamples(object):
         # [END undelete_blob]
 
         # [START get_blob_properties]
-        properties = blob_client.get_blob_properties()
+        _properties = blob_client.get_blob_properties()
         # [END get_blob_properties]
 
         # Delete container
@@ -218,7 +217,7 @@ class CommonBlobSamples(object):
             copied_blob = blob_service_client.get_blob_client("copyblobcontainer", '59466-0.txt')
 
             # start copy and check copy status
-            copy = copied_blob.start_copy_from_url(source_blob)
+            _copy = copied_blob.start_copy_from_url(source_blob)
             props = copied_blob.get_blob_properties()
             print(props.copy.status)
             # [END copy_blob_from_url]

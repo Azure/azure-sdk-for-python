@@ -111,9 +111,10 @@ class RSAKeyWrapper:
         return self.kid
 
 
-class BlobEncryptionSamples():
+class BlobEncryptionSamples:
     def __init__(self, bsc: BlobServiceClient):
         self.bsc = bsc
+        self.container_client = None
 
     def run_all_samples(self):
         self.put_encrypted_blob()
@@ -150,7 +151,7 @@ class BlobEncryptionSamples():
 
             # Even when encrypting, uploading large blobs will still automatically
             # chunk the data.
-            max_single_put_size = self.bsc._config.max_single_put_size
+            max_single_put_size = self.bsc._config.max_single_put_size  # pylint: disable=protected-access
             self.container_client.upload_blob(block_blob_name, b'ABC' * max_single_put_size, overwrite=True)
         finally:
             self.container_client.delete_container()
@@ -164,7 +165,7 @@ class BlobEncryptionSamples():
             self.container_client.key_encryption_key = kek
             self.container_client.encryption_version = '2.0'
 
-            data = os.urandom(13 * self.bsc._config.max_single_put_size + 1)
+            data = os.urandom(13 * self.bsc._config.max_single_put_size + 1)  # pylint: disable=protected-access
             self.container_client.upload_blob(block_blob_name, data)
 
             # Setting the key_resolver_function will tell the service to automatically
@@ -177,8 +178,8 @@ class BlobEncryptionSamples():
             # Downloading works as usual with support for decrypting both entire blobs
             # and decrypting range gets.
             block_blob_client = self.container_client.get_blob_client(block_blob_name)
-            blob_full = block_blob_client.download_blob().readall()
-            blob_range = block_blob_client.download_blob(offset=len(data) // 2,
+            _blob_full = block_blob_client.download_blob().readall()
+            _blob_range = block_blob_client.download_blob(offset=len(data) // 2,
                                                          length=len(data) // 4).readall()
         finally:
             self.container_client.delete_container()
@@ -200,7 +201,7 @@ class BlobEncryptionSamples():
             # key_encryption_key are set, the result of the key_resolver will take precedence
             # and the decryption will fail if that key is not successful.
             self.container_client.key_resolver_function = None
-            blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
+            _blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
         finally:
             self.container_client.delete_container()
 
@@ -223,7 +224,7 @@ class BlobEncryptionSamples():
             self.container_client.require_encryption = True
             try:
                 self.container_client.upload_blob(encrypted_blob_name, data)
-                raise Exception
+                raise AssertionError("The upload_blob API requires encryption policy set on upload.")
             except ValueError:
                 pass
 
@@ -239,7 +240,7 @@ class BlobEncryptionSamples():
             self.container_client.key_encryption_key = None
             try:
                 self.container_client.get_blob_client(encrypted_blob_name).download_blob()
-                raise Exception
+                raise AssertionError("The download_blob API requires encryption policy set on upload.")
             except ValueError:
                 pass
 
@@ -248,7 +249,7 @@ class BlobEncryptionSamples():
             self.container_client.key_resolver_function = key_resolver.resolve_key
             try:
                 self.container_client.get_blob_client(unencrypted_blob_name).download_blob()
-                raise Exception
+                raise AssertionError("The download_blob API requires encryption policy set on upload.")
             except HttpResponseError:
                 pass
         finally:
@@ -270,7 +271,7 @@ class BlobEncryptionSamples():
             self.container_client.encryption_version = '2.0'
 
             self.container_client.upload_blob(block_blob_name, b'ABC')
-            blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
+            _blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
         finally:
             self.container_client.delete_container()
 
@@ -282,6 +283,6 @@ except KeyError:
     sys.exit(1)
 
 # Configure max_single_put_size to make blobs in this sample smaller
-bsc = BlobServiceClient.from_connection_string(CONNECTION_STRING, max_single_put_size=4 * 1024 * 1024)
-samples = BlobEncryptionSamples(bsc)
+blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING, max_single_put_size=4 * 1024 * 1024)
+samples = BlobEncryptionSamples(blob_service_client)
 samples.run_all_samples()

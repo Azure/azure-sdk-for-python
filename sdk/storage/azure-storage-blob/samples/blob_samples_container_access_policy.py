@@ -34,6 +34,7 @@ import os
 import sys
 from datetime import datetime, timedelta
 
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import AccessPolicy, BlobServiceClient, ContainerSasPermissions, PublicAccess
 
 try:
@@ -79,6 +80,6 @@ def get_and_set_container_access_policy():
 
 try:
     get_and_set_container_access_policy()
-except Exception as error:
+except HttpResponseError as error:
     print(error)
     sys.exit(1)

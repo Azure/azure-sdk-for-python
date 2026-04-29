@@ -33,7 +33,8 @@ import os
 import sys
 import asyncio
 from datetime import datetime, timedelta
-from azure.core.exceptions import ResourceExistsError
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import AccessPolicy, ContainerSasPermissions, PublicAccess
 from azure.storage.blob.aio import BlobServiceClient
 
@@ -85,7 +86,7 @@ async def get_and_set_container_access_policy():
 async def main():
     try:
         await get_and_set_container_access_policy()
-    except Exception as error:
+    except HttpResponseError as error:
         print(error)
         sys.exit(1)
 

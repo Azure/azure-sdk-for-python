@@ -38,7 +38,7 @@ async def main():
         copied_blob = blob_service_client.get_blob_client("mycontainerasync", '59466-0.txt')
         # Copy started"
         await copied_blob.start_copy_from_url(source_blob)
-        for i in range(10):
+        for _ in range(10):
             props = await copied_blob.get_blob_properties()
             if props.copy.status is not None:
                 status = props.copy.status

@@ -112,7 +112,7 @@ class CommonBlobSamplesAsync(object):
             # [END undelete_blob]
 
             # [START get_blob_properties]
-            properties = await blob_client.get_blob_properties()
+            _properties = await blob_client.get_blob_properties()
             # [END get_blob_properties]
 
             # Delete container
@@ -194,7 +194,7 @@ class CommonBlobSamplesAsync(object):
             # Delete container
             await blob_service_client.delete_container("leasemyblobscontainerasync")
 
-    async def start_copy_blob_from_url_and_abort_copy_async(self):
+    async def start_copy_from_url_abort_copy_async(self):
         if self.connection_string is None:
             print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: start_copy_blob_from_url_and_abort_copy_async")
@@ -220,7 +220,7 @@ class CommonBlobSamplesAsync(object):
                 copied_blob = blob_service_client.get_blob_client("copyblobcontainerasync", '59466-0.txt')
 
                 # start copy and check copy status
-                copy = await copied_blob.start_copy_from_url(source_blob)
+                _copy = await copied_blob.start_copy_from_url(source_blob)
                 props = await copied_blob.get_blob_properties()
                 print(props.copy.status)
                 # [END copy_blob_from_url]
@@ -249,7 +249,7 @@ async def main():
     await sample.soft_delete_and_undelete_blob_async()
     await sample.delete_multiple_blobs_async()
     await sample.acquire_lease_on_blob_async()
-    await sample.start_copy_blob_from_url_and_abort_copy_async()
+    await sample.start_copy_from_url_abort_copy_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

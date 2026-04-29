@@ -75,7 +75,7 @@ class BlobServiceSamplesAsync(object):
             # [END set_blob_service_properties]
 
             # [START get_blob_service_properties]
-            properties = await blob_service_client.get_service_properties()
+            _properties = await blob_service_client.get_service_properties()
             # [END get_blob_service_properties]
 
     async def blob_service_stats_async(self):
@@ -90,7 +90,7 @@ class BlobServiceSamplesAsync(object):
 
         async with blob_service_client:
             # [START get_blob_service_stats]
-            stats = await blob_service_client.get_service_stats()
+            _stats = await blob_service_client.get_service_stats()
             # [END get_blob_service_stats]
 
     async def container_operations_async(self):
@@ -108,7 +108,7 @@ class BlobServiceSamplesAsync(object):
                 # [START bsc_create_container]
                 try:
                     new_container = await blob_service_client.create_container("containerfromblobserviceasync")
-                    properties = await new_container.get_container_properties()
+                    _properties = await new_container.get_container_properties()
                 except ResourceExistsError:
                     print("Container already exists.")
                 # [END bsc_create_container]
@@ -172,7 +172,7 @@ class BlobServiceSamplesAsync(object):
                 # [START bsc_get_blob_client]
                 blob_client = blob_service_client.get_blob_client(container="containertestasync", blob="my_blob")
                 try:
-                    stream = await blob_client.download_blob()
+                    _stream = await blob_client.download_blob()
                 except ResourceNotFoundError:
                     print("No blob found.")
                 # [END bsc_get_blob_client]
@@ -181,7 +181,7 @@ class BlobServiceSamplesAsync(object):
                 # Delete the container
                 await blob_service_client.delete_container("containertestasync")
 
-    async def get_blob_service_client_from_container_client_async(self):
+    async def get_service_client_from_container_async(self):
         if self.connection_string is None:
             print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_blob_service_client_from_container_client_async")
@@ -193,7 +193,7 @@ class BlobServiceSamplesAsync(object):
         await container_client1.create_container()
 
         # [START get_blob_service_client_from_container_client]
-        blob_service_client = container_client1._get_blob_service_client()
+        blob_service_client = container_client1._get_blob_service_client()  # pylint: disable=protected-access
         print(await blob_service_client.get_service_properties())
         container_client2 = blob_service_client.get_container_client("containerasync")
 
@@ -210,7 +210,7 @@ async def main():
     await sample.container_operations_async()
     await sample.blob_service_properties_async()
     await sample.blob_service_stats_async()
-    await sample.get_blob_service_client_from_container_client_async()
+    await sample.get_service_client_from_container_async()
 
 if __name__ == '__main__':
     asyncio.run(main())
