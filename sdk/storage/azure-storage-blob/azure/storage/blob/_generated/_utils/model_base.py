@@ -786,11 +786,9 @@ class Model(_MyMutableMapping):
         class_name = self.__class__.__name__
         if len(args) > 1:
             raise TypeError(f"{class_name}.__init__() takes 2 positional arguments but {len(args) + 1} were given")
-        dict_to_pass = {
-            rest_field._rest_name: rest_field._default
-            for rest_field in self._attr_to_rest_field.values()
-            if rest_field._default is not _UNSET
-        }
+        # _defaults is precomputed once per class in __new__; copy per instance so callers
+        # can mutate the resulting dict freely.
+        dict_to_pass = dict(self._defaults)
         if args:
             if isinstance(args[0], ET.Element):
                 dict_to_pass.update(self._init_from_xml(args[0]))
@@ -805,7 +803,7 @@ class Model(_MyMutableMapping):
                 raise TypeError(f"{class_name}.__init__() got an unexpected keyword argument '{non_attr_kwargs[0]}'")
             dict_to_pass.update(
                 {
-                    self._attr_to_rest_field[k]._rest_name: _create_value(self._attr_to_rest_field[k], v)
+                    typing.cast(str, self._attr_to_rest_field[k]._rest_name): _create_value(self._attr_to_rest_field[k], v)
                     for k, v in kwargs.items()
                     if v is not None
                 }
@@ -869,7 +867,7 @@ class Model(_MyMutableMapping):
                 # attribute
                 if prop_meta.get("attribute", False) and element.get(xml_name) is not None:
                     existed_attr_keys.append(xml_name)
-                    result[rf._rest_name] = _deserialize(rf._type, element.get(xml_name))
+                    result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, element.get(xml_name))
                     continue
 
                 # unwrapped element is array
@@ -886,23 +884,23 @@ class Model(_MyMutableMapping):
                     items = element.findall(xml_name)  # pyright: ignore
                     if len(items) > 0:
                         existed_attr_keys.append(xml_name)
-                        result[rf._rest_name] = _deserialize(rf._type, items)
+                        result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, items)
                     elif not rf._is_optional:
                         existed_attr_keys.append(xml_name)
-                        result[rf._rest_name] = []
+                        result[typing.cast(str, rf._rest_name)] = []
                     continue
 
                 # text element is primitive type
                 if prop_meta.get("text", False):
                     if element.text is not None:
-                        result[rf._rest_name] = _deserialize(rf._type, element.text)
+                        result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, element.text)
                     continue
 
                 # wrapped element could be normal property or array, it should only have one element
                 item = element.find(xml_name)
                 if item is not None:
                     existed_attr_keys.append(xml_name)
-                    result[rf._rest_name] = _deserialize(rf._type, item)
+                    result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, item)
 
         # additional properties
         for e in element:
@@ -915,7 +913,10 @@ class Model(_MyMutableMapping):
         return Model(self.__dict__)
 
     def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:
-        if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
+        # Use a per-class boolean marker stored in cls.__dict__ to avoid the cost of
+        # formatting and looking up a qualname string on every instantiation. __dict__
+        # access ensures we re-run for each subclass (the marker is not inherited).
+        if not cls.__dict__.get("_calculated_done", False):
             # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
             # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'
             mros = cls.__mro__[:-9][::-1]  # ignore parents, and reverse the mro order
@@ -932,9 +933,16 @@ class Model(_MyMutableMapping):
                 rf._module = cls.__module__
                 if not rf._type:
                     rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
-                if not rf._rest_name_input:
-                    rf._rest_name_input = attr
+                if not rf._rest_name:
+                    rf._rest_name = attr
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
+            # Precompute the default-value dict once per class. Model.__init__ copies this
+            # per instance instead of rebuilding it from _attr_to_rest_field every call.
+            cls._defaults: dict[str, typing.Any] = {
+                typing.cast(str, rf._rest_name): rf._default
+                for rf in cls._attr_to_rest_field.values()
+                if rf._default is not _UNSET
+            }
             cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
                 Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
                 for attr, rf in cls._attr_to_rest_field.items()
@@ -942,7 +950,7 @@ class Model(_MyMutableMapping):
             # Build XML field plan for fast _init_from_xml (only useful for XML models)
             if getattr(cls, "_xml", None):
                 cls._xml_field_plan = _build_xml_field_plan(cls, attr_to_rest_field)
-            cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
+            cls._calculated_done = True
 
         return super().__new__(cls)
 
@@ -1332,7 +1340,7 @@ class _RestField:
         deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]] = None,
     ):
         self._type = type
-        self._rest_name_input = name
+        self._rest_name = name
         self._module: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
         self._visibility = visibility
@@ -1352,12 +1360,6 @@ class _RestField:
         if isinstance(result, functools.partial):
             return getattr(result, "args", [None])[0]
         return result
-
-    @property
-    def _rest_name(self) -> str:
-        if self._rest_name_input is None:
-            raise ValueError("Rest name was never set")
-        return self._rest_name_input
 
     def __get__(self, obj: Model, type=None):  # pylint: disable=redefined-builtin
         # by this point, type and rest_name will have a value bc we default
