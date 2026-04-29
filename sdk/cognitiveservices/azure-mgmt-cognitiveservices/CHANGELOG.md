@@ -1,6 +1,40 @@
 # Release History
 
-## 15.0.0b1 (2026-04-02)
+## 15.0.0b1.dev1 (2026-04-29)
+
+### Features Added
+
+  - Added model `Compute`
+  - Added model `ComputeProperties`
+  - Added model `Pool`
+  - Added enum `ComputeProvisioningState`
+  - Added enum `VmPriority`
+  - Added operation group `ComputesOperations`
+
+### Breaking Changes
+
+  - Model `ComputeOperationStatus` is renamed to `Compute`
+  - Model `ComputeOperationStatusProperties` is renamed to `ComputeProperties`
+  - Enum `ComputeOperationStatusType` is renamed to `ComputeProvisioningState`
+  - Operation group `ComputeOperationsOperations` is renamed to `ComputesOperations`
+  - Client `CognitiveServicesManagementClient` renamed operation group `compute_operations` to `computes`
+  - Deleted model `FoundryAutoUpgrade`
+  - Deleted model `CustomTopicConfig`
+  - Deleted model `RaiTopicConfig`
+  - Deleted model `RaiExternalSafetyProvider`
+  - Deleted model `RaiExternalSafetyProviderProperties`
+  - Deleted model `OutboundRuleListResult`
+  - Deleted enum `FoundryAutoUpgradeMode`
+  - Deleted enum `QuotaScopeType`
+  - Model `AccountProperties` removed property `foundry_auto_upgrade`
+  - Model `ModelSkuCapacityProperties` removed property `scope_id`
+  - Model `ModelSkuCapacityProperties` removed property `scope_type`
+  - Model `RaiPolicyProperties` removed property `custom_topics`
+  - Model `Usage` removed property `scope_type`
+  - Model `Usage` removed property `scope_id`
+  - Enum `RoutingMode` renamed member `ACCURACY` to `QUALITY`
+
+## 15.0.0b1 (2026-03-26)
 
 ### Features Added
 
