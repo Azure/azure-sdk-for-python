@@ -2,5 +2,9 @@
   "apiVersion": "v1",
   "apiVersions": {
     "Azure.AI.Projects": "v1"
-  }
+  },
+  "commit": "536b4599f4ede5fdc8ad1435c218b4445b87b239",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/ai-foundry/data-plane/Foundry",
+  "emitterVersion": "0.61.3"
 }
