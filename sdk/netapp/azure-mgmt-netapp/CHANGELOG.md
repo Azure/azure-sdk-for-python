@@ -52,8 +52,8 @@
   - Added model `SmbSettings`
   - Added model `SvmPeerCommandResponseProperties`
   - Added enum `VolumeLanguage`
-  - Added model `BucketsOperations`
-  - Added model `CachesOperations`
+  - Added operation group `BucketsOperations`
+  - Added operation group `CachesOperations`
 
 ### Breaking Changes
 
