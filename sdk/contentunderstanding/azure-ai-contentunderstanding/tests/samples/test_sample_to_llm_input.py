@@ -146,6 +146,18 @@ class TestSampleToLlmInput(ContentUnderstandingClientTestBase):
         )
         print(f"[PASS] to_llm_input output validated ({len(text)} chars, pages='2-3, 5' preserved)")
 
+        # Page markers in the markdown body should use the original page numbers
+        # (<!-- page 2 -->, <!-- page 3 -->, <!-- page 5 -->), not renumbered (1, 2, 3).
+        assert "<!-- page 1 -->" not in text, (
+            "Page marker '<!-- page 1 -->' should not appear — we only requested pages 2-3, 5"
+        )
+        for expected_page in [2, 3, 5]:
+            assert f"<!-- page {expected_page} -->" in text, (
+                f"Page marker '<!-- page {expected_page} -->' should appear in the markdown body. "
+                f"Output:\n{text[:800]}"
+            )
+        print("[PASS] Page markers verified: <!-- page 2 -->, <!-- page 3 -->, <!-- page 5 -->")
+
         print("\n[SUCCESS] All test_to_llm_input_multi_page_content_range assertions passed")
 
     @ContentUnderstandingPreparer()
