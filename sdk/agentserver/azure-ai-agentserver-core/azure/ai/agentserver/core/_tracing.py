@@ -197,14 +197,19 @@ def _setup_distro_export(
 
     Separated into its own function so tests can easily mock it without
     intercepting lazy imports.
+
+    :keyword resource: OTel resource describing this service.
+    :keyword span_processors: Span processors to register.
+    :keyword log_record_processors: Log record processors to register.
+    :keyword connection_string: Application Insights connection string.
     """
     from microsoft.opentelemetry import use_microsoft_opentelemetry
 
-    kwargs: dict[str, Any] = dict(
-        resource=resource,
-        span_processors=span_processors,
-        log_record_processors=log_record_processors,
-    )
+    kwargs: dict[str, Any] = {
+        "resource": resource,
+        "span_processors": span_processors,
+        "log_record_processors": log_record_processors,
+    }
 
     # Azure Monitor export is off by default in the distro — enable it
     # when a connection string is available.
@@ -563,6 +568,9 @@ def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] =
     """Get or create a TracerProvider, optionally adding span processors.
 
     Used as a fallback when the microsoft-opentelemetry distro is not installed.
+
+    :param resource: OTel resource describing this service.
+    :param span_processors: Optional span processors to register.
     """
     if resource is None:
         return None
@@ -579,7 +587,7 @@ def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] =
     if span_processors and not getattr(provider, "_agentserver_processors_added", False):
         for proc in span_processors:
             provider.add_span_processor(proc)
-        provider._agentserver_processors_added = True  # type: ignore[attr-defined]
+        provider._agentserver_processors_added = True  # type: ignore[attr-defined]  # pylint: disable=protected-access
     return provider
 
 
