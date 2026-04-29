@@ -3342,21 +3342,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         pagination_state.head_range,
                         pagination_state.head_bc,
                     )
-                    if consecutive_no_progress_pages >= _MAX_CONSECUTIVE_NO_PROGRESS_PAGES:
-                        pagination_state.write_outbound_continuation(
-                            feedrange_response_headers,
-                            resource_id_str,
-                            query,
-                            feed_range_epk,
-                            query_hash=query_hash,
-                            feedrange_hash=feedrange_hash,
-                        )
-                        self.last_response_headers = feedrange_response_headers
-                        raise RuntimeError(
-                            "Feed-range query made no progress across {} consecutive "
-                            "continuation pages (0 items returned).".format(
-                                _MAX_CONSECUTIVE_NO_PROGRESS_PAGES
-                            )
+                    if (
+                        consecutive_no_progress_pages >= _MAX_CONSECUTIVE_NO_PROGRESS_PAGES
+                        and consecutive_no_progress_pages % _MAX_CONSECUTIVE_NO_PROGRESS_PAGES == 0
+                    ):
+                        # Warning-only: do not fail fast here.
+                        current_head = pagination_state.head_range
+                        head_min = current_head.min if current_head else "<none>"
+                        head_max = current_head.max if current_head else "<none>"
+                        _LOGGER.warning(
+                            "Feed-range query has returned 0 items for %s consecutive continuation pages "
+                            "with the same continuation token and partition key range [%s, %s); continuing scan.",
+                            consecutive_no_progress_pages,
+                            head_min,
+                            head_max,
                         )
 
                 # Pagination loop is done — write the final outbound

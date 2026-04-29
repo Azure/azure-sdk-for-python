@@ -31,7 +31,7 @@ import pytest
 
 from azure.cosmos import _base
 from azure.cosmos import http_constants
-from azure.cosmos._query_aggregate_utils import _get_select_value_aggregate_function
+from azure.cosmos._query_aggregate_utils import _extract_outer_select_value_projection, _get_select_value_aggregate_function
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
     _MAX_CONSECUTIVE_NO_PROGRESS_PAGES,
@@ -177,7 +177,7 @@ class TestTokenRoundTrip:
             "envelope must NOT carry a top-level 'bc'; bc is per-entry"
         )
         assert "cf" not in decoded_json, (
-            "envelope must NOT carry a privileged 'cf' slot (legacy PR-review shape)"
+            "envelope must NOT carry a privileged 'cf' slot"
         )
         assert "rf" not in decoded_json, (
             "envelope must NOT carry a 'rf' tail; sub-ranges live in a single 'c' list"
@@ -462,20 +462,35 @@ class TestIdentityFingerprintMismatch:
         h2 = _hash_feed_range(_FEED_RANGE)
         assert h1 == h2
 
-    def test_feed_range_inclusivity_change_changes_hash(self):
-        inclusive_exclusive = routing_range.Range(
-            range_min="0000000000000000",
-            range_max="7FFFFFFFFFFFFFFF",
-            isMinInclusive=True,
-            isMaxInclusive=False,
-        )
-        exclusive_inclusive = routing_range.Range(
+    def test_feed_range_inclusivity_normalization_yields_same_hash(self):
+        # Hashing is based on the logical normalized EPK interval, so
+        # equivalent ranges with different bound inclusivity spellings
+        # must produce the same hash.
+        non_normalized = routing_range.Range(
             range_min="0000000000000000",
             range_max="7FFFFFFFFFFFFFFF",
             isMinInclusive=False,
             isMaxInclusive=True,
         )
-        assert _hash_feed_range(inclusive_exclusive) != _hash_feed_range(exclusive_inclusive)
+        normalized_image = non_normalized.to_normalized_range()
+        # Sanity: normalization actually changed something so the test
+        # is exercising the equivalence, not a no-op.
+        assert (normalized_image.isMinInclusive, normalized_image.isMaxInclusive) == (True, False)
+
+        # The two forms must hash equal because they describe the same
+        # logical [min, max) interval after normalization.
+        assert _hash_feed_range(non_normalized) == _hash_feed_range(normalized_image)
+
+        # And feeding the function the already-normalized form must
+        # yield the same digest a second time (idempotent).
+        assert _hash_feed_range(non_normalized) == _hash_feed_range(
+            routing_range.Range(
+                range_min=normalized_image.min,
+                range_max=normalized_image.max,
+                isMinInclusive=True,
+                isMaxInclusive=False,
+            )
+        )
 
     def test_call_site_replay_against_other_collection_raises(self):
         """Drive the production validator (``_validate_token_identity``)
@@ -1016,6 +1031,43 @@ class TestAggregateMergeConsistency:
     def test_numeric_value_row_with_subquery_aggregate_still_consumes_page_item(self):
         query = "SELECT VALUE c.id FROM c WHERE EXISTS(SELECT VALUE COUNT(1) FROM d)"
         assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 1
+
+    def test_numeric_value_row_with_projection_subquery_aggregate_still_consumes_page_item(self):
+        query = "SELECT VALUE (SELECT VALUE COUNT(1) FROM d IN c.items) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+        assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 1
+
+    def test_numeric_value_row_with_array_projection_subquery_still_consumes_page_item(self):
+        query = "SELECT VALUE ARRAY(SELECT VALUE COUNT(1) FROM d IN c.items) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+        assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 1
+
+
+class TestSelectValueProjectionParser:
+    @pytest.mark.parametrize(
+        "normalized_query,expected_projection",
+        [
+            ("SELECT VALUE COUNT(1) FROM C", "COUNT(1)"),
+            ("SELECT VALUE (SELECT VALUE COUNT(1) FROM D) FROM C", "(SELECT VALUE COUNT(1) FROM D)"),
+            ("SELECT VALUE C.FROMAGE FROM C", "C.FROMAGE"),
+            ("SELECT VALUE COUNT(1)", None),
+            ("SELECT VALUE (COUNT(1) FROM C", None),
+        ],
+    )
+    def test_extract_outer_select_value_projection_edges(self, normalized_query, expected_projection):
+        assert _extract_outer_select_value_projection(normalized_query) == expected_projection
+
+    def test_projection_level_subquery_is_not_classified_as_outer_aggregate(self):
+        query = "SELECT VALUE (SELECT VALUE COUNT(1) FROM d) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_projection_level_in_subquery_is_not_classified_as_outer_aggregate(self):
+        query = "SELECT VALUE (SELECT VALUE COUNT(1) FROM d IN c.items) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_array_projection_subquery_is_not_classified_as_outer_aggregate(self):
+        query = "SELECT VALUE ARRAY(SELECT VALUE COUNT(1) FROM d IN c.items) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
 
 
 class TestEmptyPageStallCounter:

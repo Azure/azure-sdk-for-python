@@ -64,7 +64,8 @@ _FIELD_CONTINUATIONS = "c"
 # never at the envelope level. ``null`` means "this sub-range has not
 # been started, or has been fully drained".
 _FIELD_BACKEND_CONTINUATION = "bc"
-# Safety guard for repeated empty pages with no continuation/feedrange movement.
+# Observability threshold for repeated empty pages with no continuation/feedrange movement.
+# This is warning-only (not a hard stop); pagination continues until the queue drains.
 _MAX_CONSECUTIVE_NO_PROGRESS_PAGES = 1000
 # Safety guard for pathological split re-resolution loops.
 _MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS = 50
@@ -126,18 +127,25 @@ def _hash_feed_range(feed_range: routing_range.Range) -> str:
     Detects a token that was created against a different feed_range on
     the same container being replayed against the wrong scope.
 
+    The input is first converted to a standard ``[min, max)`` form via
+    ``Range.to_normalized_range()`` (idempotent — returns ``self`` when
+    already normalized). The canonical JSON intentionally carries only
+    ``min`` and ``max``: under the normalized form the inclusivity
+    flags are constants (``True``/``False``), so hashing them adds no
+    signal and would only mask the fact that the fingerprint identifies
+    the *logical EPK interval*, not the on-the-wire representation of
+    the bounds. Two ``Range`` objects describing the same logical
+    interval (e.g. ``[A, B)`` and the equivalent ``(A-1, B-1]``) hash
+    equal.
+
     :param feed_range: Input feed range.
     :type feed_range: ~azure.cosmos._routing.routing_range.Range
     :returns: Stable feed range fingerprint.
     :rtype: str
     """
+    normalized = feed_range.to_normalized_range()
     canonical = json.dumps(
-        {
-            "min": feed_range.min,
-            "max": feed_range.max,
-            "isMinInclusive": bool(feed_range.isMinInclusive),
-            "isMaxInclusive": bool(feed_range.isMaxInclusive),
-        },
+        {"min": normalized.min, "max": normalized.max},
         sort_keys=True,
         separators=(",", ":"),
     )
@@ -305,6 +313,10 @@ def _validate_token_identity(
     :type query: str or dict
     :param feed_range_epk: Current feed range scope.
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
+    :param expected_query_hash: Precomputed query hash to validate against inbound token.
+    :type expected_query_hash: Optional[str]
+    :param expected_feedrange_hash: Precomputed feed_range hash to validate against inbound token.
+    :type expected_feedrange_hash: Optional[str]
     """
     expected_qh = expected_query_hash or _hash_query_spec(query)
     expected_frh = expected_feedrange_hash or _hash_feed_range(feed_range_epk)
@@ -593,6 +605,10 @@ class _FeedRangePaginationState:
         :type query: str or dict
         :param feed_range_epk: Original request feed range.
         :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
+        :param query_hash: Optional precomputed query hash to embed in the outbound token.
+        :type query_hash: Optional[str]
+        :param feedrange_hash: Optional precomputed feed_range hash to embed in the outbound token.
+        :type feedrange_hash: Optional[str]
         """
         if not self.queue:
             last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
@@ -633,6 +649,10 @@ def _build_outbound_token(
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param entries: Ordered ``(range, bc)`` pairs to serialize.
     :type entries: Iterable[tuple[~azure.cosmos._routing.routing_range.Range, Optional[str]]]
+    :param query_hash: Optional precomputed query hash to persist in the token envelope.
+    :type query_hash: Optional[str]
+    :param feedrange_hash: Optional precomputed feed_range hash to persist in the token envelope.
+    :type feedrange_hash: Optional[str]
     :returns: Encoded continuation token.
     :rtype: str
     """

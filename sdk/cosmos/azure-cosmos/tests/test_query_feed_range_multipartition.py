@@ -475,6 +475,76 @@ class TestFeedRangeMultiPartition:
             "sub-range completed successfully before failure."
         )
 
+    def test_explode_iteration_guard_raises_in_query_loop(self, monkeypatch):
+        """Drive the live ``__QueryFeed`` explode loop until the runtime guard raises."""
+        container = _get_container()
+        partitions = _sorted_partition_ranges(container)
+        if len(partitions) < 2:
+            pytest.skip("Need a container with >= 2 physical partitions")
+
+        p0, p1 = partitions[0], partitions[1]
+        crossing = _crossing_feed_range(p0[0], p1[1])
+        client_conn = container.client_connection
+
+        # Force every routing lookup to look like an unresolved post-split overlap.
+        def _always_multi_overlap(_rid, feed_ranges, _opts):
+            head = feed_ranges[0]
+            return [
+                {"id": "left", "minInclusive": head.min, "maxExclusive": head.max},
+                {"id": "right", "minInclusive": head.min, "maxExclusive": head.max},
+            ]
+
+        monkeypatch.setattr(
+            client_conn._routing_map_provider, "get_overlapping_ranges", _always_multi_overlap
+        )
+        monkeypatch.setattr(
+            "azure.cosmos._routing.feed_range_continuation._MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS", 2
+        )
+
+        with pytest.raises(RuntimeError) as excinfo:
+            list(
+                container.query_items(
+                    query="SELECT * FROM c", feed_range=crossing, max_item_count=PAGE_SIZE
+                ).by_page()
+            )
+        assert "split re-resolution" in str(excinfo.value)
+
+    def test_no_progress_guard_logs_warning_in_query_loop(self, monkeypatch, caplog):
+        """Drive repeated empty pages with unchanged continuation and assert warning emission."""
+        container = _get_container()
+        partitions = _sorted_partition_ranges(container)
+        if len(partitions) < 2:
+            pytest.skip("Need a container with >= 2 physical partitions")
+
+        p0, p1 = partitions[0], partitions[1]
+        crossing = _crossing_feed_range(p0[0], p1[1])
+        client_conn = container.client_connection
+
+        post_call_count = 0
+
+        def _stalled_post(*_args, **_kwargs):
+            nonlocal post_call_count
+            post_call_count += 1
+            continuation = "stalled-token" if post_call_count <= 3 else None
+            return {"Documents": []}, {http_constants.HttpHeaders.Continuation: continuation}
+
+        monkeypatch.setattr(client_conn, "_CosmosClientConnection__Post", _stalled_post)
+        monkeypatch.setattr(
+            "azure.cosmos._cosmos_client_connection._MAX_CONSECUTIVE_NO_PROGRESS_PAGES", 2
+        )
+
+        with caplog.at_level("WARNING", logger="azure.cosmos._cosmos_client_connection"):
+            list(
+                container.query_items(
+                    query="SELECT * FROM c", feed_range=crossing, max_item_count=PAGE_SIZE
+                ).by_page()
+            )
+
+        assert post_call_count >= 3
+        assert any(
+            "same continuation token" in record.getMessage() for record in caplog.records
+        ), "Expected warning log from no-progress guard"
+
     # ------------------------------------------------------------------ #
     # Three-way overlap (synthetic, wider fan-out)
     # ------------------------------------------------------------------ #

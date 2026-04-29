@@ -4,7 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import re
 from enum import Enum
 from typing import Any, Optional, Union
 
@@ -58,11 +57,80 @@ def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, An
     if projection is None:
         return None
 
-    # Match whole function names only (avoid MYCOUNT) and allow COUNT (1).
-    for aggregate_fn in ("COUNT", "SUM", "MIN", "MAX", "AVG"):
-        if re.search(rf"(?<![A-Z0-9_]){aggregate_fn}\s*\(", projection):
-            return aggregate_fn
+    projection = _unwrap_outer_parentheses(projection)
+    # A projection-level subquery should not classify as an outer VALUE aggregate.
+    if projection.startswith("SELECT VALUE "):
+        return None
+
+    return _find_top_level_aggregate_function(projection)
+
+
+def _find_top_level_aggregate_function(projection: str) -> Optional[str]:
+    """Return an aggregate function name only when it appears at the top level.
+
+    This prevents nested projection expressions (for example ARRAY(SELECT VALUE
+    COUNT(...))) from being misclassified as outer VALUE aggregates.
+    """
+    aggregate_fns = {"COUNT", "SUM", "MIN", "MAX", "AVG"}
+    depth = 0
+    index = 0
+    length = len(projection)
+
+    while index < length:
+        ch = projection[index]
+        if ch == "(":
+            depth += 1
+            index += 1
+            continue
+        if ch == ")":
+            if depth > 0:
+                depth -= 1
+            index += 1
+            continue
+
+        if depth == 0 and (ch.isalpha() or ch == "_"):
+            start = index
+            index += 1
+            while index < length and (projection[index].isalnum() or projection[index] == "_"):
+                index += 1
+            token = projection[start:index]
+
+            if token in aggregate_fns:
+                lookahead = index
+                while lookahead < length and projection[lookahead].isspace():
+                    lookahead += 1
+                if lookahead < length and projection[lookahead] == "(":
+                    return token
+            continue
+
+        index += 1
+
     return None
+
+
+def _unwrap_outer_parentheses(text: str) -> str:
+    """Strip redundant outer parentheses while preserving inner structure."""
+    candidate = text.strip()
+    while candidate.startswith("(") and candidate.endswith(")"):
+        depth = 0
+        balanced = True
+        outer_pair = False
+        for idx, char in enumerate(candidate):
+            if char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth < 0:
+                    balanced = False
+                    break
+                # Closing the opening '(' at index 0 means we found the outer pair.
+                if depth == 0:
+                    outer_pair = idx == len(candidate) - 1
+                    break
+        if not balanced or not outer_pair:
+            break
+        candidate = candidate[1:-1].strip()
+    return candidate
 
 
 def _extract_outer_select_value_projection(normalized_query: str) -> Optional[str]:
