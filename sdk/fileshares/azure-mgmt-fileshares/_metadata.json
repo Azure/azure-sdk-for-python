@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2026-06-01",
+  "apiVersions": {
+    "Microsoft.FileShares": "2026-06-01"
+  }
+}
