@@ -53,7 +53,7 @@ Scan the package using the checklist below. Use file_search / grep_search / read
 
 11. **Tests**: Check `tests/` directory. Look for `conftest.py`, `*test_base*.py`, `assets.json` (recorded tests via Test Proxy), `testpreparer*.py`. Note whether tests are live, recorded, or both.
 
-12. **Documentation surfaces**: Check for `CHANGELOG.md` and `README.md` at the package root. Both are near-universal; the skill's Step 8 (Update Documentation and Samples) will reference them.
+12. **Documentation surfaces**: Check for `CHANGELOG.md` and `README.md` at the package root. Both are near-universal; the skill's Step 7 (Update Documentation and Samples) will reference them.
 
 13. **Management vs data plane**: If package name starts with `azure-mgmt-` → management-plane rules apply (see copilot-instructions). Otherwise data-plane.
 

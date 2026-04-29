@@ -46,7 +46,7 @@ Run each phase in order. **Progressive loading:** Read only the current phase fi
 **Relationship to existing SDK tools:**
 - Package skills **complement** the Azure SDK MCP tools (`azsdk_package_generate_code`, `azsdk_package_build_code`, `azsdk_customized_code_update`, etc.) — they do NOT replace them.
 - MCP tools handle deterministic operations (generate, build, test). Package skills provide the reasoning context an agent needs to use those tools correctly for a specific package, plus the package-specific verification commands the tools do not know about.
-- Reference the existing tools for the overall workflow (e.g., "Run `tsp-client update` or `azsdk_package_generate_code`"), but DO include the copy-pasteable verification commands an agent needs: import smoke tests (`python -c "from ... import ..."`), `ApiVersion` reconciliation (`grep`, `python -c "import json; ..."`), diff commands (`git diff --name-only | grep ...`), and lint invocations (`azpysdk mypy`, `azpysdk pylint`).
+- Reference the existing tools for the overall workflow (e.g., "Run `tsp-client update` or `azsdk_package_generate_code`"), but DO include the copy-pasteable verification commands an agent needs: import smoke tests (`python -c "from ... import ..."`), `ApiVersion` reconciliation (`grep`, `python -c "import json; ..."`), diff commands (`git diff --name-only | grep ...`), and the package validation invocation (`azsdk_package_run_check with checkType="All"`).
 - Never paraphrase an MCP tool's entire contract. Do include the one-line invocations the agent will run.
 
 **Structure:**

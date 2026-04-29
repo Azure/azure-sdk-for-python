@@ -14,7 +14,7 @@ The `name` field and directory name MUST match the Python distribution package n
 ## Content Principles
 
 - **Workflow-first.** The primary audience is an agent running post-regeneration cleanup. Structure the skill so the agent can execute it top-to-bottom: regenerate → verify imports → check API version → check for new operations → check for model/enum changes → lint/type-check → update docs. See *Structure Options* below.
-- **Include the commands the agent needs to copy-paste.** `tsp-client update`, `python -c "from <pkg> import X"` import smoke tests, `grep -A 20 'class ApiVersion' <path>`, `git diff --name-only | grep _operations\.py`, `azpysdk mypy`, `azpysdk pylint`, etc. Do not force the agent to invent commands. "Don't re-document MCP tools" means don't paraphrase an entire MCP tool contract — it does **not** mean omit the one-line invocation an agent is expected to run.
+- **Include the commands the agent needs to copy-paste.** `tsp-client update`, `python -c "from <pkg> import X"` import smoke tests, `grep -A 20 'class ApiVersion' <path>`, `git diff --name-only | grep _operations\.py`, `azsdk_package_run_check with checkType="All"`, etc. Do not force the agent to invent commands. "Don't re-document MCP tools" means don't paraphrase an entire MCP tool contract — it does **not** mean omit the one-line invocation an agent is expected to run.
 - **Point to source for things that change.** Never hardcode API version strings, release numbers, or the current `DEFAULT_VERSION` value. Point at `_patch.py`, `_metadata.json`, or `_version.py`.
 - **Prefer TypeSpec-level customizations over `_patch.py`.** Note when a customization could be expressed by a TypeSpec decorator or emitter option instead.
 - **Focus on the convenience layer.** What does the agent need to know to write/maintain `_patch.py`, hand-written utilities, and async parity correctly.
@@ -32,9 +32,8 @@ Numbered steps the agent executes in order. Canonical skeleton:
 3. Check ApiVersion (reconcile `_metadata.json` with the hand-maintained `ApiVersion` enum)
 4. Check for New Operations That Need Wrappers (git diff generated operations)
 5. Check for Model/Enum Changes That Affect Customizations (git diff models/enums)
-6. Ensure mypy passes
-7. Ensure pylint passes
-8. Update Documentation and Samples (CHANGELOG, README)
+6. Run package validation (`azsdk_package_run_check with checkType="All"`)
+7. Update Documentation and Samples (CHANGELOG, README)
 
 Followed by a *Customization Patterns Reference* section that names and briefly describes each hand-written pattern in the codebase (constructor reorder, polymorphic delete, enum aliases, hand-authored batching sender, custom paging, etc.), each with 2–5 sentences on *what it does* and *what would break it*. Exhaustive file-by-file detail goes to `references/customizations.md`.
 
@@ -83,7 +82,7 @@ Regardless of structure, the skill MUST include:
   - **`__all__` re-export** — any new public symbol added/overridden in `_patch.py` MUST be appended to that file's `__all__`, otherwise `patch_sdk()` will not expose it. Include the verification command `python -c "import <namespace>; print(sorted(<namespace>.__all__))"`.
   Skip categories that do not apply.
 - A "Check for Model/Enum Changes" step listing what a diff of the generated models/enums would break in the customizations (renamed enum values → aliases; changed model constructors → subclass constructors; new fields on response models → extractor helpers; new parameters on request models → builder helpers).
-- A linting / type-checking step. Prefer `azpysdk mypy` and `azpysdk pylint` (or the equivalent `azsdk_package_run_check`). Mention what the repo-level / package-level config already ignores so the agent knows where errors will come from.
+- A linting / type-checking step that runs `azsdk_package_run_check with checkType="All"` (covers mypy, pylint, and the rest of the validation suite in one invocation). Mention what the repo-level / package-level config already ignores so the agent knows where errors will come from.
 - A **Documentation and Samples** step covering:
   - CHANGELOG: find the topmost `## (Unreleased)` section; add entries under `### Features Added` / `### Breaking Changes` / `### Bugs Fixed`; create the section above the latest release if missing. Include a small example block.
   - README: when to update usage examples, Key Concepts, and the listed API version.

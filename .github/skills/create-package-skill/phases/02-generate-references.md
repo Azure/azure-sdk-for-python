@@ -82,7 +82,7 @@ If you do create it, include:
 - **API version management** — where the version enum lives, how `_patch.py` interacts with it
 - **Key supporting files** — policies, helpers, `mypy.ini`, `assets.json`, etc.
 - **Dependencies** — key runtime / dev / test deps
-- **Build / test / lint** — MCP tools and `azpysdk` entry points (not full command re-documentation)
+- **Build / test / lint** — MCP tools (`azsdk_package_run_check with checkType="All"`) and any package-specific test entry points (not full command re-documentation)
 
 ## Step 1 — Present
 

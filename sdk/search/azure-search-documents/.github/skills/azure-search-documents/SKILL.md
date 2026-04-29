@@ -131,26 +131,17 @@ Watch for:
 - **`SearchIndexResponse.semantic`** — used by `_convert_index_response()`; if the field is renamed, update the mapping.
 - **`SearchField.retrievable`** — the `hidden` property in `SearchField` subclass is its inverse; if renamed, update the property.
 
-## Step 6: Ensure mypy passes
+## Step 6: Run package validation
 
-```bash
-cd sdk/search/azure-search-documents
-azpysdk mypy
-# or: azsdk_package_run_check with checkType="All"
+Run the full validation suite (mypy, pylint, and the rest) in one shot:
+
+```
+azsdk_package_run_check with checkType="All"
 ```
 
-`mypy.ini` at the package root already ignores generated internals — errors will originate in `_patch.py` files or `samples/`.
+`mypy.ini` and the repo-level `pylintrc` already exclude generated internals, `_vendor/`, `tests/`, and `samples/` — errors will originate in `_patch.py` customizations.
 
-## Step 7: Ensure pylint passes
-
-```bash
-cd sdk/search/azure-search-documents
-azpysdk pylint
-```
-
-The repo-level `pylintrc` excludes generated, `_vendor/`, `tests/`, and `samples/` — only `_patch.py` customizations are linted.
-
-## Step 8: Update Documentation and Samples
+## Step 7: Update Documentation and Samples
 
 ### CHANGELOG
 

@@ -27,7 +27,7 @@ Ask the user to confirm the choice, defaulting to A when any of these are true: 
 - **Keep it static** regarding release state (no version numbers, no current default API version) — but **do** include copy-pasteable commands the agent will need.
 - **Point to source** for mutable things (API version enum → point at `_patch.py`; generator target → point at `_metadata.json`).
 - **Prefer TypeSpec over `_patch.py`** when the customization is expressible in the spec — note this in the customization patterns section.
-- **Include MCP tool invocations** where appropriate (`azsdk_package_generate_code`, `azsdk_package_run_check`, etc.), but also include the direct CLI equivalents (`tsp-client update`, `azpysdk mypy`, `azpysdk pylint`) because agents routinely run those too.
+- **Include MCP tool invocations** where appropriate (`azsdk_package_generate_code`, `azsdk_package_run_check`, etc.). For validation, use `azsdk_package_run_check with checkType="All"`. Include the direct `tsp-client update` CLI fallback for generation since agents routinely run it.
 
 ## Required sections — Option A (step-by-step)
 
@@ -148,25 +148,17 @@ List what to watch for, tailored to the package (from Phase 0 scan):
 - New fields on response models → extractor helpers need to be updated
 - Changed request models → builder helpers need to wire new parameters through
 
-### Step 6 — Ensure mypy pass
+### Step 6 — Run package validation
 
-```bash
-cd sdk/<service>/<package-name>
-azpysdk mypy
+Run the full validation suite in one shot:
+
+```
+azsdk_package_run_check with checkType="All"
 ```
 
-Mention what `mypy.ini` already ignores (typically generated internals).
+Mention what the package- and repo-level config already ignore (typically generated internals, `_vendor/`, `tests/`, `samples/`) so the agent knows errors will originate in `_patch.py` customizations.
 
-### Step 7 — Ensure pylint pass
-
-```bash
-cd sdk/<service>/<package-name>
-azpysdk pylint
-```
-
-Mention what `pylintrc` excludes (typically `_generated/`, `_vendor/`, `tests/`, `samples/`).
-
-### Step 8 — Update Documentation and Samples
+### Step 7 — Update Documentation and Samples
 
 **CHANGELOG**:
 - Find the topmost `## (Unreleased)` section in `CHANGELOG.md`.
