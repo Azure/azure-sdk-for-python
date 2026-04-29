@@ -16,8 +16,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 
 
 def get_build_info(service_directory: str, package_name: str) -> str:
-    """Get the pylint build info from the CI build logs.
-    """
+    """Get the pylint build info from the CI build logs."""
     build_id = os.getenv("BUILD_BUILDID")
     timeline_link = f"https://dev.azure.com/azure-sdk/internal/_apis/build/builds/{build_id}/timeline?api-version=6.0"
 
