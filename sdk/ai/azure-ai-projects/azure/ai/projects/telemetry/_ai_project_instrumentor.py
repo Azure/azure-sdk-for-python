@@ -645,7 +645,7 @@ class _AIAgentsInstrumentorPreview:
                 attribute_name = GEN_AI_INPUT_MESSAGES
 
             # Set the attribute on the span
-            if span and span.span_instance.is_recording:
+            if span and span.span_instance.is_recording():
                 span.add_attribute(attribute_name, message_json)
 
     def _get_field(self, obj: Any, field: str) -> Any:
@@ -722,7 +722,7 @@ class _AIAgentsInstrumentorPreview:
             # Use attributes for instructions tracing
             # System instructions format: array of content objects without role/parts wrapper
             message_json = json.dumps(content_array, ensure_ascii=False)
-            if span and span.span_instance.is_recording:
+            if span and span.span_instance.is_recording():
                 span.add_attribute(GEN_AI_SYSTEM_MESSAGE, message_json)
 
     def _status_to_string(self, status: Any) -> str:
@@ -782,7 +782,7 @@ class _AIAgentsInstrumentorPreview:
             reasoning_summary=reasoning_summary,
             structured_inputs=(str(structured_inputs) if structured_inputs is not None else None),
         )
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             span.add_attribute(GEN_AI_OPERATION_NAME, OperationName.CREATE_AGENT.value)
             if name:
                 span.add_attribute(GEN_AI_AGENT_NAME, name)
@@ -842,7 +842,7 @@ class _AIAgentsInstrumentorPreview:
         # _tool_resources: Optional["ToolResources"] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, server_address=server_address, port=port)
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             for message in messages or []:
                 self.add_thread_message_event(span, message)
 
