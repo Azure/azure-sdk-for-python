@@ -831,17 +831,16 @@ class Model(_MyMutableMapping):
                     if item is not None:
                         existed_attr_keys.append(xml_name)
                         if deser:
-                            result[rest_name] = deser(item)
+                            # Store raw text for lazy deserialization in __get__
+                            result[rest_name] = item.text
                         else:
                             result[rest_name] = _deserialize(rf_type, item)
                 elif kind == 1:  # attribute
                     attr_val = element.get(xml_name)
                     if attr_val is not None:
                         existed_attr_keys.append(xml_name)
-                        if deser:
-                            result[rest_name] = deser(attr_val)
-                        else:
-                            result[rest_name] = _deserialize(rf_type, attr_val)
+                        # Attributes are always strings - store raw for lazy deser
+                        result[rest_name] = attr_val
                 elif kind == 2:  # unwrapped array
                     items = element.findall(items_name)  # pyright: ignore
                     if len(items) > 0:
@@ -855,7 +854,8 @@ class Model(_MyMutableMapping):
                         result[rest_name] = []
                 elif kind == 3:  # text
                     if element.text is not None:
-                        result[rest_name] = deser(element.text) if deser else _deserialize(rf_type, element.text)
+                        # Store raw text for lazy deserialization
+                        result[rest_name] = element.text
         else:
             # No precomputed fields - attempt to deserialize anyway
             model_meta = getattr(self, "_xml", {})
@@ -1376,7 +1376,11 @@ class _RestField:
             # Return the value from _data directly (it's been deserialized in place)
             return obj._data.get(self._rest_name)
 
-        deserialized = _deserialize(self._type, _serialize(item, self._format), rf=self)
+        # Fast path: use _deserializer directly (avoids _serialize/_deserialize chain)
+        if self._deserializer:
+            deserialized = self._deserializer(item)
+        else:
+            deserialized = _deserialize(self._type, _serialize(item, self._format), rf=self)
 
         # For mutable types, store the deserialized value back in _data
         # so mutations directly affect _data
