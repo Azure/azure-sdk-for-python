@@ -36,8 +36,8 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_events_list_query_results_for_subscription(self, resource_group):
         response = self.client.policy_events.list_query_results_for_subscription(
-            policy_events_resource="str",
             subscription_id="str",
+            policy_events_resource="str",
             api_version="2024-10-01",
         )
         result = [r async for r in response]
@@ -48,9 +48,9 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_events_list_query_results_for_resource_group(self, resource_group):
         response = self.client.policy_events.list_query_results_for_resource_group(
-            policy_events_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
+            policy_events_resource="str",
             api_version="2024-10-01",
         )
         result = [r async for r in response]
@@ -73,8 +73,8 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_events_list_query_results_for_policy_set_definition(self, resource_group):
         response = self.client.policy_events.list_query_results_for_policy_set_definition(
-            policy_events_resource="str",
             subscription_id="str",
+            policy_events_resource="str",
             policy_set_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -87,8 +87,8 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_events_list_query_results_for_policy_definition(self, resource_group):
         response = self.client.policy_events.list_query_results_for_policy_definition(
-            policy_events_resource="str",
             subscription_id="str",
+            policy_events_resource="str",
             policy_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -101,8 +101,8 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_events_list_query_results_for_subscription_level_policy_assignment(self, resource_group):
         response = self.client.policy_events.list_query_results_for_subscription_level_policy_assignment(
-            policy_events_resource="str",
             subscription_id="str",
+            policy_events_resource="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -115,9 +115,9 @@ class TestPolicyInsightsPolicyEventsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_events_list_query_results_for_resource_group_level_policy_assignment(self, resource_group):
         response = self.client.policy_events.list_query_results_for_resource_group_level_policy_assignment(
-            policy_events_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
+            policy_events_resource="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",

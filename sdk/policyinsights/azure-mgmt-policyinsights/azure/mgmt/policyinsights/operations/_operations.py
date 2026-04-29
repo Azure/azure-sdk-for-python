@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
+import datetime
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
@@ -161,7 +162,7 @@ def build_remediations_delete_at_management_group_request(  # pylint: disable=na
 
 
 def build_remediations_list_for_management_group_request(  # pylint: disable=name-too-long
-    management_group_id: str, **kwargs: Any
+    management_group_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -183,6 +184,10 @@ def build_remediations_list_for_management_group_request(  # pylint: disable=nam
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -275,7 +280,7 @@ def build_remediations_delete_at_subscription_request(  # pylint: disable=name-t
 
 
 def build_remediations_list_for_subscription_request(  # pylint: disable=name-too-long
-    subscription_id: str, **kwargs: Any
+    subscription_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -293,6 +298,10 @@ def build_remediations_list_for_subscription_request(  # pylint: disable=name-to
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -301,7 +310,7 @@ def build_remediations_list_for_subscription_request(  # pylint: disable=name-to
 
 
 def build_remediations_list_deployments_at_subscription_request(  # pylint: disable=name-too-long
-    remediation_name: str, subscription_id: str, **kwargs: Any
+    remediation_name: str, subscription_id: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -312,14 +321,16 @@ def build_remediations_list_deployments_at_subscription_request(  # pylint: disa
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/remediations/{remediationName}/listDeployments"
     path_format_arguments = {
-        "remediationName": _SERIALIZER.url("remediation_name", remediation_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "remediationName": _SERIALIZER.url("remediation_name", remediation_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -442,7 +453,12 @@ def build_remediations_delete_at_resource_group_request(  # pylint: disable=name
 
 
 def build_remediations_list_for_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -453,14 +469,18 @@ def build_remediations_list_for_resource_group_request(  # pylint: disable=name-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/remediations"
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -469,7 +489,7 @@ def build_remediations_list_for_resource_group_request(  # pylint: disable=name-
 
 
 def build_remediations_list_deployments_at_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, remediation_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, remediation_name: str, subscription_id: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -480,15 +500,17 @@ def build_remediations_list_deployments_at_resource_group_request(  # pylint: di
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/remediations/{remediationName}/listDeployments"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "remediationName": _SERIALIZER.url("remediation_name", remediation_name, "str"),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -609,7 +631,7 @@ def build_remediations_delete_at_resource_request(  # pylint: disable=name-too-l
 
 
 def build_remediations_list_for_resource_request(  # pylint: disable=name-too-long
-    resource_id: str, **kwargs: Any
+    resource_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -627,6 +649,10 @@ def build_remediations_list_for_resource_request(  # pylint: disable=name-too-lo
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -635,7 +661,7 @@ def build_remediations_list_for_resource_request(  # pylint: disable=name-too-lo
 
 
 def build_remediations_list_deployments_at_resource_request(  # pylint: disable=name-too-long
-    resource_id: str, remediation_name: str, **kwargs: Any
+    resource_id: str, remediation_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -654,6 +680,8 @@ def build_remediations_list_deployments_at_resource_request(  # pylint: disable=
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -689,7 +717,7 @@ def build_remediations_cancel_at_resource_request(  # pylint: disable=name-too-l
 
 
 def build_remediations_list_deployments_at_management_group_request(  # pylint: disable=name-too-long
-    management_group_id: str, remediation_name: str, **kwargs: Any
+    management_group_id: str, remediation_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -712,6 +740,8 @@ def build_remediations_list_deployments_at_management_group_request(  # pylint: 
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -829,7 +859,7 @@ def build_attestations_delete_at_subscription_request(  # pylint: disable=name-t
 
 
 def build_attestations_list_for_subscription_request(  # pylint: disable=name-too-long
-    subscription_id: str, **kwargs: Any
+    subscription_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -847,6 +877,10 @@ def build_attestations_list_for_subscription_request(  # pylint: disable=name-to
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -936,7 +970,12 @@ def build_attestations_delete_at_resource_group_request(  # pylint: disable=name
 
 
 def build_attestations_list_for_resource_group_request(  # pylint: disable=name-too-long
-    resource_group_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -947,14 +986,18 @@ def build_attestations_list_for_resource_group_request(  # pylint: disable=name-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/attestations"
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1041,7 +1084,7 @@ def build_attestations_delete_at_resource_request(  # pylint: disable=name-too-l
 
 
 def build_attestations_list_for_resource_request(  # pylint: disable=name-too-long
-    resource_id: str, **kwargs: Any
+    resource_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1059,6 +1102,10 @@ def build_attestations_list_for_resource_request(  # pylint: disable=name-too-lo
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1092,7 +1139,7 @@ def build_policy_metadata_get_resource_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_policy_metadata_list_request(**kwargs: Any) -> HttpRequest:
+def build_policy_metadata_list_request(*, top: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1104,6 +1151,8 @@ def build_policy_metadata_list_request(**kwargs: Any) -> HttpRequest:
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1112,7 +1161,18 @@ def build_policy_metadata_list_request(**kwargs: Any) -> HttpRequest:
 
 
 def build_policy_events_list_query_results_for_management_group_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType], management_group_name: str, **kwargs: Any
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
+    management_group_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1135,6 +1195,22 @@ def build_policy_events_list_query_results_for_management_group_request(  # pyli
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1143,7 +1219,18 @@ def build_policy_events_list_query_results_for_management_group_request(  # pyli
 
 
 def build_policy_events_list_query_results_for_subscription_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType], subscription_id: str, **kwargs: Any
+    subscription_id: str,
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1154,14 +1241,30 @@ def build_policy_events_list_query_results_for_subscription_request(  # pylint: 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults"
     path_format_arguments = {
-        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1170,9 +1273,18 @@ def build_policy_events_list_query_results_for_subscription_request(  # pylint: 
 
 
 def build_policy_events_list_query_results_for_resource_group_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     subscription_id: str,
     resource_group_name: str,
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1184,15 +1296,31 @@ def build_policy_events_list_query_results_for_resource_group_request(  # pylint
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults"
     path_format_arguments = {
-        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1201,7 +1329,19 @@ def build_policy_events_list_query_results_for_resource_group_request(  # pylint
 
 
 def build_policy_events_list_query_results_for_resource_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType], resource_id: str, **kwargs: Any
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
+    resource_id: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    expand: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1220,6 +1360,24 @@ def build_policy_events_list_query_results_for_resource_request(  # pylint: disa
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1228,9 +1386,18 @@ def build_policy_events_list_query_results_for_resource_request(  # pylint: disa
 
 
 def build_policy_events_list_query_results_for_policy_set_definition_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     subscription_id: str,
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     policy_set_definition_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1245,8 +1412,8 @@ def build_policy_events_list_query_results_for_policy_set_definition_request(  #
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults"
     path_format_arguments = {
-        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policySetDefinitionName": _SERIALIZER.url("policy_set_definition_name", policy_set_definition_name, "str"),
     }
@@ -1255,6 +1422,22 @@ def build_policy_events_list_query_results_for_policy_set_definition_request(  #
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1263,9 +1446,18 @@ def build_policy_events_list_query_results_for_policy_set_definition_request(  #
 
 
 def build_policy_events_list_query_results_for_policy_definition_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     subscription_id: str,
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     policy_definition_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1280,8 +1472,8 @@ def build_policy_events_list_query_results_for_policy_definition_request(  # pyl
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults"
     path_format_arguments = {
-        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyDefinitionName": _SERIALIZER.url("policy_definition_name", policy_definition_name, "str"),
     }
@@ -1290,6 +1482,22 @@ def build_policy_events_list_query_results_for_policy_definition_request(  # pyl
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1298,9 +1506,18 @@ def build_policy_events_list_query_results_for_policy_definition_request(  # pyl
 
 
 def build_policy_events_list_query_results_for_subscription_level_policy_assignment_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     subscription_id: str,
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     policy_assignment_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1315,8 +1532,8 @@ def build_policy_events_list_query_results_for_subscription_level_policy_assignm
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults"
     path_format_arguments = {
-        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
@@ -1325,6 +1542,22 @@ def build_policy_events_list_query_results_for_subscription_level_policy_assignm
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1333,10 +1566,19 @@ def build_policy_events_list_query_results_for_subscription_level_policy_assignm
 
 
 def build_policy_events_list_query_results_for_resource_group_level_policy_assignment_request(  # pylint: disable=name-too-long
-    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     subscription_id: str,
     resource_group_name: str,
+    policy_events_resource: Union[str, _models.PolicyEventsResourceType],
     policy_assignment_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1351,9 +1593,9 @@ def build_policy_events_list_query_results_for_resource_group_level_policy_assig
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyEvents/{policyEventsResource}/queryResults"
     path_format_arguments = {
-        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "policyEventsResource": _SERIALIZER.url("policy_events_resource", policy_events_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
@@ -1362,6 +1604,22 @@ def build_policy_events_list_query_results_for_resource_group_level_policy_assig
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1370,7 +1628,18 @@ def build_policy_events_list_query_results_for_resource_group_level_policy_assig
 
 
 def build_policy_states_list_query_results_for_management_group_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource], management_group_name: str, **kwargs: Any
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
+    management_group_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1393,6 +1662,22 @@ def build_policy_states_list_query_results_for_management_group_request(  # pyli
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1403,6 +1688,11 @@ def build_policy_states_list_query_results_for_management_group_request(  # pyli
 def build_policy_states_summarize_for_management_group_request(  # pylint: disable=name-too-long
     policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     management_group_name: str,
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1428,6 +1718,14 @@ def build_policy_states_summarize_for_management_group_request(  # pylint: disab
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1436,7 +1734,18 @@ def build_policy_states_summarize_for_management_group_request(  # pylint: disab
 
 
 def build_policy_states_list_query_results_for_subscription_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource], subscription_id: str, **kwargs: Any
+    subscription_id: str,
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1447,14 +1756,30 @@ def build_policy_states_list_query_results_for_subscription_request(  # pylint: 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
     path_format_arguments = {
-        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1463,8 +1788,13 @@ def build_policy_states_list_query_results_for_subscription_request(  # pylint: 
 
 
 def build_policy_states_summarize_for_subscription_request(  # pylint: disable=name-too-long
-    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     subscription_id: str,
+    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1476,16 +1806,24 @@ def build_policy_states_summarize_for_subscription_request(  # pylint: disable=n
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyStatesSummaryResource": _SERIALIZER.url(
             "policy_states_summary_resource", policy_states_summary_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1494,9 +1832,18 @@ def build_policy_states_summarize_for_subscription_request(  # pylint: disable=n
 
 
 def build_policy_states_list_query_results_for_resource_group_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource],
     subscription_id: str,
     resource_group_name: str,
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1508,15 +1855,31 @@ def build_policy_states_list_query_results_for_resource_group_request(  # pylint
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
     path_format_arguments = {
-        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1525,9 +1888,14 @@ def build_policy_states_list_query_results_for_resource_group_request(  # pylint
 
 
 def build_policy_states_summarize_for_resource_group_request(  # pylint: disable=name-too-long
-    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     subscription_id: str,
     resource_group_name: str,
+    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1539,17 +1907,25 @@ def build_policy_states_summarize_for_resource_group_request(  # pylint: disable
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "policyStatesSummaryResource": _SERIALIZER.url(
             "policy_states_summary_resource", policy_states_summary_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1558,7 +1934,19 @@ def build_policy_states_summarize_for_resource_group_request(  # pylint: disable
 
 
 def build_policy_states_list_query_results_for_resource_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource], resource_id: str, **kwargs: Any
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
+    resource_id: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    expand: Optional[str] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1577,6 +1965,24 @@ def build_policy_states_list_query_results_for_resource_request(  # pylint: disa
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1585,7 +1991,14 @@ def build_policy_states_list_query_results_for_resource_request(  # pylint: disa
 
 
 def build_policy_states_summarize_for_resource_request(  # pylint: disable=name-too-long
-    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType], resource_id: str, **kwargs: Any
+    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
+    resource_id: str,
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1606,6 +2019,14 @@ def build_policy_states_summarize_for_resource_request(  # pylint: disable=name-
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1655,9 +2076,18 @@ def build_policy_states_trigger_resource_group_evaluation_request(  # pylint: di
 
 
 def build_policy_states_list_query_results_for_policy_set_definition_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource],
     subscription_id: str,
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
     policy_set_definition_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1672,8 +2102,8 @@ def build_policy_states_list_query_results_for_policy_set_definition_request(  #
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
     path_format_arguments = {
-        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policySetDefinitionName": _SERIALIZER.url("policy_set_definition_name", policy_set_definition_name, "str"),
     }
@@ -1682,6 +2112,22 @@ def build_policy_states_list_query_results_for_policy_set_definition_request(  #
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1690,9 +2136,14 @@ def build_policy_states_list_query_results_for_policy_set_definition_request(  #
 
 
 def build_policy_states_summarize_for_policy_set_definition_request(  # pylint: disable=name-too-long
-    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     subscription_id: str,
+    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     policy_set_definition_name: str,
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1707,10 +2158,10 @@ def build_policy_states_summarize_for_policy_set_definition_request(  # pylint: 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyStatesSummaryResource": _SERIALIZER.url(
             "policy_states_summary_resource", policy_states_summary_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policySetDefinitionName": _SERIALIZER.url("policy_set_definition_name", policy_set_definition_name, "str"),
     }
@@ -1719,6 +2170,14 @@ def build_policy_states_summarize_for_policy_set_definition_request(  # pylint: 
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1727,9 +2186,18 @@ def build_policy_states_summarize_for_policy_set_definition_request(  # pylint: 
 
 
 def build_policy_states_list_query_results_for_policy_definition_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource],
     subscription_id: str,
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
     policy_definition_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1744,8 +2212,8 @@ def build_policy_states_list_query_results_for_policy_definition_request(  # pyl
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
     path_format_arguments = {
-        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyDefinitionName": _SERIALIZER.url("policy_definition_name", policy_definition_name, "str"),
     }
@@ -1754,6 +2222,22 @@ def build_policy_states_list_query_results_for_policy_definition_request(  # pyl
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1762,9 +2246,14 @@ def build_policy_states_list_query_results_for_policy_definition_request(  # pyl
 
 
 def build_policy_states_summarize_for_policy_definition_request(  # pylint: disable=name-too-long
-    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     subscription_id: str,
+    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     policy_definition_name: str,
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1779,10 +2268,10 @@ def build_policy_states_summarize_for_policy_definition_request(  # pylint: disa
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyStatesSummaryResource": _SERIALIZER.url(
             "policy_states_summary_resource", policy_states_summary_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyDefinitionName": _SERIALIZER.url("policy_definition_name", policy_definition_name, "str"),
     }
@@ -1791,6 +2280,14 @@ def build_policy_states_summarize_for_policy_definition_request(  # pylint: disa
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1799,9 +2296,18 @@ def build_policy_states_summarize_for_policy_definition_request(  # pylint: disa
 
 
 def build_policy_states_list_query_results_for_subscription_level_policy_assignment_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource],
     subscription_id: str,
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
     policy_assignment_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1816,8 +2322,8 @@ def build_policy_states_list_query_results_for_subscription_level_policy_assignm
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
     path_format_arguments = {
-        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
@@ -1826,6 +2332,22 @@ def build_policy_states_list_query_results_for_subscription_level_policy_assignm
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1834,9 +2356,14 @@ def build_policy_states_list_query_results_for_subscription_level_policy_assignm
 
 
 def build_policy_states_summarize_for_subscription_level_policy_assignment_request(  # pylint: disable=name-too-long
-    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     subscription_id: str,
+    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     policy_assignment_name: str,
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1851,10 +2378,10 @@ def build_policy_states_summarize_for_subscription_level_policy_assignment_reque
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyStatesSummaryResource": _SERIALIZER.url(
             "policy_states_summary_resource", policy_states_summary_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
@@ -1863,6 +2390,14 @@ def build_policy_states_summarize_for_subscription_level_policy_assignment_reque
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1871,10 +2406,19 @@ def build_policy_states_summarize_for_subscription_level_policy_assignment_reque
 
 
 def build_policy_states_list_query_results_for_resource_group_level_policy_assignment_request(  # pylint: disable=name-too-long
-    policy_states_resource: Union[str, _models.PolicyStatesResource],
     subscription_id: str,
     resource_group_name: str,
+    policy_states_resource: Union[str, _models.PolicyStatesResource],
     policy_assignment_name: str,
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    skip_token: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1889,9 +2433,9 @@ def build_policy_states_list_query_results_for_resource_group_level_policy_assig
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
     path_format_arguments = {
-        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "policyStatesResource": _SERIALIZER.url("policy_states_resource", policy_states_resource, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
@@ -1900,6 +2444,22 @@ def build_policy_states_list_query_results_for_resource_group_level_policy_assig
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if skip_token is not None:
+        _params["$skiptoken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1908,10 +2468,15 @@ def build_policy_states_list_query_results_for_resource_group_level_policy_assig
 
 
 def build_policy_states_summarize_for_resource_group_level_policy_assignment_request(  # pylint: disable=name-too-long
-    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     subscription_id: str,
     resource_group_name: str,
+    policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
     policy_assignment_name: str,
+    *,
+    top: Optional[int] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1926,11 +2491,11 @@ def build_policy_states_summarize_for_resource_group_level_policy_assignment_req
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "policyStatesSummaryResource": _SERIALIZER.url(
             "policy_states_summary_resource", policy_states_summary_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "authorizationNamespace": _SERIALIZER.url("authorization_namespace", authorization_namespace, "str"),
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
@@ -1939,6 +2504,14 @@ def build_policy_states_summarize_for_resource_group_level_policy_assignment_req
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2041,6 +2614,14 @@ def build_policy_restrictions_check_at_management_group_scope_request(  # pylint
 def build_component_policy_states_list_query_results_for_subscription_request(  # pylint: disable=name-too-long
     subscription_id: str,
     component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2062,6 +2643,20 @@ def build_component_policy_states_list_query_results_for_subscription_request(  
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2073,6 +2668,14 @@ def build_component_policy_states_list_query_results_for_resource_group_request(
     subscription_id: str,
     resource_group_name: str,
     component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2095,6 +2698,20 @@ def build_component_policy_states_list_query_results_for_resource_group_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2103,7 +2720,18 @@ def build_component_policy_states_list_query_results_for_resource_group_request(
 
 
 def build_component_policy_states_list_query_results_for_resource_request(  # pylint: disable=name-too-long
-    resource_id: str, component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource], **kwargs: Any
+    resource_id: str,
+    component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
+    expand: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2124,6 +2752,22 @@ def build_component_policy_states_list_query_results_for_resource_request(  # py
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2135,6 +2779,14 @@ def build_component_policy_states_list_query_results_for_policy_definition_reque
     subscription_id: str,
     policy_definition_name: str,
     component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2161,6 +2813,20 @@ def build_component_policy_states_list_query_results_for_policy_definition_reque
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2172,6 +2838,14 @@ def build_component_policy_states_list_query_results_for_subscription_level_poli
     subscription_id: str,
     policy_assignment_name: str,
     component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2198,6 +2872,20 @@ def build_component_policy_states_list_query_results_for_subscription_level_poli
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2210,6 +2898,14 @@ def build_component_policy_states_list_query_results_for_resource_group_level_po
     resource_group_name: str,
     policy_assignment_name: str,
     component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+    *,
+    top: Optional[int] = None,
+    order_by: Optional[str] = None,
+    select: Optional[str] = None,
+    from_parameter: Optional[datetime.datetime] = None,
+    to: Optional[datetime.datetime] = None,
+    filter: Optional[str] = None,
+    apply: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2237,6 +2933,20 @@ def build_component_policy_states_list_query_results_for_resource_group_level_po
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if order_by is not None:
+        _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "str")
+    if select is not None:
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
+    if from_parameter is not None:
+        _params["$from"] = _SERIALIZER.query("from_parameter", from_parameter, "iso-8601")
+    if to is not None:
+        _params["$to"] = _SERIALIZER.query("to", to, "iso-8601")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if apply is not None:
+        _params["$apply"] = _SERIALIZER.query("apply", apply, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2247,6 +2957,9 @@ def build_component_policy_states_list_query_results_for_resource_group_level_po
 def build_policy_tracked_resources_list_query_results_for_management_group_request(  # pylint: disable=name-too-long
     management_group_name: str,
     policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
+    *,
+    top: Optional[int] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2272,6 +2985,10 @@ def build_policy_tracked_resources_list_query_results_for_management_group_reque
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2282,6 +2999,9 @@ def build_policy_tracked_resources_list_query_results_for_management_group_reque
 def build_policy_tracked_resources_list_query_results_for_subscription_request(  # pylint: disable=name-too-long
     policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
     subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2293,16 +3013,20 @@ def build_policy_tracked_resources_list_query_results_for_subscription_request( 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyTrackedResources/{policyTrackedResourcesResource}/queryResults"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "policyTrackedResourcesResource": _SERIALIZER.url(
             "policy_tracked_resources_resource", policy_tracked_resources_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2314,6 +3038,9 @@ def build_policy_tracked_resources_list_query_results_for_resource_group_request
     resource_group_name: str,
     policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
     subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2325,17 +3052,21 @@ def build_policy_tracked_resources_list_query_results_for_resource_group_request
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyTrackedResources/{policyTrackedResourcesResource}/queryResults"
     path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "policyTrackedResourcesResource": _SERIALIZER.url(
             "policy_tracked_resources_resource", policy_tracked_resources_resource, "str"
         ),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2346,6 +3077,9 @@ def build_policy_tracked_resources_list_query_results_for_resource_group_request
 def build_policy_tracked_resources_list_query_results_for_resource_request(  # pylint: disable=name-too-long
     resource_id: str,
     policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
+    *,
+    top: Optional[int] = None,
+    filter: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2367,6 +3101,10 @@ def build_policy_tracked_resources_list_query_results_for_resource_request(  # p
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2795,11 +3533,17 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_for_management_group(self, management_group_id: str, **kwargs: Any) -> ItemPaged["_models.Remediation"]:
+    def list_for_management_group(
+        self, management_group_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Remediation"]:
         """Gets all remediations for the management group.
 
         :param management_group_id: Management group ID. Required.
         :type management_group_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of Remediation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.Remediation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2826,6 +3570,8 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
 
                 _request = build_remediations_list_for_management_group_request(
                     management_group_id=management_group_id,
+                    top=top,
+                    filter=filter,
                     management_groups_namespace=management_groups_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -3158,9 +3904,15 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_for_subscription(self, **kwargs: Any) -> ItemPaged["_models.Remediation"]:
+    def list_for_subscription(
+        self, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Remediation"]:
         """Gets all remediations for the subscription.
 
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of Remediation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.Remediation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3184,6 +3936,8 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
 
                 _request = build_remediations_list_for_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -3239,12 +3993,14 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_deployments_at_subscription(
-        self, remediation_name: str, **kwargs: Any
+        self, remediation_name: str, *, top: Optional[int] = None, **kwargs: Any
     ) -> ItemPaged["_models.RemediationDeployment"]:
         """Gets all deployments for a remediation at subscription scope.
 
         :param remediation_name: The name of the remediation. Required.
         :type remediation_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of RemediationDeployment
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3269,6 +4025,7 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
                 _request = build_remediations_list_deployments_at_subscription_request(
                     remediation_name=remediation_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -3709,12 +4466,18 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_for_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Remediation"]:
+    def list_for_resource_group(
+        self, resource_group_name: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Remediation"]:
         """Gets all remediations for the subscription.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of Remediation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.Remediation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3739,6 +4502,8 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
                 _request = build_remediations_list_for_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -3794,7 +4559,7 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_deployments_at_resource_group(
-        self, resource_group_name: str, remediation_name: str, **kwargs: Any
+        self, resource_group_name: str, remediation_name: str, *, top: Optional[int] = None, **kwargs: Any
     ) -> ItemPaged["_models.RemediationDeployment"]:
         """Gets all deployments for a remediation at resource group scope.
 
@@ -3803,6 +4568,8 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param remediation_name: The name of the remediation. Required.
         :type remediation_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of RemediationDeployment
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3828,6 +4595,7 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
                     resource_group_name=resource_group_name,
                     remediation_name=remediation_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -4263,11 +5031,17 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_for_resource(self, resource_id: str, **kwargs: Any) -> ItemPaged["_models.Remediation"]:
+    def list_for_resource(
+        self, resource_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Remediation"]:
         """Gets all remediations for a resource.
 
         :param resource_id: Resource ID. Required.
         :type resource_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of Remediation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.Remediation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4291,6 +5065,8 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
 
                 _request = build_remediations_list_for_resource_request(
                     resource_id=resource_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -4346,7 +5122,7 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_deployments_at_resource(
-        self, resource_id: str, remediation_name: str, **kwargs: Any
+        self, resource_id: str, remediation_name: str, *, top: Optional[int] = None, **kwargs: Any
     ) -> ItemPaged["_models.RemediationDeployment"]:
         """Gets all deployments for a remediation at resource scope.
 
@@ -4354,6 +5130,8 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
         :type resource_id: str
         :param remediation_name: The name of the remediation. Required.
         :type remediation_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of RemediationDeployment
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4378,6 +5156,7 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
                 _request = build_remediations_list_deployments_at_resource_request(
                     resource_id=resource_id,
                     remediation_name=remediation_name,
+                    top=top,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -4502,7 +5281,7 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_deployments_at_management_group(
-        self, management_group_id: str, remediation_name: str, **kwargs: Any
+        self, management_group_id: str, remediation_name: str, *, top: Optional[int] = None, **kwargs: Any
     ) -> ItemPaged["_models.RemediationDeployment"]:
         """Gets all deployments for a remediation at management group scope.
 
@@ -4510,6 +5289,8 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
         :type management_group_id: str
         :param remediation_name: The name of the remediation. Required.
         :type remediation_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of RemediationDeployment
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.RemediationDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4537,6 +5318,7 @@ class RemediationsOperations:  # pylint: disable=too-many-public-methods
                 _request = build_remediations_list_deployments_at_management_group_request(
                     management_group_id=management_group_id,
                     remediation_name=remediation_name,
+                    top=top,
                     management_groups_namespace=management_groups_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -5010,9 +5792,15 @@ class AttestationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_for_subscription(self, **kwargs: Any) -> ItemPaged["_models.Attestation"]:
+    def list_for_subscription(
+        self, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Attestation"]:
         """Gets all attestations for the subscription.
 
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of Attestation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.Attestation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5036,6 +5824,8 @@ class AttestationsOperations:
 
                 _request = build_attestations_list_for_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -5460,12 +6250,18 @@ class AttestationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_for_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Attestation"]:
+    def list_for_resource_group(
+        self, resource_group_name: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Attestation"]:
         """Gets all attestations for the resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of Attestation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.Attestation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5490,6 +6286,8 @@ class AttestationsOperations:
                 _request = build_attestations_list_for_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -5903,11 +6701,17 @@ class AttestationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_for_resource(self, resource_id: str, **kwargs: Any) -> ItemPaged["_models.Attestation"]:
+    def list_for_resource(
+        self, resource_id: str, *, top: Optional[int] = None, filter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Attestation"]:
         """Gets all attestations for a resource.
 
         :param resource_id: Resource ID. Required.
         :type resource_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of Attestation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.Attestation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5931,6 +6735,8 @@ class AttestationsOperations:
 
                 _request = build_attestations_list_for_resource_request(
                     resource_id=resource_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -6069,9 +6875,11 @@ class PolicyMetadataOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.SlimPolicyMetadata"]:
+    def list(self, *, top: Optional[int] = None, **kwargs: Any) -> ItemPaged["_models.SlimPolicyMetadata"]:
         """Get a list of the policy metadata resources.
 
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of SlimPolicyMetadata
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.SlimPolicyMetadata]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6094,6 +6902,7 @@ class PolicyMetadataOperations:
             if not next_link:
 
                 _request = build_policy_metadata_list_request(
+                    top=top,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -6166,10 +6975,19 @@ class PolicyEventsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_query_results_for_management_group(
+    def list_query_results_for_management_group(  # pylint: disable=too-many-locals
         self,
         policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         management_group_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the resources under the management group.
@@ -6179,6 +6997,28 @@ class PolicyEventsOperations:
         :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
         :param management_group_name: Management group name. Required.
         :type management_group_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6206,6 +7046,14 @@ class PolicyEventsOperations:
                 _request = build_policy_events_list_query_results_for_management_group_request(
                     policy_events_resource=policy_events_resource,
                     management_group_name=management_group_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     management_groups_namespace=management_groups_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -6262,15 +7110,49 @@ class PolicyEventsOperations:
 
     @distributed_trace
     def list_query_results_for_subscription(
-        self, policy_events_resource: Union[str, _models.PolicyEventsResourceType], subscription_id: str, **kwargs: Any
+        self,
+        subscription_id: str,
+        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the resources under the subscription.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
          type; only "default" is allowed. "default" Required.
         :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6293,8 +7175,16 @@ class PolicyEventsOperations:
             if not next_link:
 
                 _request = build_policy_events_list_query_results_for_subscription_request(
-                    policy_events_resource=policy_events_resource,
                     subscription_id=subscription_id,
+                    policy_events_resource=policy_events_resource,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -6349,23 +7239,54 @@ class PolicyEventsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_query_results_for_resource_group(
+    def list_query_results_for_resource_group(  # pylint: disable=too-many-locals
         self,
-        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         subscription_id: str,
         resource_group_name: str,
+        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the resources under the resource group.
 
-        :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
-         type; only "default" is allowed. "default" Required.
-        :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
         :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
         :type subscription_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
+         type; only "default" is allowed. "default" Required.
+        :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6388,9 +7309,17 @@ class PolicyEventsOperations:
             if not next_link:
 
                 _request = build_policy_events_list_query_results_for_resource_group_request(
-                    policy_events_resource=policy_events_resource,
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
+                    policy_events_resource=policy_events_resource,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -6445,8 +7374,21 @@ class PolicyEventsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_query_results_for_resource(
-        self, policy_events_resource: Union[str, _models.PolicyEventsResourceType], resource_id: str, **kwargs: Any
+    def list_query_results_for_resource(  # pylint: disable=too-many-locals
+        self,
+        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
+        resource_id: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        expand: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the resource.
 
@@ -6455,6 +7397,31 @@ class PolicyEventsOperations:
         :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
         :param resource_id: Resource ID. Required.
         :type resource_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword expand: The $expand query parameter. For example, to expand components use
+         $expand=components. Default value is None.
+        :paramtype expand: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6479,6 +7446,15 @@ class PolicyEventsOperations:
                 _request = build_policy_events_list_query_results_for_resource_request(
                     policy_events_resource=policy_events_resource,
                     resource_id=resource_id,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    expand=expand,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -6533,22 +7509,53 @@ class PolicyEventsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_query_results_for_policy_set_definition(  # pylint: disable=name-too-long
+    def list_query_results_for_policy_set_definition(  # pylint: disable=name-too-long,too-many-locals
         self,
-        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         subscription_id: str,
+        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         policy_set_definition_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the subscription level policy set definition.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
          type; only "default" is allowed. "default" Required.
         :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_set_definition_name: Policy set definition name. Required.
         :type policy_set_definition_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6574,9 +7581,17 @@ class PolicyEventsOperations:
             if not next_link:
 
                 _request = build_policy_events_list_query_results_for_policy_set_definition_request(
-                    policy_events_resource=policy_events_resource,
                     subscription_id=subscription_id,
+                    policy_events_resource=policy_events_resource,
                     policy_set_definition_name=policy_set_definition_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -6632,22 +7647,53 @@ class PolicyEventsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_query_results_for_policy_definition(
+    def list_query_results_for_policy_definition(  # pylint: disable=too-many-locals
         self,
-        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         subscription_id: str,
+        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         policy_definition_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the subscription level policy definition.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
          type; only "default" is allowed. "default" Required.
         :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_definition_name: Policy definition name. Required.
         :type policy_definition_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6673,9 +7719,17 @@ class PolicyEventsOperations:
             if not next_link:
 
                 _request = build_policy_events_list_query_results_for_policy_definition_request(
-                    policy_events_resource=policy_events_resource,
                     subscription_id=subscription_id,
+                    policy_events_resource=policy_events_resource,
                     policy_definition_name=policy_definition_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -6731,22 +7785,53 @@ class PolicyEventsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_query_results_for_subscription_level_policy_assignment(  # pylint: disable=name-too-long
+    def list_query_results_for_subscription_level_policy_assignment(  # pylint: disable=name-too-long,too-many-locals
         self,
-        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         subscription_id: str,
+        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         policy_assignment_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the subscription level policy assignment.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
          type; only "default" is allowed. "default" Required.
         :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_assignment_name: Policy assignment name. Required.
         :type policy_assignment_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6772,9 +7857,17 @@ class PolicyEventsOperations:
             if not next_link:
 
                 _request = build_policy_events_list_query_results_for_subscription_level_policy_assignment_request(
-                    policy_events_resource=policy_events_resource,
                     subscription_id=subscription_id,
+                    policy_events_resource=policy_events_resource,
                     policy_assignment_name=policy_assignment_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -6830,25 +7923,56 @@ class PolicyEventsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_query_results_for_resource_group_level_policy_assignment(  # pylint: disable=name-too-long
+    def list_query_results_for_resource_group_level_policy_assignment(  # pylint: disable=name-too-long,too-many-locals
         self,
-        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         subscription_id: str,
         resource_group_name: str,
+        policy_events_resource: Union[str, _models.PolicyEventsResourceType],
         policy_assignment_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyEvent"]:
         """Queries policy events for the resource group level policy assignment.
 
-        :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
-         type; only "default" is allowed. "default" Required.
-        :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
         :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
         :type subscription_id: str
         :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
+        :param policy_events_resource: The name of the virtual resource under PolicyEvents resource
+         type; only "default" is allowed. "default" Required.
+        :type policy_events_resource: str or ~azure.mgmt.policyinsights.models.PolicyEventsResourceType
         :param policy_assignment_name: Policy assignment name. Required.
         :type policy_assignment_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyEvent
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6874,10 +7998,18 @@ class PolicyEventsOperations:
             if not next_link:
 
                 _request = build_policy_events_list_query_results_for_resource_group_level_policy_assignment_request(
-                    policy_events_resource=policy_events_resource,
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
+                    policy_events_resource=policy_events_resource,
                     policy_assignment_name=policy_assignment_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -6951,10 +8083,19 @@ class PolicyStatesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_query_results_for_management_group(
+    def list_query_results_for_management_group(  # pylint: disable=too-many-locals
         self,
         policy_states_resource: Union[str, _models.PolicyStatesResource],
         management_group_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the resources under the management group.
@@ -6965,6 +8106,28 @@ class PolicyStatesOperations:
         :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
         :param management_group_name: Management group name. Required.
         :type management_group_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6992,6 +8155,14 @@ class PolicyStatesOperations:
                 _request = build_policy_states_list_query_results_for_management_group_request(
                     policy_states_resource=policy_states_resource,
                     management_group_name=management_group_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     management_groups_namespace=management_groups_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -7051,6 +8222,11 @@ class PolicyStatesOperations:
         self,
         policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         management_group_name: str,
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the resources under the management group.
@@ -7062,6 +8238,16 @@ class PolicyStatesOperations:
          ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
         :param management_group_name: Management group name. Required.
         :type management_group_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7086,6 +8272,10 @@ class PolicyStatesOperations:
         _request = build_policy_states_summarize_for_management_group_request(
             policy_states_summary_resource=policy_states_summary_resource,
             management_group_name=management_group_name,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             management_groups_namespace=management_groups_namespace,
             api_version=api_version,
             headers=_headers,
@@ -7129,16 +8319,50 @@ class PolicyStatesOperations:
 
     @distributed_trace
     def list_query_results_for_subscription(
-        self, policy_states_resource: Union[str, _models.PolicyStatesResource], subscription_id: str, **kwargs: Any
+        self,
+        subscription_id: str,
+        policy_states_resource: Union[str, _models.PolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the resources under the subscription.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
          given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
          all policy state(s). Known values are: "default" and "latest". Required.
         :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7161,8 +8385,16 @@ class PolicyStatesOperations:
             if not next_link:
 
                 _request = build_policy_states_list_query_results_for_subscription_request(
-                    policy_states_resource=policy_states_resource,
                     subscription_id=subscription_id,
+                    policy_states_resource=policy_states_resource,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -7219,19 +8451,34 @@ class PolicyStatesOperations:
     @distributed_trace
     def summarize_for_subscription(
         self,
-        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         subscription_id: str,
+        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the resources under the subscription.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_summary_resource: The virtual resource under PolicyStates resource type
          for summarize action. In a given time range, 'latest' represents the latest policy state(s) and
          is the only allowed value. "latest" Required.
         :type policy_states_summary_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7251,8 +8498,12 @@ class PolicyStatesOperations:
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _request = build_policy_states_summarize_for_subscription_request(
-            policy_states_summary_resource=policy_states_summary_resource,
             subscription_id=subscription_id,
+            policy_states_summary_resource=policy_states_summary_resource,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -7294,24 +8545,55 @@ class PolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_resource_group(
+    def list_query_results_for_resource_group(  # pylint: disable=too-many-locals
         self,
-        policy_states_resource: Union[str, _models.PolicyStatesResource],
         subscription_id: str,
         resource_group_name: str,
+        policy_states_resource: Union[str, _models.PolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the resources under the resource group.
 
-        :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
-         given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
-         all policy state(s). Known values are: "default" and "latest". Required.
-        :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
         :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
         :type subscription_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
+         given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
+         all policy state(s). Known values are: "default" and "latest". Required.
+        :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7334,9 +8616,17 @@ class PolicyStatesOperations:
             if not next_link:
 
                 _request = build_policy_states_list_query_results_for_resource_group_request(
-                    policy_states_resource=policy_states_resource,
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
+                    policy_states_resource=policy_states_resource,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -7393,23 +8683,38 @@ class PolicyStatesOperations:
     @distributed_trace
     def summarize_for_resource_group(
         self,
-        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         subscription_id: str,
         resource_group_name: str,
+        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the resources under the resource group.
 
-        :param policy_states_summary_resource: The virtual resource under PolicyStates resource type
-         for summarize action. In a given time range, 'latest' represents the latest policy state(s) and
-         is the only allowed value. "latest" Required.
-        :type policy_states_summary_resource: str or
-         ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
         :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
         :type subscription_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :param policy_states_summary_resource: The virtual resource under PolicyStates resource type
+         for summarize action. In a given time range, 'latest' represents the latest policy state(s) and
+         is the only allowed value. "latest" Required.
+        :type policy_states_summary_resource: str or
+         ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7429,9 +8734,13 @@ class PolicyStatesOperations:
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _request = build_policy_states_summarize_for_resource_group_request(
-            policy_states_summary_resource=policy_states_summary_resource,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
+            policy_states_summary_resource=policy_states_summary_resource,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -7473,8 +8782,21 @@ class PolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_resource(
-        self, policy_states_resource: Union[str, _models.PolicyStatesResource], resource_id: str, **kwargs: Any
+    def list_query_results_for_resource(  # pylint: disable=too-many-locals
+        self,
+        policy_states_resource: Union[str, _models.PolicyStatesResource],
+        resource_id: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        expand: Optional[str] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the resource.
 
@@ -7484,6 +8806,31 @@ class PolicyStatesOperations:
         :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
         :param resource_id: Resource ID. Required.
         :type resource_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword expand: The $expand query parameter. For example, to expand components use
+         $expand=components. Default value is None.
+        :paramtype expand: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7508,6 +8855,15 @@ class PolicyStatesOperations:
                 _request = build_policy_states_list_query_results_for_resource_request(
                     policy_states_resource=policy_states_resource,
                     resource_id=resource_id,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    expand=expand,
+                    skip_token=skip_token,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -7566,6 +8922,11 @@ class PolicyStatesOperations:
         self,
         policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         resource_id: str,
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the resource.
@@ -7577,6 +8938,16 @@ class PolicyStatesOperations:
          ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
         :param resource_id: Resource ID. Required.
         :type resource_id: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7598,6 +8969,10 @@ class PolicyStatesOperations:
         _request = build_policy_states_summarize_for_resource_request(
             policy_states_summary_resource=policy_states_summary_resource,
             resource_id=resource_id,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -7873,23 +9248,54 @@ class PolicyStatesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_policy_set_definition(  # pylint: disable=name-too-long
+    def list_query_results_for_policy_set_definition(  # pylint: disable=name-too-long,too-many-locals
         self,
-        policy_states_resource: Union[str, _models.PolicyStatesResource],
         subscription_id: str,
+        policy_states_resource: Union[str, _models.PolicyStatesResource],
         policy_set_definition_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the subscription level policy set definition.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
          given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
          all policy state(s). Known values are: "default" and "latest". Required.
         :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_set_definition_name: Policy set definition name. Required.
         :type policy_set_definition_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7915,9 +9321,17 @@ class PolicyStatesOperations:
             if not next_link:
 
                 _request = build_policy_states_list_query_results_for_policy_set_definition_request(
-                    policy_states_resource=policy_states_resource,
                     subscription_id=subscription_id,
+                    policy_states_resource=policy_states_resource,
                     policy_set_definition_name=policy_set_definition_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -7975,22 +9389,37 @@ class PolicyStatesOperations:
     @distributed_trace
     def summarize_for_policy_set_definition(
         self,
-        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         subscription_id: str,
+        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         policy_set_definition_name: str,
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the subscription level policy set definition.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_summary_resource: The virtual resource under PolicyStates resource type
          for summarize action. In a given time range, 'latest' represents the latest policy state(s) and
          is the only allowed value. "latest" Required.
         :type policy_states_summary_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_set_definition_name: Policy set definition name. Required.
         :type policy_set_definition_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8013,9 +9442,13 @@ class PolicyStatesOperations:
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _request = build_policy_states_summarize_for_policy_set_definition_request(
-            policy_states_summary_resource=policy_states_summary_resource,
             subscription_id=subscription_id,
+            policy_states_summary_resource=policy_states_summary_resource,
             policy_set_definition_name=policy_set_definition_name,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             authorization_namespace=authorization_namespace,
             api_version=api_version,
             headers=_headers,
@@ -8058,23 +9491,54 @@ class PolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_policy_definition(
+    def list_query_results_for_policy_definition(  # pylint: disable=too-many-locals
         self,
-        policy_states_resource: Union[str, _models.PolicyStatesResource],
         subscription_id: str,
+        policy_states_resource: Union[str, _models.PolicyStatesResource],
         policy_definition_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the subscription level policy definition.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
          given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
          all policy state(s). Known values are: "default" and "latest". Required.
         :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_definition_name: Policy definition name. Required.
         :type policy_definition_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8100,9 +9564,17 @@ class PolicyStatesOperations:
             if not next_link:
 
                 _request = build_policy_states_list_query_results_for_policy_definition_request(
-                    policy_states_resource=policy_states_resource,
                     subscription_id=subscription_id,
+                    policy_states_resource=policy_states_resource,
                     policy_definition_name=policy_definition_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -8160,22 +9632,37 @@ class PolicyStatesOperations:
     @distributed_trace
     def summarize_for_policy_definition(
         self,
-        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         subscription_id: str,
+        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         policy_definition_name: str,
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the subscription level policy definition.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_summary_resource: The virtual resource under PolicyStates resource type
          for summarize action. In a given time range, 'latest' represents the latest policy state(s) and
          is the only allowed value. "latest" Required.
         :type policy_states_summary_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_definition_name: Policy definition name. Required.
         :type policy_definition_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8198,9 +9685,13 @@ class PolicyStatesOperations:
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _request = build_policy_states_summarize_for_policy_definition_request(
-            policy_states_summary_resource=policy_states_summary_resource,
             subscription_id=subscription_id,
+            policy_states_summary_resource=policy_states_summary_resource,
             policy_definition_name=policy_definition_name,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             authorization_namespace=authorization_namespace,
             api_version=api_version,
             headers=_headers,
@@ -8243,23 +9734,54 @@ class PolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_subscription_level_policy_assignment(  # pylint: disable=name-too-long
+    def list_query_results_for_subscription_level_policy_assignment(  # pylint: disable=name-too-long,too-many-locals
         self,
-        policy_states_resource: Union[str, _models.PolicyStatesResource],
         subscription_id: str,
+        policy_states_resource: Union[str, _models.PolicyStatesResource],
         policy_assignment_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the subscription level policy assignment.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
          given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
          all policy state(s). Known values are: "default" and "latest". Required.
         :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_assignment_name: Policy assignment name. Required.
         :type policy_assignment_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8285,9 +9807,17 @@ class PolicyStatesOperations:
             if not next_link:
 
                 _request = build_policy_states_list_query_results_for_subscription_level_policy_assignment_request(
-                    policy_states_resource=policy_states_resource,
                     subscription_id=subscription_id,
+                    policy_states_resource=policy_states_resource,
                     policy_assignment_name=policy_assignment_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -8345,22 +9875,37 @@ class PolicyStatesOperations:
     @distributed_trace
     def summarize_for_subscription_level_policy_assignment(  # pylint: disable=name-too-long
         self,
-        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         subscription_id: str,
+        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         policy_assignment_name: str,
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the subscription level policy assignment.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
         :param policy_states_summary_resource: The virtual resource under PolicyStates resource type
          for summarize action. In a given time range, 'latest' represents the latest policy state(s) and
          is the only allowed value. "latest" Required.
         :type policy_states_summary_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
         :param policy_assignment_name: Policy assignment name. Required.
         :type policy_assignment_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8383,9 +9928,13 @@ class PolicyStatesOperations:
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _request = build_policy_states_summarize_for_subscription_level_policy_assignment_request(
-            policy_states_summary_resource=policy_states_summary_resource,
             subscription_id=subscription_id,
+            policy_states_summary_resource=policy_states_summary_resource,
             policy_assignment_name=policy_assignment_name,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             authorization_namespace=authorization_namespace,
             api_version=api_version,
             headers=_headers,
@@ -8428,26 +9977,57 @@ class PolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_resource_group_level_policy_assignment(  # pylint: disable=name-too-long
+    def list_query_results_for_resource_group_level_policy_assignment(  # pylint: disable=name-too-long,too-many-locals
         self,
-        policy_states_resource: Union[str, _models.PolicyStatesResource],
         subscription_id: str,
         resource_group_name: str,
+        policy_states_resource: Union[str, _models.PolicyStatesResource],
         policy_assignment_name: str,
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        skip_token: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyState"]:
         """Queries policy states for the resource group level policy assignment.
 
-        :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
-         given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
-         all policy state(s). Known values are: "default" and "latest". Required.
-        :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
         :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
         :type subscription_id: str
         :param resource_group_name: Resource group name. Required.
         :type resource_group_name: str
+        :param policy_states_resource: The virtual resource under PolicyStates resource type. In a
+         given time range, 'latest' represents the latest policy state(s), whereas 'default' represents
+         all policy state(s). Known values are: "default" and "latest". Required.
+        :type policy_states_resource: str or ~azure.mgmt.policyinsights.models.PolicyStatesResource
         :param policy_assignment_name: Policy assignment name. Required.
         :type policy_assignment_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword skip_token: Skiptoken is only provided if a previous response returned a partial
+         result as a part of nextLink element. Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of PolicyState
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyState]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8473,10 +10053,18 @@ class PolicyStatesOperations:
             if not next_link:
 
                 _request = build_policy_states_list_query_results_for_resource_group_level_policy_assignment_request(
-                    policy_states_resource=policy_states_resource,
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
+                    policy_states_resource=policy_states_resource,
                     policy_assignment_name=policy_assignment_name,
+                    top=top,
+                    order_by=order_by,
+                    select=select,
+                    from_parameter=from_parameter,
+                    to=to,
+                    filter=filter,
+                    apply=apply,
+                    skip_token=skip_token,
                     authorization_namespace=authorization_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -8534,25 +10122,40 @@ class PolicyStatesOperations:
     @distributed_trace
     def summarize_for_resource_group_level_policy_assignment(  # pylint: disable=name-too-long
         self,
-        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         subscription_id: str,
         resource_group_name: str,
+        policy_states_summary_resource: Union[str, _models.PolicyStatesSummaryResourceType],
         policy_assignment_name: str,
+        *,
+        top: Optional[int] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SummarizeResults:
         """Summarizes policy states for the resource group level policy assignment.
 
+        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
+        :type subscription_id: str
+        :param resource_group_name: Resource group name. Required.
+        :type resource_group_name: str
         :param policy_states_summary_resource: The virtual resource under PolicyStates resource type
          for summarize action. In a given time range, 'latest' represents the latest policy state(s) and
          is the only allowed value. "latest" Required.
         :type policy_states_summary_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyStatesSummaryResourceType
-        :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
-        :type subscription_id: str
-        :param resource_group_name: Resource group name. Required.
-        :type resource_group_name: str
         :param policy_assignment_name: Policy assignment name. Required.
         :type policy_assignment_name: str
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: SummarizeResults. The SummarizeResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.SummarizeResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8575,10 +10178,14 @@ class PolicyStatesOperations:
         cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _request = build_policy_states_summarize_for_resource_group_level_policy_assignment_request(
-            policy_states_summary_resource=policy_states_summary_resource,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
+            policy_states_summary_resource=policy_states_summary_resource,
             policy_assignment_name=policy_assignment_name,
+            top=top,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
             authorization_namespace=authorization_namespace,
             api_version=api_version,
             headers=_headers,
@@ -9090,6 +10697,14 @@ class ComponentPolicyStatesOperations:
         self,
         subscription_id: str,
         component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ComponentPolicyStatesQueryResults:
         """Queries component policy states under subscription scope.
@@ -9101,6 +10716,25 @@ class ComponentPolicyStatesOperations:
          "latest" Required.
         :type component_policy_states_resource: str or
          ~azure.mgmt.policyinsights.models.ComponentPolicyStatesResource
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
         :return: ComponentPolicyStatesQueryResults. The ComponentPolicyStatesQueryResults is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.ComponentPolicyStatesQueryResults
@@ -9123,6 +10757,13 @@ class ComponentPolicyStatesOperations:
         _request = build_component_policy_states_list_query_results_for_subscription_request(
             subscription_id=subscription_id,
             component_policy_states_resource=component_policy_states_resource,
+            top=top,
+            order_by=order_by,
+            select=select,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
+            apply=apply,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -9169,6 +10810,14 @@ class ComponentPolicyStatesOperations:
         subscription_id: str,
         resource_group_name: str,
         component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ComponentPolicyStatesQueryResults:
         """Queries component policy states under resource group scope.
@@ -9183,6 +10832,25 @@ class ComponentPolicyStatesOperations:
          "latest" Required.
         :type component_policy_states_resource: str or
          ~azure.mgmt.policyinsights.models.ComponentPolicyStatesResource
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
         :return: ComponentPolicyStatesQueryResults. The ComponentPolicyStatesQueryResults is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.ComponentPolicyStatesQueryResults
@@ -9206,6 +10874,13 @@ class ComponentPolicyStatesOperations:
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             component_policy_states_resource=component_policy_states_resource,
+            top=top,
+            order_by=order_by,
+            select=select,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
+            apply=apply,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -9251,6 +10926,15 @@ class ComponentPolicyStatesOperations:
         self,
         resource_id: str,
         component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
+        expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ComponentPolicyStatesQueryResults:
         """Queries component policy states for the resource.
@@ -9262,6 +10946,27 @@ class ComponentPolicyStatesOperations:
          "latest" Required.
         :type component_policy_states_resource: str or
          ~azure.mgmt.policyinsights.models.ComponentPolicyStatesResource
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
+        :keyword expand: The $expand query parameter. Default value is None.
+        :paramtype expand: str
         :return: ComponentPolicyStatesQueryResults. The ComponentPolicyStatesQueryResults is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.ComponentPolicyStatesQueryResults
@@ -9284,6 +10989,14 @@ class ComponentPolicyStatesOperations:
         _request = build_component_policy_states_list_query_results_for_resource_request(
             resource_id=resource_id,
             component_policy_states_resource=component_policy_states_resource,
+            top=top,
+            order_by=order_by,
+            select=select,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
+            apply=apply,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -9325,11 +11038,19 @@ class ComponentPolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_policy_definition(
+    def list_query_results_for_policy_definition(  # pylint: disable=too-many-locals
         self,
         subscription_id: str,
         policy_definition_name: str,
         component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ComponentPolicyStatesQueryResults:
         """Queries component policy states for the subscription level policy definition.
@@ -9343,6 +11064,25 @@ class ComponentPolicyStatesOperations:
          "latest" Required.
         :type component_policy_states_resource: str or
          ~azure.mgmt.policyinsights.models.ComponentPolicyStatesResource
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
         :return: ComponentPolicyStatesQueryResults. The ComponentPolicyStatesQueryResults is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.ComponentPolicyStatesQueryResults
@@ -9369,6 +11109,13 @@ class ComponentPolicyStatesOperations:
             subscription_id=subscription_id,
             policy_definition_name=policy_definition_name,
             component_policy_states_resource=component_policy_states_resource,
+            top=top,
+            order_by=order_by,
+            select=select,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
+            apply=apply,
             authorization_namespace=authorization_namespace,
             api_version=api_version,
             headers=_headers,
@@ -9411,11 +11158,19 @@ class ComponentPolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_subscription_level_policy_assignment(  # pylint: disable=name-too-long
+    def list_query_results_for_subscription_level_policy_assignment(  # pylint: disable=name-too-long,too-many-locals
         self,
         subscription_id: str,
         policy_assignment_name: str,
         component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ComponentPolicyStatesQueryResults:
         """Queries component policy states for the subscription level policy assignment.
@@ -9429,6 +11184,25 @@ class ComponentPolicyStatesOperations:
          "latest" Required.
         :type component_policy_states_resource: str or
          ~azure.mgmt.policyinsights.models.ComponentPolicyStatesResource
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
         :return: ComponentPolicyStatesQueryResults. The ComponentPolicyStatesQueryResults is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.ComponentPolicyStatesQueryResults
@@ -9455,6 +11229,13 @@ class ComponentPolicyStatesOperations:
             subscription_id=subscription_id,
             policy_assignment_name=policy_assignment_name,
             component_policy_states_resource=component_policy_states_resource,
+            top=top,
+            order_by=order_by,
+            select=select,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
+            apply=apply,
             authorization_namespace=authorization_namespace,
             api_version=api_version,
             headers=_headers,
@@ -9497,12 +11278,20 @@ class ComponentPolicyStatesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_query_results_for_resource_group_level_policy_assignment(  # pylint: disable=name-too-long
+    def list_query_results_for_resource_group_level_policy_assignment(  # pylint: disable=name-too-long,too-many-locals
         self,
         subscription_id: str,
         resource_group_name: str,
         policy_assignment_name: str,
         component_policy_states_resource: Union[str, _models.ComponentPolicyStatesResource],
+        *,
+        top: Optional[int] = None,
+        order_by: Optional[str] = None,
+        select: Optional[str] = None,
+        from_parameter: Optional[datetime.datetime] = None,
+        to: Optional[datetime.datetime] = None,
+        filter: Optional[str] = None,
+        apply: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ComponentPolicyStatesQueryResults:
         """Queries component policy states for the resource group level policy assignment.
@@ -9518,6 +11307,25 @@ class ComponentPolicyStatesOperations:
          "latest" Required.
         :type component_policy_states_resource: str or
          ~azure.mgmt.policyinsights.models.ComponentPolicyStatesResource
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword order_by: Ordering expression using OData notation. One or more comma-separated column
+         names with an optional "desc" (the default) or "asc", e.g. "$orderby=PolicyAssignmentId,
+         ResourceId asc". Default value is None.
+        :paramtype order_by: str
+        :keyword select: Select expression using OData notation. Limits the columns on each record to
+         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId". Default value is None.
+        :paramtype select: str
+        :keyword from_parameter: ISO 8601 formatted timestamp specifying the start time of the interval
+         to query. When not specified, the service uses ($to - 1-day). Default value is None.
+        :paramtype from_parameter: ~datetime.datetime
+        :keyword to: ISO 8601 formatted timestamp specifying the end time of the interval to query.
+         When not specified, the service uses request time. Default value is None.
+        :paramtype to: ~datetime.datetime
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
+        :keyword apply: OData apply expression for aggregations. Default value is None.
+        :paramtype apply: str
         :return: ComponentPolicyStatesQueryResults. The ComponentPolicyStatesQueryResults is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.policyinsights.models.ComponentPolicyStatesQueryResults
@@ -9545,6 +11353,13 @@ class ComponentPolicyStatesOperations:
             resource_group_name=resource_group_name,
             policy_assignment_name=policy_assignment_name,
             component_policy_states_resource=component_policy_states_resource,
+            top=top,
+            order_by=order_by,
+            select=select,
+            from_parameter=from_parameter,
+            to=to,
+            filter=filter,
+            apply=apply,
             authorization_namespace=authorization_namespace,
             api_version=api_version,
             headers=_headers,
@@ -9609,6 +11424,9 @@ class PolicyTrackedResourcesOperations:
         self,
         management_group_name: str,
         policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
+        *,
+        top: Optional[int] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyTrackedResource"]:
         """Queries policy tracked resources under the management group.
@@ -9619,6 +11437,10 @@ class PolicyTrackedResourcesOperations:
          PolicyTrackedResources resource type; only "default" is allowed. "default" Required.
         :type policy_tracked_resources_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyTrackedResourcesResourceType
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of PolicyTrackedResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9646,6 +11468,8 @@ class PolicyTrackedResourcesOperations:
                 _request = build_policy_tracked_resources_list_query_results_for_management_group_request(
                     management_group_name=management_group_name,
                     policy_tracked_resources_resource=policy_tracked_resources_resource,
+                    top=top,
+                    filter=filter,
                     management_groups_namespace=management_groups_namespace,
                     api_version=api_version,
                     headers=_headers,
@@ -9702,7 +11526,12 @@ class PolicyTrackedResourcesOperations:
 
     @distributed_trace
     def list_query_results_for_subscription(
-        self, policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType], **kwargs: Any
+        self,
+        policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
+        *,
+        top: Optional[int] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.PolicyTrackedResource"]:
         """Queries policy tracked resources under the subscription.
 
@@ -9710,6 +11539,10 @@ class PolicyTrackedResourcesOperations:
          PolicyTrackedResources resource type; only "default" is allowed. "default" Required.
         :type policy_tracked_resources_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyTrackedResourcesResourceType
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of PolicyTrackedResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9734,6 +11567,8 @@ class PolicyTrackedResourcesOperations:
                 _request = build_policy_tracked_resources_list_query_results_for_subscription_request(
                     policy_tracked_resources_resource=policy_tracked_resources_resource,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -9792,6 +11627,9 @@ class PolicyTrackedResourcesOperations:
         self,
         resource_group_name: str,
         policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
+        *,
+        top: Optional[int] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyTrackedResource"]:
         """Queries policy tracked resources under the resource group.
@@ -9803,6 +11641,10 @@ class PolicyTrackedResourcesOperations:
          PolicyTrackedResources resource type; only "default" is allowed. "default" Required.
         :type policy_tracked_resources_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyTrackedResourcesResourceType
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of PolicyTrackedResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9828,6 +11670,8 @@ class PolicyTrackedResourcesOperations:
                     resource_group_name=resource_group_name,
                     policy_tracked_resources_resource=policy_tracked_resources_resource,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -9886,6 +11730,9 @@ class PolicyTrackedResourcesOperations:
         self,
         resource_id: str,
         policy_tracked_resources_resource: Union[str, _models.PolicyTrackedResourcesResourceType],
+        *,
+        top: Optional[int] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.PolicyTrackedResource"]:
         """Queries policy tracked resources under the resource.
@@ -9896,6 +11743,10 @@ class PolicyTrackedResourcesOperations:
          PolicyTrackedResources resource type; only "default" is allowed. "default" Required.
         :type policy_tracked_resources_resource: str or
          ~azure.mgmt.policyinsights.models.PolicyTrackedResourcesResourceType
+        :keyword top: Maximum number of records to return. Default value is None.
+        :paramtype top: int
+        :keyword filter: OData filter expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of PolicyTrackedResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.policyinsights.models.PolicyTrackedResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9920,6 +11771,8 @@ class PolicyTrackedResourcesOperations:
                 _request = build_policy_tracked_resources_list_query_results_for_resource_request(
                     resource_id=resource_id,
                     policy_tracked_resources_resource=policy_tracked_resources_resource,
+                    top=top,
+                    filter=filter,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,

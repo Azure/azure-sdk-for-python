@@ -49,8 +49,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_list_query_results_for_subscription(self, resource_group):
         response = self.client.policy_states.list_query_results_for_subscription(
-            policy_states_resource="str",
             subscription_id="str",
+            policy_states_resource="str",
             api_version="2024-10-01",
         )
         result = [r async for r in response]
@@ -61,8 +61,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_summarize_for_subscription(self, resource_group):
         response = await self.client.policy_states.summarize_for_subscription(
-            policy_states_summary_resource="str",
             subscription_id="str",
+            policy_states_summary_resource="str",
             api_version="2024-10-01",
         )
 
@@ -73,9 +73,9 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_list_query_results_for_resource_group(self, resource_group):
         response = self.client.policy_states.list_query_results_for_resource_group(
-            policy_states_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
+            policy_states_resource="str",
             api_version="2024-10-01",
         )
         result = [r async for r in response]
@@ -86,9 +86,9 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_summarize_for_resource_group(self, resource_group):
         response = await self.client.policy_states.summarize_for_resource_group(
-            policy_states_summary_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
+            policy_states_summary_resource="str",
             api_version="2024-10-01",
         )
 
@@ -150,8 +150,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_list_query_results_for_policy_set_definition(self, resource_group):
         response = self.client.policy_states.list_query_results_for_policy_set_definition(
-            policy_states_resource="str",
             subscription_id="str",
+            policy_states_resource="str",
             policy_set_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -164,8 +164,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_summarize_for_policy_set_definition(self, resource_group):
         response = await self.client.policy_states.summarize_for_policy_set_definition(
-            policy_states_summary_resource="str",
             subscription_id="str",
+            policy_states_summary_resource="str",
             policy_set_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -178,8 +178,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_list_query_results_for_policy_definition(self, resource_group):
         response = self.client.policy_states.list_query_results_for_policy_definition(
-            policy_states_resource="str",
             subscription_id="str",
+            policy_states_resource="str",
             policy_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -192,8 +192,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_summarize_for_policy_definition(self, resource_group):
         response = await self.client.policy_states.summarize_for_policy_definition(
-            policy_states_summary_resource="str",
             subscription_id="str",
+            policy_states_summary_resource="str",
             policy_definition_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -206,8 +206,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_list_query_results_for_subscription_level_policy_assignment(self, resource_group):
         response = self.client.policy_states.list_query_results_for_subscription_level_policy_assignment(
-            policy_states_resource="str",
             subscription_id="str",
+            policy_states_resource="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -220,8 +220,8 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_summarize_for_subscription_level_policy_assignment(self, resource_group):
         response = await self.client.policy_states.summarize_for_subscription_level_policy_assignment(
-            policy_states_summary_resource="str",
             subscription_id="str",
+            policy_states_summary_resource="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -234,9 +234,9 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_list_query_results_for_resource_group_level_policy_assignment(self, resource_group):
         response = self.client.policy_states.list_query_results_for_resource_group_level_policy_assignment(
-            policy_states_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
+            policy_states_resource="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
@@ -249,9 +249,9 @@ class TestPolicyInsightsPolicyStatesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_policy_states_summarize_for_resource_group_level_policy_assignment(self, resource_group):
         response = await self.client.policy_states.summarize_for_resource_group_level_policy_assignment(
-            policy_states_summary_resource="str",
             subscription_id="str",
             resource_group_name=resource_group.name,
+            policy_states_summary_resource="str",
             policy_assignment_name="str",
             authorization_namespace="Microsoft.Authorization",
             api_version="2024-10-01",
