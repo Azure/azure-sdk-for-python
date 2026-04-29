@@ -68,6 +68,7 @@ class MockClient:
     def __init__(self):
         self._global_endpoint_manager = MockGlobalEndpointManager()
         self._routing_map_provider = MockRoutingMapProvider()
+        self.last_response_headers = {}
         self.refresh_routing_map_provider_call_count = 0
         self.last_refresh_collection_link = None
         self.last_refresh_previous_map = None
@@ -187,6 +188,136 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert mock_client.refresh_routing_map_provider_call_count == 1, \
             "refresh_routing_map_provider should be called once on 410"
         assert result == expected_docs, "Should return expected documents after retry"
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_410_uses_checkpoint_continuation_from_last_response_headers(self, mock_execute):
+        """410 retry should resume from checkpoint continuation stamped by __QueryFeed."""
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-token"}
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2
+        assert seen_continuations == ["checkpoint-token"]
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_410_without_checkpoint_continuation_retries_from_none(self, mock_execute):
+        """If no checkpoint header is stamped, continuation should remain None on retry."""
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                client.last_response_headers = {}
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2
+        assert seen_continuations == [None]
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_multiple_410_uses_latest_checkpoint_continuation(self, mock_execute):
+        """Across repeated 410 retries, execution should resume using the latest checkpoint token."""
+        mock_client = MockClient()
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-token-1"}
+                raise create_410_partition_split_error()
+            if call_count[0] == 2:
+                client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-token-2"}
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+        result = context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 3
+        assert seen_continuations == ["checkpoint-token-2"]
+        assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_mid_pagination_split_retries_from_checkpoint_without_duplicates(self, mock_execute):
+        """Simulate page2 split and verify retry resumes from checkpoint token, not from page1."""
+        mock_client = MockClient()
+
+        docs_page_1 = [{"id": "1"}, {"id": "2"}, {"id": "3"}, {"id": "4"}, {"id": "5"}]
+        docs_page_2 = [{"id": "6"}, {"id": "7"}, {"id": "8"}, {"id": "9"}, {"id": "10"}]
+
+        def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        fetch_calls = []
+
+        def mock_fetch_function(options):
+            continuation = options.get("continuation")
+            fetch_calls.append(continuation)
+
+            if continuation is None:
+                return (docs_page_1, {HttpHeaders.Continuation: "token-after-page-1"})
+
+            if continuation == "token-after-page-1":
+                # Simulate __QueryFeed writing a checkpoint before re-raising split error.
+                mock_client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-after-split"}
+                raise create_410_partition_split_error()
+
+            if continuation == "checkpoint-after-split":
+                return (docs_page_2, {})
+
+            self.fail(f"Unexpected continuation seen by fetch: {continuation}")
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+
+        first_result = context._fetch_items_helper_with_retries(mock_fetch_function)
+        self.assertListEqual(first_result, docs_page_1)
+
+        second_result = context._fetch_items_helper_with_retries(mock_fetch_function)
+        self.assertListEqual(second_result, docs_page_2)
+
+        # Validate the second page did not replay page-1 items and resumed from checkpoint.
+        self.assertEqual(fetch_calls, [None, "token-after-page-1", "checkpoint-after-split"])
 
     @patch('azure.cosmos._retry_utility.Execute')
     def test_pk_range_query_skips_410_retry_to_prevent_recursion(self, mock_execute):

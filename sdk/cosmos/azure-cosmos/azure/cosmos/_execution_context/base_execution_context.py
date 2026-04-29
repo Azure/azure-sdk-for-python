@@ -210,9 +210,13 @@ class _QueryExecutionContextBase(object):
                         _LOGGER.debug("Partition split retry: No resource_link available, using global refresh")
                         self._client.refresh_routing_map_provider()
 
-                    # Reset execution context state to allow retry from the beginning
+                    # Reset execution context state for retry. If __QueryFeed already
+                    # stamped a checkpoint continuation on failure, resume from it.
+                    continuation_key = http_constants.HttpHeaders.Continuation
+                    last_headers = getattr(self._client, "last_response_headers", None) or {}
+                    checkpoint_continuation = last_headers.get(continuation_key)
                     self._has_started = False
-                    self._continuation = None
+                    self._continuation = checkpoint_continuation
                     # Retry immediately (no backoff needed for partition splits)
                     continue
                 raise  # Not a partition split error, propagate immediately
