@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import base64
 import os
@@ -12,21 +13,20 @@ from math import ceil
 from unittest import mock
 
 import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobServiceClient, BlobType, ContentSettings
-from azure.storage.blob._encryption import (
-    _dict_to_encryption_data,
-    _validate_and_unwrap_cek,
-    _GCM_NONCE_LENGTH,
-    _GCM_TAG_LENGTH,
-)
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobServiceClient, BlobType, ContentSettings
+from azure.storage.blob._encryption import (
+    _dict_to_encryption_data, _GCM_NONCE_LENGTH, _GCM_TAG_LENGTH, _validate_and_unwrap_cek,
+)
+
 
 TEST_CONTAINER_PREFIX = 'encryptionv2_container'
 TEST_BLOB_PREFIX = 'encryptionv2_blob'
@@ -45,7 +45,7 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_container_reference(self):

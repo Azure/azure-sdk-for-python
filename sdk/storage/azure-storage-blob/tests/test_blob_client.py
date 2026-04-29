@@ -3,11 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-public-methods
 
 import platform
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core.credentials import AzureSasCredential
 from azure.storage.blob import (
     AccountSasPermissions,
@@ -22,9 +28,6 @@ from azure.storage.blob import (
 from azure.storage.blob._shared.base_client import create_configuration
 from azure.storage.blob._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 SERVICES = {
     BlobServiceClient: 'blob',
@@ -378,7 +381,7 @@ class TestStorageClient(StorageRecordedTestCase):
 
         container_name, blob_name = "foo", "bar"
 
-        for service_type in SERVICES.keys():
+        for service_type in SERVICES:
             service = service_type(
                 account_url,
                 credential=storage_account_key.secret,
@@ -419,7 +422,7 @@ class TestStorageClient(StorageRecordedTestCase):
 
         hostname = "github.com"
         account_url = f"https://{hostname}"
-        for service_type in SERVICES.keys():
+        for service_type in SERVICES:
             service = service_type(
                 account_url,
                 credential=token_credential,
@@ -510,11 +513,11 @@ class TestStorageClient(StorageRecordedTestCase):
 
         # Assert
         assert service is not None
-        assert service.account_name == None
+        assert service.account_name is None
         assert service.credential is None
         assert service.primary_endpoint.startswith('https://www.mydomain.com/')
         with pytest.raises(ValueError):
-            service.secondary_endpoint
+            service.secondary_endpoint  # pylint: disable=pointless-statement
 
     @BlobPreparer()
     def test_create_service_with_cstr_custom_domain(self, **kwargs):
@@ -597,7 +600,7 @@ class TestStorageClient(StorageRecordedTestCase):
 
             # Fails if primary excluded
             with pytest.raises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
+                service_type[0].from_connection_string(conn_string, container_name="foo", blob_name="bar")
 
     @BlobPreparer()
     def test_create_service_with_cstr_succeeds_if_sec_with_prim(self, **kwargs):
@@ -798,23 +801,23 @@ class TestStorageClient(StorageRecordedTestCase):
             user_agent=custom_app
         )
 
-        def callback(response):
+        def first_callback(response):
             assert 'User-Agent' in response.http_request.headers
             assert ("TestApp/v1.0 azsdk-python-storage-blob/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())) in response.http_request.headers['User-Agent']
 
-        service.get_service_properties(raw_response_hook=callback)
+        service.get_service_properties(raw_response_hook=first_callback)
 
-        def callback(response):
+        def second_callback(response):
             assert 'User-Agent' in response.http_request.headers
             assert ("TestApp/v2.0 TestApp/v1.0 azsdk-python-storage-blob/{} Python/{} ({})".format(
                     VERSION,
                     platform.python_version(),
                     platform.platform())) in response.http_request.headers['User-Agent']
 
-        service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
+        service.get_service_properties(raw_response_hook=second_callback, user_agent="TestApp/v2.0")
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -841,8 +844,7 @@ class TestStorageClient(StorageRecordedTestCase):
             for service_type in SERVICES.items():
                 # Act
                 with pytest.raises(ValueError) as e:
-                    service = service_type[0].from_connection_string(
-                        conn_str, blob_name="test", container_name="foo/bar")
+                    service_type[0].from_connection_string(conn_str, blob_name="test", container_name="foo/bar")
 
                 if conn_str in ("", "foobar", "foo;bar;baz", ";"):
                     assert str(e.value) == "Connection string is either blank or malformed."
@@ -855,7 +857,7 @@ class TestStorageClient(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        for client, url in SERVICES.items():
+        for client in SERVICES:
             # Act
             service = client(
                 self.account_url(storage_account_name, "blob"),
@@ -875,7 +877,7 @@ class TestStorageClient(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        for client, url in SERVICES.items():
+        for client in SERVICES:
             # Act
             service = client(
                 self.account_url(storage_account_name, "blob"),
@@ -886,7 +888,7 @@ class TestStorageClient(StorageRecordedTestCase):
             service.close()
 
     @BlobPreparer()
-    def test_create_configuration_legacy(self, **kwargs):
+    def test_create_configuration_legacy(self):
         # Arrange
         sdk_name = 'Blob-test'
 

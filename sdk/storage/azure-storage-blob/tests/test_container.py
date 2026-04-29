@@ -866,7 +866,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
-        self.sleep(10)
+        if self.is_live:
+            self.sleep(10)
         lease_id_start = lease.id
 
         # Act
@@ -874,10 +875,12 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         # Assert
         assert lease.id == lease_id_start
-        self.sleep(5)
+        if self.is_live:
+            self.sleep(5)
         with pytest.raises(HttpResponseError):
             container.delete_container()
-        self.sleep(10)
+        if self.is_live:
+            self.sleep(10)
         container.delete_container()
 
     @BlobPreparer()
@@ -894,7 +897,8 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         # Assert
         lease.break_lease(lease_break_period=5)
-        self.sleep(8)
+        if self.is_live:
+            self.sleep(10)
         with pytest.raises(HttpResponseError):
             container.delete_container(lease=lease)
 
@@ -930,7 +934,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         with pytest.raises(HttpResponseError):
             container.acquire_lease()
-        self.sleep(17)
+        if self.is_live:
+            self.sleep(17)
         container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
     @BlobPreparer()
@@ -1596,13 +1601,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
         data = b'hello world'
 
-        try:
-            blob_client1 = container.get_blob_client('blob1')
-            blob_client1.upload_blob(data, overwrite=True)
-            container.get_blob_client('blob2').upload_blob(data, overwrite=True)
-            container.get_blob_client('blob3').upload_blob(data, overwrite=True)
-        except HttpResponseError:
-            pass
+        blob_client1 = container.get_blob_client('blob1')
+        blob_client1.upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
 
         # Act
         response = container.delete_blobs(
@@ -1661,12 +1663,9 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
         data = b'hello world'
 
-        try:
-            blob = bsc.get_blob_client(container.container_name, 'blob1')
-            blob.upload_blob(data, length=len(data), overwrite=True)
-            container.get_blob_client('blob2').upload_blob(data, overwrite=True)
-        except HttpResponseError:
-            pass
+        blob = bsc.get_blob_client(container.container_name, 'blob1')
+        blob.upload_blob(data, length=len(data), overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
 
         # Act
         blob = bsc.get_blob_client(container.container_name, 'blob1')
@@ -1751,13 +1750,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = ContainerClient.from_container_url(container_client.url, credential=sas_token)
         data = b'hello world'
 
-        try:
-            blob_client1 = container.get_blob_client('blob1')
-            blob_client1.upload_blob(data, overwrite=True)
-            container.get_blob_client('blob2').upload_blob(data, overwrite=True)
-            container.get_blob_client('blob3').upload_blob(data, overwrite=True)
-        except HttpResponseError:
-            pass
+        blob_client1 = container.get_blob_client('blob1')
+        blob_client1.upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
 
         # Act
         response = container.delete_blobs(
@@ -1784,13 +1780,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         data = b'hello world'
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
 
-        try:
-            blob_client1 = container.get_blob_client('blob1')
-            blob_client1.upload_blob(data, overwrite=True, tags=tags)
-            container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
-            container.get_blob_client('blob3').upload_blob(data,  overwrite=True, tags=tags)
-        except HttpResponseError:
-            pass
+        blob_client1 = container.get_blob_client('blob1')
+        blob_client1.upload_blob(data, tags=tags, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, tags=tags, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, tags=tags, overwrite=True)
 
         if self.is_live:
             sleep(10)
@@ -1882,12 +1875,9 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
         data = b'hello world'
 
-        try:
-            container.get_blob_client('blob1').upload_blob(data, overwrite=True)
-            container.get_blob_client('blob2').upload_blob(data, overwrite=True)
-            container.get_blob_client('blob3').upload_blob(data, overwrite=True)
-        except HttpResponseError:
-            pass
+        container.get_blob_client('blob1').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
 
         # Act
         response = container.delete_blobs(
@@ -1913,14 +1903,12 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc, prefix="test")
         data = b'hello world'
 
-        try:
-            blob1_client = container.get_blob_client('blob1')
-            blob1_client.upload_blob(data, overwrite=True)
-            blob1_client.create_snapshot()
-            container.get_blob_client('blob2').upload_blob(data, overwrite=True)
-            container.get_blob_client('blob3').upload_blob(data, overwrite=True)
-        except HttpResponseError:
-            pass
+        blob1_client = container.get_blob_client('blob1')
+        blob1_client.upload_blob(data, overwrite=True)
+        blob1_client.create_snapshot()
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
+
         blobs = list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 

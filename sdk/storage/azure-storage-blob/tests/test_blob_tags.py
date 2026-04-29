@@ -3,14 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
+
 import os
-import pytest
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
+import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     AccountSasPermissions,
     BlobBlock,
@@ -19,12 +26,9 @@ from azure.storage.blob import (
     BlobServiceClient,
     generate_account_sas,
     generate_blob_sas,
-    ResourceTypes
+    ResourceTypes,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -49,7 +53,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except OSError:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -84,7 +88,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         container_name = self.get_resource_name(prefix)
         try:
             self.bsc.create_container(container_name)
-        except:
+        except ResourceExistsError:
             pass
         return container_name
 

@@ -3,8 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 from datetime import datetime, timedelta
+
+import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
 
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
@@ -16,12 +21,8 @@ from azure.storage.blob import (
     Metrics,
     ResourceTypes,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
-
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 
 # ------------------------------------------------------------------------------
@@ -90,8 +91,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -470,14 +470,8 @@ class TestServiceProperties(StorageRecordedTestCase):
     # --Test cases for errors ---------------------------------------
     @BlobPreparer()
     @recorded_by_proxy
-    def test_retention_no_days(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        pytest.raises(ValueError,
-                      RetentionPolicy,
-                      True, None)
+    def test_retention_no_days(self):
+        pytest.raises(ValueError, RetentionPolicy, True, None)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -487,7 +481,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         cors = []
-        for i in range(0, 6):
+        for _ in range(6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert

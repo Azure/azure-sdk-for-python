@@ -3,33 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
 import tempfile
-import uuid
 from datetime import datetime, timedelta
 
 import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
-from azure.mgmt.storage import StorageManagementClient
-from azure.storage.blob import (
-    BlobClient,
-    BlobImmutabilityPolicyMode,
-    BlobProperties,
-    BlobSasPermissions,
-    BlobServiceClient,
-    BlobType,
-    ImmutabilityPolicy,
-    PremiumPageBlobTier,
-    SequenceNumberAction,
-    generate_blob_sas
-)
-from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import NonSeekableStream, ProgressTracker
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
+from azure.mgmt.storage import StorageManagementClient
+from azure.storage.blob import (
+    BlobClient, BlobImmutabilityPolicyMode, BlobProperties, BlobSasPermissions, BlobServiceClient, BlobType,
+    generate_blob_sas, ImmutabilityPolicy, PremiumPageBlobTier, SequenceNumberAction,
+)
+from azure.storage.blob._shared.policies import StorageContentValidation
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -49,11 +43,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             try:
                 bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, bsc) -> BlobClient:
@@ -215,7 +209,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
-        resp = blob.create_page_blob(512, metadata=metadata)
+        blob.create_page_blob(512, metadata=metadata)
 
         # Assert
         md = blob.get_blob_properties()
@@ -265,7 +259,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob.upload_page(data, offset=0, length=512, lease=lease,
                          if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
-        page_ranges, cleared = blob.get_page_ranges()
+        page_ranges, _ = blob.get_page_ranges()
 
         # Assert
         content = blob.download_blob(lease=lease)
@@ -307,7 +301,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         # Act
         resp = blob.create_page_blob(EIGHT_TB)
         props = blob.get_blob_properties()
-        page_ranges, cleared = blob.get_page_ranges()
+        page_ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert resp.get('etag') is not None
@@ -349,7 +343,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         length = 512
         resp = blob.upload_page(data, offset=start_offset, length=length)
         props = blob.get_blob_properties()
-        page_ranges, cleared = blob.get_page_ranges()
+        page_ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert resp.get('etag') is not None
@@ -374,7 +368,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Act
         data = self.get_random_bytes(512)
-        resp = blob.upload_page(data, offset=0, length=512, validate_content=True)
+        blob.upload_page(data, offset=0, length=512, validate_content=True)
 
         # Assert
 
@@ -1404,7 +1398,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob = self._create_blob(bsc)
 
         # Act
-        ranges, cleared = blob.get_page_ranges()
+        ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert ranges is not None
@@ -1422,11 +1416,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
-        resp1 = blob.upload_page(data, offset=0, length=512)
-        resp2 = blob.upload_page(data, offset=1024, length=512)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
-        ranges, cleared = blob.get_page_ranges()
+        ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert ranges is not None
@@ -1560,7 +1554,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
-        resp1 = blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=0, length=512)
 
         # Act
         with pytest.raises(ValueError):
@@ -1661,16 +1655,18 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         data2 = b'1234' * 256
 
         # Act
-        create_resp = blob.upload_blob(
+        blob.upload_blob(
             data1,
             overwrite=True,
             blob_type=BlobType.PageBlob,
-            metadata={'blobdata': 'data1'})
+            metadata={'blobdata': 'data1'}
+        )
         update_resp = blob.upload_blob(
             data2,
             overwrite=True,
             blob_type=BlobType.PageBlob,
-            metadata={'blobdata': 'data2'})
+            metadata={'blobdata': 'data2'}
+        )
 
         props = blob.get_blob_properties()
 
@@ -1902,7 +1898,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         # Assert
         # the uploader should have skipped the empty ranges
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
-        page_ranges, cleared = list(blob.get_page_ranges())
+        page_ranges, _ = blob.get_page_ranges()
         assert len(page_ranges) == 2
         assert page_ranges[0]['start'] == 0
         assert page_ranges[0]['end'] == 4095
@@ -2065,8 +2061,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         try:
             source_blob = self._create_blob(bsc, length=2048)
             data = self.get_random_bytes(512)
-            resp1 = source_blob.upload_page(data, offset=0, length=512)
-            resp2 = source_blob.upload_page(data, offset=1024, length=512)
+            source_blob.upload_page(data, offset=0, length=512)
+            source_blob.upload_page(data, offset=1024, length=512)
             source_snapshot_blob = source_blob.create_snapshot()
 
             snapshot_blob = BlobClient.from_blob_url(
@@ -2303,7 +2299,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob_client = self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
 
         # Act
-        page_ranges, cleared = blob_client.get_page_ranges()
+        page_ranges, _ = blob_client.get_page_ranges()
         start = page_ranges[0]['start']
         end = page_ranges[0]['end']
 
@@ -2317,12 +2313,12 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         for byte in content[:start-1]:
             try:
                 assert byte == '\x00'
-            except:
+            except AssertionError:
                 assert byte == 0
         for byte in content[end+1:]:
             try:
                 assert byte == '\x00'
-            except:
+            except AssertionError:
                 assert byte == 0
 
     @pytest.mark.live_test_only
@@ -2343,11 +2339,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob_client = self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
 
         # Act
-        page_ranges, cleared = blob_client.get_page_ranges()
-        start = page_ranges[0]['start']
-        end = page_ranges[0]['end']
+        page_ranges, _ = blob_client.get_page_ranges()
+        start = page_ranges[0]['start']  # pylint: disable=unused-variable
+        end = page_ranges[0]['end']  # pylint: disable=unused-variable
 
-        content = blob_client.download_blob(max_concurrency=3).readall()
+        blob_client.download_blob(max_concurrency=3).readall()
 
     @BlobPreparer()
     @recorded_by_proxy

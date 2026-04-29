@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disabl=attribute-defined-outside-init
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import tempfile
-import uuid
 from datetime import datetime, timedelta
 from io import BytesIO
 
@@ -79,7 +78,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
     def _get_blob_with_special_chars_reference(self):
         return 'भारत¥test/testsubÐirÍ/' + self.get_resource_name('srcÆblob')
 
-    async def _create_source_blob_url_with_special_chars(self, tags=None):
+    async def _create_source_blob_url_with_special_chars(self):
         blob_name = self._get_blob_with_special_chars_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.upload_blob(self.get_random_bytes(8 * 1024))
@@ -887,7 +886,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         try:
             block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='4')]
             await blob.commit_block_list(block_list)
-            self.fail()
+            pytest.fail()
         except HttpResponseError as e:
             assert str(e).find('specified block list is invalid') >= 0
 
@@ -1113,7 +1112,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         data2 = b'hello second world'
 
         # Act
-        create_resp = await blob.upload_blob(data1, overwrite=True)
+        await blob.upload_blob(data1, overwrite=True)
         update_resp = await blob.upload_blob(data2, overwrite=True)
 
         props = await blob.get_blob_properties()
@@ -1167,7 +1166,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = await blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
+        await blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
         update_resp = await blob.upload_blob(data2, overwrite=True, metadata={'blobdata': 'data2'})
 
         props = await blob.get_blob_properties()
@@ -1508,7 +1507,6 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        FILE_PATH = 'non_parallel_with_standard_blob_tier.temp.{}.dat'.format(str(uuid.uuid4()))
         data = self.get_random_bytes(100)
         blob_tier = StandardBlobTier.Cool
         # Act
@@ -1701,7 +1699,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            resp = await blob.upload_blob(temp_file, length=blob_size)
+            await blob.upload_blob(temp_file, length=blob_size)
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])

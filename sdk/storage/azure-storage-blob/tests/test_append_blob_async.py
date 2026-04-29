@@ -3,31 +3,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
+import tempfile
+from datetime import datetime, timedelta
 
 import aiohttp
-import tempfile
-import uuid
-from datetime import datetime, timedelta
-from os import path, remove
-
 import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
-from azure.mgmt.storage.aio import StorageManagementClient
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas, BlobImmutabilityPolicyMode, ImmutabilityPolicy
-from azure.storage.blob._shared.policies import StorageContentValidation
-from azure.storage.blob import BlobType
-from azure.storage.blob.aio import BlobServiceClient, BlobClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers_async import (
+    _build_base_file_share_headers,
+    _create_file_share_oauth,
     NonSeekableStream,
     ProgressTracker,
-    _build_base_file_share_headers,
-    _create_file_share_oauth
 )
+
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
+from azure.mgmt.storage.aio import StorageManagementClient
+from azure.storage.blob import BlobImmutabilityPolicyMode, BlobSasPermissions, generate_blob_sas, ImmutabilityPolicy
+from azure.storage.blob import BlobType
+from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -45,8 +47,11 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
+            except ResourceExistsError:
+                pass
+            try:
                 await bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self):
@@ -221,7 +226,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         data = self.get_random_bytes(5 * 1024)
 
         # Act
-        for i in range(2):
+        for _ in range(2):
             await blob.append_block(data=data)
 
         # Assert
@@ -931,22 +936,24 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
             self.container_name,
-            blob_name)
+            blob_name
+        )
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = await blob.upload_blob(
+        await blob.upload_blob(
             data1,
             overwrite=True,
             blob_type=BlobType.AppendBlob,
-            metadata={'blobdata': 'Data1'})
-
+            metadata={'blobdata': 'Data1'}
+        )
         update_resp = await blob.upload_blob(
             data2,
             overwrite=False,
             blob_type=BlobType.AppendBlob,
-            metadata={'blobdata': 'Data2'})
+            metadata={'blobdata': 'Data2'}
+        )
 
         props = await blob.get_blob_properties()
 
@@ -971,16 +978,18 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
             self.container_name,
-            blob_name)
+            blob_name
+        )
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = await blob.upload_blob(
+        await blob.upload_blob(
             data1,
             overwrite=True,
             blob_type=BlobType.AppendBlob,
-            metadata={'blobdata': 'Data1'})
+            metadata={'blobdata': 'Data1'}
+        )
         update_resp = await blob.upload_blob(
             data2,
             overwrite=True,

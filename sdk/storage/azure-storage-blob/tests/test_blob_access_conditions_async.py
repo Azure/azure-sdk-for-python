@@ -3,13 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import asyncio
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from settings.testcase import BlobPreparer
+
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceModifiedError
 from azure.storage.blob import (
     AccessPolicy,
     BlobBlock,
@@ -25,11 +32,6 @@ from azure.storage.blob.aio import (
     ContainerClient,
     BlobLeaseClient,
 )
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
-from settings.testcase import BlobPreparer
 
 
 # ------------------------------------------------------------------------------
@@ -48,23 +50,23 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         return container
 
     async def _create_container_and_block_blob(self, container_name, blob_name, blob_data, bsc):
-        container = await self._create_container(container_name, bsc)
+        await self._create_container(container_name, bsc)
         blob = bsc.get_blob_client(container_name, blob_name)
         resp = await blob.upload_blob(blob_data, length=len(blob_data))
         assert resp.get('etag') is not None
-        return container, blob
+        return blob
 
     async def _create_container_and_page_blob(self, container_name, blob_name, content_length, bsc):
-        container = await self._create_container(container_name, bsc)
+        await self._create_container(container_name, bsc)
         blob = bsc.get_blob_client(container_name, blob_name)
-        resp = await blob.create_page_blob(str(content_length))
-        return container, blob
+        await blob.create_page_blob(str(content_length))
+        return blob
 
     async def _create_container_and_append_blob(self, container_name, blob_name, bsc):
-        container = await self._create_container(container_name, bsc)
+        await self._create_container(container_name, bsc)
         blob = bsc.get_blob_client(container_name, blob_name)
-        resp = await blob.create_append_blob()
-        return container, blob
+        await blob.create_append_blob()
+        return blob
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -516,7 +518,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
@@ -539,7 +541,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
@@ -563,7 +565,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
@@ -586,7 +588,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
@@ -609,7 +611,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
         etag = (await blob.get_blob_properties()).etag
 
@@ -629,7 +631,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
 
         # Act
@@ -651,7 +653,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
 
         # Act
@@ -675,7 +677,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         data = b'hello world'
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
         etag = (await blob.get_blob_properties()).etag
 
@@ -702,7 +704,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
@@ -725,7 +727,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
@@ -748,7 +750,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
@@ -771,7 +773,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
@@ -793,7 +795,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         etag = (await blob.get_blob_properties()).etag
 
@@ -813,7 +815,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
@@ -832,7 +834,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
         # Act
@@ -851,7 +853,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         etag = (await blob.get_blob_properties()).etag
 
@@ -2257,7 +2259,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2285,7 +2287,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
                                 versioned_storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2312,7 +2314,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2341,7 +2343,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2370,7 +2372,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2398,7 +2400,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2424,7 +2426,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2449,7 +2451,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2474,7 +2476,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_block_blob(
+        blob = await self._create_container_and_block_blob(
             self.container_name, 'blob1', b'', bsc)
         await asyncio.gather(*[
             blob.stage_block('1', b'AAA'),
@@ -2686,7 +2688,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
@@ -2715,7 +2717,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
@@ -2743,7 +2745,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
@@ -2772,7 +2774,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
@@ -2799,7 +2801,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         await asyncio.gather(
@@ -2825,7 +2827,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         await asyncio.gather(
@@ -2849,7 +2851,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         await asyncio.gather(
@@ -2874,7 +2876,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_page_blob(
+        blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
 
@@ -2901,7 +2903,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         for i in range(5):
@@ -2925,12 +2927,12 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
-                resp = await blob.append_block(f"block {i}", if_modified_since=test_datetime)
+                await blob.append_block(f"block {i}", if_modified_since=test_datetime)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2947,7 +2949,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         for i in range(5):
@@ -2971,7 +2973,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2992,7 +2994,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
         # Act
         for i in range(5):
@@ -3018,10 +3020,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
         # Act
-        with pytest.raises(HttpResponseError) as e:
+        with pytest.raises(HttpResponseError):
             for i in range(5):
                 await blob.append_block(
                     f"block {i}",
@@ -3038,7 +3040,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
         # Act
         for i in range(5):
@@ -3063,7 +3065,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
-        container, blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -3089,7 +3091,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
@@ -3114,7 +3116,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
@@ -3137,7 +3139,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
@@ -3162,7 +3164,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
@@ -3184,7 +3186,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_etag = (await blob.get_blob_properties()).etag
 
         # Act
@@ -3211,7 +3213,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_etag = '0x8D2C9167D53FC2C'
 
         # Act
@@ -3236,7 +3238,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_etag = '0x8D2C9167D53FC2C'
 
         # Act
@@ -3263,7 +3265,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, connection_data_block_size=4 * 1024)
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        blob = await self._create_container_and_append_blob(self.container_name, blob_name, bsc)
         test_etag = (await blob.get_blob_properties()).etag
 
         # Act
@@ -3289,7 +3291,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         try:
             container_client = await bsc.create_container(self.container_name)
-        except:
+        except ResourceExistsError:
             container_client = bsc.get_container_client(self.container_name)
         blob_client = container_client.get_blob_client('blob1')
 
@@ -3320,31 +3322,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         try:
             container_client = await bsc.create_container(self.container_name)
-        except:
-            container_client = bsc.get_container_client(self.container_name)
-        blob_client = container_client.get_blob_client('blob1')
-
-        # Hand-picked metadata examples as Python & service don't sort '_' with the same weight
-        metadata = {'a0': 'a', 'a1': 'a', 'a2': 'a', 'a3': 'a', 'a4': 'a', 'a5': 'a', 'a6': 'a', 'a7': 'a', 'a8': 'a',
-                    'a9': 'a', '_': 'a', '_a': 'a', 'a_': 'a', '__': 'a', '_a_': 'a', 'b': 'a', 'c': 'a', 'y': 'a',
-                    'z': 'z_', '_z': 'a', '_F': 'a', 'F': 'a', 'F_': 'a', '_F_': 'a', '__F': 'a', '__a': 'a', 'a__': 'a'
-                    }
-
-        # Act
-        await blob_client.upload_blob(data, length=len(data), metadata=metadata)
-
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_header_metadata_sort_in_upload_blob(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup()
-        data = b'hello world'
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        try:
-            container_client = await bsc.create_container(self.container_name)
-        except:
+        except ResourceExistsError:
             container_client = bsc.get_container_client(self.container_name)
         blob_client = container_client.get_blob_client('blob1')
 
@@ -3368,7 +3346,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         try:
             container_client = await bsc.create_container(self.container_name)
-        except:
+        except ResourceExistsError:
             container_client = bsc.get_container_client(self.container_name)
         blob_client = container_client.get_blob_client('blob1')
 
