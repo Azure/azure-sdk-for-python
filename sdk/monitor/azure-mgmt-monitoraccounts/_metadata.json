@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-10-03",
+  "apiVersions": {
+    "Microsoft.Monitor": "2025-10-03"
+  },
+  "commit": "5add22a11dd50051e5f10fda67bcd0232b65fbad",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/monitoringservice/resource-manager/Microsoft.Monitor/Accounts",
+  "emitterVersion": "0.61.3"
+}
