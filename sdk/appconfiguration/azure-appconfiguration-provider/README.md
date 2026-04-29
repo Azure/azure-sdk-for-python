@@ -36,7 +36,7 @@ config = load(connection_string=connection_string)
 
 or with Entra ID:
 
-<!-- SNIPPET:entra_id_sample.create_provider_aad -->
+<!-- SNIPPET:entra_id_sample.create_provider_entra_id -->
 
 ```python
 import os
@@ -80,7 +80,7 @@ Currently the Azure App Configuration Provider enables:
 
 You can refine or expand the configurations loaded from your store by using `SettingSelector`s. Setting selectors provide a way to pass a key filter and label filter into the provider.
 
-<!-- SNIPPET:entra_id_sample.setting_selector_aad -->
+<!-- SNIPPET:entra_id_sample.setting_selector_entra_id -->
 
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
@@ -180,7 +180,7 @@ For additional info check out [Dynamic Refresh](https://learn.microsoft.com/azur
 
 You can trim the prefix off of keys by providing a list of trimmed key prefixes to the provider. For example, if you have the key(s) like `/application/message` in your configuration store, you could trim `/application/` from them.
 
-<!-- SNIPPET:entra_id_sample.trim_prefixes_aad -->
+<!-- SNIPPET:entra_id_sample.trim_prefixes_entra_id -->
 
 ```python
 from azure.appconfiguration.provider import load
@@ -361,7 +361,7 @@ config = load(endpoint=endpoint, credential=DefaultAzureCredential(), startup_ti
 
 The provider includes full async support via the `azure.appconfiguration.provider.aio` module.
 
-<!-- SNIPPET:async_entra_id_sample.create_provider_aad_async -->
+<!-- SNIPPET:async_entra_id_sample.create_provider_entra_id_async -->
 
 ```python
 from azure.appconfiguration.provider.aio import load

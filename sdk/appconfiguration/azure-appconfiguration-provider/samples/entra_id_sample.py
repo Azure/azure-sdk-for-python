@@ -12,7 +12,7 @@ authority = get_authority(endpoint)
 credential = get_credential(authority)
 kwargs = get_client_modifications()
 
-# [START create_provider_aad]
+# [START create_provider_entra_id]
 import os
 from azure.appconfiguration.provider import load
 from azure.identity import DefaultAzureCredential
@@ -22,21 +22,21 @@ credential = DefaultAzureCredential()
 
 # Connecting to Azure App Configuration using Entra ID
 config = load(endpoint=endpoint, credential=credential)
-# [END create_provider_aad]
+# [END create_provider_entra_id]
 
 print(config["message"])
 
-# [START trim_prefixes_aad]
+# [START trim_prefixes_entra_id]
 from azure.appconfiguration.provider import load
 
 # Connecting to Azure App Configuration using Entra ID and trim key prefixes
 trimmed = ["test."]
 config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
-# [END trim_prefixes_aad]
+# [END trim_prefixes_entra_id]
 
 print(config["message"])
 
-# [START setting_selector_aad]
+# [START setting_selector_entra_id]
 from azure.appconfiguration.provider import load, SettingSelector
 
 # Connection to Azure App Configuration using SettingSelector
@@ -49,7 +49,7 @@ config = load(
     feature_flag_selectors=None,
     **kwargs
 )
-# [END setting_selector_aad]
+# [END setting_selector_entra_id]
 
 print("message found: " + str("message" in config))
 print("test.message found: " + str("test.message" in config))
