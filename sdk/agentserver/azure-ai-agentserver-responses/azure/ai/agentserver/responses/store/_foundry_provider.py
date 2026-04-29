@@ -140,7 +140,15 @@ class FoundryStorageProvider:
                     _FOUNDRY_TOKEN_SCOPE,
                 ),
                 FoundryStorageLoggingPolicy(),
-                policies.ContentDecodePolicy(),
+                # NOTE: ``ContentDecodePolicy`` is intentionally NOT included.
+                # It eagerly decodes every response body as JSON and crashes
+                # with ``UnicodeDecodeError`` when the storage backend (or an
+                # intermediary gateway / load-balancer) returns a non-UTF-8
+                # body — for example a gzip-compressed payload, an HTML error
+                # page, or a transport-corrupted body.  We never read its
+                # output (``response.context['deserialized_data']``); our own
+                # ``_foundry_serializer`` and ``_foundry_errors`` modules call
+                # ``http_resp.text()`` directly with defensive error handling.
                 policies.DistributedTracingPolicy(),
             ],
         )

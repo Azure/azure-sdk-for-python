@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Removed `ContentDecodePolicy` from the `FoundryStorageProvider` HTTP pipeline.  The policy eagerly decoded every response body as JSON and crashed with `UnicodeDecodeError` when the storage backend (or an intermediary gateway/load-balancer) returned a non-UTF-8 body — for example a gzip-compressed payload, an HTML error page, or a transport-corrupted response.  The crash propagated up before our error-classification code could see the response, masking the underlying status with a generic decode error.  Our serializers and error-extraction helpers already call `http_resp.text()` lazily with defensive error handling, so the eager decode policy was never needed.
+
 ### Other Changes
 
 - Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module). Error source classification helpers remain internal to this package.
