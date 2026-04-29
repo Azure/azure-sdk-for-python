@@ -84,7 +84,7 @@ async def send_async() -> None:
 
 if __name__ == "__main__":
     send()
-    asyncio.get_event_loop().run_until_complete(send_async())
+    asyncio.run(send_async())
     print(
         f"it takes {TIME_COST} seconds to send {MESSAGE_COUNT} messages with Sync API"
     )
