@@ -70,25 +70,32 @@ created_snapshot = client.begin_create_snapshot(
 print(f"Created snapshot: {created_snapshot.name} with status: {created_snapshot.status}")
 
 
+# [START load_snapshot]
+from azure.appconfiguration.provider import load, SettingSelector
+
 # Step 2: Loading configuration settings from the snapshot
 snapshot_selects = [SettingSelector(snapshot_name=snapshot_name)]
 config = load(endpoint=endpoint, credential=credential, selects=snapshot_selects)
+# [END load_snapshot]
 
 print("Configuration settings from snapshot:")
 for key, value in config.items():
     print(f"{key}: {value}")
 
+# [START load_snapshot_mixed]
 # Step 3: Combine snapshot with regular selectors (later selectors take precedence)
 mixed_selects = [
     SettingSelector(snapshot_name=snapshot_name),  # Load all settings from snapshot
     SettingSelector(key_filter="override.*", label_filter="prod"),  # Also load specific override settings
 ]
 config_mixed = load(endpoint=endpoint, credential=credential, selects=mixed_selects)
+# [END load_snapshot_mixed]
 
 print("\nMixed configuration (snapshot + filtered settings):")
 for key, value in config_mixed.items():
     print(f"{key}: {value}")
 
+# [START load_snapshot_feature_flags]
 # Step 4: Load feature flags from the snapshot (requires feature_flag_enabled=True)
 feature_flag_selects = [SettingSelector(snapshot_name=snapshot_name)]
 config_with_flags = load(
@@ -97,6 +104,7 @@ config_with_flags = load(
     selects=feature_flag_selects,
     feature_flag_enabled=True,
 )
+# [END load_snapshot_feature_flags]
 
 print(f"\nFeature flags loaded: {'feature_management' in config_with_flags}")
 if "feature_management" in config_with_flags:

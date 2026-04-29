@@ -17,7 +17,7 @@ async def main():
     credential = get_credential(authority, is_async=True)
     kwargs = get_client_modifications()
 
-    # Connection to Azure App Configuration using AAD with Provided Client
+    # Connection to Azure App Configuration using Entra ID with Provided Client
     client_configs = {key_vault_uri: {"credential": credential}}
     selects = [SettingSelector(key_filter="*", label_filter="prod")]
     config = await load(

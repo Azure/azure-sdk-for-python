@@ -13,9 +13,13 @@ audience = get_audience(authority)
 credential = get_credential(authority)
 kwargs = get_client_modifications()
 
-# Connection to Azure App Configuration using AAD and Resolving Key Vault References
+# [START key_vault_reference]
+from azure.appconfiguration.provider import load, SettingSelector
+
+# Connection to Azure App Configuration using Entra ID and Resolving Key Vault References
 selects = [SettingSelector(key_filter="*", label_filter="prod")]
 
 config = load(endpoint=endpoint, credential=credential, keyvault_credential=credential, selects=selects, **kwargs)
+# [END key_vault_reference]
 
 print(config["secret"])

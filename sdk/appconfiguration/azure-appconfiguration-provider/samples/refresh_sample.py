@@ -31,6 +31,9 @@ def my_callback_on_fail(_):
 rand = random.random()
 watch_key = WatchKey("message" + str(rand))
 
+# [START refresh_provider]
+from azure.appconfiguration.provider import load, WatchKey
+
 # Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
 # changes
 config = load(
@@ -40,6 +43,7 @@ config = load(
     on_refresh_error=my_callback_on_fail,
     **kwargs,
 )
+# [END refresh_provider]
 
 print(config["message"])
 print(config["my_json"]["key"])

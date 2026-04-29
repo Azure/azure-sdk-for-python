@@ -20,19 +20,37 @@ Alternatively, get the connection string from the Azure Portal.
 
 You can create a client with a connection string:
 
-```python
-from azure.appconfiguration.provider import load
-
-config = load(connection_string="your-connection-string")
-```
-
-or with AAD:
+<!-- SNIPPET:connection_string_sample.create_provider_connection_string -->
 
 ```python
+import os
 from azure.appconfiguration.provider import load
 
-config = load(endpoint="your-endpoint", credential=DefaultAzureCredential())
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
+# Connecting to Azure App Configuration using connection string
+config = load(connection_string=connection_string)
 ```
+
+<!-- END SNIPPET -->
+
+or with Entra ID:
+
+<!-- SNIPPET:entra_id_sample.create_provider_aad -->
+
+```python
+import os
+from azure.appconfiguration.provider import load
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
+credential = DefaultAzureCredential()
+
+# Connecting to Azure App Configuration using Entra ID
+config = load(endpoint=endpoint, credential=credential)
+```
+
+<!-- END SNIPPET -->
 
 these providers will by default load all configurations with `(No Label)` from your configuration store into a dictionary of key/values.
 
@@ -40,21 +58,21 @@ these providers will by default load all configurations with `(No Label)` from y
 
 Currently the Azure App Configuration Provider enables:
 
-* Connecting to an App Configuration Store using a connection string or Azure Active Directory.
+* Connecting to an App Configuration Store using a connection string or Entra ID.
 * Selecting multiple sets of configurations using `SettingSelector`.
+* Filtering by tags using `tag_filters` on `SettingSelector`.
+* Loading from snapshots using `snapshot_name` on `SettingSelector`.
 * Loading Feature Flags
 * Dynamic Refresh
-* Geo-Replication support
+* Geo-Replication support with replica discovery and load balancing.
 * Trim prefixes off key names.
-* Resolving Key Vault References, requires AAD.
+* Resolving Key Vault References, requires Entra ID.
 * Secret Resolver, resolve Key Vault References locally without connecting to Key Vault.
+* Periodic Key Vault secret refresh via `secret_refresh_interval`.
 * Json Content Type
-
-#### Future Features
-
-List of features we are going to add to the Python Provider in the future.
-
-* Configuration Placeholders
+* Configuration mapper for transforming settings during load.
+* Configurable startup timeout with retry.
+* Async support via `azure.appconfiguration.provider.aio`.
 
 ## Examples
 
@@ -62,43 +80,91 @@ List of features we are going to add to the Python Provider in the future.
 
 You can refine or expand the configurations loaded from your store by using `SettingSelector`s. Setting selectors provide a way to pass a key filter and label filter into the provider.
 
+<!-- SNIPPET:entra_id_sample.setting_selector_aad -->
+
+```python
+from azure.appconfiguration.provider import load, SettingSelector
+
+# Connection to Azure App Configuration using SettingSelector
+selects = [SettingSelector(key_filter="message*")]
+config = load(
+    endpoint=endpoint,
+    credential=credential,
+    selects=selects,
+    feature_flag_enabled=True,
+    feature_flag_selectors=None,
+    **kwargs
+)
+```
+
+<!-- END SNIPPET -->
+
+In this example all configuration with empty label and the dev label are loaded. Because the dev selector is listed last, any configurations from dev take priority over those with `(No Label)` when duplicates are found.
+
+### Filtering by Tags
+
+You can filter configuration settings by tags using the `tag_filters` parameter on `SettingSelector`. Tag filters must follow the format `"tagName=tagValue"`.
+
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
 from azure.identity import DefaultAzureCredential
 
-selects = {SettingSelector(key_filter="*", label_filter="\0"), SettingSelector(key_filter="*", label_filter="dev")}
+selects = [SettingSelector(key_filter="*", tag_filters=["env=prod"])]
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), selects=selects)
 ```
 
-In this example all configuration with empty label and the dev label are loaded. Because the dev selector is listed last, any configurations from dev take priority over those with `(No Label)` when duplicates are found.
+### Loading from Snapshots
+
+You can load configuration settings from a snapshot by providing `snapshot_name` on `SettingSelector`. When `snapshot_name` is specified, all configuration settings from the snapshot are loaded. Note that `snapshot_name` cannot be used together with `key_filter`, `label_filter`, or `tag_filters`.
+
+<!-- SNIPPET:snapshot_sample.load_snapshot -->
+
+```python
+from azure.appconfiguration.provider import load, SettingSelector
+
+# Step 2: Loading configuration settings from the snapshot
+snapshot_selects = [SettingSelector(snapshot_name=snapshot_name)]
+config = load(endpoint=endpoint, credential=credential, selects=snapshot_selects)
+```
+
+<!-- END SNIPPET -->
+
+You can also mix snapshot selectors with regular selectors. Later selectors take precedence when there are duplicate keys.
+
+<!-- SNIPPET:snapshot_sample.load_snapshot_mixed -->
+
+```python
+# Step 3: Combine snapshot with regular selectors (later selectors take precedence)
+mixed_selects = [
+    SettingSelector(snapshot_name=snapshot_name),  # Load all settings from snapshot
+    SettingSelector(key_filter="override.*", label_filter="prod"),  # Also load specific override settings
+]
+config_mixed = load(endpoint=endpoint, credential=credential, selects=mixed_selects)
+```
+
+<!-- END SNIPPET -->
 
 ## Dynamic Refresh
 
 The provider can be configured to refresh configurations from the store on a set interval. This is done by providing a `refresh_on` to the provider, which is a list of key(s) that will be watched for changes, and when they do change a refresh can happen. `refresh_interval` is the period of time in seconds between refreshes. `on_refresh_success` is a callback that will be called only if a change is detected and no error happens. `on_refresh_error` is a callback that will be called when a refresh fails.
 
+<!-- SNIPPET:refresh_sample.refresh_provider -->
+
 ```python
 from azure.appconfiguration.provider import load, WatchKey
-import os
 
-connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
-
-def my_callback_on_success():
-    # Do something on success
-    ...
-
-def my_callback_on_fail(error):
-    # Do something on fail
-    ...
-
+# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
+# changes
 config = load(
     connection_string=connection_string,
-    refresh_on=[WatchKey("Sentinel")],
-    refresh_interval=60,
-    on_refresh_success=my_callback_on_success,
+    refresh_on=[watch_key],
+    refresh_interval=1,
     on_refresh_error=my_callback_on_fail,
     **kwargs,
 )
 ```
+
+<!-- END SNIPPET -->
 
 In this example, the sentinel key will be checked for changes no sooner than every 60 seconds. In order to check for changes, the provider's `refresh` method needs to be called.
 
@@ -114,14 +180,17 @@ For additional info check out [Dynamic Refresh](https://learn.microsoft.com/azur
 
 You can trim the prefix off of keys by providing a list of trimmed key prefixes to the provider. For example, if you have the key(s) like `/application/message` in your configuration store, you could trim `/application/` from them.
 
+<!-- SNIPPET:entra_id_sample.trim_prefixes_aad -->
+
 ```python
 from azure.appconfiguration.provider import load
-from azure.identity import DefaultAzureCredential
 
-trim_prefixes={"/application/"}
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), trim_prefixes=trim_prefixes)
-print(config["message"])
+# Connecting to Azure App Configuration using Entra ID and trim key prefixes
+trimmed = ["test."]
+config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 ### Resolving Key Vault References
 
@@ -131,26 +200,37 @@ Key Vault References can be resolved by providing credentials to your key vault 
 
 You can provide `AzureAppConfigurationKeyVaultOptions` with a credential and all key vault references will be resolved with it. The provider will attempt to connect to any key vault referenced with the credential provided.
 
-```python
-from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
-from azure.identity import DefaultAzureCredential
+<!-- SNIPPET:key_vault_reference_sample.key_vault_reference -->
 
-key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=DefaultAzureCredential())
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
+```python
+from azure.appconfiguration.provider import load, SettingSelector
+
+# Connection to Azure App Configuration using Entra ID and Resolving Key Vault References
+selects = [SettingSelector(key_filter="*", label_filter="prod")]
+
+config = load(endpoint=endpoint, credential=credential, keyvault_credential=credential, selects=selects, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 ### With Clients
 
 You can provide `AzureAppConfigurationKeyVaultOptions` with a list of `SecretClients`.
 
-```python
-from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
-from azure.identity import DefaultAzureCredential
+<!-- SNIPPET:key_vault_reference_customized_clients_sample.key_vault_reference_customized_clients -->
 
-key_vault_options = AzureAppConfigurationKeyVaultOptions(
-    client_configs={key_vault_uri: {'credential': credential}})
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
+```python
+from azure.appconfiguration.provider import load, SettingSelector
+
+# Connection to Azure App Configuration using Entra ID with Provided Client
+client_configs = {key_vault_uri: {"credential": credential}}
+selects = [SettingSelector(key_filter="*", label_filter="prod")]
+config = load(
+    endpoint=endpoint, credential=credential, keyvault_client_configs=client_configs, selects=selects, **kwargs
+)
 ```
+
+<!-- END SNIPPET -->
 
 ### Secret Resolver
 
@@ -168,6 +248,19 @@ key_vault_options = AzureAppConfigurationKeyVaultOptions(
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
 ```
 
+### Secret Refresh Interval
+
+When using Key Vault references, the provider can periodically refresh resolved secrets. By default, secrets are refreshed every 60 seconds. You can customize this with the `secret_refresh_interval` parameter (minimum 1 second).
+
+```python
+config = load(
+    endpoint=endpoint,
+    credential=DefaultAzureCredential(),
+    key_vault_options=key_vault_options,
+    secret_refresh_interval=120,  # Refresh secrets every 120 seconds
+)
+```
+
 ## Geo Replication
 
 The Azure App Configuration Provider library will automatically discover the provided configuration store's replicas and use the replicas if any issue arises. From more information see [Geo-Replication](https://learn.microsoft.com/azure/azure-app-configuration/howto-geo-replication).
@@ -181,39 +274,129 @@ from azure.identity import DefaultAzureCredential
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), replica_discovery_enabled=False)
 ```
 
+You can also enable load balancing to distribute requests across replicas by setting `load_balancing_enabled` to `True`.
+
+```python
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), load_balancing_enabled=True)
+```
+
 ## Loading Feature Flags
 
 Feature Flags can be loaded from config stores using the provider. Feature flags are loaded as a dictionary of key/value pairs stored in the provider under the `feature_management`, then `feature_flags`.
 
 ```python
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True)
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flag_enabled=True)
 alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
 
-By default all feature flags with no label are loaded when `feature_flags_enabled` is set to `True`. . If you want to load feature flags with a specific label you can use `SettingSelector` to filter the feature flags.
+By default all feature flags with no label are loaded when `feature_flag_enabled` is set to `True`. If you want to load feature flags with a specific label you can use `SettingSelector` to filter the feature flags.
 
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
 
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True, feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")])
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flag_enabled=True, feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")])
 alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
 
 To enable refresh for feature flags you need to enable refresh. This will allow the provider to refresh feature flags the same way it refreshes configurations. Unlike configurations, all loaded feature flags are monitored for changes and will cause a refresh. Refresh of configuration settings and feature flags are independent of each other. Both are trigged by the `refresh` method, but a feature flag changing will not cause a refresh of configurations and vice versa. Also, if refresh for configuration settings is not enabled, feature flags can still be enabled for refresh.
 
+<!-- SNIPPET:refresh_sample_feature_flags.refresh_feature_flags -->
+
 ```python
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flags_enabled=True, feature_flag_refresh_enabled=True)
+from azure.appconfiguration.provider import load, WatchKey
 
-...
-
-config.refresh()
+# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
+# changes
+config = load(
+    connection_string=connection_string,
+    refresh_on=[WatchKey("message")],
+    refresh_on_feature_flags=True,
+    refresh_interval=1,
+    on_refresh_error=my_callback_on_fail,
+    feature_flag_enabled=True,
+    feature_flag_refresh_enabled=True,
+    **kwargs,
+)
 ```
+
+<!-- END SNIPPET -->
+
+## JSON Content Type
+
+Configuration settings with a JSON content type (e.g., `application/json`) are automatically deserialized into their corresponding Python objects when loaded by the provider.
+
+```python
+# If a setting "app/config" has value '{"timeout": 30, "retries": 3}' with content type "application/json"
+config = load(endpoint=endpoint, credential=DefaultAzureCredential())
+app_config = config["app/config"]  # Returns a dict: {"timeout": 30, "retries": 3}
+print(app_config["timeout"])  # 30
+```
+
+## Configuration Mapper
+
+You can provide a `configuration_mapper` callback to transform configuration settings before they are added to the provider.
+
+```python
+from azure.appconfiguration.provider import load
+from azure.identity import DefaultAzureCredential
+
+def my_mapper(setting):
+    # Transform the setting as needed
+    setting.value = setting.value.strip()
+
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), configuration_mapper=my_mapper)
+```
+
+## Startup Timeout
+
+The provider supports configurable startup timeout with automatic retry. By default, the provider allows 100 seconds for the initial load from Azure App Configuration. You can customize this with the `startup_timeout` parameter.
+
+```python
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), startup_timeout=200)
+```
+
+## Async Support
+
+The provider includes full async support via the `azure.appconfiguration.provider.aio` module.
+
+<!-- SNIPPET:async_entra_id_sample.create_provider_aad_async -->
+
+```python
+from azure.appconfiguration.provider.aio import load
+
+# Connecting to Azure App Configuration using Entra ID
+config = await load(endpoint=endpoint, credential=credential, **kwargs)
+print(config["message"])
+
+await credential.close()
+await config.close()
+```
+
+<!-- END SNIPPET -->
 
 ## Key concepts
 
+The `AzureAppConfigurationProvider` is the main object returned by `load()`. It implements the `Mapping` interface, so it can be used like a read-only dictionary. Call `refresh()` (or `await refresh()` for async) to pull the latest values from the store.
+
+Key types used:
+
+* `SettingSelector` — Filters which configuration settings to load by key, label, tags, or snapshot name.
+* `WatchKey` — Identifies a sentinel key (and optional label) used to trigger configuration refresh.
+* `AzureAppConfigurationKeyVaultOptions` — Groups Key Vault credential, per-vault client configs, and secret resolver options.
+
 ## Troubleshooting
+
+### Logging
+
+This library uses the standard [logging](https://docs.python.org/3/library/logging.html) library for logging. Information about configuration loading, refresh, and Key Vault resolution is logged at the `DEBUG` level.
+
+### Common Issues
+
+* **Key Vault references not resolving** — Ensure you have provided credentials via `key_vault_options` or `keyvault_credential`. Key Vault resolution requires Entra ID authentication.
+* **Configuration not refreshing** — Make sure you are calling `config.refresh()` periodically (e.g., before each request in a web app). The provider does not auto-refresh in the background.
+* **Startup failures** — If the store is unreachable during startup, the provider will retry until `startup_timeout` (default 100 seconds) is exceeded. Increase this value if your store is expected to have high latency.
 
 ## Next steps
 
