@@ -22,7 +22,7 @@ class TestConnectedKubernetesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_get(self, resource_group):
         response = self.client.operations.get(
-            api_version="2024-12-01-preview",
+            api_version="2021-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

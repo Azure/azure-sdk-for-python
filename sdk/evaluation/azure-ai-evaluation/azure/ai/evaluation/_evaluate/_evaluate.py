@@ -1269,6 +1269,18 @@ def _log_events_to_app_insights(
                 if agent_version:
                     internal_log_attributes["gen_ai.agent.version"] = agent_version
 
+                # Add token usage information if present in sample.usage
+                # Normalize sample once so non-dict values do not break sample-derived logging
+                sample = event_data.get("sample")
+                sample = sample if isinstance(sample, dict) else {}
+                # Add token usage information if present in sample.usage
+                usage = sample.get("usage", {})
+                usage = usage if isinstance(usage, dict) else {}
+                if usage.get("prompt_tokens") is not None:
+                    standard_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
+                if usage.get("completion_tokens") is not None:
+                    standard_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
+
                 # Combine standard and internal attributes, put internal under the properties bag
                 standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
@@ -1339,7 +1351,10 @@ def emit_eval_result_events_to_app_insights(
         azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
 
         # Add the Azure Monitor exporter to the logger provider
-        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
+        # Set export_timeout_millis to prevent individual batch exports from hanging
+        logger_provider.add_log_record_processor(
+            BatchLogRecordProcessor(azure_log_exporter, export_timeout_millis=60000)
+        )
 
         # Create event logger
         event_provider = EventLoggerProvider(logger_provider)
@@ -1370,9 +1385,16 @@ def emit_eval_result_events_to_app_insights(
                 evaluator_config=evaluator_config,
                 app_insights_config=app_insights_config,
             )
-        # Force flush to ensure events are sent
-        logger_provider.force_flush()
-        LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        # Force flush to ensure events are sent, with a timeout to prevent hanging
+        flush_timeout_millis = 60000  # 60 seconds
+        flush_success = logger_provider.force_flush(timeout_millis=flush_timeout_millis)
+        if flush_success:
+            LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        else:
+            LOGGER.warning(
+                f"App Insights force_flush timed out after {flush_timeout_millis}ms. "
+                "Some evaluation events may not have been sent."
+            )
 
     except Exception as e:
         LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")
@@ -2576,7 +2598,8 @@ def _extract_metric_values(
             "score": 4.5,
             "coherence_reason": "Good flow",
             "threshold": 3.0,
-            "sample": {...}
+            "sample": {...},
+            "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
         }
         expected_metrics = ["score"]
 
@@ -2586,13 +2609,29 @@ def _extract_metric_values(
                 "score": 4.5,
                 "reason": "Good flow",
                 "threshold": 3.0,
-                "sample": {...}
+                "sample": {...},
+                "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
             }
         }
+
+    Note: If a ``properties`` key is present in the metrics dict and its value is a dict,
+    it is extracted and attached to every per-metric result entry. This allows evaluators
+    to return additional output fields alongside standard score/reason/threshold values.
     """
     result_per_metric = {}
+    properties = None
 
     for metric_key, metric_value in metrics.items():
+        if metric_key == "properties":
+            if isinstance(metric_value, dict):
+                properties = metric_value
+            else:
+                logger.info(
+                    "Evaluator '%s' returned 'properties' as %s instead of dict; ignoring.",
+                    criteria_name,
+                    type(metric_value).__name__,
+                )
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
@@ -2611,6 +2650,11 @@ def _extract_metric_values(
         )
         if result_name == "label" and criteria_type == "azure_ai_evaluator" and derived_passed is not None:
             _append_indirect_attachments_to_results(result_per_metric, "passed", metric, derived_passed, None, None)
+
+    if properties is not None:
+        for metric_dict in result_per_metric.values():
+            if metric_dict is not None and len(metric_dict) > 0:
+                metric_dict["properties"] = properties.copy()
 
     empty_metrics = []
     empty_metrics.extend(
@@ -2855,7 +2899,8 @@ def _create_result_object(
             "score": 4.5,
             "reason": "Good logical flow",
             "threshold": 3.0,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
         criteria_type = "quality"
 
@@ -2869,8 +2914,13 @@ def _create_result_object(
             "reason": "Good logical flow",
             "threshold": 3.0,
             "passed": None,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
+
+    Note: The ``properties`` field is included only when the evaluator returned a
+    properties dict. It carries additional output fields beyond the standard
+    score/label/reason/threshold/passed values.
     """
     # Extract values
     score = metric_values.get("score")
@@ -2879,6 +2929,7 @@ def _create_result_object(
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
+    properties = metric_values.get("properties")
 
     # Handle decrease boolean metrics
     if is_inverse:
@@ -2898,6 +2949,8 @@ def _create_result_object(
 
     if sample is not None:
         result_obj["sample"] = sample
+    if properties is not None:
+        result_obj["properties"] = properties
 
     return result_obj
 

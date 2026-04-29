@@ -12,9 +12,11 @@ from azure.search.documents._operations._patch import SearchPageIterator
 
 from azure.search.documents.models import (
     FacetResult,
-    SearchDocumentsResult,
     SearchResult,
 )
+
+# Internal type used to mock the wire response from _search_post
+from azure.search.documents.models._models import SearchDocumentsResult
 
 from azure.search.documents import (
     IndexDocumentsBatch,
@@ -146,10 +148,6 @@ class TestSearchClient:
 
         facet_bucket = FacetResult()
         facet_bucket.count = 4
-        facet_bucket.avg = 120.5
-        facet_bucket.min = 75.0
-        facet_bucket.max = 240.0
-        facet_bucket.cardinality = 3
 
         search_result.facets = {"baseRate": [facet_bucket]}
         mock_search_post.return_value = search_result
@@ -162,10 +160,6 @@ class TestSearchClient:
         assert len(facets["baseRate"]) == 1
         bucket = facets["baseRate"][0]
         assert bucket["count"] == 4
-        assert bucket["avg"] == 120.5
-        assert bucket["min"] == 75.0
-        assert bucket["max"] == 240.0
-        assert bucket["cardinality"] == 3
 
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin.get_document")
     def test_get_document_v2020_06_30(self, mock_get):

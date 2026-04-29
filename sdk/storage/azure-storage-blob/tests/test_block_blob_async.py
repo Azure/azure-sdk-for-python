@@ -806,6 +806,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         assert content.properties.etag == put_block_list_resp.get('etag')
         assert content.properties.last_modified == put_block_list_resp.get('last_modified')
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_put_block_with_immutability_policy(self, **kwargs):
@@ -2118,5 +2119,120 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
         content = await (await blob.download_blob()).readall()
         assert data == content
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_stage_block_from_url_uds(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        container_name, blob_name = self.get_resource_name('oauthcontainer'), self.get_resource_name('oauthblob')
+        container = await service.create_container(container_name)
+        blob = container.get_blob_client(blob_name)
+
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        dst_sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            user_delegation_key=user_delegation_key,
+            permission=BlobSasPermissions(create=True),
+            expiry=expiry,
+        )
+        dst_blob = BlobClient.from_blob_url(f"{blob.url}?{dst_sas}")
+
+        src_blob_name = self.get_resource_name('oauthblob2')
+        src_sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            src_blob_name,
+            user_delegation_key=user_delegation_key,
+            permission=BlobSasPermissions(read=True, add=True, create=True, write=True, delete=True),
+            expiry=expiry,
+        )
+        data = b"abc123"
+        src_blob = BlobClient.from_blob_url(f"{container.url}/{src_blob_name}?{src_sas}")
+        await src_blob.upload_blob(data)
+
+        await dst_blob.stage_block_from_url('1', src_blob.url)
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_commit_block_list_uds(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        container_name, blob_name = self.get_resource_name('oauthcontainer'), self.get_resource_name('oauthblob')
+        container = await service.create_container(container_name)
+        blob = container.get_blob_client(blob_name)
+
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            user_delegation_key=user_delegation_key,
+            permission=BlobSasPermissions(create=True),
+            expiry=expiry,
+        )
+
+        identity_blob = BlobClient.from_blob_url(f"{blob.url}?{sas}")
+        await blob.stage_block('1', b'AAA')
+        await blob.stage_block('2', b'BBB')
+        await blob.stage_block('3', b'CCC')
+        block_list = [BlobBlock(block_id='3'), BlobBlock(block_id='2'), BlobBlock(block_id='1')]
+        await identity_blob.commit_block_list(block_list=block_list)
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_smart_access_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        data = b"abc123" * 4
+        blob1 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob1.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
+        props = await blob1.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.SMART
+        assert props.smart_access_tier is not None
+
+        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob2.upload_blob(data, standard_blob_tier=StandardBlobTier.COOL, overwrite=True)
+        props = await blob2.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.COOL
+        assert props.smart_access_tier is None
+
+        await blob2.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.SMART)
+        props = await blob2.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.SMART
+        assert props.smart_access_tier is not None
+
+        cc = self.bsc.get_container_client(self.container_name)
+        async for blob in cc.list_blobs():
+            assert blob.blob_tier == StandardBlobTier.SMART
+            assert blob.smart_access_tier is not None
 
 # ------------------------------------------------------------------------------

@@ -21,6 +21,7 @@ from ..._operations._patch import (
 )
 from ...models._patch import RequestEntityTooLargeError
 from ... import models as _models
+from ...models._models import SearchDocumentsResult, SearchRequest
 
 
 def _ensure_response(f):
@@ -44,7 +45,7 @@ def _ensure_response(f):
 class AsyncSearchPageIterator(AsyncPageIterator):
     """An async iterator over search result pages."""
 
-    def __init__(self, client, initial_request: _models.SearchRequest, kwargs, continuation_token=None) -> None:
+    def __init__(self, client, initial_request: SearchRequest, kwargs, continuation_token=None) -> None:
         super(AsyncSearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -54,7 +55,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2025-11-01-preview")
+        self._api_version = kwargs.get("api_version", "2026-04-01")
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -67,7 +68,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
             body=next_page_request, **self._kwargs
         )
 
-    async def _extract_data_cb(self, response: _models.SearchDocumentsResult):
+    async def _extract_data_cb(self, response: SearchDocumentsResult):
         continuation_token = _pack_continuation_token(response, api_version=self._api_version)
         results = [_convert_search_result(r) for r in response.results]
         return continuation_token, results
@@ -75,7 +76,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
     @_ensure_response
     async def get_facets(self) -> Optional[Dict[str, Any]]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         if response.facets is not None and self._facets is None:
             self._facets = {
                 k: [x.as_dict() if hasattr(x, "as_dict") else dict(x) for x in v] for k, v in response.facets.items()
@@ -85,26 +86,20 @@ class AsyncSearchPageIterator(AsyncPageIterator):
     @_ensure_response
     async def get_coverage(self) -> Optional[float]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.coverage
 
     @_ensure_response
     async def get_count(self) -> Optional[int]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.count
 
     @_ensure_response
     async def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.answers
-
-    @_ensure_response
-    async def get_debug_info(self) -> Optional[_models.DebugInfo]:
-        self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
-        return response.debug_info
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
@@ -167,14 +162,6 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
         """
         return cast(Optional[List[_models.QueryAnswerResult]], await self._first_iterator_instance().get_answers())
-
-    async def get_debug_info(self) -> _models.DebugInfo:
-        """Return the debug information for the query.
-
-        :return: the debug information for the query
-        :rtype: ~azure.search.documents.models.DebugInfo
-        """
-        return cast(_models.DebugInfo, await self._first_iterator_instance().get_debug_info())
 
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
@@ -350,14 +337,11 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         semantic_query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, _models.SearchMode]] = None,
-        query_language: Optional[Union[str, _models.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models.QuerySpellerType]] = None,
         query_answer: Optional[Union[str, _models.QueryAnswerType]] = None,
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, _models.QueryCaptionType]] = None,
         query_caption_highlight_enabled: Optional[bool] = None,
-        semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[List[str]] = None,
         skip: Optional[int] = None,
@@ -368,12 +352,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
-        query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
-        query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
-        hybrid_search: Optional[_models.HybridSearch] = None,
-        query_source_authorization: Optional[str] = None,
-        enable_elevated_read: Optional[bool] = None,
         **kwargs: Any,
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals
@@ -427,18 +406,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
             matched in order to count the document as a match. Possible values include: 'any', 'all'.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-        :keyword query_language: The language of the search query. Possible values include: "none", "en-us",
-            "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn",
-            "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl",
-            "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo",
-            "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn",
-            "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es",
-            "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es",
-            "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", "ur-pk".
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword query_speller: A value that specified the type of the speller to use to spell-correct
-            individual search query terms. Possible values include: "none", "lexicon".
-        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword query_answer: This parameter is only valid if the query type is 'semantic'. If set,
             the query returns answers extracted from key passages in the highest ranked documents.
             Possible values include: "none", "extractive".
@@ -454,8 +421,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
             query caption is set to 'extractive'. Determines whether highlighting is enabled.
             Defaults to 'true'.
-        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
-        :paramtype semantic_fields: list[str]
         :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
             processing documents for queries of type semantic.
         :paramtype semantic_configuration_name: str
@@ -487,15 +452,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
             time it takes for semantic enrichment to finish processing before the request fails.
-        :keyword query_rewrites: When QueryRewrites is set to ``generative``\\ , the query terms are sent
-            to a generate model which will produce 10 (default) rewrites to help increase the recall of the
-            request. The requested count can be configured by appending the pipe character ``|`` followed
-            by the ``count-<number of rewrites>`` option, such as ``generative|count-3``. Defaults to
-            ``None``. This parameter is only valid if the query type is ``semantic``. Known values are:
-            "none" and "generative".
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
-        :keyword int query_rewrites_count: This parameter is only valid if the query rewrites type is 'generative'.
-            Configures the number of rewrites returned. Default count is 10.
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
             results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
@@ -504,15 +460,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
             vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
-        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
-        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
-         permission checks for the query operation. Default value is None.
-        :paramtype enable_elevated_read: bool
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype: AsyncSearchItemPaged[dict]
@@ -561,14 +508,11 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             semantic_query=semantic_query,
             search_fields=search_fields,
             search_mode=search_mode,
-            query_language=query_language,
-            query_speller=query_speller,
             query_answer=query_answer,
             query_answer_count=query_answer_count,
             query_answer_threshold=query_answer_threshold,
             query_caption=query_caption,
             query_caption_highlight_enabled=query_caption_highlight_enabled,
-            semantic_fields=semantic_fields,
             semantic_configuration_name=semantic_configuration_name,
             select=select,
             skip=skip,
@@ -579,18 +523,11 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             vector_filter_mode=vector_filter_mode,
             semantic_error_mode=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
-            query_rewrites=query_rewrites,
-            query_rewrites_count=query_rewrites_count,
             debug=debug,
-            hybrid_search=hybrid_search,
         )
 
         # Create kwargs for the search_post call
         search_kwargs = dict(kwargs)
-        if query_source_authorization is not None:
-            search_kwargs["query_source_authorization"] = query_source_authorization
-        if enable_elevated_read is not None:
-            search_kwargs["enable_elevated_read"] = enable_elevated_read
 
         return AsyncSearchItemPaged(self, search_request, search_kwargs, page_iterator_class=AsyncSearchPageIterator)
 
