@@ -92,11 +92,15 @@ def _find_parent_from_child(child_span, spans, expected_parent_operation: str):
 
     # Find the parent span by matching the span_id the child points to
     parent_matches = [
+    # Find the parent span by matching the exact trace_id + span_id the child points to
+    parent_matches = [
         s for s in spans
-        if s.context.span_id == child_parent_span_id
+        if s.context.trace_id == child_trace_id
+        and s.context.span_id == child_parent_span_id
     ]
     assert len(parent_matches) == 1, (
-        f"Expected exactly 1 span with span_id={format(child_parent_span_id, '016x')}, "
+        f"Expected exactly 1 span with trace_id={format(child_trace_id, '032x')} "
+        f"and span_id={format(child_parent_span_id, '016x')}, "
         f"got {len(parent_matches)}: {[s.name for s in parent_matches]}"
     )
     parent = parent_matches[0]
@@ -246,10 +250,13 @@ def test_framework_span_is_child_of_get_invocation_span():
 
     client = TestClient(app)
     resp = client.post("/invocations", content=b"data")
+    assert resp.status_code == 200
     inv_id = resp.headers["x-agent-invocation-id"]
 
     # Clear invoke spans so only get_invocation + child remain
     _EXPORTER.clear()
-    client.get(f"/invocations/{inv_id}")
+    get_resp = client.get(f"/invocations/{inv_id}")
+    assert get_resp.status_code == 200
+    assert get_resp.content == b"data"
 
     _find_parent_from_child(captured_child["span"], _get_spans(), "get_invocation")
