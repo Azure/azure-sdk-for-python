@@ -1,4 +1,4 @@
-# Emit Python SDK from TypeSpec
+# Emit azure-ai-projectsPython SDK from TypeSpec
 
 These instructions guide Copilot through emitting the azure-ai-projects Python SDK from TypeSpec,
 applying post-emitter fixes, updating the changelog, and creating a Pull Request.
@@ -12,6 +12,12 @@ lifecycle operations instead of running commands directly. In particular:
 - **`azsdk-common-generate-sdk-locally`** – For generating SDK from TypeSpec, building, running
   checks/tests, updating changelog, metadata, and version.
 
+Progress Tracking:
+- Create a progress tracker markdown file in the correct folder.
+  - The progress file should start with a concise plan outlining the major phases of the work.
+  - As work proceeds, keep the file updated to reflect current status, completed steps, and the next planned actions.
+  - Periodically re-reference the progress file to guide what to do next.
+  - Do NOT commit or include the progress markdown file in any pull requests.
 ---
 
 ## Step 1: Gather information from the user
