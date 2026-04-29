@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/logAnalyticExamples/LogAnalytics_RequestRateByInterval.json
+# x-ms-original-file: 2025-11-01/logAnalyticExamples/LogAnalytics_RequestRateByInterval.json
 if __name__ == "__main__":
     main()
