@@ -59,14 +59,14 @@ Similarly, models used by the moved operations must be imported from their new p
 All models were imported from `azure.mgmt.web.models`.
 
 ```python
-from azure.mgmt.web.models import ApiManagementConfig, Domain
+from azure.mgmt.web.models import AppServiceCertificateOrder, Domain
 ```
 
 **After**:
 Import the moved models from their new locations.
 
 ```python
-from azure.mgmt.certificateregistration.models import ApiManagementConfig
+from azure.mgmt.certificateregistration.models import AppServiceCertificateOrder
 from azure.mgmt.domainregistration.models import Domain
 ```
 
