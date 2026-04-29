@@ -407,7 +407,7 @@ class _FeedRangePaginationState:
         returns a non-null one,
       * pops the head when the sub-range is drained,
       * on a partition split, replaces the head with one entry per
-        child sub-range (each starting with no backend continuation).
+        child sub-range (each inheriting the parent's backend continuation).
 
     There is no separate "current vs. remaining" split. The head is
     ``queue[0]`` and later entries are queued behind it.
@@ -493,13 +493,13 @@ class _FeedRangePaginationState:
     def explode_on_multi_overlap(self, overlapping: List[dict]) -> bool:
         """If the head sub-range now spans more than one physical
         partition (Cosmos split it since the token was minted),
-        replace the head with one entry per child sub-range and drop
-        the stale parent backend continuation.
+        replace the head with one entry per child sub-range and carry
+        the parent backend continuation onto each child.
 
         Dequeue the parent and append child entries at the tail
-        (preserving child EPK order). Each child starts with
-        ``bc = None`` because parent continuation is not valid for
-        child partitions.
+        (preserving child EPK order). Each child inherits the
+        parent ``bc`` so resume can continue after a split without
+        replaying the entire child feed range.
 
         :param overlapping: Routing overlaps for the head sub-range.
         :type overlapping: list[dict]
@@ -508,14 +508,14 @@ class _FeedRangePaginationState:
         """
         if not self.queue or len(overlapping) <= 1:
             return False
-        head_range, _stale_bc = self.queue[0]
+        head_range, parent_bc = self.queue[0]
         sub_feedranges = _derive_initial_feedranges(head_range, overlapping)
         if not sub_feedranges:
             return False
         self.queue.popleft()
         # Keep existing tail entries ahead of split children.
         for sub in sub_feedranges:
-            self.queue.append((sub, None))
+            self.queue.append((sub, parent_bc))
         return True
 
     def apply_post_result(self, items_returned: int, backend_continuation: Optional[str]) -> None:

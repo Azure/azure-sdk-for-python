@@ -1317,14 +1317,36 @@ class TestFeedRangePaginationState:
 
         assert did_explode is True
         # Parent is dequeued and children are appended at the queue tail
-        # in EPK order (Java/.NET parity). Children start with no backend
-        # continuation (parent's bc was tied to the retired partition).
+        # in EPK order (Java/.NET parity). Children inherit the parent's
+        # backend continuation so resume progress is preserved across split.
+        assert self._queue_bounds(state) == [
+            ("80", "C0", None),
+            ("00", "40", "token-1"),
+            ("40", "80", "token-1"),
+        ]
+        assert state.head_bc is None
+
+    def test_explode_on_multi_overlap_with_no_parent_continuation_keeps_children_none(self):
+        current = _mk_range("00", "80")
+        tail = _mk_range("80", "C0")
+        state = _FeedRangePaginationState(
+            queue=[(current, None), (tail, None)],
+            remaining_page_item_count=4,
+        )
+
+        did_explode = state.explode_on_multi_overlap(
+            [
+                self._pkr("X1", "00", "40"),
+                self._pkr("X2", "40", "80"),
+            ]
+        )
+
+        assert did_explode is True
         assert self._queue_bounds(state) == [
             ("80", "C0", None),
             ("00", "40", None),
             ("40", "80", None),
         ]
-        assert state.head_bc is None
 
 
 class TestCheckpointRoundTripOnException:
