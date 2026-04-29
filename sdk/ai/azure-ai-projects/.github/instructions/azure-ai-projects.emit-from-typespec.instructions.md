@@ -11,8 +11,6 @@ lifecycle operations instead of running commands directly. In particular:
 
 - **`azsdk-common-generate-sdk-locally`** – For generating SDK from TypeSpec, building, running
   checks/tests, updating changelog, metadata, and version.
-- **`fix-black`** – For formatting code.
-- **`fix-pylint`**, **`fix-mypy`** – For fixing lint and type-check issues if they arise.
 
 ---
 
@@ -22,8 +20,15 @@ Ask the user the following questions **one at a time**, waiting for each answer 
 
 ### 1a. Topic branch name
 
-Ask the user for a **topic branch name**. Mention that the expected format is
-`<github-userid>/<work-title>` (e.g. `dcohen/emit-new-api`).
+Ask the user to choose **one** of the following two options for the target topic branch:
+
+1. **Emit to current branch** – Emit directly to the current branch without creating a new topic branch. 
+This is not common, but may be necessary if the user is re-running this workflow because of a previous
+failure, where the topic branch was already created.
+
+2. **Create a new topic branch** – Create a new topic branch for the emitted changes. If selected, ask
+ for a topic branch name. Mention that the expected format is
+`<github-userid>/<work-title>` (e.g. `dargilco/emit-from-typespec-04-29-2026`).
 
 ### 1b. TypeSpec source
 
