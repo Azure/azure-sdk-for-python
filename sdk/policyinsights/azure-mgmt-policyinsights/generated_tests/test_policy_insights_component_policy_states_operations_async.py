@@ -23,6 +23,7 @@ class TestPolicyInsightsComponentPolicyStatesOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_component_policy_states_list_query_results_for_subscription(self, resource_group):
         response = await self.client.component_policy_states.list_query_results_for_subscription(
+            subscription_id="str",
             component_policy_states_resource="str",
             api_version="2024-10-01",
         )
@@ -34,6 +35,7 @@ class TestPolicyInsightsComponentPolicyStatesOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_component_policy_states_list_query_results_for_resource_group(self, resource_group):
         response = await self.client.component_policy_states.list_query_results_for_resource_group(
+            subscription_id="str",
             resource_group_name=resource_group.name,
             component_policy_states_resource="str",
             api_version="2024-10-01",
@@ -58,6 +60,7 @@ class TestPolicyInsightsComponentPolicyStatesOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_component_policy_states_list_query_results_for_policy_definition(self, resource_group):
         response = await self.client.component_policy_states.list_query_results_for_policy_definition(
+            subscription_id="str",
             policy_definition_name="str",
             component_policy_states_resource="str",
             authorization_namespace="Microsoft.Authorization",
@@ -74,6 +77,7 @@ class TestPolicyInsightsComponentPolicyStatesOperationsAsync(AzureMgmtRecordedTe
     ):
         response = (
             await self.client.component_policy_states.list_query_results_for_subscription_level_policy_assignment(
+                subscription_id="str",
                 policy_assignment_name="str",
                 component_policy_states_resource="str",
                 authorization_namespace="Microsoft.Authorization",
@@ -91,6 +95,7 @@ class TestPolicyInsightsComponentPolicyStatesOperationsAsync(AzureMgmtRecordedTe
     ):
         response = (
             await self.client.component_policy_states.list_query_results_for_resource_group_level_policy_assignment(
+                subscription_id="str",
                 resource_group_name=resource_group.name,
                 policy_assignment_name="str",
                 component_policy_states_resource="str",

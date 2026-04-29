@@ -3,7 +3,7 @@
     "PolicyInsightsApi": "2024-10-01",
     "PolicyTrackedResourcesApi": "2018-07-01-preview"
   },
-  "commit": "6595cfdf0df33c33842fe345b640b4b6db37c62c",
+  "commit": "824b04cfb7e14b06067a0f5fb245ddd43d456515",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/policyinsights/resource-manager/Microsoft.PolicyInsights/PolicyInsights",
   "emitterVersion": "0.61.1"

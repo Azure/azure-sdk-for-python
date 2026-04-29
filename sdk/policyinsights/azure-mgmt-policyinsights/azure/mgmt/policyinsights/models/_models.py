@@ -269,6 +269,14 @@ class AttestationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AttestationsListForResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """AttestationsListForResourceGroupQueryOptions."""
+
+
+class AttestationsListForResourceQueryOptions(_Model):
+    """AttestationsListForResourceQueryOptions."""
+
+
 class AttestationsListForSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
     """AttestationsListForSubscriptionQueryOptions."""
 
@@ -855,6 +863,34 @@ class ComponentPolicyState(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ComponentPolicyStatesListQueryResultsForPolicyDefinitionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """ComponentPolicyStatesListQueryResultsForPolicyDefinitionQueryOptions."""
+
+
+class ComponentPolicyStatesListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions(
+    _Model
+):  # pylint: disable=name-too-long
+    """ComponentPolicyStatesListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions."""
+
+
+class ComponentPolicyStatesListQueryResultsForResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """ComponentPolicyStatesListQueryResultsForResourceGroupQueryOptions."""
+
+
+class ComponentPolicyStatesListQueryResultsForResourceQueryOptions(_Model):  # pylint: disable=name-too-long
+    """ComponentPolicyStatesListQueryResultsForResourceQueryOptions."""
+
+
+class ComponentPolicyStatesListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions(
+    _Model
+):  # pylint: disable=name-too-long
+    """ComponentPolicyStatesListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions."""
+
+
+class ComponentPolicyStatesListQueryResultsForSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """ComponentPolicyStatesListQueryResultsForSubscriptionQueryOptions."""
 
 
 class ComponentPolicyStatesQueryResults(_Model):
@@ -1813,6 +1849,42 @@ class PolicyEvent(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PolicyEventsListQueryResultsForManagementGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForManagementGroupQueryOptions."""
+
+
+class PolicyEventsListQueryResultsForPolicyDefinitionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForPolicyDefinitionQueryOptions."""
+
+
+class PolicyEventsListQueryResultsForPolicySetDefinitionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForPolicySetDefinitionQueryOptions."""
+
+
+class PolicyEventsListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions(
+    _Model
+):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions."""
+
+
+class PolicyEventsListQueryResultsForResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForResourceGroupQueryOptions."""
+
+
+class PolicyEventsListQueryResultsForResourceQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForResourceQueryOptions."""
+
+
+class PolicyEventsListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions(
+    _Model
+):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions."""
+
+
+class PolicyEventsListQueryResultsForSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyEventsListQueryResultsForSubscriptionQueryOptions."""
+
+
 class PolicyGroupSummary(_Model):
     """Policy definition group summary.
 
@@ -2269,6 +2341,74 @@ class PolicyState(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PolicyStatesListQueryResultsForManagementGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForManagementGroupQueryOptions."""
+
+
+class PolicyStatesListQueryResultsForPolicyDefinitionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForPolicyDefinitionQueryOptions."""
+
+
+class PolicyStatesListQueryResultsForPolicySetDefinitionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForPolicySetDefinitionQueryOptions."""
+
+
+class PolicyStatesListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions(
+    _Model
+):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForResourceGroupLevelPolicyAssignmentQueryOptions."""
+
+
+class PolicyStatesListQueryResultsForResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForResourceGroupQueryOptions."""
+
+
+class PolicyStatesListQueryResultsForResourceQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForResourceQueryOptions."""
+
+
+class PolicyStatesListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions(
+    _Model
+):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForSubscriptionLevelPolicyAssignmentQueryOptions."""
+
+
+class PolicyStatesListQueryResultsForSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesListQueryResultsForSubscriptionQueryOptions."""
+
+
+class PolicyStatesSummarizeForManagementGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForManagementGroupQueryOptions."""
+
+
+class PolicyStatesSummarizeForPolicyDefinitionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForPolicyDefinitionQueryOptions."""
+
+
+class PolicyStatesSummarizeForPolicySetDefinitionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForPolicySetDefinitionQueryOptions."""
+
+
+class PolicyStatesSummarizeForResourceGroupLevelPolicyAssignmentQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForResourceGroupLevelPolicyAssignmentQueryOptions."""
+
+
+class PolicyStatesSummarizeForResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForResourceGroupQueryOptions."""
+
+
+class PolicyStatesSummarizeForResourceQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForResourceQueryOptions."""
+
+
+class PolicyStatesSummarizeForSubscriptionLevelPolicyAssignmentQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForSubscriptionLevelPolicyAssignmentQueryOptions."""
+
+
+class PolicyStatesSummarizeForSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyStatesSummarizeForSubscriptionQueryOptions."""
+
+
 class PolicyTrackedResource(_Model):
     """Policy tracked resource record.
 
@@ -2302,6 +2442,22 @@ class PolicyTrackedResource(_Model):
         name="lastUpdateUtc", visibility=["read"], format="rfc3339"
     )
     """Timestamp of the last update to the tracked resource."""
+
+
+class PolicyTrackedResourcesListQueryResultsForManagementGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyTrackedResourcesListQueryResultsForManagementGroupQueryOptions."""
+
+
+class PolicyTrackedResourcesListQueryResultsForResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyTrackedResourcesListQueryResultsForResourceGroupQueryOptions."""
+
+
+class PolicyTrackedResourcesListQueryResultsForResourceQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyTrackedResourcesListQueryResultsForResourceQueryOptions."""
+
+
+class PolicyTrackedResourcesListQueryResultsForSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """PolicyTrackedResourcesListQueryResultsForSubscriptionQueryOptions."""
 
 
 class QueryFailure(_Model):
@@ -2674,6 +2830,38 @@ class RemediationPropertiesFailureThreshold(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class RemediationsListDeploymentsAtManagementGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """RemediationsListDeploymentsAtManagementGroupQueryOptions."""
+
+
+class RemediationsListDeploymentsAtResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """RemediationsListDeploymentsAtResourceGroupQueryOptions."""
+
+
+class RemediationsListDeploymentsAtResourceQueryOptions(_Model):  # pylint: disable=name-too-long
+    """RemediationsListDeploymentsAtResourceQueryOptions."""
+
+
+class RemediationsListDeploymentsAtSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """RemediationsListDeploymentsAtSubscriptionQueryOptions."""
+
+
+class RemediationsListForManagementGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """RemediationsListForManagementGroupQueryOptions."""
+
+
+class RemediationsListForResourceGroupQueryOptions(_Model):  # pylint: disable=name-too-long
+    """RemediationsListForResourceGroupQueryOptions."""
+
+
+class RemediationsListForResourceQueryOptions(_Model):
+    """RemediationsListForResourceQueryOptions."""
+
+
+class RemediationsListForSubscriptionQueryOptions(_Model):  # pylint: disable=name-too-long
+    """RemediationsListForSubscriptionQueryOptions."""
 
 
 class SlimPolicyMetadata(_Model):
