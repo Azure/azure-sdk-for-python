@@ -98,12 +98,6 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                     },
                     "endpoint": "str",
                     "endpoints": {"str": "str"},
-                    "foundryAutoUpgrade": {
-                        "mode": "str",
-                        "plannedByMicrosoft": bool,
-                        "scheduledAt": "2020-02-20 00:00:00",
-                        "statusReason": "str",
-                    },
                     "internalId": "str",
                     "isMigrated": bool,
                     "locations": {
@@ -263,12 +257,6 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                     },
                     "endpoint": "str",
                     "endpoints": {"str": "str"},
-                    "foundryAutoUpgrade": {
-                        "mode": "str",
-                        "plannedByMicrosoft": bool,
-                        "scheduledAt": "2020-02-20 00:00:00",
-                        "statusReason": "str",
-                    },
                     "internalId": "str",
                     "isMigrated": bool,
                     "locations": {

@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-15-preview/ManagedNetwork/getManagedNetworkV2.json
+# x-ms-original-file: 2026-03-01/ManagedNetwork/getManagedNetworkV2.json
 if __name__ == "__main__":
     main()

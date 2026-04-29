@@ -44,9 +44,10 @@ def main():
             }
         },
     ).result()
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-01-15-preview/ManagedNetwork/postOutboundRulesV2.json
+# x-ms-original-file: 2026-03-01/ManagedNetwork/postOutboundRulesV2.json
 if __name__ == "__main__":
     main()

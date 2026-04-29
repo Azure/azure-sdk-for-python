@@ -173,17 +173,23 @@ class CommitmentPlanProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     """CANCELED."""
 
 
-class ComputeOperationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status type of a compute operation."""
+class ComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a compute resource."""
 
-    IN_PROGRESS = "InProgress"
-    """The operation is in progress."""
+    ACCEPTED = "Accepted"
+    """The resource provisioning request has been accepted."""
     SUCCEEDED = "Succeeded"
-    """The operation has succeeded."""
+    """The resource has been fully provisioned."""
     FAILED = "Failed"
-    """The operation has failed."""
+    """The resource provisioning has failed."""
     CANCELED = "Canceled"
-    """The operation has been canceled."""
+    """The resource provisioning was canceled."""
+    DELETING = "Deleting"
+    """The resource is being deleted."""
+    SCALING = "Scaling"
+    """The resource is scaling."""
+    DISABLED = "Disabled"
+    """The resource is disabled."""
 
 
 class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -629,15 +635,6 @@ class FirewallSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BASIC."""
 
 
-class FoundryAutoUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the mode for foundry auto-upgrade configuration."""
-
-    ENABLED = "Enabled"
-    """Auto-upgrade is enabled."""
-    DISABLED = "Disabled"
-    """Auto-upgrade is disabled (opted out)."""
-
-
 class HostingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Account hosting model."""
 
@@ -891,19 +888,6 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DISABLED."""
 
 
-class QuotaScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The quota scope that determines the level at which the quota is applied."""
-
-    REGIONAL = "Regional"
-    """REGIONAL."""
-    GLOBAL = "Global"
-    """GLOBAL."""
-    DATA_ZONE = "DataZone"
-    """DATA_ZONE."""
-    CLASSIC = "Classic"
-    """CLASSIC."""
-
-
 class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cognitive Services account quota usage status."""
 
@@ -1017,14 +1001,14 @@ class RoutingMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RoutingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The routing mode that determines how requests are distributed across models."""
+    """The model-router routing mode that determines how requests are distributed across models."""
 
     COST = "cost"
     """Route requests to minimize cost while meeting performance requirements."""
     BALANCED = "balanced"
-    """Balance cost and accuracy when routing requests across models."""
-    ACCURACY = "accuracy"
-    """Route requests to maximize accuracy regardless of cost."""
+    """Balance cost and quality when routing requests across models."""
+    QUALITY = "quality"
+    """Route requests to maximize quality regardless of cost."""
 
 
 class RuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1162,3 +1146,12 @@ class UpgradeAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AVAILABLE."""
     NOT_AVAILABLE = "NotAvailable"
     """NOT_AVAILABLE."""
+
+
+class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VM priority for a compute pool."""
+
+    REGULAR = "Regular"
+    """Regular VM priority."""
+    SPOT = "Spot"
+    """Spot VM priority."""

@@ -20,6 +20,14 @@ class TestCognitiveServicesManagementDeletedAccountsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_deleted_accounts_list(self, resource_group):
+        response = self.client.deleted_accounts.list()
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_deleted_accounts_get(self, resource_group):
         response = self.client.deleted_accounts.get(
             location="str",
@@ -39,13 +47,5 @@ class TestCognitiveServicesManagementDeletedAccountsOperations(AzureMgmtRecorded
             account_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_deleted_accounts_list(self, resource_group):
-        response = self.client.deleted_accounts.list()
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

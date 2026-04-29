@@ -55,7 +55,6 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
                         }
                     ],
                     "customBlocklists": [{"blocking": bool, "blocklistName": "str", "source": "str"}],
-                    "customTopics": [{"blocking": bool, "source": "str", "topicName": "str"}],
                     "mode": "str",
                     "safetyProviders": [{"blocking": bool, "safetyProviderName": "str", "source": "str"}],
                     "type": "str",

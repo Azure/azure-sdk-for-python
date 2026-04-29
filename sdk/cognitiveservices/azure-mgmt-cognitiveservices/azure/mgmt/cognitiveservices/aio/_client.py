@@ -27,7 +27,7 @@ from .operations import (
     AgentDeploymentsOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
-    ComputeOperationsOperations,
+    ComputesOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
@@ -127,9 +127,8 @@ class CognitiveServicesManagementClient(
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.aio.operations.AgentApplicationsOperations
-    :ivar compute_operations: ComputeOperationsOperations operations
-    :vartype compute_operations:
-     azure.mgmt.cognitiveservices.aio.operations.ComputeOperationsOperations
+    :ivar computes: ComputesOperations operations
+    :vartype computes: azure.mgmt.cognitiveservices.aio.operations.ComputesOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cognitiveservices.aio.operations.PrivateLinkResourcesOperations
@@ -185,9 +184,9 @@ class CognitiveServicesManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-15-preview". Default value is "2026-01-15-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-03-01".
+     Default value is "2026-03-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -287,9 +286,7 @@ class CognitiveServicesManagementClient(
         self.agent_applications = AgentApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.compute_operations = ComputeOperationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.computes = ComputesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
