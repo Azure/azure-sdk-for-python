@@ -252,7 +252,9 @@ def test_delay_extraction_httpdate(polling_response, http_response):
 
     from datetime import datetime as basedatetime
 
-    now_mock_datetime = datetime.datetime(1995, 11, 20, 18, 12, 8, tzinfo=datetime.timezone(datetime.timedelta(hours=-5)))
+    now_mock_datetime = datetime.datetime(
+        1995, 11, 20, 18, 12, 8, tzinfo=datetime.timezone(datetime.timedelta(hours=-5))
+    )
     with mock.patch("datetime.datetime") as mock_datetime:
         mock_datetime.now.return_value = now_mock_datetime
         mock_datetime.side_effect = lambda *args, **kw: basedatetime(*args, **kw)
