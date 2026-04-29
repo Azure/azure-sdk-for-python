@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2026-03-01-preview",
+  "apiVersions": {
+    "Microsoft.AzureArcData": "2026-03-01-preview"
+  },
+  "commit": "daba69c05565bf658da065123a2921fa43946bc4",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/azurearcdata/AzureArcData.Management",
+  "emitterVersion": "0.61.2"
+}
