@@ -1,5 +1,43 @@
 # Release History
 
+## 4.1.0b1 (2026-04-08)
+
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added method `send_request`
+  - Model `JobExecution` added property `system_data`
+  - Model `Usage` added property `unit`
+  - Added model `LogicAppProperties`
+  - Added model `Object`
+
+### Breaking Changes
+
+  - Parameter `args` of `BaseContainer.__init__` is now required
+  - Method `BaseContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Parameter `args` of `Container.__init__` is now required
+  - Method `Container.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Parameter `args` of `InitContainer.__init__` is now required
+  - Method `InitContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Parameter `args` of `JobExecutionContainer.__init__` is now required
+  - Method `JobExecutionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Parameter `args` of `SessionContainer.__init__` is now required
+  - Method `SessionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Model `BuildResource` moved instance variable `provisioning_state`, `build_status`, `destination_container_registry`, `configuration`, `upload_endpoint`, `log_stream_endpoint` and `token_endpoint` under property `properties` whose type is `BuildProperties`
+  - Model `BuilderResource` moved instance variable `provisioning_state`, `environment_id` and `container_registries` under property `properties` whose type is `BuilderProperties`
+  - Model `ContainerAppsBuildResource` moved instance variable `provisioning_state`, `build_status`, `destination_container_registry`, `configuration` and `log_stream_endpoint` under property `properties` whose type is `ContainerAppsBuildProperties`
+  - Model `HeaderMatch` moved instance variable `exact_match`, `prefix_match`, `suffix_match` and `regex_match` under property `match` whose type is `HeaderMatchMatch`
+  - Model `HttpRetryPolicy` moved instance variable `headers`, `http_status_codes` and `errors` under property `matches` whose type is `HttpRetryPolicyMatches`
+  - Model `HttpRetryPolicy` moved instance variable `initial_delay_in_milliseconds` and `max_interval_in_milliseconds` under property `retry_back_off` whose type is `HttpRetryPolicyRetryBackOff`
+  - Model `MaintenanceConfigurationResource` moved instance variable `scheduled_entries` under property `properties` whose type is `ScheduledEntries`
+  - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainerAppsSourceControlsOperations.begin_create_or_update` changed its parameter `x_ms_github_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainerAppsSourceControlsOperations.begin_delete` changed its parameter `x_ms_github_auxiliary`/`ignore_workflow_deletion_failure`/`delete_workflow` from `positional_or_keyword` to `keyword_only`
+  - Method `LogicAppsOperations.invoke` changed its parameter `x_ms_logic_apps_proxy_path`/`x_ms_logic_apps_proxy_method` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AvailableOperations`/`AppResiliencyCollection`/`AuthConfigCollection`/`AvailableWorkloadProfilesCollection`/`BuildCollection`/`BuilderCollection`/`CertificateCollection`/`ConnectedEnvironmentCollection`/`ContainerAppCollection`/`ContainerAppsBuildCollection`/`ContainerAppsFunctionCollection`/`DaprComponentResiliencyPoliciesCollection`/`DaprComponentsCollection`/`DaprSubscriptionsCollection`/`DotNetComponentsCollection`/`HttpRouteConfigCollection`/`JavaComponentsCollection`/`JobExecutionNamesCollection`/`JobsCollection`/`LabelHistoryCollection`/`ListUsagesResult`/`MaintenanceConfigurationCollection`/`ManagedCertificateCollection`/`ManagedEnvironmentsCollection`/`PatchCollection`/`RevisionCollection`/`SessionPoolCollection`/`SourceControlCollection`/`WorkflowEnvelopeCollection`/`WorkloadProfileStatesCollection` which actually were not used by SDK users
+
 ## 4.0.0 (2025-10-24)
 
 ### Features Added
