@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2020-02-07-preview",
+  "apiVersions": {
+    "Microsoft.HanaOnAzure": "2020-02-07-preview"
+  },
+  "commit": "e8e18a09f535c70748570d4c5585082b3f4b3f2b",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/HanaOnAzure",
+  "emitterVersion": "0.61.3"
+}

@@ -1,5 +1,26 @@
 # Release History
 
+## 1.1.0b2 (2026-04-15)
+
+### Features Added
+
+  - Model `ProviderInstance` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `SapMonitor` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `CreatedByType`
+  - Added model `ProviderInstanceProperties`
+  - Added model `SystemData`
+
+### Breaking Changes
+
+  - Deleted or renamed client `HanaManagementClient`
+  - Model `ProviderInstance` deleted or renamed its instance variable `type_properties_type`
+  - Model `ProviderInstance` deleted or renamed its instance variable `metadata`
+  - Model `ProviderInstance` deleted or renamed its instance variable `provisioning_state`
+  - Deleted or renamed model `OperationList`
+
 ## 1.1.0b1 (2022-10-31)
 
 ### Other Changes
