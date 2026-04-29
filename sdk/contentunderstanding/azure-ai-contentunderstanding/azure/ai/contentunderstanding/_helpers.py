@@ -201,7 +201,13 @@ def _resolve_field_value(
     if isinstance(field, ArrayField):
         arr = field.value_array
         if arr:
-            return [_resolve_field_value(item) for item in arr]
+            items = []
+            for item in arr:
+                resolved = _resolve_field_value(item)
+                if resolved is not None:
+                    items.append(resolved)
+            # Omit empty child fields, consistent with top-level field omission.
+            return items or None
         return None
 
     # Leaf field — use the .value convenience property
