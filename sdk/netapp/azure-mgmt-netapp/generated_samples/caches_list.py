@@ -15,7 +15,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python elastic_backup_vaults_update.py
+    python caches_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.elastic_backup_vaults.begin_update(
+    response = client.caches.list(
         resource_group_name="myRG",
         account_name="account1",
-        backup_vault_name="backupVault1",
-        body={"tags": {"Tag1": "Value1"}},
-    ).result()
-    print(response)
+        pool_name="pool1",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-12-15-preview/ElasticBackupVaults_Update.json
+# x-ms-original-file: 2026-01-01/Caches_List.json
 if __name__ == "__main__":
     main()
