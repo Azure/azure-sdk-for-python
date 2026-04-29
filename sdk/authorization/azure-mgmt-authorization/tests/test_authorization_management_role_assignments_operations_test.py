@@ -32,4 +32,4 @@ class TestAuthorizationManagementRoleAssignmentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
-        assert response
+        assert len(result)

@@ -20,7 +20,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class DeploymentTemplateOperations(_ScopeDependentOperations):
     """DeploymentTemplateOperations.
 
@@ -261,6 +260,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.List", ActivityType.PUBLICAPI)
+    @experimental
     def list(
         self,
         *,
@@ -307,6 +307,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
+    @experimental
     def get(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Get a deployment template by name and version.
 
@@ -339,6 +340,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @experimental
     def create_or_update(self, deployment_template: DeploymentTemplate, **kwargs: Any) -> DeploymentTemplate:
         """Create or update a deployment template.
 
@@ -372,6 +374,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
+    @experimental
     def delete(self, name: str, version: Optional[str] = None, **kwargs: Any) -> None:
         """Delete a deployment template.
 
@@ -405,6 +408,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Archive", ActivityType.PUBLICAPI)
+    @experimental
     def archive(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Archive a deployment template by setting its stage to 'Archived'.
 
@@ -427,6 +431,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Restore", ActivityType.PUBLICAPI)
+    @experimental
     def restore(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Restore a deployment template by setting its stage to 'Development'.
 

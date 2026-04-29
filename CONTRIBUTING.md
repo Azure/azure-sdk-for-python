@@ -95,7 +95,84 @@ SDK performance testing is supported via the custom `perfstress` framework. For 
 
 ### More Reading
 
-We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
+We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions. That document covers:
+
+- [Static analysis checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#static-analysis-checks) (MyPy, Pyright, Pylint, Sphinx, Bandit, etc.)
+- [Install and test checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#install-and-test-checks) (whl, sdist, mindependency, latestdependency, devtest, regression)
+- [PR validation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation) (subset that runs on every pull request)
+- [Nightly and release checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#nightly-and-release) (full check set including latestdependency, whl_no_aio, import_all)
+- [Weekly analyze checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#weekly-analyze-checks) (ruff, next-generation tool versions)
+- [pyproject.toml configuration](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml) (enabling/disabling checks per package, analyze_python_version override)
+- [Skipping checks at queue time](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#skipping-checks-at-queue-time)
+
+### Package Index Configuration
+
+This repo uses Central Feed Services (CFS) as the default package source for CI, and prefers it for local development over PyPI.
+
+ A repo-root `uv.toml` configures uv to use the CFS feed automatically. 
+ 
+ To use the feed with standard `pip`, use the `--index-url` flag. For example:
+
+ ```bash
+ pip install <pkg> --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+ ```
+
+ #### `azpysdk` Configuration
+ 
+  The `azpysdk` tool automatically configures pip and uv subprocesses to use the CFS feed by setting the `PIP_INDEX_URL` and `UV_DEFAULT_INDEX` environment variables. If you have already set these variables to a different feed, `azpysdk` will respect your configuration and won't override them.
+  
+If you wish to bypass CFS and install directly from PyPI, use the `--pypi` flag to pull from PyPI:
+
+```
+azpysdk --pypi <command>
+```
+
+#### Authentication for upstream pull-through
+When installing a package version not yet cached in the CFS feed, it needs to be pulled through from PyPI upstream, which requires authentication. 
+
+Below are options for authenticating:
+
+**Authenticate in terminal (with uv):**
+
+This requires the Azure CLI. First run: 
+
+```bash
+az login
+```
+
+Then:
+
+```bash
+export UV_INDEX_AZURE_SDK_USERNAME=x
+export UV_INDEX_AZURE_SDK_PASSWORD=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv)
+```
+
+**Create a PAT in Azure DevOps:**
+
+1. Go to [https://dev.azure.com/azure-sdk](https://dev.azure.com/azure-sdk)
+2. Click the user settings button in the top right corner next to your profile picture
+3. Select "Personal access tokens"
+4. Click "New Token"
+5. Give it a name (e.g., "Azure SDK Python Feed Access")
+6. Set expiration as needed
+7. Under "Scopes" -> "Packaging", select "Read, write, & manage"
+8. Click "Create"
+9. Copy the token and use it in your environment:
+
+```bash
+export UV_INDEX_AZURE_SDK_USERNAME=x
+export UV_INDEX_AZURE_SDK_PASSWORD=<your-pat-token>
+```
+
+Or for pip:
+```bash
+export PIP_INDEX_URL="https://your-azure-username:your-pat-token@pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+```
+
+**To override the CFS index and use PyPI with uv:**
+```bash
+uv pip install <package> --index-url https://pypi.org/simple/
+```
 
 ### Dev Feed
 Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. Below is the link to Azure devops feed.

@@ -66,7 +66,7 @@ azpysdk pylint .
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
-- Use Python 3.9 compatible environment
+- Use Python 3.10 compatible environment
 - Follow official fixing guidelines
 - Run `azpysdk mypy .` from the package directory
 
@@ -113,7 +113,7 @@ This library is failing two release blocking checks - Mypy and Tests - CI. The l
 ## Local SDK Generation and Package Lifecycle (TypeSpec)
 
 ### AUTHORITATIVE REFERENCE
-For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:../eng/common/instructions/azsdk-tools/local-sdk-workflow.instructions.md
+For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:skills/azsdk-common-generate-sdk-locally/SKILL.md
 
 ### DEFAULT BEHAVIORS
 - **Repository:** Use the current workspace as the local SDK repository unless the user specifies a different path.
@@ -164,4 +164,4 @@ These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-
 
 ## SDK release
 
-For detailed workflow instructions, see [SDK Release](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/instructions/copilot/sdk-release.instructions.md).
+For detailed workflow instructions, see [SDK Release](skills/azsdk-common-sdk-release/SKILL.md).
