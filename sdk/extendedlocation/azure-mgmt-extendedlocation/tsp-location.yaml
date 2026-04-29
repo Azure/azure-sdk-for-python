@@ -1,0 +1,4 @@
+directory: specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations
+commit: e2c526cba2b39a4d2b5666fba68af1992613ef9d
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

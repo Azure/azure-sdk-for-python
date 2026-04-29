@@ -16,7 +16,7 @@ from azure.mgmt.extendedlocation import CustomLocationsClient
     pip install azure-identity
     pip install azure-mgmt-extendedlocation
 # USAGE
-    python custom_locations_patch.py
+    python resource_sync_rules_create_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,23 +31,25 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.custom_locations.update(
+    response = client.resource_sync_rules.begin_create_or_update(
         resource_group_name="testresourcegroup",
         resource_name="customLocation01",
+        child_resource_name="resourceSyncRule01",
         parameters={
-            "identity": {"type": "SystemAssigned"},
+            "location": "West US",
             "properties": {
-                "clusterExtensionIds": [
-                    "/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/testresourcegroup/providers/Microsoft.ContainerService/managedClusters/cluster01/Microsoft.KubernetesConfiguration/clusterExtensions/fooExtension",
-                    "/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/testresourcegroup/providers/Microsoft.ContainerService/managedClusters/cluster01/Microsoft.KubernetesConfiguration/clusterExtensions/barExtension",
-                ]
+                "priority": 999,
+                "selector": {
+                    "matchExpressions": [{"key": "key4", "operator": "In", "values": ["value4"]}],
+                    "matchLabels": {"key1": "value1"},
+                },
+                "targetResourceGroup": "/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/testresourcegroup",
             },
-            "tags": {"archv3": "", "tier": "testing"},
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2021-08-31-preview/CustomLocationsPatch.json
+# x-ms-original-file: 2021-08-31-preview/ResourceSyncRulesCreate_Update.json
 if __name__ == "__main__":
     main()
