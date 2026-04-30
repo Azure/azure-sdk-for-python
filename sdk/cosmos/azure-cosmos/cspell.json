@@ -1,10 +1,15 @@
 {
     "ignoreWords": [
+        "hdrh",
+        "hdrhistogram",
         "perfdb",
         "perfresults",
+        "pkrange",
         "ppcb",
         "hdrh",
         "hdrhistogram",
-        "reranker"
+        "reranker",
+        "Reranker"
+        "toctou"
     ]
 }

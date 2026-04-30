@@ -236,8 +236,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
-        return await self.client_connection.pipeline_client.__aexit__(*args)
+        try:
+            await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
+            return await self.client_connection.pipeline_client.__aexit__(*args)
+        finally:
+            try:
+                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+            except Exception:  # pylint: disable=broad-except
+                pass
 
     async def close(self) -> None:
         """Close this instance of CosmosClient."""
