@@ -6,10 +6,12 @@
 
 * New `FabricIQPreviewTool`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* New `ToolboxSearchPreviewTool` for searching over the agent's toolbox.
 
 ### Breaking Changes
 
 * Agent Endpoint beta operations: Removed required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
+* Renamed `AgentEndpoint` class to `AgentEndpointConfig`.
 
 ### Bugs Fixed
 * Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
