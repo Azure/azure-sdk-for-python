@@ -2562,7 +2562,7 @@ class CommandJob(JobProperties, discriminator="Command"):
     :vartype job_type: str
     :ivar command: The command to execute on startup of the job. Required.
     :vartype command: str
-    :ivar environment_image_reference: ACR path or ID of environment. Required.
+    :ivar environment_image_reference: ACR path of environment. Required.
     :vartype environment_image_reference: str
     :ivar display_name: Display name of job.
     :vartype display_name: str
@@ -2593,6 +2593,8 @@ class CommandJob(JobProperties, discriminator="Command"):
     :vartype services: dict[str, ~azure.ai.projects.models.JobService]
     :ivar queue_settings: Queue settings for the job.
     :vartype queue_settings: ~azure.ai.projects.models.QueueSettings
+    :ivar user_assigned_identity_id: user-assigned managed identity.
+    :vartype user_assigned_identity_id: str
     :ivar is_archived: Is the asset archived?.
     :vartype is_archived: bool
     :ivar status: Status of the job.
@@ -2604,9 +2606,9 @@ class CommandJob(JobProperties, discriminator="Command"):
     command: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The command to execute on startup of the job. Required."""
     environment_image_reference: str = rest_field(
-        name="environmentId", visibility=["read", "create", "update", "delete", "query"]
+        name="environmentImageReference", visibility=["read", "create", "update", "delete", "query"]
     )
-    """ACR path or ID of environment. Required."""
+    """ACR path of environment. Required."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2652,6 +2654,10 @@ class CommandJob(JobProperties, discriminator="Command"):
         name="queueSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Queue settings for the job."""
+    user_assigned_identity_id: Optional[str] = rest_field(
+        name="userAssignedIdentityId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """user-assigned managed identity."""
     is_archived: Optional[bool] = rest_field(
         name="isArchived", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2678,6 +2684,7 @@ class CommandJob(JobProperties, discriminator="Command"):
         distribution: Optional["_models.DistributionConfiguration"] = None,
         limits: Optional["_models.CommandJobLimits"] = None,
         queue_settings: Optional["_models.QueueSettings"] = None,
+        user_assigned_identity_id: Optional[str] = None,
         is_archived: Optional[bool] = None,
     ) -> None: ...
 
@@ -7825,6 +7832,12 @@ class Output(_Model):
     :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
     :ivar asset_name: Name of the output data asset to register.
     :vartype asset_name: str
+    :ivar asset_version: Version of the output data asset to register.
+    :vartype asset_version: str
+    :ivar uri: Output Asset URI.
+    :vartype uri: str
+    :ivar base_model_id: Base model ID. Applies to safetensors_model outputs.
+    :vartype base_model_id: str
     :ivar description: Description for the output.
     :vartype description: str
     """
@@ -7841,6 +7854,16 @@ class Output(_Model):
      \"Download\", \"Direct\", and \"Upload\"."""
     asset_name: Optional[str] = rest_field(name="assetName", visibility=["read", "create", "update", "delete", "query"])
     """Name of the output data asset to register."""
+    asset_version: Optional[str] = rest_field(
+        name="assetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Version of the output data asset to register."""
+    uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Output Asset URI."""
+    base_model_id: Optional[str] = rest_field(
+        name="baseModelId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Base model ID. Applies to safetensors_model outputs."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description for the output."""
 
@@ -7851,6 +7874,9 @@ class Output(_Model):
         type: Union[str, "_models.AssetTypes"],
         mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
         asset_name: Optional[str] = None,
+        asset_version: Optional[str] = None,
+        uri: Optional[str] = None,
+        base_model_id: Optional[str] = None,
         description: Optional[str] = None,
     ) -> None: ...
 

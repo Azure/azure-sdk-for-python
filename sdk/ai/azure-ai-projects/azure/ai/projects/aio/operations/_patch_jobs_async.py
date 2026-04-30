@@ -7,21 +7,36 @@
 
 import logging
 from datetime import datetime, timezone
+from os import PathLike
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from azure.storage.blob.aio import ContainerClient
+
 from ._operations import BetaTrainingJobsOperations as _GeneratedTrainingJobsOps
 from ._patch_datasets_async import DatasetsOperations
+from ...models._models import BlobReference
 from ...models._models import Job as _RestJob
 from ...models._models import Input as _Input
+from ...models._models import Output as _Output
 from ...models._patch_jobs import CommandJob
 from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ...models._enums import FoundryFeaturesOptInKeys
+from ...operations._job_helper import (
+    _TERMINAL_JOB_STATUSES,
+    _MAX_CONCURRENCY,
+    _NAMED_OUTPUTS_DIR,
+    _DEFAULT_OUTPUT_NOT_SUPPORTED_MSG,
+    _blob_uri_to_prefix,
+    _is_folder_marker,
+    _ensure_dir,
+    _validate_output_for_download,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -249,3 +264,175 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         """
         self._inject_preview_header(kwargs)
         return await super().begin_cancel(name=name, **kwargs)
+
+    async def _resolve_output_to_blob_ref(self, output_name: str, output: _Output) -> BlobReference:
+        """Resolve a job ``Output`` to a :class:`~azure.ai.projects.models.BlobReference`.
+
+        :param output_name: The output name.
+        :type output_name: str
+        :param output: The job output object from the Get Job response.
+        :type output: ~azure.ai.projects.models.Output
+        :return: A blob reference describing the storage location and SAS credential.
+        :rtype: ~azure.ai.projects.models.BlobReference
+        :raises ValueError: If ``asset_name`` / ``asset_version`` are missing or
+            the output type is not supported for download.
+        :raises NotImplementedError: If the output type requires Models operations
+            not yet generated in this SDK build.
+        """
+        _validate_output_for_download(output_name, output)
+        assert output.asset_name is not None and output.asset_version is not None
+        credential = await self._datasets.get_credentials(name=output.asset_name, version=output.asset_version)
+        return credential.blob_reference
+
+    async def _download_blob_reference(self, blob_ref: BlobReference, destination: Path) -> Tuple[int, int]:
+        """Download every blob under ``blob_ref`` into ``destination``.
+
+        :param blob_ref: The blob reference to download.
+        :type blob_ref: ~azure.ai.projects.models.BlobReference
+        :param destination: Local directory to write files to. Created if missing.
+        :type destination: ~pathlib.Path
+        :return: A tuple of ``(file_count, total_bytes_downloaded)``.
+        :rtype: Tuple[int, int]
+        :raises ValueError: If the SAS URI or blob URI is missing.
+        """
+        if not blob_ref or not blob_ref.credential or not blob_ref.credential.sas_uri:
+            raise ValueError("Blob reference is missing a SAS URI credential.")
+        if not blob_ref.blob_uri:
+            raise ValueError("Blob reference is missing the blob URI.")
+
+        prefix = _blob_uri_to_prefix(blob_ref.blob_uri)
+        sas_uri = blob_ref.credential.sas_uri
+
+        destination.mkdir(parents=True, exist_ok=True)
+
+        async with ContainerClient.from_container_url(container_url=sas_uri) as container_client:
+            list_prefix = (prefix + "/") if prefix else ""
+            blobs = []
+            async for b in container_client.list_blobs(name_starts_with=list_prefix or None, include=["metadata"]):
+                blobs.append(b)
+            all_names = {b.name for b in blobs}
+
+            file_count = 0
+            total_bytes = 0
+            for blob in blobs:
+                blob_name = blob.name
+                if list_prefix and blob_name.startswith(list_prefix):
+                    relative = blob_name[len(list_prefix) :]
+                else:
+                    relative = blob_name
+                if not relative:
+                    continue
+                local_path = destination / relative
+                if _is_folder_marker(blob, all_names):
+                    _ensure_dir(local_path)
+                    continue
+                _ensure_dir(local_path.parent)
+                _logger.debug("[TrainingJobsOperations] Downloading blob '%s' \u2192 '%s'.", blob_name, local_path)
+                downloader = await container_client.download_blob(blob=blob_name, max_concurrency=_MAX_CONCURRENCY)
+                with open(local_path, "wb") as fh:
+                    await downloader.readinto(fh)
+                file_count += 1
+                total_bytes += blob.size or 0
+            return file_count, total_bytes
+
+    @distributed_trace_async
+    async def download(
+        self,
+        name: str,
+        *,
+        download_path: Union[PathLike, str] = ".",
+        output_name: Optional[str] = None,
+        all: bool = False,  # pylint: disable=redefined-builtin
+        **kwargs: Any,
+    ) -> None:
+        """Download outputs of a completed training job to a local directory.
+
+        :param name: The name of the job. Required.
+        :type name: str
+        :keyword download_path: The local path to be used as the download destination.
+            Defaults to ``"."`` (the current working directory). Created if it does not exist.
+        :paramtype download_path: Union[PathLike, str]
+        :keyword output_name: Name of a single named output to download.
+            Mutually exclusive with ``all``.
+        :paramtype output_name: str
+        :keyword all: If True, download every named output, each into its own
+            ``<download_path>/named-outputs/<output_name>/`` subfolder. Mutually
+            exclusive with ``output_name``.
+        :paramtype all: bool
+        :raises ValueError: If both ``output_name`` and ``all`` are provided,
+            if the job has no outputs, or if ``output_name`` does not exist.
+        :raises NotImplementedError: If the user requests the default-output
+            download (no ``output_name`` and ``all`` is False).
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if output_name is not None and all:
+            raise ValueError("Specify either 'output_name' or 'all=True', not both.")
+
+        self._inject_preview_header(kwargs)
+        job = await self.get(name=name, **kwargs)
+
+        job_status = (job.status or "").lower()
+        if job_status not in _TERMINAL_JOB_STATUSES:
+            raise ValueError(
+                f"Job '{name}' is in state '{job.status}'. Download is allowed only when the job is in "
+                f"a terminal state: {sorted(_TERMINAL_JOB_STATUSES)}."
+            )
+
+        outputs: dict = job.outputs or {}
+        if not outputs:
+            raise ValueError(f"Job '{name}' has no outputs to download.")
+
+        dest_root = Path(download_path)
+
+        if output_name is not None:
+            if output_name not in outputs:
+                raise ValueError(
+                    f"Job '{name}' has no output named '{output_name}'. "
+                    f"Available outputs: {sorted(outputs.keys())}."
+                )
+            blob_ref = await self._resolve_output_to_blob_ref(output_name, outputs[output_name])
+            destination = dest_root / _NAMED_OUTPUTS_DIR / output_name
+            _logger.info(
+                "[TrainingJobsOperations] Downloading output '%s' from '%s' to '%s'.",
+                output_name,
+                blob_ref.blob_uri,
+                destination,
+            )
+            file_count, total_bytes = await self._download_blob_reference(blob_ref, destination)
+            _logger.info(
+                "[TrainingJobsOperations] Downloaded %d file(s) (%.2f MB) for output '%s'.",
+                file_count,
+                total_bytes / (1024 * 1024),
+                output_name,
+            )
+            return
+
+        if all:
+            for out_name, out in outputs.items():
+                try:
+                    blob_ref = await self._resolve_output_to_blob_ref(out_name, out)
+                except ValueError as exc:
+                    _logger.warning(
+                        "[TrainingJobsOperations] Skipping output '%s' for job '%s': %s",
+                        out_name,
+                        name,
+                        exc,
+                    )
+                    continue
+                destination = dest_root / _NAMED_OUTPUTS_DIR / out_name
+                _logger.info(
+                    "[TrainingJobsOperations] Downloading output '%s' from '%s' to '%s'.",
+                    out_name,
+                    blob_ref.blob_uri,
+                    destination,
+                )
+                file_count, total_bytes = await self._download_blob_reference(blob_ref, destination)
+                _logger.info(
+                    "[TrainingJobsOperations] Downloaded %d file(s) (%.2f MB) for output '%s'.",
+                    file_count,
+                    total_bytes / (1024 * 1024),
+                    out_name,
+                )
+            return
+
+        raise NotImplementedError(_DEFAULT_OUTPUT_NOT_SUPPORTED_MSG)
