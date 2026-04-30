@@ -61,8 +61,6 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.ai",
-    "azure.ai.evaluation",
-    "azure.ai.evaluation._common",
     "doc*",
     "generated_samples*",
     "generated_tests*",
