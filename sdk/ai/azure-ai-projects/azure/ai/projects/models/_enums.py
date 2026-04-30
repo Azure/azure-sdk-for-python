@@ -67,8 +67,8 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY."""
     RESPONSES = "responses"
     """RESPONSES."""
-    A2A = "a2a"
-    """A2A."""
+    A2_A = "a2a"
+    """A2_A."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
 
@@ -632,8 +632,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT_2024_11_15 = "default-2024-11-15"
-    """DEFAULT_2024_11_15."""
+    DEFAULT2024_11_15 = "default-2024-11-15"
+    """DEFAULT2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -791,8 +791,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
-    WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
-    """WEB_SEARCH_PREVIEW_2025_03_11."""
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW2025_03_11."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
@@ -842,6 +842,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORK_IQ_PREVIEW."""
     FABRIC_IQ_PREVIEW = "fabric_iq_preview"
     """FABRIC_IQ_PREVIEW."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """TOOLBOX_SEARCH_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
