@@ -1,5 +1,574 @@
 # Release History
 
+## 10.0.0b6 (2026-04-30)
+
+### Features Added
+
+  - Model `CosmosDBManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `CosmosDBManagementClient` added method `send_request`
+  - Client `CosmosDBManagementClient` added operation group `copy_jobs`
+  - Client `CosmosDBManagementClient` added operation group `garnet_clusters`
+  - Client `CosmosDBManagementClient` added operation group `mongo_mi_resources`
+  - Client `CosmosDBManagementClient` added operation group `fleet`
+  - Client `CosmosDBManagementClient` added operation group `fleet_analytics`
+  - Client `CosmosDBManagementClient` added operation group `fleetspace`
+  - Client `CosmosDBManagementClient` added operation group `fleetspace_account`
+  - Model `CassandraKeyspaceCreateUpdateParameters` added property `properties`
+  - Model `CassandraKeyspaceGetResults` added property `properties`
+  - Model `CassandraKeyspaceGetResults` added property `system_data`
+  - Model `CassandraTableCreateUpdateParameters` added property `properties`
+  - Model `CassandraTableGetResults` added property `properties`
+  - Model `CassandraTableGetResults` added property `system_data`
+  - Model `CassandraViewCreateUpdateParameters` added property `properties`
+  - Model `CassandraViewGetResults` added property `properties`
+  - Model `CassandraViewGetResults` added property `system_data`
+  - Model `ChaosFaultResource` added property `properties`
+  - Model `ClientEncryptionKeyGetResults` added property `properties`
+  - Model `ClientEncryptionKeyGetResults` added property `system_data`
+  - Model `ClusterResource` added property `system_data`
+  - Model `DataCenterResource` added property `system_data`
+  - Enum `DataTransferComponent` added member `BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK`
+  - Model `DataTransferJobGetResults` added property `properties`
+  - Model `DataTransferJobGetResults` added property `system_data`
+  - Model `DatabaseAccountCreateUpdateParameters` added property `properties`
+  - Model `DatabaseAccountGetResults` added property `properties`
+  - Model `DatabaseAccountUpdateParameters` added property `properties`
+  - Model `GraphResourceCreateUpdateParameters` added property `properties`
+  - Model `GraphResourceGetResults` added property `properties`
+  - Model `GraphResourceGetResults` added property `system_data`
+  - Model `GremlinDatabaseCreateUpdateParameters` added property `properties`
+  - Model `GremlinDatabaseGetResults` added property `properties`
+  - Model `GremlinDatabaseGetResults` added property `system_data`
+  - Model `GremlinGraphCreateUpdateParameters` added property `properties`
+  - Model `GremlinGraphGetResults` added property `properties`
+  - Model `GremlinGraphGetResults` added property `system_data`
+  - Model `IndexingPolicy` added property `full_text_indexes`
+  - Model `LocationGetResult` added property `system_data`
+  - Model `MaterializedViewDefinition` added property `throughput_bucket_for_build`
+  - Model `MongoDBCollectionCreateUpdateParameters` added property `properties`
+  - Model `MongoDBCollectionGetResults` added property `properties`
+  - Model `MongoDBCollectionGetResults` added property `system_data`
+  - Model `MongoDBDatabaseCreateUpdateParameters` added property `properties`
+  - Model `MongoDBDatabaseGetResults` added property `properties`
+  - Model `MongoDBDatabaseGetResults` added property `system_data`
+  - Model `MongoRoleDefinitionGetResults` added property `properties`
+  - Model `MongoRoleDefinitionGetResults` added property `system_data`
+  - Model `MongoUserDefinitionGetResults` added property `properties`
+  - Model `MongoUserDefinitionGetResults` added property `system_data`
+  - Model `NotebookWorkspace` added property `system_data`
+  - Model `Permission` added property `id`
+  - Model `PhysicalPartitionThroughputInfoResource` added property `target_throughput`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `RedistributeThroughputParameters` added property `properties`
+  - Model `RestorableDatabaseAccountGetResult` added property `properties`
+  - Model `RestorableDatabaseAccountGetResult` added property `system_data`
+  - Model `RestorableGremlinDatabaseGetResult` added property `properties`
+  - Model `RestorableGremlinGraphGetResult` added property `properties`
+  - Model `RestorableMongodbCollectionGetResult` added property `properties`
+  - Model `RestorableMongodbDatabaseGetResult` added property `properties`
+  - Model `RestorableSqlContainerGetResult` added property `properties`
+  - Model `RestorableSqlContainerPropertiesResourceContainer` added property `materialized_views`
+  - Model `RestorableSqlContainerPropertiesResourceContainer` added property `materialized_views_properties`
+  - Model `RestorableSqlContainerPropertiesResourceContainer` added property `full_text_policy`
+  - Model `RestorableSqlContainerPropertiesResourceContainer` added property `data_masking_policy`
+  - Model `RestorableSqlDatabaseGetResult` added property `properties`
+  - Model `RestorableTableGetResult` added property `properties`
+  - Model `RetrieveThroughputParameters` added property `properties`
+  - Model `ServiceResource` added property `system_data`
+  - Model `SqlContainerCreateUpdateParameters` added property `properties`
+  - Model `SqlContainerGetPropertiesResource` added property `materialized_views`
+  - Model `SqlContainerGetPropertiesResource` added property `materialized_views_properties`
+  - Model `SqlContainerGetPropertiesResource` added property `full_text_policy`
+  - Model `SqlContainerGetPropertiesResource` added property `data_masking_policy`
+  - Model `SqlContainerGetResults` added property `properties`
+  - Model `SqlContainerGetResults` added property `system_data`
+  - Model `SqlContainerResource` added property `materialized_views`
+  - Model `SqlContainerResource` added property `materialized_views_properties`
+  - Model `SqlContainerResource` added property `full_text_policy`
+  - Model `SqlContainerResource` added property `data_masking_policy`
+  - Model `SqlDatabaseCreateUpdateParameters` added property `properties`
+  - Model `SqlDatabaseGetResults` added property `properties`
+  - Model `SqlDatabaseGetResults` added property `system_data`
+  - Model `SqlRoleAssignmentGetResults` added property `properties`
+  - Model `SqlRoleAssignmentGetResults` added property `system_data`
+  - Model `SqlRoleDefinitionGetResults` added property `properties`
+  - Model `SqlRoleDefinitionGetResults` added property `system_data`
+  - Model `SqlStoredProcedureCreateUpdateParameters` added property `properties`
+  - Model `SqlStoredProcedureGetResults` added property `properties`
+  - Model `SqlStoredProcedureGetResults` added property `system_data`
+  - Model `SqlTriggerCreateUpdateParameters` added property `properties`
+  - Model `SqlTriggerGetResults` added property `properties`
+  - Model `SqlTriggerGetResults` added property `system_data`
+  - Model `SqlUserDefinedFunctionCreateUpdateParameters` added property `properties`
+  - Model `SqlUserDefinedFunctionGetResults` added property `properties`
+  - Model `SqlUserDefinedFunctionGetResults` added property `system_data`
+  - Enum `Status` added member `CREATING`
+  - Model `TableCreateUpdateParameters` added property `properties`
+  - Model `TableGetResults` added property `properties`
+  - Model `TableGetResults` added property `system_data`
+  - Model `ThroughputBucketResource` added property `is_default_bucket`
+  - Model `ThroughputPoolAccountResource` added property `properties`
+  - Model `ThroughputPoolResource` added property `properties`
+  - Model `ThroughputSettingsGetResults` added property `properties`
+  - Model `ThroughputSettingsGetResults` added property `system_data`
+  - Model `ThroughputSettingsUpdateParameters` added property `properties`
+  - Enum `VectorDataType` added member `FLOAT16`
+  - Model `VectorIndex` added property `quantization_byte_size`
+  - Model `VectorIndex` added property `indexing_search_list_size`
+  - Model `VectorIndex` added property `vector_index_shard_key`
+  - Added enum `AllocationState`
+  - Added model `AzureBlobContainer`
+  - Added model `AzureBlobSourceSinkDetails`
+  - Added model `BaseCopyJobProperties`
+  - Added model `BaseCopyJobTask`
+  - Added model `BlobToCassandraRUCopyJobProperties`
+  - Added model `BlobToCassandraRUCopyJobTask`
+  - Added model `CassandraKeyspaceCreateUpdateProperties`
+  - Added model `CassandraKeyspaceGetProperties`
+  - Added model `CassandraRUToBlobCopyJobProperties`
+  - Added model `CassandraRUToBlobCopyJobTask`
+  - Added model `CassandraRUToCassandraRUCopyJobProperties`
+  - Added model `CassandraRUToCassandraRUCopyJobTask`
+  - Added model `CassandraRoleAssignmentResource`
+  - Added model `CassandraRoleAssignmentResourceProperties`
+  - Added model `CassandraRoleDefinitionResource`
+  - Added model `CassandraRoleDefinitionResourceProperties`
+  - Added model `CassandraTableCreateUpdateProperties`
+  - Added model `CassandraTableGetProperties`
+  - Added model `CassandraViewCreateUpdateProperties`
+  - Added model `CassandraViewGetProperties`
+  - Added model `ChaosFaultProperties`
+  - Added model `ClientEncryptionKeyCreateUpdateProperties`
+  - Added model `ClientEncryptionKeyGetProperties`
+  - Added model `CloudError`
+  - Added model `ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems`
+  - Added model `CopyJobGetResults`
+  - Added enum `CopyJobMode`
+  - Added model `CopyJobProperties`
+  - Added enum `CopyJobStatus`
+  - Added enum `CopyJobType`
+  - Added model `CosmosDBCassandraTable`
+  - Added model `CosmosDBMongoCollection`
+  - Added model `CosmosDBMongoVCoreCollection`
+  - Added model `CosmosDBNoSqlContainer`
+  - Added model `CosmosDBSourceSinkDetails`
+  - Added model `DataMaskingPolicy`
+  - Added model `DataMaskingPolicyExcludedPathsItem`
+  - Added model `DataMaskingPolicyIncludedPathsItem`
+  - Added model `DatabaseAccountCreateUpdateProperties`
+  - Added model `DatabaseAccountGetProperties`
+  - Added model `DatabaseAccountUpdateProperties`
+  - Added model `FleetAnalyticsProperties`
+  - Added enum `FleetAnalyticsPropertiesStorageLocationType`
+  - Added model `FleetAnalyticsResource`
+  - Added model `FleetResource`
+  - Added model `FleetResourceProperties`
+  - Added model `FleetResourceUpdate`
+  - Added model `FleetspaceAccountProperties`
+  - Added model `FleetspaceAccountPropertiesGlobalDatabaseAccountProperties`
+  - Added model `FleetspaceAccountResource`
+  - Added model `FleetspaceProperties`
+  - Added enum `FleetspacePropertiesFleetspaceApiKind`
+  - Added enum `FleetspacePropertiesServiceTier`
+  - Added model `FleetspacePropertiesThroughputPoolConfiguration`
+  - Added model `FleetspaceResource`
+  - Added model `FleetspaceUpdate`
+  - Added model `FullTextIndexPath`
+  - Added model `FullTextPath`
+  - Added model `FullTextPolicy`
+  - Added enum `GarnetCacheProvisioningState`
+  - Added model `GarnetClusterResource`
+  - Added model `GarnetClusterResourcePatch`
+  - Added model `GarnetClusterResourcePatchProperties`
+  - Added model `GarnetClusterResourceProperties`
+  - Added model `GarnetClusterResourcePropertiesEndPointsItem`
+  - Added model `GraphResourceCreateUpdateProperties`
+  - Added model `GraphResourceGetProperties`
+  - Added model `GremlinDatabaseCreateUpdateProperties`
+  - Added model `GremlinDatabaseGetProperties`
+  - Added model `GremlinGraphCreateUpdateProperties`
+  - Added model `GremlinGraphGetProperties`
+  - Added model `GremlinRoleAssignmentResource`
+  - Added model `GremlinRoleAssignmentResourceProperties`
+  - Added model `GremlinRoleDefinitionResource`
+  - Added model `GremlinRoleDefinitionResourceProperties`
+  - Added model `ManagedServiceIdentityUserAssignedIdentities`
+  - Added model `MaterializedViewDetails`
+  - Added model `MaterializedViewsProperties`
+  - Added model `MongoDBCollectionCreateUpdateProperties`
+  - Added model `MongoDBCollectionGetProperties`
+  - Added model `MongoDBDatabaseCreateUpdateProperties`
+  - Added model `MongoDBDatabaseGetProperties`
+  - Added model `MongoMIRoleAssignmentResource`
+  - Added model `MongoMIRoleAssignmentResourceProperties`
+  - Added model `MongoMIRoleDefinitionResource`
+  - Added model `MongoMIRoleDefinitionResourceProperties`
+  - Added model `MongoRUToMongoRUCopyJobProperties`
+  - Added model `MongoRUToMongoRUCopyJobTask`
+  - Added model `MongoRUToMongoVCoreCopyJobProperties`
+  - Added model `MongoRUToMongoVCoreCopyJobTask`
+  - Added model `MongoRoleDefinitionResource`
+  - Added model `MongoUserDefinitionResource`
+  - Added model `MongoVCoreSourceSinkDetails`
+  - Added model `NoSqlRUToNoSqlRUCopyJobProperties`
+  - Added model `NoSqlRUToNoSqlRUCopyJobTask`
+  - Added model `RedistributeThroughputProperties`
+  - Added model `RestorableDatabaseAccountProperties`
+  - Added model `RestorableGremlinDatabaseProperties`
+  - Added model `RestorableGremlinGraphProperties`
+  - Added model `RestorableMongodbCollectionProperties`
+  - Added model `RestorableMongodbDatabaseProperties`
+  - Added model `RestorableSqlContainerProperties`
+  - Added model `RestorableSqlDatabaseProperties`
+  - Added model `RestorableTableProperties`
+  - Added model `RetrieveThroughputProperties`
+  - Added model `SqlContainerCreateUpdateProperties`
+  - Added model `SqlContainerGetProperties`
+  - Added model `SqlDatabaseCreateUpdateProperties`
+  - Added model `SqlDatabaseGetProperties`
+  - Added model `SqlRoleAssignmentResource`
+  - Added model `SqlRoleDefinitionResource`
+  - Added model `SqlStoredProcedureCreateUpdateProperties`
+  - Added model `SqlStoredProcedureGetProperties`
+  - Added model `SqlTriggerCreateUpdateProperties`
+  - Added model `SqlTriggerGetProperties`
+  - Added model `SqlUserDefinedFunctionCreateUpdateProperties`
+  - Added model `SqlUserDefinedFunctionGetProperties`
+  - Added model `TableCreateUpdateProperties`
+  - Added model `TableGetProperties`
+  - Added model `ThroughputPoolAccountProperties`
+  - Added model `ThroughputPoolProperties`
+  - Added model `ThroughputSettingsGetProperties`
+  - Added model `ThroughputSettingsUpdateProperties`
+  - Model `CassandraResourcesOperations` added method `begin_create_update_cassandra_role_assignment`
+  - Model `CassandraResourcesOperations` added method `begin_create_update_cassandra_role_definition`
+  - Model `CassandraResourcesOperations` added method `begin_delete_cassandra_role_assignment`
+  - Model `CassandraResourcesOperations` added method `begin_delete_cassandra_role_definition`
+  - Model `CassandraResourcesOperations` added method `get_cassandra_role_assignment`
+  - Model `CassandraResourcesOperations` added method `get_cassandra_role_definition`
+  - Model `CassandraResourcesOperations` added method `list_cassandra_role_assignments`
+  - Model `CassandraResourcesOperations` added method `list_cassandra_role_definitions`
+  - Model `GremlinResourcesOperations` added method `begin_create_update_gremlin_role_assignment`
+  - Model `GremlinResourcesOperations` added method `begin_create_update_gremlin_role_definition`
+  - Model `GremlinResourcesOperations` added method `begin_delete_gremlin_role_assignment`
+  - Model `GremlinResourcesOperations` added method `begin_delete_gremlin_role_definition`
+  - Model `GremlinResourcesOperations` added method `get_gremlin_role_assignment`
+  - Model `GremlinResourcesOperations` added method `get_gremlin_role_definition`
+  - Model `GremlinResourcesOperations` added method `list_gremlin_role_assignments`
+  - Model `GremlinResourcesOperations` added method `list_gremlin_role_definitions`
+  - Added model `CopyJobsOperations`
+  - Added model `FleetAnalyticsOperations`
+  - Added model `FleetOperations`
+  - Added model `FleetspaceAccountOperations`
+  - Added model `FleetspaceOperations`
+  - Added model `GarnetClustersOperations`
+  - Added model `MongoMIResourcesOperations`
+
+### Breaking Changes
+
+  - Model `CassandraKeyspaceCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `CassandraKeyspaceCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `CassandraKeyspaceGetResults` deleted or renamed its instance variable `resource`
+  - Model `CassandraKeyspaceGetResults` deleted or renamed its instance variable `options`
+  - Model `CassandraTableCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `CassandraTableCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `CassandraTableGetResults` deleted or renamed its instance variable `resource`
+  - Model `CassandraTableGetResults` deleted or renamed its instance variable `options`
+  - Model `CassandraViewCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `CassandraViewCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `CassandraViewGetResults` deleted or renamed its instance variable `resource`
+  - Model `CassandraViewGetResults` deleted or renamed its instance variable `options`
+  - Model `ChaosFaultResource` deleted or renamed its instance variable `action`
+  - Model `ChaosFaultResource` deleted or renamed its instance variable `region`
+  - Model `ChaosFaultResource` deleted or renamed its instance variable `database_name`
+  - Model `ChaosFaultResource` deleted or renamed its instance variable `container_name`
+  - Model `ChaosFaultResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `ClientEncryptionKeyCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `ClientEncryptionKeyGetResults` deleted or renamed its instance variable `resource`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `job_name`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `source`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `destination`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `status`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `processed_count`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `total_count`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `last_updated_utc_time`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `worker_count`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `error`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `duration`
+  - Model `DataTransferJobGetResults` deleted or renamed its instance variable `mode`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `consistency_policy`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `locations`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `ip_rules`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `is_virtual_network_filter_enabled`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_automatic_failover`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `capabilities`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `virtual_network_rules`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_multiple_write_locations`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_cassandra_connector`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `connector_offer`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `disable_key_based_metadata_write_access`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `key_vault_key_uri`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `default_identity`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_free_tier`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `api_properties`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_analytical_storage`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `analytical_storage_configuration`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `create_mode`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `backup_policy`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `cors`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `network_acl_bypass`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `network_acl_bypass_resource_ids`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `diagnostic_log_settings`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `restore_parameters`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `capacity`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `capacity_mode`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_materialized_views`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `keys_metadata`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_partition_merge`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_burst_capacity`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `minimal_tls_version`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `customer_managed_key_status`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_priority_based_execution`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `default_priority_level`
+  - Model `DatabaseAccountCreateUpdateParameters` deleted or renamed its instance variable `enable_per_region_per_partition_autoscale`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `provisioning_state`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `document_endpoint`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `database_account_offer_type`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `ip_rules`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `is_virtual_network_filter_enabled`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_automatic_failover`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `consistency_policy`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `capabilities`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `write_locations`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `read_locations`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `locations`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `failover_policies`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `virtual_network_rules`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_multiple_write_locations`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_cassandra_connector`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `connector_offer`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `disable_key_based_metadata_write_access`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `key_vault_key_uri`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `default_identity`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `public_network_access`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_free_tier`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `api_properties`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_analytical_storage`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `analytical_storage_configuration`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `instance_id`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `create_mode`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `restore_parameters`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `backup_policy`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `cors`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `network_acl_bypass`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `network_acl_bypass_resource_ids`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `diagnostic_log_settings`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `disable_local_auth`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `capacity`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `capacity_mode`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `capacity_mode_change_transition_state`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_materialized_views`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `keys_metadata`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_partition_merge`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_burst_capacity`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `minimal_tls_version`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `customer_managed_key_status`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_priority_based_execution`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `default_priority_level`
+  - Model `DatabaseAccountGetResults` deleted or renamed its instance variable `enable_per_region_per_partition_autoscale`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `consistency_policy`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `locations`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `ip_rules`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `is_virtual_network_filter_enabled`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_automatic_failover`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `capabilities`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `virtual_network_rules`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_multiple_write_locations`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_cassandra_connector`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `connector_offer`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `disable_key_based_metadata_write_access`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `key_vault_key_uri`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `default_identity`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_free_tier`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `api_properties`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_analytical_storage`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `analytical_storage_configuration`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `backup_policy`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `cors`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `network_acl_bypass`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `network_acl_bypass_resource_ids`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `diagnostic_log_settings`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `capacity`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `capacity_mode`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_materialized_views`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `keys_metadata`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_partition_merge`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_burst_capacity`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `minimal_tls_version`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `customer_managed_key_status`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_priority_based_execution`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `default_priority_level`
+  - Model `DatabaseAccountUpdateParameters` deleted or renamed its instance variable `enable_per_region_per_partition_autoscale`
+  - Model `GraphResourceCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `GraphResourceCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `GraphResourceGetResults` deleted or renamed its instance variable `resource`
+  - Model `GraphResourceGetResults` deleted or renamed its instance variable `options`
+  - Model `GremlinDatabaseCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `GremlinDatabaseCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `GremlinDatabaseGetResults` deleted or renamed its instance variable `resource`
+  - Model `GremlinDatabaseGetResults` deleted or renamed its instance variable `options`
+  - Model `GremlinGraphCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `GremlinGraphCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `GremlinGraphGetResults` deleted or renamed its instance variable `resource`
+  - Model `GremlinGraphGetResults` deleted or renamed its instance variable `options`
+  - Model `MongoDBCollectionCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `MongoDBCollectionCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `MongoDBCollectionGetResults` deleted or renamed its instance variable `resource`
+  - Model `MongoDBCollectionGetResults` deleted or renamed its instance variable `options`
+  - Model `MongoDBDatabaseCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `MongoDBDatabaseCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `MongoDBDatabaseGetResults` deleted or renamed its instance variable `resource`
+  - Model `MongoDBDatabaseGetResults` deleted or renamed its instance variable `options`
+  - Model `MongoIndexKeys` deleted or renamed its instance variable `keys`
+  - Model `MongoRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `role_name`
+  - Model `MongoRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `type`
+  - Model `MongoRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `database_name`
+  - Model `MongoRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `privileges`
+  - Model `MongoRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `roles`
+  - Model `MongoRoleDefinitionGetResults` deleted or renamed its instance variable `role_name`
+  - Model `MongoRoleDefinitionGetResults` deleted or renamed its instance variable `type_properties_type`
+  - Model `MongoRoleDefinitionGetResults` deleted or renamed its instance variable `database_name`
+  - Model `MongoRoleDefinitionGetResults` deleted or renamed its instance variable `privileges`
+  - Model `MongoRoleDefinitionGetResults` deleted or renamed its instance variable `roles`
+  - Model `MongoUserDefinitionCreateUpdateParameters` deleted or renamed its instance variable `user_name`
+  - Model `MongoUserDefinitionCreateUpdateParameters` deleted or renamed its instance variable `password`
+  - Model `MongoUserDefinitionCreateUpdateParameters` deleted or renamed its instance variable `database_name`
+  - Model `MongoUserDefinitionCreateUpdateParameters` deleted or renamed its instance variable `custom_data`
+  - Model `MongoUserDefinitionCreateUpdateParameters` deleted or renamed its instance variable `roles`
+  - Model `MongoUserDefinitionCreateUpdateParameters` deleted or renamed its instance variable `mechanisms`
+  - Model `MongoUserDefinitionGetResults` deleted or renamed its instance variable `user_name`
+  - Model `MongoUserDefinitionGetResults` deleted or renamed its instance variable `password`
+  - Model `MongoUserDefinitionGetResults` deleted or renamed its instance variable `database_name`
+  - Model `MongoUserDefinitionGetResults` deleted or renamed its instance variable `custom_data`
+  - Model `MongoUserDefinitionGetResults` deleted or renamed its instance variable `roles`
+  - Model `MongoUserDefinitionGetResults` deleted or renamed its instance variable `mechanisms`
+  - Model `RedistributeThroughputParameters` deleted or renamed its instance variable `resource`
+  - Model `RestorableDatabaseAccountGetResult` deleted or renamed its instance variable `account_name`
+  - Model `RestorableDatabaseAccountGetResult` deleted or renamed its instance variable `creation_time`
+  - Model `RestorableDatabaseAccountGetResult` deleted or renamed its instance variable `oldest_restorable_time`
+  - Model `RestorableDatabaseAccountGetResult` deleted or renamed its instance variable `deletion_time`
+  - Model `RestorableDatabaseAccountGetResult` deleted or renamed its instance variable `api_type`
+  - Model `RestorableDatabaseAccountGetResult` deleted or renamed its instance variable `restorable_locations`
+  - Model `RestorableGremlinDatabaseGetResult` deleted or renamed its instance variable `resource`
+  - Model `RestorableGremlinGraphGetResult` deleted or renamed its instance variable `resource`
+  - Model `RestorableMongodbCollectionGetResult` deleted or renamed its instance variable `resource`
+  - Model `RestorableMongodbDatabaseGetResult` deleted or renamed its instance variable `resource`
+  - Model `RestorableSqlContainerGetResult` deleted or renamed its instance variable `resource`
+  - Model `RestorableSqlDatabaseGetResult` deleted or renamed its instance variable `resource`
+  - Model `RestorableTableGetResult` deleted or renamed its instance variable `resource`
+  - Model `RetrieveThroughputParameters` deleted or renamed its instance variable `resource`
+  - Model `SqlContainerCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `SqlContainerCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `SqlContainerGetResults` deleted or renamed its instance variable `resource`
+  - Model `SqlContainerGetResults` deleted or renamed its instance variable `options`
+  - Model `SqlDatabaseCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `SqlDatabaseCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `SqlDatabaseGetResults` deleted or renamed its instance variable `resource`
+  - Model `SqlDatabaseGetResults` deleted or renamed its instance variable `options`
+  - Model `SqlRoleAssignmentCreateUpdateParameters` deleted or renamed its instance variable `role_definition_id`
+  - Model `SqlRoleAssignmentCreateUpdateParameters` deleted or renamed its instance variable `scope`
+  - Model `SqlRoleAssignmentCreateUpdateParameters` deleted or renamed its instance variable `principal_id`
+  - Model `SqlRoleAssignmentGetResults` deleted or renamed its instance variable `role_definition_id`
+  - Model `SqlRoleAssignmentGetResults` deleted or renamed its instance variable `scope`
+  - Model `SqlRoleAssignmentGetResults` deleted or renamed its instance variable `principal_id`
+  - Model `SqlRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `role_name`
+  - Model `SqlRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `type`
+  - Model `SqlRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `assignable_scopes`
+  - Model `SqlRoleDefinitionCreateUpdateParameters` deleted or renamed its instance variable `permissions`
+  - Model `SqlRoleDefinitionGetResults` deleted or renamed its instance variable `role_name`
+  - Model `SqlRoleDefinitionGetResults` deleted or renamed its instance variable `type_properties_type`
+  - Model `SqlRoleDefinitionGetResults` deleted or renamed its instance variable `assignable_scopes`
+  - Model `SqlRoleDefinitionGetResults` deleted or renamed its instance variable `permissions`
+  - Model `SqlStoredProcedureCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `SqlStoredProcedureCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `SqlStoredProcedureGetResults` deleted or renamed its instance variable `resource`
+  - Model `SqlTriggerCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `SqlTriggerCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `SqlTriggerGetResults` deleted or renamed its instance variable `resource`
+  - Model `SqlUserDefinedFunctionCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `SqlUserDefinedFunctionCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `SqlUserDefinedFunctionGetResults` deleted or renamed its instance variable `resource`
+  - Model `TableCreateUpdateParameters` deleted or renamed its instance variable `resource`
+  - Model `TableCreateUpdateParameters` deleted or renamed its instance variable `options`
+  - Model `TableGetResults` deleted or renamed its instance variable `resource`
+  - Model `TableGetResults` deleted or renamed its instance variable `options`
+  - Model `ThroughputPoolAccountResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `ThroughputPoolAccountResource` deleted or renamed its instance variable `account_resource_identifier`
+  - Model `ThroughputPoolAccountResource` deleted or renamed its instance variable `account_location`
+  - Model `ThroughputPoolAccountResource` deleted or renamed its instance variable `account_instance_id`
+  - Model `ThroughputPoolResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `ThroughputPoolResource` deleted or renamed its instance variable `max_throughput`
+  - Model `ThroughputPoolUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `ThroughputPoolUpdate` deleted or renamed its instance variable `max_throughput`
+  - Model `ThroughputSettingsGetResults` deleted or renamed its instance variable `resource`
+  - Model `ThroughputSettingsUpdateParameters` deleted or renamed its instance variable `resource`
+  - Deleted or renamed model `CassandraClusterDataCenterNodeItem`
+  - Deleted or renamed model `ChaosFaultListResponse`
+  - Deleted or renamed model `DataTransferJobFeedResults`
+  - Deleted or renamed model `DataTransferServiceResource`
+  - Deleted or renamed model `ExtendedResourceProperties`
+  - Deleted or renamed model `GraphAPIComputeServiceResource`
+  - Deleted or renamed model `ListBackups`
+  - Deleted or renamed model `ListClusters`
+  - Deleted or renamed model `ListCommands`
+  - Deleted or renamed model `ListDataCenters`
+  - Deleted or renamed model `ManagedCassandraARMResourceProperties`
+  - Deleted or renamed model `ManagedServiceIdentityUserAssignedIdentity`
+  - Deleted or renamed model `MaterializedViewsBuilderServiceResource`
+  - Deleted or renamed model `NodeStatus`
+  - Deleted or renamed model `PartitionUsagesResult`
+  - Deleted or renamed model `PermissionAutoGenerated`
+  - Deleted or renamed model `SqlDedicatedGatewayServiceResource`
+  - Deleted or renamed model `ThroughputPoolAccountCreateParameters`
+  - Deleted or renamed model `UsagesResult`
+  - Method `CassandraClustersOperations.begin_deallocate` changed its parameter `x_ms_force_deallocate` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableGremlinGraphsOperations.list` changed its parameter `restorable_gremlin_database_rid` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableGremlinGraphsOperations.list` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableGremlinGraphsOperations.list` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableGremlinResourcesOperations.list` changed its parameter `restore_location` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableGremlinResourcesOperations.list` changed its parameter `restore_timestamp_in_utc` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableMongodbCollectionsOperations.list` changed its parameter `restorable_mongodb_database_rid` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableMongodbCollectionsOperations.list` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableMongodbCollectionsOperations.list` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableMongodbResourcesOperations.list` changed its parameter `restore_location` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableMongodbResourcesOperations.list` changed its parameter `restore_timestamp_in_utc` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableSqlContainersOperations.list` changed its parameter `restorable_sql_database_rid` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableSqlContainersOperations.list` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableSqlContainersOperations.list` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableSqlResourcesOperations.list` changed its parameter `restore_location` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableSqlResourcesOperations.list` changed its parameter `restore_timestamp_in_utc` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableTableResourcesOperations.list` changed its parameter `restore_location` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableTableResourcesOperations.list` changed its parameter `restore_timestamp_in_utc` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableTablesOperations.list` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorableTablesOperations.list` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
+  - Method `SqlResourcesOperations.begin_create_update_sql_role_definition` re-ordered its parameters from `['self', 'role_definition_id', 'resource_group_name', 'account_name', 'create_update_sql_role_definition_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_definition_id', 'create_update_sql_role_definition_parameters', 'kwargs']`
+  - Method `SqlResourcesOperations.begin_create_update_sql_role_assignment` re-ordered its parameters from `['self', 'role_assignment_id', 'resource_group_name', 'account_name', 'create_update_sql_role_assignment_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_assignment_id', 'create_update_sql_role_assignment_parameters', 'kwargs']`
+  - Method `SqlResourcesOperations.get_sql_role_definition` re-ordered its parameters from `['self', 'role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_definition_id', 'kwargs']`
+  - Method `SqlResourcesOperations.begin_delete_sql_role_assignment` re-ordered its parameters from `['self', 'role_assignment_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_assignment_id', 'kwargs']`
+  - Method `SqlResourcesOperations.get_sql_role_assignment` re-ordered its parameters from `['self', 'role_assignment_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_assignment_id', 'kwargs']`
+  - Method `SqlResourcesOperations.begin_delete_sql_role_definition` re-ordered its parameters from `['self', 'role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_definition_id', 'kwargs']`
+  - Method `MongoDBResourcesOperations.begin_delete_mongo_user_definition` re-ordered its parameters from `['self', 'mongo_user_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_user_definition_id', 'kwargs']`
+  - Method `MongoDBResourcesOperations.begin_create_update_mongo_user_definition` re-ordered its parameters from `['self', 'mongo_user_definition_id', 'resource_group_name', 'account_name', 'create_update_mongo_user_definition_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_user_definition_id', 'create_update_mongo_user_definition_parameters', 'kwargs']`
+  - Method `MongoDBResourcesOperations.begin_create_update_mongo_role_definition` re-ordered its parameters from `['self', 'mongo_role_definition_id', 'resource_group_name', 'account_name', 'create_update_mongo_role_definition_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_role_definition_id', 'create_update_mongo_role_definition_parameters', 'kwargs']`
+  - Method `MongoDBResourcesOperations.begin_delete_mongo_role_definition` re-ordered its parameters from `['self', 'mongo_role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_role_definition_id', 'kwargs']`
+  - Method `MongoDBResourcesOperations.get_mongo_user_definition` re-ordered its parameters from `['self', 'mongo_user_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_user_definition_id', 'kwargs']`
+  - Method `MongoDBResourcesOperations.get_mongo_role_definition` re-ordered its parameters from `['self', 'mongo_role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_role_definition_id', 'kwargs']`
+
 ## 9.9.0 (2025-11-14)
 
 ### Features Added
