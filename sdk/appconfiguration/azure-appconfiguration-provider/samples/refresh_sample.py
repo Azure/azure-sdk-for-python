@@ -48,6 +48,10 @@ config = load(
 print(config["message"])
 print(config["my_json"]["key"])
 
+# [START refresh_call]
+config.refresh()
+# [END refresh_call]
+
 # Updating the configuration setting
 configuration_setting.value = "Hello World Updated!"
 

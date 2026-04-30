@@ -20,7 +20,11 @@ from azure.appconfiguration.provider import load, SettingSelector
 client_configs = {key_vault_uri: {"credential": credential}}
 selects = [SettingSelector(key_filter="*", label_filter="prod")]
 config = load(
-    endpoint=endpoint, credential=credential, keyvault_client_configs=client_configs, selects=selects, **kwargs
+    endpoint=endpoint,
+    credential=credential,
+    keyvault_client_configs=client_configs,
+    selects=selects,
+    **kwargs,
 )
 # [END key_vault_reference_customized_clients]
 

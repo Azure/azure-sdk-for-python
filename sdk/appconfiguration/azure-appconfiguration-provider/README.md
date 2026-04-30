@@ -93,7 +93,7 @@ config = load(
     selects=selects,
     feature_flag_enabled=True,
     feature_flag_selectors=None,
-    **kwargs
+    **kwargs,
 )
 ```
 
@@ -105,13 +105,17 @@ In this example all configuration with empty label and the dev label are loaded.
 
 You can filter configuration settings by tags using the `tag_filters` parameter on `SettingSelector`. Tag filters must follow the format `"tagName=tagValue"`.
 
+<!-- SNIPPET:entra_id_sample.tag_filters -->
+
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
-from azure.identity import DefaultAzureCredential
 
+# Filtering by tags
 selects = [SettingSelector(key_filter="*", tag_filters=["env=prod"])]
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), selects=selects)
+config = load(endpoint=endpoint, credential=credential, selects=selects, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 ### Loading from Snapshots
 
@@ -168,9 +172,13 @@ config = load(
 
 In this example, the sentinel key will be checked for changes no sooner than every 60 seconds. In order to check for changes, the provider's `refresh` method needs to be called.
 
+<!-- SNIPPET:refresh_sample.refresh_call -->
+
 ```python
 config.refresh()
 ```
+
+<!-- END SNIPPET -->
 
 Once the provider is refreshed, the configurations can be accessed as normal. And if any changes have been made it will be updated with the latest values. If the `refresh_interval` hasn't passed since the last refresh check, the provider will not check for changes.
 
@@ -194,11 +202,11 @@ config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, *
 
 ### Resolving Key Vault References
 
-Key Vault References can be resolved by providing credentials to your key vault to the provider using `AzureAppConfigurationKeyVaultOptions`.
+Key Vault References can be resolved by providing credentials to your key vault to the provider.
 
 #### With Credentials
 
-You can provide `AzureAppConfigurationKeyVaultOptions` with a credential and all key vault references will be resolved with it. The provider will attempt to connect to any key vault referenced with the credential provided.
+You can provide a `keyvault_credential` and all key vault references will be resolved with it. The provider will attempt to connect to any key vault referenced with the credential provided.
 
 <!-- SNIPPET:key_vault_reference_sample.key_vault_reference -->
 
@@ -213,9 +221,9 @@ config = load(endpoint=endpoint, credential=credential, keyvault_credential=cred
 
 <!-- END SNIPPET -->
 
-### With Clients
+#### With Client Configs
 
-You can provide `AzureAppConfigurationKeyVaultOptions` with a list of `SecretClients`.
+You can provide `keyvault_client_configs` with a mapping of Key Vault URIs to client configurations. This is useful when different Key Vaults require different credentials.
 
 <!-- SNIPPET:key_vault_reference_customized_clients_sample.key_vault_reference_customized_clients -->
 
@@ -226,40 +234,55 @@ from azure.appconfiguration.provider import load, SettingSelector
 client_configs = {key_vault_uri: {"credential": credential}}
 selects = [SettingSelector(key_filter="*", label_filter="prod")]
 config = load(
-    endpoint=endpoint, credential=credential, keyvault_client_configs=client_configs, selects=selects, **kwargs
+    endpoint=endpoint,
+    credential=credential,
+    keyvault_client_configs=client_configs,
+    selects=selects,
+    **kwargs,
 )
 ```
 
 <!-- END SNIPPET -->
 
-### Secret Resolver
+#### Secret Resolver
 
-If no Credentials or Clients are provided a secret resolver can be used. Secret resolver provides a way to return any value you want to a key vault reference.
+If no credentials or client configs are provided, a `secret_resolver` can be used. Secret resolver provides a way to return any value you want for a key vault reference.
+
+<!-- SNIPPET:key_vault_reference_sample.key_vault_reference_secret_resolver -->
 
 ```python
-from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
-from azure.identity import DefaultAzureCredential
+from azure.appconfiguration.provider import load
+
 
 def secret_resolver(uri):
     return "From Secret Resolver"
 
-key_vault_options = AzureAppConfigurationKeyVaultOptions(
-    secret_resolver=secret_resolver)
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
+
+config = load(endpoint=endpoint, credential=credential, secret_resolver=secret_resolver, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 ### Secret Refresh Interval
 
 When using Key Vault references, the provider can periodically refresh resolved secrets. By default, secrets are refreshed every 60 seconds. You can customize this with the `secret_refresh_interval` parameter (minimum 1 second).
 
+<!-- SNIPPET:key_vault_reference_sample.key_vault_reference_secret_refresh_interval -->
+
 ```python
+from azure.appconfiguration.provider import load
+
+# Refresh Key Vault secrets every 120 seconds
 config = load(
     endpoint=endpoint,
-    credential=DefaultAzureCredential(),
-    key_vault_options=key_vault_options,
-    secret_refresh_interval=120,  # Refresh secrets every 120 seconds
+    credential=credential,
+    keyvault_credential=credential,
+    secret_refresh_interval=120,
+    **kwargs,
 )
 ```
+
+<!-- END SNIPPET -->
 
 ## Geo Replication
 
@@ -267,38 +290,65 @@ The Azure App Configuration Provider library will automatically discover the pro
 
 Replica discovery is enabled by default. If you want to disable it, you can set `replica_discovery_enabled` to `False`.
 
+<!-- SNIPPET:entra_id_sample.geo_replication_disable_discovery -->
+
 ```python
 from azure.appconfiguration.provider import load
-from azure.identity import DefaultAzureCredential
 
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), replica_discovery_enabled=False)
+# Disabling replica discovery
+config = load(endpoint=endpoint, credential=credential, replica_discovery_enabled=False, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 You can also enable load balancing to distribute requests across replicas by setting `load_balancing_enabled` to `True`.
 
+<!-- SNIPPET:entra_id_sample.geo_replication_load_balancing -->
+
 ```python
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), load_balancing_enabled=True)
+from azure.appconfiguration.provider import load
+
+# Enabling load balancing across replicas
+config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=True, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 ## Loading Feature Flags
 
 Feature Flags can be loaded from config stores using the provider. Feature flags are loaded as a dictionary of key/value pairs stored in the provider under the `feature_management`, then `feature_flags`.
 
+<!-- SNIPPET:entra_id_sample.feature_flag_loading -->
+
 ```python
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flag_enabled=True)
+from azure.appconfiguration.provider import load
+
+config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
 alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
 
+<!-- END SNIPPET -->
+
 By default all feature flags with no label are loaded when `feature_flag_enabled` is set to `True`. If you want to load feature flags with a specific label you can use `SettingSelector` to filter the feature flags.
+
+<!-- SNIPPET:entra_id_sample.feature_flag_selector -->
 
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
 
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), feature_flag_enabled=True, feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")])
+config = load(
+    endpoint=endpoint,
+    credential=credential,
+    feature_flag_enabled=True,
+    feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")],
+    **kwargs,
+)
 alpha = config["feature_management"]["feature_flags"]["Alpha"]
 print(alpha["enabled"])
 ```
+
+<!-- END SNIPPET -->
 
 To enable refresh for feature flags you need to enable refresh. This will allow the provider to refresh feature flags the same way it refreshes configurations. Unlike configurations, all loaded feature flags are monitored for changes and will cause a refresh. Refresh of configuration settings and feature flags are independent of each other. Both are trigged by the `refresh` method, but a feature flag changing will not cause a refresh of configurations and vice versa. Also, if refresh for configuration settings is not enabled, feature flags can still be enabled for refresh.
 
@@ -327,35 +377,52 @@ config = load(
 
 Configuration settings with a JSON content type (e.g., `application/json`) are automatically deserialized into their corresponding Python objects when loaded by the provider.
 
+<!-- SNIPPET:entra_id_sample.json_content_type -->
+
 ```python
-# If a setting "app/config" has value '{"timeout": 30, "retries": 3}' with content type "application/json"
-config = load(endpoint=endpoint, credential=DefaultAzureCredential())
-app_config = config["app/config"]  # Returns a dict: {"timeout": 30, "retries": 3}
-print(app_config["timeout"])  # 30
+from azure.appconfiguration.provider import load
+
+# Settings with JSON content type are automatically deserialized
+config = load(endpoint=endpoint, credential=credential, **kwargs)
+app_config = config["app/config"]  # Returns a dict if the value is JSON
+print(app_config["timeout"])
 ```
+
+<!-- END SNIPPET -->
 
 ## Configuration Mapper
 
 You can provide a `configuration_mapper` callback to transform configuration settings before they are added to the provider.
 
+<!-- SNIPPET:entra_id_sample.configuration_mapper -->
+
 ```python
 from azure.appconfiguration.provider import load
-from azure.identity import DefaultAzureCredential
+
 
 def my_mapper(setting):
     # Transform the setting as needed
     setting.value = setting.value.strip()
 
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), configuration_mapper=my_mapper)
+
+config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 ## Startup Timeout
 
 The provider supports configurable startup timeout with automatic retry. By default, the provider allows 100 seconds for the initial load from Azure App Configuration. You can customize this with the `startup_timeout` parameter.
 
+<!-- SNIPPET:entra_id_sample.startup_timeout -->
+
 ```python
-config = load(endpoint=endpoint, credential=DefaultAzureCredential(), startup_timeout=200)
+from azure.appconfiguration.provider import load
+
+config = load(endpoint=endpoint, credential=credential, startup_timeout=200, **kwargs)
 ```
+
+<!-- END SNIPPET -->
 
 ## Async Support
 

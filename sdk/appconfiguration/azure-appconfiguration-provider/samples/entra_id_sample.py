@@ -47,10 +47,81 @@ config = load(
     selects=selects,
     feature_flag_enabled=True,
     feature_flag_selectors=None,
-    **kwargs
+    **kwargs,
 )
 # [END setting_selector_entra_id]
 
 print("message found: " + str("message" in config))
 print("test.message found: " + str("test.message" in config))
 print("feature_flag_enabled found: " + str(config.get("feature_management")))
+
+# [START tag_filters]
+from azure.appconfiguration.provider import load, SettingSelector
+
+# Filtering by tags
+selects = [SettingSelector(key_filter="*", tag_filters=["env=prod"])]
+config = load(endpoint=endpoint, credential=credential, selects=selects, **kwargs)
+# [END tag_filters]
+
+# [START geo_replication_disable_discovery]
+from azure.appconfiguration.provider import load
+
+# Disabling replica discovery
+config = load(endpoint=endpoint, credential=credential, replica_discovery_enabled=False, **kwargs)
+# [END geo_replication_disable_discovery]
+
+# [START geo_replication_load_balancing]
+from azure.appconfiguration.provider import load
+
+# Enabling load balancing across replicas
+config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=True, **kwargs)
+# [END geo_replication_load_balancing]
+
+# [START feature_flag_loading]
+from azure.appconfiguration.provider import load
+
+config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
+alpha = config["feature_management"]["feature_flags"]["Alpha"]
+print(alpha["enabled"])
+# [END feature_flag_loading]
+
+# [START feature_flag_selector]
+from azure.appconfiguration.provider import load, SettingSelector
+
+config = load(
+    endpoint=endpoint,
+    credential=credential,
+    feature_flag_enabled=True,
+    feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")],
+    **kwargs,
+)
+alpha = config["feature_management"]["feature_flags"]["Alpha"]
+print(alpha["enabled"])
+# [END feature_flag_selector]
+
+# [START json_content_type]
+from azure.appconfiguration.provider import load
+
+# Settings with JSON content type are automatically deserialized
+config = load(endpoint=endpoint, credential=credential, **kwargs)
+app_config = config["app/config"]  # Returns a dict if the value is JSON
+print(app_config["timeout"])
+# [END json_content_type]
+
+# [START configuration_mapper]
+from azure.appconfiguration.provider import load
+
+
+def my_mapper(setting):
+    # Transform the setting as needed
+    setting.value = setting.value.strip()
+
+
+config = load(endpoint=endpoint, credential=credential, configuration_mapper=my_mapper, **kwargs)
+# [END configuration_mapper]
+
+# [START startup_timeout]
+from azure.appconfiguration.provider import load
+
+config = load(endpoint=endpoint, credential=credential, startup_timeout=200, **kwargs)
+# [END startup_timeout]
