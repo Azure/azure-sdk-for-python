@@ -1,0 +1,10 @@
+{
+    "CrossLanguagePackageId": "Serialization.EncodedName.Json",
+    "CrossLanguageDefinitionId": {
+        "serialization.encodedname.json.models.JsonEncodedNameModel": "Serialization.EncodedName.Json.Property.JsonEncodedNameModel",
+        "serialization.encodedname.json.operations.PropertyOperations.send": "Serialization.EncodedName.Json.Property.send",
+        "serialization.encodedname.json.aio.operations.PropertyOperations.send": "Serialization.EncodedName.Json.Property.send",
+        "serialization.encodedname.json.operations.PropertyOperations.get": "Serialization.EncodedName.Json.Property.get",
+        "serialization.encodedname.json.aio.operations.PropertyOperations.get": "Serialization.EncodedName.Json.Property.get"
+    }
+}
