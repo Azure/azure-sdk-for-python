@@ -4,13 +4,15 @@
 
 ### Features Added
 
-- Below clients and models are added for knowledge base support
+- Below clients, models, and enum members are added for knowledge base support
   - `azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient`
   - `azure.search.documents.indexes.models.AzureBlobKnowledgeSource`
   - `azure.search.documents.indexes.models.IndexedOneLakeKnowledgeSource`
   - `azure.search.documents.indexes.models.KnowledgeBase`
   - `azure.search.documents.indexes.models.SearchIndexKnowledgeSource`
   - `azure.search.documents.indexes.models.WebKnowledgeSource`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseModelWebSummarizationActivityRecord`
   - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalMinimalReasoningEffort`
   - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort`
   - `azure.search.documents.knowledgebases.models.KnowledgeSourceStatistics`
@@ -75,6 +77,7 @@
   - `azure.search.documents.indexes.models.KnowledgeRetrievalLowReasoningEffort`
   - `azure.search.documents.indexes.models.KnowledgeRetrievalMediumReasoningEffort`
   - `azure.search.documents.indexes.models.KnowledgeRetrievalOutputMode`
+  - `azure.search.documents.indexes.models.KnowledgeSourceIngestionPermissionOption`
   - `azure.search.documents.indexes.models.PermissionFilter`
   - `azure.search.documents.indexes.models.SearchIndexerCache`
   - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
@@ -122,6 +125,7 @@
   - `azure.search.documents.indexes.models.KnowledgeBase.output_mode`
   - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_instructions`
   - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_reasoning_effort`
+  - `azure.search.documents.indexes.models.KnowledgeSourceIngestionParameters.ingestion_permission_options`
   - `azure.search.documents.indexes.models.SearchField.permission_filter`
   - `azure.search.documents.indexes.models.SearchField.sensitivity_label`
   - `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`
