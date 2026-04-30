@@ -49,10 +49,9 @@ readme = {file = [
 
 [tool.setuptools.packages.find]
 exclude = [
-    "tests",
     "azure",
     "azure.maps",
-    "azure.*",
+    "azure.maps.geolocation",
     "doc*",
     "generated_samples*",
     "generated_tests*",
