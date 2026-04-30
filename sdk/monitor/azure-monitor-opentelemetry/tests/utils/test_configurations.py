@@ -804,6 +804,12 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "parentbased_trace_id_ratio")
 
+    @patch.dict("os.environ", {}, clear=True)
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_sets_distro_version_env_var(self, resource_create_mock):
+        _get_configurations()
+        self.assertEqual(environ.get("AZURE_MONITOR_DISTRO_VERSION"), VERSION)
+
     @patch.dict(
         "os.environ",
         {

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from azure.monitor.opentelemetry.exporter._constants import (  # pylint: disable=import-error,no-name-in-module
+    _AZURE_MONITOR_DISTRO_VERSION,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
 )
 
