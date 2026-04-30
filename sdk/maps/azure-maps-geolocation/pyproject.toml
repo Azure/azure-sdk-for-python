@@ -51,7 +51,6 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.maps",
-    "azure.maps.geolocation",
     "doc*",
     "generated_samples*",
     "generated_tests*",
