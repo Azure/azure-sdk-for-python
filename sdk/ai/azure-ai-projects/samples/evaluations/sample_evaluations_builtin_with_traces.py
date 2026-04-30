@@ -130,7 +130,7 @@ dependencies
     return []
 
 
-def main() -> None:
+def main() -> None:  # pylint: disable=too-many-statements
     parser = argparse.ArgumentParser(description="Run Azure AI trace evaluations against agent traces.")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--agent-id", default=None, help="Agent ID for server-side trace resolution")

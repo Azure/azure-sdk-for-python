@@ -68,7 +68,17 @@ def _build_evaluator_config(
     evaluator_name: str,
     response_mapping: str,
 ) -> TestingCriterionAzureAIEvaluator:
-    """Create a standard Azure AI evaluator configuration block."""
+    """Create a standard Azure AI evaluator configuration block.
+
+    :param name: Display name for this testing criterion.
+    :type name: str
+    :param evaluator_name: Built-in evaluator identifier.
+    :type evaluator_name: str
+    :param response_mapping: Response mapping expression used by the evaluator.
+    :type response_mapping: str
+    :return: Evaluator configuration used in the evaluation group.
+    :rtype: ~azure.ai.projects.models.TestingCriterionAzureAIEvaluator
+    """
     return TestingCriterionAzureAIEvaluator(
         type="azure_ai_evaluator",
         name=name,
