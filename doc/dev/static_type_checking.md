@@ -5,7 +5,7 @@ It also walks through the setup necessary to run mypy and pyright, static type c
 
 For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md).
 
-> Note: If you are seeing typing errors in **generated code**, please first try to regenerate with the latest version of the generator. If typing errors persist, open an issue in the [generator repo](https://github.com/Azure/autorest.python).
+> Note: If you are seeing typing errors in **generated code**, please first try to regenerate with the latest version of the generator. If typing errors persist, open an issue in the [TypeSpec repo](https://github.com/microsoft/typespec) for TypeSpec-based SDKs or the [autorest.python repo](https://github.com/Azure/autorest.python) for swagger-based SDKs.
 
 ## Table of contents
   - [Intro to typing in Python](#intro-to-typing-in-python)
