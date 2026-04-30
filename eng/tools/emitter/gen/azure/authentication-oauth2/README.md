@@ -11,7 +11,7 @@ python -m pip install authentication-oauth2
 
 #### Prequisites
 
-- Python 3.9 or later is required to use this package.
+- Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Authentication Oauth2 instance.
 

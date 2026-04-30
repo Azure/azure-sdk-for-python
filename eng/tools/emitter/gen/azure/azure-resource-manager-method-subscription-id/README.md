@@ -11,7 +11,7 @@ python -m pip install azure-resourcemanager-methodsubscriptionid
 
 #### Prequisites
 
-- Python 3.9 or later is required to use this package.
+- Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Methodsubscriptionid Management instance.
 

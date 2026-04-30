@@ -11,7 +11,7 @@ python -m pip install specs-azure-clientgenerator-core-clientinitialization-defa
 
 #### Prequisites
 
-- Python 3.9 or later is required to use this package.
+- Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Specs Azure Clientgenerator Core Clientinitialization Default instance.
 
