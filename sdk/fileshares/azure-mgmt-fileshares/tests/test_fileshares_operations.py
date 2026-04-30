@@ -25,6 +25,10 @@ class TestFileSharesOperations(AzureMgmtRecordedTestCase):
             credential_scopes=["https://management.azure.com/.default"],
         )
 
+    # No proxy recording is committed for this test yet, so it only runs when
+    # AZURE_TEST_RUN_LIVE=true. Once a recording is captured and pushed to the
+    # assets repo, this marker can be removed.
+    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_operations_list(self):
         # `operations.list()` is a tenant-scope ARM call that needs no resource group

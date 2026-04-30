@@ -56,6 +56,10 @@ class TestFileSharesCrud(AzureMgmtRecordedTestCase):
             credential_scopes=["https://management.azure.com/.default"],
         )
 
+    # No proxy recording is committed for this test yet, so it only runs when
+    # AZURE_TEST_RUN_LIVE=true. Once a recording is captured and pushed to the
+    # assets repo, this marker can be removed.
+    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_file_share_crud(self):
         # Use a short, unique name per run so concurrent test runs don't collide.
