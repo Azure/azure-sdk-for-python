@@ -48,7 +48,6 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.digitaltwins",
-    "azure.digitaltwins.core",
     "doc*",
     "generated_samples*",
     "generated_tests*",
