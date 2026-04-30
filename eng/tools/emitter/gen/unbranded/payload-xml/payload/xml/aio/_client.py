@@ -1,0 +1,268 @@
+# coding=utf-8
+
+from copy import deepcopy
+from typing import Any, Awaitable
+from typing_extensions import Self
+
+from corehttp.rest import AsyncHttpResponse, HttpRequest
+from corehttp.runtime import AsyncPipelineClient, policies
+
+from .._utils.serialization import Deserializer, Serializer
+from ._configuration import XmlClientConfiguration
+from .operations import (
+    ModelWithArrayOfModelValueOperations,
+    ModelWithAttributesValueOperations,
+    ModelWithDatetimeValueOperations,
+    ModelWithDictionaryValueOperations,
+    ModelWithEmptyArrayValueOperations,
+    ModelWithEncodedNamesValueOperations,
+    ModelWithEnumValueOperations,
+    ModelWithNamespaceOnPropertiesValueOperations,
+    ModelWithNamespaceValueOperations,
+    ModelWithNestedModelValueOperations,
+    ModelWithOptionalFieldValueOperations,
+    ModelWithRenamedArraysValueOperations,
+    ModelWithRenamedAttributeValueOperations,
+    ModelWithRenamedFieldsValueOperations,
+    ModelWithRenamedNestedModelValueOperations,
+    ModelWithRenamedPropertyValueOperations,
+    ModelWithRenamedUnwrappedModelArrayValueOperations,
+    ModelWithRenamedWrappedAndItemModelArrayValueOperations,
+    ModelWithRenamedWrappedModelArrayValueOperations,
+    ModelWithSimpleArraysValueOperations,
+    ModelWithTextValueOperations,
+    ModelWithUnwrappedArrayValueOperations,
+    ModelWithUnwrappedModelArrayValueOperations,
+    ModelWithWrappedPrimitiveCustomItemNamesValueOperations,
+    SimpleModelValueOperations,
+    XmlErrorValueOperations,
+)
+
+
+class XmlClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """Sends and receives bodies in XML format.
+
+    :ivar simple_model_value: SimpleModelValueOperations operations
+    :vartype simple_model_value: payload.xml.aio.operations.SimpleModelValueOperations
+    :ivar model_with_renamed_property_value: ModelWithRenamedPropertyValueOperations operations
+    :vartype model_with_renamed_property_value:
+     payload.xml.aio.operations.ModelWithRenamedPropertyValueOperations
+    :ivar model_with_renamed_fields_value: ModelWithRenamedFieldsValueOperations operations
+    :vartype model_with_renamed_fields_value:
+     payload.xml.aio.operations.ModelWithRenamedFieldsValueOperations
+    :ivar model_with_nested_model_value: ModelWithNestedModelValueOperations operations
+    :vartype model_with_nested_model_value:
+     payload.xml.aio.operations.ModelWithNestedModelValueOperations
+    :ivar model_with_renamed_nested_model_value: ModelWithRenamedNestedModelValueOperations
+     operations
+    :vartype model_with_renamed_nested_model_value:
+     payload.xml.aio.operations.ModelWithRenamedNestedModelValueOperations
+    :ivar model_with_simple_arrays_value: ModelWithSimpleArraysValueOperations operations
+    :vartype model_with_simple_arrays_value:
+     payload.xml.aio.operations.ModelWithSimpleArraysValueOperations
+    :ivar model_with_unwrapped_array_value: ModelWithUnwrappedArrayValueOperations operations
+    :vartype model_with_unwrapped_array_value:
+     payload.xml.aio.operations.ModelWithUnwrappedArrayValueOperations
+    :ivar model_with_renamed_arrays_value: ModelWithRenamedArraysValueOperations operations
+    :vartype model_with_renamed_arrays_value:
+     payload.xml.aio.operations.ModelWithRenamedArraysValueOperations
+    :ivar model_with_wrapped_primitive_custom_item_names_value:
+     ModelWithWrappedPrimitiveCustomItemNamesValueOperations operations
+    :vartype model_with_wrapped_primitive_custom_item_names_value:
+     payload.xml.aio.operations.ModelWithWrappedPrimitiveCustomItemNamesValueOperations
+    :ivar model_with_array_of_model_value: ModelWithArrayOfModelValueOperations operations
+    :vartype model_with_array_of_model_value:
+     payload.xml.aio.operations.ModelWithArrayOfModelValueOperations
+    :ivar model_with_unwrapped_model_array_value: ModelWithUnwrappedModelArrayValueOperations
+     operations
+    :vartype model_with_unwrapped_model_array_value:
+     payload.xml.aio.operations.ModelWithUnwrappedModelArrayValueOperations
+    :ivar model_with_renamed_wrapped_model_array_value:
+     ModelWithRenamedWrappedModelArrayValueOperations operations
+    :vartype model_with_renamed_wrapped_model_array_value:
+     payload.xml.aio.operations.ModelWithRenamedWrappedModelArrayValueOperations
+    :ivar model_with_renamed_unwrapped_model_array_value:
+     ModelWithRenamedUnwrappedModelArrayValueOperations operations
+    :vartype model_with_renamed_unwrapped_model_array_value:
+     payload.xml.aio.operations.ModelWithRenamedUnwrappedModelArrayValueOperations
+    :ivar model_with_renamed_wrapped_and_item_model_array_value:
+     ModelWithRenamedWrappedAndItemModelArrayValueOperations operations
+    :vartype model_with_renamed_wrapped_and_item_model_array_value:
+     payload.xml.aio.operations.ModelWithRenamedWrappedAndItemModelArrayValueOperations
+    :ivar model_with_attributes_value: ModelWithAttributesValueOperations operations
+    :vartype model_with_attributes_value:
+     payload.xml.aio.operations.ModelWithAttributesValueOperations
+    :ivar model_with_renamed_attribute_value: ModelWithRenamedAttributeValueOperations operations
+    :vartype model_with_renamed_attribute_value:
+     payload.xml.aio.operations.ModelWithRenamedAttributeValueOperations
+    :ivar model_with_namespace_value: ModelWithNamespaceValueOperations operations
+    :vartype model_with_namespace_value:
+     payload.xml.aio.operations.ModelWithNamespaceValueOperations
+    :ivar model_with_namespace_on_properties_value: ModelWithNamespaceOnPropertiesValueOperations
+     operations
+    :vartype model_with_namespace_on_properties_value:
+     payload.xml.aio.operations.ModelWithNamespaceOnPropertiesValueOperations
+    :ivar model_with_text_value: ModelWithTextValueOperations operations
+    :vartype model_with_text_value: payload.xml.aio.operations.ModelWithTextValueOperations
+    :ivar model_with_optional_field_value: ModelWithOptionalFieldValueOperations operations
+    :vartype model_with_optional_field_value:
+     payload.xml.aio.operations.ModelWithOptionalFieldValueOperations
+    :ivar model_with_empty_array_value: ModelWithEmptyArrayValueOperations operations
+    :vartype model_with_empty_array_value:
+     payload.xml.aio.operations.ModelWithEmptyArrayValueOperations
+    :ivar model_with_dictionary_value: ModelWithDictionaryValueOperations operations
+    :vartype model_with_dictionary_value:
+     payload.xml.aio.operations.ModelWithDictionaryValueOperations
+    :ivar model_with_encoded_names_value: ModelWithEncodedNamesValueOperations operations
+    :vartype model_with_encoded_names_value:
+     payload.xml.aio.operations.ModelWithEncodedNamesValueOperations
+    :ivar model_with_enum_value: ModelWithEnumValueOperations operations
+    :vartype model_with_enum_value: payload.xml.aio.operations.ModelWithEnumValueOperations
+    :ivar model_with_datetime_value: ModelWithDatetimeValueOperations operations
+    :vartype model_with_datetime_value: payload.xml.aio.operations.ModelWithDatetimeValueOperations
+    :ivar xml_error_value: XmlErrorValueOperations operations
+    :vartype xml_error_value: payload.xml.aio.operations.XmlErrorValueOperations
+    :keyword endpoint: Service host. Default value is "http://localhost:3000".
+    :paramtype endpoint: str
+    """
+
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, *, endpoint: str = "http://localhost:3000", **kwargs: Any
+    ) -> None:
+        _endpoint = "{endpoint}"
+        self._config = XmlClientConfiguration(endpoint=endpoint, **kwargs)
+
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.logging_policy,
+            ]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(endpoint=_endpoint, policies=_policies, **kwargs)
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+        self.simple_model_value = SimpleModelValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_property_value = ModelWithRenamedPropertyValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_fields_value = ModelWithRenamedFieldsValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_nested_model_value = ModelWithNestedModelValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_nested_model_value = ModelWithRenamedNestedModelValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_simple_arrays_value = ModelWithSimpleArraysValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_unwrapped_array_value = ModelWithUnwrappedArrayValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_arrays_value = ModelWithRenamedArraysValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_wrapped_primitive_custom_item_names_value = (
+            ModelWithWrappedPrimitiveCustomItemNamesValueOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.model_with_array_of_model_value = ModelWithArrayOfModelValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_unwrapped_model_array_value = ModelWithUnwrappedModelArrayValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_wrapped_model_array_value = ModelWithRenamedWrappedModelArrayValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_unwrapped_model_array_value = ModelWithRenamedUnwrappedModelArrayValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_wrapped_and_item_model_array_value = (
+            ModelWithRenamedWrappedAndItemModelArrayValueOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.model_with_attributes_value = ModelWithAttributesValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_renamed_attribute_value = ModelWithRenamedAttributeValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_namespace_value = ModelWithNamespaceValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_namespace_on_properties_value = ModelWithNamespaceOnPropertiesValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_text_value = ModelWithTextValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_optional_field_value = ModelWithOptionalFieldValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_empty_array_value = ModelWithEmptyArrayValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_dictionary_value = ModelWithDictionaryValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_encoded_names_value = ModelWithEncodedNamesValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_enum_value = ModelWithEnumValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.model_with_datetime_value = ModelWithDatetimeValueOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.xml_error_value = XmlErrorValueOperations(self._client, self._config, self._serialize, self._deserialize)
+
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from corehttp.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~corehttp.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~corehttp.rest.AsyncHttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)

@@ -1,0 +1,7 @@
+{
+    "CrossLanguagePackageId": "Client.AlternateApiVersion.Service.Header",
+    "CrossLanguageDefinitionId": {
+        "client.alternateapiversion.service.header.HeaderClient.header_api_version": "Client.AlternateApiVersion.Service.Header.headerApiVersion",
+        "client.alternateapiversion.service.header.aio.HeaderClient.header_api_version": "Client.AlternateApiVersion.Service.Header.headerApiVersion"
+    }
+}
