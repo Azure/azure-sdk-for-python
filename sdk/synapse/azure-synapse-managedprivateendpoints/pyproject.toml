@@ -51,7 +51,6 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.synapse",
-    "azure.synapse.managedprivateendpoints",
     "doc*",
     "generated_samples*",
     "generated_tests*",
