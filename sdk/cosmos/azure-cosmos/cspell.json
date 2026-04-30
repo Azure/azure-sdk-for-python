@@ -4,6 +4,8 @@
         "perfresults",
         "ppcb",
         "hdrh",
-        "hdrhistogram"
+        "hdrhistogram",
+        "reranker",
+        "Reranker"
     ]
 }
