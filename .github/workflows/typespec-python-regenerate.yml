@@ -206,7 +206,7 @@ jobs:
 
           # Reuse an existing open tracking issue if one exists (matched by title).
           EXISTING_ISSUE=$(gh issue list --state open --search "\"$TITLE\" in:title" \
-            --json number,title --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n1 || echo "")
+            --json number,title | jq -r --arg title "$TITLE" '.[] | select(.title == $title) | .number' | head -n1 || echo "")
 
           if [ -n "$EXISTING_ISSUE" ]; then
             echo "Updating existing issue #$EXISTING_ISSUE"
