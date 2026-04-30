@@ -485,6 +485,7 @@ from azure.core.pipeline.policies import (
 | HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | logger | x | x | If specified, it will be used to log information |
 |  |  | http_logging_level | x | x | The logging level to use for HTTP request and response logs. Defaults to `logging.INFO`. |
+|  |  | allowed_query_params | x |  | Additional URL query parameters to allow in logs. These are additive to the default allowlist (which includes `api-version`). Applies to `DistributedTracingPolicy` as well. |
 | ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | response_encoding | x | x | The encoding to use if known for this service (will disable auto-detection). |
 | ProxyPolicy | SansIOHTTPPolicy |  |  |  |  |
@@ -495,6 +496,7 @@ from azure.core.pipeline.policies import (
 | DistributedTracingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | network_span_namer | x | x | A callable to customize the span name. |
 |  |  | tracing_attributes | x | x | Attributes to set on all created spans. |
+|  |  | allowed_query_params | x | | Additional URL query parameters to allow in span attributes. These are additive to the default allowlist (which includes `api-version`). Applies to `HttpLoggingPolicy` as well. |
 | --- | --- | --- | --- | --- | --- |
 | RedirectPolicy | HTTPPolicy |  |  |  |  |
 |  |  | permit_redirects | x | x | Whether the client allows redirects. Defaults to `True`. |
