@@ -48,19 +48,8 @@ readme = {file = [
 
 [tool.setuptools.packages.find]
 exclude = [
-    "samples",
-    "samples.utils",
-    "samples.agents_tools",
-    "samples.agents_async",
-    "samples.agents_multiagent",
-    "samples.agents_streaming",
-    "samples.agents_telemetry",
-    "samples.assets",
-    "samples.agents_async.utils",
-    "tests",
     "azure",
     "azure.ai",
-    "azure.*",
     "doc*",
     "generated_samples*",
     "generated_tests*",
