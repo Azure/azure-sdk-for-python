@@ -31,14 +31,14 @@ keywords = [
     "azure",
     "azure sdk",
 ]
+version = "0.1.0"
 dependencies = []
-dynamic = ["version", "readme"]
+dynamic = ["readme"]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.storage.extensions._version.VERSION"}
 readme = {file = [
     "README.md",
     "CHANGELOG.md",
