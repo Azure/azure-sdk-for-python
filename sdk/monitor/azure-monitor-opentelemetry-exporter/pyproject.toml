@@ -55,8 +55,6 @@ exclude = [
     "azure",
     "azure.monitor",
     "azure.monitor.opentelemetry",
-    "azure.monitor.opentelemetry.exporter",
-    "azure.monitor.opentelemetry.exporter._generated",
     "doc*",
     "generated_samples*",
     "generated_tests*",
