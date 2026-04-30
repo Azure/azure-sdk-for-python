@@ -210,7 +210,10 @@ jobs:
 
           if [ -n "$EXISTING_ISSUE" ]; then
             echo "Updating existing issue #$EXISTING_ISSUE"
-            gh issue edit "$EXISTING_ISSUE" --body "$ISSUE_BODY"
+            # Re-apply expected label and assignees in case they were removed from the existing issue.
+            gh issue edit "$EXISTING_ISSUE" --body "$ISSUE_BODY" \
+              --add-label "typespec-python" \
+              --add-assignee iscai-msft,msyyc
             ISSUE_NUMBER="$EXISTING_ISSUE"
           else
             echo "Creating new tracking issue"
