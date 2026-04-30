@@ -172,8 +172,13 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 if assert_func(test_group_name):
                     break
                 time.sleep(1)
+            assert assert_func(test_group_name)
+
+        _test(
+            enable_auto_rejoin=True,
             test_group_name="test_rejoin_group",
             assert_func=lambda x: x in TEST_RESULT,
+        )
         _test(
             enable_auto_rejoin=False,
             test_group_name="test_disable_rejoin_group",

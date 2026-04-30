@@ -40,7 +40,7 @@ try:
     endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
 except KeyError:
     LOG.error(
-        "Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set if before running the example"
+        "Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set it before running the example"
     )
     exit()
 

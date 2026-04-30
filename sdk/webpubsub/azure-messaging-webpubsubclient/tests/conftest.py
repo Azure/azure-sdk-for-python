@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import os
+import re
 import pytest
 from dotenv import load_dotenv
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
@@ -34,6 +35,6 @@ load_dotenv()
 def add_sanitizers(test_proxy):
     endpoint = os.environ.get("WEBPUBSUBCLIENT_ENDPOINT", "WEBPUBSUBCLIENT_ENDPOINT")
     add_general_regex_sanitizer(
-        regex=endpoint,
+        regex=re.escape(endpoint),
         value="https://myservice.webpubsub.azure.com",
     )

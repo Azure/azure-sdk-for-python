@@ -38,19 +38,19 @@ class TestWebpubsubSmokeAsync(WebpubsubAsyncTest):
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_hello_world_with_connection_string(self, webpubsub_endpoint):
+    async def test_hello_world(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         await client.send_to_all(message="Hello, World!", content_type="text/plain")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_hello_world_with_connection_string_json(self, webpubsub_endpoint):
+    async def test_hello_world_json(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         await client.send_to_all(message={"hello": "world!"})
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_hello_world_with_connection_string_binary(self, webpubsub_endpoint):
+    async def test_hello_world_binary(self, webpubsub_endpoint):
         client = self.create_client(endpoint=webpubsub_endpoint, hub="hub")
         await client.send_to_all(message=b"Hello, World!", content_type="application/octet-stream")
 
