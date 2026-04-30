@@ -57,6 +57,7 @@ This table shows the relationship between SDK versions and supported API service
 
 | SDK version | Supported API service version |
 | ----------- | ----------------------------- |
+| 1.2.0b1     | 2025-11-01                    |
 | 1.1.0       | 2025-11-01                    |
 | 1.0.1       | 2025-11-01                    |
 | 1.0.0       | 2025-11-01                    |
@@ -517,6 +518,58 @@ async def analyze_invoice():
 asyncio.run(analyze_invoice())
 ```
 
+#### Convert results to LLM-ready text
+
+Use the `to_llm_input()` helper to convert any analysis result into a text format that LLMs
+can consume directly — YAML front matter with extracted fields followed by the markdown body.
+This works with all content types (documents, images, audio, video) and handles multi-segment
+results and classification hierarchies automatically. Run from the `samples/` directory:
+
+```python
+from azure.ai.contentunderstanding import ContentUnderstandingClient, to_llm_input
+from azure.identity import DefaultAzureCredential
+
+client = ContentUnderstandingClient(endpoint, DefaultAzureCredential())
+
+# Analyze a document with text, tables, and charts using prebuilt-documentSearch (CU's primary RAG analyzer)
+with open("sample_files/sample_document_features.pdf", "rb") as f:
+    poller = client.begin_analyze_binary(
+        analyzer_id="prebuilt-documentSearch",
+        binary_input=f.read(),
+    )
+result = poller.result()
+
+# One line to get LLM-ready text
+text = to_llm_input(result)
+print(text)
+# Output:
+#   ---
+#   contentType: document
+#   pages: 1
+#   fields:
+#     Summary: The document provides an overview of Latin, includes a sample
+#       table with names and corporate affiliations, presents a bar chart
+#       figure illustrating monthly values, and describes the AI Document
+#       Intelligence service...
+#   ---
+#   <!-- page 1 -->
+#   # ==This is title==
+#   ## 1. Text
+#   [Latin](https://en.wikipedia.org/wiki/Latin) refers to an ancient Italic language...
+#   ## 2. Page Objects
+#   ### 2.1 Table
+#   <table><caption>Table 1: This is a dummy table</caption>...</table>
+#   ### 2.2. Figure
+#   ![Values...](figures/1.1 "Bar chart with six bars: Jan=200, Feb=300...")
+#   ```chart
+#   {"type":"bar","data":{"labels":["Jan","Feb",...],...}}
+#   ```
+#   ...
+```
+
+See the [advanced sample][python_cu_sample_to_llm_input] for output options (fields-only,
+markdown-only, custom metadata), multi-page content ranges, and multi-segment video.
+
 ## Troubleshooting
 
 ### Common issues
@@ -567,7 +620,7 @@ This package includes [GitHub Copilot][github_copilot] skills under `.github/ski
 | Skill | Description | How to Use |
 |-------|-------------|------------|
 | [**cu-sdk-setup**][cu_sdk_setup_skill] | Interactive environment setup wizard — creates virtual environment, installs the SDK, configures `.env`, helps set up model deployments, and runs model defaults | In VS Code Copilot Chat, ask: *"Help me set up the Content Understanding Python SDK"* or reference the skill directly |
-| [**cu-sdk-py-sample-run**][cu_sdk_py_sample_run_skill] | Guided sample runner — helps you choose and run sync/async samples with troubleshooting | Ask: *"Run a Content Understanding sample"* or *"Run sample_analyze_invoice"* |
+| [**cu-sdk-sample-run**][cu_sdk_sample_run_skill] | Guided sample runner — helps you choose and run sync/async samples with troubleshooting | Ask: *"Run a Content Understanding sample"* or *"Run sample_analyze_invoice"* |
 | [**cu-sdk-common-knowledge**][cu_sdk_common_knowledge_skill] | Domain knowledge reference — answers questions about Content Understanding concepts, analyzers, field schemas, API operations, and SDK usage | Ask: *"What prebuilt analyzers are available?"* or *"How do I create a custom analyzer?"* |
 
 ### Using Skills in VS Code
@@ -579,14 +632,14 @@ This package includes [GitHub Copilot][github_copilot] skills under `.github/ski
 
 **Example prompts:**
 - *"Set up my Python environment for Content Understanding"* → likely uses `cu-sdk-setup`
-- *"Run the async version of sample_analyze_url"* → likely uses `cu-sdk-py-sample-run`
+- *"Run the async version of sample_analyze_url"* → likely uses `cu-sdk-sample-run`
 - *"Explain how custom analyzers work"* → likely uses `cu-sdk-common-knowledge`
 
 ### Troubleshooting Skill Selection
 
 If Copilot does not use the expected skill, try the following:
 
-1. Be explicit about intent and context in one prompt (for example: *"Use cu-sdk-py-sample-run to run sample_analyze_invoice_async"*).
+1. Be explicit about intent and context in one prompt (for example: *"Use cu-sdk-sample-run to run sample_analyze_invoice_async"*).
 2. Include your goal and current state (for example: *"My `.venv` is active and `.env` is configured; help me run sample_analyze_binary"*).
 3. Ask for a step-by-step interactive flow when needed (for example: *"Guide me step by step to set up the SDK environment"*).
 4. For sample execution errors, mention the exact error text and your working directory so Copilot can apply the right troubleshooting path.
@@ -618,6 +671,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python_cu_pypi]: https://pypi.org/project/azure-ai-contentunderstanding/
 [python_cu_product_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
 [python_cu_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
+[python_cu_sample_to_llm_input]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_to_llm_input.py
 [azure_sub]: https://azure.microsoft.com/free/
 [cu_quickstart]: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=portal%2Cdocument
 [cu_region_support]: https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support
@@ -634,7 +688,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_update_defaults]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_update_defaults.py
 [sample_analyze_binary]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_analyze_binary.py
 [cu_sdk_setup_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-setup
-[cu_sdk_py_sample_run_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-py-sample-run
+[cu_sdk_sample_run_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-sample-run
 [cu_sdk_common_knowledge_skill]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/cu-sdk-common-knowledge
 [tests_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/tests/README.md
 [azure_sdk_testing_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md

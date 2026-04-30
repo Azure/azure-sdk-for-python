@@ -21,14 +21,13 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b2",
+    "azure-ai-agentserver-core>=2.0.0b3",
 ]
 
 [dependency-groups]
 # keep in sync with dev_requirements.txt
 dev = [
     "azure-identity",
-    "azure-monitor-opentelemetry-exporter",
     "azure-monitor-query",
     "azure-sdk-tools",
     "httpx",
@@ -86,6 +85,5 @@ type_check_samples = false
 [tool.uv.sources]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
 azure-identity = { path = "../../identity/azure-identity" }
-azure-monitor-opentelemetry-exporter = { path = "../../monitor/azure-monitor-opentelemetry-exporter" }
 azure-monitor-query = { path = "../../monitor/azure-monitor-query" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }

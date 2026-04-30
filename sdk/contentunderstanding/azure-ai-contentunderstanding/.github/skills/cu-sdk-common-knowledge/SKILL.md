@@ -44,4 +44,4 @@ Always read the relevant page (via `fetch_webpage`) before answering if the refe
 ## Related Skills
 
 - `cu-sdk-setup` — Set up Python environment and run samples
-- `cu-sdk-py-sample-run` — Run specific samples interactively
+- `cu-sdk-sample-run` — Run specific samples interactively

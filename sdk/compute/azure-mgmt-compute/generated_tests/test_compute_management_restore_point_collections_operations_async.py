@@ -25,7 +25,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
         response = await self.client.restore_point_collections.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -240,7 +240,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -443,7 +443,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -456,7 +456,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
             await self.client.restore_point_collections.begin_delete(
                 resource_group_name=resource_group.name,
                 restore_point_collection_name="str",
-                api_version="2025-04-01",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -468,7 +468,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
     async def test_restore_point_collections_list(self, resource_group):
         response = self.client.restore_point_collections.list(
             resource_group_name=resource_group.name,
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -478,7 +478,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_restore_point_collections_list_all(self, resource_group):
         response = self.client.restore_point_collections.list_all(
-            api_version="2025-04-01",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
