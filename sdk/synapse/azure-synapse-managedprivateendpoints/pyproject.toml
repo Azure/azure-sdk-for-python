@@ -49,10 +49,9 @@ readme = {file = [
 
 [tool.setuptools.packages.find]
 exclude = [
-    "tests",
     "azure",
     "azure.synapse",
-    "azure.*",
+    "azure.synapse.managedprivateendpoints",
     "doc*",
     "generated_samples*",
     "generated_tests*",
