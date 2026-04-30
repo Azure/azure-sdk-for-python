@@ -49,10 +49,9 @@ readme = {file = [
 
 [tool.setuptools.packages.find]
 exclude = [
-    "tests",
     "azure",
     "azure.purview",
-    "azure.*",
+    "azure.purview.administration",
     "doc*",
     "generated_samples*",
     "generated_tests*",
