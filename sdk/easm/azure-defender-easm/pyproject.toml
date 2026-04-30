@@ -8,35 +8,38 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-digitaltwins-core"
+name = "azure-defender-easm"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Azure Azure DigitalTwins Core Client Library for Python"
+description = "Microsoft EASM Data Plane Client Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 requires-python = ">=3.7"
 keywords = [
     "azure",
     "azure sdk",
 ]
-version = "1.3.0"
+version = "1.0.0b2"
 dependencies = [
-    "azure-core<2.0.0,>=1.29.0",
-    "isodate>=0.6.1",
+    "isodate<1.0.0,>=0.6.1",
+    "azure-core<2.0.0,>=1.24.0",
+    "typing-extensions>=4.3.0; python_version<'3.8.0'",
 ]
 dynamic = ["readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/digitaltwins/azure-digitaltwins-core"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
 [tool.setuptools.dynamic]
 readme = {file = [
@@ -46,10 +49,9 @@ readme = {file = [
 
 [tool.setuptools.packages.find]
 exclude = [
-    "samples",
     "tests",
     "azure",
-    "azure.digitaltwins",
+    "azure.defender",
     "azure.*",
     "doc*",
     "generated_samples*",
@@ -61,9 +63,3 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
-
-[tool.azure-sdk-build]
-pyright = false
-
-[tool.azure-sdk-conda]
-in_bundle = false
