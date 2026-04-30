@@ -8,11 +8,11 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-purview-datamap"
+name = "azure-purview-workflow"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Azure Purview Datamap Client Library for Python"
+description = "Microsoft Azure Purview Workflow Service Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -24,8 +24,9 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.7"
 keywords = [
     "azure",
     "azure sdk",
@@ -33,8 +34,8 @@ keywords = [
 version = "1.0.0b3"
 dependencies = [
     "isodate<1.0.0,>=0.6.1",
-    "azure-core<2.0.0,>=1.30.0",
-    "typing-extensions>=4.6.0",
+    "azure-core<2.0.0,>=1.28.0",
+    "typing-extensions>=4.3.0; python_version<'3.8.0'",
 ]
 dynamic = ["readme"]
 
@@ -63,7 +64,3 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
-
-[tool.azure-sdk-build]
-pylint = false
-sphinx = false
