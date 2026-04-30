@@ -245,7 +245,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert re.search(
-                    r"the full.text policy contains an unsupported language.*spa-SPA",
+                    r"The language specified in the full-text policy, \'spa-SPA\', is invalid.",
                     e.http_error_message, re.IGNORECASE)
 
         # Pass a full text policy with an unsupported path language
