@@ -162,8 +162,8 @@ jobs:
           echo "has_changes=true" >> $GITHUB_OUTPUT
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
 
-      - name: Create or update Pull Request
-        id: create-pr
+      - name: Create or update tracking issue with PR link
+        id: create-issue
         if: steps.push-changes.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -172,36 +172,55 @@ jobs:
           EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
           VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
           BRANCH="${{ steps.push-changes.outputs.branch }}"
+          REPO="${{ github.repository }}"
+          SERVER="${{ github.server_url }}"
+          RUN_URL="${SERVER}/${REPO}/actions/runs/${{ github.run_id }}"
+
           TITLE="[typespec-python] Regenerate tests with ${EMITTER}@${VERSION}"
-          BODY="Automated regeneration of TypeSpec Python generated tests.
+
+          # Build a "compare" URL that opens the PR creation page pre-filled.
+          # GitHub Actions cannot create PRs directly (org policy), so the
+          # reviewer just needs to click the link to open the PR.
+          PR_TITLE_ENC=$(jq -rn --arg t "$TITLE" '$t|@uri')
+          PR_BODY_RAW="Automated regeneration of TypeSpec Python generated tests.
 
           - Emitter: \`${EMITTER}@${VERSION}\`
-          - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          - Workflow run: ${RUN_URL}
 
           This PR was auto-generated."
+          PR_BODY_ENC=$(jq -rn --arg b "$PR_BODY_RAW" '$b|@uri')
+          COMPARE_URL="${SERVER}/${REPO}/compare/main...${BRANCH}?quick_pull=1&title=${PR_TITLE_ENC}&body=${PR_BODY_ENC}"
 
-          # Check if a PR already exists for this branch
-          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number' || echo "")
-          if [ -n "$EXISTING_PR" ]; then
-            echo "Updating existing PR #$EXISTING_PR"
-            gh pr edit "$EXISTING_PR" --title "$TITLE" --body "$BODY" --add-reviewer iscai-msft,msyyc
-            PR_NUMBER="$EXISTING_PR"
+          ISSUE_BODY="GitHub Actions is not permitted to create pull requests in this repository, so this issue tracks the regeneration instead.
+
+          **Click the link below to open a pre-filled PR:**
+
+          👉 [Create pull request from \`${BRANCH}\`](${COMPARE_URL})
+
+          Details:
+          - Emitter: \`${EMITTER}@${VERSION}\`
+          - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
+          - Workflow run: ${RUN_URL}
+
+          cc @iscai-msft @msyyc"
+
+          # Reuse an existing open tracking issue if one exists (matched by title).
+          EXISTING_ISSUE=$(gh issue list --state open --search "\"$TITLE\" in:title" \
+            --json number,title --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n1 || echo "")
+
+          if [ -n "$EXISTING_ISSUE" ]; then
+            echo "Updating existing issue #$EXISTING_ISSUE"
+            gh issue edit "$EXISTING_ISSUE" --body "$ISSUE_BODY"
+            ISSUE_NUMBER="$EXISTING_ISSUE"
           else
-            echo "Creating new PR"
-            PR_NUMBER=$(gh pr create --head "$BRANCH" --base main \
-              --title "$TITLE" --body "$BODY" \
-              --reviewer iscai-msft,msyyc | grep -oP '\d+$')
-            echo "Created PR #$PR_NUMBER"
+            echo "Creating new tracking issue"
+            ISSUE_URL=$(gh issue create --title "$TITLE" --body "$ISSUE_BODY" \
+              --label "typespec-python" \
+              --assignee iscai-msft,msyyc)
+            echo "Created issue: $ISSUE_URL"
+            ISSUE_NUMBER="${ISSUE_URL##*/}"
           fi
-          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
-
-      - name: Enable auto-merge
-        if: steps.push-changes.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr merge "${{ steps.create-pr.outputs.pr_number }}" --auto --squash || \
-            echo "::warning::Auto-merge could not be enabled (may require branch protection rules)"
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
 
   notify-on-failure:
     name: "Notify on failure"
