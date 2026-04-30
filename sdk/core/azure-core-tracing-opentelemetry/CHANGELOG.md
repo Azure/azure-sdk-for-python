@@ -1,8 +1,6 @@
 # Release History
 
-## 1.0.0b13 (Unreleased)
-
-### Features Added
+## 1.0.0b13 (2026-04-30)
 
 ### Breaking Changes
 
@@ -13,9 +11,9 @@
     - `net.peer.port` -> `server.port`
     - `http.url` -> `url.full`
 
-### Bugs Fixed
-
 ### Other Changes
+
+- Python 3.8 and 3.9 are no longer supported. Please use Python version 3.10 or later.
 
 ## 1.0.0b12 (2025-03-20)
 
