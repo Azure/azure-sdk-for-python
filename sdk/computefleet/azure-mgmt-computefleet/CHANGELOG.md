@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `ComputeFleetMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ComputeFleetMgmtClient` added parameter `cloud_setting` in method `__init__`
   - Enum `FleetMode` added member `LAUNCH`
   - Model `FleetProperties` added property `vm_name_prefix`
   - Enum `VMOperationStatus` added member `LAUNCHING`
