@@ -51,7 +51,6 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.keyvault",
-    "azure.keyvault.administration",
     "doc*",
     "generated_samples*",
     "generated_tests*",
