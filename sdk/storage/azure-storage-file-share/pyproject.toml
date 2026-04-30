@@ -53,8 +53,6 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.storage",
-    "tests",
-    "azure.*",
     "doc*",
     "generated_samples*",
     "generated_tests*",
