@@ -6,10 +6,7 @@
         "perfresults",
         "pkrange",
         "ppcb",
-        "hdrh",
-        "hdrhistogram",
         "reranker",
-        "Reranker"
         "toctou"
     ]
 }
