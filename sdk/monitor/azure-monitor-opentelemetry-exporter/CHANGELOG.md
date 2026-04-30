@@ -3,6 +3,8 @@
 ## 1.0.0b52 (Unreleased)
 
 ### Features Added
+- Add support for populating SDK version from distro and Microsoft OpenTelemetry distro environment variables
+  ([#46613](https://github.com/Azure/azure-sdk-for-python/pull/46613))
 
 ### Breaking Changes
 
