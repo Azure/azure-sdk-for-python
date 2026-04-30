@@ -50,8 +50,6 @@ readme = {file = [
 [tool.setuptools.packages.find]
 exclude = [
     "azure",
-    "azure.schemaregistry",
-    "azure.schemaregistry.encoder",
     "doc*",
     "generated_samples*",
     "generated_tests*",
