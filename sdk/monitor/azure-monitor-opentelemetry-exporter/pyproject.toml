@@ -52,12 +52,11 @@ readme = {file = [
 
 [tool.setuptools.packages.find]
 exclude = [
-    "tests",
-    "samples",
     "azure",
     "azure.monitor",
     "azure.monitor.opentelemetry",
-    "azure.*",
+    "azure.monitor.opentelemetry.exporter",
+    "azure.monitor.opentelemetry.exporter._generated",
     "doc*",
     "generated_samples*",
     "generated_tests*",
