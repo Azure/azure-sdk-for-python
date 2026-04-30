@@ -50,9 +50,7 @@ from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureAIDataSourceConfig,
     TestingCriterionAzureAIEvaluator,
-    TracesPreviewEvalRunDataSource,
 )
 
 load_dotenv()
@@ -149,7 +147,7 @@ def main() -> None:
 
     if args.agent_id:
         agent_id_for_server = args.agent_id
-        print(f"Mode: Server-side agent ID resolution")
+        print("Mode: Server-side agent ID resolution")
         print(f"Agent ID: {args.agent_id}")
         print(f"Lookback: {lookback_hours}h, Max traces: {args.max_traces}")
         metadata["agent_id"] = args.agent_id
@@ -159,8 +157,6 @@ def main() -> None:
         print(f"Mode: Explicit trace IDs ({len(trace_ids)} provided)")
 
     else:
-        appinsights_resource_id = os.environ["APPINSIGHTS_RESOURCE_ID"]
-        agent_id = os.environ["AGENT_ID"]
         end_time = datetime.now(tz=timezone.utc)
         start_time = end_time - timedelta(hours=lookback_hours)
 
