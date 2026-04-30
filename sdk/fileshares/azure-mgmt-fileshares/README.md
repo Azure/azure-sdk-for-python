@@ -9,7 +9,7 @@
 python -m pip install azure-mgmt-fileshares
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
@@ -33,7 +33,7 @@ Use the returned token credential to authenticate the client:
 ```python
 >>> from azure.mgmt.fileshares import FileSharesClient
 >>> from azure.identity import DefaultAzureCredential
->>> client = FileSharesClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = FileSharesClient(credential=DefaultAzureCredential(), subscription_id='<subscription_id>')
 ```
 
 ## Examples
@@ -43,11 +43,13 @@ Use the returned token credential to authenticate the client:
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 
->>> client = FileSharesClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = FileSharesClient(credential=DefaultAzureCredential(), subscription_id='<subscription_id>')
 >>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
+...     result = client.file_shares.list_by_subscription()
+...     for item in result:
+...         print(item)
+... except HttpResponseError as e:
+...     print('service responds error: {}'.format(e.response.json()))
 
 ```
 

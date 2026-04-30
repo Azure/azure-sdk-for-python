@@ -59,3 +59,21 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
+[tool.azure-sdk-build]
+breaking = false
+pyright = false
+mypy = false
+
+[packaging]
+package_name = "azure-mgmt-fileshares"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Fileshares Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+exclude_folders = ""
+title = "FileSharesClient"
