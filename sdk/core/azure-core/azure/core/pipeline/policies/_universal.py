@@ -444,14 +444,18 @@ class HttpLoggingPolicy(
     MULTI_RECORD_LOG: str = "AZURE_SDK_LOGGING_MULTIRECORD"
 
     def __init__(
-        self, logger: Optional[logging.Logger] = None, *, http_logging_level: int = logging.INFO, **kwargs: Any
+        self,
+        logger: Optional[logging.Logger] = None,
+        *,
+        http_logging_level: int = logging.INFO,
+        additional_allowed_query_params: Optional[Iterable[str]] = None,
+        **kwargs: Any
     ):  # pylint: disable=unused-argument
         self.logger: logging.Logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.http_logging_level: int = http_logging_level
         self.allowed_query_params: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
-        additional_query_params = kwargs.get("additional_allowed_query_params")
-        if additional_query_params:
-            self.allowed_query_params.update(additional_query_params)
+        if additional_allowed_query_params:
+            self.allowed_query_params.update(additional_allowed_query_params)
         self.allowed_header_names: Set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
     def _redact_header(self, key: str, value: str) -> str:
