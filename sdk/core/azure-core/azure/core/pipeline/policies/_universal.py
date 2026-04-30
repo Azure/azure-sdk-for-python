@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping, Iterable
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError

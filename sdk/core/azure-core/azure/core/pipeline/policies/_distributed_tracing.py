@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict, Iterable
 from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
