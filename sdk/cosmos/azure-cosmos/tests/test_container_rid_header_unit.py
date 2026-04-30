@@ -149,7 +149,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         )
         assert "containerRID" not in client.captured_feed_options
 
-    def test_force_refresh_preserves_containerRID(self):
+    def test_incremental_refresh_preserves_containerRID(self):
         """A force_refresh (triggered by split/merge errors) must re-send
         containerRID to the service so the correct physical container is
         queried again."""
@@ -165,8 +165,51 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
             force_refresh=True,
             previous_routing_map=previous_map,
         )
-        # In this mock setup, incremental refresh has no split/merge deltas and
-        # falls back to a full refresh, so force-refresh performs two reads.
+        # The mock returns the same ranges (no split/merge deltas), so the
+        # incremental merge succeeds in a single fetch without falling back
+        # to a full refresh.
+        assert client.call_count == 2
+        assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
+
+    def test_full_refresh_fallback_after_split_preserves_containerRID(self):
+        """When an incremental refresh encounters unresolvable parent ranges,
+        it falls back to a full refresh. containerRID must still flow through
+        on the fallback call."""
+        # Post-split ranges reference parents not in the original map
+        split_ranges = [
+            {"id": "3", "minInclusive": "", "maxExclusive": "1F", "parents": ["99"]},
+            {"id": "4", "minInclusive": "1F", "maxExclusive": "3F", "parents": ["99"]},
+        ]
+
+        class SplitMockClient:
+            def __init__(self):
+                self.captured_feed_options = None
+                self.call_count = 0
+
+            def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
+                self.captured_feed_options = dict(feed_options) if feed_options else {}
+                self.call_count += 1
+                # First call: initial load returns original ranges
+                # Second call: incremental returns split ranges with unknown parents
+                # Third call: full fallback returns original ranges
+                if self.call_count == 2:
+                    return iter(split_ranges)
+                return iter(PARTITION_KEY_RANGES)
+
+        client = SplitMockClient()
+        cache = PartitionKeyRangeCache(client)
+        feed_options = {"containerRID": CONTAINER_RID}
+        previous_map = cache.get_routing_map(COLLECTION_LINK, feed_options)
+        assert client.call_count == 1
+        assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
+        cache.get_routing_map(
+            COLLECTION_LINK,
+            feed_options,
+            force_refresh=True,
+            previous_routing_map=previous_map,
+        )
+        # Incremental fetch returns ranges with unresolvable parents, triggering
+        # a full refresh fallback: 1 initial + 1 incremental + 1 full = 3 calls.
         assert client.call_count == 3
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 
