@@ -254,7 +254,7 @@ class TestFullTextPolicy(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
             assert re.search(
-                    r"the full.text policy contains an unsupported language.*spa-SPA",
+                    r"The language specified in the full-text policy, \'spa-SPA\', is invalid",
                     e.http_error_message, re.IGNORECASE)
 
     def test_fail_create_full_text_indexing_policy(self):
