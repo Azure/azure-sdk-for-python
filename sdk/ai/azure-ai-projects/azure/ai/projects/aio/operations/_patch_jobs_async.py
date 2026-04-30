@@ -36,6 +36,7 @@ from ...operations._job_helper import (
     _is_folder_marker,
     _ensure_dir,
     _validate_output_for_download,
+    _validate_command_job,
 )
 
 _logger = logging.getLogger(__name__)
@@ -59,28 +60,6 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
-
-    def _validate(self, name: str, body: CommandJob) -> None:
-        """Validate required fields before sending to the service.
-
-        :param name: The job name.
-        :type name: str
-        :param body: The command job body.
-        :type body: ~azure.ai.projects.models.CommandJob
-        :raises ValueError: If any required field is missing or empty.
-        """
-        if not name or not name.strip():
-            raise ValueError("'name' is required and cannot be empty.")
-        if not body.command or not body.command.strip():
-            raise ValueError("'command' is required and cannot be empty for a CommandJob.")
-        if not body.environment_image_reference or not body.environment_image_reference.strip():
-            raise ValueError("'environment_image_reference' is required and cannot be empty for a CommandJob.")
-        if not body.compute or not body.compute.strip():
-            raise ValueError("'compute' is required and cannot be empty for a CommandJob.")
-        if isinstance(body.code, str) and not body.code.strip():
-            raise ValueError(
-                "'code' cannot be an empty string. Omit it or provide a valid local path or datastore URI."
-            )
 
     async def _resolve_asset_uri(self, uri: str, dataset_name: str) -> str:
         """Resolve a single URI to a dataset asset URI (async).
@@ -231,12 +210,17 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         :type name: str
         :param job: The command job to create or update. Required.
         :type job: ~azure.ai.projects.models.CommandJob
+        :keyword skip_validation: If ``True``, skip the local validation step.
+            Defaults to ``False``.
+        :paramtype skip_validation: bool
         :return: The created/updated job.
         :rtype: ~azure.ai.projects.models.CommandJob
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ValueError: If required fields are missing or empty.
         """
-        self._validate(name, job)
+        skip_validation = kwargs.pop("skip_validation", False)
+        if not skip_validation:
+            _validate_command_job(job).try_raise(raise_on_failure=True)
         await self._resolve_local_paths(name, job)
         self._inject_preview_header(kwargs)
         rest_body = _RestJob(properties=job)

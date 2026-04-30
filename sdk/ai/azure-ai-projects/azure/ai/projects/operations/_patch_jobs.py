@@ -33,12 +33,13 @@ from ._job_helper import (
     _is_folder_marker,
     _ensure_dir,
     _validate_output_for_download,
+    _validate_command_job,
 )
 from ..models._models import BlobReference
 from ..models._models import Job as _RestJob
 from ..models._models import Input as _Input
 from ..models._models import Output as _Output
-from ..models._patch_jobs import CommandJob
+from ..models._patch_jobs import CommandJob, ValidationResult
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ..models._enums import FoundryFeaturesOptInKeys
 
@@ -147,27 +148,25 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         super().__init__(*args, **kwargs)
         self._datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _validate(self, name: str, body: CommandJob) -> None:
-        """Validate required fields before sending to the service.
+    @distributed_trace
+    def validate(
+        self,
+        job: CommandJob,
+        *,
+        raise_on_failure: bool = False,
+    ) -> ValidationResult:
+        """Validates a CommandJob object before submitting to the service. Only command jobs are
+        supported for validation currently.
 
-        :param name: The job name.
-        :type name: str
-        :param body: The command job body.
-        :type body: ~azure.ai.projects.models.CommandJob
-        :raises ValueError: If any required field is missing or empty.
+        :param job: The job object to be validated.
+        :type job: ~azure.ai.projects.models.CommandJob
+        :keyword raise_on_failure: Specifies if an error should be raised if validation fails.
+            Defaults to False.
+        :paramtype raise_on_failure: bool
+        :return: A ValidationResult object containing all found errors.
+        :rtype: ~azure.ai.projects.models.ValidationResult
         """
-        if not name or not name.strip():
-            raise ValueError("'name' is required and cannot be empty.")
-        if not body.command or not body.command.strip():
-            raise ValueError("'command' is required and cannot be empty for a CommandJob.")
-        if not body.environment_image_reference or not body.environment_image_reference.strip():
-            raise ValueError("'environment_image_reference' is required and cannot be empty for a CommandJob.")
-        if not body.compute or not body.compute.strip():
-            raise ValueError("'compute' is required and cannot be empty for a CommandJob.")
-        if isinstance(body.code, str) and not body.code.strip():
-            raise ValueError(
-                "'code' cannot be an empty string. Omit it or provide a valid local path or datastore URI."
-            )
+        return _validate_command_job(job).try_raise(raise_on_failure=raise_on_failure)
 
     def _resolve_asset_uri(
         self,
@@ -362,12 +361,17 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         :type name: str
         :param job: The command job to create or update. Required.
         :type job: ~azure.ai.projects.models.CommandJob
+        :keyword skip_validation: If ``True``, skip the local validation step.
+            Defaults to ``False``.
+        :paramtype skip_validation: bool
         :return: The created/updated job.
         :rtype: ~azure.ai.projects.models.CommandJob
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ValueError: If required fields are missing or empty.
         """
-        self._validate(name, job)
+        skip_validation = kwargs.pop("skip_validation", False)
+        if not skip_validation:
+            _validate_command_job(job).try_raise(raise_on_failure=True)
         self._resolve_local_paths(name, job)
         self._inject_preview_header(kwargs)
         # Wrap the flat CommandJob inside the Job envelope required by the wire format

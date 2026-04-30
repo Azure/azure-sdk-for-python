@@ -6,10 +6,11 @@
 """Customized job models."""
 
 import datetime
+import json
 import yaml
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 from ._models import (
     CommandJob as _RestCommandJob,
     CommandJobLimits as _RestCommandJobLimits,
@@ -174,3 +175,168 @@ def load_job(source: Union[str, "PathLike[str]", IO[AnyStr]]) -> CommandJob:
     if job_type_str == "command":
         return _load_command_job(data, base_dir=base_dir)
     raise ValueError(f"Unsupported job type: '{job_type_str}'. Supported types: ['command']")
+
+
+class Diagnostic:
+    """Represents a diagnostic of a job validation error with the location info."""
+
+    def __init__(
+        self,
+        yaml_path: str,
+        message: str,
+        *,
+        error_code: Optional[str] = None,
+        value: Any = None,
+    ) -> None:
+        """Init Diagnostic.
+
+        :keyword yaml_path: A dot-separated path from the root to the target element of the
+            diagnostic, e.g. ``inputs.training_data.path``.
+        :paramtype yaml_path: str
+        :keyword message: Error message of the diagnostic.
+        :paramtype message: str
+        :keyword error_code: Error code of the diagnostic.
+        :paramtype error_code: str
+        :keyword value: The offending value, if relevant.
+        :paramtype value: Any
+        """
+        self.yaml_path = yaml_path
+        self.message = message
+        self.error_code = error_code
+        self.value = value
+
+    def __repr__(self) -> str:
+        """The yaml path and error message.
+
+        :return: The formatted diagnostic
+        :rtype: str
+        """
+        return "{}: {}".format(self.yaml_path, self.message)
+
+
+class ValidationResult:
+    """Represents the result of job validation.
+
+    This class is used to organize and parse diagnostics from client-side validation
+    before exposing them to the user.
+    """
+
+    _STATUS_SUCCEEDED = "Succeeded"
+    _STATUS_FAILED = "Failed"
+
+    def __init__(self) -> None:
+        self.errors: List[Diagnostic] = []
+        self.warnings: List[Diagnostic] = []
+
+    @property
+    def passed(self) -> bool:
+        """Returns boolean indicating whether any errors were found.
+
+        :return: True if the validation passed, False otherwise.
+        :rtype: bool
+        """
+        return not self.errors
+
+    @property
+    def error_messages(self) -> Dict[str, str]:
+        """Return all messages of errors in the validation result.
+
+        :return: A dictionary of error messages. The key is the yaml path of the error,
+            and the value is the error message. Multiple messages on the same path are
+            joined with ``"; "``.
+        :rtype: dict
+        """
+        messages: Dict[str, str] = {}
+        for err in self.errors:
+            if err.yaml_path in messages:
+                messages[err.yaml_path] = messages[err.yaml_path] + "; " + err.message
+            else:
+                messages[err.yaml_path] = err.message
+        return messages
+
+    def append_error(
+        self,
+        yaml_path: str,
+        message: str,
+        *,
+        error_code: Optional[str] = None,
+        value: Any = None,
+    ) -> "ValidationResult":
+        """Add an error to the result.
+
+        :param yaml_path: The yaml path of the error.
+        :type yaml_path: str
+        :param message: The error message.
+        :type message: str
+        :keyword error_code: Error code of the diagnostic.
+        :paramtype error_code: str
+        :keyword value: The offending value, if relevant.
+        :paramtype value: Any
+        :return: The current validation result.
+        :rtype: ValidationResult
+        """
+        self.errors.append(Diagnostic(yaml_path, message, error_code=error_code, value=value))
+        return self
+
+    def append_warning(
+        self,
+        yaml_path: str,
+        message: str,
+        *,
+        error_code: Optional[str] = None,
+        value: Any = None,
+    ) -> "ValidationResult":
+        """Add a warning to the result.
+
+        :param yaml_path: The yaml path of the warning.
+        :type yaml_path: str
+        :param message: The warning message.
+        :type message: str
+        :keyword error_code: Error code of the diagnostic.
+        :paramtype error_code: str
+        :keyword value: The offending value, if relevant.
+        :paramtype value: Any
+        :return: The current validation result.
+        :rtype: ValidationResult
+        """
+        self.warnings.append(Diagnostic(yaml_path, message, error_code=error_code, value=value))
+        return self
+
+    def try_raise(self, *, raise_on_failure: bool = True) -> "ValidationResult":
+        """Try to raise an error from the validation result.
+
+        If the validation is passed or ``raise_on_failure`` is False, this method
+        will return the validation result.
+
+        :keyword raise_on_failure: Whether to raise the error.
+        :paramtype raise_on_failure: bool
+        :return: The current validation result.
+        :rtype: ValidationResult
+        :raises ValueError: If validation did not pass and ``raise_on_failure`` is True.
+        """
+        if raise_on_failure and not self.passed:
+            raise ValueError(repr(self))
+        return self
+
+    def _to_dict(self) -> Dict[str, Any]:
+        result: Dict[str, Any] = {"result": self._STATUS_SUCCEEDED if self.passed else self._STATUS_FAILED}
+        for diagnostic_type, diagnostics in [("errors", self.errors), ("warnings", self.warnings)]:
+            messages = []
+            for diagnostic in diagnostics:
+                message: Dict[str, Any] = {"message": diagnostic.message, "path": diagnostic.yaml_path}
+                if diagnostic.error_code is not None:
+                    message["error_code"] = diagnostic.error_code
+                if diagnostic.value is not None:
+                    message["value"] = diagnostic.value
+                messages.append(message)
+            if messages:
+                result[diagnostic_type] = messages
+        return result
+
+    def __repr__(self) -> str:
+        """Get the string representation of the validation result.
+
+        :return: The string representation
+        :rtype: str
+        """
+        return json.dumps(self._to_dict(), indent=2)

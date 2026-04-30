@@ -19,7 +19,7 @@ from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import FoundryFeaturesOptInKeys
-from ._patch_jobs import CommandJob, CommandJobLimits, load_job
+from ._patch_jobs import CommandJob, CommandJobLimits, Diagnostic, ValidationResult, load_job
 
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
@@ -350,6 +350,8 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 __all__: List[str] = [
     "CommandJob",
     "CommandJobLimits",
+    "Diagnostic",
+    "ValidationResult",
     "load_job",
     "CustomCredential",
     "UpdateMemoriesLROPoller",
