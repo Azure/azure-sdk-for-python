@@ -21,7 +21,7 @@
   - Added model `ResourceAssociation`
   - Added enum `ResourceAssociationAccessMode`
   - Added enum `Severity`
-  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
 
 ## 6.0.0b1 (2026-01-19)
 
