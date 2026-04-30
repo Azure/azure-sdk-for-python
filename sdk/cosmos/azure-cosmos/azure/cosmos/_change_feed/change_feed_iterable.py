@@ -97,11 +97,15 @@ class ChangeFeedIterable(PageIterator):
 
     def _unpack(self, block: list[dict[str, Any]]) -> Tuple[Optional[str], list[dict[str, Any]]]:
         continuation: Optional[str] = None
-        # Prefer the per-iterable captured headers (thread-safe) when available.
-        # Fall back to the shared client.last_response_headers for backwards compatibility
-        # when a header capture list was not provided.
-        if self._response_headers_list:
-            continuation = self._response_headers_list[-1].get('etag')
+        # Prefer the per-iterable captured headers (thread-safe) when a capture list was
+        # provided. Only fall back to the shared client.last_response_headers for backwards
+        # compatibility when no header capture list was provided. If a capture list was
+        # provided but is empty (no fetch yet), keep continuation as None rather than
+        # consulting the shared client headers, which could expose a stale etag from an
+        # unrelated operation.
+        if self._response_headers_list is not None:
+            if self._response_headers_list:
+                continuation = self._response_headers_list[-1].get('etag')
         elif self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
 
