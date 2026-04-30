@@ -54,6 +54,11 @@ extends:
       safeName: azurestoragequeue
     - name: azure-storage-extensions
       safeName: azurestorageextensions
+      triggeringPaths:
+        - /sdk/storage/azure-storage-blob
+        - /sdk/storage/azure-storage-file-datalake
+        - /sdk/storage/azure-storage-file-share
+        - /sdk/storage/azure-storage-queue
       # Pure C-based storage extension package, not generating docs at this moment.
       skipPublishDocGithubIo: true
       skipPublishDocMs: true

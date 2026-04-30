@@ -1,0 +1,15 @@
+{
+    "CrossLanguagePackageId": "Parameters.CollectionFormat",
+    "CrossLanguageDefinitionId": {
+        "parameters.collectionformat.operations.QueryOperations.multi": "Parameters.CollectionFormat.Query.multi",
+        "parameters.collectionformat.aio.operations.QueryOperations.multi": "Parameters.CollectionFormat.Query.multi",
+        "parameters.collectionformat.operations.QueryOperations.ssv": "Parameters.CollectionFormat.Query.ssv",
+        "parameters.collectionformat.aio.operations.QueryOperations.ssv": "Parameters.CollectionFormat.Query.ssv",
+        "parameters.collectionformat.operations.QueryOperations.pipes": "Parameters.CollectionFormat.Query.pipes",
+        "parameters.collectionformat.aio.operations.QueryOperations.pipes": "Parameters.CollectionFormat.Query.pipes",
+        "parameters.collectionformat.operations.QueryOperations.csv": "Parameters.CollectionFormat.Query.csv",
+        "parameters.collectionformat.aio.operations.QueryOperations.csv": "Parameters.CollectionFormat.Query.csv",
+        "parameters.collectionformat.operations.HeaderOperations.csv": "Parameters.CollectionFormat.Header.csv",
+        "parameters.collectionformat.aio.operations.HeaderOperations.csv": "Parameters.CollectionFormat.Header.csv"
+    }
+}

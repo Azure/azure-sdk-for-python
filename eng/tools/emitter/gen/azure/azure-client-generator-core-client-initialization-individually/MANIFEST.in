@@ -1,0 +1,10 @@
+include *.md
+include LICENSE
+include specs/azure/clientgenerator/core/clientinitialization/individually/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include specs/__init__.py
+include specs/azure/__init__.py
+include specs/azure/clientgenerator/__init__.py
+include specs/azure/clientgenerator/core/__init__.py
+include specs/azure/clientgenerator/core/clientinitialization/__init__.py
