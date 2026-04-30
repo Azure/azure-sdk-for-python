@@ -1,0 +1,9 @@
+{
+    "CrossLanguagePackageId": "Authentication.Noauth.Union",
+    "CrossLanguageDefinitionId": {
+        "authentication.noauth.union.UnionClient.valid_no_auth": "Authentication.Noauth.Union.validNoAuth",
+        "authentication.noauth.union.aio.UnionClient.valid_no_auth": "Authentication.Noauth.Union.validNoAuth",
+        "authentication.noauth.union.UnionClient.valid_token": "Authentication.Noauth.Union.validToken",
+        "authentication.noauth.union.aio.UnionClient.valid_token": "Authentication.Noauth.Union.validToken"
+    }
+}

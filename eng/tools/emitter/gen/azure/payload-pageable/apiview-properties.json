@@ -1,0 +1,28 @@
+{
+    "CrossLanguagePackageId": "Payload.Pageable",
+    "CrossLanguageDefinitionId": {
+        "payload.pageable.serverdrivenpagination.alternateinitialverb.models.Filter": "Payload.Pageable.ServerDrivenPagination.AlternateInitialVerb.Filter",
+        "payload.pageable.serverdrivenpagination.models.NestedLinkResponseNestedItems": "Payload.Pageable.ServerDrivenPagination.nestedLink.Response.nestedItems.anonymous",
+        "payload.pageable.serverdrivenpagination.models.NestedLinkResponseNestedNext": "Payload.Pageable.ServerDrivenPagination.nestedLink.Response.nestedNext.anonymous",
+        "payload.pageable.models.Pet": "Payload.Pageable.Pet",
+        "payload.pageable.serverdrivenpagination.continuationtoken.models.RequestHeaderNestedResponseBodyResponseNestedItems": "Payload.Pageable.ServerDrivenPagination.ContinuationToken.requestHeaderNestedResponseBody.Response.nestedItems.anonymous",
+        "payload.pageable.serverdrivenpagination.continuationtoken.models.RequestHeaderNestedResponseBodyResponseNestedNext": "Payload.Pageable.ServerDrivenPagination.ContinuationToken.requestHeaderNestedResponseBody.Response.nestedNext.anonymous",
+        "payload.pageable.serverdrivenpagination.continuationtoken.models.RequestQueryNestedResponseBodyResponseNestedItems": "Payload.Pageable.ServerDrivenPagination.ContinuationToken.requestQueryNestedResponseBody.Response.nestedItems.anonymous",
+        "payload.pageable.serverdrivenpagination.continuationtoken.models.RequestQueryNestedResponseBodyResponseNestedNext": "Payload.Pageable.ServerDrivenPagination.ContinuationToken.requestQueryNestedResponseBody.Response.nestedNext.anonymous",
+        "payload.pageable.models.XmlPet": "Payload.Pageable.XmlPet",
+        "payload.pageable.operations.ServerDrivenPaginationOperations.link": "Payload.Pageable.ServerDrivenPagination.link",
+        "payload.pageable.aio.operations.ServerDrivenPaginationOperations.link": "Payload.Pageable.ServerDrivenPagination.link",
+        "payload.pageable.operations.ServerDrivenPaginationOperations.link_string": "Payload.Pageable.ServerDrivenPagination.linkString",
+        "payload.pageable.aio.operations.ServerDrivenPaginationOperations.link_string": "Payload.Pageable.ServerDrivenPagination.linkString",
+        "payload.pageable.operations.ServerDrivenPaginationOperations.nested_link": "Payload.Pageable.ServerDrivenPagination.nestedLink",
+        "payload.pageable.aio.operations.ServerDrivenPaginationOperations.nested_link": "Payload.Pageable.ServerDrivenPagination.nestedLink",
+        "payload.pageable.operations.PageSizeOperations.list_without_continuation": "Payload.Pageable.PageSize.listWithoutContinuation",
+        "payload.pageable.aio.operations.PageSizeOperations.list_without_continuation": "Payload.Pageable.PageSize.listWithoutContinuation",
+        "payload.pageable.operations.PageSizeOperations.list_with_page_size": "Payload.Pageable.PageSize.listWithPageSize",
+        "payload.pageable.aio.operations.PageSizeOperations.list_with_page_size": "Payload.Pageable.PageSize.listWithPageSize",
+        "payload.pageable.operations.XmlPaginationOperations.list_with_continuation": "Payload.Pageable.XmlPagination.listWithContinuation",
+        "payload.pageable.aio.operations.XmlPaginationOperations.list_with_continuation": "Payload.Pageable.XmlPagination.listWithContinuation",
+        "payload.pageable.operations.XmlPaginationOperations.list_with_next_link": "Payload.Pageable.XmlPagination.listWithNextLink",
+        "payload.pageable.aio.operations.XmlPaginationOperations.list_with_next_link": "Payload.Pageable.XmlPagination.listWithNextLink"
+    }
+}

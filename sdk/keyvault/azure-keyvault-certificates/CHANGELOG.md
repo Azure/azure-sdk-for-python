@@ -1,5 +1,14 @@
 # Release History
 
+## 4.11.1 (2026-04-29)
+
+### Bugs Fixed
+
+- Fixed `CertificateClient.begin_create_certificate` (and its async counterpart) incorrectly raising
+  `ValueError` when a `CertificatePolicy` was created with only `san_ip_addresses` or `san_uris` and no
+  `subject`, `san_dns_names`, `san_emails`, or `san_user_principal_names`. IP addresses and URIs are
+  valid subject alternative name types and are now recognized by the client's policy validator.
+
 ## 4.11.0 (2026-03-27)
 
 ### Features Added
