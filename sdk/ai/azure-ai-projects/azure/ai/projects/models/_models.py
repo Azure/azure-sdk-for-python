@@ -21,6 +21,9 @@ from ._enums import (
     ContainerSkillType,
     CredentialType,
     CustomToolParamFormatType,
+    DataGenerationJobOutputType,
+    DataGenerationJobSourceType,
+    DataGenerationJobType,
     DatasetType,
     DeploymentType,
     EvaluationRuleActionType,
@@ -61,14 +64,16 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerUsePreviewTool, CustomToolParam,
     MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool, ImageGenTool,
     LocalShellToolParam, MCPTool, MemorySearchPreviewTool, OpenApiTool, SharepointPreviewTool,
-    FunctionShellToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    FunctionShellToolParam, ToolboxSearchPreviewTool, WebSearchTool, WebSearchPreviewTool,
+    WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer_use_preview",
      "web_search", "mcp", "code_interpreter", "image_generation", "local_shell", "shell", "custom",
      "web_search_preview", "apply_patch", "a2a_preview", "bing_custom_search_preview",
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
-     "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "azure_ai_search",
-     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
+     "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
+     "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
+     "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -79,8 +84,8 @@ class Tool(_Model):
      \"shell\", \"custom\", \"web_search_preview\", \"apply_patch\", \"a2a_preview\",
      \"bing_custom_search_preview\", \"browser_automation_preview\", \"fabric_dataagent_preview\",
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
-     \"capture_structured_outputs\", and \"openapi\"."""
+     \"fabric_iq_preview\", \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\",
+     \"bing_grounding\", \"capture_structured_outputs\", and \"openapi\"."""
 
     @overload
     def __init__(
@@ -105,6 +110,10 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2A_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
@@ -118,6 +127,10 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``\"a2a_preview``. Required. A2A_PREVIEW."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base URL of the agent."""
     agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -131,6 +144,8 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
     def __init__(
         self,
         *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
         base_url: Optional[str] = None,
         agent_card_path: Optional[str] = None,
         project_connection_id: Optional[str] = None,
@@ -408,6 +423,94 @@ class AgentClusterInsightResult(InsightResult, discriminator="AgentClusterInsigh
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = InsightType.AGENT_CLUSTER_INSIGHT  # type: ignore
+
+
+class DataGenerationJobSource(_Model):
+    """The base source model for data generation jobs.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AgentDataGenerationJobSource, DatasetDataGenerationJobSource, FileDataGenerationJobSource,
+    PromptDataGenerationJobSource, TracesDataGenerationJobSource
+
+    :ivar type: The type of source. Required. Known values are: "prompt", "agent", "traces",
+     "dataset", and "file".
+    :vartype type: str or ~azure.ai.projects.models.DataGenerationJobSourceType
+    :ivar description: Optional description of what this source represents — helps the pipeline
+     interpret its content (e.g., 'Company refund policy document' or 'Describes the agent's core
+     capabilities').
+    :vartype description: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of source. Required. Known values are: \"prompt\", \"agent\", \"traces\", \"dataset\",
+     and \"file\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional description of what this source represents — helps the pipeline interpret its content
+     (e.g., 'Company refund policy document' or 'Describes the agent's core capabilities')."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentDataGenerationJobSource(DataGenerationJobSource, discriminator="agent"):
+    """Agent source for data generation jobs — references an agent to fetch instructions and metadata
+    from.
+
+    :ivar description: Optional description of what this source represents — helps the pipeline
+     interpret its content (e.g., 'Company refund policy document' or 'Describes the agent's core
+     capabilities').
+    :vartype description: str
+    :ivar type: The source type for this source, which is Agent. Required. Agent source —
+     references an agent.
+    :vartype type: str or ~azure.ai.projects.models.AGENT
+    :ivar agent_name: The agent name to fetch instructions from. Required.
+    :vartype agent_name: str
+    :ivar agent_version: The agent version. If not specified, the latest version is used.
+    :vartype agent_version: str
+    """
+
+    type: Literal[DataGenerationJobSourceType.AGENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The source type for this source, which is Agent. Required. Agent source — references an agent."""
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent name to fetch instructions from. Required."""
+    agent_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent version. If not specified, the latest version is used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_name: str,
+        description: Optional[str] = None,
+        agent_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobSourceType.AGENT  # type: ignore
 
 
 class AgentDefinition(_Model):
@@ -1487,12 +1590,20 @@ class AzureAISearchTool(Tool, discriminator="azure_ai_search"):
 
     :ivar type: The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH.
     :vartype type: str or ~azure.ai.projects.models.AZURE_AI_SEARCH
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar azure_ai_search: The azure ai search index resource. Required.
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchToolResource
     """
 
     type: Literal[ToolType.AZURE_AI_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     azure_ai_search: "_models.AzureAISearchToolResource" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1503,6 +1614,8 @@ class AzureAISearchTool(Tool, discriminator="azure_ai_search"):
         self,
         *,
         azure_ai_search: "_models.AzureAISearchToolResource",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1876,6 +1989,10 @@ class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_previe
     :ivar type: The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.BING_CUSTOM_SEARCH_PREVIEW
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar bing_custom_search_preview: The bing custom search tool parameters. Required.
     :vartype bing_custom_search_preview: ~azure.ai.projects.models.BingCustomSearchToolParameters
     """
@@ -1883,6 +2000,10 @@ class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_previe
     type: Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     bing_custom_search_preview: "_models.BingCustomSearchToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1893,6 +2014,8 @@ class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_previe
         self,
         *,
         bing_custom_search_preview: "_models.BingCustomSearchToolParameters",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2028,12 +2151,20 @@ class BingGroundingTool(Tool, discriminator="bing_grounding"):
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. BING_GROUNDING.
     :vartype type: str or ~azure.ai.projects.models.BING_GROUNDING
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar bing_grounding: The bing grounding search tool parameters. Required.
     :vartype bing_grounding: ~azure.ai.projects.models.BingGroundingSearchToolParameters
     """
 
     type: Literal[ToolType.BING_GROUNDING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. BING_GROUNDING."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     bing_grounding: "_models.BingGroundingSearchToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2044,6 +2175,8 @@ class BingGroundingTool(Tool, discriminator="bing_grounding"):
         self,
         *,
         bing_grounding: "_models.BingGroundingSearchToolParameters",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2181,6 +2314,10 @@ class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_previ
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION_PREVIEW
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar browser_automation_preview: The Browser Automation Tool parameters. Required.
     :vartype browser_automation_preview: ~azure.ai.projects.models.BrowserAutomationToolParameters
     """
@@ -2188,6 +2325,10 @@ class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_previ
     type: Literal[ToolType.BROWSER_AUTOMATION_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     browser_automation_preview: "_models.BrowserAutomationToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2198,6 +2339,8 @@ class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_previ
         self,
         *,
         browser_automation_preview: "_models.BrowserAutomationToolParameters",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3732,6 +3875,292 @@ class DailyRecurrenceSchedule(RecurrenceSchedule, discriminator="Daily"):
         self.type = RecurrenceType.DAILY  # type: ignore
 
 
+class DataGenerationJob(_Model):
+    """Data Generation Job resource.
+
+    :ivar id: Server-assigned unique identifier. Required.
+    :vartype id: str
+    :ivar inputs: Caller-supplied inputs.
+    :vartype inputs: ~azure.ai.projects.models.DataGenerationJobInputs
+    :ivar result: Result produced on success.
+    :vartype result: ~azure.ai.projects.models.DataGenerationJobResult
+    :ivar status: Current lifecycle status. Required. Known values are: "queued", "in_progress",
+     "succeeded", "failed", and "cancelled".
+    :vartype status: str or ~azure.ai.projects.models.JobStatus
+    :ivar error: Error details — populated only on failure.
+    :vartype error: ~azure.ai.projects.models.ApiError
+    :ivar created_at: The timestamp when the job was created, represented in Unix time (seconds
+     since January 1, 1970). Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar finished_at: The timestamp when the job was finished, represented in Unix time (seconds
+     since January 1, 1970).
+    :vartype finished_at: ~datetime.datetime
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Server-assigned unique identifier. Required."""
+    inputs: Optional["_models.DataGenerationJobInputs"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Caller-supplied inputs."""
+    result: Optional["_models.DataGenerationJobResult"] = rest_field(visibility=["read"])
+    """Result produced on success."""
+    status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
+    """Current lifecycle status. Required. Known values are: \"queued\", \"in_progress\",
+     \"succeeded\", \"failed\", and \"cancelled\"."""
+    error: Optional["_models.ApiError"] = rest_field(visibility=["read"])
+    """Error details — populated only on failure."""
+    created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The timestamp when the job was created, represented in Unix time (seconds since January 1,
+     1970). Required."""
+    finished_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The timestamp when the job was finished, represented in Unix time (seconds since January 1,
+     1970)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inputs: Optional["_models.DataGenerationJobInputs"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationJobInputs(_Model):
+    """Caller-supplied inputs for a data generation job.
+
+    :ivar name: The display name of the data generation job. Required.
+    :vartype name: str
+    :ivar sources: The sources used for the data generation job. Required.
+    :vartype sources: list[~azure.ai.projects.models.DataGenerationJobSource]
+    :ivar options: The options for the data generation job. Required.
+    :vartype options: ~azure.ai.projects.models.DataGenerationJobOptions
+    :ivar scenario: The scenario of the data generation job. Either for fine-tuning or evaluation.
+     Required. Known values are: "supervised_finetuning", "reinforcement_finetuning", and
+     "evaluation".
+    :vartype scenario: str or ~azure.ai.projects.models.DataGenerationJobScenario
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The display name of the data generation job. Required."""
+    sources: list["_models.DataGenerationJobSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sources used for the data generation job. Required."""
+    options: "_models.DataGenerationJobOptions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The options for the data generation job. Required."""
+    scenario: Union[str, "_models.DataGenerationJobScenario"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scenario of the data generation job. Either for fine-tuning or evaluation. Required. Known
+     values are: \"supervised_finetuning\", \"reinforcement_finetuning\", and \"evaluation\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        sources: list["_models.DataGenerationJobSource"],
+        options: "_models.DataGenerationJobOptions",
+        scenario: Union[str, "_models.DataGenerationJobScenario"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationJobOptions(_Model):
+    """Options for managing data generation jobs.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SimpleQnADataGenerationJobOptions, TaskDataGenerationJobOptions,
+    ToolUseFineTuningDataGenerationJobOptions, TracesDataGenerationJobOptions
+
+    :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
+     "tool_use", and "task".
+    :vartype type: str or ~azure.ai.projects.models.DataGenerationJobType
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\",
+     \"tool_use\", and \"task\"."""
+    max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of samples to generate. Required."""
+    train_split: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The proportion of the generated data to be used for training when the data is used for
+     fine-tuning. The rest will be used for validation. Value should be between 0 and 1."""
+    model_options: Optional["_models.DataGenerationModelOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The LLM model options."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationJobOutput(_Model):
+    """Output information for a data generation job.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DatasetDataGenerationJobOutput, FileDataGenerationJobOutput
+
+    :ivar type: The type of the output. Required. Known values are: "file" and "dataset".
+    :vartype type: str or ~azure.ai.projects.models.DataGenerationJobOutputType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the output. Required. Known values are: \"file\" and \"dataset\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationJobResult(_Model):
+    """Result produced by a successful data generation job.
+
+    :ivar outputs: The final job outputs: Azure OpenAI files for fine-tuning, or datasets for
+     evaluation.
+    :vartype outputs: list[~azure.ai.projects.models.DataGenerationJobOutput]
+    :ivar generated_samples: The number of samples actually generated. Required.
+    :vartype generated_samples: int
+    :ivar token_usage: The token usage information for the data generation job.
+    :vartype token_usage: ~azure.ai.projects.models.DataGenerationTokenUsage
+    """
+
+    outputs: Optional[list["_models.DataGenerationJobOutput"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The final job outputs: Azure OpenAI files for fine-tuning, or datasets for evaluation."""
+    generated_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of samples actually generated. Required."""
+    token_usage: Optional["_models.DataGenerationTokenUsage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The token usage information for the data generation job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        generated_samples: int,
+        outputs: Optional[list["_models.DataGenerationJobOutput"]] = None,
+        token_usage: Optional["_models.DataGenerationTokenUsage"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationModelOptions(_Model):
+    """LLM model options for data generation jobs.
+
+    :ivar model: Base model name used to generate data. Required.
+    :vartype model: str
+    """
+
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base model name used to generate data. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataGenerationTokenUsage(_Model):
+    """Token usage information for a data generation job.
+
+    :ivar prompt_tokens: The number of prompt tokens used.
+    :vartype prompt_tokens: int
+    :ivar completion_tokens: The number of completion tokens generated.
+    :vartype completion_tokens: int
+    :ivar total_tokens: Total number of tokens used.
+    :vartype total_tokens: int
+    """
+
+    prompt_tokens: Optional[int] = rest_field(visibility=["read"])
+    """The number of prompt tokens used."""
+    completion_tokens: Optional[int] = rest_field(visibility=["read"])
+    """The number of completion tokens generated."""
+    total_tokens: Optional[int] = rest_field(visibility=["read"])
+    """Total number of tokens used."""
+
+
 class DatasetCredential(_Model):
     """Represents a reference to a blob for consumption.
 
@@ -3760,6 +4189,104 @@ class DatasetCredential(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class DatasetDataGenerationJobOutput(DataGenerationJobOutput, discriminator="dataset"):
+    """Dataset output for a data generation job.
+
+    :ivar type: Dataset output. Required. The generated data is a Dataset.
+    :vartype type: str or ~azure.ai.projects.models.DATASET
+    :ivar id: The id of the output dataset created.
+    :vartype id: str
+    :ivar name: The name of the output dataset and can be optionally set during job creation time.
+    :vartype name: str
+    :ivar version: The version of the output dataset.
+    :vartype version: str
+    :ivar description: Description of the output dataset and can be optionally set during job
+     creation time.
+    :vartype description: str
+    :ivar tags: Tag dictionary of the output dataset and can be optionally set during job creation
+     time.
+    :vartype tags: dict[str, str]
+    """
+
+    type: Literal[DataGenerationJobOutputType.DATASET] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Dataset output. Required. The generated data is a Dataset."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The id of the output dataset created."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the output dataset and can be optionally set during job creation time."""
+    version: Optional[str] = rest_field(visibility=["read"])
+    """The version of the output dataset."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the output dataset and can be optionally set during job creation time."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tag dictionary of the output dataset and can be optionally set during job creation time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobOutputType.DATASET  # type: ignore
+
+
+class DatasetDataGenerationJobSource(DataGenerationJobSource, discriminator="dataset"):
+    """Dataset source for data generation jobs — reference to a dataset.
+
+    :ivar description: Optional description of what this source represents — helps the pipeline
+     interpret its content (e.g., 'Company refund policy document' or 'Describes the agent's core
+     capabilities').
+    :vartype description: str
+    :ivar type: The source type for this source, which is Dataset. Required. Dataset source —
+     reference to a dataset.
+    :vartype type: str or ~azure.ai.projects.models.DATASET
+    :ivar name: The name of the dataset. Required.
+    :vartype name: str
+    :ivar version: The version of the dataset. If not specified, the latest version is used.
+    :vartype version: str
+    """
+
+    type: Literal[DataGenerationJobSourceType.DATASET] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The source type for this source, which is Dataset. Required. Dataset source — reference to a
+     dataset."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the dataset. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the dataset. If not specified, the latest version is used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobSourceType.DATASET  # type: ignore
 
 
 class DatasetVersion(_Model):
@@ -5194,6 +5721,80 @@ class FieldMapping(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class FileDataGenerationJobOutput(DataGenerationJobOutput, discriminator="file"):
+    """Azure OpenAI file output for a data generation job.
+
+    :ivar type: Azure OpenAI file output. Required. The generated data is an Azure OpenAI File.
+    :vartype type: str or ~azure.ai.projects.models.FILE
+    :ivar id: The id of the output Azure OpenAI file. Required.
+    :vartype id: str
+    :ivar filename: The filename of the output Azure OpenAI file. Required.
+    :vartype filename: str
+    """
+
+    type: Literal[DataGenerationJobOutputType.FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Azure OpenAI file output. Required. The generated data is an Azure OpenAI File."""
+    id: str = rest_field(visibility=["read"])
+    """The id of the output Azure OpenAI file. Required."""
+    filename: str = rest_field(visibility=["read"])
+    """The filename of the output Azure OpenAI file. Required."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobOutputType.FILE  # type: ignore
+
+
+class FileDataGenerationJobSource(DataGenerationJobSource, discriminator="file"):
+    """File source for data generation jobs — Azure OpenAI file input.
+
+    :ivar description: Optional description of what this source represents — helps the pipeline
+     interpret its content (e.g., 'Company refund policy document' or 'Describes the agent's core
+     capabilities').
+    :vartype description: str
+    :ivar type: The source type for this job, which is File. Required. File source — Azure OpenAI
+     file.
+    :vartype type: str or ~azure.ai.projects.models.FILE
+    :ivar id: Input Azure Open AI file id used for data generation. Required.
+    :vartype id: str
+    """
+
+    type: Literal[DataGenerationJobSourceType.FILE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The source type for this job, which is File. Required. File source — Azure OpenAI file."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Input Azure Open AI file id used for data generation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobSourceType.FILE  # type: ignore
 
 
 class FileDatasetVersion(DatasetVersion, discriminator="uri_file"):
@@ -6895,6 +7496,10 @@ class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
     :ivar type: The type of the tool. Always ``memory_search_preview``. Required.
      MEMORY_SEARCH_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.MEMORY_SEARCH_PREVIEW
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar memory_store_name: The name of the memory store to use. Required.
     :vartype memory_store_name: str
     :ivar scope: The namespace used to group and isolate memories, such as a user ID. Limits which
@@ -6910,6 +7515,10 @@ class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
 
     type: Literal[ToolType.MEMORY_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``memory_search_preview``. Required. MEMORY_SEARCH_PREVIEW."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     memory_store_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the memory store to use. Required."""
     scope: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6929,6 +7538,8 @@ class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
         *,
         memory_store_name: str,
         scope: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
         search_options: Optional["_models.MemorySearchOptions"] = None,
         update_delay: Optional[int] = None,
     ) -> None: ...
@@ -7377,6 +7988,10 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
     :ivar type: The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.FABRIC_DATAAGENT_PREVIEW
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar fabric_dataagent_preview: The fabric data agent tool parameters. Required.
     :vartype fabric_dataagent_preview: ~azure.ai.projects.models.FabricDataAgentToolParameters
     """
@@ -7384,6 +7999,10 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
     type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     fabric_dataagent_preview: "_models.FabricDataAgentToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7394,6 +8013,8 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
         self,
         *,
         fabric_dataagent_preview: "_models.FabricDataAgentToolParameters",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -8347,6 +8968,47 @@ class PromptBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="prompt"
         self.type = EvaluatorDefinitionType.PROMPT  # type: ignore
 
 
+class PromptDataGenerationJobSource(DataGenerationJobSource, discriminator="prompt"):
+    """Prompt source for data generation jobs — inline text provided by the user.
+
+    :ivar description: Optional description of what this source represents — helps the pipeline
+     interpret its content (e.g., 'Company refund policy document' or 'Describes the agent's core
+     capabilities').
+    :vartype description: str
+    :ivar type: The source type for this source, which is Prompt. Required. Prompt source — inline
+     text provided by the user.
+    :vartype type: str or ~azure.ai.projects.models.PROMPT
+    :ivar prompt: Inline prompt text (e.g., agent description, policy text, supplementary context).
+     Required.
+    :vartype prompt: str
+    """
+
+    type: Literal[DataGenerationJobSourceType.PROMPT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The source type for this source, which is Prompt. Required. Prompt source — inline text
+     provided by the user."""
+    prompt: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Inline prompt text (e.g., agent description, policy text, supplementary context). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        prompt: str,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobSourceType.PROMPT  # type: ignore
+
+
 class ProtocolVersionRecord(_Model):
     """A record mapping for a single protocol and its version.
 
@@ -9082,6 +9744,10 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
     :ivar type: The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.SHAREPOINT_GROUNDING_PREVIEW
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     :ivar sharepoint_grounding_preview: The sharepoint grounding tool parameters. Required.
     :vartype sharepoint_grounding_preview:
      ~azure.ai.projects.models.SharepointGroundingToolParameters
@@ -9090,6 +9756,10 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
     type: Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
     sharepoint_grounding_preview: "_models.SharepointGroundingToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9100,6 +9770,8 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
         self,
         *,
         sharepoint_grounding_preview: "_models.SharepointGroundingToolParameters",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9112,6 +9784,53 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.SHAREPOINT_GROUNDING_PREVIEW  # type: ignore
+
+
+class SimpleQnADataGenerationJobOptions(DataGenerationJobOptions, discriminator="simple_qna"):
+    """The options for a data generation job with SimpleQnA type.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is SimpleQnA for this model. Required. Simple
+     question and answers between user and agent.
+    :vartype type: str or ~azure.ai.projects.models.SIMPLE_QNA
+    :ivar question_types: The question types to generate. Used only for fine-tuning scenarios.
+    :vartype question_types: list[str or ~azure.ai.projects.models.SimpleQnAFineTuningQuestionType]
+    """
+
+    type: Literal[DataGenerationJobType.SIMPLE_QNA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is SimpleQnA for this model. Required. Simple question and
+     answers between user and agent."""
+    question_types: Optional[list[Union[str, "_models.SimpleQnAFineTuningQuestionType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The question types to generate. Used only for fine-tuning scenarios."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+        question_types: Optional[list[Union[str, "_models.SimpleQnAFineTuningQuestionType"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.SIMPLE_QNA  # type: ignore
 
 
 class SkillObject(_Model):
@@ -9391,6 +10110,46 @@ class StructuredOutputDefinition(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TaskDataGenerationJobOptions(DataGenerationJobOptions, discriminator="task"):
+    """The options for a data generation job with Task type.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is Task for this model. Required. Task helps in
+     providing a scenario description for generating multi turn conversation between user and agent.
+    :vartype type: str or ~azure.ai.projects.models.TASK
+    """
+
+    type: Literal[DataGenerationJobType.TASK] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is Task for this model. Required. Task helps in providing a
+     scenario description for generating multi turn conversation between user and agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.TASK  # type: ignore
 
 
 class TaxonomyCategory(_Model):
@@ -9745,6 +10504,46 @@ class ToolboxPolicies(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ToolboxSearchPreviewTool(Tool, discriminator="toolbox_search_preview"):
+    """A tool for searching over the agent's toolbox. When present, deferred tools are hidden from
+    ``tools/list`` and only discoverable via ``search_tools`` queries at runtime.
+
+    :ivar type: The type of the tool. Always ``toolbox_search_preview``. Required.
+     TOOLBOX_SEARCH_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.TOOLBOX_SEARCH_PREVIEW
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    """
+
+    type: Literal[ToolType.TOOLBOX_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``toolbox_search_preview``. Required. TOOLBOX_SEARCH_PREVIEW."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.TOOLBOX_SEARCH_PREVIEW  # type: ignore
 
 
 class ToolboxVersionObject(_Model):
@@ -10219,6 +11018,154 @@ class ToolProjectConnection(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ToolUseFineTuningDataGenerationJobOptions(
+    DataGenerationJobOptions, discriminator="tool_use"
+):  # pylint: disable=name-too-long
+    """The options for a data generation job with ToolUse type. Used only for fine-tuning scenarios.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is ToolUse for this model. Required. Tool
+     calling conversation between user and agent.
+    :vartype type: str or ~azure.ai.projects.models.TOOL_USE
+    """
+
+    type: Literal[DataGenerationJobType.TOOL_USE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is ToolUse for this model. Required. Tool calling
+     conversation between user and agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.TOOL_USE  # type: ignore
+
+
+class TracesDataGenerationJobOptions(DataGenerationJobOptions, discriminator="traces"):
+    """The options for a data generation job with Traces type.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is Traces for this model. Required. Single turn
+     query and response from agent traces.
+    :vartype type: str or ~azure.ai.projects.models.TRACES
+    """
+
+    type: Literal[DataGenerationJobType.TRACES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is Traces for this model. Required. Single turn query and
+     response from agent traces."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.TRACES  # type: ignore
+
+
+class TracesDataGenerationJobSource(DataGenerationJobSource, discriminator="traces"):
+    """Traces source for data generation jobs — conversation traces from Application Insights.
+
+    :ivar description: Optional description of what this source represents — helps the pipeline
+     interpret its content (e.g., 'Company refund policy document' or 'Describes the agent's core
+     capabilities').
+    :vartype description: str
+    :ivar type: The source type for this source, which is Traces. Required. Traces source —
+     conversation traces from Application Insights.
+    :vartype type: str or ~azure.ai.projects.models.TRACES
+    :ivar agent_name: The agent name to fetch traces for. Required.
+    :vartype agent_name: str
+    :ivar agent_version: The agent version. If not specified, traces for ALL versions of the agent
+     are included within the time window.
+    :vartype agent_version: str
+    :ivar start_time: Start of the time window (Unix timestamp in seconds) for fetching traces.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: End of the time window (Unix timestamp in seconds). Defaults to current time.
+    :vartype end_time: ~datetime.datetime
+    :ivar max_traces: Maximum number of traces to retrieve.
+    :vartype max_traces: int
+    """
+
+    type: Literal[DataGenerationJobSourceType.TRACES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The source type for this source, which is Traces. Required. Traces source — conversation traces
+     from Application Insights."""
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent name to fetch traces for. Required."""
+    agent_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent version. If not specified, traces for ALL versions of the agent are included within
+     the time window."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Start of the time window (Unix timestamp in seconds) for fetching traces."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """End of the time window (Unix timestamp in seconds). Defaults to current time."""
+    max_traces: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of traces to retrieve."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_name: str,
+        description: Optional[str] = None,
+        agent_version: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        max_traces: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobSourceType.TRACES  # type: ignore
 
 
 class UpdateToolboxRequest(_Model):

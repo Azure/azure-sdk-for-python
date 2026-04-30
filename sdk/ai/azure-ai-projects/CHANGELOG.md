@@ -6,6 +6,10 @@
 
 * New `FabricIQPreviewTool`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
+* Added `datasets` beta sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, and `delete_generation_job`.
+* New models: `DataGenerationJob`, `DataGenerationJobInputs`, `DataGenerationJobOptions`, `DataGenerationJobOutput`, `DataGenerationJobResult`, `DataGenerationJobSource`, `DataGenerationModelOptions`, `DataGenerationTokenUsage`, and related discriminated subtypes.
+* New enums: `DataGenerationJobOutputType`, `DataGenerationJobScenario`, `DataGenerationJobSourceType`, `DataGenerationJobType`, `JobStatus`, `SimpleQnAFineTuningQuestionType`.
+* New `ToolboxSearchPreviewTool` model.
 
 ### Breaking Changes
 
