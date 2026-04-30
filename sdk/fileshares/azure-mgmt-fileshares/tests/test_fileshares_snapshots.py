@@ -9,7 +9,7 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
-from _helpers import (  # type: ignore[import-not-found]
+from _fs_test_helpers import (  # type: ignore[import-not-found]
     RESOURCE_GROUP,
     build_share_payload,
     build_snapshot_payload,

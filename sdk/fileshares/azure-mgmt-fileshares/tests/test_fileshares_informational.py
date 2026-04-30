@@ -8,7 +8,7 @@ from azure.mgmt.fileshares import models as fs_models
 
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
-from _helpers import (  # type: ignore[import-not-found]
+from _fs_test_helpers import (  # type: ignore[import-not-found]
     LOCATION,
     RESOURCE_GROUP,
     build_share_payload,
