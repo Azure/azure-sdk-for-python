@@ -1,0 +1,14 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.Override",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.override.models.GroupParametersOptions": "Customization.GroupParametersOptions",
+        "specs.azure.clientgenerator.core.override.operations.ReorderParametersOperations.reorder": "_Specs_.Azure.ClientGenerator.Core.Override.ReorderParameters.reorder",
+        "specs.azure.clientgenerator.core.override.aio.operations.ReorderParametersOperations.reorder": "_Specs_.Azure.ClientGenerator.Core.Override.ReorderParameters.reorder",
+        "specs.azure.clientgenerator.core.override.operations.GroupParametersOperations.group": "_Specs_.Azure.ClientGenerator.Core.Override.GroupParameters.group",
+        "specs.azure.clientgenerator.core.override.aio.operations.GroupParametersOperations.group": "_Specs_.Azure.ClientGenerator.Core.Override.GroupParameters.group",
+        "specs.azure.clientgenerator.core.override.operations.RequireOptionalParameterOperations.require_optional": "_Specs_.Azure.ClientGenerator.Core.Override.RequireOptionalParameter.requireOptional",
+        "specs.azure.clientgenerator.core.override.aio.operations.RequireOptionalParameterOperations.require_optional": "_Specs_.Azure.ClientGenerator.Core.Override.RequireOptionalParameter.requireOptional",
+        "specs.azure.clientgenerator.core.override.operations.RemoveOptionalParameterOperations.remove_optional": "_Specs_.Azure.ClientGenerator.Core.Override.RemoveOptionalParameter.removeOptional",
+        "specs.azure.clientgenerator.core.override.aio.operations.RemoveOptionalParameterOperations.remove_optional": "_Specs_.Azure.ClientGenerator.Core.Override.RemoveOptionalParameter.removeOptional"
+    }
+}

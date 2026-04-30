@@ -1,0 +1,13 @@
+{
+    "CrossLanguagePackageId": "Client.Naming.EnumConflict",
+    "CrossLanguageDefinitionId": {
+        "client.naming.enumconflict.firstnamespace.models.FirstModel": "Client.Naming.EnumConflict.FirstNamespace.FirstModel",
+        "client.naming.enumconflict.secondnamespace.models.SecondModel": "Client.Naming.EnumConflict.SecondNamespace.SecondModel",
+        "client.naming.enumconflict.models.Status": "Client.Naming.EnumConflict.FirstNamespace.Status",
+        "client.naming.enumconflict.models.SecondStatus": "Client.Naming.EnumConflict.SecondNamespace.Status",
+        "client.naming.enumconflict.operations.FirstOperationsOperations.first": "Client.Naming.EnumConflict.FirstOperations.first",
+        "client.naming.enumconflict.aio.operations.FirstOperationsOperations.first": "Client.Naming.EnumConflict.FirstOperations.first",
+        "client.naming.enumconflict.operations.SecondOperationsOperations.second": "Client.Naming.EnumConflict.SecondOperations.second",
+        "client.naming.enumconflict.aio.operations.SecondOperationsOperations.second": "Client.Naming.EnumConflict.SecondOperations.second"
+    }
+}

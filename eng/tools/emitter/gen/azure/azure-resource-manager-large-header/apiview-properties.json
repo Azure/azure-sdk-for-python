@@ -1,0 +1,11 @@
+{
+    "CrossLanguagePackageId": "Azure.ResourceManager.LargeHeader",
+    "CrossLanguageDefinitionId": {
+        "azure.resourcemanager.largeheader.models.CancelResult": "Azure.ResourceManager.LargeHeader.CancelResult",
+        "azure.resourcemanager.largeheader.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.resourcemanager.largeheader.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.resourcemanager.largeheader.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.resourcemanager.largeheader.operations.LargeHeadersOperations.begin_two6_k": "Azure.ResourceManager.LargeHeader.LargeHeaders.two6k",
+        "azure.resourcemanager.largeheader.aio.operations.LargeHeadersOperations.begin_two6_k": "Azure.ResourceManager.LargeHeader.LargeHeaders.two6k"
+    }
+}
