@@ -125,7 +125,7 @@ jobs:
         working-directory: _typespec/packages/http-client-python
         run: |
           EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          npm run regenerate -- --emitterName "$EMITTER"
+          npm run regenerate
 
       - name: Copy regenerated tests
         run: |
