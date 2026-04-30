@@ -830,7 +830,13 @@ class Model(_MyMutableMapping):
                         existed_attr_keys.append(xml_name)
                         if deser:
                             # Store raw text for lazy deserialization in __get__
-                            result[rest_name] = item.text
+                            # If text is None (empty element), deserialize eagerly
+                            # to get the correct empty value (e.g. "" for str)
+                            text = item.text
+                            if text is not None:
+                                result[rest_name] = text
+                            else:
+                                result[rest_name] = deser(item)
                         else:
                             result[rest_name] = _deserialize(rf_type, item)
                 elif kind == 1:  # attribute
@@ -933,8 +939,8 @@ class Model(_MyMutableMapping):
                 rf._module = cls.__module__
                 if not rf._type:
                     rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
-                if not rf._rest_name:
-                    rf._rest_name = attr
+                if not rf._rest_name_input:
+                    rf._rest_name_input = attr
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
             # Precompute the default-value dict once per class. Model.__init__ copies this
             # per instance instead of rebuilding it from _attr_to_rest_field every call.
@@ -1340,7 +1346,7 @@ class _RestField:
         deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]] = None,
     ):
         self._type = type
-        self._rest_name = name
+        self._rest_name_input = name
         self._module: typing.Optional[str] = None
         self._is_discriminator = is_discriminator
         self._visibility = visibility
@@ -1360,6 +1366,12 @@ class _RestField:
         if isinstance(result, functools.partial):
             return getattr(result, "args", [None])[0]
         return result
+
+    @property
+    def _rest_name(self) -> str:
+        if self._rest_name_input is None:
+            raise ValueError("Rest name was never set")
+        return self._rest_name_input
 
     def __get__(self, obj: Model, type=None):  # pylint: disable=redefined-builtin
         # by this point, type and rest_name will have a value bc we default

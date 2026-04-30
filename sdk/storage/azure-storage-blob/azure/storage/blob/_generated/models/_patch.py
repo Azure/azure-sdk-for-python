@@ -15,6 +15,7 @@ from .._utils.model_base import (
     Model as _Model,
     _MyMutableMapping,
     _RestField,
+    _UNSET,
     _deserialize,
     _build_xml_field_plan,
 )
@@ -92,6 +93,13 @@ def _patched_new(cls, *args, **kwargs):
         cls._backcompat_attr_to_rest_field = {
             _Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
             for attr, rf in cls._attr_to_rest_field.items()
+        }
+
+        # Precompute the default-value dict once per class.
+        cls._defaults = {
+            rf._rest_name: rf._default
+            for rf in attr_to_rest_field.values()
+            if rf._default is not _UNSET
         }
 
         # Reverse mapping: REST wire name → Python attribute name
