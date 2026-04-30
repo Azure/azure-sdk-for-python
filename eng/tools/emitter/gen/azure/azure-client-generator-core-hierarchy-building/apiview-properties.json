@@ -1,0 +1,18 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.hierarchybuilding.models.Animal": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.Animal",
+        "specs.azure.clientgenerator.core.hierarchybuilding.models.Pet": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.Pet",
+        "specs.azure.clientgenerator.core.hierarchybuilding.models.Dog": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.Dog",
+        "specs.azure.clientgenerator.core.hierarchybuilding.operations.AnimalOperationsOperations.update_pet_as_animal": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.AnimalOperations.updatePetAsAnimal",
+        "specs.azure.clientgenerator.core.hierarchybuilding.aio.operations.AnimalOperationsOperations.update_pet_as_animal": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.AnimalOperations.updatePetAsAnimal",
+        "specs.azure.clientgenerator.core.hierarchybuilding.operations.AnimalOperationsOperations.update_dog_as_animal": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.AnimalOperations.updateDogAsAnimal",
+        "specs.azure.clientgenerator.core.hierarchybuilding.aio.operations.AnimalOperationsOperations.update_dog_as_animal": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.AnimalOperations.updateDogAsAnimal",
+        "specs.azure.clientgenerator.core.hierarchybuilding.operations.PetOperationsOperations.update_pet_as_pet": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.PetOperations.updatePetAsPet",
+        "specs.azure.clientgenerator.core.hierarchybuilding.aio.operations.PetOperationsOperations.update_pet_as_pet": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.PetOperations.updatePetAsPet",
+        "specs.azure.clientgenerator.core.hierarchybuilding.operations.PetOperationsOperations.update_dog_as_pet": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.PetOperations.updateDogAsPet",
+        "specs.azure.clientgenerator.core.hierarchybuilding.aio.operations.PetOperationsOperations.update_dog_as_pet": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.PetOperations.updateDogAsPet",
+        "specs.azure.clientgenerator.core.hierarchybuilding.operations.DogOperationsOperations.update_dog_as_dog": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.DogOperations.updateDogAsDog",
+        "specs.azure.clientgenerator.core.hierarchybuilding.aio.operations.DogOperationsOperations.update_dog_as_dog": "_Specs_.Azure.ClientGenerator.Core.HierarchyBuilding.DogOperations.updateDogAsDog"
+    }
+}

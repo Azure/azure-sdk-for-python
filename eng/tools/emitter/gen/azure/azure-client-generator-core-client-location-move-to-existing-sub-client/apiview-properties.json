@@ -1,0 +1,11 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.clientlocation.subclient.operations.AdminOperationsOperations.get_admin_info": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.AdminOperations.getAdminInfo",
+        "specs.azure.clientgenerator.core.clientlocation.subclient.aio.operations.AdminOperationsOperations.get_admin_info": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.AdminOperations.getAdminInfo",
+        "specs.azure.clientgenerator.core.clientlocation.subclient.operations.AdminOperationsOperations.delete_user": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.UserOperations.deleteUser",
+        "specs.azure.clientgenerator.core.clientlocation.subclient.aio.operations.AdminOperationsOperations.delete_user": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.UserOperations.deleteUser",
+        "specs.azure.clientgenerator.core.clientlocation.subclient.operations.UserOperationsOperations.get_user": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.UserOperations.getUser",
+        "specs.azure.clientgenerator.core.clientlocation.subclient.aio.operations.UserOperationsOperations.get_user": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.UserOperations.getUser"
+    }
+}

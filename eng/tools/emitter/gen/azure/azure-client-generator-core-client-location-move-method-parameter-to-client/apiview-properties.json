@@ -1,0 +1,8 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveMethodParameterToClient",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.clientlocation.parameter.models.Blob": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveMethodParameterToClient.Blob",
+        "specs.azure.clientgenerator.core.clientlocation.parameter.operations.BlobOperationsOperations.get_blob": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveMethodParameterToClient.BlobOperations.getBlob",
+        "specs.azure.clientgenerator.core.clientlocation.parameter.aio.operations.BlobOperationsOperations.get_blob": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveMethodParameterToClient.BlobOperations.getBlob"
+    }
+}
