@@ -15,7 +15,7 @@ class TestAgentEndpointDeprecation:
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             # Warning is emitted on attribute access, not instantiation
-            _ = models.AgentEndpoint
+            _ = models.AgentEndpoint  # type: ignore[attr-defined]
 
             assert len(w) == 1
             assert issubclass(w[0].category, DeprecationWarning)
@@ -46,7 +46,7 @@ class TestAgentEndpointDeprecation:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
             # With PEP 562 __getattr__, AgentEndpoint IS AgentEndpointConfig
-            assert models.AgentEndpoint is models.AgentEndpointConfig
+            assert models.AgentEndpoint is models.AgentEndpointConfig  # type: ignore[attr-defined]
 
     def test_agent_endpoint_instance_is_config_instance(self):
         """Test that AgentEndpoint instance is also an AgentEndpointConfig instance."""
@@ -54,7 +54,7 @@ class TestAgentEndpointDeprecation:
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            endpoint = models.AgentEndpoint()
+            endpoint = models.AgentEndpoint()  # type: ignore[attr-defined]
 
         assert isinstance(endpoint, models.AgentEndpointConfig)
 
@@ -64,7 +64,7 @@ class TestAgentEndpointDeprecation:
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            endpoint = models.AgentEndpoint(
+            endpoint = models.AgentEndpoint(  # type: ignore[attr-defined]
                 protocols=[models.AgentEndpointProtocol.A2A],
             )
 
