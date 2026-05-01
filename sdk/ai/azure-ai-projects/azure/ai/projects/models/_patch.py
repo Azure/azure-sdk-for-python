@@ -370,34 +370,6 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-# Deprecated names handled via __getattr__ (PEP 562: https://peps.python.org/pep-0562/)
-_DEPRECATED_NAMES: Dict[str, str] = {
-    # Deprecated Name: Replacement Name
-    "AgentEndpoint": "AgentEndpointConfig",  # Deprecated in v2.2.0
-}
-
-
-def __getattr__(name: str) -> Any:
-    """Module-level __getattr__ for deprecation warnings (PEP 562).
-
-    :param name: The attribute name being accessed.
-    :type name: str
-    :return: The replacement attribute value.
-    :rtype: Any
-    :raises AttributeError: If the attribute is not found.
-    """
-    if name in _DEPRECATED_NAMES:
-        replacement = _DEPRECATED_NAMES[name]
-        warnings.warn(
-            f"'{name}' is deprecated and will be removed in the next release. "
-            f"Use '{replacement}' instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return globals()[replacement]
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
 __all__: List[str] = [
     "AsyncUpdateMemoriesLROPoller",
     "AzureAIAgentTargetParam",
@@ -419,14 +391,11 @@ __all__: List[str] = [
 ]  # Add all objects you want publicly available to users at this package level
 
 
-def __dir__() -> List[str]:
-    """Include deprecated names in dir() output for discoverability (PEP 562).
-
-    :return: List of public names including deprecated aliases.
-    :rtype: List[str]
-    """
-    return sorted(__all__ + list(_DEPRECATED_NAMES.keys()))
-
+# Deprecated names handled via _models_getattr injected by patch_sdk()
+_DEPRECATED_NAMES: Dict[str, str] = {
+    # Deprecated Name: Replacement Name
+    "AgentEndpoint": "AgentEndpointConfig",  # Deprecated in v2.2.0
+}
 
 def _models_getattr(name: str) -> Any:
     """Module-level __getattr__ for deprecation warnings on azure.ai.projects.models.
@@ -463,7 +432,7 @@ def patch_sdk():
     """
     import sys
 
-    # Inject __getattr__ into the models module for PEP 562 deprecation handling
+    # Inject __getattr__ into the models module for PEP 562 deprecation handling (https://peps.python.org/pep-0562/)
     models_module = sys.modules.get("azure.ai.projects.models")
     if models_module is not None:
         models_module.__getattr__ = _models_getattr  # type: ignore[attr-defined]
