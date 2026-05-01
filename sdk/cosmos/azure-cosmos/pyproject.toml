@@ -12,6 +12,9 @@ name = "azure-cosmos"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
+maintainers = [
+  { name = "Microsoft", email = "askdocdb@microsoft.com" },
+]
 description = "Microsoft Azure Cosmos Client Library for Python"
 license = "MIT"
 classifiers = [
