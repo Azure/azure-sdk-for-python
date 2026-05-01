@@ -520,6 +520,12 @@ asyncio.run(analyze_invoice())
 
 #### Convert results to LLM-ready text
 
+> [!NOTE]
+> **Preview feature**: `to_llm_input()` is currently in preview and may change in
+> future releases. We welcome feedback — please file suggestions or issues on
+> [GitHub Issues](https://github.com/Azure/azure-sdk-for-python/issues) with the
+> `Cognitive - Content Understanding` label.
+
 Use the `to_llm_input()` helper to convert any analysis result into a text format that LLMs
 can consume directly — YAML front matter with extracted fields followed by the markdown body.
 This works with all content types (documents, images, audio, video) and handles multi-segment
