@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for service API version `2025-07-01`
+- Added support for service API version `2025-07-01` [#46352](https://github.com/Azure/azure-sdk-for-python/pull/46352)
 
 ### Breaking Changes
 
