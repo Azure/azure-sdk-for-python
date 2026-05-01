@@ -38,6 +38,11 @@ dependencies = [
     "typing-extensions>=4.6.0",
     "isodate>=0.6.1",
 ]
+
+[project.optional-dependencies]
+aio = [
+    "azure-core[aio]>=1.37.0",
+]
 dynamic = ["readme"]
 
 [project.urls]
