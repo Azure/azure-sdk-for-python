@@ -14,6 +14,7 @@ azure-monitor-query
 jsonref
 opentelemetry-sdk
 python-dotenv
+black
 # Can't include those, because they are not supported in Python 3.9. Samples that use these package
 # cannot be run as pytest, because the pipeline will fail on Python 3.9 jobs.
 # pillow

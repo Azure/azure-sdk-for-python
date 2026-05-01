@@ -107,6 +107,8 @@ This script applies azure-ai-projects-specific corrections to the emitted code (
 The emitted code may have introduced another beta sub-client (a new property on class `BetaOperations`). It may have also added another enum value to the existing internal class `_FoundryFeaturesOptInKeys`. This means that the client library needs to set a new HTTP request header when making REST API calls to the service, to opt-in to the new service features which are still in preview.
 If that's the case, update the dictionary `_BETA_OPERATION_FEATURE_HEADERS` defined in `azure\ai\projects\models\_patch.py`, to include a new key-value pair to map the new beta sub-client name to the proper value from `_FoundryFeaturesOptInKeys`. If no new beta sub-client was introduced, but a new enum value was added to `_FoundryFeaturesOptInKeys`, you will need to update one of the existing key-value pairs in `_BETA_OPERATION_FEATURE_HEADERS` to a comma-separated join of multiple values from `_FoundryFeaturesOptInKeys`.
 
+Do a similar change to the dictionary `EXPECTED_FOUNDRY_FEATURES` defined in the test file `tests\foundry_features_header\foundry_features_header_test_base.py`: add a new key-value pair if a new beta sub-client was introduced, or update an existing key-value pair to include the new enum value if no new beta sub-client was introduced. 
+
 If a new enum value was added to `_AgentDefinitionOptInKeys`, please print a note on screen that mentions which value was added, and tell the user that a review is needed to make sure this new value is properly used. But otherwise continue on.
 
 ---
