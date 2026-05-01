@@ -58,6 +58,13 @@ exclude = [
     "tests*",
 ]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.maps",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 pyright = false
 ci_enabled = true
