@@ -60,3 +60,11 @@ exclude = [
 
 [tool.setuptools.package-data]
 "azure.media.videoanalyzeredge" = ["py.typed"]
+
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.media",
+    "samples",
+    "tests",
+]

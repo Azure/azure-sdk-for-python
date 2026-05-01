@@ -66,6 +66,15 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.monitor",
+    "azure.monitor.opentelemetry",
+    "samples",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false
