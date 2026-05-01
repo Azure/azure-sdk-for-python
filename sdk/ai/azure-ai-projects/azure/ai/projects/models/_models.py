@@ -459,7 +459,7 @@ class AgentDetails(_Model):
     :ivar versions: The latest version of the agent. Required.
     :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
     :ivar agent_endpoint: The endpoint configuration for the agent.
-    :vartype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+    :vartype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
     :ivar instance_identity: The instance identity of the agent.
     :vartype instance_identity: ~azure.ai.projects.models.AgentIdentity
     :ivar blueprint: The blueprint for the agent.
@@ -478,7 +478,7 @@ class AgentDetails(_Model):
     """The name of the agent. Required."""
     versions: "_models.AgentObjectVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The latest version of the agent. Required."""
-    agent_endpoint: Optional["_models.AgentEndpoint"] = rest_field(
+    agent_endpoint: Optional["_models.AgentEndpointConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoint configuration for the agent."""
@@ -498,7 +498,7 @@ class AgentDetails(_Model):
         id: str,  # pylint: disable=redefined-builtin
         name: str,
         versions: "_models.AgentObjectVersions",
-        agent_endpoint: Optional["_models.AgentEndpoint"] = None,
+        agent_endpoint: Optional["_models.AgentEndpointConfig"] = None,
         agent_card: Optional["_models.AgentCard"] = None,
     ) -> None: ...
 
@@ -513,8 +513,8 @@ class AgentDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentEndpoint(_Model):
-    """AgentEndpoint.
+class AgentEndpointConfig(_Model):
+    """AgentEndpointConfig.
 
     :ivar version_selector: The version selector of the agent endpoint determines how traffic is
      routed to different versions of the agent.

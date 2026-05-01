@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import warnings
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
@@ -33,6 +34,7 @@ from ._patch_evaluation_typeddicts import (
     TracesPreviewEvalRunDataSource,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
+from ._models import AgentEndpointConfig  # New name in v2.2.0, replacing deprecated AgentEndpoint
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 
@@ -368,7 +370,37 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+# Note: As an alternative to the below, to support deprecated class name without warning, you can do the following:
+# AgentEndpoint = AgentEndpointConfig
+
+class AgentEndpoint(AgentEndpointConfig):
+    """Deprecated alias for :class:`AgentEndpointConfig`.
+
+    .. deprecated:: 2.2.0
+        Use :class:`AgentEndpointConfig` instead. This alias will be removed in a future version.
+
+    :ivar version_selector: The version selector of the agent endpoint determines how traffic is
+     routed to different versions of the agent.
+    :vartype version_selector: ~azure.ai.projects.models.VersionSelector
+    :ivar protocols: The protocols that the agent supports.
+    :vartype protocols: list[str or ~azure.ai.projects.models.AgentEndpointProtocol]
+    :ivar authorization_schemes: The authorization schemes supported by the agent endpoint.
+    :vartype authorization_schemes:
+     list[~azure.ai.projects.models.AgentEndpointAuthorizationScheme]
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        warnings.warn(
+            "'AgentEndpoint' is deprecated and will be removed in a future version. "
+            "Use 'AgentEndpointConfig' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)
+
+
 __all__: List[str] = [
+    "AgentEndpoint",  # Deprecated alias for AgentEndpointConfig
     "AsyncUpdateMemoriesLROPoller",
     "AzureAIAgentTargetParam",
     "AzureAIBenchmarkPreviewEvalRunDataSource",

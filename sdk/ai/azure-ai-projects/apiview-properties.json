@@ -12,7 +12,7 @@
         "azure.ai.projects.models.AgentClusterInsightResult": "Azure.AI.Projects.AgentClusterInsightResult",
         "azure.ai.projects.models.AgentDefinition": "Azure.AI.Projects.AgentDefinition",
         "azure.ai.projects.models.AgentDetails": "Azure.AI.Projects.AgentObject",
-        "azure.ai.projects.models.AgentEndpoint": "Azure.AI.Projects.AgentEndpoint",
+        "azure.ai.projects.models.AgentEndpointConfig": "Azure.AI.Projects.AgentEndpointConfig",
         "azure.ai.projects.models.AgentEndpointAuthorizationScheme": "Azure.AI.Projects.AgentEndpointAuthorizationScheme",
         "azure.ai.projects.models.BaseCredentials": "Azure.AI.Projects.BaseCredentials",
         "azure.ai.projects.models.AgenticIdentityPreviewCredentials": "Azure.AI.Projects.AgenticIdentityPreviewCredentials",

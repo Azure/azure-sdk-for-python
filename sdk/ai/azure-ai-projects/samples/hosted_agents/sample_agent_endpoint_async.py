@@ -42,7 +42,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentEndpoint,
+    AgentEndpointConfig,
     AgentEndpointProtocol,
     FixedRatioVersionSelectionRule,
     VersionSelector,
@@ -77,7 +77,7 @@ async def main():
         try:
             # Configure endpoint routing so this agent name serves the created version.
             # 100% of traffic is routed to the single created version.
-            endpoint_config = AgentEndpoint(
+            endpoint_config = AgentEndpointConfig(
                 version_selector=VersionSelector(
                     version_selection_rules=[
                         FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
