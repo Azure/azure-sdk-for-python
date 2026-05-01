@@ -59,6 +59,13 @@ exclude = [
     "tests*",
 ]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.communication",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 pyright = false
 
