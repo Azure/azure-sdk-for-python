@@ -788,6 +788,99 @@ class TestUtils(unittest.TestCase):
         properties = {"user_agent.synthetic.type": "test"}
         self.assertTrue(_utils._is_synthetic_source(properties))
 
+    # SDK Version
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.ext_version",
+        "1.0.0b21",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {},
+        clear=True,
+    )
+    def test_get_sdk_version_default(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b21")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"AZURE_MONITOR_DISTRO_VERSION": "1.8.8"},
+        clear=True,
+    )
+    def test_get_sdk_version_distro(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:dst1.8.8")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0"},
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "AZURE_MONITOR_DISTRO_VERSION": "1.8.8",
+            "MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0",
+        },
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry_takes_priority(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
+
     def test_is_synthetic_source_none(self):
         properties = {}
         self.assertFalse(_utils._is_synthetic_source(properties))

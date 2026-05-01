@@ -27,7 +27,7 @@
 import logging
 import sys
 import urllib.parse
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type, Mapping, Dict, Iterable
 from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -103,14 +103,19 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     _RESPONSE_ID = "x-ms-request-id"
     _RESPONSE_ID_ATTR = "az.service_request_id"
 
-    def __init__(self, *, instrumentation_config: Optional[Mapping[str, Any]] = None, **kwargs: Any):
+    def __init__(
+        self,
+        *,
+        instrumentation_config: Optional[Mapping[str, Any]] = None,
+        additional_allowed_query_params: Optional[Iterable[str]] = None,
+        **kwargs: Any,
+    ):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
         self._instrumentation_config = instrumentation_config
         self.allowed_query_params: set[str] = CaseInsensitiveSet(self.__class__.DEFAULT_QUERY_PARAMS_ALLOWLIST)
-        additional_params = kwargs.get("additional_allowed_query_params")
-        if additional_params:
-            self.allowed_query_params.update(additional_params)
+        if additional_allowed_query_params:
+            self.allowed_query_params.update(additional_allowed_query_params)
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Starts a span for the network call.
