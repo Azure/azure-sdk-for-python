@@ -53,18 +53,6 @@ readme = {file = [
     "CHANGELOG.md",
 ], content-type = "text/markdown"}
 
-[tool.setuptools.packages.find]
-exclude = [
-    "azure",
-    "azure.ai",
-    "doc*",
-    "generated_samples*",
-    "generated_tests*",
-    "samples*",
-    "swagger*",
-    "tests*",
-]
-
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
