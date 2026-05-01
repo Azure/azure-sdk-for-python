@@ -1269,6 +1269,18 @@ def _log_events_to_app_insights(
                 if agent_version:
                     internal_log_attributes["gen_ai.agent.version"] = agent_version
 
+                # Add token usage information if present in sample.usage
+                # Normalize sample once so non-dict values do not break sample-derived logging
+                sample = event_data.get("sample")
+                sample = sample if isinstance(sample, dict) else {}
+                # Add token usage information if present in sample.usage
+                usage = sample.get("usage", {})
+                usage = usage if isinstance(usage, dict) else {}
+                if usage.get("prompt_tokens") is not None:
+                    standard_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
+                if usage.get("completion_tokens") is not None:
+                    standard_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
+
                 # Combine standard and internal attributes, put internal under the properties bag
                 standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
                 # Anonymize IP address to prevent Azure GeoIP enrichment and location tracking
@@ -1339,7 +1351,10 @@ def emit_eval_result_events_to_app_insights(
         azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
 
         # Add the Azure Monitor exporter to the logger provider
-        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
+        # Set export_timeout_millis to prevent individual batch exports from hanging
+        logger_provider.add_log_record_processor(
+            BatchLogRecordProcessor(azure_log_exporter, export_timeout_millis=60000)
+        )
 
         # Create event logger
         event_provider = EventLoggerProvider(logger_provider)
@@ -1370,9 +1385,16 @@ def emit_eval_result_events_to_app_insights(
                 evaluator_config=evaluator_config,
                 app_insights_config=app_insights_config,
             )
-        # Force flush to ensure events are sent
-        logger_provider.force_flush()
-        LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        # Force flush to ensure events are sent, with a timeout to prevent hanging
+        flush_timeout_millis = 60000  # 60 seconds
+        flush_success = logger_provider.force_flush(timeout_millis=flush_timeout_millis)
+        if flush_success:
+            LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        else:
+            LOGGER.warning(
+                f"App Insights force_flush timed out after {flush_timeout_millis}ms. "
+                "Some evaluation events may not have been sent."
+            )
 
     except Exception as e:
         LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")

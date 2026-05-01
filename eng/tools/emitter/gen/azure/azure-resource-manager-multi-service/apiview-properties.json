@@ -1,0 +1,25 @@
+{
+    "CrossLanguagePackageId": "Azure.ResourceManager.MultiService.Compute",
+    "CrossLanguageDefinitionId": {
+        "azure.resourcemanager.multiservice.combined.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.resourcemanager.multiservice.combined.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.resourcemanager.multiservice.combined.models.Disk": "Azure.ResourceManager.MultiService.ComputeDisk.Disk",
+        "azure.resourcemanager.multiservice.combined.models.DiskProperties": "Azure.ResourceManager.MultiService.ComputeDisk.DiskProperties",
+        "azure.resourcemanager.multiservice.combined.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.resourcemanager.multiservice.combined.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.resourcemanager.multiservice.combined.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.resourcemanager.multiservice.combined.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.resourcemanager.multiservice.combined.models.VirtualMachine": "Azure.ResourceManager.MultiService.Compute.VirtualMachine",
+        "azure.resourcemanager.multiservice.combined.models.VirtualMachineProperties": "Azure.ResourceManager.MultiService.Compute.VirtualMachineProperties",
+        "azure.resourcemanager.multiservice.combined.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.resourcemanager.multiservice.combined.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
+        "azure.resourcemanager.multiservice.combined.operations.VirtualMachinesOperations.get": "Azure.ResourceManager.MultiService.Compute.VirtualMachines.get",
+        "azure.resourcemanager.multiservice.combined.aio.operations.VirtualMachinesOperations.get": "Azure.ResourceManager.MultiService.Compute.VirtualMachines.get",
+        "azure.resourcemanager.multiservice.combined.operations.VirtualMachinesOperations.begin_create_or_update": "Azure.ResourceManager.MultiService.Compute.VirtualMachines.createOrUpdate",
+        "azure.resourcemanager.multiservice.combined.aio.operations.VirtualMachinesOperations.begin_create_or_update": "Azure.ResourceManager.MultiService.Compute.VirtualMachines.createOrUpdate",
+        "azure.resourcemanager.multiservice.combined.operations.DisksOperations.get": "Azure.ResourceManager.MultiService.ComputeDisk.Disks.get",
+        "azure.resourcemanager.multiservice.combined.aio.operations.DisksOperations.get": "Azure.ResourceManager.MultiService.ComputeDisk.Disks.get",
+        "azure.resourcemanager.multiservice.combined.operations.DisksOperations.begin_create_or_update": "Azure.ResourceManager.MultiService.ComputeDisk.Disks.createOrUpdate",
+        "azure.resourcemanager.multiservice.combined.aio.operations.DisksOperations.begin_create_or_update": "Azure.ResourceManager.MultiService.ComputeDisk.Disks.createOrUpdate"
+    }
+}

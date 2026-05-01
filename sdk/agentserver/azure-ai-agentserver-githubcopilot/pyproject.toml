@@ -20,10 +20,11 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=1.0.0b14,<1.0.0b18",
+    "azure-ai-agentserver-core>=2.0.0a1",
+    "azure-ai-agentserver-responses>=1.0.0a1",
     "github-copilot-sdk>=0.2.0,<0.3.0",
-    "opentelemetry-exporter-otlp-proto-http",
     "azure-identity",
+    "httpx>=0.24.0",
     "pyyaml>=6.0",
 ]
 
@@ -40,17 +41,6 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
-
-[tool.ruff]
-line-length = 120
-target-version = "py311"
-lint.select = ["E", "F", "B", "I"]
-lint.ignore = []
-fix = false
-
-[tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.githubcopilot"]
-combine-as-imports = true
 
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"

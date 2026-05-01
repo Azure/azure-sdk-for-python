@@ -1,0 +1,28 @@
+{
+    "CrossLanguagePackageId": "Azure.ResourceManager.MethodSubscriptionId",
+    "CrossLanguageDefinitionId": {
+        "azure.resourcemanager.methodsubscriptionid.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.resourcemanager.methodsubscriptionid.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.resourcemanager.methodsubscriptionid.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.resourcemanager.methodsubscriptionid.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.resourcemanager.methodsubscriptionid.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.resourcemanager.methodsubscriptionid.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.resourcemanager.methodsubscriptionid.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.resourcemanager.methodsubscriptionid.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.resourcemanager.methodsubscriptionid.models.ResourceGroupResource": "Azure.ResourceManager.MethodSubscriptionId.MixedSubscriptionPlacement.ResourceGroupResource",
+        "azure.resourcemanager.methodsubscriptionid.models.ResourceGroupResourceProperties": "Azure.ResourceManager.MethodSubscriptionId.MixedSubscriptionPlacement.ResourceGroupResourceProperties",
+        "azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource": "Azure.ResourceManager.MethodSubscriptionId.MixedSubscriptionPlacement.SubscriptionResource",
+        "azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource1": "Azure.ResourceManager.MethodSubscriptionId.TwoSubscriptionResourcesMethodLevel.SubscriptionResource1",
+        "azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource1Properties": "Azure.ResourceManager.MethodSubscriptionId.TwoSubscriptionResourcesMethodLevel.SubscriptionResource1Properties",
+        "azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource2": "Azure.ResourceManager.MethodSubscriptionId.TwoSubscriptionResourcesMethodLevel.SubscriptionResource2",
+        "azure.resourcemanager.methodsubscriptionid.models.SubscriptionResource2Properties": "Azure.ResourceManager.MethodSubscriptionId.TwoSubscriptionResourcesMethodLevel.SubscriptionResource2Properties",
+        "azure.resourcemanager.methodsubscriptionid.models.SubscriptionResourceProperties": "Azure.ResourceManager.MethodSubscriptionId.MixedSubscriptionPlacement.SubscriptionResourceProperties",
+        "azure.resourcemanager.methodsubscriptionid.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.resourcemanager.methodsubscriptionid.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.resourcemanager.methodsubscriptionid.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
+        "azure.resourcemanager.methodsubscriptionid.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.resourcemanager.methodsubscriptionid.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.resourcemanager.methodsubscriptionid.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.resourcemanager.methodsubscriptionid.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list"
+    }
+}
