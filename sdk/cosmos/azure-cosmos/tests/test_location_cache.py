@@ -589,8 +589,8 @@ class TestLocationCache:
         # The direct mutation should be overwritten — routing contexts recalculated from account data
         recalculated = lc.read_regional_routing_contexts
         assert len(recalculated) == len(original_read_contexts)
-        for orig, recalc in zip(original_read_contexts, recalculated):
-            assert orig.get_primary() == recalc.get_primary(), \
+        for orig, context in zip(original_read_contexts, recalculated):
+            assert orig.get_primary() == context.get_primary(), \
                 "update_location_cache() should recalculate from account data, overwriting direct mutations"
 
     def test_update_location_cache_preserves_unavailability_marks(self):
