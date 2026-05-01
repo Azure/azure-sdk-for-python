@@ -131,7 +131,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     """
 
     # To run this test with a specific sample, use:
-    # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_evaluation_samples[sample_agent_evaluation]
+    # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_evaluation_samples[sample_agent_as_target_evaluation]
     @evaluationsPreparer()
     @pytest.mark.parametrize(
         "sample_path",
