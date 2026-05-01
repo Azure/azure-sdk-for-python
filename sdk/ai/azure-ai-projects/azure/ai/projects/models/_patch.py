@@ -34,7 +34,6 @@ from ._patch_evaluation_typeddicts import (
     TracesPreviewEvalRunDataSource,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
-from ._models import AgentEndpointConfig  # New name in v2.2.0, replacing deprecated AgentEndpoint
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 
@@ -371,37 +370,35 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-# Note: As an alternative to the below, to support deprecated class name without warning, you can do the following:
-# AgentEndpoint = AgentEndpointConfig
+# Deprecated names handled via __getattr__ (PEP 562: https://peps.python.org/pep-0562/)
+_DEPRECATED_NAMES: Dict[str, str] = {
+    # Deprecated Name: Replacement Name
+    "AgentEndpoint": "AgentEndpointConfig",  # Deprecated in v2.2.0
+}
 
-class AgentEndpoint(AgentEndpointConfig):
-    """Deprecated alias for :class:`AgentEndpointConfig`.
 
-    .. deprecated:: 2.2.0
-        Use :class:`AgentEndpointConfig` instead. This alias will be removed in a future version.
+def __getattr__(name: str) -> Any:
+    """Module-level __getattr__ for deprecation warnings (PEP 562).
 
-    :ivar version_selector: The version selector of the agent endpoint determines how traffic is
-     routed to different versions of the agent.
-    :vartype version_selector: ~azure.ai.projects.models.VersionSelector
-    :ivar protocols: The protocols that the agent supports.
-    :vartype protocols: list[str or ~azure.ai.projects.models.AgentEndpointProtocol]
-    :ivar authorization_schemes: The authorization schemes supported by the agent endpoint.
-    :vartype authorization_schemes:
-     list[~azure.ai.projects.models.AgentEndpointAuthorizationScheme]
+    :param name: The attribute name being accessed.
+    :type name: str
+    :return: The replacement attribute value.
+    :rtype: Any
+    :raises AttributeError: If the attribute is not found.
     """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    if name in _DEPRECATED_NAMES:
+        replacement = _DEPRECATED_NAMES[name]
         warnings.warn(
-            "'AgentEndpoint' is deprecated and will be removed in a future version. "
-            "Use 'AgentEndpointConfig' instead.",
+            f"'{name}' is deprecated and will be removed in the next release. "
+            f"Use '{replacement}' instead.",
             DeprecationWarning,
             stacklevel=2,
         )
-        super().__init__(*args, **kwargs)
+        return globals()[replacement]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 __all__: List[str] = [
-    "AgentEndpoint",  # Deprecated alias for AgentEndpointConfig
     "AsyncUpdateMemoriesLROPoller",
     "AzureAIAgentTargetParam",
     "AzureAIBenchmarkPreviewEvalRunDataSource",
@@ -420,6 +417,15 @@ __all__: List[str] = [
     "TracesPreviewEvalRunDataSource",
     "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
+
+
+def __dir__() -> List[str]:
+    """Include deprecated names in dir() output for discoverability (PEP 562).
+
+    :return: List of public names including deprecated aliases.
+    :rtype: List[str]
+    """
+    return sorted(__all__ + list(_DEPRECATED_NAMES.keys()))
 
 
 def patch_sdk():
