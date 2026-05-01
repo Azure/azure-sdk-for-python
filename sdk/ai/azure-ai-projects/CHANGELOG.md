@@ -4,11 +4,14 @@
 
 ### Features Added
 
-* New `FabricIQPreviewTool`.
+* New Agent tool `FabricIQPreviewTool`.
+* New Agent tool `ToolboxSearchPreviewTool`.
+* New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 
 ### Breaking Changes
 
+* Renamed model `AgentEndpoint` to `AgentEndpointConfig`.
 * Agent Endpoint beta operations: Removed required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
 
 ### Bugs Fixed

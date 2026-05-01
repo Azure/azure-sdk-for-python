@@ -1,6 +1,17 @@
-# Emit azure-ai-projectsPython SDK from TypeSpec
+---
+name: azure-ai-projects-emit-from-typespec
+license: MIT
+metadata:
+  version: "1.0.0"
+  distribution: local
+description: "Emit the azure-ai-projects Python SDK from TypeSpec, apply post-emitter fixes, update changelog, and create a Pull Request. WHEN: \"emit SDK from TypeSpec\", \"generate azure-ai-projects SDK\", \"update azure-ai-projects from TypeSpec\", \"emit from TypeSpec\", \"regenerate azure-ai-projects\". DO NOT USE FOR: other Azure SDK packages, manual code edits without TypeSpec. INVOKES: azsdk-common-generate-sdk-locally skill, post-emitter-fixes.cmd script, git commands, gh CLI for PR creation."
+compatibility:
+  requires: "azure-sdk-mcp server, local azure-sdk-for-python clone, git, gh CLI"
+---
 
-These instructions guide Copilot through emitting the azure-ai-projects Python SDK from TypeSpec,
+# Emit azure-ai-projects Python SDK from TypeSpec
+
+This skill guides Copilot through emitting the azure-ai-projects Python SDK from TypeSpec,
 applying post-emitter fixes, updating the changelog, installing package from sources and creating a Pull Request.
 
 **Working directory:** `sdk/ai/azure-ai-projects`
@@ -19,7 +30,7 @@ Ask the user the following questions **one at a time**, waiting for each answer 
 
 Ask the user to choose **one** of the following two options for the target topic branch:
 
-1. **Create a new topic branch** (this should be the default options) – Create a new topic branch for the emitted changes. If selected, ask for a topic branch name. Mention that the expected format is `<github-userid>/<work-title>`.
+1. **Create a new topic branch** (this should be the default options) – Create a new topic branch for the emitted changes. If selected, ask for a topic branch name. Mention that the expected format is `<github-userid>/<work-title>`. Give a default value that uses this format "<github-userid>/<emit-from-typespec-DD-MM-HH-MM>", where `github-userid` is the user's GitHub ID and `DD-MM-HHMM` is the current date-time using date, month, hour and minute. For example, if the GitHub ID is "dargilco" and the current date and time is May 1st, 2026 at 8:13am, the default branch name would be `dargilco/emit-from-typespec-01-05-0813`.
 
 2. **Emit to current branch** – Emit directly to the current branch without creating a new topic branch. This is not common, but may be necessary if the user is re-running this workflow because of a previous failure, where the topic branch was already created. If the current branch is named `feature/azure-ai-projects/2.2.0` then  and report that they cannot emit directly to the current feature branch.stop
 
@@ -96,6 +107,8 @@ This script applies azure-ai-projects-specific corrections to the emitted code (
 The emitted code may have introduced another beta sub-client (a new property on class `BetaOperations`). It may have also added another enum value to the existing internal class `_FoundryFeaturesOptInKeys`. This means that the client library needs to set a new HTTP request header when making REST API calls to the service, to opt-in to the new service features which are still in preview.
 If that's the case, update the dictionary `_BETA_OPERATION_FEATURE_HEADERS` defined in `azure\ai\projects\models\_patch.py`, to include a new key-value pair to map the new beta sub-client name to the proper value from `_FoundryFeaturesOptInKeys`. If no new beta sub-client was introduced, but a new enum value was added to `_FoundryFeaturesOptInKeys`, you will need to update one of the existing key-value pairs in `_BETA_OPERATION_FEATURE_HEADERS` to a comma-separated join of multiple values from `_FoundryFeaturesOptInKeys`.
 
+Do a similar change to the dictionary `EXPECTED_FOUNDRY_FEATURES` defined in the test file `tests\foundry_features_header\foundry_features_header_test_base.py`: add a new key-value pair if a new beta sub-client was introduced, or update an existing key-value pair to include the new enum value if no new beta sub-client was introduced. 
+
 If a new enum value was added to `_AgentDefinitionOptInKeys`, please print a note on screen that mentions which value was added, and tell the user that a review is needed to make sure this new value is properly used. But otherwise continue on.
 
 ---
@@ -139,7 +152,7 @@ git push -u origin <topic-branch>
 Create a PR from the **topic branch** to the **base branch** (recorded in Step 2):
 
 ```
-gh pr create --base <BASE_BRANCH> --head <topic-branch> --title "<PR title>" --body "<PR body>"
+gh pr create --base <BASE_BRANCH> --head <topic-branch> --assignee @me --title "<PR title>" --body "<PR body>"
 ```
 
 - **Title:** Use a descriptive title such as `[azure-ai-projects] Emit SDK from TypeSpec (<short description>)`.
@@ -148,4 +161,3 @@ gh pr create --base <BASE_BRANCH> --head <topic-branch> --title "<PR title>" --b
 Show the user the PR URL when done.
 
 ---
-
