@@ -40,6 +40,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
     """TOOLBOXES_V1_PREVIEW."""
+    DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
+    """DATA_GENERATION_JOBS_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -329,6 +331,55 @@ class CustomToolParamFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GRAMMAR."""
 
 
+class DataGenerationJobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported output file types for a data generation job."""
+
+    FILE = "file"
+    """The generated data is an Azure OpenAI File."""
+    DATASET = "dataset"
+    """The generated data is a Dataset."""
+
+
+class DataGenerationJobScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported scenarios for a data generation job."""
+
+    SUPERVISED_FINETUNING = "supervised_finetuning"
+    """Supervised Fine-tuning scenario."""
+    REINFORCEMENT_FINETUNING = "reinforcement_finetuning"
+    """Reinforcement Fine-tuning scenario."""
+    EVALUATION = "evaluation"
+    """Evaluation scenario."""
+
+
+class DataGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported source types for data generation jobs."""
+
+    PROMPT = "prompt"
+    """Prompt source — inline text provided by the user."""
+    AGENT = "agent"
+    """Agent source — references an agent."""
+    TRACES = "traces"
+    """Traces source — conversation traces from Application Insights."""
+    DATASET = "dataset"
+    """Dataset source — reference to a dataset."""
+    FILE = "file"
+    """File source — Azure OpenAI file."""
+
+
+class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported data generation job types."""
+
+    SIMPLE_QNA = "simple_qna"
+    """Simple question and answers between user and agent."""
+    TRACES = "traces"
+    """Single turn query and response from agent traces."""
+    TOOL_USE = "tool_use"
+    """Tool calling conversation between user and agent."""
+    TASK = "task"
+    """Task helps in providing a scenario description for generating multi turn conversation between
+    user and agent."""
+
+
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to determine the type of data."""
 
@@ -523,6 +574,21 @@ class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ENTRA."""
     HEADER = "Header"
     """HEADER."""
+
+
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extensible status values shared by Foundry jobs."""
+
+    QUEUED = "queued"
+    """Job is waiting to start."""
+    IN_PROGRESS = "in_progress"
+    """Job is actively processing."""
+    SUCCEEDED = "succeeded"
+    """Job completed successfully."""
+    FAILED = "failed"
+    """Job failed."""
+    CANCELLED = "cancelled"
+    """Job was cancelled by the caller."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -725,6 +791,15 @@ class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A log line from the agent session container."""
 
 
+class SimpleQnAFineTuningQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported question types for SimpleQnA data generation jobs used for fine-tuning scenarios."""
+
+    SHORT_ANSWER = "short_answer"
+    """Short answer question type."""
+    LONG_ANSWER = "long_answer"
+    """Long answer question type."""
+
+
 class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of telemetry data to export."""
 
@@ -842,6 +917,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORK_IQ_PREVIEW."""
     FABRIC_IQ_PREVIEW = "fabric_iq_preview"
     """FABRIC_IQ_PREVIEW."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """TOOLBOX_SEARCH_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
