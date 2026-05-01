@@ -62,3 +62,10 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.purview",
+    "tests",
+]
