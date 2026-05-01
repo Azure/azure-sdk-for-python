@@ -47,7 +47,7 @@ The TypeSpec model TargetCompletionEvalRunDataSource has a property:
 
 where OpenAI.CreateEvalCompletionsRunDataSourceInputMessagesItemReference has a type discriminator: "item_reference".
  
-Now looking at the Python sample `sample_agent_as_target_evaluation.py` it defines input_messages as the following:
+Now looking at the Python sample `sample_agent_evaluation.py` it defines input_messages as the following:
 
 ``` 
 "input_messages": {
@@ -64,11 +64,11 @@ So I think our TypeSpec is missing a Union with other OpenAI TypeSpec models.
 
 ##  Model `ResponseRetrievalItemGenerationParams`, property `max_runs_hourly`
 
-Is defined in TypeSpec (using type discriminator "response_retrieval"), having `max_runs_hourly` as required properties. Yet the sample code `sample_agent_as_target_evaluation.py` does not set it. Should it be made optional in TypeSpec? Removed?
+Is defined in TypeSpec (using type discriminator "response_retrieval"), having `max_runs_hourly` as required properties. Yet the sample code `sample_agent_evaluation.py` does not set it. Should it be made optional in TypeSpec? Removed?
 
 ## Model AzureAIResponsesEvalRunDataSource, properties `max_runs_hourly` and `event_configuration_id`
 
-Is defined in TypeSpec (using type discriminator "azure_ai_responses"), having required properties max_runs_hourly and event_configuration_id. Yet the same sample code `sample_agent_as_target_evaluation.py` does not set them. Should they be made optional in TypeSpec?
+Is defined in TypeSpec (using type discriminator "azure_ai_responses"), having required properties max_runs_hourly and event_configuration_id. Yet the same sample code `sample_agent_evaluation.py` does not set them. Should they be made optional in TypeSpec?
 
 ## Score Model Grader
 
@@ -175,7 +175,7 @@ model ModelSamplingParams {
 }
 ```
 
-Note that all properties are REQUIRED on ModelSamplingParam. Yet when I look at the sample `samples\evaluations\sample_model_as_target_evaluation.py` it has:
+Note that all properties are REQUIRED on ModelSamplingParam. Yet when I look at the sample `samples\evaluations\sample_model_evaluation.py` it has:
 
 ```
 "sampling_params": {  # Note: model sampling parameters are optional and can differ per model

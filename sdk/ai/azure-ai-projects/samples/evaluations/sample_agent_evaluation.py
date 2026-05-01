@@ -12,7 +12,7 @@ DESCRIPTION:
     for more information.
 
 USAGE:
-    python sample_agent_as_target_evaluation.py
+    python sample_agent_evaluation.py
 
     Before running the sample:
 

@@ -76,8 +76,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Included samples (28):
 
     Main evaluation samples (13):
-    - sample_agent_as_target_evaluation.py
-    - sample_model_as_target_evaluation.py
+    - sample_agent_evaluation.py
+    - sample_model_evaluation.py
     - sample_agent_response_evaluation.py
     - sample_agent_response_evaluation_with_function_tool.py
     - sample_evaluations_builtin_with_inline_data.py
@@ -131,7 +131,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     """
 
     # To run this test with a specific sample, use:
-    # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_evaluation_samples[sample_agent_as_target_evaluation]
+    # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_evaluation_samples[sample_agent_evaluation]
     @evaluationsPreparer()
     @pytest.mark.parametrize(
         "sample_path",
