@@ -462,13 +462,13 @@ class FileProperty(_Model):
      call Get File Properties. Required.
     :vartype content_length: int
     :ivar creation_time: The creation time.
-    :vartype creation_time: ~datetime.datetime
+    :vartype creation_time: str
     :ivar last_access_time: The last access time.
-    :vartype last_access_time: ~datetime.datetime
+    :vartype last_access_time: str
     :ivar last_write_time: The last write time.
-    :vartype last_write_time: ~datetime.datetime
+    :vartype last_write_time: str
     :ivar change_time: The change time.
-    :vartype change_time: ~datetime.datetime
+    :vartype change_time: str
     :ivar last_modified: The last modified time.
     :vartype last_modified: ~datetime.datetime
     :ivar etag: The ETag of the file.
@@ -484,31 +484,27 @@ class FileProperty(_Model):
      modified the file locally. The value of Content-Length may not reflect that fact until the
      handle is closed or the op-lock is broken. To retrieve current property values, call Get File
      Properties. Required."""
-    creation_time: Optional[datetime.datetime] = rest_field(
+    creation_time: Optional[str] = rest_field(
         name="creationTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "CreationTime", "text": False, "unwrapped": False},
     )
     """The creation time."""
-    last_access_time: Optional[datetime.datetime] = rest_field(
+    last_access_time: Optional[str] = rest_field(
         name="lastAccessTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "LastAccessTime", "text": False, "unwrapped": False},
     )
     """The last access time."""
-    last_write_time: Optional[datetime.datetime] = rest_field(
+    last_write_time: Optional[str] = rest_field(
         name="lastWriteTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "LastWriteTime", "text": False, "unwrapped": False},
     )
     """The last write time."""
-    change_time: Optional[datetime.datetime] = rest_field(
+    change_time: Optional[str] = rest_field(
         name="changeTime",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc7231",
         xml={"attribute": False, "name": "ChangeTime", "text": False, "unwrapped": False},
     )
     """The change time."""
@@ -532,10 +528,10 @@ class FileProperty(_Model):
         self,
         *,
         content_length: int,
-        creation_time: Optional[datetime.datetime] = None,
-        last_access_time: Optional[datetime.datetime] = None,
-        last_write_time: Optional[datetime.datetime] = None,
-        change_time: Optional[datetime.datetime] = None,
+        creation_time: Optional[str] = None,
+        last_access_time: Optional[str] = None,
+        last_write_time: Optional[str] = None,
+        change_time: Optional[str] = None,
         last_modified: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
     ) -> None: ...
