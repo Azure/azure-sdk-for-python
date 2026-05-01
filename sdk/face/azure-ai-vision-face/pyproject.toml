@@ -63,5 +63,13 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.ai",
+    "azure.ai.vision",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 verifytypes = false

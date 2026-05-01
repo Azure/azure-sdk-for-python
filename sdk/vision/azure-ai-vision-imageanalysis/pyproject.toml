@@ -66,3 +66,11 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-conda]
 in_bundle = true
 bundle_name = "azure-ai-vision"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.ai",
+    "azure.ai.vision",
+    "tests",
+]

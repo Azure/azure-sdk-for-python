@@ -68,6 +68,13 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.ai",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 pyright = false
 pylint = false
