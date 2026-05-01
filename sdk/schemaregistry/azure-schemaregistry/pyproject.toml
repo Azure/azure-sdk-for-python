@@ -36,6 +36,11 @@ dependencies = [
     "isodate>=0.6.0",
     "typing-extensions>=4.6.0",
 ]
+
+[project.optional-dependencies]
+jsonencoder = [
+    "jsonschema>=4.10.3",
+]
 dynamic = ["readme"]
 
 [project.urls]
