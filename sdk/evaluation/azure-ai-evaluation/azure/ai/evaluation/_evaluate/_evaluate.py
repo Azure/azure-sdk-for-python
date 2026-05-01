@@ -2931,8 +2931,11 @@ def _create_result_object(
     sample = metric_values.get("sample")
     properties = metric_values.get("properties")
 
-    # Handle decrease boolean metrics
-    if is_inverse:
+    # Handle decrease boolean metrics — only apply inverse adjustment for
+    # boolean labels (from safety evaluators like indirect_attack). String
+    # labels like "pass"/"fail" (from code-based evaluators like deflection_rate)
+    # indicate the evaluator already computed direction-aware pass/fail.
+    if is_inverse and not (label is not None and isinstance(label, str)):
         score, label, passed = _adjust_for_inverse_metric(label)
 
     # Create result object
