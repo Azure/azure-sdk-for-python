@@ -62,6 +62,11 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
+[tool.setuptools]
+packages = [
+    "azure.storage.blob.changefeed",
+]
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false

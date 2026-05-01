@@ -66,6 +66,15 @@ exclude = [
     "tests*",
 ]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.storage",
+    "tests",
+    "tests.common",
+    "tests.queue",
+]
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false

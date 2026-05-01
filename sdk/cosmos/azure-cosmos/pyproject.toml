@@ -66,6 +66,13 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "samples",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false
