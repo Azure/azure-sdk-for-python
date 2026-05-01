@@ -6,21 +6,25 @@ on:
     paths:
       - "sdk/*/*/**"
 
+concurrency:
+  group: chronus-verify-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   chronus-verify:
     name: Verify Chronus Change Descriptions
-    if: >-
-      github.event.pull_request.user.login != 'azure-sdk'
+    if: github.event.pull_request.user.login != 'azure-sdk'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
+      issues: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0  # needed so chronus can diff against base branch
+          persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: lts/*
           cache: npm
@@ -34,9 +38,12 @@ jobs:
         id: verify
         run: .github/chronus/node_modules/.bin/chronus verify
 
-      - name: Post sticky PR comment with one-click fix instructions
+      # Sticky comment is only post-able when GITHUB_TOKEN has write scope —
+      # i.e. PRs from the main repo. Fork PRs see only the error annotation
+      # below, which is fine because /chronus add doesn't work for forks anyway.
+      - name: Post sticky one-click-fix PR comment on failure
         if: failure() && steps.verify.conclusion == 'failure' && github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/github-script@v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
             const HEADER = '<!-- chronus-verify-sticky -->';
@@ -67,7 +74,7 @@ jobs:
               '> ```bash',
               '> azpysdk changelog add',
               '> ```',
-              '>',
+              '',
               'See [`doc/dev/changelog_updates.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md) for full instructions.',
             ].join('\n');
 

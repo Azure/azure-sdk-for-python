@@ -1,13 +1,15 @@
 name: Chronus Fix (slash command)
 
-# Listens for `/chronus add [kind]` comments on PRs and commits a Chronus
-# change entry derived from the PR title back to the PR branch.
+# Listens for `/chronus add [kind]` PR comments and commits a Chronus change
+# entry derived from the PR title back to the PR branch.
 #
-# Security note: this workflow runs in default-branch context with a
-# write-scoped GITHUB_TOKEN. Because we install the chronus tooling pinned
-# at .github/chronus/* from the PR head, we restrict execution to PRs that
-# originate from the same repository. Fork PRs receive a comment instructing
-# the contributor to run the command locally instead.
+# Security model:
+#   - Restricted to same-repository PRs (fork PRs get a polite reply with
+#     local-run instructions).
+#   - Commenter must have write permission.
+#   - The Chronus tooling under `.github/chronus` is restored from the BASE
+#     branch before install/run, so PR-head changes to the tooling cannot
+#     execute under this workflow's write-scoped token.
 
 on:
   issue_comment:
@@ -16,7 +18,7 @@ on:
 permissions:
   contents: write
   issues: write
-  pull-requests: write
+  pull-requests: read
 
 concurrency:
   group: chronus-fix-${{ github.event.issue.number }}
@@ -30,50 +32,61 @@ jobs:
       github.event.issue.pull_request != null &&
       startsWith(github.event.comment.body, '/chronus add')
     steps:
-      - name: Verify commenter has write permission
-        uses: actions/github-script@v7
+      - name: Authorize command and load PR metadata
+        id: pr
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         with:
           script: |
-            const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              username: context.payload.comment.user.login,
-            });
-            if (!['admin', 'maintain', 'write'].includes(data.permission)) {
-              core.setFailed(
-                `User ${context.payload.comment.user.login} lacks write permission ` +
-                `(has: ${data.permission}).`
-              );
+            const comment = context.payload.comment;
+            const issue = context.payload.issue;
+
+            const match = comment.body.trim().match(/^\/chronus\s+add(?:\s+([A-Za-z]+))?\s*$/i);
+            if (!match) {
+              core.setFailed('Invalid command. Use `/chronus add [kind]`.');
+              return;
+            }
+            const aliases = {
+              internal: 'internal',
+              fix: 'fix', bug: 'fix',
+              feature: 'feature', features: 'feature',
+              breaking: 'breaking',
+              deprecation: 'deprecation', deprecated: 'deprecation',
+              dependencies: 'dependencies', deps: 'dependencies',
+            };
+            const kind = aliases[(match[1] || 'internal').toLowerCase()];
+            if (!kind) {
+              core.setFailed('Unknown kind. Allowed: internal, fix, feature, breaking, deprecation, dependencies.');
+              return;
             }
 
-      - name: React 👀 to the comment
-        uses: actions/github-script@v7
-        with:
-          script: |
+            const { data: perm } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: comment.user.login,
+            });
+            if (!['admin', 'maintain', 'write'].includes(perm.permission)) {
+              core.setFailed(`User ${comment.user.login} lacks write permission (has: ${perm.permission}).`);
+              return;
+            }
+
             await github.rest.reactions.createForIssueComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
+              comment_id: comment.id,
               content: 'eyes',
             });
 
-      - name: Get PR metadata and reject fork PRs
-        id: pr
-        uses: actions/github-script@v7
-        with:
-          script: |
             const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.payload.issue.number,
+              pull_number: issue.number,
             });
 
-            const isFork = pr.head.repo.full_name !== pr.base.repo.full_name;
-            if (isFork) {
+            if (pr.head.repo.full_name !== pr.base.repo.full_name) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.payload.issue.number,
+                issue_number: issue.number,
                 body: [
                   '⚠️ `/chronus add` cannot push to fork PR branches.',
                   '',
@@ -88,10 +101,8 @@ jobs:
               return;
             }
 
-            // Validate ref shape (defensive — refs come from the API but we
-            // pass them to git below). Allow standard branch characters only.
-            if (!/^[A-Za-z0-9._/\-]+$/.test(pr.head.ref) ||
-                !/^[A-Za-z0-9._/\-]+$/.test(pr.base.ref)) {
+            const refOk = /^[A-Za-z0-9._/\-]+$/;
+            if (!refOk.test(pr.head.ref) || !refOk.test(pr.base.ref)) {
               core.setFailed(`Refusing unusual ref name. head=${pr.head.ref} base=${pr.base.ref}`);
               return;
             }
@@ -100,51 +111,26 @@ jobs:
             core.setOutput('head_sha', pr.head.sha);
             core.setOutput('base_ref', pr.base.ref);
             core.setOutput('title', pr.title);
-
-      - name: Parse requested kind from comment
-        id: kind
-        env:
-          BODY: ${{ github.event.comment.body }}
-        run: |
-          set -euo pipefail
-          # Extract the third whitespace-separated token: "/chronus add <kind>".
-          token="$(printf '%s' "$BODY" | awk '{print $3}' | tr -d '\r')"
-          case "${token,,}" in
-            ""|internal)            kind="internal" ;;
-            fix|bug)                kind="fix" ;;
-            feature|features)       kind="feature" ;;
-            breaking)               kind="breaking" ;;
-            deprecation|deprecated) kind="deprecation" ;;
-            dependencies|deps)      kind="dependencies" ;;
-            *)
-              echo "::error::Unknown kind '$token'. Allowed: internal, fix, feature, breaking, deprecation, dependencies."
-              exit 1
-              ;;
-          esac
-          echo "kind=$kind" >> "$GITHUB_OUTPUT"
+            core.setOutput('kind', kind);
 
       - name: Checkout PR head
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          # We're already restricted to same-repo PRs above, so the default
-          # repository (github.repository) is the right source.
           ref: ${{ steps.pr.outputs.head_sha }}
           fetch-depth: 0
-          persist-credentials: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
-      - name: Fetch base branch for chronus diff
+      - name: Fetch base branch and restore trusted tooling
         env:
           BASE_REF: ${{ steps.pr.outputs.base_ref }}
         run: |
           set -euo pipefail
-          # Chronus reads `baseBranch` from .chronus/config.yaml (currently
-          # "main") and diffs against it via git. Make sure that branch ref
-          # exists locally.
-          git fetch origin "$BASE_REF:$BASE_REF" || git fetch origin "$BASE_REF"
+          git fetch --no-tags origin "$BASE_REF:$BASE_REF"
+          # Replace .github/chronus with the base-branch version so the PR
+          # cannot influence what we install or execute below.
+          git restore --source="$BASE_REF" -- .github/chronus
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: lts/*
           cache: npm
@@ -154,68 +140,49 @@ jobs:
         run: npm ci
         working-directory: .github/chronus
 
-      - name: Determine packages missing a change entry
-        id: missing
+      - name: Run chronus add for missing packages
+        id: add
+        env:
+          KIND: ${{ steps.pr.outputs.kind }}
+          MESSAGE: ${{ steps.pr.outputs.title }}
         run: |
           set -uo pipefail
-          # `chronus verify` exits non-zero when entries are missing. Capture
-          # output and parse the package list. Don't fail this step on
-          # non-zero exit because the missing-entries case is exactly what
-          # we want to handle.
           out="$(.github/chronus/node_modules/.bin/chronus verify 2>&1)" || true
           printf '%s\n' "$out"
 
-          # Extract anything that looks like sdk/<service>/<package>.
           pkgs="$(printf '%s\n' "$out" | grep -oE 'sdk/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+' | sort -u || true)"
           if [ -z "$pkgs" ]; then
             echo "found=0" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=1" >> "$GITHUB_OUTPUT"
-            {
-              echo 'packages<<CHRONUS_EOF'
-              printf '%s\n' "$pkgs"
-              echo 'CHRONUS_EOF'
-            } >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          echo "found=1" >> "$GITHUB_OUTPUT"
 
-      - name: Add chronus entry per package
-        if: steps.missing.outputs.found == '1'
-        env:
-          KIND: ${{ steps.kind.outputs.kind }}
-          MESSAGE: ${{ steps.pr.outputs.title }}
-          PACKAGES: ${{ steps.missing.outputs.packages }}
-        run: |
-          set -euo pipefail
+          set -e
           while IFS= read -r pkg_path; do
             [ -z "$pkg_path" ] && continue
             pkg_name="$(basename "$pkg_path")"
             echo "::group::chronus add $pkg_name ($KIND)"
-            # `chronus add` takes the package name as a positional argument.
-            .github/chronus/node_modules/.bin/chronus add \
-              "$pkg_name" \
-              --kind "$KIND" \
-              --message "$MESSAGE"
+            .github/chronus/node_modules/.bin/chronus add "$pkg_name" --kind "$KIND" --message "$MESSAGE"
             echo "::endgroup::"
-          done <<< "$PACKAGES"
+          done <<< "$pkgs"
 
       - name: Commit and push
         id: push
-        if: steps.missing.outputs.found == '1'
+        if: steps.add.outputs.found == '1'
         env:
           HEAD_REF: ${{ steps.pr.outputs.head_ref }}
           ACTOR: ${{ github.event.comment.user.login }}
           ACTOR_ID: ${{ github.event.comment.user.id }}
           PR_NUMBER: ${{ github.event.issue.number }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          # Defensive validation — reject unusual branch names.
           git check-ref-format --branch "$HEAD_REF"
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .chronus/changes/
           if git diff --cached --quiet; then
-            echo "Nothing staged — chronus add did not produce a file."
             echo "pushed=0" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -224,89 +191,62 @@ jobs:
             "$PR_NUMBER" "$ACTOR" "$ACTOR_ID" "$ACTOR")"
           git commit -m "$msg"
 
-          if git push origin "HEAD:refs/heads/$HEAD_REF"; then
+          if git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$HEAD_REF"; then
             echo "pushed=1" >> "$GITHUB_OUTPUT"
           else
             echo "pushed=0" >> "$GITHUB_OUTPUT"
             echo "::warning::Push failed. The PR branch may have moved; ask the user to retry."
           fi
 
-      - name: React 🚀 and reply on success
-        if: success() && steps.push.outputs.pushed == '1'
-        uses: actions/github-script@v7
+      - name: Reply with final result
+        if: always()
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         env:
-          KIND: ${{ steps.kind.outputs.kind }}
+          KIND: ${{ steps.pr.outputs.kind }}
           TITLE: ${{ steps.pr.outputs.title }}
+          FOUND: ${{ steps.add.outputs.found }}
+          PUSHED: ${{ steps.push.outputs.pushed }}
+          JOB_STATUS: ${{ job.status }}
         with:
           script: |
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'rocket',
+            const issue_number = context.payload.issue.number;
+            const comment_id = context.payload.comment.id;
+            const react = (content) => github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner, repo: context.repo.repo, comment_id, content,
             });
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.issue.number,
-              body: [
+            const reply = (body) => github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number, body,
+            });
+
+            if (process.env.JOB_STATUS !== 'success') {
+              await react('-1');
+              return;
+            }
+            if (process.env.FOUND !== '1') {
+              await reply([
+                'ℹ️ Could not detect any packages missing a Chronus change entry.',
+                '',
+                'Either every changed package already has an entry, or `chronus verify`',
+                'failed for an unrelated reason — check the workflow run for details.',
+              ].join('\n'));
+              return;
+            }
+            if (process.env.PUSHED === '1') {
+              await react('rocket');
+              await reply([
                 '✅ Pushed a Chronus change entry to this PR.',
                 '',
                 '- **Kind:** `' + process.env.KIND + '`',
                 '- **Description:** _' + process.env.TITLE + '_',
                 '',
                 'Edit the file under `.chronus/changes/` if you\'d like to refine the description.',
-              ].join('\n'),
-            });
-
-      - name: Reply on no-op
-        if: success() && steps.missing.outputs.found != '1'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.issue.number,
-              body: [
-                'ℹ️ Could not detect any packages missing a Chronus change entry.',
-                '',
-                'Either every changed package already has an entry, or `chronus verify`',
-                'failed for an unrelated reason — check the workflow run for details.',
-              ].join('\n'),
-            });
-
-      - name: Reply on push failure
-        if: success() && steps.missing.outputs.found == '1' && steps.push.outputs.pushed != '1'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'confused',
-            });
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.issue.number,
-              body: [
-                '⚠️ Could not push a Chronus entry to this PR branch.',
-                '',
-                'The branch may have moved while the bot was working. Please',
-                'comment `/chronus add` again, or run `azpysdk changelog add` locally.',
-              ].join('\n'),
-            });
-
-      - name: React 👎 on failure
-        if: failure()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            await github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: '-1',
-            });
+              ].join('\n'));
+              return;
+            }
+            await react('confused');
+            await reply([
+              '⚠️ Could not push a Chronus entry to this PR branch.',
+              '',
+              'The branch may have moved while the bot was working. Please',
+              'comment `/chronus add` again, or run `azpysdk changelog add` locally.',
+            ].join('\n'));
