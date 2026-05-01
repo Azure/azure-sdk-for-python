@@ -50,14 +50,6 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
-[tool.ruff]
-target-version = "py310"
-line-length = 120
-exclude = ["azure/ai/agentserver/responses/models/_generated"]
-
-[tool.ruff.lint]
-select = ["E", "F", "W", "I"]
-
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
