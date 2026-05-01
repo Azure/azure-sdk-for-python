@@ -58,18 +58,6 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.storage",
-    "doc*",
-    "generated_samples*",
-    "generated_tests*",
-    "samples*",
-    "swagger*",
-    "tests*",
-]
-
-[tool.setuptools.packages.find]
-exclude = [
-    "azure",
-    "azure.storage",
     "tests",
 ]
 
