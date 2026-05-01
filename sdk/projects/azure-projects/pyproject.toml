@@ -41,6 +41,12 @@ dependencies = [
     "azure-identity>=1.20",
     "azure-appconfiguration-provider>=2.0.0",
 ]
+
+[project.optional-dependencies]
+mcp = [
+    "mcp>=1.6",
+    "makefun>=1.15",
+]
 dynamic = ["readme"]
 
 [project.urls]
