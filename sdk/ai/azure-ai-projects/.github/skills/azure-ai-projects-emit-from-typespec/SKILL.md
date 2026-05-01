@@ -152,7 +152,7 @@ git push -u origin <topic-branch>
 Create a PR from the **topic branch** to the **base branch** (recorded in Step 2):
 
 ```
-gh pr create --base <BASE_BRANCH> --head <topic-branch> --title "<PR title>" --body "<PR body>"
+gh pr create --base <BASE_BRANCH> --head <topic-branch> --assignee @me --title "<PR title>" --body "<PR body>"
 ```
 
 - **Title:** Use a descriptive title such as `[azure-ai-projects] Emit SDK from TypeSpec (<short description>)`.
