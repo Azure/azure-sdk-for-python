@@ -428,6 +428,32 @@ def __dir__() -> List[str]:
     return sorted(__all__ + list(_DEPRECATED_NAMES.keys()))
 
 
+def _models_getattr(name: str) -> Any:
+    """Module-level __getattr__ for deprecation warnings on azure.ai.projects.models.
+
+    This function is injected into the models module by patch_sdk() to handle
+    deprecated name lookups (PEP 562).
+
+    :param name: The attribute name being accessed.
+    :type name: str
+    :return: The replacement attribute value.
+    :rtype: Any
+    :raises AttributeError: If the attribute is not found.
+    """
+    import sys
+
+    if name in _DEPRECATED_NAMES:
+        replacement = _DEPRECATED_NAMES[name]
+        warnings.warn(
+            f"'{name}' is deprecated and will be removed in the next release. "
+            f"Use '{replacement}' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return getattr(sys.modules["azure.ai.projects.models"], replacement)
+    raise AttributeError(f"module 'azure.ai.projects.models' has no attribute {name!r}")
+
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -435,3 +461,9 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    import sys
+
+    # Inject __getattr__ into the models module for PEP 562 deprecation handling
+    models_module = sys.modules.get("azure.ai.projects.models")
+    if models_module is not None:
+        models_module.__getattr__ = _models_getattr  # type: ignore[attr-defined]
