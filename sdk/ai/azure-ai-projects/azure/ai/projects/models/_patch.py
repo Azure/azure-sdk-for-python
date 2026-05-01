@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import warnings
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
@@ -390,6 +391,38 @@ __all__: List[str] = [
 ]  # Add all objects you want publicly available to users at this package level
 
 
+# Deprecated names handled via _models_getattr injected by patch_sdk()
+_DEPRECATED_NAMES: Dict[str, str] = {
+    # Deprecated Name: Replacement Name
+    "AgentEndpoint": "AgentEndpointConfig",  # Deprecated in v2.2.0
+}
+
+def _models_getattr(name: str) -> Any:
+    """Module-level __getattr__ for deprecation warnings on azure.ai.projects.models.
+
+    This function is injected into the models module by patch_sdk() to handle
+    deprecated name lookups (PEP 562).
+
+    :param name: The attribute name being accessed.
+    :type name: str
+    :return: The replacement attribute value.
+    :rtype: Any
+    :raises AttributeError: If the attribute is not found.
+    """
+    import sys
+
+    if name in _DEPRECATED_NAMES:
+        replacement = _DEPRECATED_NAMES[name]
+        warnings.warn(
+            f"'{name}' is deprecated and will be removed in the next release. "
+            f"Use '{replacement}' instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return getattr(sys.modules["azure.ai.projects.models"], replacement)
+    raise AttributeError(f"module 'azure.ai.projects.models' has no attribute {name!r}")
+
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -397,3 +430,9 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    import sys
+
+    # Inject __getattr__ into the models module for PEP 562 deprecation handling (https://peps.python.org/pep-0562/)
+    models_module = sys.modules.get("azure.ai.projects.models")
+    if models_module is not None:
+        models_module.__getattr__ = _models_getattr  # type: ignore[attr-defined]

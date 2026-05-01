@@ -11,8 +11,9 @@
 
 ### Breaking Changes
 
-* Renamed model `AgentEndpoint` to `AgentEndpointConfig`.
-* Agent Endpoint beta operations: Removed required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
+* Agent Endpoint beta operations: 
+  * Renamed model `AgentEndpoint` to `AgentEndpointConfig`.
+  * Removed previously required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
 
 ### Bugs Fixed
 * Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
