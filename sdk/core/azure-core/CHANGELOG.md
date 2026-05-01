@@ -1,6 +1,6 @@
 # Release History
 
-## 1.40.0 (Unreleased)
+## 1.40.0 (2026-04-30)
 
 ### Features Added
 
@@ -8,13 +8,10 @@
 - Introduced the keyword argument `additional_allowed_query_params` to `DistributedTracingPolicy` and `HttpLoggingPolicy` to allow users to specify additional URL query parameters that should not be redacted in span attributes or logs. #46482
     - Users can specify this at the SDK client level by passing `additional_allowed_query_params` to the client constructor. For example: `client = ServiceClient(..., additional_allowed_query_params={"custom_param"})`. This will apply to all operations performed by the client.
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - URL attributes in HTTP tracing spans will now have query parameters sanitized by default. To add additional query parameters that should not be redacted, use the `additional_allowed_query_params` argument in your client constructor. #46482
+- Python 3.9 is no longer supported. Please use Python version 3.10 or later.
 
 ## 1.39.0 (2026-03-18)
 
