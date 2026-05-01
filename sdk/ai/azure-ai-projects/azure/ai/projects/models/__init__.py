@@ -24,10 +24,6 @@ from ._models import (  # type: ignore
     AgentDataGenerationJobSource,
     AgentDefinition,
     AgentDetails,
-<<<<<<< HEAD
-    AgentEndpointConfig,
-=======
->>>>>>> origin/feature/azure-ai-projects/2.2.0
     AgentEndpointAuthorizationScheme,
     AgentEndpointConfig,
     AgentIdentity,
@@ -377,10 +373,6 @@ __all__ = [
     "AgentDataGenerationJobSource",
     "AgentDefinition",
     "AgentDetails",
-<<<<<<< HEAD
-    "AgentEndpointConfig",
-=======
->>>>>>> origin/feature/azure-ai-projects/2.2.0
     "AgentEndpointAuthorizationScheme",
     "AgentEndpointConfig",
     "AgentIdentity",

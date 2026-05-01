@@ -14,10 +14,6 @@
         "azure.ai.projects.models.AgentDataGenerationJobSource": "Azure.AI.Projects.AgentDataGenerationJobSource",
         "azure.ai.projects.models.AgentDefinition": "Azure.AI.Projects.AgentDefinition",
         "azure.ai.projects.models.AgentDetails": "Azure.AI.Projects.AgentObject",
-<<<<<<< HEAD
-        "azure.ai.projects.models.AgentEndpointConfig": "Azure.AI.Projects.AgentEndpointConfig",
-=======
->>>>>>> origin/feature/azure-ai-projects/2.2.0
         "azure.ai.projects.models.AgentEndpointAuthorizationScheme": "Azure.AI.Projects.AgentEndpointAuthorizationScheme",
         "azure.ai.projects.models.AgentEndpointConfig": "Azure.AI.Projects.AgentEndpointConfig",
         "azure.ai.projects.models.BaseCredentials": "Azure.AI.Projects.BaseCredentials",
