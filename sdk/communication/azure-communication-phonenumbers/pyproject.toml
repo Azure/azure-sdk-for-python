@@ -48,6 +48,7 @@ readme = {file = [
 
 [tool.setuptools.packages.find]
 exclude = [
+    "test",
     "azure",
     "azure.communication",
     "doc*",
