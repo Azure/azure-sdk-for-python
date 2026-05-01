@@ -59,6 +59,14 @@ exclude = [
     "tests*",
 ]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "azure.keyvault",
+    "samples",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 pyright = false
 
