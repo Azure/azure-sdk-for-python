@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Added `__deepcopy__` method to `KeyVaultRSAPublicKey` and `KeyVaultRSAPrivateKey` to remain compatible with the `cryptography` library, which now requires this method on key classes. ([#46661](https://github.com/Azure/azure-sdk-for-python/pull/46661))
+
 ### Other Changes
 
 ## 4.11.0 (2025-06-16)

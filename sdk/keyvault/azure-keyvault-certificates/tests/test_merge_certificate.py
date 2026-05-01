@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
+import platform
 import os
 
 import pytest
 from azure.keyvault.certificates import CertificatePolicy, WellKnownIssuerNames
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from OpenSSL import crypto
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import CertificatesClientPreparer, get_decorator
@@ -17,10 +17,12 @@ all_api_versions = get_decorator()
 
 
 class TestMergeCertificate(KeyVaultTestCase):
+    @pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="PyPy has issues with OpenSSL")
     @pytest.mark.parametrize("api_version", all_api_versions)
     @CertificatesClientPreparer()
     @recorded_by_proxy
     def test_merge_certificate(self, client, **kwargs):
+        from OpenSSL import crypto
         set_bodiless_matcher()
         cert_name = self.get_resource_name("mergeCertificate")
         cert_policy = CertificatePolicy(

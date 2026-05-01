@@ -6,6 +6,7 @@
 Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
 the challenge cache is global to the process.
 """
+import asyncio
 import base64
 import functools
 from itertools import product
@@ -74,11 +75,18 @@ class TestChallengeAuth(KeyVaultTestCase, KeysTestCase):
 
 
 def empty_challenge_cache(fn):
-    @functools.wraps(fn)
-    def wrapper(**kwargs):
-        HttpChallengeCache.clear()
-        assert len(HttpChallengeCache._cache) == 0
-        return fn(**kwargs)
+    if asyncio.iscoroutinefunction(fn):
+        @functools.wraps(fn)
+        async def wrapper(**kwargs):
+            HttpChallengeCache.clear()
+            assert len(HttpChallengeCache._cache) == 0
+            return await fn(**kwargs)
+    else:
+        @functools.wraps(fn)
+        def wrapper(**kwargs):
+            HttpChallengeCache.clear()
+            assert len(HttpChallengeCache._cache) == 0
+            return fn(**kwargs)
 
     return wrapper
 

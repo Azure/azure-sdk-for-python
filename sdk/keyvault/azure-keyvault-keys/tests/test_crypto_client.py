@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import codecs
+import copy
 from datetime import datetime, timezone
 import hashlib
 from json import dumps
@@ -1137,6 +1138,24 @@ def test_rsa_private_key_private_bytes():
         Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()
     )
     assert private_bytes == crypto_private_bytes
+
+
+def test_rsa_public_key_deepcopy():
+    """Verify that deepcopy of KeyVaultRSAPublicKey returns the same instance (immutable)"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    public_key_copy = copy.deepcopy(public_key)
+    assert public_key_copy is public_key
+
+
+def test_rsa_private_key_deepcopy():
+    """Verify that deepcopy of KeyVaultRSAPrivateKey returns the same instance (immutable)"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    private_key = client.create_rsa_private_key()
+    private_key_copy = copy.deepcopy(private_key)
+    assert private_key_copy is private_key
 
 
 def test_retain_url_port():

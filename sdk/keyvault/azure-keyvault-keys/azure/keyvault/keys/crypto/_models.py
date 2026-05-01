@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPublicKey,
     RSAPublicNumbers,
 )
-from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
+from cryptography.hazmat.primitives.asymmetric.utils import Prehashed, NoDigestInfo
 from cryptography.hazmat.primitives.hashes import Hash, HashAlgorithm, SHA1, SHA256, SHA384, SHA512
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -240,7 +240,7 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
             raise InvalidSignature(f"The provided signature '{signature!r}' is invalid.")
 
     def recover_data_from_signature(
-        self, signature: bytes, padding: AsymmetricPadding, algorithm: Optional[HashAlgorithm]
+        self, signature: bytes, padding: AsymmetricPadding, algorithm: Optional[Union[HashAlgorithm, NoDigestInfo]]
     ) -> bytes:
         # pylint: disable=line-too-long
         """Recovers the signed data from the signature. Only supported with `cryptography` version 3.3 and above.
@@ -265,8 +265,10 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :param bytes signature: The signature.
         :param padding: An instance of `AsymmetricPadding`. Recovery is only supported with some of the padding types.
         :type padding: ~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding
-        :param algorithm: An instance of `HashAlgorithm`. Can be None to return all the data present in the signature.
-        :type algorithm: ~cryptography.hazmat.primitives.hashes.HashAlgorithm
+        :param algorithm: An instance of `HashAlgorithm` or `NoDigestInfo`. Can be None to return all the data present
+            in the signature.
+        :type algorithm: ~cryptography.hazmat.primitives.hashes.HashAlgorithm or
+            ~cryptography.hazmat.primitives.asymmetric.utils.NoDigestInfo
 
         :returns: The signed data.
         :rtype: bytes
@@ -311,6 +313,16 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
     def __copy__(self) -> KeyVaultRSAPublicKey:
         """Returns this instance since it is treated as immutable.
+
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPublicKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by :func:`copy.deepcopy`.
 
         :returns: This instance.
         :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
@@ -385,7 +397,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         self,
         data: bytes,
         padding: AsymmetricPadding,
-        algorithm: Union[Prehashed, HashAlgorithm],
+        algorithm: Union[Prehashed, HashAlgorithm, NoDigestInfo],
     ) -> bytes:
         """Signs the data.
 
@@ -397,13 +409,16 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
             `SHA384`, and `SHA512`.
         :type algorithm: ~cryptography.hazmat.primitives.asymmetric.utils.Prehashed or
-            cryptography.hazmat.primitives.hashes.HashAlgorithm
+            cryptography.hazmat.primitives.hashes.HashAlgorithm or
+            ~cryptography.hazmat.primitives.asymmetric.utils.NoDigestInfo
 
         :returns: The signature, as bytes.
         :rtype: bytes
         """
         if isinstance(algorithm, Prehashed):
             raise ValueError("`Prehashed` algorithms are unsupported. Please provide a `HashAlgorithm` instead.")
+        if isinstance(algorithm, NoDigestInfo):
+            raise ValueError("`NoDigestInfo` algorithms are unsupported. Please provide a `HashAlgorithm` instead.")
         mapped_algorithm = get_signature_algorithm(padding, algorithm)
         digest = Hash(algorithm)
         digest.update(data)
@@ -493,6 +508,16 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
     def __copy__(self) -> KeyVaultRSAPrivateKey:
         """Returns this instance since it is treated as immutable.
+
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPrivateKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by :func:`copy.deepcopy`.
 
         :returns: This instance.
         :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import platform
 import time
 
 import pytest
@@ -19,6 +20,7 @@ def print(*args):
     assert all(arg is not None for arg in args)
 
 
+@pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="PyPy cryptography issue")
 @pytest.mark.playback_test_only("Can't run in live pipelines, and there's no reason to.")
 def test_create_certificate_client():
     vault_url = "vault_url"
