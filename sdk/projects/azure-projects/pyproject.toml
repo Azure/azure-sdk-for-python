@@ -72,6 +72,12 @@ exclude = [
 [tool.setuptools.package-data]
 "azure.projects" = ["py.typed"]
 
+[tool.setuptools.packages.find]
+exclude = [
+    "azure",
+    "tests",
+]
+
 [tool.azure-sdk-build]
 mypy = true
 type_check_samples = true
