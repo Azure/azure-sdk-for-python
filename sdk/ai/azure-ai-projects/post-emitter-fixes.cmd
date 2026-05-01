@@ -63,6 +63,7 @@ REM The emitter wraps bullet/code-block lines with insufficient indentation.
 powershell -Command "$files='azure\ai\projects\operations\_operations.py','azure\ai\projects\aio\operations\_operations.py'; foreach ($f in $files) { $c=Get-Content $f -Raw; $c=$c -replace 'schema\r?\n\s+is not contractual and may include additional keys or change format\r?\n\s+over time [^\r\n]*clients should treat it as an opaque string\)', 'schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)'; $c=$c -replace '(message\":\"Starting)\r?\n\s+(FoundryCBAgent server on port 8088\"})', '$1 $2'; $c=$c -replace '(message\":\"INFO: Application)\r?\n\s+(startup complete\.\"})', '$1 $2'; $c=$c -replace '(message\":\"Successfully)\r?\n\s+(connected to container\"})', '$1 $2'; $c=$c -replace '(message\":\"No logs since)\r?\n\s+(last 60 seconds\"})', '$1 $2'; Set-Content $f $c -NoNewline }"
 
 REM Finishing by running 'black' tool to format code. 
+pip install black
 black --config ../../../eng/black-pyproject.toml . || echo black not found, skipping formatting.
 
 

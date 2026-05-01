@@ -840,6 +840,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_SEARCH_PREVIEW."""
     WORK_IQ_PREVIEW = "work_iq_preview"
     """WORK_IQ_PREVIEW."""
+    FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+    """FABRIC_IQ_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"

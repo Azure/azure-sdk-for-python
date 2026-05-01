@@ -192,6 +192,8 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
+        if os.path.basename(sample_path) == "sample_hosted_agent_create.py" and not self.is_live:
+            pytest.skip("sample_hosted_agent_create.py is skipped in replay mode due to RBAC complications.")
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
