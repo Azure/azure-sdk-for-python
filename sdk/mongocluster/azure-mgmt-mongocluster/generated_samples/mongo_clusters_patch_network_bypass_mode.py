@@ -15,7 +15,7 @@ from azure.mgmt.mongocluster import MongoClusterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-mongocluster
 # USAGE
-    python mongo_clusters_name_availability_already_exists.py
+    python mongo_clusters_patch_network_bypass_mode.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.mongo_clusters.check_name_availability(
-        location="westus2",
-        body={"name": "existingmongocluster", "type": "Microsoft.DocumentDB/mongoClusters"},
-    )
+    response = client.mongo_clusters.begin_update(
+        resource_group_name="TestResourceGroup",
+        mongo_cluster_name="myMongoCluster",
+        properties={"properties": {"networkBypassMode": "AzureCosmosDB"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/MongoClusters_NameAvailability_AlreadyExists.json
+# x-ms-original-file: 2026-02-01-preview/MongoClusters_PatchNetworkBypassMode.json
 if __name__ == "__main__":
     main()
