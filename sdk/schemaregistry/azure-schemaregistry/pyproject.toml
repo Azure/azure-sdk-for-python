@@ -37,11 +37,11 @@ dependencies = [
     "typing-extensions>=4.6.0",
 ]
 
+dynamic = ["readme"]
 [project.optional-dependencies]
 jsonencoder = [
     "jsonschema>=4.10.3",
 ]
-dynamic = ["readme"]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
