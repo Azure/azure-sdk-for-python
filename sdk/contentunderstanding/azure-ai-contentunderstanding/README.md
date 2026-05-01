@@ -522,10 +522,8 @@ asyncio.run(analyze_invoice())
 
 #### Convert results to LLM-ready text
 
-> [!NOTE]
-> **Preview feature**: `to_llm_input()` is currently in preview and may change in
-> future releases. We welcome feedback — please
-> [file an issue][file_issue].
+> **Note:** `to_llm_input()` is currently in preview and may change in future
+> releases. We welcome feedback — please [file an issue][file_issue].
 
 Use the `to_llm_input()` helper to convert any analysis result into a text format that LLMs
 can consume directly — YAML front matter with extracted fields followed by the markdown body.
