@@ -37,6 +37,7 @@ SLEEP_TIME = 30  # sleep for 30 seconds
 
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
+
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
     masterKey = os.getenv('ACCOUNT_KEY',
                           'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
