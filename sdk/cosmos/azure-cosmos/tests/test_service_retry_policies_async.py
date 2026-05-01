@@ -47,6 +47,33 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
         self.connectionPolicy.ConnectionRetryConfiguration = None
         await self.client.close()
 
+    async def _cancel_background_refresh_task(self, client):
+        """Cancel any pending GEM background health check task to prevent it from
+        overwriting test cache mutations via update_location_cache()."""
+        gem = client.client_connection._global_endpoint_manager
+        if gem.refresh_task and not gem.refresh_task.done():
+            gem.refresh_task.cancel()
+            try:
+                await gem.refresh_task
+            except BaseException:
+                pass
+        gem.refresh_task = None
+
+    def _setup_read_regions(self, location_cache, regions):
+        """Configure location cache for the given read regions consistently."""
+        location_cache.account_read_locations = regions
+        location_cache.account_read_regional_routing_contexts_by_location = {
+            r: self.REGIONAL_ENDPOINT for r in regions}
+        location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT] * len(regions)
+        location_cache.effective_preferred_locations = regions
+
+    def _setup_write_regions(self, location_cache, regions):
+        """Configure location cache for the given write regions consistently."""
+        location_cache.account_write_locations = regions
+        location_cache.account_write_regional_routing_contexts_by_location = {
+            r: self.REGIONAL_ENDPOINT for r in regions}
+        location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT] * len(regions)
+
     async def test_service_request_retry_policy_async(self):
         # ServiceRequestErrors will always retry, and will retry once per preferred region
         async with CosmosClient(self.host, self.masterKey) as mock_client:
@@ -57,15 +84,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             # Save the original function
             self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
 
-            # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
+            # Cancel background health check to prevent it from overwriting cache mutations
+            await self._cancel_background_refresh_task(mock_client)
+
+            # Change the location cache to have 3 preferred read regions
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-            original_location_cache.account_read_locations = [self.REGION1, self.REGION2, self.REGION3]
-            original_location_cache.available_read_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+            self._setup_read_regions(original_location_cache, [self.REGION1, self.REGION2, self.REGION3])
             expected_counter = len(original_location_cache.read_regional_routing_contexts)
             try:
                 # Mock the function to return the ServiceRequestException we retry
@@ -82,15 +106,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             # retry policy should eventually raise an exception as it should stop retrying with a max retry attempt
             # equal to the available read region locations
 
-            # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
-            original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-            original_location_cache.account_read_locations = [self.REGION1, self.REGION2, self.REGION3]
-            original_location_cache.available_read_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+            # Change the location cache to have 3 preferred read regions
+            self._setup_read_regions(original_location_cache, [self.REGION1, self.REGION2, self.REGION3])
             expected_counter = len(original_location_cache.read_regional_routing_contexts)
 
             try:
@@ -106,8 +123,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
-            original_location_cache.account_read_locations = [self.REGION1]
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT]
+            self._setup_read_regions(original_location_cache, [self.REGION1])
             expected_counter = len(original_location_cache.read_regional_routing_contexts)
             try:
                 # Reset the function to reset the counter
@@ -121,11 +137,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
-            original_location_cache.account_write_locations = [self.REGION1, self.REGION2]
-            original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
-            original_location_cache.available_write_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
+            self._setup_write_regions(original_location_cache, [self.REGION1, self.REGION2])
             expected_counter = len(original_location_cache.write_regional_routing_contexts)
             try:
                 # Reset the function to reset the counter
@@ -149,15 +161,12 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             # Save the original function
             self.original_execute_function = _retry_utility_async.ExecuteFunctionAsync
 
-            # Change the location cache to have 3 preferred read regions and 3 available read endpoints by location
+            # Cancel background health check to prevent it from overwriting cache mutations
+            await self._cancel_background_refresh_task(mock_client)
+
+            # Change the location cache to have 3 preferred read regions
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-            original_location_cache.account_read_locations = [self.REGION1, self.REGION2, self.REGION3]
-            original_location_cache.available_read_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+            self._setup_read_regions(original_location_cache, [self.REGION1, self.REGION2, self.REGION3])
             try:
                 # Mock the function to return the ClientConnectionError we retry
                 mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(AttributeError,
@@ -171,8 +180,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we change the location cache to have only 1 preferred read region
-            original_location_cache.account_read_locations = [self.REGION1]
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT]
+            self._setup_read_regions(original_location_cache, [self.REGION1])
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
@@ -185,11 +193,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 _retry_utility_async.ExecuteFunctionAsync = self.original_execute_function
 
             # Now we try it out with a write request
-            original_location_cache.account_write_locations = [self.REGION1, self.REGION2]
-            original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
-            original_location_cache.available_write_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
+            self._setup_write_regions(original_location_cache, [self.REGION1, self.REGION2])
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
@@ -205,11 +209,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
             # If we do a write request with a ClientConnectionError,
             # we will do cross-region retries like with read requests
-            original_location_cache.account_write_locations = [self.REGION1, self.REGION2]
-            original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
-            original_location_cache.available_write_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
+            self._setup_write_regions(original_location_cache, [self.REGION1, self.REGION2])
             try:
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(ClientConnectionError, ClientConnectionError())
@@ -292,19 +292,16 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
             container = db.get_container_client(self.TEST_CONTAINER_ID)
             await container.read()
 
+            # Cancel background health check to prevent it from overwriting cache mutations
+            await self._cancel_background_refresh_task(mock_client)
+
             original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-            original_location_cache.account_read_locations = [self.REGION1, self.REGION2, self.REGION3]
-            original_location_cache.available_read_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT,
-                self.REGION3: self.REGIONAL_ENDPOINT}
-            original_location_cache.read_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT,
-                                                                      self.REGIONAL_ENDPOINT]
+            self._setup_read_regions(original_location_cache, [self.REGION1, self.REGION2, self.REGION3])
+            # For write regions in this test, only set the routing contexts directly (not
+            # account_write_regional_routing_contexts_by_location) so that mark_endpoint_unavailable's
+            # internal update_location_cache() recalculates correctly using emulator account data.
             original_location_cache.account_write_locations = [self.REGION1, self.REGION2]
             original_location_cache.write_regional_routing_contexts = [self.REGIONAL_ENDPOINT, self.REGIONAL_ENDPOINT]
-            original_location_cache.available_write_regional_endpoints_by_locations = {
-                self.REGION1: self.REGIONAL_ENDPOINT,
-                self.REGION2: self.REGIONAL_ENDPOINT}
             try:
                 # Start with a normal ServiceResponseException with no special casing
                 mf = self.MockExecuteServiceResponseException(AttributeError, AttributeError())
