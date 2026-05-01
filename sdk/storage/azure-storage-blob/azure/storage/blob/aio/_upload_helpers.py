@@ -29,7 +29,7 @@ from .._shared.uploads_async import (
     upload_data_chunks,
     upload_substream_blocks,
 )
-from .._upload_helpers import _any_conditions, _convert_mod_error
+from .._upload_helpers import _any_conditions, _convert_mod_error, _pop_content_settings
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
@@ -233,6 +233,7 @@ async def upload_page_blob(
 
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
+        content_settings_kwargs = _pop_content_settings(kwargs)
 
         response = cast(
             Dict[str, Any],
@@ -244,6 +245,7 @@ async def upload_page_blob(
                 tier=tier,
                 cls=return_response_headers,
                 headers=headers,
+                **content_settings_kwargs,
                 **kwargs,
             ),
         )
@@ -304,10 +306,17 @@ async def upload_append_blob(  # pylint: disable=unused-argument
         maxsize_condition = kwargs.pop("maxsize_condition", None)
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
+        content_settings_kwargs = _pop_content_settings(kwargs)
 
         try:
             if overwrite:
-                await client.create(content_length=0, headers=headers, blob_tags_string=blob_tags_string, **kwargs)
+                await client.create(
+                    content_length=0,
+                    headers=headers,
+                    blob_tags_string=blob_tags_string,
+                    **content_settings_kwargs,
+                    **kwargs,
+                )
             return cast(
                 Dict[str, Any],
                 await upload_data_chunks(
@@ -335,7 +344,13 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 except UnsupportedOperation as exc:
                     # if body is not seekable, then retry would not work
                     raise error from exc
-            await client.create(content_length=0, headers=headers, blob_tags_string=blob_tags_string, **kwargs)
+            await client.create(
+                content_length=0,
+                headers=headers,
+                blob_tags_string=blob_tags_string,
+                **content_settings_kwargs,
+                **kwargs,
+            )
             return cast(
                 Dict[str, Any],
                 await upload_data_chunks(

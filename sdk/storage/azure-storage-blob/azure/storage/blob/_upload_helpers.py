@@ -39,6 +39,22 @@ if TYPE_CHECKING:
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
+# Content-settings kwargs accepted by AppendBlob/PageBlob create() but NOT by
+# append_block/upload_pages. They must be stripped from the kwargs forwarded to
+# upload_data_chunks to avoid leaking through to the transport layer.
+_CONTENT_SETTINGS_KWARGS = (
+    "blob_cache_control",
+    "blob_content_type",
+    "blob_content_md5",
+    "blob_content_encoding",
+    "blob_content_language",
+    "blob_content_disposition",
+)
+
+
+def _pop_content_settings(kwargs):
+    return {k: kwargs.pop(k) for k in _CONTENT_SETTINGS_KWARGS if k in kwargs}
+
 
 def _convert_mod_error(error):
     message = error.message.replace(
@@ -249,6 +265,7 @@ def upload_page_blob(
 
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
+        content_settings_kwargs = _pop_content_settings(kwargs)
 
         response = cast(
             Dict[str, Any],
@@ -260,6 +277,7 @@ def upload_page_blob(
                 tier=tier,
                 cls=return_response_headers,
                 headers=headers,
+                **content_settings_kwargs,
                 **kwargs,
             ),
         )
@@ -320,10 +338,17 @@ def upload_append_blob(  # pylint: disable=unused-argument
         maxsize_condition = kwargs.pop("maxsize_condition", None)
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
+        content_settings_kwargs = _pop_content_settings(kwargs)
 
         try:
             if overwrite:
-                client.create(content_length=0, headers=headers, blob_tags_string=blob_tags_string, **kwargs)
+                client.create(
+                    content_length=0,
+                    headers=headers,
+                    blob_tags_string=blob_tags_string,
+                    **content_settings_kwargs,
+                    **kwargs,
+                )
             return cast(
                 Dict[str, Any],
                 upload_data_chunks(
@@ -351,7 +376,13 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 except UnsupportedOperation as exc:
                     # if body is not seekable, then retry would not work
                     raise error from exc
-            client.create(content_length=0, headers=headers, blob_tags_string=blob_tags_string, **kwargs)
+            client.create(
+                content_length=0,
+                headers=headers,
+                blob_tags_string=blob_tags_string,
+                **content_settings_kwargs,
+                **kwargs,
+            )
             return cast(
                 Dict[str, Any],
                 upload_data_chunks(
