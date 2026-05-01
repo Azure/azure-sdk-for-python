@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,10 +31,70 @@ jobs:
         working-directory: .github/chronus
 
       - name: Run chronus verify
+        id: verify
         run: .github/chronus/node_modules/.bin/chronus verify
 
-      - name: Chronus verification failed – see docs
-        if: failure()
+      - name: Post sticky PR comment with one-click fix instructions
+        if: failure() && steps.verify.conclusion == 'failure' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const HEADER = '<!-- chronus-verify-sticky -->';
+            const body = [
+              HEADER,
+              '### 📝 Missing changelog entry',
+              '',
+              'This PR touches package source under `sdk/*/*/**` but no Chronus',
+              'change description was found. CI requires every user-affecting',
+              'change to have one.',
+              '',
+              '#### ⚡ One-click fix',
+              '',
+              '**Comment `/chronus add` on this PR** and a bot will commit a',
+              'changelog entry for you, derived from your PR title.',
+              '',
+              'Customise the entry kind by appending it to the command:',
+              '',
+              '- `/chronus add` &nbsp;→&nbsp; defaults to `internal`',
+              '- `/chronus add fix` &nbsp;→&nbsp; bug fix',
+              '- `/chronus add feature` &nbsp;→&nbsp; new feature',
+              '- `/chronus add breaking` &nbsp;→&nbsp; breaking change',
+              '- `/chronus add deprecation` &nbsp;→&nbsp; deprecation',
+              '- `/chronus add dependencies` &nbsp;→&nbsp; dependency bump',
+              '',
+              '> ℹ️ For PRs from forks, run the command locally instead:',
+              '>',
+              '> ```bash',
+              '> azpysdk changelog add',
+              '> ```',
+              '>',
+              'See [`doc/dev/changelog_updates.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md) for full instructions.',
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const existing = comments.find(c => c.body && c.body.startsWith(HEADER));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body,
+              });
+            }
+
+      - name: Emit annotation on failure
+        if: failure() && steps.verify.conclusion == 'failure'
         run: |
-          echo "::error::Chronus verification failed. Add a change description with 'azpysdk changelog add' (or 'npx chronus add' if you prefer raw Chronus)."
+          echo "::error::Chronus verification failed. Comment '/chronus add' on this PR for an automated fix, or run 'azpysdk changelog add' locally."
           echo "::error::See https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md for instructions."
