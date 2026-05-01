@@ -562,7 +562,7 @@ class AgentDetails(_Model):
     :ivar versions: The latest version of the agent. Required.
     :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
     :ivar agent_endpoint: The endpoint configuration for the agent.
-    :vartype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+    :vartype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
     :ivar instance_identity: The instance identity of the agent.
     :vartype instance_identity: ~azure.ai.projects.models.AgentIdentity
     :ivar blueprint: The blueprint for the agent.
@@ -581,7 +581,7 @@ class AgentDetails(_Model):
     """The name of the agent. Required."""
     versions: "_models.AgentObjectVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The latest version of the agent. Required."""
-    agent_endpoint: Optional["_models.AgentEndpoint"] = rest_field(
+    agent_endpoint: Optional["_models.AgentEndpointConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoint configuration for the agent."""
@@ -601,55 +601,8 @@ class AgentDetails(_Model):
         id: str,  # pylint: disable=redefined-builtin
         name: str,
         versions: "_models.AgentObjectVersions",
-        agent_endpoint: Optional["_models.AgentEndpoint"] = None,
+        agent_endpoint: Optional["_models.AgentEndpointConfig"] = None,
         agent_card: Optional["_models.AgentCard"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AgentEndpoint(_Model):
-    """AgentEndpoint.
-
-    :ivar version_selector: The version selector of the agent endpoint determines how traffic is
-     routed to different versions of the agent.
-    :vartype version_selector: ~azure.ai.projects.models.VersionSelector
-    :ivar protocols: The protocols that the agent supports.
-    :vartype protocols: list[str or ~azure.ai.projects.models.AgentEndpointProtocol]
-    :ivar authorization_schemes: The authorization schemes supported by the agent endpoint.
-    :vartype authorization_schemes:
-     list[~azure.ai.projects.models.AgentEndpointAuthorizationScheme]
-    """
-
-    version_selector: Optional["_models.VersionSelector"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The version selector of the agent endpoint determines how traffic is routed to different
-     versions of the agent."""
-    protocols: Optional[list[Union[str, "_models.AgentEndpointProtocol"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The protocols that the agent supports."""
-    authorization_schemes: Optional[list["_models.AgentEndpointAuthorizationScheme"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The authorization schemes supported by the agent endpoint."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        version_selector: Optional["_models.VersionSelector"] = None,
-        protocols: Optional[list[Union[str, "_models.AgentEndpointProtocol"]]] = None,
-        authorization_schemes: Optional[list["_models.AgentEndpointAuthorizationScheme"]] = None,
     ) -> None: ...
 
     @overload
@@ -682,6 +635,53 @@ class AgentEndpointAuthorizationScheme(_Model):
         self,
         *,
         type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentEndpointConfig(_Model):
+    """AgentEndpointConfig.
+
+    :ivar version_selector: The version selector of the agent endpoint determines how traffic is
+     routed to different versions of the agent.
+    :vartype version_selector: ~azure.ai.projects.models.VersionSelector
+    :ivar protocols: The protocols that the agent supports.
+    :vartype protocols: list[str or ~azure.ai.projects.models.AgentEndpointProtocol]
+    :ivar authorization_schemes: The authorization schemes supported by the agent endpoint.
+    :vartype authorization_schemes:
+     list[~azure.ai.projects.models.AgentEndpointAuthorizationScheme]
+    """
+
+    version_selector: Optional["_models.VersionSelector"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The version selector of the agent endpoint determines how traffic is routed to different
+     versions of the agent."""
+    protocols: Optional[list[Union[str, "_models.AgentEndpointProtocol"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The protocols that the agent supports."""
+    authorization_schemes: Optional[list["_models.AgentEndpointAuthorizationScheme"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authorization schemes supported by the agent endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        version_selector: Optional["_models.VersionSelector"] = None,
+        protocols: Optional[list[Union[str, "_models.AgentEndpointProtocol"]]] = None,
+        authorization_schemes: Optional[list["_models.AgentEndpointAuthorizationScheme"]] = None,
     ) -> None: ...
 
     @overload

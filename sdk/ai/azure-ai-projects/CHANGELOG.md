@@ -11,6 +11,7 @@
 
 ### Breaking Changes
 
+* Renamed model `AgentEndpoint` to `AgentEndpointConfig`.
 * Agent Endpoint beta operations: Removed required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
 
 ### Bugs Fixed

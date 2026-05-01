@@ -3024,7 +3024,7 @@ class BetaAgentsOperations:
         agent_name: str,
         *,
         content_type: str = "application/merge-patch+json",
-        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
         agent_card: Optional[_models.AgentCard] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
@@ -3036,7 +3036,7 @@ class BetaAgentsOperations:
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
         :paramtype agent_card: ~azure.ai.projects.models.AgentCard
         :return: AgentDetails. The AgentDetails is compatible with MutableMapping
@@ -3086,7 +3086,7 @@ class BetaAgentsOperations:
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_endpoint: Optional[_models.AgentEndpointConfig] = None,
         agent_card: Optional[_models.AgentCard] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
@@ -3097,7 +3097,7 @@ class BetaAgentsOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
         :keyword agent_card: Optional agent card for the agent. Default value is None.
         :paramtype agent_card: ~azure.ai.projects.models.AgentCard
         :return: AgentDetails. The AgentDetails is compatible with MutableMapping
