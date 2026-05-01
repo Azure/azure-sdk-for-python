@@ -1,4 +1,15 @@
-# Emit azure-ai-projectsPython SDK from TypeSpec
+---
+name: azure-ai-projects-emit-from-typespec
+license: MIT
+metadata:
+  version: "1.0.0"
+  distribution: local
+description: "Emit the azure-ai-projects Python SDK from TypeSpec, apply post-emitter fixes, update changelog, and create a Pull Request. WHEN: \"emit SDK from TypeSpec\", \"generate azure-ai-projects SDK\", \"update azure-ai-projects from TypeSpec\", \"emit from TypeSpec\", \"regenerate azure-ai-projects\". DO NOT USE FOR: other Azure SDK packages, manual code edits without TypeSpec. INVOKES: azsdk-common-generate-sdk-locally skill, post-emitter-fixes.cmd script, git commands, gh CLI for PR creation."
+compatibility:
+  requires: "azure-sdk-mcp server, local azure-sdk-for-python clone, git, gh CLI"
+---
+
+# Emit azure-ai-projects Python SDK from TypeSpec
 
 These instructions guide Copilot through emitting the azure-ai-projects Python SDK from TypeSpec,
 applying post-emitter fixes, updating the changelog, installing package from sources and creating a Pull Request.
@@ -148,4 +159,3 @@ gh pr create --base <BASE_BRANCH> --head <topic-branch> --title "<PR title>" --b
 Show the user the PR URL when done.
 
 ---
-
