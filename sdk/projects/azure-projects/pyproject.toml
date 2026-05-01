@@ -15,7 +15,7 @@ authors = [
 description = "Microsoft Azure Projects Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
@@ -42,12 +42,12 @@ dependencies = [
     "azure-appconfiguration-provider>=2.0.0",
 ]
 
+dynamic = ["readme"]
 [project.optional-dependencies]
 mcp = [
     "mcp>=1.6",
     "makefun>=1.15",
 ]
-dynamic = ["readme"]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
@@ -70,7 +70,7 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
+"azure.projects" = ["py.typed"]
 
 [tool.azure-sdk-build]
 mypy = true
