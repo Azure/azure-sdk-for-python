@@ -1,5 +1,11 @@
 # Release History
 
+## 7.14.4 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed a race condition in the async ServiceBusSender where concurrent coroutines could trigger `AttributeError: 'NoneType' object has no attribute 'client_ready_async'` when reusing a sender. ([#35618](https://github.com/Azure/azure-sdk-for-python/issues/35618))
+
 ## 7.14.3 (2025-11-11)
 
 ### Bugs Fixed
