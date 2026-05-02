@@ -2,13 +2,9 @@
 
 ## 2.0.0b4 (2026-05-01)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
+
+- Migrated tracing export from `azure-monitor-opentelemetry-exporter` and `opentelemetry-exporter-otlp-proto-grpc` to the unified `microsoft-opentelemetry` distro. The distro auto-detects exporters from environment variables. No changes to public API or behavior.
 
 ## 2.0.0b3 (2026-04-22)
 
