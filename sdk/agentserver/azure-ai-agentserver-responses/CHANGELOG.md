@@ -1,10 +1,14 @@
 # Release History
 
-## 1.0.0b6 (2026-05-01)
+## 1.0.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
-
-- Internal configuration cleanup (no functional changes).
 
 ## 1.0.0b5 (2026-04-22)
 
