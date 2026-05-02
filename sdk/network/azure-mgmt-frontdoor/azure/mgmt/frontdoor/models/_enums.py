@@ -142,6 +142,43 @@ class EnforceCertificateNameCheckEnabledState(str, Enum, metaclass=CaseInsensiti
     """Disabled."""
 
 
+class ExceptionMatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The variable to be evaluated for excluding the request."""
+
+    REQUEST_URI = "RequestUri"
+    """Request Uri Exception Match Variable."""
+    SOCKET_ADDR = "SocketAddr"
+    """Socket Address Exception Match Variable."""
+    REQUEST_HEADER_NAMES = "RequestHeaderNames"
+    """Request Header Names Exception Match Variable."""
+
+
+class ExceptionSelectorMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Comparison operator to apply to the selector when specifying which elements in the collection
+    this exception applies to..
+    """
+
+    EQUALS = "Equals"
+    """Equals Selector Match Operator."""
+
+
+class ExceptionValueMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Comparison operator to apply to the value to be matched.."""
+
+    EQUALS = "Equals"
+    """Equals Exception Value Match Operator."""
+    CONTAINS = "Contains"
+    """Contains Exception Value Match Operator."""
+    STARTS_WITH = "StartsWith"
+    """StartsWith Exception Value Match Operator."""
+    ENDS_WITH = "EndsWith"
+    """EndsWith Exception Value Match Operator."""
+    EQUALS_ANY = "EqualsAny"
+    """EqualsAny Exception Value Match Operator."""
+    IP_MATCH = "IPMatch"
+    """IPMatch Exception Value Match Operator."""
+
+
 class FrontDoorCertificateSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the source of the SSL certificate."""
 
@@ -383,6 +420,8 @@ class MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cookies."""
     SOCKET_ADDR = "SocketAddr"
     """SocketAddr."""
+    JA4 = "JA4"
+    """JA4 Match Variable."""
 
 
 class MinimumTLSVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -442,6 +481,10 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RegEx."""
     SERVICE_TAG_MATCH = "ServiceTagMatch"
     """ServiceTagMatch."""
+    ASN_MATCH = "AsnMatch"
+    """Autonomous System Number Match Operator."""
+    CLIENT_FINGERPRINT = "ClientFingerprint"
+    """Client Finger print Operator."""
 
 
 class PolicyEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -1,5 +1,127 @@
 # Release History
 
+## 2.0.0 (2026-05-02)
+
+### Features Added
+
+  - Model `FrontDoorManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `FrontDoorManagementClient` added method `send_request`
+  - Enum `ActionType` added member `CAPTCHA`
+  - Model `BackendPool` added property `properties`
+  - Model `CustomHttpsConfiguration` added property `key_vault_certificate_source_parameters`
+  - Model `CustomHttpsConfiguration` added property `front_door_certificate_source_parameters`
+  - Model `ExperimentUpdateModel` added property `properties`
+  - Model `FrontDoor` added property `properties`
+  - Model `FrontendEndpoint` added property `properties`
+  - Model `HealthProbeSettingsModel` added property `properties`
+  - Model `LoadBalancingSettingsModel` added property `properties`
+  - Model `ManagedRuleDefinition` added property `default_sensitivity`
+  - Model `ManagedRuleOverride` added property `sensitivity`
+  - Model `ManagedRuleSetList` added property `exceptions_list`
+  - Enum `MatchVariable` added member `JA4`
+  - Enum `Operator` added member `ASN_MATCH`
+  - Enum `Operator` added member `CLIENT_FINGERPRINT`
+  - Enum `Operator` added member `SERVICE_TAG_MATCH`
+  - Model `PolicySettings` added property `captcha_expiration_in_minutes`
+  - Model `PolicySettings` added property `log_scrubbing`
+  - Model `ProfileUpdateModel` added property `properties`
+  - Model `RoutingRule` added property `properties`
+  - Model `RulesEngine` added property `properties`
+  - Added model `BasicResource`
+  - Added model `BasicResourceWithSettableIDName`
+  - Added enum `ExceptionMatchVariable`
+  - Added enum `ExceptionSelectorMatchOperator`
+  - Added enum `ExceptionValueMatchOperator`
+  - Added model `ExperimentUpdateProperties`
+  - Added model `FrontDoorCertificateSourceParameters`
+  - Added model `KeyVaultCertificateSourceParameters`
+  - Added model `ManagedRuleSetException`
+  - Added model `ManagedRuleSetExceptionList`
+  - Added model `ManagedRuleSetScope`
+  - Added model `PolicySettingsLogScrubbing`
+  - Added model `ProfileUpdateProperties`
+  - Added model `ResourcewithSettableName`
+  - Added model `RuleGroupScope`
+  - Added model `RuleScope`
+  - Added enum `SensitivityType`
+  - Model `FrontDoorsOperations` added method `begin_update`
+
+### Breaking Changes
+
+  - Model `BackendPool` deleted or renamed its instance variable `backends`
+  - Model `BackendPool` deleted or renamed its instance variable `load_balancing_settings`
+  - Model `BackendPool` deleted or renamed its instance variable `health_probe_settings`
+  - Model `BackendPool` deleted or renamed its instance variable `resource_state`
+  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `certificate_type`
+  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `vault`
+  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `secret_name`
+  - Model `CustomHttpsConfiguration` deleted or renamed its instance variable `secret_version`
+  - Model `ExperimentUpdateModel` deleted or renamed its instance variable `description`
+  - Model `ExperimentUpdateModel` deleted or renamed its instance variable `enabled_state`
+  - Model `FrontDoor` deleted or renamed its instance variable `friendly_name`
+  - Model `FrontDoor` deleted or renamed its instance variable `routing_rules`
+  - Model `FrontDoor` deleted or renamed its instance variable `load_balancing_settings`
+  - Model `FrontDoor` deleted or renamed its instance variable `health_probe_settings`
+  - Model `FrontDoor` deleted or renamed its instance variable `backend_pools`
+  - Model `FrontDoor` deleted or renamed its instance variable `frontend_endpoints`
+  - Model `FrontDoor` deleted or renamed its instance variable `backend_pools_settings`
+  - Model `FrontDoor` deleted or renamed its instance variable `enabled_state`
+  - Model `FrontDoor` deleted or renamed its instance variable `resource_state`
+  - Model `FrontDoor` deleted or renamed its instance variable `provisioning_state`
+  - Model `FrontDoor` deleted or renamed its instance variable `cname`
+  - Model `FrontDoor` deleted or renamed its instance variable `frontdoor_id`
+  - Model `FrontDoor` deleted or renamed its instance variable `rules_engines`
+  - Model `FrontDoor` deleted or renamed its instance variable `extended_properties`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `host_name`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `session_affinity_enabled_state`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `session_affinity_ttl_seconds`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `web_application_firewall_policy_link`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `resource_state`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `custom_https_provisioning_state`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `custom_https_provisioning_substate`
+  - Model `FrontendEndpoint` deleted or renamed its instance variable `custom_https_configuration`
+  - Model `HealthProbeSettingsModel` deleted or renamed its instance variable `path`
+  - Model `HealthProbeSettingsModel` deleted or renamed its instance variable `protocol`
+  - Model `HealthProbeSettingsModel` deleted or renamed its instance variable `interval_in_seconds`
+  - Model `HealthProbeSettingsModel` deleted or renamed its instance variable `health_probe_method`
+  - Model `HealthProbeSettingsModel` deleted or renamed its instance variable `enabled_state`
+  - Model `HealthProbeSettingsModel` deleted or renamed its instance variable `resource_state`
+  - Model `LoadBalancingSettingsModel` deleted or renamed its instance variable `sample_size`
+  - Model `LoadBalancingSettingsModel` deleted or renamed its instance variable `successful_samples_required`
+  - Model `LoadBalancingSettingsModel` deleted or renamed its instance variable `additional_latency_milliseconds`
+  - Model `LoadBalancingSettingsModel` deleted or renamed its instance variable `resource_state`
+  - Model `PolicySettings` deleted or renamed its instance variable `state`
+  - Model `PolicySettings` deleted or renamed its instance variable `scrubbing_rules`
+  - Model `ProfileUpdateModel` deleted or renamed its instance variable `enabled_state`
+  - Model `RoutingRule` deleted or renamed its instance variable `frontend_endpoints`
+  - Model `RoutingRule` deleted or renamed its instance variable `accepted_protocols`
+  - Model `RoutingRule` deleted or renamed its instance variable `patterns_to_match`
+  - Model `RoutingRule` deleted or renamed its instance variable `enabled_state`
+  - Model `RoutingRule` deleted or renamed its instance variable `route_configuration`
+  - Model `RoutingRule` deleted or renamed its instance variable `rules_engine`
+  - Model `RoutingRule` deleted or renamed its instance variable `web_application_firewall_policy_link`
+  - Model `RoutingRule` deleted or renamed its instance variable `resource_state`
+  - Model `RulesEngine` deleted or renamed its instance variable `rules`
+  - Model `RulesEngine` deleted or renamed its instance variable `resource_state`
+  - Deleted or renamed model `AzureAsyncOperationResult`
+  - Deleted or renamed model `Error`
+  - Deleted or renamed model `ErrorDetails`
+  - Deleted or renamed model `ExperimentList`
+  - Deleted or renamed model `ManagedRuleSetDefinitionList`
+  - Deleted or renamed model `NetworkOperationStatus`
+  - Deleted or renamed model `PreconfiguredEndpointList`
+  - Deleted or renamed model `ProfileList`
+  - Deleted or renamed model `WebApplicationFirewallPolicyList`
+  - Method `ReportsOperations.get_latency_scorecards` changed its parameter `aggregation_interval` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_latency_scorecards` changed its parameter `end_date_time_utc` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_latency_scorecards` changed its parameter `country` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_timeseries` changed its parameter `start_date_time_utc` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_timeseries` changed its parameter `end_date_time_utc` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_timeseries` changed its parameter `aggregation_interval` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_timeseries` changed its parameter `timeseries_type` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_timeseries` changed its parameter `endpoint` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_timeseries` changed its parameter `country` from `positional_or_keyword` to `keyword_only`
+
 ## 2.0.0b1 (2026-03-24)
 
 ### Features Added

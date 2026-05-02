@@ -86,6 +86,21 @@ def main():
                     ]
                 },
                 "managedRules": {
+                    "exceptionsList": {
+                        "exceptions": [
+                            {
+                                "matchValues": ["Mozilla"],
+                                "matchVariable": "RequestHeaderNames",
+                                "scopes": [
+                                    {"ruleSetType": "Microsoft_DefaultRuleSet", "ruleSetVersion": "2.2"},
+                                    {"ruleSetType": "Microsoft_HTTPDDoSRuleSet", "ruleSetVersion": "1.0"},
+                                ],
+                                "selector": "User-Agent",
+                                "selectorMatchOperator": "Equals",
+                                "valueMatchOperator": "Contains",
+                            }
+                        ]
+                    },
                     "managedRuleSets": [
                         {
                             "exclusions": [
@@ -123,8 +138,8 @@ def main():
                                 }
                             ],
                             "ruleSetAction": "Block",
-                            "ruleSetType": "DefaultRuleSet",
-                            "ruleSetVersion": "1.0",
+                            "ruleSetType": "Microsoft_DefaultRuleSet",
+                            "ruleSetVersion": "2.2",
                         },
                         {
                             "ruleGroupOverrides": [
@@ -143,7 +158,7 @@ def main():
                             "ruleSetType": "Microsoft_HTTPDDoSRuleSet",
                             "ruleSetVersion": "1.0",
                         },
-                    ]
+                    ],
                 },
                 "policySettings": {
                     "captchaExpirationInMinutes": 30,
@@ -173,6 +188,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/WafPolicyCreateOrUpdate.json
+# x-ms-original-file: 2025-11-01/WafPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()

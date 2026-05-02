@@ -2765,23 +2765,173 @@ class ManagedRuleSetDefinitionProperties(_Model):
     """Rule groups of the managed rule set."""
 
 
+class ManagedRuleSetException(_Model):
+    """Excludes whole requests from managed rule evaluation according to match conditions.
+
+    :ivar match_variable: The variable to be evaluated for excluding the request. Required. Known
+     values are: "RequestUri", "SocketAddr", and "RequestHeaderNames".
+    :vartype match_variable: str or ~azure.mgmt.frontdoor.models.ExceptionMatchVariable
+    :ivar selector_match_operator: Comparison operator to apply to the selector when specifying
+     which elements in the collection this exception applies to. "Equals"
+    :vartype selector_match_operator: str or
+     ~azure.mgmt.frontdoor.models.ExceptionSelectorMatchOperator
+    :ivar selector: When matchVariable is a collection, operator used to specify which elements in
+     the collection this exception applies to. Currently supported only for RequestHeaderNames.
+    :vartype selector: str
+    :ivar value_match_operator: Comparison operator to apply to the value to be matched. Required.
+     Known values are: "Equals", "Contains", "StartsWith", "EndsWith", "EqualsAny", and "IPMatch".
+    :vartype value_match_operator: str or ~azure.mgmt.frontdoor.models.ExceptionValueMatchOperator
+    :ivar match_values: List of values to be matched with. Required.
+    :vartype match_values: list[str]
+    :ivar scopes: Scope(s) of the exception. Required.
+    :vartype scopes: list[~azure.mgmt.frontdoor.models.ManagedRuleSetScope]
+    """
+
+    match_variable: Union[str, "_models.ExceptionMatchVariable"] = rest_field(
+        name="matchVariable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The variable to be evaluated for excluding the request. Required. Known values are:
+     \"RequestUri\", \"SocketAddr\", and \"RequestHeaderNames\"."""
+    selector_match_operator: Optional[Union[str, "_models.ExceptionSelectorMatchOperator"]] = rest_field(
+        name="selectorMatchOperator", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Comparison operator to apply to the selector when specifying which elements in the collection
+     this exception applies to. \"Equals\""""
+    selector: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """When matchVariable is a collection, operator used to specify which elements in the collection
+     this exception applies to. Currently supported only for RequestHeaderNames."""
+    value_match_operator: Union[str, "_models.ExceptionValueMatchOperator"] = rest_field(
+        name="valueMatchOperator", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Comparison operator to apply to the value to be matched. Required. Known values are:
+     \"Equals\", \"Contains\", \"StartsWith\", \"EndsWith\", \"EqualsAny\", and \"IPMatch\"."""
+    match_values: list[str] = rest_field(name="matchValues", visibility=["read", "create", "update", "delete", "query"])
+    """List of values to be matched with. Required."""
+    scopes: list["_models.ManagedRuleSetScope"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Scope(s) of the exception. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        match_variable: Union[str, "_models.ExceptionMatchVariable"],
+        value_match_operator: Union[str, "_models.ExceptionValueMatchOperator"],
+        match_values: list[str],
+        scopes: list["_models.ManagedRuleSetScope"],
+        selector_match_operator: Optional[Union[str, "_models.ExceptionSelectorMatchOperator"]] = None,
+        selector: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedRuleSetExceptionList(_Model):
+    """Defines the list of exceptions for the managed rule sets.
+
+    :ivar exceptions: List of exceptions.
+    :vartype exceptions: list[~azure.mgmt.frontdoor.models.ManagedRuleSetException]
+    """
+
+    exceptions: Optional[list["_models.ManagedRuleSetException"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of exceptions."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        exceptions: Optional[list["_models.ManagedRuleSetException"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedRuleSetList(_Model):
     """Defines the list of managed rule sets for the policy.
 
     :ivar managed_rule_sets: List of rule sets.
     :vartype managed_rule_sets: list[~azure.mgmt.frontdoor.models.ManagedRuleSet]
+    :ivar exceptions_list: List of exceptions applied on the managed rule sets.
+    :vartype exceptions_list: ~azure.mgmt.frontdoor.models.ManagedRuleSetExceptionList
     """
 
     managed_rule_sets: Optional[list["_models.ManagedRuleSet"]] = rest_field(
         name="managedRuleSets", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of rule sets."""
+    exceptions_list: Optional["_models.ManagedRuleSetExceptionList"] = rest_field(
+        name="exceptionsList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of exceptions applied on the managed rule sets."""
 
     @overload
     def __init__(
         self,
         *,
         managed_rule_sets: Optional[list["_models.ManagedRuleSet"]] = None,
+        exceptions_list: Optional["_models.ManagedRuleSetExceptionList"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedRuleSetScope(_Model):
+    """Defines the scope of the managed rules.
+
+    :ivar rule_set_type: Defines the rule set type. Examples: DefaultRuleSet,
+     Microsoft_DefaultRuleSet, Microsoft_BotManagerRuleSet, Microsoft_HTTPDDoSRuleSet,
+     BotProtection. Required.
+    :vartype rule_set_type: str
+    :ivar rule_set_version: Defines the version of the rule set. Required.
+    :vartype rule_set_version: str
+    :ivar rule_group_scopes: List of rule group scopes.
+    :vartype rule_group_scopes: list[~azure.mgmt.frontdoor.models.RuleGroupScope]
+    """
+
+    rule_set_type: str = rest_field(name="ruleSetType", visibility=["read", "create", "update", "delete", "query"])
+    """Defines the rule set type. Examples: DefaultRuleSet, Microsoft_DefaultRuleSet,
+     Microsoft_BotManagerRuleSet, Microsoft_HTTPDDoSRuleSet, BotProtection. Required."""
+    rule_set_version: str = rest_field(
+        name="ruleSetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the version of the rule set. Required."""
+    rule_group_scopes: Optional[list["_models.RuleGroupScope"]] = rest_field(
+        name="ruleGroupScopes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of rule group scopes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_set_type: str,
+        rule_set_version: str,
+        rule_group_scopes: Optional[list["_models.RuleGroupScope"]] = None,
     ) -> None: ...
 
     @overload
@@ -2800,15 +2950,15 @@ class MatchCondition(_Model):
 
     :ivar match_variable: Request variable to compare with. Required. Known values are:
      "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
-     "RequestBody", "Cookies", and "SocketAddr".
+     "RequestBody", "Cookies", "SocketAddr", and "JA4".
     :vartype match_variable: str or ~azure.mgmt.frontdoor.models.MatchVariable
     :ivar selector: Match against a specific key from the QueryString, PostArgs, RequestHeader or
      Cookies variables. Default is null.
     :vartype selector: str
     :ivar operator: Comparison type to use for matching with the variable value. Required. Known
      values are: "Any", "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan",
-     "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx", and
-     "ServiceTagMatch".
+     "LessThanOrEqual", "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx", "ServiceTagMatch",
+     "AsnMatch", and "ClientFingerprint".
     :vartype operator: str or ~azure.mgmt.frontdoor.models.Operator
     :ivar negate_condition: Describes if the result of this condition should be negated.
     :vartype negate_condition: bool
@@ -2823,15 +2973,15 @@ class MatchCondition(_Model):
     )
     """Request variable to compare with. Required. Known values are: \"RemoteAddr\",
      \"RequestMethod\", \"QueryString\", \"PostArgs\", \"RequestUri\", \"RequestHeader\",
-     \"RequestBody\", \"Cookies\", and \"SocketAddr\"."""
+     \"RequestBody\", \"Cookies\", \"SocketAddr\", and \"JA4\"."""
     selector: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Match against a specific key from the QueryString, PostArgs, RequestHeader or Cookies
      variables. Default is null."""
     operator: Union[str, "_models.Operator"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Comparison type to use for matching with the variable value. Required. Known values are:
      \"Any\", \"IPMatch\", \"GeoMatch\", \"Equal\", \"Contains\", \"LessThan\", \"GreaterThan\",
-     \"LessThanOrEqual\", \"GreaterThanOrEqual\", \"BeginsWith\", \"EndsWith\", \"RegEx\", and
-     \"ServiceTagMatch\"."""
+     \"LessThanOrEqual\", \"GreaterThanOrEqual\", \"BeginsWith\", \"EndsWith\", \"RegEx\",
+     \"ServiceTagMatch\", \"AsnMatch\", and \"ClientFingerprint\"."""
     negate_condition: Optional[bool] = rest_field(
         name="negateCondition", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3752,6 +3902,69 @@ class RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(_Model):  # py
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RuleGroupScope(_Model):
+    """Defines the scope of the rule group.
+
+    :ivar rule_group_name: Defines the rule group name. Required.
+    :vartype rule_group_name: str
+    :ivar rule_scopes: List of rule scopes.
+    :vartype rule_scopes: list[~azure.mgmt.frontdoor.models.RuleScope]
+    """
+
+    rule_group_name: str = rest_field(name="ruleGroupName", visibility=["read", "create", "update", "delete", "query"])
+    """Defines the rule group name. Required."""
+    rule_scopes: Optional[list["_models.RuleScope"]] = rest_field(
+        name="ruleScopes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of rule scopes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_group_name: str,
+        rule_scopes: Optional[list["_models.RuleScope"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RuleScope(_Model):
+    """Defines the scope of the rule.
+
+    :ivar rule_id: Defines the rule id. Required.
+    :vartype rule_id: str
+    """
+
+    rule_id: str = rest_field(name="ruleId", visibility=["read", "create", "update", "delete", "query"])
+    """Defines the rule id. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_id: str,
     ) -> None: ...
 
     @overload

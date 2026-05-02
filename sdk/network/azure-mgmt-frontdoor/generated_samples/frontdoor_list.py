@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-10-01/FrontdoorList.json
+# x-ms-original-file: 2025-11-01/FrontdoorList.json
 if __name__ == "__main__":
     main()
