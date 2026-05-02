@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
 import unittest
 import uuid
 import pytest
@@ -176,6 +177,9 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             partition_key=PartitionKey(path="/pk"),
             computed_properties=new_computed_properties
         )
+
+        # Allow time for the emulator to reindex existing items with new computed properties
+        await asyncio.sleep(2)
 
         # Check if computed properties were set
         container = await replaced_collection.read()
