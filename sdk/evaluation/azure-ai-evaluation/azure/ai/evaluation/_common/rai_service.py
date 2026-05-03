@@ -892,13 +892,12 @@ async def evaluate_with_rai_service(
     :return: The parsed annotation result.
     :rtype: Dict[str, Union[str, float]]
     """
-
     if is_onedp_project(project_scope):
         client = AIProjectClient(
             endpoint=project_scope,
             credential=credential,
             user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
-            headers=extra_headers,
+            headers=extra_headers or {},
         )
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, annotation_task)
