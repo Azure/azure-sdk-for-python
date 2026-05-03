@@ -3386,6 +3386,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     # during splits).
                     try:
                         results = base._merge_query_results(results, backend_query_result, query)
+                    except ValueError as merge_error:
+                        base._raise_query_merge_value_error(merge_error)
                     except (TypeError, KeyError) as merge_error:
                         _LOGGER.warning(
                             "Falling back to non-aggregate merge after aggregate merge failure: %s",

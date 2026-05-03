@@ -622,6 +622,27 @@ def _write_query_outbound_continuation(
 
     Full-PK queries keep legacy continuation emission unless structured
     emission is explicitly enabled by the client-level env-var contract.
+
+    :param last_response_headers: Response headers to mutate.
+    :type last_response_headers: MutableMapping[str, Any]
+    :param pagination_state: Current pagination state for this request.
+    :type pagination_state: _FeedRangePaginationState
+    :param resource_id: Collection resource ID.
+    :type resource_id: str
+    :param query: Query text/spec used for hash identity.
+    :type query: Any
+    :param feed_range_epk: Original request feed range.
+    :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
+    :param is_full_pk_structured_scope: Whether request scope is full-PK on structured path.
+    :type is_full_pk_structured_scope: bool
+    :param should_emit_structured_full_pk: Whether structured emission is enabled for full-PK.
+    :type should_emit_structured_full_pk: bool
+    :param query_hash: Precomputed query hash for outbound token identity.
+    :type query_hash: str
+    :param feedrange_hash: Precomputed feed range hash for outbound token identity.
+    :type feedrange_hash: str
+    :returns: None. Mutates ``last_response_headers`` in place.
+    :rtype: None
     """
     if is_full_pk_structured_scope and not should_emit_structured_full_pk:
         legacy_outbound = pagination_state.head_bc
@@ -645,6 +666,11 @@ def _should_attempt_legacy_bridge_fallback(error: Any) -> bool:
 
     Compatibility fallback is restricted to legacy-token bridge failures
     that surface as ``400 BadRequest``.
+
+    :param error: Exception raised by backend request execution.
+    :type error: Any
+    :returns: ``True`` when the error is a ``400 BadRequest`` compatibility failure.
+    :rtype: bool
     """
     return getattr(error, "status_code", None) == http_constants.StatusCodes.BAD_REQUEST
 

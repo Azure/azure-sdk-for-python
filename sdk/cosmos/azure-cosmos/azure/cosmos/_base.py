@@ -229,6 +229,28 @@ def _merge_query_results(
     return results
 
 
+def _raise_query_merge_value_error(merge_error: ValueError) -> None:
+    """Raise a clearer user-facing error for unsupported VALUE aggregate merges.
+
+    ``SELECT VALUE AVG(...)`` partials cannot be merged correctly client-side
+    across multiple partition/range responses. We fail loudly instead of
+    falling back to list concatenation (which would silently produce
+    mathematically incorrect results).
+
+    :param merge_error: ValueError raised while merging partial query results.
+    :type merge_error: ValueError
+    :raises ValueError: Always re-raises, potentially with a clearer message.
+    """
+    merge_message = str(merge_error)
+    if "VALUE AVG aggregate merge across partitions is not supported client-side." in merge_message:
+        raise ValueError(
+            "Unsupported query shape for range-scoped pagination: "
+            "SELECT VALUE AVG(...) cannot be merged client-side when the query "
+            "scope spans multiple physical partitions."
+        ) from merge_error
+    raise merge_error
+
+
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
         default_headers: Mapping[str, Any],

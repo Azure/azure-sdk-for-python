@@ -31,7 +31,13 @@ import pytest
 
 from azure.cosmos import _base
 from azure.cosmos import http_constants
-from azure.cosmos._query_aggregate_utils import _extract_outer_select_value_projection, _get_select_value_aggregate_function
+from azure.cosmos._query_aggregate_utils import (
+    _AggregatePartialClassification,
+    _classify_aggregate_partial,
+    _extract_outer_select_value_projection,
+    _get_select_value_aggregate_function,
+    _strip_sql_block_comments,
+)
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
     _MAX_CONSECUTIVE_NO_PROGRESS_PAGES,
@@ -1014,6 +1020,23 @@ class TestAggregateMergeConsistency:
 
         assert "VALUE AVG aggregate merge" in str(excinfo.value)
 
+    def test_raise_query_merge_value_error_rewrites_value_avg_message(self):
+        original = ValueError("VALUE AVG aggregate merge across partitions is not supported client-side.")
+
+        with pytest.raises(ValueError) as excinfo:
+            _base._raise_query_merge_value_error(original)
+
+        assert "SELECT VALUE AVG(...)" in str(excinfo.value)
+        assert "range-scoped pagination" in str(excinfo.value)
+
+    def test_raise_query_merge_value_error_preserves_other_value_errors(self):
+        original = ValueError("Invariant violation: VALUE aggregate classification requires a recognized aggregate function.")
+
+        with pytest.raises(ValueError) as excinfo:
+            _base._raise_query_merge_value_error(original)
+
+        assert str(excinfo.value) == str(original)
+
     def test_value_aggregate_detection_allows_space_before_open_paren(self):
         query = "SELECT VALUE COUNT (1) FROM c"
         assert _get_select_value_aggregate_function(query) == "COUNT"
@@ -1068,6 +1091,44 @@ class TestSelectValueProjectionParser:
     def test_array_projection_subquery_is_not_classified_as_outer_aggregate(self):
         query = "SELECT VALUE ARRAY(SELECT VALUE COUNT(1) FROM d IN c.items) FROM c"
         assert _get_select_value_aggregate_function(query) is None
+
+
+class TestAggregateClassificationHeuristics:
+    def test_block_comment_prefix_does_not_drive_outer_select_value_detection(self):
+        query = "/* SELECT VALUE COUNT(1) */ SELECT VALUE c.x FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+
+    def test_value_aggregate_detected_with_comment_between_select_and_value(self):
+        query = "SELECT /* comment */ VALUE COUNT(1) FROM c"
+        assert _get_select_value_aggregate_function(query) == "COUNT"
+
+    def test_value_aggregate_detected_with_comment_between_value_and_function(self):
+        query = "SELECT VALUE /* comment */ COUNT(1) FROM c"
+        assert _get_select_value_aggregate_function(query) == "COUNT"
+
+    def test_comment_with_fake_from_does_not_truncate_projection(self):
+        query = "SELECT VALUE /* FROM d */ COUNT(1) FROM c"
+        assert _get_select_value_aggregate_function(query) == "COUNT"
+
+    def test_block_comment_inside_string_literal_is_not_stripped(self):
+        query = "SELECT VALUE '/* COUNT(1) */' FROM c"
+        stripped = _strip_sql_block_comments(query)
+        assert "/* COUNT(1) */" in stripped
+
+    def test_value_projection_with_property_named_count_is_not_aggregate(self):
+        query = "SELECT VALUE c.COUNT FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+        assert _count_page_items_from_partial_result({"Documents": [42.5]}, query) == 1
+
+    def test_classify_aggregate_partial_excludes_boolean_value_rows(self):
+        query = "SELECT VALUE COUNT(1) FROM c"
+        docs = [True]
+        assert _classify_aggregate_partial(docs, query) == _AggregatePartialClassification.NONE
+
+    def test_classify_aggregate_partial_treats_non_aggregate_float_as_none(self):
+        query = "SELECT VALUE c.price FROM c"
+        docs = [42.5]
+        assert _classify_aggregate_partial(docs, query) == _AggregatePartialClassification.NONE
 
 
 class TestEmptyPageStallCounter:

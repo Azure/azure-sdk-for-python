@@ -32,7 +32,7 @@ import pytest
 
 import test_config
 from azure.cosmos import _base
-from azure.cosmos import CosmosClient, http_constants
+from azure.cosmos import CosmosClient, documents, http_constants
 from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.partition_key import PartitionKey
 
@@ -229,6 +229,136 @@ class TestFeedRangeMultiPartition:
         assert pager.continuation_token in (None, "", b""), (
             f"expected empty continuation after draining all pages; got "
             f"{pager.continuation_token!r}")
+
+    # ------------------------------------------------------------------ #
+    # Partition-key caller shapes (full key and prefix key)
+    # ------------------------------------------------------------------ #
+    def test_full_partition_key_query_pagination_resume(self):
+        """Full hierarchical partition-key query resumes correctly by continuation.
+
+        This uses a dedicated MultiHash container and a full key value so the
+        query stays scoped to one logical partition while still exercising
+        pagination + resume on the partition_key path.
+        """
+        db = _client().get_database_client(DATABASE_ID)
+        container_id = "FeedRangeMultiPartitionFullPK-" + str(uuid.uuid4())
+        created_container = db.create_container_if_not_exists(
+            id=container_id,
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash),
+            offer_throughput=400,
+        )
+        try:
+            full_key = ['CA', 'Oxnard', '93033']
+            for i in range(25):
+                created_container.upsert_item({
+                    'id': f'full-pk-doc-{i:03d}',
+                    'state': full_key[0],
+                    'city': full_key[1],
+                    'zipcode': full_key[2],
+                    'value': i,
+                })
+            for i in range(5):
+                created_container.upsert_item({
+                    'id': f'other-doc-{i:03d}',
+                    'state': 'WA',
+                    'city': 'Seattle',
+                    'zipcode': f'98{i:03d}',
+                    'value': i,
+                })
+
+            query = 'SELECT c.id FROM c ORDER BY c.id'
+            query_iterable = created_container.query_items(
+                query=query,
+                partition_key=full_key,
+                max_item_count=7,
+            )
+
+            pager = query_iterable.by_page()
+            first_page = list(next(pager))
+            assert first_page
+            token = pager.continuation_token
+            assert token
+
+            expected_remaining_ids = []
+            for page in pager:
+                expected_remaining_ids.extend(item['id'] for item in page)
+
+            resumed_remaining_ids = []
+            for page in query_iterable.by_page(token):
+                resumed_remaining_ids.extend(item['id'] for item in page)
+
+            assert expected_remaining_ids == resumed_remaining_ids
+
+            baseline_ids = [
+                item['id'] for item in created_container.query_items(query=query, partition_key=full_key)
+            ]
+            fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
+            assert baseline_ids == fetched_ids
+        finally:
+            db.delete_container(created_container.id)
+
+    def test_prefix_partition_key_query_pagination_resume(self):
+        """Prefix hierarchical partition-key query resumes correctly by continuation.
+
+        The caller provides only the first level (``['CA']``). The query spans
+        multiple descendants under that prefix and must preserve continuation
+        correctness on resume.
+        """
+        db = _client().get_database_client(DATABASE_ID)
+        container_id = "FeedRangeMultiPartitionPrefixPK-" + str(uuid.uuid4())
+        created_container = db.create_container_if_not_exists(
+            id=container_id,
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash),
+            offer_throughput=400,
+        )
+        try:
+            for i in range(30):
+                created_container.upsert_item({
+                    'id': f'ca-doc-{i:03d}',
+                    'state': 'CA',
+                    'city': f'city-{i % 5}',
+                    'zipcode': f'zip-{i:03d}',
+                    'value': i,
+                })
+            for i in range(6):
+                created_container.upsert_item({
+                    'id': f'wa-doc-{i:03d}',
+                    'state': 'WA',
+                    'city': f'city-{i % 2}',
+                    'zipcode': f'zip-{i:03d}',
+                    'value': i,
+                })
+
+            query = 'SELECT c.id FROM c ORDER BY c.id'
+            query_iterable = created_container.query_items(
+                query=query,
+                partition_key=['CA'],
+                max_item_count=7,
+            )
+
+            pager = query_iterable.by_page()
+            first_page = list(next(pager))
+            assert first_page
+            token = pager.continuation_token
+            assert token
+
+            expected_remaining_ids = []
+            for page in pager:
+                expected_remaining_ids.extend(item['id'] for item in page)
+
+            resumed_remaining_ids = []
+            for page in query_iterable.by_page(token):
+                resumed_remaining_ids.extend(item['id'] for item in page)
+
+            assert expected_remaining_ids == resumed_remaining_ids
+
+            baseline_ids = [
+                item['id'] for item in created_container.query_items(query=query, partition_key=['CA'])
+            ]
+            fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
+            assert baseline_ids == fetched_ids
+        finally:
+            db.delete_container(created_container.id)
 
 
     # ------------------------------------------------------------------ #

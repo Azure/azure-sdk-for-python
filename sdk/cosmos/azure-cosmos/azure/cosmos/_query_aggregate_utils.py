@@ -35,6 +35,61 @@ def _extract_query_text(query: Optional[Union[str, dict[str, Any]]]) -> Optional
     return None
 
 
+def _strip_sql_block_comments(query_text: str) -> str:
+    """Return ``query_text`` with ``/* ... */`` comment spans removed.
+
+    The aggregate detector is a lightweight scanner, so this helper keeps the
+    same lightweight approach and removes only block comments before scanning.
+    Quoted strings are preserved so comment-like text inside literals does not
+    get stripped.
+
+    :param query_text: Raw query text.
+    :type query_text: str
+    :returns: Query text with block comments removed.
+    :rtype: str
+    """
+    out: list[str] = []
+    index = 0
+    length = len(query_text)
+    in_quote: Optional[str] = None
+
+    while index < length:
+        ch = query_text[index]
+
+        if in_quote is not None:
+            out.append(ch)
+            # SQL-style escaped quote inside same quote type, e.g. 'it''s'.
+            if ch == in_quote and index + 1 < length and query_text[index + 1] == in_quote:
+                out.append(query_text[index + 1])
+                index += 2
+                continue
+            if ch == in_quote:
+                in_quote = None
+            index += 1
+            continue
+
+        if ch in ("'", '"'):
+            in_quote = ch
+            out.append(ch)
+            index += 1
+            continue
+
+        if ch == "/" and index + 1 < length and query_text[index + 1] == "*":
+            index += 2
+            while index + 1 < length and not (query_text[index] == "*" and query_text[index + 1] == "/"):
+                index += 1
+            if index + 1 < length:
+                index += 2
+            # Preserve token separation where a comment was removed.
+            out.append(" ")
+            continue
+
+        out.append(ch)
+        index += 1
+
+    return "".join(out)
+
+
 def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, Any]]]) -> Optional[str]:
     """Identify the aggregate function for ``SELECT VALUE`` aggregate queries.
 
@@ -52,7 +107,8 @@ def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, An
     if not query_text:
         return None
 
-    normalized = " ".join(query_text.upper().split())
+    without_comments = _strip_sql_block_comments(query_text)
+    normalized = " ".join(without_comments.upper().split())
     projection = _extract_outer_select_value_projection(normalized)
     if projection is None:
         return None
