@@ -1,5 +1,11 @@
 ## Release History
 
+### 4.14.7 (Unreleased)
+
+#### Bugs Fixed
+* Fixed a bug in `query_items(feed_range=...)` where pagination could return incorrect results after a partition split caused the supplied feed range to overlap multiple physical partitions.
+* Fixed bug where unavailable regional endpoints were dropped from the routing list instead of being kept as fallback options. See [PR 45200](https://github.com/Azure/azure-sdk-for-python/pull/45200)
+
 ### 4.14.6 (2026-02-02)
 
 #### Bugs Fixed
