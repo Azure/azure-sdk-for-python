@@ -146,6 +146,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
         self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
+        # Serializes _open() so concurrent callers cannot race on creating
+        # and closing self._handler (see issue #35618). Initialized lazily
+        # because the constructor may execute outside a running event loop.
+        self._open_lock: Optional[asyncio.Lock] = None
 
     async def __aenter__(self) -> "ServiceBusSender":
         if self._shutdown.is_set():
@@ -203,28 +207,31 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     async def _open(self):
         if self._running:
             return
-        if self._handler:
-            await self._handler.close_async()
-        auth = None if self._connection else (await create_authentication(self))
-        self._create_handler(auth)
-        # Capture a local reference to the handler to guard against concurrent
-        # coroutines mutating self._handler across awaits (see issue #35618).
-        handler = self._handler
-        try:
-            await handler.open_async(connection=self._connection)
-            while not await handler.client_ready_async():
-                await asyncio.sleep(0.05)
-            self._running = True
-            self._max_message_size_on_link = (
-                self._amqp_transport.get_remote_max_message_size(handler) or MAX_MESSAGE_LENGTH_BYTES
-            )
-            if self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
-                self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
-            else:
-                self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
-        except:
-            await self._close_handler()
-            raise
+        if self._open_lock is None:
+            self._open_lock = asyncio.Lock()
+        async with self._open_lock:
+            if self._running:
+                return
+            if self._handler:
+                await self._handler.close_async()
+            auth = None if self._connection else (await create_authentication(self))
+            self._create_handler(auth)
+            handler = self._handler
+            try:
+                await handler.open_async(connection=self._connection)
+                while not await handler.client_ready_async():
+                    await asyncio.sleep(0.05)
+                self._running = True
+                self._max_message_size_on_link = (
+                    self._amqp_transport.get_remote_max_message_size(handler) or MAX_MESSAGE_LENGTH_BYTES
+                )
+                if self._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+                    self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
+                else:
+                    self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
+            except:
+                await self._close_handler()
+                raise
 
     async def _send(
         self,
