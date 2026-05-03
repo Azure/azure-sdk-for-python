@@ -169,8 +169,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
-        emit_structured_env = os.environ.get(Constants.EMIT_STRUCTURED_CONTINUATION_PK_CONFIG, "")
-        self._emit_structured_continuation_pk = emit_structured_env.strip().lower() in ("1", "true", "yes", "on")
+        self._emit_structured_continuation_pk = os.environ.get(
+            Constants.EMIT_STRUCTURED_CONTINUATION_PK_CONFIG,
+            "",
+        ).strip().lower() in ("1", "true", "yes", "on")
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_executor: Optional[ThreadPoolExecutor] = availability_strategy_executor
