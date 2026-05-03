@@ -6,6 +6,7 @@
         "perfresults",
         "pkrange",
         "ppcb",
+        "reindexing",
         "reranker",
         "toctou"
     ]
