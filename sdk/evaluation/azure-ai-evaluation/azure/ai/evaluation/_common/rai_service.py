@@ -898,7 +898,7 @@ async def evaluate_with_rai_service(
             endpoint=project_scope,
             credential=credential,
             user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
-            headers=extra_headers
+            headers=extra_headers,
         )
         token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
         await ensure_service_availability_onedp(client, token, annotation_task)
@@ -916,7 +916,12 @@ async def evaluate_with_rai_service(
 
         # Submit annotation request and fetch result
         operation_id = await submit_request(
-            data, metric_name, rai_svc_url, token, annotation_task, evaluator_name,
+            data,
+            metric_name,
+            rai_svc_url,
+            token,
+            annotation_task,
+            evaluator_name,
             extra_headers=extra_headers,
         )
         annotation_response = cast(
@@ -1172,7 +1177,7 @@ async def evaluate_with_rai_service_sync(
             metric_display_name=metric_display_name,
             evaluator_name=evaluator_name,
             scan_session_id=scan_session_id,
-            extra_headers=extra_headers
+            extra_headers=extra_headers,
         )
 
     # Sync evals endpoint implementation (default)

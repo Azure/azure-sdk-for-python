@@ -844,7 +844,8 @@ class TestExtraHeaders:
     @patch(
         "azure.ai.evaluation._http_utils.AsyncHttpPipeline.post",
         return_value=MockAsyncHttpResponse(
-            202, json={"location": "this/is/the/op-id"},
+            202,
+            json={"location": "this/is/the/op-id"},
         ),
     )
     async def test_submit_request_extra_headers_included(self, post_mock):
@@ -913,9 +914,7 @@ class TestExtraHeaders:
     @pytest.mark.asyncio
     @patch(
         "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
-        return_value=MockAsyncHttpResponse(
-            200, json={"properties": {"discoveryUrl": "https://disc.com/path"}}
-        ),
+        return_value=MockAsyncHttpResponse(200, json={"properties": {"discoveryUrl": "https://disc.com/path"}}),
     )
     async def test_get_service_discovery_url_extra_headers_included(self, get_mock):
         """extra_headers should appear in the ARM request headers."""
@@ -1073,9 +1072,7 @@ class TestExtraHeaders:
         get_url_mock.return_value = "https://fake-rai-url.com"
         ensure_avail_mock.return_value = None
         submit_mock.return_value = "op-id"
-        fetch_result_mock.return_value = [
-            {"violence": '{"label": 0, "reasoning": "safe"}'}
-        ]
+        fetch_result_mock.return_value = [{"violence": '{"label": 0, "reasoning": "safe"}'}]
 
         extra = {"X-Custom": "legacy-sub-value"}
         await evaluate_with_rai_service(
