@@ -28,8 +28,7 @@ import copy
 import logging
 
 from ...aio import _retry_utility_async
-from ... import http_constants, exceptions, _base
-from ..._constants import _Constants as Constants
+from ... import http_constants, exceptions
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -53,6 +52,9 @@ class _QueryExecutionContextBase(object):
         self._has_finished = False
         self._buffer = deque()
         self._resource_link = None
+        # Per-query mutable capture used by __QueryFeed to report response
+        # headers (including failure checkpoints) without crossing requests.
+        self._internal_response_headers_capture = {}
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -120,6 +122,9 @@ class _QueryExecutionContextBase(object):
         """
         fetched_items = []
         new_options = copy.deepcopy(self._options)
+        # Clear stale values from prior pages before issuing a new fetch.
+        self._internal_response_headers_capture.clear()
+        new_options["_internal_response_headers_capture"] = self._internal_response_headers_capture
         while self._continuation or not self._has_started:
             new_options["continuation"] = self._continuation
 
@@ -184,46 +189,21 @@ class _QueryExecutionContextBase(object):
                         max_retries
                     )
 
-                    # Refresh routing map to get new partition key ranges.
-                    # When resource_link is available, do a targeted refresh for just this collection
-                    # instead of destroying all collections' cached routing maps.
-                    if self._resource_link:
-                        collection_id = _base.GetResourceIdOrFullNameFromLink(self._resource_link)
-                        previous_map = self._client._routing_map_provider._collection_routing_map_by_item.get(
-                            collection_id)
-                        _LOGGER.debug(
-                            "Partition split retry (async): Targeted refresh for collection %s (has_previous_map=%s)",
-                            self._resource_link,
-                            previous_map is not None,
-                        )
-                        refresh_feed_options = {}
-                        if Constants.ContainerRID in self._options:
-                            refresh_feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
-                        if "excludedLocations" in self._options:
-                            refresh_feed_options["excludedLocations"] = self._options["excludedLocations"]
-                        await self._client.refresh_routing_map_provider(
-                            self._resource_link,
-                            previous_map,
-                            refresh_feed_options if refresh_feed_options else None,
-                        )
-                    else:
-                        # No resource_link available — defensive fallback to global refresh.
-                        # This branch should not be reached in practice since all callers now pass resource_link.
-                        _LOGGER.debug("Partition split retry (async): No resource_link available, using global refresh")
-                        await self._client.refresh_routing_map_provider()
-
+                    # Refresh routing map to get new partition key ranges
+                    self._client.refresh_routing_map_provider()
                     # Reset execution context state to allow retry from the beginning
+
+                    # Reset execution context state for retry. If __QueryFeed already
+                    # stamped a checkpoint continuation on failure, resume from it.
+                    continuation_key = http_constants.HttpHeaders.Continuation
+                    checkpoint_continuation = self._internal_response_headers_capture.get(continuation_key)
                     self._has_started = False
-                    self._continuation = None
+                    self._continuation = checkpoint_continuation
                     # Retry immediately (no backoff needed for partition splits)
                     continue
                 raise  # Not a partition split error, propagate immediately
 
         # This should never be reached, but added for safety
-        _LOGGER.warning(
-            "Partition split retry (async): Unexpectedly exited retry loop without returning results. "
-            "This indicates a potential logic error."
-        )
         return []
 
 
@@ -239,9 +219,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         :param method fetch_function:
             Will be invoked for retrieving each page
         :param str resource_link:
-            Optional collection link used for targeted routing map refresh on 410 partition split.
-            When provided, the 410 retry loop refreshes only this collection's cached routing map
-            instead of destroying all collections' cached maps.
+            Optional collection link associated with this execution context.
 
             Example of `fetch_function`:
 
