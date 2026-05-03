@@ -1,7 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import asyncio
 import unittest
 import uuid
 import pytest
@@ -177,10 +176,6 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             partition_key=PartitionKey(path="/pk"),
             computed_properties=new_computed_properties
         )
-
-        # Re-upsert items so computed properties are indexed with the new definitions
-        for item in self.items:
-            await replaced_collection.upsert_item(body=item)
 
         # Check if computed properties were set
         container = await replaced_collection.read()
