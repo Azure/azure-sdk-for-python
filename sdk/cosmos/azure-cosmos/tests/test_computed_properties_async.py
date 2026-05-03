@@ -178,8 +178,9 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             computed_properties=new_computed_properties
         )
 
-        # Allow time for the emulator to reindex existing items with new computed properties
-        await asyncio.sleep(2)
+        # Re-upsert items so computed properties are indexed with the new definitions
+        for item in self.items:
+            await replaced_collection.upsert_item(body=item)
 
         # Check if computed properties were set
         container = await replaced_collection.read()
