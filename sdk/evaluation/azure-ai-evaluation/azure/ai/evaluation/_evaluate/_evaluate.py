@@ -1277,9 +1277,9 @@ def _log_events_to_app_insights(
                 usage = sample.get("usage", {})
                 usage = usage if isinstance(usage, dict) else {}
                 if usage.get("prompt_tokens") is not None:
-                    standard_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
+                    internal_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
                 if usage.get("completion_tokens") is not None:
-                    standard_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
+                    internal_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
 
                 # Combine standard and internal attributes, put internal under the properties bag
                 standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
