@@ -423,52 +423,52 @@ class _FeedRangePaginationState:
     def __init__(
         self,
         queue: Iterable[Tuple[routing_range.Range, Optional[str]]],
-        remaining_page_item_count: Optional[int],
+        page_size_hint: Optional[int],
     ) -> None:
         self.queue: Deque[Tuple[routing_range.Range, Optional[str]]] = deque(queue)
-        self.remaining_page_item_count = remaining_page_item_count
+        self.page_size_hint = page_size_hint
 
     @classmethod
     def from_inbound(
         cls,
         inbound: dict,
-        remaining_page_item_count: Optional[int],
+        page_size_hint: Optional[int],
     ) -> "_FeedRangePaginationState":
         """Build state from a decoded inbound token.
 
         :param inbound: Decoded inbound token payload.
         :type inbound: dict
-        :param remaining_page_item_count: Remaining items allowed in this logical page.
-        :type remaining_page_item_count: Optional[int]
+        :param page_size_hint: Request page-size hint propagated to backend POSTs.
+        :type page_size_hint: Optional[int]
         :returns: Pagination state initialized for resume.
         :rtype: _FeedRangePaginationState
         """
-        return cls(_extract_resume_queue(inbound), remaining_page_item_count)
+        return cls(_extract_resume_queue(inbound), page_size_hint)
 
     @classmethod
     def from_derived_feedranges(
         cls,
         feedranges: Iterable[routing_range.Range],
-        remaining_page_item_count: Optional[int],
+        page_size_hint: Optional[int],
     ) -> "_FeedRangePaginationState":
         """Build state from feedranges computed at startup (no backend
         continuations yet — every entry starts with ``bc = None``).
 
         :param feedranges: Derived feedranges ordered by ``min``.
         :type feedranges: Iterable[~azure.cosmos._routing.routing_range.Range]
-        :param remaining_page_item_count: Remaining items allowed in this logical page.
-        :type remaining_page_item_count: Optional[int]
+        :param page_size_hint: Request page-size hint propagated to backend POSTs.
+        :type page_size_hint: Optional[int]
         :returns: Pagination state initialized for first request.
         :rtype: _FeedRangePaginationState
         """
-        return cls(((fr, None) for fr in feedranges), remaining_page_item_count)
+        return cls(((fr, None) for fr in feedranges), page_size_hint)
 
     @classmethod
     def from_single_feedrange_with_continuation(
         cls,
         feedrange: routing_range.Range,
         backend_continuation: Optional[str],
-        remaining_page_item_count: Optional[int],
+        page_size_hint: Optional[int],
     ) -> "_FeedRangePaginationState":
         """Build state for one feedrange where a backend continuation
         already exists.
@@ -482,12 +482,12 @@ class _FeedRangePaginationState:
         :type feedrange: ~azure.cosmos._routing.routing_range.Range
         :param backend_continuation: Existing backend continuation for the range.
         :type backend_continuation: Optional[str]
-        :param remaining_page_item_count: Remaining items allowed in this logical page.
-        :type remaining_page_item_count: Optional[int]
+        :param page_size_hint: Request page-size hint propagated to backend POSTs.
+        :type page_size_hint: Optional[int]
         :returns: Pagination state initialized with one queued entry.
         :rtype: _FeedRangePaginationState
         """
-        return cls(((feedrange, backend_continuation),), remaining_page_item_count)
+        return cls(((feedrange, backend_continuation),), page_size_hint)
 
     @property
     def head_range(self) -> Optional[routing_range.Range]:
@@ -507,14 +507,10 @@ class _FeedRangePaginationState:
     def can_issue_request(self) -> bool:
         """Whether another backend POST can be issued for this page.
 
-        :returns: ``True`` when the queue is non-empty and the page-item budget allows another POST.
+        :returns: ``True`` when the queue is non-empty.
         :rtype: bool
         """
-        if not self.queue:
-            return False
-        if self.remaining_page_item_count is not None and self.remaining_page_item_count <= 0:
-            return False
-        return True
+        return bool(self.queue)
 
     def explode_on_multi_overlap(self, overlapping: List[dict]) -> bool:
         """If the head sub-range now spans more than one physical
@@ -547,14 +543,15 @@ class _FeedRangePaginationState:
     def apply_post_result(self, items_returned: int, backend_continuation: Optional[str]) -> None:
         """Apply one backend response to the queue.
 
-        :param items_returned: Number of documents returned by this POST.
+        :param items_returned: Number of logical rows returned by this POST.
         :type items_returned: int
         :param backend_continuation: Backend continuation for the head
             sub-range (``None`` when the head is drained).
         :type backend_continuation: Optional[str]
         """
-        if self.remaining_page_item_count is not None:
-            self.remaining_page_item_count -= items_returned
+        # Kept for call-site API symmetry and observability; page-size hints are
+        # no longer decremented between backend requests.
+        _ = items_returned
         if not self.queue:
             return
         head_range, _ = self.queue[0]
@@ -844,7 +841,7 @@ def _apply_feedrange_request_headers(
     overlapping: List[dict],
     partition_scope: routing_range.Range,
     head_feedrange: routing_range.Range,
-    remaining_page_item_count: Optional[int],
+    page_size_hint: Optional[int],
     inbound_continuation: Optional[str],
 ) -> None:
     """Populate ``req_headers`` for one backend POST against
@@ -863,8 +860,8 @@ def _apply_feedrange_request_headers(
     :type partition_scope: ~azure.cosmos._routing.routing_range.Range
     :param head_feedrange: Feed range for the current backend request.
     :type head_feedrange: ~azure.cosmos._routing.routing_range.Range
-    :param remaining_page_item_count: Remaining items allowed in this logical page.
-    :type remaining_page_item_count: Optional[int]
+    :param page_size_hint: Request page-size hint for the backend POST.
+    :type page_size_hint: Optional[int]
     :param inbound_continuation: Continuation token for backend request.
     :type inbound_continuation: Optional[str]
     """
@@ -884,8 +881,8 @@ def _apply_feedrange_request_headers(
         req_headers[http_constants.HttpHeaders.EndEpkString] = head_feedrange.max
     req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
 
-    if remaining_page_item_count is not None:
-        req_headers[http_constants.HttpHeaders.PageSize] = str(remaining_page_item_count)
+    if page_size_hint is not None:
+        req_headers[http_constants.HttpHeaders.PageSize] = str(page_size_hint)
     else:
         req_headers.pop(http_constants.HttpHeaders.PageSize, None)
 

@@ -3185,7 +3185,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # Decode and validate inbound continuation for this request.
             # ``None`` means start from the beginning of the requested
             # feed range.
-            items_left_in_page = _normalize_max_item_count(options.get("maxItemCount"))
+            page_size_hint = _normalize_max_item_count(options.get("maxItemCount"))
             query_hash = _hash_query_spec(query)
             feedrange_hash = _hash_feed_range(feed_range_epk)
             should_emit_structured_full_pk = self._emit_structured_continuation_pk
@@ -3215,13 +3215,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     expected_feedrange_hash=feedrange_hash,
                 )
                 pagination_state = _FeedRangePaginationState.from_inbound(
-                    inbound_token_payload, items_left_in_page
+                    inbound_token_payload, page_size_hint
                 )
             elif legacy_bridge_in_use and inbound_serialized_continuation:
                 pagination_state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
                     feed_range_epk,
                     inbound_serialized_continuation,
-                    items_left_in_page,
+                    page_size_hint,
                 )
             else:
                 first_overlaps = await self._routing_map_provider.get_overlapping_ranges(
@@ -3239,7 +3239,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 else:
                     pagination_state = _FeedRangePaginationState.from_derived_feedranges(
                         all_feedranges,
-                        items_left_in_page,
+                        page_size_hint,
                         )
 
             if pagination_state is not None:
@@ -3317,7 +3317,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         overlapping,
                         partition_scope,
                         head_feedrange,
-                        pagination_state.remaining_page_item_count,
+                        pagination_state.page_size_hint,
                         pagination_state.head_bc,
                     )
                     # Use the session token for this specific partition so we don't
@@ -3434,6 +3434,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             head_min,
                             head_max,
                         )
+
+                    # maxItemCount is a per-request hint. Return this SDK page
+                    # after the first non-empty logical result instead of filling
+                    # an exact target count by issuing extra backend requests.
+                    if page_items_returned > 0:
+                        break
 
                 # Pagination loop is done — write the final outbound
                 # continuation (or clear the header if the queue is fully

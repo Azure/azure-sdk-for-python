@@ -836,7 +836,7 @@ class TestApplyFeedrangeRequestHeaders:
             overlapping=overlapping,
             partition_scope=partition_scope,
             head_feedrange=head_feedrange,
-            remaining_page_item_count=None,
+            page_size_hint=None,
             inbound_continuation=None,
         )
 
@@ -850,7 +850,7 @@ class TestApplyFeedrangeRequestHeaders:
             assert http_constants.HttpHeaders.EndEpkString not in req_headers
 
     @pytest.mark.parametrize(
-        "remaining_page_item_count,inbound_continuation,expect_page_size,expect_continuation",
+        "page_size_hint,inbound_continuation,expect_page_size,expect_continuation",
         [
             (5, "abc", True, True),
             (None, "abc", False, True),
@@ -860,7 +860,7 @@ class TestApplyFeedrangeRequestHeaders:
     )
     def test_page_size_and_continuation_are_set_or_cleared(
         self,
-        remaining_page_item_count,
+        page_size_hint,
         inbound_continuation,
         expect_page_size,
         expect_continuation,
@@ -879,12 +879,12 @@ class TestApplyFeedrangeRequestHeaders:
             overlapping=overlapping,
             partition_scope=partition_scope,
             head_feedrange=head_feedrange,
-            remaining_page_item_count=remaining_page_item_count,
+            page_size_hint=page_size_hint,
             inbound_continuation=inbound_continuation,
         )
 
         if expect_page_size:
-            assert req_headers[http_constants.HttpHeaders.PageSize] == str(remaining_page_item_count)
+            assert req_headers[http_constants.HttpHeaders.PageSize] == str(page_size_hint)
         else:
             assert http_constants.HttpHeaders.PageSize not in req_headers
 
@@ -1224,57 +1224,57 @@ class TestFeedRangePaginationState:
         return [(r.min, r.max, bc) for r, bc in state.queue]
 
     def test_from_derived_feedranges_empty_initializes_done_state(self):
-        state = _FeedRangePaginationState.from_derived_feedranges([], remaining_page_item_count=5)
+        state = _FeedRangePaginationState.from_derived_feedranges([], page_size_hint=5)
         assert list(state.queue) == []
         assert state.head_range is None
         assert state.head_bc is None
-        assert state.remaining_page_item_count == 5
+        assert state.page_size_hint == 5
 
     def test_from_derived_feedranges_seeds_queue_with_no_continuations(self):
         a = _mk_range("00", "40")
         b = _mk_range("40", "80")
-        state = _FeedRangePaginationState.from_derived_feedranges([a, b], remaining_page_item_count=7)
+        state = _FeedRangePaginationState.from_derived_feedranges([a, b], page_size_hint=7)
         assert self._queue_bounds(state) == [("00", "40", None), ("40", "80", None)]
         assert self._bounds(state.head_range) == ("00", "40")
         assert state.head_bc is None
-        assert state.remaining_page_item_count == 7
+        assert state.page_size_hint == 7
 
     def test_from_single_feedrange_with_continuation_seeds_head_bc(self):
         head = _mk_range("AA", "BB")
         state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
             head,
             "legacy-token-1",
-            remaining_page_item_count=11,
+            page_size_hint=11,
         )
         assert self._queue_bounds(state) == [("AA", "BB", "legacy-token-1")]
         assert self._bounds(state.head_range) == ("AA", "BB")
         assert state.head_bc == "legacy-token-1"
-        assert state.remaining_page_item_count == 11
+        assert state.page_size_hint == 11
 
     def test_from_single_feedrange_with_continuation_allows_null(self):
         head = _mk_range("AA", "BB")
         state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
             head,
             None,
-            remaining_page_item_count=None,
+            page_size_hint=None,
         )
         assert self._queue_bounds(state) == [("AA", "BB", None)]
         assert state.head_bc is None
 
     @pytest.mark.parametrize(
-        "queue,remaining_page_item_count,expected",
+        "queue,page_size_hint,expected",
         [
             ([], None, False),
-            ([(_mk_range("00", "40"), None)], 0, False),
-            ([(_mk_range("00", "40"), None)], -1, False),
+            ([(_mk_range("00", "40"), None)], 0, True),
+            ([(_mk_range("00", "40"), None)], -1, True),
             ([(_mk_range("00", "40"), None)], None, True),
             ([(_mk_range("00", "40"), None)], 1, True),
         ],
     )
-    def test_can_issue_request_boundaries(self, queue, remaining_page_item_count, expected):
+    def test_can_issue_request_boundaries(self, queue, page_size_hint, expected):
         state = _FeedRangePaginationState(
             queue=queue,
-            remaining_page_item_count=remaining_page_item_count,
+            page_size_hint=page_size_hint,
         )
         assert state.can_issue_request() is expected
 
@@ -1289,14 +1289,14 @@ class TestFeedRangePaginationState:
                 {"min": "40", "max": "80", _FIELD_BACKEND_CONTINUATION: None},
             ],
         }
-        state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=9)
+        state = _FeedRangePaginationState.from_inbound(inbound, page_size_hint=9)
         assert self._queue_bounds(state) == [
             ("00", "40", "token-1"),
             ("40", "80", None),
         ]
         assert self._bounds(state.head_range) == ("00", "40")
         assert state.head_bc == "token-1"
-        assert state.remaining_page_item_count == 9
+        assert state.page_size_hint == 9
 
     def test_from_inbound_preserves_per_entry_backend_continuations(self):
         # Future non-sequential / parallel-loop case: a saved token
@@ -1309,7 +1309,7 @@ class TestFeedRangePaginationState:
                 {"min": "40", "max": "80", _FIELD_BACKEND_CONTINUATION: "A-cont-5"},
             ],
         }
-        state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=None)
+        state = _FeedRangePaginationState.from_inbound(inbound, page_size_hint=None)
         assert self._queue_bounds(state) == [
             ("00", "40", "B-cont-5"),
             ("40", "80", "A-cont-5"),
@@ -1327,7 +1327,7 @@ class TestFeedRangePaginationState:
         next_range = _mk_range("40", "80")
         state = _FeedRangePaginationState(
             queue=[(current, None), (next_range, None)],
-            remaining_page_item_count=5,
+            page_size_hint=5,
         )
 
         state.apply_post_result(items_returned=2, backend_continuation="token-2")
@@ -1337,14 +1337,14 @@ class TestFeedRangePaginationState:
             ("40", "80", None),
         ]
         assert state.head_bc == "token-2"
-        assert state.remaining_page_item_count == 3
+        assert state.page_size_hint == 5
 
     def test_apply_post_result_with_none_pops_head(self):
         current = _mk_range("00", "40")
         next_range = _mk_range("40", "80")
         state = _FeedRangePaginationState(
             queue=[(current, "token-1"), (next_range, None)],
-            remaining_page_item_count=6,
+            page_size_hint=6,
         )
 
         state.apply_post_result(items_returned=1, backend_continuation=None)
@@ -1352,13 +1352,13 @@ class TestFeedRangePaginationState:
         assert self._queue_bounds(state) == [("40", "80", None)]
         assert self._bounds(state.head_range) == ("40", "80")
         assert state.head_bc is None
-        assert state.remaining_page_item_count == 5
+        assert state.page_size_hint == 6
 
     def test_apply_post_result_with_none_and_no_tail_drains_queue(self):
         current = _mk_range("00", "40")
         state = _FeedRangePaginationState(
             queue=[(current, "token-1")],
-            remaining_page_item_count=None,
+            page_size_hint=None,
         )
 
         state.apply_post_result(items_returned=1, backend_continuation=None)
@@ -1372,7 +1372,7 @@ class TestFeedRangePaginationState:
         tail = _mk_range("80", "C0")
         state = _FeedRangePaginationState(
             queue=[(current, "token-1"), (tail, None)],
-            remaining_page_item_count=4,
+            page_size_hint=4,
         )
 
         did_explode = state.explode_on_multi_overlap([self._pkr("X", "00", "80")])
@@ -1388,7 +1388,7 @@ class TestFeedRangePaginationState:
         tail = _mk_range("80", "C0")
         state = _FeedRangePaginationState(
             queue=[(current, "token-1"), (tail, None)],
-            remaining_page_item_count=4,
+            page_size_hint=4,
         )
 
         did_explode = state.explode_on_multi_overlap(
@@ -1414,7 +1414,7 @@ class TestFeedRangePaginationState:
         tail = _mk_range("80", "C0")
         state = _FeedRangePaginationState(
             queue=[(current, None), (tail, None)],
-            remaining_page_item_count=4,
+            page_size_hint=4,
         )
 
         did_explode = state.explode_on_multi_overlap(
@@ -1459,7 +1459,7 @@ class TestCheckpointRoundTripOnException:
         a, b, c = _mk_range("00", "40"), _mk_range("40", "80"), _mk_range("80", "C0")
         state = _FeedRangePaginationState(
             queue=[(a, "cont-A"), (b, None), (c, None)],
-            remaining_page_item_count=7,
+            page_size_hint=7,
         )
 
         headers: dict = {}
@@ -1473,7 +1473,7 @@ class TestCheckpointRoundTripOnException:
         inbound = _decode_token(wire)
         assert inbound is not None
         _validate_token_identity(inbound, _RID, _QUERY, _FEED_RANGE)
-        resumed = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=7)
+        resumed = _FeedRangePaginationState.from_inbound(inbound, page_size_hint=7)
 
         # Head is still A with its bc; tail (B, C) is intact and bc-free.
         assert self._bounds(resumed.head_range) == ("00", "40")
@@ -1492,7 +1492,7 @@ class TestCheckpointRoundTripOnException:
         a, b, c = _mk_range("00", "40"), _mk_range("40", "80"), _mk_range("80", "C0")
         state = _FeedRangePaginationState(
             queue=[(a, "cont-A-final"), (b, None), (c, None)],
-            remaining_page_item_count=5,
+            page_size_hint=5,
         )
         state.apply_post_result(items_returned=3, backend_continuation=None)
         # A is now drained; head should be B.
@@ -1503,7 +1503,7 @@ class TestCheckpointRoundTripOnException:
 
         resumed = _FeedRangePaginationState.from_inbound(
             _decode_token(headers[http_constants.HttpHeaders.Continuation]),
-            remaining_page_item_count=2,
+            page_size_hint=2,
         )
         assert [(r.min, r.max, bc) for r, bc in resumed.queue] == [
             ("40", "80", None),
@@ -1515,7 +1515,7 @@ class TestCheckpointRoundTripOnException:
         # the outbound continuation header (not leave a stale one
         # behind) so the caller's by_page loop terminates.
         headers = {http_constants.HttpHeaders.Continuation: "stale-from-prior-page"}
-        state = _FeedRangePaginationState(queue=[], remaining_page_item_count=None)
+        state = _FeedRangePaginationState(queue=[], page_size_hint=None)
 
         state.write_outbound_continuation(headers, _RID, _QUERY, _FEED_RANGE)
 
