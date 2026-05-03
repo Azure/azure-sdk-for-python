@@ -1032,6 +1032,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Get container property and init client container caches
         container_properties = self._get_properties_with_options(feed_options)
+        kwargs["container_properties"] = container_properties
 
         # Update 'feed_options' from 'kwargs'
         if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):

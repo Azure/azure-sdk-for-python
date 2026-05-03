@@ -51,6 +51,9 @@ class _QueryExecutionContextBase(object):
         self._has_finished = False
         self._buffer = deque()
         self._resource_link = None
+        # Per-query mutable capture used by __QueryFeed to report response
+        # headers (including failure checkpoints) without crossing requests.
+        self._internal_response_headers_capture = {}
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -118,6 +121,9 @@ class _QueryExecutionContextBase(object):
         """
         fetched_items = []
         new_options = copy.deepcopy(self._options)
+        # Clear stale values from prior pages before issuing a new fetch.
+        self._internal_response_headers_capture.clear()
+        new_options["_internal_response_headers_capture"] = self._internal_response_headers_capture
         while self._continuation or not self._has_started:
             new_options["continuation"] = self._continuation
 
@@ -213,8 +219,7 @@ class _QueryExecutionContextBase(object):
                     # Reset execution context state for retry. If __QueryFeed already
                     # stamped a checkpoint continuation on failure, resume from it.
                     continuation_key = http_constants.HttpHeaders.Continuation
-                    last_headers = getattr(self._client, "last_response_headers", None) or {}
-                    checkpoint_continuation = last_headers.get(continuation_key)
+                    checkpoint_continuation = self._internal_response_headers_capture.get(continuation_key)
                     self._has_started = False
                     self._continuation = checkpoint_continuation
                     # Retry immediately (no backoff needed for partition splits)

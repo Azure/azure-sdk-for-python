@@ -193,17 +193,18 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert result == expected_docs, "Should return expected documents after retry"
 
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
-    async def test_retry_with_410_uses_checkpoint_continuation_from_last_response_headers_async(self, mock_execute):
+    async def test_retry_with_410_uses_checkpoint_continuation_from_internal_capture_async(self, mock_execute):
         """410 retry should resume from checkpoint continuation stamped by __QueryFeed (async)."""
         mock_client = MockClient()
         expected_docs = [{"id": "success"}]
         seen_continuations = []
         call_count = [0]
+        context = _DefaultQueryExecutionContext(mock_client, {}, lambda _options: (expected_docs, {}))
 
         async def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
             call_count[0] += 1
             if call_count[0] == 1:
-                client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-token"}
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-token"
                 raise create_410_partition_split_error()
             return await callback()
 
@@ -213,11 +214,41 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             seen_continuations.append(options.get("continuation"))
             return (expected_docs, {})
 
-        context = _DefaultQueryExecutionContext(mock_client, {}, mock_fetch_function)
+        context._fetch_function = mock_fetch_function
         result = await context._fetch_items_helper_with_retries(mock_fetch_function)
 
         assert call_count[0] == 2
         assert seen_continuations == ["checkpoint-token"]
+        assert result == expected_docs
+
+    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    async def test_retry_with_410_ignores_stale_shared_client_headers_async(self, mock_execute):
+        """Retry resumes from request-local captured headers, not shared client headers."""
+        mock_client = MockClient()
+        mock_client.last_response_headers = {HttpHeaders.Continuation: "stale-global-token"}
+        expected_docs = [{"id": "success"}]
+        seen_continuations = []
+        call_count = [0]
+        context = _DefaultQueryExecutionContext(mock_client, {}, lambda _options: (expected_docs, {}))
+
+        async def execute_side_effect(_client, _global_endpoint_manager, callback, **kwargs):
+            call_count[0] += 1
+            if call_count[0] == 1:
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "fresh-checkpoint"
+                raise create_410_partition_split_error()
+            return await callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        async def mock_fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            return (expected_docs, {})
+
+        context._fetch_function = mock_fetch_function
+        result = await context._fetch_items_helper_with_retries(mock_fetch_function)
+
+        assert call_count[0] == 2
+        assert seen_continuations == ["fresh-checkpoint"]
         assert result == expected_docs
 
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
@@ -231,7 +262,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         async def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
             call_count[0] += 1
             if call_count[0] == 1:
-                client.last_response_headers = {}
+                context._internal_response_headers_capture.clear()
                 raise create_410_partition_split_error()
             return await callback()
 
@@ -259,10 +290,10 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         async def execute_side_effect(client, _global_endpoint_manager, callback, **kwargs):
             call_count[0] += 1
             if call_count[0] == 1:
-                client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-token-1"}
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-token-1"
                 raise create_410_partition_split_error()
             if call_count[0] == 2:
-                client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-token-2"}
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-token-2"
                 raise create_410_partition_split_error()
             return await callback()
 
@@ -303,7 +334,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
             if continuation == "token-after-page-1":
                 # Simulate __QueryFeed writing a checkpoint before re-raising split error.
-                mock_client.last_response_headers = {HttpHeaders.Continuation: "checkpoint-after-split"}
+                context._internal_response_headers_capture[HttpHeaders.Continuation] = "checkpoint-after-split"
                 raise create_410_partition_split_error()
 
             if continuation == "checkpoint-after-split":

@@ -86,13 +86,16 @@ from ._routing.feed_range_continuation import (
     _hash_query_spec,
     _increment_explode_iterations_or_raise,
     _normalize_max_item_count,
+    _should_attempt_legacy_bridge_fallback,
     _update_no_progress_page_count,
     _validate_token_identity,
+    _write_query_outbound_continuation,
 )
 from ._query_advisor import get_query_advice_info
 from ._inference_service import _InferenceService
 from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
+    _build_partition_key_from_properties,
     _Undefined,
     _Empty,
     _PartitionKeyKind,
@@ -166,6 +169,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
+        emit_structured_env = os.environ.get(Constants.EMIT_STRUCTURED_CONTINUATION_PK_CONFIG, "")
+        self._emit_structured_continuation_pk = emit_structured_env.strip().lower() in ("1", "true", "yes", "on")
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_executor: Optional[ThreadPoolExecutor] = availability_strategy_executor
@@ -3361,6 +3366,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
+        container_properties = kwargs.pop("container_properties", None)
+        is_full_pk_structured_scope = False
+        legacy_partition_key_header = req_headers.get(http_constants.HttpHeaders.PartitionKey)
         if "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
@@ -3369,6 +3377,19 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             prefix_partition_key_value: _SequentialPartitionKeyType = kwargs.pop("prefix_partition_key_value")
             feed_range_epk = (
                 prefix_partition_key_obj._get_epk_range_for_prefix_partition_key(prefix_partition_key_value))
+        elif options.get("partitionKey") is not None and container_properties is not None:
+            partition_key_value = options["partitionKey"]
+            partition_key_obj = _build_partition_key_from_properties(container_properties)
+            if not partition_key_obj._is_prefix_partition_key(partition_key_value):
+                # Once we route full-PK queries through feed-range pagination,
+                # avoid sending the legacy partition-key header on the same request.
+                req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
+                # Full-PK returns a single-value inclusive range; normalize to
+                # [min, max) before routing-map overlap resolution.
+                feed_range_epk = partition_key_obj._get_epk_range_for_partition_key(
+                    partition_key_value
+                ).to_normalized_range()
+                is_full_pk_structured_scope = True
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:
@@ -3385,13 +3406,23 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             items_left_in_page = _normalize_max_item_count(options.get("maxItemCount"))
             query_hash = _hash_query_spec(query)
             feedrange_hash = _hash_feed_range(feed_range_epk)
+            should_emit_structured_full_pk = self._emit_structured_continuation_pk
             inbound_serialized_continuation = options.get("continuation")
             inbound_token_payload = _decode_token(inbound_serialized_continuation)
+            legacy_bridge_in_use = False
+            legacy_fallback_attempted = False
             if inbound_serialized_continuation and inbound_token_payload is None:
-                _LOGGER.warning(
-                    "Feed-range query continuation token is not in the supported structured format; "
-                    "restarting this feed_range query from the beginning."
-                )
+                if is_full_pk_structured_scope:
+                    _LOGGER.warning(
+                        "Full-PK query continuation token is in legacy format; "
+                        "bridging it into structured pagination state for resume."
+                    )
+                    legacy_bridge_in_use = True
+                else:
+                    _LOGGER.warning(
+                        "Feed-range query continuation token is not in the supported structured format; "
+                        "restarting this feed_range query from the beginning."
+                    )
             if inbound_token_payload is not None:
                 _validate_token_identity(
                     inbound_token_payload,
@@ -3403,6 +3434,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 )
                 pagination_state = _FeedRangePaginationState.from_inbound(
                     inbound_token_payload, items_left_in_page
+                )
+            elif legacy_bridge_in_use and inbound_serialized_continuation:
+                pagination_state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
+                    feed_range_epk,
+                    inbound_serialized_continuation,
+                    items_left_in_page,
                 )
             else:
                 # First call. Ask the routing map which
@@ -3431,6 +3468,29 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 results: dict[str, Any] = {}
                 feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 consecutive_no_progress_pages = 0
+
+                def _checkpoint_and_reraise(error: Exception) -> None:
+                    # Intentionally broad: stamp the latest resumable checkpoint
+                    # for any mid-page failure, then re-raise the original error.
+                    self.last_response_headers = feedrange_response_headers
+                    try:
+                        _write_query_outbound_continuation(
+                            feedrange_response_headers,
+                            pagination_state,
+                            resource_id_str,
+                            query,
+                            feed_range_epk,
+                            is_full_pk_structured_scope,
+                            should_emit_structured_full_pk,
+                            query_hash,
+                            feedrange_hash,
+                        )
+                    except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
+                        _LOGGER.warning(
+                            "Failed to write continuation while handling query POST failure: %s",
+                            continuation_write_error,
+                        )
+                    raise error
 
                 # NOTE: Keep this feed_range pagination loop in sync with
                 # ``azure/cosmos/aio/_cosmos_client_connection_async.py::__QueryFeed``.
@@ -3492,25 +3552,43 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         backend_query_result, backend_response_headers = self.__Post(
                             path, request_params, query, req_headers, **kwargs
                         )
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        # Intentionally broad: stamp the latest resumable checkpoint
-                        # for any mid-page failure, then re-raise the original error.
-                        self.last_response_headers = feedrange_response_headers
-                        try:
-                            pagination_state.write_outbound_continuation(
-                                feedrange_response_headers,
-                                resource_id_str,
-                                query,
-                                feed_range_epk,
-                                query_hash=query_hash,
-                                feedrange_hash=feedrange_hash,
+                    except exceptions.CosmosHttpResponseError as post_error:
+                        if (
+                            legacy_bridge_in_use
+                            and not legacy_fallback_attempted
+                            and _should_attempt_legacy_bridge_fallback(post_error)
+                        ):
+                            legacy_fallback_attempted = True
+                            req_headers.pop(http_constants.HttpHeaders.PartitionKeyRangeID, None)
+                            req_headers.pop(http_constants.HttpHeaders.StartEpkString, None)
+                            req_headers.pop(http_constants.HttpHeaders.EndEpkString, None)
+                            req_headers.pop(http_constants.HttpHeaders.ReadFeedKeyType, None)
+                            if legacy_partition_key_header is not None:
+                                req_headers[http_constants.HttpHeaders.PartitionKey] = legacy_partition_key_header
+                            req_headers[http_constants.HttpHeaders.Continuation] = inbound_serialized_continuation
+                            base.set_session_token_header(
+                                self, req_headers, path, request_params, options, partition_key_range_id
                             )
-                        except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
-                            _LOGGER.warning(
-                                "Failed to write continuation while handling query POST failure: %s",
-                                continuation_write_error,
+                            try:
+                                backend_query_result, backend_response_headers = self.__Post(
+                                    path, request_params, query, req_headers, **kwargs
+                                )
+                            except Exception as fallback_error:  # pylint: disable=broad-exception-caught
+                                _checkpoint_and_reraise(fallback_error)
+                            self.last_response_headers = backend_response_headers
+                            if internal_headers_capture is not None:
+                                _capture_internal_headers(backend_response_headers)
+                            self._UpdateSessionIfRequired(
+                                req_headers, backend_query_result, backend_response_headers
                             )
-                        raise
+                            if response_headers_list is not None:
+                                response_headers_list.append(backend_response_headers.copy())
+                            if response_hook:
+                                response_hook(backend_response_headers, backend_query_result)
+                            return __GetBodiesFromQueryResult(backend_query_result), backend_response_headers
+                        _checkpoint_and_reraise(post_error)
+                    except Exception as post_error:  # pylint: disable=broad-exception-caught
+                        _checkpoint_and_reraise(post_error)
                     feedrange_response_headers = backend_response_headers
                     self.last_response_headers = feedrange_response_headers
                     if internal_headers_capture is not None:
@@ -3572,13 +3650,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # Pagination loop is done — write the final outbound
                 # continuation (or clear the header if the queue is fully
                 # drained) so the caller's ``by_page`` loop terminates.
-                pagination_state.write_outbound_continuation(
+                _write_query_outbound_continuation(
                     feedrange_response_headers,
+                    pagination_state,
                     resource_id_str,
                     query,
                     feed_range_epk,
-                    query_hash=query_hash,
-                    feedrange_hash=feedrange_hash,
+                    is_full_pk_structured_scope,
+                    should_emit_structured_full_pk,
+                    query_hash,
+                    feedrange_hash,
                 )
                 # End feed_range pagination block.
                 self.last_response_headers = feedrange_response_headers

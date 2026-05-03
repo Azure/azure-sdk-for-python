@@ -463,6 +463,32 @@ class _FeedRangePaginationState:
         """
         return cls(((fr, None) for fr in feedranges), remaining_page_item_count)
 
+    @classmethod
+    def from_single_feedrange_with_continuation(
+        cls,
+        feedrange: routing_range.Range,
+        backend_continuation: Optional[str],
+        remaining_page_item_count: Optional[int],
+    ) -> "_FeedRangePaginationState":
+        """Build state for one feedrange where a backend continuation
+        already exists.
+
+        Used for legacy-token compatibility on full-PK queries:
+        we keep the decoder strict, then bridge a legacy continuation
+        string into the queue head's ``bc`` slot for the single target
+        range.
+
+        :param feedrange: Single feedrange to seed.
+        :type feedrange: ~azure.cosmos._routing.routing_range.Range
+        :param backend_continuation: Existing backend continuation for the range.
+        :type backend_continuation: Optional[str]
+        :param remaining_page_item_count: Remaining items allowed in this logical page.
+        :type remaining_page_item_count: Optional[int]
+        :returns: Pagination state initialized with one queued entry.
+        :rtype: _FeedRangePaginationState
+        """
+        return cls(((feedrange, backend_continuation),), remaining_page_item_count)
+
     @property
     def head_range(self) -> Optional[routing_range.Range]:
         """The sub-range at the head of the queue (the one the next
@@ -579,6 +605,48 @@ class _FeedRangePaginationState:
             query_hash=query_hash,
             feedrange_hash=feedrange_hash,
         )
+
+
+def _write_query_outbound_continuation(
+    last_response_headers: MutableMapping[str, Any],
+    pagination_state: _FeedRangePaginationState,
+    resource_id: str,
+    query: Any,
+    feed_range_epk: routing_range.Range,
+    is_full_pk_structured_scope: bool,
+    should_emit_structured_full_pk: bool,
+    query_hash: str,
+    feedrange_hash: str,
+) -> None:
+    """Write outbound continuation for feed-range pagination.
+
+    Full-PK queries keep legacy continuation emission unless structured
+    emission is explicitly enabled by the client-level env-var contract.
+    """
+    if is_full_pk_structured_scope and not should_emit_structured_full_pk:
+        legacy_outbound = pagination_state.head_bc
+        if legacy_outbound is None:
+            last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
+        else:
+            last_response_headers[http_constants.HttpHeaders.Continuation] = legacy_outbound
+        return
+    pagination_state.write_outbound_continuation(
+        last_response_headers,
+        resource_id,
+        query,
+        feed_range_epk,
+        query_hash=query_hash,
+        feedrange_hash=feedrange_hash,
+    )
+
+
+def _should_attempt_legacy_bridge_fallback(error: Any) -> bool:
+    """Return whether a compatibility fallback should be attempted.
+
+    Compatibility fallback is restricted to legacy-token bridge failures
+    that surface as ``400 BadRequest``.
+    """
+    return getattr(error, "status_code", None) == http_constants.StatusCodes.BAD_REQUEST
 
 
 def _build_outbound_token(

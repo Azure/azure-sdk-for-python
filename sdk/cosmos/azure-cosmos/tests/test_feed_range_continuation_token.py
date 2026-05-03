@@ -1178,6 +1178,28 @@ class TestFeedRangePaginationState:
         assert state.head_bc is None
         assert state.remaining_page_item_count == 7
 
+    def test_from_single_feedrange_with_continuation_seeds_head_bc(self):
+        head = _mk_range("AA", "BB")
+        state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
+            head,
+            "legacy-token-1",
+            remaining_page_item_count=11,
+        )
+        assert self._queue_bounds(state) == [("AA", "BB", "legacy-token-1")]
+        assert self._bounds(state.head_range) == ("AA", "BB")
+        assert state.head_bc == "legacy-token-1"
+        assert state.remaining_page_item_count == 11
+
+    def test_from_single_feedrange_with_continuation_allows_null(self):
+        head = _mk_range("AA", "BB")
+        state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
+            head,
+            None,
+            remaining_page_item_count=None,
+        )
+        assert self._queue_bounds(state) == [("AA", "BB", None)]
+        assert state.head_bc is None
+
     @pytest.mark.parametrize(
         "queue,remaining_page_item_count,expected",
         [
