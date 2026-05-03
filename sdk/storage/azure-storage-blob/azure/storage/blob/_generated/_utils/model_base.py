@@ -829,22 +829,17 @@ class Model(_MyMutableMapping):
                     if item is not None:
                         existed_attr_keys.append(xml_name)
                         if deser:
-                            # Store raw text for lazy deserialization in __get__
-                            # If text is None (empty element), deserialize eagerly
-                            # to get the correct empty value (e.g. "" for str)
-                            text = item.text
-                            if text is not None:
-                                result[rest_name] = text
-                            else:
-                                result[rest_name] = deser(item)
+                            result[rest_name] = deser(item)
                         else:
                             result[rest_name] = _deserialize(rf_type, item)
                 elif kind == 1:  # attribute
                     attr_val = element.get(xml_name)
                     if attr_val is not None:
                         existed_attr_keys.append(xml_name)
-                        # Attributes are always strings - store raw for lazy deser
-                        result[rest_name] = attr_val
+                        if deser:
+                            result[rest_name] = deser(attr_val)
+                        else:
+                            result[rest_name] = attr_val
                 elif kind == 2:  # unwrapped array
                     items = element.findall(items_name)  # pyright: ignore
                     if len(items) > 0:
@@ -858,8 +853,10 @@ class Model(_MyMutableMapping):
                         result[rest_name] = []
                 elif kind == 3:  # text
                     if element.text is not None:
-                        # Store raw text for lazy deserialization
-                        result[rest_name] = element.text
+                        if deser:
+                            result[rest_name] = deser(element.text)
+                        else:
+                            result[rest_name] = element.text
         else:
             # No precomputed fields - attempt to deserialize anyway
             model_meta = getattr(self, "_xml", {})
