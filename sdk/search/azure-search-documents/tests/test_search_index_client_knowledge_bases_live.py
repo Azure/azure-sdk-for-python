@@ -94,6 +94,7 @@ class TestSearchIndexClientKnowledgeBases(AzureRecordedTestCase):
         with _knowledge_base_resources(self, endpoint, sdk_verb="delete") as context:
             knowledge_base_name = context.knowledge_base_name
 
+            assert context.knowledge_base.e_tag is not None
             context.index_client.delete_knowledge_base(
                 context.knowledge_base,
                 match_condition=MatchConditions.IfNotModified,

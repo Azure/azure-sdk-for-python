@@ -36,14 +36,14 @@ def _clean_up_indexes(endpoint, cred):
     client = SearchIndexClient(endpoint, cred, retry_backoff_factor=60)
     try:
         try:
-            for knowledge_source in client.list_knowledge_sources():
-                client.delete_knowledge_source(knowledge_source.name)
+            for knowledge_base in client.list_knowledge_bases():
+                client.delete_knowledge_base(knowledge_base.name)
         except HttpResponseError:
             pass
 
         try:
-            for knowledge_base in client.list_knowledge_bases():
-                client.delete_knowledge_base(knowledge_base.name)
+            for knowledge_source in client.list_knowledge_sources():
+                client.delete_knowledge_source(knowledge_source.name)
         except HttpResponseError:
             pass
 

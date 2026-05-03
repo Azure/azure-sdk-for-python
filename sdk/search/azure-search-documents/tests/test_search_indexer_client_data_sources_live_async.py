@@ -21,7 +21,6 @@ from _search_helpers_async import live_test, make_indexer_client, safe_delete
 DATA_SOURCE_TYPE = "azureblob"
 DATA_SOURCE_DESCRIPTION = "Data source description"
 REPLACEMENT_DATA_SOURCE_DESCRIPTION = "Replacement data source description"
-NON_MATCHING_DATA_SOURCE_ETAG = "non-matching-data-source-etag"
 
 
 def _build_data_source_connection(
@@ -175,9 +174,19 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
                         storage_container_name,
                     )
                 )
-                data_source_connection.description = REPLACEMENT_DATA_SOURCE_DESCRIPTION
-                data_source_connection.e_tag = NON_MATCHING_DATA_SOURCE_ETAG
+                original_e_tag = data_source_connection.e_tag
 
+                await client.create_or_update_data_source_connection(
+                    _build_data_source_connection(
+                        data_source_connection_name,
+                        storage_connection_string,
+                        storage_container_name,
+                        description=REPLACEMENT_DATA_SOURCE_DESCRIPTION,
+                    )
+                )
+
+                data_source_connection.description = DATA_SOURCE_DESCRIPTION
+                data_source_connection.e_tag = original_e_tag
                 with pytest.raises(HttpResponseError):
                     await client.create_or_update_data_source_connection(
                         data_source_connection,
@@ -225,8 +234,18 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
                         storage_container_name,
                     )
                 )
-                data_source_connection.e_tag = NON_MATCHING_DATA_SOURCE_ETAG
+                original_e_tag = data_source_connection.e_tag
 
+                await client.create_or_update_data_source_connection(
+                    _build_data_source_connection(
+                        data_source_connection_name,
+                        storage_connection_string,
+                        storage_container_name,
+                        description=REPLACEMENT_DATA_SOURCE_DESCRIPTION,
+                    )
+                )
+
+                data_source_connection.e_tag = original_e_tag
                 with pytest.raises(HttpResponseError):
                     await client.delete_data_source_connection(
                         data_source_connection,

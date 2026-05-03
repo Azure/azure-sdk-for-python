@@ -17,8 +17,31 @@ from azure.search.documents.indexes.models import (
     SimpleField,
 )
 
+CANONICAL_FIELD_TYPES = [
+    ("STRING", "Edm.String"),
+    ("INT32", "Edm.Int32"),
+    ("INT64", "Edm.Int64"),
+    ("SINGLE", "Edm.Single"),
+    ("DOUBLE", "Edm.Double"),
+    ("BOOLEAN", "Edm.Boolean"),
+    ("DATE_TIME_OFFSET", "Edm.DateTimeOffset"),
+    ("GEOGRAPHY_POINT", "Edm.GeographyPoint"),
+    ("COMPLEX", "Edm.ComplexType"),
+]
+
+
+def _assert_default_analyzer_settings(field):
+    assert field.analyzer_name is None
+    assert field.search_analyzer_name is None
+    assert field.index_analyzer_name is None
+    assert field.synonym_map_names is None
+
 
 class TestSearchFieldDataType:
+    @pytest.mark.parametrize(("name", "value"), CANONICAL_FIELD_TYPES)
+    def test_canonical_members_keep_edm_values(self, name, value):
+        assert getattr(SearchFieldDataType, name) == value
+
     @pytest.mark.parametrize(
         ("alias", "canonical"),
         [
@@ -76,6 +99,7 @@ class TestSimpleField:
         assert field.facetable is False
         assert field.hidden is False
         assert field.retrievable is True
+        _assert_default_analyzer_settings(field)
 
     def test_forwards_boolean_flags_and_accepts_raw_type_string(self):
         field = SimpleField(
@@ -97,6 +121,7 @@ class TestSimpleField:
         assert field.facetable is True
         assert field.hidden is True
         assert field.retrievable is False
+        _assert_default_analyzer_settings(field)
 
 
 class TestSearchableField:
@@ -112,11 +137,13 @@ class TestSearchableField:
         assert field.facetable is False
         assert field.hidden is False
         assert field.retrievable is True
+        _assert_default_analyzer_settings(field)
 
     def test_collection_field_uses_collection_string_type(self):
         field = SearchableField(name="Tags", collection=True)
 
         assert field.type == SearchFieldDataType.Collection(SearchFieldDataType.STRING)
+        _assert_default_analyzer_settings(field)
 
     def test_forwards_search_options(self):
         field = SearchableField(
@@ -152,6 +179,7 @@ class TestComplexField:
         assert field.filterable is None
         assert field.sortable is None
         assert field.facetable is None
+        _assert_default_analyzer_settings(field)
 
     def test_collection_complex_field_uses_collection_complex_type(self):
         subfield = SearchableField(name="Amenities", collection=True)
@@ -160,3 +188,8 @@ class TestComplexField:
         assert field.name == "Rooms"
         assert field.type == SearchFieldDataType.Collection(SearchFieldDataType.COMPLEX)
         assert field.fields == [subfield]
+        assert field.searchable is None
+        assert field.filterable is None
+        assert field.sortable is None
+        assert field.facetable is None
+        _assert_default_analyzer_settings(field)

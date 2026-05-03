@@ -53,7 +53,7 @@ def _build_skillset(
 class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
     @live_test()
     def test_create_skillset_returns_created_resource(self, endpoint):
-        skillset_name = "skillset-create"
+        skillset_name = self.get_resource_name("skillset-create")
         client = make_indexer_client(endpoint)
 
         try:
@@ -80,7 +80,7 @@ class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
 
     @live_test()
     def test_get_skillset_returns_created_resource(self, endpoint):
-        skillset_name = "skillset-get"
+        skillset_name = self.get_resource_name("skillset-get")
         client = make_indexer_client(endpoint)
 
         try:
@@ -100,8 +100,8 @@ class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
 
     @live_test()
     def test_get_skillsets_and_names_return_created_resources(self, endpoint):
-        first_skillset_name = "skillset-list-first"
-        second_skillset_name = "skillset-list-second"
+        first_skillset_name = self.get_resource_name("skillset-list-first")
+        second_skillset_name = self.get_resource_name("skillset-list-second")
         client = make_indexer_client(endpoint)
 
         try:
@@ -122,7 +122,7 @@ class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
 
     @live_test()
     def test_create_or_update_skillset_replaces_existing_resource(self, endpoint):
-        skillset_name = "skillset-create-or-update"
+        skillset_name = self.get_resource_name("skillset-create-or-update")
         client = make_indexer_client(endpoint)
 
         try:
@@ -141,7 +141,7 @@ class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
 
     @live_test()
     def test_create_or_update_skillset_accepts_returned_model(self, endpoint):
-        skillset_name = "skillset-create-or-update-inplace"
+        skillset_name = self.get_resource_name("skillset-create-or-update-inplace")
         client = make_indexer_client(endpoint)
 
         try:
@@ -159,7 +159,7 @@ class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
 
     @live_test()
     def test_create_or_update_skillset_if_unchanged_uses_model_etag(self, endpoint):
-        skillset_name = "skillset-create-or-update-if-unchanged"
+        skillset_name = self.get_resource_name("skillset-create-or-update-if-unchanged")
         client = make_indexer_client(endpoint)
 
         try:
@@ -175,7 +175,7 @@ class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
 
     @live_test()
     def test_delete_skillset_accepts_name(self, endpoint):
-        skillset_name = "skillset-delete"
+        skillset_name = self.get_resource_name("skillset-delete")
         client = make_indexer_client(endpoint)
 
         try:
@@ -190,7 +190,7 @@ class TestSearchIndexerClientSkillset(AzureRecordedTestCase):
 
     @live_test()
     def test_delete_skillset_if_unchanged_uses_model_etag(self, endpoint):
-        skillset_name = "skillset-delete-if-unchanged"
+        skillset_name = self.get_resource_name("skillset-delete-if-unchanged")
         client = make_indexer_client(endpoint)
 
         try:

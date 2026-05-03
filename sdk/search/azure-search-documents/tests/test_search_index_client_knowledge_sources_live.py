@@ -127,6 +127,7 @@ class TestSearchIndexClientWebKnowledgeSources(AzureRecordedTestCase):
             try:
                 original = client.create_knowledge_source(_build_web_knowledge_source(knowledge_source_name))
 
+                assert original.e_tag is not None
                 client.delete_knowledge_source(
                     original,
                     match_condition=MatchConditions.IfNotModified,

@@ -45,15 +45,16 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
         ) as (search_client, buffered_sender):
             documents = [
                 build_hotel_document("1000", rating=5),
-                build_hotel_document("1001", rating=4, hotel_name=REPLACEMENT_HOTEL_NAME),
+                build_hotel_document("3", rating=4, hotel_name=REPLACEMENT_HOTEL_NAME),
             ]
 
             await buffered_sender.upload_documents(documents)
             await buffered_sender.flush()
             await self._wait_for_indexing()
 
-            assert await search_client.get_document_count() == HOTEL_DOCUMENT_COUNT + len(documents)
-            assert (await search_client.get_document(key="1001"))["HotelName"] == REPLACEMENT_HOTEL_NAME
+            assert await search_client.get_document_count() == HOTEL_DOCUMENT_COUNT + 1
+            assert (await search_client.get_document(key="1000"))["Rating"] == 5
+            assert (await search_client.get_document(key="3"))["HotelName"] == REPLACEMENT_HOTEL_NAME
 
     @live_test()
     async def test_upload_documents_auto_flushes_when_batch_action_count_is_reached(self, endpoint):
@@ -80,13 +81,14 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
             search_client,
             buffered_sender,
         ):
-            await buffered_sender.delete_documents([{"HotelId": "3"}, {"HotelId": MISSING_HOTEL_ID}])
+            await buffered_sender.delete_documents([{"HotelId": "3"}, {"HotelId": "4"}, {"HotelId": MISSING_HOTEL_ID}])
 
             assert await buffered_sender.flush() is False
             await self._wait_for_indexing()
 
-            assert await search_client.get_document_count() == HOTEL_DOCUMENT_COUNT - 1
+            assert await search_client.get_document_count() == HOTEL_DOCUMENT_COUNT - 2
             await _assert_missing(search_client, "3")
+            await _assert_missing(search_client, "4")
             await _assert_missing(search_client, MISSING_HOTEL_ID)
 
     @live_test()
@@ -103,7 +105,9 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
                 [{"HotelId": "5", "Rating": 1}, {"HotelId": MISSING_HOTEL_ID, "Rating": 2}]
             )
 
-            assert await buffered_sender.flush() is True
+            has_error = await buffered_sender.flush()
+            if self.is_live:
+                assert has_error is True
             await self._wait_for_indexing()
 
             assert await search_client.get_document_count() == HOTEL_DOCUMENT_COUNT

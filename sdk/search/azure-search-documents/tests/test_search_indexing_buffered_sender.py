@@ -50,6 +50,16 @@ def create_indexing_result(document_key=DOCUMENT_KEY, *, succeeded=True, status_
 
 
 class TestSearchIndexingBufferedSenderConstructor:
+    def test_constructor_uses_default_buffering_settings(self):
+        sender = SearchIndexingBufferedSender(SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, window=100)
+        try:
+            assert sender._batch_action_count == 512
+            assert sender._max_retries_per_action == 3
+            assert sender._auto_flush_interval == 60
+            assert sender._auto_flush is True
+        finally:
+            sender._timer.cancel()
+
     def test_constructor_uses_public_settings_and_creates_inner_client(self):
         sender = create_sender(
             api_version=API_VERSION,
@@ -77,6 +87,23 @@ class TestSearchIndexingBufferedSenderConstructor:
 
 
 class TestSearchIndexingBufferedSenderQueueing:
+    @pytest.mark.parametrize(
+        ("method_name", "documents"),
+        [
+            ("upload_documents", [create_hotel_document(DOCUMENT_KEY)]),
+            ("delete_documents", [create_hotel_document(DOCUMENT_KEY)]),
+            ("merge_documents", [{"HotelId": DOCUMENT_KEY, "Rating": 4.5}]),
+            ("merge_or_upload_documents", [{"HotelId": DOCUMENT_KEY, "HotelName": "Northwind Lodge"}]),
+        ],
+    )
+    def test_document_methods_trigger_processing_check(self, method_name, documents):
+        sender = create_sender()
+
+        with mock.patch.object(sender, "_process_if_needed", return_value=False) as mock_process:
+            getattr(sender, method_name)(documents)
+
+        mock_process.assert_called_once_with()
+
     def test_document_methods_enqueue_expected_actions_without_auto_flush(self):
         sender = create_sender()
 
@@ -122,7 +149,7 @@ class TestSearchIndexingBufferedSenderQueueing:
             REPLACEMENT_DOCUMENT_KEY,
         ]
 
-    def test_auto_flush_processes_when_batch_threshold_is_reached(self):
+    def test_upload_documents_auto_flushes_when_batch_threshold_is_reached(self):
         with mock.patch.object(SearchIndexingBufferedSender, "_process", return_value=False) as mock_process:
             sender = SearchIndexingBufferedSender(
                 SEARCH_ENDPOINT,
@@ -146,7 +173,7 @@ class TestSearchIndexingBufferedSenderQueueing:
 
 
 class TestSearchIndexingBufferedSenderProcessing:
-    def test_process_detects_key_field_and_reports_success_callbacks(self):
+    def test_flush_detects_key_field_and_reports_success_callbacks(self):
         on_progress = mock.Mock()
         on_remove = mock.Mock()
         sender = create_sender(on_progress=on_progress, on_remove=on_remove)
@@ -167,7 +194,7 @@ class TestSearchIndexingBufferedSenderProcessing:
         on_remove.assert_called_once()
         assert on_progress.call_args.args[0].as_dict()["HotelId"] == DOCUMENT_KEY
 
-    def test_process_retries_retryable_result_and_reports_error_at_retry_limit(self):
+    def test_flush_retries_retryable_result_and_reports_error_at_retry_limit(self):
         on_error = mock.Mock()
         on_remove = mock.Mock()
         sender = create_sender(max_retries_per_action=1, on_error=on_error, on_remove=on_remove)
@@ -186,7 +213,7 @@ class TestSearchIndexingBufferedSenderProcessing:
         on_error.assert_called_once()
         on_remove.assert_called_once()
 
-    def test_process_reports_non_retryable_result_to_error_callback(self):
+    def test_flush_reports_non_retryable_result_to_error_callback(self):
         on_error = mock.Mock()
         sender = create_sender(on_error=on_error)
         sender._index_key = "HotelId"
@@ -236,6 +263,19 @@ class TestSearchIndexingBufferedSenderProcessing:
 
 
 class TestSearchIndexingBufferedSenderIndexing:
+    def test_context_manager_enters_client_and_closes_on_exit(self):
+        sender = create_sender()
+
+        with mock.patch.object(sender._client, "__enter__", return_value=sender._client) as mock_enter, mock.patch.object(
+            sender._client, "__exit__", return_value=None
+        ) as mock_exit, mock.patch.object(sender, "close") as mock_close:
+            with sender as result:
+                assert result is sender
+
+        mock_enter.assert_called_once_with()
+        mock_close.assert_called_once_with()
+        mock_exit.assert_called_once_with(None, None, None)
+
     def test_index_documents_uses_inner_client_and_returns_results(self):
         sender = create_sender()
         sender.upload_documents([create_hotel_document(DOCUMENT_KEY)])

@@ -98,14 +98,13 @@ async def wait_for_live_indexing(test: Any, *, delay_seconds: int = INDEXING_DEL
 
 
 async def wait_for_document_count(test: Any, search_client: Any, expected_count: int) -> None:
-    if test.is_live:
-        snapshots = await poll_until(
-            search_client.get_document_count,
-            predicate=lambda document_count: document_count == expected_count,
-            interval=INDEXING_DELAY_SECONDS,
-            attempts=20,
-        )
-        assert snapshots[-1] == expected_count
+    snapshots = await poll_until(
+        search_client.get_document_count,
+        predicate=lambda document_count: document_count == expected_count,
+        interval=INDEXING_DELAY_SECONDS if test.is_live else 0,
+        attempts=20,
+    )
+    assert snapshots[-1] == expected_count
 
 
 async def upload_documents(search_client: Any, documents: list[dict[str, Any]]) -> None:

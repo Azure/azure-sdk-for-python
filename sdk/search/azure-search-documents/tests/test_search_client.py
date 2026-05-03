@@ -196,6 +196,17 @@ class TestSearchRequestBuilding:
         assert result._first_page_iterator_instance.continuation_token is None
         mock_search_post.assert_called_once()
 
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_metadata_accessors_return_none_when_metadata_is_absent(self, mock_search_post):
+        mock_search_post.return_value = create_search_documents_result()
+        client = create_search_client()
+        result = client.search(search_text=SEARCH_TEXT)
+
+        assert result.get_count() is None
+        assert result.get_coverage() is None
+        assert result.get_facets() is None
+        mock_search_post.assert_called_once()
+
 
 class TestSearchSuggestionRequests:
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._suggest_post")

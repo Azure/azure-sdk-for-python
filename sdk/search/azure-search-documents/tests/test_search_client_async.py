@@ -197,6 +197,19 @@ class TestSearchRequestBuildingAsync:
         assert result._first_page_iterator_instance.continuation_token is None
         mock_search_post.assert_awaited_once()
 
+    @pytest.mark.asyncio
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_search_metadata_accessors_return_none_when_metadata_is_absent(self, mock_search_post):
+        mock_search_post.return_value = create_search_documents_result()
+        async with create_search_client() as client:
+            result = await client.search(search_text=SEARCH_TEXT)
+
+            assert await result.get_count() is None
+            assert await result.get_coverage() is None
+            assert await result.get_facets() is None
+
+        mock_search_post.assert_awaited_once()
+
 
 class TestSearchSuggestionRequestsAsync:
     @pytest.mark.asyncio
