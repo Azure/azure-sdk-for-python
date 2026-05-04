@@ -67,7 +67,6 @@ with (
 
     session = project_client.beta.agents.create_session(
         agent_name=agent_name,
-        isolation_key="sample-isolation-key",
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
@@ -104,6 +103,5 @@ with (
         project_client.beta.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
-            isolation_key="sample-isolation-key",
         )
         print(f"Session deleted (id: {session.agent_session_id})")

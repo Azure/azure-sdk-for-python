@@ -466,6 +466,22 @@ class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Service-based evaluator."""
     OPENAI_GRADERS = "openai_graders"
     """OpenAI graders."""
+    RUBRICS = "rubrics"
+    """Rubric-based evaluator definition. Stores rubric criteria for both quality and safety
+    evaluators. Can be created via the generate API or manually via createVersion."""
+
+
+class EvaluatorGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported source types for evaluator generation jobs."""
+
+    PROMPT = "prompt"
+    """Prompt source — inline text provided by the user."""
+    AGENT = "agent"
+    """Agent source — references an agent to fetch instructions and metadata from."""
+    TRACES = "traces"
+    """Traces source — conversation traces from Application Insights."""
+    DATASET = "dataset"
+    """Dataset source — reference to a dataset."""
 
 
 class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -565,15 +581,6 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster Insight on an Agent."""
     EVALUATION_COMPARISON = "EvaluationComparison"
     """Evaluation Comparison."""
-
-
-class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of IsolationKeySourceKind."""
-
-    ENTRA = "Entra"
-    """ENTRA."""
-    HEADER = "Header"
-    """HEADER."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

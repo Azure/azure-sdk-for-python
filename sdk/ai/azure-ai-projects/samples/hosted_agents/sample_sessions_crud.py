@@ -51,7 +51,6 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
-isolation_key = "sample-isolation-key"
 
 with (
     DefaultAzureCredential() as credential,
@@ -64,7 +63,6 @@ with (
     agent = get_latest_active_agent_version(project_client, agent_name)
     session = project_client.beta.agents.create_session(
         agent_name=agent_name,
-        isolation_key=isolation_key,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
@@ -86,6 +84,5 @@ with (
     project_client.beta.agents.delete_session(
         agent_name=agent_name,
         session_id=session.agent_session_id,
-        isolation_key=isolation_key,
     )
     print(f"Deleted session (id: {session.agent_session_id})")

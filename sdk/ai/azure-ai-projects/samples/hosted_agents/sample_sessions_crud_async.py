@@ -54,7 +54,6 @@ load_dotenv()
 async def main():
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
-    isolation_key = "sample-isolation-key"
 
     async with (
         DefaultAzureCredential() as credential,
@@ -67,7 +66,6 @@ async def main():
         agent = await get_latest_active_agent_version_async(project_client, agent_name)
         session = await project_client.beta.agents.create_session(
             agent_name=agent_name,
-            isolation_key=isolation_key,
             version_indicator=VersionRefIndicator(agent_version=agent.version),
         )
         print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
@@ -89,7 +87,6 @@ async def main():
         await project_client.beta.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
-            isolation_key=isolation_key,
         )
         print(f"Deleted session (id: {session.agent_session_id})")
 
