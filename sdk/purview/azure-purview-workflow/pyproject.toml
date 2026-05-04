@@ -55,5 +55,10 @@ pytyped = ["py.typed"]
 exclude = [
     "azure",
     "azure.purview",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
