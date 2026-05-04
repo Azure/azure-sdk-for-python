@@ -733,6 +733,30 @@ def _xml_deser_enum_or_str(enum_cls, value):
         return text
 
 
+def _extract_xml_model_type(rf_type):
+    """Extract the concrete Model class from a resolved rf._type partial chain.
+
+    Unwraps ``Optional[Model]`` and ``_deserialize_model(Model, ...)``
+    wrappers.  Only handles Model and Optional[Model] — other composite
+    types (List, Dict, Union, etc.) return None and fall through to the
+    generic ``_deserialize`` path at runtime.
+    """
+    if rf_type is None:
+        return None
+    if isinstance(rf_type, type) and _is_model(rf_type):
+        return rf_type
+    if not isinstance(rf_type, functools.partial):
+        return None
+    func = rf_type.func
+    args = rf_type.args
+    if func is _deserialize_with_optional and args:
+        return _extract_xml_model_type(args[0])
+    if func is _deserialize_model and args:
+        cls = args[0]
+        return cls if isinstance(cls, type) and _is_model(cls) else None
+    return None
+
+
 def _build_xml_field_plan(cls, attr_to_rest_field: dict) -> list:
     """Build a precomputed XML field plan for fast _init_from_xml iteration.
 
@@ -740,7 +764,12 @@ def _build_xml_field_plan(cls, attr_to_rest_field: dict) -> list:
         (rest_name, xml_name, kind, deser, rf_type, is_optional, items_name)
 
     kind: 0=wrapped, 1=attribute, 2=unwrapped, 3=text
-    model_cls: Model subclass for direct instantiation (bypasses generic _deserialize chain)
+
+    For Model and Optional[Model] fields that lack a scalar
+    ``_deserializer``, this function precomputes the Model class as the
+    deserializer so ``_init_from_xml`` can call ``ModelClass(element)``
+    directly instead of going through the expensive
+    ``_get_deserialize_callable_from_annotation`` chain at runtime.
     """
     model_meta = getattr(cls, "_xml", {})
     model_ns = model_meta.get("ns") or model_meta.get("namespace")
@@ -758,6 +787,13 @@ def _build_xml_field_plan(cls, attr_to_rest_field: dict) -> list:
             ns = model_ns
         if ns:
             xml_name = "{" + ns + "}" + xml_name
+
+        # For Model / Optional[Model] fields without a scalar deserializer,
+        # precompute the Model class as the deserializer.
+        if deser is None and rf._type is not None:
+            model_cls = _extract_xml_model_type(rf._type)
+            if model_cls is not None:
+                deser = model_cls
 
         if prop_meta.get("attribute", False):
             plan.append((rf._rest_name, xml_name, 1, deser, rf._type, rf._is_optional, None))
