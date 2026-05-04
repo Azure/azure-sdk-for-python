@@ -61,6 +61,9 @@ setup(
         ]
     ),
     include_package_data=True,
+    package_data={
+        "azure.keyvault.administration._generated": ["py.typed"],
+    },
     install_requires=[
         "isodate>=0.6.1",
         "azure-core>=1.38.0",
