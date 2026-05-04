@@ -340,7 +340,8 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         if unparsed_link:
             next_link = unparsed_link[1 : unparsed_link.index(">")]
         deserialized["@nextLink"] = next_link
-        deserialized["items"] = []
+        if response.status_code != 304:
+            deserialized["items"] = []
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
