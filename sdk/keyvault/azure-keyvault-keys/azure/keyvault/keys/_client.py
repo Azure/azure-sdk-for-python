@@ -399,9 +399,9 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def begin_delete_key(
+    def begin_delete_key(  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         self, name: str, **kwargs: Any
-    ) -> LROPoller[DeletedKey]:  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
+    ) -> LROPoller[DeletedKey]:
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
