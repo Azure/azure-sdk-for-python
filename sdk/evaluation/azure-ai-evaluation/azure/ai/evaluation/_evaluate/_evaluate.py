@@ -2967,6 +2967,8 @@ def _create_result_object(
     status = metric_values.get("status")
     if status not in ("completed", "error", "skipped"):
         status = "completed" if (passed is not None or not _is_none_or_nan(score)) else "error"
+    if status == "skipped":
+        passed = None  # For skipped evaluations, passed should be None regardless of other values
 
     # Handle decrease boolean metrics
     if is_inverse:

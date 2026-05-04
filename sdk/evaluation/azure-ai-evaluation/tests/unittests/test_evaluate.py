@@ -1503,6 +1503,53 @@ class TestEvaluate:
         violence_result = [r for r in row["results"] if r["metric"] == "violence"][0]
         assert violence_result["status"] == "skipped"
 
+    def test_convert_results_skipped_with_label_nulls_passed(self):
+        """When a _result key eagerly derives passed=False but _status is skipped,
+        the final result must have passed=None — skipped means 'not evaluated'."""
+        import logging
+
+        logger = logging.getLogger("test_logger")
+
+        # Simulate an evaluator that returns both _result (which derives passed)
+        # and _status="skipped" — e.g. tool_call_accuracy with no tool calls
+        results = {
+            "metrics": {},
+            "rows": [
+                {
+                    "inputs.query": "test query",
+                    "outputs.tool_call_accuracy.tool_call_accuracy_result": None,
+                    "outputs.tool_call_accuracy.tool_call_accuracy_status": "skipped",
+                }
+            ],
+            "studio_url": None,
+        }
+
+        _convert_results_to_aoai_evaluation_results(
+            results=results,
+            logger=logger,
+            eval_run_id="run1",
+            eval_id="eval1",
+            evaluators={
+                "tool_call_accuracy": lambda **kwargs: {"score": 1},
+            },
+            eval_meta_data={
+                "testing_criteria": [
+                    {
+                        "name": "tool_call_accuracy",
+                        "type": "azure_ai_evaluator",
+                        "metrics": ["tool_call_accuracy"],
+                    },
+                ]
+            },
+        )
+
+        row = results["_evaluation_results_list"][0]
+        tca_result = [r for r in row["results"] if r["name"] == "tool_call_accuracy"][0]
+        assert tca_result["status"] == "skipped"
+        # The _result branch would have derived passed=False from label=None,
+        # but the skipped status fix must null it out
+        assert tca_result["passed"] is None
+
     @patch(
         "azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins",
         return_value={},
@@ -2441,6 +2488,19 @@ class TestCreateResultObjectStatus:
 
     def test_evaluator_status_takes_priority(self):
         result = self._call({"score": None, "passed": None, "status": "skipped"})
+        assert result["status"] == "skipped"
+        assert result["passed"] is None
+
+    def test_skipped_status_nulls_derived_passed(self):
+        """When _result/_label eagerly derived passed=False but status is skipped,
+        passed must be nulled — skipped means 'not evaluated', not 'failed'."""
+        result = self._call({"score": None, "passed": False, "status": "skipped"})
+        assert result["status"] == "skipped"
+        assert result["passed"] is None
+
+    def test_skipped_status_nulls_derived_passed_true(self):
+        """Even if passed was True, skipped status should still null it out."""
+        result = self._call({"score": 5.0, "passed": True, "status": "skipped"})
         assert result["status"] == "skipped"
         assert result["passed"] is None
 
