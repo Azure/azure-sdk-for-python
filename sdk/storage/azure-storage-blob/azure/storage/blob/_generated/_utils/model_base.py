@@ -773,20 +773,18 @@ def _build_xml_field_plan(cls, attr_to_rest_field: dict) -> list:
     """
     model_meta = getattr(cls, "_xml", {})
     model_ns = model_meta.get("ns") or model_meta.get("namespace")
-    model_has_prefix = model_meta.get("prefix")
     plan = []
 
     for rf in attr_to_rest_field.values():
         prop_meta = getattr(rf, "_xml", {})
         deser = rf._deserializer
-        xml_name = prop_meta.get("name", rf._rest_name)
 
-        # Resolve namespace
-        ns = prop_meta.get("ns") or prop_meta.get("namespace")
-        if ns is None and not model_has_prefix:
-            ns = model_ns
-        if ns:
-            xml_name = "{" + ns + "}" + xml_name
+        xml_name = prop_meta.get("name", rf._rest_name)
+        xml_ns = _resolve_xml_ns(prop_meta, model_meta)
+        if xml_ns:
+            xml_name = "{" + xml_ns + "}" + xml_name
+
+        is_optional = rf._is_optional
 
         # For Model / Optional[Model] fields without a scalar deserializer,
         # precompute the Model class as the deserializer.
@@ -796,19 +794,22 @@ def _build_xml_field_plan(cls, attr_to_rest_field: dict) -> list:
                 deser = model_cls
 
         if prop_meta.get("attribute", False):
-            plan.append((rf._rest_name, xml_name, 1, deser, rf._type, rf._is_optional, None))
+            plan.append((rf._rest_name, xml_name, 1, deser, rf._type, is_optional, None))
         elif prop_meta.get("unwrapped", False):
-            items_name = prop_meta.get("itemsName") or xml_name
-            items_ns = prop_meta.get("itemsNs")
-            if items_ns is not None:
-                ns = items_ns
-            if ns and prop_meta.get("itemsName"):
-                items_name = "{" + ns + "}" + items_name
-            plan.append((rf._rest_name, xml_name, 2, deser, rf._type, rf._is_optional, items_name))
+            items_name = prop_meta.get("itemsName")
+            if items_name:
+                items_ns = prop_meta.get("itemsNs")
+                if items_ns is not None:
+                    xml_ns = items_ns
+                if xml_ns:
+                    items_name = "{" + xml_ns + "}" + items_name
+            else:
+                items_name = xml_name
+            plan.append((rf._rest_name, xml_name, 2, deser, rf._type, is_optional, items_name))
         elif prop_meta.get("text", False):
-            plan.append((rf._rest_name, xml_name, 3, deser, rf._type, rf._is_optional, None))
+            plan.append((rf._rest_name, xml_name, 3, deser, rf._type, is_optional, None))
         else:
-            plan.append((rf._rest_name, xml_name, 0, deser, rf._type, rf._is_optional, None))
+            plan.append((rf._rest_name, xml_name, 0, deser, rf._type, is_optional, None))
     return plan
 
 
@@ -894,7 +895,6 @@ class Model(_MyMutableMapping):
                         else:
                             result[rest_name] = element.text
         else:
-            # No precomputed fields - attempt to deserialize anyway
             model_meta = getattr(self, "_xml", {})
             for rf in self._attr_to_rest_field.values():
                 prop_meta = getattr(rf, "_xml", {})
@@ -906,12 +906,11 @@ class Model(_MyMutableMapping):
                 # attribute
                 if prop_meta.get("attribute", False) and element.get(xml_name) is not None:
                     existed_attr_keys.append(xml_name)
-                    result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, element.get(xml_name))
+                    result[rf._rest_name] = _deserialize(rf._type, element.get(xml_name))
                     continue
 
                 # unwrapped element is array
                 if prop_meta.get("unwrapped", False):
-                    # unwrapped array could either use prop items meta/prop meta
                     _items_name = prop_meta.get("itemsName")
                     if _items_name:
                         xml_name = _items_name
@@ -923,25 +922,25 @@ class Model(_MyMutableMapping):
                     items = element.findall(xml_name)  # pyright: ignore
                     if len(items) > 0:
                         existed_attr_keys.append(xml_name)
-                        result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, items)
+                        result[rf._rest_name] = _deserialize(rf._type, items)
                     elif not rf._is_optional:
                         existed_attr_keys.append(xml_name)
-                        result[typing.cast(str, rf._rest_name)] = []
+                        result[rf._rest_name] = []
                     continue
 
                 # text element is primitive type
                 if prop_meta.get("text", False):
                     if element.text is not None:
-                        result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, element.text)
+                        result[rf._rest_name] = _deserialize(rf._type, element.text)
                     continue
 
-                # wrapped element could be normal property or array, it should only have one element
+                # wrapped element could be normal property or array
                 item = element.find(xml_name)
                 if item is not None:
                     existed_attr_keys.append(xml_name)
-                    result[typing.cast(str, rf._rest_name)] = _deserialize(rf._type, item)
+                    result[rf._rest_name] = _deserialize(rf._type, item)
 
-        # additional properties
+        # rest thing is additional properties
         for e in element:
             if e.tag not in existed_attr_keys:
                 result[e.tag] = _convert_element(e)
