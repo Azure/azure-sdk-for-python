@@ -399,6 +399,7 @@ def recursive_download(
     :type starts_with: str
     """
     try:
+        resolved_destination = Path(destination).resolve()
         items = list(client.list_directories_and_files(name_starts_with=starts_with))
         files = [item for item in items if not item["is_directory"]]
         folders = [item for item in items if item["is_directory"]]
@@ -406,16 +407,38 @@ def recursive_download(
         for f in files:
             Path(destination).mkdir(parents=True, exist_ok=True)
             file_name = f["name"]
+            local_path = Path(destination, file_name)
+
+            # Prevent path traversal: ensure target is within the destination directory
+            try:
+                local_path.resolve().relative_to(resolved_destination)
+            except ValueError:
+                module_logger.warning(
+                    "Skipping file '%s': resolved path is outside the destination directory.",
+                    file_name,
+                )
+                continue
+
             file_client = client.get_file_client(file_name)
             file_content = file_client.download_file(max_concurrency=max_concurrency)
-            local_path = Path(destination, file_name)
             with open(local_path, "wb") as file_data:
                 file_data.write(file_content.readall())
 
         for f in folders:
             sub_client = client.get_subdirectory_client(f["name"])
-            destination = "/".join((destination, f["name"]))
-            recursive_download(sub_client, destination=destination, max_concurrency=max_concurrency)
+            sub_destination = "/".join((destination, f["name"]))
+
+            # Prevent path traversal: ensure subdirectory is within the destination directory
+            try:
+                Path(sub_destination).resolve().relative_to(resolved_destination)
+            except ValueError:
+                module_logger.warning(
+                    "Skipping directory '%s': resolved path is outside the destination directory.",
+                    f["name"],
+                )
+                continue
+
+            recursive_download(sub_client, destination=sub_destination, max_concurrency=max_concurrency)
     except Exception as e:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
         raise MlException(

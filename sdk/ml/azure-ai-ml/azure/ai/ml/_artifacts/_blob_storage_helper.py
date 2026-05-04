@@ -244,11 +244,22 @@ class BlobStorageClient:
         :type max_concurrency: int
         """
         try:
+            resolved_destination = Path(destination).resolve()
             my_list = list(self.container_client.list_blobs(name_starts_with=starts_with, include="metadata"))
             download_size_in_mb = 0
             for item in my_list:
                 blob_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
                 target_path = Path(destination, blob_name).resolve()
+
+                # Prevent path traversal: ensure target is within the destination directory
+                try:
+                    target_path.relative_to(resolved_destination)
+                except ValueError:
+                    module_logger.warning(
+                        "Skipping blob '%s': resolved path is outside the destination directory.",
+                        item.name,
+                    )
+                    continue
 
                 if _blob_is_hdi_folder(item):
                     target_path.mkdir(parents=True, exist_ok=True)
