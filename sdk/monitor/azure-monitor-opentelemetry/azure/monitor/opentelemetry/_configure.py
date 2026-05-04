@@ -59,6 +59,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pyl
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
 )
+from azure.monitor.opentelemetry.exporter._gen_ai._processor import (  # pylint: disable=import-error,no-name-in-module
+    _GenAIMainAgentLogRecordProcessor,
+    _GenAIMainAgentSpanProcessor,
+)
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
     AzureMonitorMetricExporter,
@@ -182,6 +186,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
         )
 
+    # GenAI main-agent attribution processor must be registered first
+    tracer_provider.add_span_processor(_GenAIMainAgentSpanProcessor())
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -235,6 +241,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        # GenAI main-agent attribution processor must be registered first
+        logger_provider.add_log_record_processor(_GenAIMainAgentLogRecordProcessor())
         for custom_log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
             logger_provider.add_log_record_processor(custom_log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
