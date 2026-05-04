@@ -71,15 +71,11 @@ class _GenAIMainAgentSpanProcessor(SpanProcessor):
         pass
 
     def force_flush(self, timeout_millis: int = 30000):
-        pass
+        return True
 
 
 class _GenAIMainAgentLogRecordProcessor(LogRecordProcessor):
     """Copies microsoft.gen_ai.main_agent.* attributes from the current span onto log records."""
-
-    def __init__(self):
-        super().__init__()
-        self.call_on_emit = hasattr(super(), "on_emit")
 
     def on_emit(self, log_record: ReadWriteLogRecord) -> None:  # type: ignore # pylint: disable=arguments-renamed
         current_span = get_current_span()
@@ -97,17 +93,19 @@ class _GenAIMainAgentLogRecordProcessor(LogRecordProcessor):
         if not main_agent_attrs:
             return
 
-        # Copy them onto the log record
+        # Copy them onto the log record without overwriting any existing log-level values
         if hasattr(log_record, "log_record") and log_record.log_record is not None:
             if log_record.log_record.attributes is None:
                 log_record.log_record.attributes = {}
             for key, value in main_agent_attrs.items():
-                log_record.log_record.attributes[key] = value  # type: ignore[index]
+                if key not in log_record.log_record.attributes:
+                    log_record.log_record.attributes[key] = value  # type: ignore[index]
         elif hasattr(log_record, "attributes"):
-            if log_record.attributes is None:
-                log_record.attributes = {}
+            if log_record.attributes is None:  # type: ignore[union-attr]
+                log_record.attributes = {}  # type: ignore[union-attr]
             for key, value in main_agent_attrs.items():
-                log_record.attributes[key] = value  # type: ignore[index]
+                if key not in log_record.attributes:  # type: ignore[operator]
+                    log_record.attributes[key] = value  # type: ignore[index]
 
     def emit(self, log_record: ReadWriteLogRecord) -> None:  # pylint: disable=arguments-renamed
         self.on_emit(log_record)

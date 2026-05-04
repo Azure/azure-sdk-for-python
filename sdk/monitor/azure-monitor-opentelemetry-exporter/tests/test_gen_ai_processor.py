@@ -310,6 +310,34 @@ class TestGenAIMainAgentLogRecordProcessor(unittest.TestCase):
 
         self.assertEqual(log_record.log_record.attributes["microsoft.gen_ai.main_agent.name"], "TestAgent")
 
+    def test_on_emit_does_not_overwrite_existing_log_record_attributes(self):
+        """on_emit should not overwrite existing microsoft.gen_ai.main_agent.* on the log record."""
+        log_record = MagicMock()
+        log_record.log_record = MagicMock()
+        log_record.log_record.attributes = {
+            "microsoft.gen_ai.main_agent.name": "ExistingAgent",
+        }
+
+        current_span = MagicMock()
+        current_span.get_span_context.return_value = SpanContext(
+            trace_id=1, span_id=2, is_remote=False, trace_flags=TraceFlags(1)
+        )
+        current_span.attributes = {
+            "microsoft.gen_ai.main_agent.name": "SpanAgent",
+            "microsoft.gen_ai.main_agent.id": "span-id-123",
+        }
+
+        with patch(
+            "azure.monitor.opentelemetry.exporter._gen_ai._processor.get_current_span",
+            return_value=current_span,
+        ):
+            self.processor.on_emit(log_record)
+
+        # Existing value should not be overwritten
+        self.assertEqual(log_record.log_record.attributes["microsoft.gen_ai.main_agent.name"], "ExistingAgent")
+        # Missing value should be populated
+        self.assertEqual(log_record.log_record.attributes["microsoft.gen_ai.main_agent.id"], "span-id-123")
+
     def test_on_emit_span_has_no_attributes(self):
         """on_emit should no-op when span has no attributes property."""
         log_record = MagicMock()
