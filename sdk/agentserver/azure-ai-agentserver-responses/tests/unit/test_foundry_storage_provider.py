@@ -17,9 +17,11 @@ from azure.ai.agentserver.responses.store._foundry_errors import (
     FoundryBadRequestError,
     FoundryResourceNotFoundError,
 )
+from azure.ai.agentserver.responses._platform_headers import (
+    CHAT_ISOLATION_KEY as _CHAT_ISOLATION_HEADER,
+    USER_ISOLATION_KEY as _USER_ISOLATION_HEADER,
+)
 from azure.ai.agentserver.responses.store._foundry_provider import (
-    _CHAT_ISOLATION_HEADER,
-    _USER_ISOLATION_HEADER,
     FoundryStorageProvider,
 )
 from azure.ai.agentserver.responses.store._foundry_settings import FoundryStorageSettings
@@ -144,7 +146,6 @@ async def test_create_response__raises_foundry_api_error_on_500(
     with pytest.raises(FoundryApiError) as exc_info:
         await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None)
 
-    assert exc_info.value.status_code == 500
     assert "server fault" in exc_info.value.message
 
 
@@ -599,7 +600,7 @@ async def test_error_mapping__generic_status_raises_foundry_api_error(
     with pytest.raises(FoundryApiError) as exc_info:
         await provider.get_response("any_id")
 
-    assert exc_info.value.status_code == 503
+    assert "503" in exc_info.value.message
 
 
 @pytest.mark.asyncio

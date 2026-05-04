@@ -51,17 +51,19 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         """Build an error map for key-value operations."""
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
+            403: HttpResponseError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        if include_not_modified:
-            error_map[304] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
         elif match_condition == MatchConditions.IfPresent:
             error_map[412] = ResourceNotFoundError
         elif match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
+        if include_not_modified:
+            error_map[304] = ResourceNotModifiedError
         return error_map
 
     def _prepare_kv_request(
@@ -233,7 +235,11 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
 
         if response.status_code not in valid_status_codes:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.Error, response.json())
+            error = None
+            try:
+                error = _deserialize(_models.Error, response.json())
+            except (ValueError, KeyError):
+                pass
             raise HttpResponseError(response=response, model=error)
 
         response_headers = response.headers

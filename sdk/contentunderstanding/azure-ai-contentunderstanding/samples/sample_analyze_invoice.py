@@ -59,7 +59,7 @@ import os
 from typing import cast
 
 from dotenv import load_dotenv
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+from azure.ai.contentunderstanding import ContentUnderstandingClient, to_llm_input
 from azure.ai.contentunderstanding.models import (
     AnalysisInput,
     AnalysisResult,
@@ -204,6 +204,50 @@ def main() -> None:
                     else "    Quantity Confidence: N/A"
                 )
     # [END extract_invoice_fields]
+
+    # [START get_usage]
+    # Access usage details from the poller (available after result() completes).
+    # Usage reports resource consumption for billing estimation:
+    #
+    # - document_pages_standard/basic/minimal: Pages processed at each extraction tier.
+    #   Standard = layout + OCR (scanned docs), Basic = OCR only, Minimal = digital formats
+    #   (DOCX, XLSX, HTML, TXT) that need no OCR. Charged per 1,000 pages.
+    #
+    # - contextualization_tokens: Fixed-rate tokens charged by Content Understanding for
+    #   preparing context, generating confidence scores, source grounding, and formatting
+    #   output. Typically 1,000 tokens per page. Charged separately from LLM tokens.
+    #
+    # - tokens: Dict of "{model}-input" / "{model}-output" token counts consumed by your
+    #   Foundry model deployment (e.g. "gpt-4.1-input", "gpt-4.1-output"). These are
+    #   billed on your Foundry deployment, not on Content Understanding.
+    #
+    # For full pricing details, see:
+    # https://learn.microsoft.com/azure/ai-services/content-understanding/pricing-explainer
+    usage = poller.usage
+    if usage:
+        print("\nUsage Details:")
+        if usage.document_pages_standard is not None:
+            print(f"  Document pages (standard): {usage.document_pages_standard}")
+        if usage.contextualization_tokens is not None:
+            print(f"  Contextualization tokens: {usage.contextualization_tokens}")
+        if usage.tokens:
+            print("  Model tokens:")
+            for model, count in usage.tokens.items():
+                print(f"    {model}: {count}")
+    # [END get_usage]
+
+    # [START invoice_to_llm_input]
+    # The fields above can also be packaged into a single LLM-ready text block.
+    # to_llm_input() renders all extracted fields as YAML front matter followed by
+    # the markdown body, so an LLM can consume both structured data and document text
+    # in one shot. For advanced options, see sample_to_llm_input.py.
+    print("\n" + "=" * 60)
+    print("LLM-READY OUTPUT (fields + markdown)")
+    print("=" * 60)
+
+    text = to_llm_input(result)
+    print(text)
+    # [END invoice_to_llm_input]
 
 
 if __name__ == "__main__":

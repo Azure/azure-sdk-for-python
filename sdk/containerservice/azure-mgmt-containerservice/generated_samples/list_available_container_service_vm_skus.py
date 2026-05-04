@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-01-02-preview/ListAvailableContainerServiceVmSkus.json
+# x-ms-original-file: 2026-02-02-preview/ListAvailableContainerServiceVmSkus.json
 if __name__ == "__main__":
     main()

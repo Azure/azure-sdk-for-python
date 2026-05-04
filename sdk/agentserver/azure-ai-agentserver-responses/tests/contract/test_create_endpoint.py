@@ -24,7 +24,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 def _build_client() -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     return TestClient(app)
 
 
@@ -232,7 +232,7 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_output_producing_handler)
+    app.response_handler(_output_producing_handler)
     client = TestClient(app)
 
     response = client.post(
@@ -281,7 +281,7 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_output_producing_handler)
+    app.response_handler(_output_producing_handler)
     client = TestClient(app)
 
     create_response = client.post(
@@ -466,6 +466,7 @@ def test_create__returns_400_for_empty_body() -> None:
     payload = response.json()
     assert isinstance(payload.get("error"), dict)
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_create__returns_400_for_invalid_json_body() -> None:
@@ -482,6 +483,7 @@ def test_create__returns_400_for_invalid_json_body() -> None:
     payload = response.json()
     assert isinstance(payload.get("error"), dict)
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_create__ignores_unknown_fields_in_request_body() -> None:
@@ -526,7 +528,7 @@ def test_sync_handler_exception_returns_500() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_raising_handler)
+    _app.response_handler(_raising_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     response = client.post(
@@ -535,6 +537,11 @@ def test_sync_handler_exception_returns_500() -> None:
     )
 
     assert response.status_code == 500
+    # Server errors must return a structured error envelope
+    payload = response.json()
+    assert isinstance(payload.get("error"), dict), "500 must include a JSON error envelope"
+    assert payload["error"].get("type") == "server_error"
+    assert payload["error"].get("code") == "server_error"
 
 
 def test_sync_no_terminal_event_still_completes() -> None:
@@ -558,7 +565,7 @@ def test_sync_no_terminal_event_still_completes() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_no_terminal_handler)
+    _app.response_handler(_no_terminal_handler)
     client = TestClient(_app)
 
     response = client.post(
@@ -603,7 +610,7 @@ def test_s007_wrong_first_event_sync() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_wrong_first_event_handler)
+    _app.response_handler(_wrong_first_event_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     response = client.post(
@@ -636,7 +643,7 @@ def test_s007_wrong_first_event_stream() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_wrong_first_event_handler)
+    _app.response_handler(_wrong_first_event_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     import json as _json
@@ -693,7 +700,7 @@ def test_s008_mismatched_id_stream() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_mismatched_id_handler)
+    _app.response_handler(_mismatched_id_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     import json as _json
@@ -744,7 +751,7 @@ def test_s009_terminal_status_on_created_stream() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_terminal_on_created_handler)
+    _app.response_handler(_terminal_on_created_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     import json as _json
@@ -792,7 +799,7 @@ def test_s007_valid_handler_not_affected() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_compliant_handler)
+    _app.response_handler(_compliant_handler)
     client = TestClient(_app)
 
     import json as _json

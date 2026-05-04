@@ -66,7 +66,7 @@ async def _find_function_call_output(context: ResponseContext) -> str | None:
 # complete output items in one call each.
 
 
-@app.create_handler
+@app.response_handler
 async def handler(
     request: CreateResponse,
     context: ResponseContext,

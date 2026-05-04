@@ -16,6 +16,20 @@ from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
 from ci_tools.logging import logger
 
+# Re-export venv/pip helpers from their new home so existing imports keep working.
+from ci_tools.venv import (  # noqa: F401
+    get_venv_call,
+    get_pip_command,
+    get_venv_python,
+    install_into_venv,
+    uninstall_from_venv,
+    pip_install,
+    pip_uninstall,
+    pip_install_requirements_file,
+    run_pip_freeze,
+    get_pip_list_output,
+)
+
 import os, sys, platform, glob, re, logging
 from typing import List, Any, Optional, Tuple
 
@@ -483,154 +497,6 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
     return packages[0]
 
 
-def pip_install(
-    requirements: List[str],
-    include_dependencies: bool = True,
-    python_executable: Optional[str] = None,
-    cwd: Optional[str] = None,
-) -> bool:
-    """
-    Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
-    """
-
-    exe = get_pip_command(python_executable)
-
-    command = exe + ["install"]
-
-    if requirements:
-        command.extend([req.strip() for req in requirements])
-    else:
-        return True
-
-    try:
-        if cwd:
-            subprocess.check_call(command, cwd=cwd)
-        else:
-            subprocess.check_call(command)
-    except subprocess.CalledProcessError as f:
-        return False
-
-    return True
-
-
-def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
-    """
-    Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
-    """
-    # use uninstall_from_venv() for uv venvs
-    exe = python_executable or sys.executable
-    command = [exe, "-m", "pip", "uninstall", "-y"]
-
-    if requirements:
-        command.extend([req.strip() for req in requirements])
-    else:
-        return True
-
-    try:
-        result = subprocess.check_call(command)
-        return True
-    except subprocess.CalledProcessError as f:
-        return False
-
-
-def get_venv_python(venv_path: str) -> str:
-    """
-    Given a python venv path, identify the crossplat reference to the python executable.
-    """
-    # if we already have a path to a python executable, return it
-    if os.path.isfile(venv_path) and os.access(venv_path, os.X_OK) and os.path.basename(venv_path).startswith("python"):
-        return venv_path
-
-    # cross-platform python in a venv
-    bin_dir = "Scripts" if os.name == "nt" else "bin"
-    python_exe = "python.exe" if os.name == "nt" else "python"
-    return os.path.join(venv_path, bin_dir, python_exe)
-
-
-def install_into_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
-    """
-    Install the requirements into an existing venv (venv_path) without activating it.
-
-    - Uses get_pip_command(get_venv_python) per request.
-    - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
-      so installation goes into the target venv reliably.
-    """
-    py = get_venv_python(venv_path_or_executable)
-    pip_cmd = get_pip_command(py)
-
-    install_targets = [r.strip() for r in requirements]
-    cmd = pip_cmd + ["install"] + install_targets
-
-    if pip_cmd[0] == "uv":
-        cmd += ["--python", py]
-
-    # todo: clean this up so that we're using run_logged from #42862
-    subprocess.check_call(cmd, cwd=working_directory)
-
-
-def uninstall_from_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
-    """
-    Uninstalls the requirements from an existing venv (venv_path) without activating it.
-    """
-    py = get_venv_python(venv_path_or_executable)
-    pip_cmd = get_pip_command(py)
-
-    install_targets = [r.strip() for r in requirements]
-    cmd = pip_cmd + ["uninstall"]
-    if pip_cmd[0] != "uv":
-        cmd += ["-y"]
-    cmd.extend(install_targets)
-
-    if pip_cmd[0] == "uv":
-        cmd += ["--python", py]
-
-    subprocess.check_call(cmd, cwd=working_directory)
-
-
-def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
-    return pip_install(["-r", requirements_file], True, python_executable)
-
-
-def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
-    """Uses the invoking python executable to get the output from pip freeze."""
-    exe = python_executable or sys.executable
-
-    pip_cmd = get_pip_command(exe)
-
-    # we use `freeze` because it is present on both pip and uv
-    out = subprocess.Popen(
-        pip_cmd + ["freeze", "--disable-pip-version-check"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-
-    stdout, stderr = out.communicate()
-
-    collected_output = []
-
-    if stdout and (stderr is None):
-        for line in stdout.decode("utf-8").splitlines():
-            if line:
-                collected_output.append(line)
-    else:
-        raise Exception(stderr)
-
-    return collected_output
-
-
-def get_pip_list_output(python_executable: Optional[str] = None):
-    """Uses the invoking python executable to get the output from pip list."""
-    pip_output = run_pip_freeze(python_executable)
-
-    collected_output = {}
-    for line in pip_output:
-        if "==" in line:
-            package, version = re.split("==", line)
-            collected_output[package] = version
-
-    return collected_output
-
-
 def pytest(args: list, cwd: Optional[str] = None, python_executable: Optional[str] = None) -> bool:
     """
     Invokes a set of tests, returns true if successful, false otherwise.
@@ -1043,44 +909,6 @@ def verify_package_classifiers(
                 f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'.",
             )
     return True, None
-
-
-def get_venv_call(python_exe: Optional[str] = None) -> List[str]:
-    """
-    Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
-
-    :param str python_exe: The Python executable to use (if not using the default).
-    :return: List of command arguments for venv.
-    :rtype: List[str]
-
-    """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
-
-    # soon we will change this to default to uv
-    if pip_impl == "uv":
-        return ["uv", "venv"]
-    else:
-        return [python_exe if python_exe else sys.executable, "-m", "venv"]
-
-
-def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
-    """
-    Determine whether to use 'uv pip' or regular 'pip' based on environment.
-
-    :param str python_exe: The Python executable to use (if not using the default).
-    :return: List of command arguments for pip.
-    :rtype: List[str]
-
-    """
-    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
-
-    # soon we will change this to default to uv
-    if pip_impl == "uv":
-        return ["uv", "pip"]
-    else:
-        return [python_exe if python_exe else sys.executable, "-m", "pip"]
 
 
 def is_error_code_5_allowed(target_pkg: str, pkg_name: str):
