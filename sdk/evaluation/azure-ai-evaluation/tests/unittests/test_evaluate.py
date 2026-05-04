@@ -45,6 +45,9 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _extract_testing_criteria_metadata,
     _process_criteria_metrics,
     _log_events_to_app_insights,
+    _adjust_for_inverse_metric,
+    _is_inverse_metric,
+    _create_result_object,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -2279,3 +2282,154 @@ class TestLogEventsTokenUsage:
         attrs = emitted[0].attributes
         assert attrs["gen_ai.evaluation.usage.input_tokens"] == "42"
         assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+
+class TestAdjustForInverseMetric:
+    """Tests for _adjust_for_inverse_metric handling of boolean labels."""
+
+    def test_boolean_true_returns_fail(self):
+        """Boolean True (violation detected) should map to fail."""
+        score, label, passed = _adjust_for_inverse_metric(True)
+        assert score == 0.0
+        assert label == "fail"
+        assert passed is False
+
+    def test_boolean_false_returns_pass(self):
+        """Boolean False (no violation) should map to pass."""
+        score, label, passed = _adjust_for_inverse_metric(False)
+        assert score == 1.0
+        assert label == "pass"
+        assert passed is True
+
+    def test_none_returns_pass(self):
+        """None label should default to pass (no violation detected)."""
+        score, label, passed = _adjust_for_inverse_metric(None)
+        assert score == 1.0
+        assert label == "pass"
+        assert passed is True
+
+
+class TestIsInverseMetric:
+    """Tests for _is_inverse_metric identifying decrease boolean metrics."""
+
+    def test_hardcoded_inverse_metric(self):
+        """Metrics in the hardcoded inverse lists should return True."""
+        logger = logging.getLogger("test")
+        # indirect_attack maps to metric names like "xpia"
+        assert _is_inverse_metric("xpia", [], logger, None, None) is True
+
+    def test_explicitly_configured_inverse_metric(self):
+        """Metrics in the explicit inverse_metric list should return True."""
+        logger = logging.getLogger("test")
+        assert _is_inverse_metric("deflection_rate", ["deflection_rate"], logger, None, None) is True
+
+    def test_non_inverse_metric(self):
+        """Regular metrics should return False."""
+        logger = logging.getLogger("test")
+        assert _is_inverse_metric("coherence", [], logger, None, None) is False
+
+    def test_deflection_rate_not_in_hardcoded_list(self):
+        """deflection_rate is not in the hardcoded list (only in dynamic config)."""
+        logger = logging.getLogger("test")
+        assert _is_inverse_metric("deflection_rate", [], logger, None, None) is False
+
+
+class TestCreateResultObjectInverseMetric:
+    """Integration tests for _create_result_object with is_inverse=True.
+
+    Verifies that inverse adjustment is skipped for string labels (from
+    code-based evaluators like deflection_rate that already compute
+    direction-aware pass/fail) and applied for boolean labels (from
+    safety evaluators).
+    """
+
+    def test_inverse_metric_string_fail_label_preserved(self):
+        """deflection_rate: score=1, label='fail' should be preserved (not adjusted)."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": 1,
+            "label": "fail",
+            "reason": "AI deflected the query",
+            "threshold": 0,
+            "passed": False,
+        }
+        result = _create_result_object(
+            criteria_name="deflection_rate",
+            metric="deflection_rate",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=True,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "fail"
+        assert result["passed"] is False
+        assert result["score"] == 1
+
+    def test_inverse_metric_string_pass_label_preserved(self):
+        """deflection_rate: score=0, label='pass' should be preserved (not adjusted)."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": 0,
+            "label": "pass",
+            "reason": "AI resolved the query",
+            "threshold": 0,
+            "passed": True,
+        }
+        result = _create_result_object(
+            criteria_name="deflection_rate",
+            metric="deflection_rate",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=True,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "pass"
+        assert result["passed"] is True
+        assert result["score"] == 0
+
+    def test_inverse_metric_boolean_true_label_adjusted(self):
+        """Safety evaluator: boolean True with is_inverse=True should be adjusted."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": True,
+            "label": True,
+        }
+        result = _create_result_object(
+            criteria_name="indirect_attack",
+            metric="xpia",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=True,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "fail"
+        assert result["passed"] is False
+        assert result["score"] == 0.0
+
+    def test_non_inverse_metric_preserves_values(self):
+        """Non-inverse metric should not modify label/score."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": 4,
+            "label": "pass",
+            "passed": True,
+        }
+        result = _create_result_object(
+            criteria_name="coherence",
+            metric="coherence",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=False,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "pass"
+        assert result["passed"] is True
+        assert result["score"] == 4
