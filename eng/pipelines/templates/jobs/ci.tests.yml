@@ -89,10 +89,12 @@ jobs:
           Write-Host "##vso[task.setvariable variable=DOTNET_ROOT]$dotnetroot"
         displayName: 'Set DOTNET_ROOT'
 
+    - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-          TokenToUseForAuth: $(azuresdk-github-pat)
+          TokenToUseForAuth: $(GH_TOKEN)
         Paths:
           - '**'
 
