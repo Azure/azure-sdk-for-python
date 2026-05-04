@@ -64,7 +64,12 @@ readme = {file = [
 [tool.setuptools.packages.find]
 exclude = [
     "azure",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
 
 [tool.azure-sdk-build]
