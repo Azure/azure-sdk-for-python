@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-02-01/ManagedClustersRotateServiceAccountSigningKeys.json
+# x-ms-original-file: 2026-02-02-preview/ManagedClustersRotateServiceAccountSigningKeys.json
 if __name__ == "__main__":
     main()

@@ -1,0 +1,7 @@
+{
+    "CrossLanguagePackageId": "Azure.SpecialHeaders.XmsClientRequestId",
+    "CrossLanguageDefinitionId": {
+        "azure.specialheaders.xmsclientrequestid.XmsClientRequestIdClient.get": "Azure.SpecialHeaders.XmsClientRequestId.get",
+        "azure.specialheaders.xmsclientrequestid.aio.XmsClientRequestIdClient.get": "Azure.SpecialHeaders.XmsClientRequestId.get"
+    }
+}

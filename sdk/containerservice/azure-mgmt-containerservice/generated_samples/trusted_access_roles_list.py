@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-02-01/TrustedAccessRoles_List.json
+# x-ms-original-file: 2026-02-02-preview/TrustedAccessRoles_List.json
 if __name__ == "__main__":
     main()
