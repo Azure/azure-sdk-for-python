@@ -24,6 +24,9 @@ from typing_extensions import Self
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
+_ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
+_ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
+_ENV_FOUNDRY_AGENT_TENANT_ID = "FOUNDRY_AGENT_TENANT_ID"
 _ENV_FOUNDRY_HOSTING_ENVIRONMENT = "FOUNDRY_HOSTING_ENVIRONMENT"
 _ENV_FOUNDRY_PROJECT_ENDPOINT = "FOUNDRY_PROJECT_ENDPOINT"
 _ENV_FOUNDRY_PROJECT_ARM_ID = "FOUNDRY_PROJECT_ARM_ID"
@@ -281,6 +284,46 @@ def resolve_agent_version() -> str:
     :rtype: str
     """
     return os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
+
+
+def resolve_agent_id() -> str:
+    """Resolve the agent ID.
+
+    Resolution order:
+    1. ``FOUNDRY_AGENT_INSTANCE_CLIENT_ID`` environment variable.
+    2. ``<agent_name>:<agent_version>`` if both are set.
+    3. ``<agent_name>`` if only name is set.
+    4. Empty string if nothing is available.
+
+    :return: The resolved agent ID, or an empty string if not determinable.
+    :rtype: str
+    """
+    agent_id = os.environ.get(_ENV_FOUNDRY_AGENT_INSTANCE_CLIENT_ID, "")
+    if agent_id:
+        return agent_id
+    agent_name = os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
+    agent_version = os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
+    if agent_name and agent_version:
+        return f"{agent_name}:{agent_version}"
+    return agent_name
+
+
+def resolve_agent_blueprint_id() -> str:
+    """Resolve the agent blueprint client ID from the ``FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID`` environment variable.
+
+    :return: The agent blueprint client ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID, "")
+
+
+def resolve_agent_tenant_id() -> str:
+    """Resolve the agent tenant ID from the ``FOUNDRY_AGENT_TENANT_ID`` environment variable.
+
+    :return: The agent tenant ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_TENANT_ID, "")
 
 
 def resolve_project_id() -> str:

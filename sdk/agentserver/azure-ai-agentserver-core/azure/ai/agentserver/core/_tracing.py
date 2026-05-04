@@ -53,6 +53,8 @@ _ATTR_SERVICE_NAME = "service.name"
 _ATTR_GEN_AI_SYSTEM = "gen_ai.system"
 _ATTR_GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
 _ATTR_GEN_AI_AGENT_ID = "gen_ai.agent.id"
+_ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "gen_ai.agent.blueprint.id"
+_ATTR_GEN_AI_AGENT_TENANT_ID = "microsoft.tenant.id"
 _ATTR_GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 _ATTR_GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
 _ATTR_GEN_AI_RESPONSE_ID = "gen_ai.response.id"
@@ -156,18 +158,16 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
     agent_name = _config.resolve_agent_name() or None
     agent_version = _config.resolve_agent_version() or None
     project_id = _config.resolve_project_id() or None
-
-    if agent_name and agent_version:
-        agent_id = f"{agent_name}:{agent_version}"
-    elif agent_name:
-        agent_id = agent_name
-    else:
-        agent_id = None
+    agent_id = _config.resolve_agent_id() or None
+    agent_blueprint_id = _config.resolve_agent_blueprint_id() or None
+    agent_tenant_id = _config.resolve_agent_tenant_id() or None
 
     span_processors = [
         _FoundryEnrichmentSpanProcessor(
             agent_name=agent_name, agent_version=agent_version,
             agent_id=agent_id, project_id=project_id,
+            agent_blueprint_id=agent_blueprint_id,
+            agent_tenant_id=agent_tenant_id,
         ),
     ]
     log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
@@ -468,15 +468,20 @@ class _FoundryEnrichmentSpanProcessor:
 
     def __init__(
         self,
+        *,
         agent_name: Optional[str] = None,
         agent_version: Optional[str] = None,
         agent_id: Optional[str] = None,
         project_id: Optional[str] = None,
+        agent_blueprint_id: Optional[str] = None,
+        agent_tenant_id: Optional[str] = None,
     ) -> None:
         self.agent_name = agent_name
         self.agent_version = agent_version
         self.agent_id = agent_id
         self.project_id = project_id
+        self.agent_blueprint_id = agent_blueprint_id
+        self.agent_tenant_id = agent_tenant_id
 
     def on_start(self, span: Any, parent_context: Any = None) -> None:
         if self.project_id:
@@ -512,6 +517,10 @@ class _FoundryEnrichmentSpanProcessor:
                 attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
                 attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+            if self.agent_blueprint_id:
+                attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
+            if self.agent_tenant_id:
+                attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
