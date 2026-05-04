@@ -240,8 +240,11 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         if not result.is_valid:
             raise InvalidSignature(f"The provided signature '{signature!r}' is invalid.")
 
-    def recover_data_from_signature(
-        self, signature: bytes, padding: AsymmetricPadding, algorithm: Optional[HashAlgorithm]
+    def recover_data_from_signature(  # type: ignore[override]  # Parameter subset
+        self,
+        signature: bytes,
+        padding: AsymmetricPadding,
+        algorithm: Optional[HashAlgorithm],
     ) -> bytes:
         # pylint: disable=line-too-long
         """Recovers the signed data from the signature. Only supported with `cryptography` version 3.3 and above.
@@ -327,7 +330,7 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         """
         return self
 
-    def verifier(# pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+    def verifier(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
     ) -> NoReturn:
         """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
@@ -391,7 +394,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """
         return KeyVaultRSAPublicKey(self._client, self._key)
 
-    def sign(
+    def sign(  # type: ignore[override]  # Parameter subset
         self,
         data: bytes,
         padding: AsymmetricPadding,
@@ -412,8 +415,8 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The signature, as bytes.
         :rtype: bytes
         """
-        if isinstance(algorithm, Prehashed):
-            raise ValueError("`Prehashed` algorithms are unsupported. Please provide a `HashAlgorithm` instead.")
+        if not isinstance(algorithm, HashAlgorithm):
+            raise ValueError("Only `HashAlgorithm`s are supported. Please provide a `HashAlgorithm` instead.")
         mapped_algorithm = get_signature_algorithm(padding, algorithm)
         digest = Hash(algorithm)
         digest.update(data)

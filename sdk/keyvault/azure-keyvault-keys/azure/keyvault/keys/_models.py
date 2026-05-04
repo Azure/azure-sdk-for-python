@@ -313,9 +313,8 @@ class KeyProperties(object):
         # attestation was added in 7.6-preview.2
         if self._attributes:
             attestation = getattr(self._attributes, "attestation", None)
-            return (
-                KeyAttestation._from_generated(attestation=attestation) if attestation else None
-            )  # pylint:disable=protected-access
+            if attestation:
+                return KeyAttestation._from_generated(attestation=attestation)  # pylint:disable=protected-access
         return None
 
 
@@ -414,8 +413,8 @@ class KeyRotationPolicy(object):
             []
             if policy.lifetime_actions is None
             else [
-                KeyRotationLifetimeAction._from_generated(action)
-                for action in policy.lifetime_actions  # pylint:disable=protected-access
+                KeyRotationLifetimeAction._from_generated(action)  # pylint:disable=protected-access
+                for action in policy.lifetime_actions
             ]
         )
         if policy.attributes:
