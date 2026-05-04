@@ -53,6 +53,10 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.media",
-    "samples",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
