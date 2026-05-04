@@ -380,7 +380,7 @@ def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
         )
 
-        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
+        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, taxonomy=eval_taxonomy_input)
         taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
         # Create the data folder if it doesn't exist
         os.makedirs(data_folder, exist_ok=True)

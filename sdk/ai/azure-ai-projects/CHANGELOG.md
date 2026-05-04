@@ -12,11 +12,10 @@
 
 ### Breaking Changes
 
+Breaking changes in beta operations:
 * Renamed model `AgentEndpoint` to `AgentEndpointConfig`.
-* Agent Endpoint beta operations: Removed required parameters `user_isolation_key` and `chat_isolation_key` from the `HeaderIsolationKeySource` class constructor.
-* Removed models: `EntraIsolationKeySource`, `HeaderIsolationKeySource`, `IsolationKeySource`.
-* Removed enum `IsolationKeySourceKind`.
-* `BetaAgentsOperations.create_session`: Removed `isolation_key` parameter. Added explicit keyword arguments `version_indicator` and `agent_session_id`.
+* Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
+* Required keyword argument `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 
 ### Bugs Fixed
 
