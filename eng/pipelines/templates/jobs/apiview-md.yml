@@ -92,14 +92,9 @@ jobs:
           fi
         displayName: 'Stage and commit api.md changes'
 
-      - template: /eng/common/pipelines/templates/steps/login-to-github.yml
-        parameters:
-          TokenOwners:
-            - Azure
-
       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
         parameters:
-          AuthToken: $(GH_TOKEN)
+          AuthToken: ''
           PRBranchName: 'automated/apiview-md-regen-$(Build.BuildId)'
           CommitMsg: '[Auto] Regenerate api.md for all packages'
           PRTitle: '[Auto] Regenerate api.md for all packages'
