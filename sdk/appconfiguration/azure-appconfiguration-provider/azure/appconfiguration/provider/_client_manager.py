@@ -187,6 +187,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: bool
         """
         for i, select in enumerate(selects):
+            if i >= len(page_etags):
+                # Missing or stale etag state should trigger a refresh instead of failing.
+                return True
             selector_etags = page_etags[i]
             if select.snapshot_name is None:
                 # We only process non-snapshot selectors here, because snapshot never change
@@ -262,6 +265,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: bool
         """
         for i, select in enumerate(feature_flag_selectors):
+            if i >= len(page_etags):
+                # Missing or stale etag state should trigger a refresh instead of failing.
+                return True
             selector_etags = page_etags[i]
             if select.snapshot_name is None:
                 key_filter = select.key_filter if select.key_filter is not None else ""

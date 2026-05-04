@@ -189,6 +189,9 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: bool
         """
         for i, select in enumerate(selects):
+            if i >= len(page_etags):
+                # Missing or stale etag state should trigger a refresh instead of failing.
+                return True
             selector_etags = page_etags[i]
             if select.snapshot_name is None:
                 # We only process non-snapshot selectors here, because snapshot never change
