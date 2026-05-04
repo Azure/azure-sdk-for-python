@@ -104,6 +104,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
+            403: HttpResponseError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
@@ -195,7 +196,11 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
 
         if response.status_code not in valid_status_codes:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.Error, response.json())
+            error = None
+            try:
+                error = _deserialize(_models.Error, response.json())
+            except (ValueError, KeyError):
+                pass
             raise HttpResponseError(response=response, model=error)
 
         response_headers = response.headers
