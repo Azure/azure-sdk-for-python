@@ -163,7 +163,7 @@ def convert_logging(value: Union[str, int]) -> int:
     if val == "VERBOSE":
         val = "DEBUG"
     level = _levels.get(val)
-    if not level:
+    if level is None:
         _LOGGER.warning(
             "Invalid log level %r for AZURE_LOG_LEVEL; falling back to INFO. Valid values are: %s.",
             value,
