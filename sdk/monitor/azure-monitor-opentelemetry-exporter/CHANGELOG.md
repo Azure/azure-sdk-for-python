@@ -10,6 +10,7 @@
 
 ### Breaking Changes
 - Dropped support for Python 3.9. This package now supports Python 3.10+.
+  ([#46694](https://github.com/Azure/azure-sdk-for-python/pull/46694))
 
 ### Bugs Fixed
 - Fix `success` field on HTTP request telemetry resolving to an integer instead of a boolean when no status code is present
