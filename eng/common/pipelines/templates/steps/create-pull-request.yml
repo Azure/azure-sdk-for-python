@@ -32,7 +32,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/login-to-github.yml
     parameters:
       TokenOwners:
-        - ${{ parameters.RepoOwner }}
+        - ${{ parameters.PROwner }}
       ScriptDirectory: ${{ parameters.ScriptDirectory }}
 
 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
