@@ -5,6 +5,18 @@
 ### Features Added
 - Stable release of features from 12.16.0b1
 
+### Bugs Fixed
+- Fixed various issues with configuring logging via `logging_enable` and `logging_body` keywords on a per-request
+basis and with retries. Prior to this fix logging may have not behaved as expected, especially on retries.
+- Fix a potential memory leak caused by improper exception handling that could occur under rare circumstances.
+
+## 12.17.0b1 (2026-04-01)
+
+### Features Added
+- Added support for service version 2026-06-06.
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `QueueServiceClient` and `QueueClient`.
+
 ## 12.16.0b1 (2026-01-27)
 
 ### Features Added

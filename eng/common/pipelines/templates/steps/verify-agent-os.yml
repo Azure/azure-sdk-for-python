@@ -15,4 +15,3 @@ steps:
       arguments: >
         -AgentImage "${{ parameters.AgentImage }}"
 
-  - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml

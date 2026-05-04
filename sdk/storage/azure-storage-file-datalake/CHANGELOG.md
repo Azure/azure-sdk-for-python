@@ -5,6 +5,23 @@
 ### Features Added
 - Stable release of features from 12.24.0b1
 
+### Bugs Fixed
+- Fixed various issues with configuring logging via `logging_enable` and `logging_body` keywords on a per-request
+basis and with retries. Prior to this fix logging may have not behaved as expected, especially on retries.
+- Fix a potential memory leak caused by improper exception handling that could occur under rare circumstances.
+
+## 12.25.0b1 (2026-04-01)
+
+### Features Added
+- Added support for service version 2026-06-06.
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `DataLakeServiceClient`, `FileSystemClient`, `DataLakeDirectoryClient`, and `DataLakeFileClient`.
+- Added support for `DataLakeDirectoryClient` and `DataLakeFileClient`'s `set_tags` and `get_tags` APIs
+to conditionally set and get tags associated with a directory or file client, respectively.
+
+### Other Changes
+- Consolidated the behavior of `max_concurrency=None` by defaulting to the shared `DEFAULT_MAX_CONCURRENCY` constant.
+
 ## 12.24.0b1 (2026-01-27)
 
 ### Features Added
