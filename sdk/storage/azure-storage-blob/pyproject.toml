@@ -58,9 +58,12 @@ readme = {file = [
 exclude = [
     "azure",
     "azure.storage",
-    "tests",
-    "tests.blob",
-    "tests.common",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
 
 [tool.azure-sdk-build]
