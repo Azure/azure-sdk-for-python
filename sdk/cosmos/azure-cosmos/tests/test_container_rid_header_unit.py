@@ -171,10 +171,11 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         assert client.call_count == 2
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 
-    def test_full_refresh_fallback_after_split_preserves_containerRID(self):
+    def test_incremental_retry_after_split_preserves_containerRID(self):
         """When an incremental refresh encounters unresolvable parent ranges,
-        it falls back to a full refresh. containerRID must still flow through
-        on the fallback call."""
+        the routing map provider retries the incremental fetch once
+        (_INCOMPLETE_ROUTING_MAP_MAX_RETRIES=1). On the retry, if the ranges
+        resolve successfully, containerRID must still flow through."""
         # Post-split ranges reference parents not in the original map
         split_ranges = [
             {"id": "3", "minInclusive": "", "maxExclusive": "1F", "parents": ["99"]},
@@ -190,8 +191,9 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
                 self.captured_feed_options = dict(feed_options) if feed_options else {}
                 self.call_count += 1
                 # First call: initial load returns original ranges
-                # Second call: incremental returns split ranges with unknown parents
-                # Third call: full fallback returns original ranges
+                # Second call: incremental returns split ranges with unknown parents,
+                #              triggering _NeedFullRefresh → retry (count 0→1)
+                # Third call: incremental retry succeeds with resolvable ranges
                 if self.call_count == 2:
                     return iter(split_ranges)
                 return iter(PARTITION_KEY_RANGES)
@@ -208,8 +210,8 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
             force_refresh=True,
             previous_routing_map=previous_map,
         )
-        # Incremental fetch returns ranges with unresolvable parents, triggering
-        # a full refresh fallback: 1 initial + 1 incremental + 1 full = 3 calls.
+        # Incremental fetch hits unresolvable parents → retries once → succeeds:
+        # 1 initial + 1 failed incremental + 1 successful retry = 3 calls.
         assert client.call_count == 3
         assert client.captured_feed_options.get("containerRID") == CONTAINER_RID
 

@@ -479,10 +479,11 @@ class TestHealthCheckAsync:
             assert "https://fake-region2.documents.azure.com" not in current_endpoints, \
                 "Stale direct mutations should be overwritten by update_location_cache()"
 
-            _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check_method
             await client.close()
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            if hasattr(self, 'original_health_check_method'):
+                _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check_method
 
     async def test_retry_policy_unaffected_by_concurrent_cache_refresh_async(self, setup):
         """
