@@ -1973,7 +1973,8 @@
         "wday",
         "mday",
         "deseralize",
-        "astimezone"
+        "astimezone",
+        "Merkle"
       ]
     },
     {
