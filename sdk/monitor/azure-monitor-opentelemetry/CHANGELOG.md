@@ -6,6 +6,7 @@
 
 ### Breaking Changes
 - Dropped support for Python 3.9. This package now supports Python 3.10+.
+  ([#46695](https://github.com/Azure/azure-sdk-for-python/pull/46695))
 
 ### Bugs Fixed
 
