@@ -57,5 +57,10 @@ bundle_name = "azure-healthinsights"
 exclude = [
     "azure",
     "azure.healthinsights",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
