@@ -2103,7 +2103,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
-        request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result = await self.__Post(path, request_params, batch_operations, headers, **kwargs)
         return cast(Tuple[list[dict[str, Any]], CaseInsensitiveDict], result)
 
@@ -3221,6 +3220,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             "Failed to write continuation while handling query POST failure: %s",
                             continuation_write_error,
                         )
+                    _capture_internal_headers(feedrange_response_headers)
                     raise error
 
                 # NOTE: Keep this feed_range pagination loop in sync with

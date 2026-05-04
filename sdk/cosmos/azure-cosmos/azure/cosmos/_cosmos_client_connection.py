@@ -3429,6 +3429,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             "Failed to write continuation while handling query POST failure: %s",
                             continuation_write_error,
                         )
+                    _capture_internal_headers(feedrange_response_headers)
                     raise error
 
                 # NOTE: Keep this feed_range pagination loop in sync with
