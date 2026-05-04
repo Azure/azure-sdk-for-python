@@ -217,6 +217,14 @@ def _setup_distro_export(
         kwargs["enable_azure_monitor"] = True
         kwargs["azure_monitor_connection_string"] = connection_string
 
+    # A365 tracing export — enabled only in hosted environments.
+    if (
+        os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "")
+        and os.environ.get("FOUNDRY_AGENT365_TRACING_ENABLED", "").lower() in ("true", "1")
+    ):
+        kwargs["enable_a365"] = True
+        kwargs["a365_use_s2s_endpoint"] = True
+
     use_microsoft_opentelemetry(**kwargs)
 
 
