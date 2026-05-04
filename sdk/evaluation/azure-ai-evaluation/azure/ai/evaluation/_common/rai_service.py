@@ -153,12 +153,11 @@ def get_common_headers(
         if evaluator_name
         else UserAgentSingleton().value
     )
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "User-Agent": user_agent,
-    }
-    if extra_headers:
-        headers.update(extra_headers)
+    # Apply extra_headers first, then SDK-owned headers on top so that
+    # Authorization, User-Agent, etc. can never be silently overridden.
+    headers = dict(extra_headers) if extra_headers else {}
+    headers["Authorization"] = f"Bearer {token}"
+    headers["User-Agent"] = user_agent
     return headers
 
 
@@ -1189,9 +1188,12 @@ async def evaluate_with_rai_service_sync(
 
         # Submit annotation request and fetch result
         url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
-        headers = {"aml-user-token": token, "Authorization": "Bearer " + token, "Content-Type": "application/json"}
-        if extra_headers:
-            headers.update(extra_headers)
+        # Apply extra_headers first, then SDK-owned headers on top so that
+        # auth and content-type can never be silently overridden.
+        headers = dict(extra_headers) if extra_headers else {}
+        headers["aml-user-token"] = token
+        headers["Authorization"] = "Bearer " + token
+        headers["Content-Type"] = "application/json"
         sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
         sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
 
@@ -1422,15 +1424,14 @@ async def evaluate_with_rai_service_sync_multimodal(
     await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM, extra_headers=extra_headers)
 
     url = rai_svc_url + f"/sync_evals:run?api-version={api_version}"
-    headers = {
-        "aml-user-token": token,
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json",
-    }
+    # Apply extra_headers first, then SDK-owned headers on top so that
+    # auth, content-type, and correlation IDs can never be silently overridden.
+    headers = dict(extra_headers) if extra_headers else {}
+    headers["aml-user-token"] = token
+    headers["Authorization"] = "Bearer " + token
+    headers["Content-Type"] = "application/json"
     if scan_session_id:
         headers["x-ms-client-request-id"] = scan_session_id
-    if extra_headers:
-        headers.update(extra_headers)
 
     sync_eval_payload_json = json.dumps(sync_eval_payload, cls=SdkJSONEncoder)
 

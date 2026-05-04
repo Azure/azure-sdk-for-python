@@ -823,11 +823,11 @@ class TestExtraHeaders:
         assert headers["X-Another"] == "42"
 
     def test_get_common_headers_extra_headers_do_not_override_auth(self):
-        """User-supplied extra_headers can override Authorization if they choose to."""
+        """SDK-owned headers (Authorization, User-Agent) must win over extra_headers."""
         extra = {"Authorization": "Bearer override"}
         headers = get_common_headers("fake-token", extra_headers=extra)
-        # extra_headers is applied after base headers, so it overrides
-        assert headers["Authorization"] == "Bearer override"
+        # SDK headers are applied after extra_headers, so they cannot be overridden
+        assert headers["Authorization"] == "Bearer fake-token"
 
     def test_get_common_headers_with_evaluator_name_and_extra_headers(self):
         """Both evaluator_name and extra_headers work together."""
