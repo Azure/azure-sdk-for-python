@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `AZURE_LOG_LEVEL` now accepts `VERBOSE` (case-insensitive) as an alias for `DEBUG`.
+- `AZURE_LOG_LEVEL` now accepts `VERBOSE` (case-insensitive) as an alias for `DEBUG`. #46668
 
 ### Breaking Changes
 
