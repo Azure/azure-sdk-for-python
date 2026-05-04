@@ -9,9 +9,6 @@
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New models: `EvaluatorGenerationJob`, `EvaluatorGenerationJobSource`, `EvaluatorGenerationInputs`, `EvaluatorGenerationArtifacts`, `EvaluatorGenerationTokenUsage`, `PromptEvaluatorGenerationJobSource`, `AgentEvaluatorGenerationJobSource`, `DatasetEvaluatorGenerationJobSource`, `TracesEvaluatorGenerationJobSource`, `RubricBasedEvaluatorDefinition`, `RubricCriterion`, `DatasetReference`.
-* New enum `EvaluatorGenerationJobSourceType` with values: `PROMPT`, `AGENT`, `TRACES`, `DATASET`.
-* New enum value `EvaluatorDefinitionType.RUBRICS`.
 
 ### Breaking Changes
 
@@ -22,6 +19,7 @@
 * `BetaAgentsOperations.create_session`: Removed `isolation_key` parameter. Added explicit keyword arguments `version_indicator` and `agent_session_id`.
 
 ### Bugs Fixed
+
 * Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
 
 ### Sample updates
