@@ -190,7 +190,7 @@ class TestContainerRIDHeaderUnitAsync(unittest.IsolatedAsyncioTestCase):
                 SplitMockClient._capture_internal_headers(kwargs, '"test-etag-1"')
                 # First call: initial load returns original ranges
                 # Second call: incremental returns split ranges with unknown parents,
-                #              triggering _NeedFullRefresh → retry (count 0→1)
+                #              raising _IncrementalMergeFailed (caught → retry incremental, count 0→1)
                 # Third call: incremental retry succeeds with resolvable ranges
                 items = split_ranges if self.call_count == 2 else PARTITION_KEY_RANGES
                 for item in items:
