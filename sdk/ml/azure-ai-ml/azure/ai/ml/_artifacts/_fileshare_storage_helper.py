@@ -426,7 +426,7 @@ def recursive_download(
 
         for f in folders:
             sub_client = client.get_subdirectory_client(f["name"])
-            sub_destination = "/".join((destination, f["name"]))
+            sub_destination = str(Path(destination) / f["name"])
 
             # Prevent path traversal: ensure subdirectory is within the destination directory
             try:
