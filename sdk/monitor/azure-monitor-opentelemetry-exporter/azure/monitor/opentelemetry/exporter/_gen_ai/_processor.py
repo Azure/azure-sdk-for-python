@@ -11,29 +11,11 @@ from opentelemetry.sdk._logs import LogRecordProcessor, ReadWriteLogRecord
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 from opentelemetry.trace import get_current_span, Span
 
-# Attribute mapping for main-agent propagation
-_MAIN_AGENT_ATTRIBUTES = (
-    # (target_attribute, primary_source, fallback_source)
-    ("microsoft.gen_ai.main_agent.name", "microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
-    ("microsoft.gen_ai.main_agent.id", "microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
-    ("microsoft.gen_ai.main_agent.version", "microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
-    (
-        "microsoft.gen_ai.main_agent.conversation_id",
-        "microsoft.gen_ai.main_agent.conversation_id",
-        "gen_ai.conversation.id",
-    ),
+from azure.monitor.opentelemetry.exporter._constants import (
+    _MAIN_AGENT_ATTRIBUTES,
+    _MAIN_AGENT_PREFIX,
+    _MAIN_AGENT_SELF_ATTRIBUTES,
 )
-
-# OnEnd self-attribution mapping (for root invoke_agent spans)
-_MAIN_AGENT_SELF_ATTRIBUTES = (
-    # (target_attribute, source_attribute)
-    ("microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
-    ("microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
-    ("microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
-    ("microsoft.gen_ai.main_agent.conversation_id", "gen_ai.conversation.id"),
-)
-
-_MAIN_AGENT_PREFIX = "microsoft.gen_ai.main_agent."
 
 
 # pylint: disable=protected-access

@@ -7,10 +7,14 @@ from unittest.mock import MagicMock, patch
 from opentelemetry.context import Context
 from opentelemetry.trace import INVALID_SPAN_CONTEXT, SpanContext, TraceFlags
 
+from azure.monitor.opentelemetry.exporter._constants import (
+    _MAIN_AGENT_ATTRIBUTES,
+    _MAIN_AGENT_PREFIX,
+    _MAIN_AGENT_SELF_ATTRIBUTES,
+)
 from azure.monitor.opentelemetry.exporter._gen_ai._processor import (
     _GenAIMainAgentLogRecordProcessor,
     _GenAIMainAgentSpanProcessor,
-    _MAIN_AGENT_PREFIX,
 )
 
 
