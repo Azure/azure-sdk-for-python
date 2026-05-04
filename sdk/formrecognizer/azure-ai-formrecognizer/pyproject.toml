@@ -60,7 +60,12 @@ pytyped = ["py.typed"]
 exclude = [
     "azure",
     "azure.ai",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
 
 [tool.azure-sdk-build]

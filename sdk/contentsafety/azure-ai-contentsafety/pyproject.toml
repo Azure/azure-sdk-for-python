@@ -57,5 +57,10 @@ in_bundle = false
 exclude = [
     "azure",
     "azure.ai",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]

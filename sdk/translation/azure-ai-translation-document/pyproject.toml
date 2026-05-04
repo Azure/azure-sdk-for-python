@@ -56,7 +56,12 @@ exclude = [
     "azure",
     "azure.ai",
     "azure.ai.translation",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
 
 [tool.azure-sdk-build]
