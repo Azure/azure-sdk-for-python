@@ -44,6 +44,7 @@ jobs:
         versionSpec: '3.10'
         addToPath: true
         architecture: 'x64'
+    - template: /eng/common/pipelines/templates/steps/login-to-github.yml
     - bash: |
         script_path=$(pwd)/scripts/release_helper
         cd ..
@@ -58,7 +59,7 @@ jobs:
         git clone -b $(SPEC_BRANCH) https://github.com/Azure/azure-rest-api-specs.git $(pwd)/azure-rest-api-specs
 
         # import env variable
-        export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
+        export AZURESDK_BOT_TOKEN=$(GH_TOKEN)
         export LANGUAGE=$(RUN_LANGUAGE)
         export SPEC_REPO=$(pwd)/azure-rest-api-specs/specification
         export TYPESPEC_JSON=$(pwd)/file-storage/data/typespec.json

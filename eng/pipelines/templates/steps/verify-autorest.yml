@@ -46,3 +46,4 @@ steps:
           CommitMsg: "Regenerated code from nightly builds"
           PRTitle: "Automated autorest generation"
           PRBranchName: 'autorest-${{ parameters.ServiceDirectory }}'
+          AuthToken: ''
