@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+- Dropped support for Python 3.9. This package now supports Python 3.10+.
 
 ### Bugs Fixed
 
