@@ -62,7 +62,12 @@ pytyped = ["py.typed"]
 exclude = [
     "azure",
     "azure.iot",
-    "tests",
+    "doc*",
+    "generated_samples*",
+    "generated_tests*",
+    "samples*",
+    "swagger*",
+    "tests*",
 ]
 
 [tool.azure-sdk-build]
