@@ -174,10 +174,10 @@ class AzureAppConfigurationClient:
         key, label, tags and accept_datetime. For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value?pivots=v23-11#supported-filters.
 
-        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
             of the filter.
         :paramtype key_filter: str or None
-        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard at the end
             of the filter.
         :paramtype label_filter: str or None
         :keyword tags_filter: Filter results based on their tags.
@@ -278,10 +278,10 @@ class AzureAppConfigurationClient:
         """Check configuration settings using a HEAD request, returning only headers without the
         response body. This is useful for efficiently checking if settings have changed by comparing ETags.
 
-        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
             of the filter.
         :paramtype key_filter: str or None
-        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard at the end
             of the filter.
         :paramtype label_filter: str or None
         :keyword tags_filter: Filter results based on their tags.
@@ -309,18 +309,16 @@ class AzureAppConfigurationClient:
         """
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
-        select = fields
-        if select:
-            select = ["locked" if x == "read_only" else x for x in select]
-        tags = tags_filter
+        if fields:
+            fields = ["locked" if x == "read_only" else x for x in fields]
         command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
         return ConfigurationSettingPagedAsync(
             command,
             key=key_filter,
             label=label_filter,
             accept_datetime=accept_datetime,
-            select=select,
-            tags=tags,
+            select=fields,
+            tags=tags_filter,
             page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
         )
 
@@ -543,10 +541,10 @@ class AzureAppConfigurationClient:
         For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-revisions?pivots=v23-11#supported-filters.
 
-        :param key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+        :param key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
             of the filter.
         :type key_filter: str or None
-        :param label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+        :param label_filter: Filter results based on their label. '*' can be used as wildcard at the end
             of the filter.
         :type label_filter: str or None
         :keyword tags_filter: Filter results based on their tags.
