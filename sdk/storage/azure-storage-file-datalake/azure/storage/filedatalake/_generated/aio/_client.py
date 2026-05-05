@@ -25,12 +25,12 @@ if TYPE_CHECKING:
 class DataLakeClient:  # pylint: disable=client-accepts-api-version-keyword
     """DataLakeClient.
 
-    :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.filedatalake.aio.operations.ServiceOperations
     :ivar file_system: FileSystemOperations operations
     :vartype file_system: azure.storage.filedatalake.aio.operations.FileSystemOperations
     :ivar path: PathOperations operations
     :vartype path: azure.storage.filedatalake.aio.operations.PathOperations
+    :ivar service: ServiceOperations operations
+    :vartype service: azure.storage.filedatalake.aio.operations.ServiceOperations
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation. Required.
     :type url: str
@@ -68,9 +68,9 @@ class DataLakeClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
         self.file_system = FileSystemOperations(self._client, self._config, self._serialize, self._deserialize)
         self.path = PathOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

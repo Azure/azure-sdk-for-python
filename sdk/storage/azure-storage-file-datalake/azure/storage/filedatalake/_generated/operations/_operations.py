@@ -40,42 +40,6 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_service_list_file_systems_request(
-    *,
-    resource: Union[str, _models.AccountResourceType],
-    prefix: Optional[str] = None,
-    continuation: Optional[str] = None,
-    max_results: Optional[int] = None,
-    timeout: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = ""
-
-    # Construct parameters
-    _params["resource"] = _SERIALIZER.query("resource", resource, "str")
-    if prefix is not None:
-        _params["prefix"] = _SERIALIZER.query("prefix", prefix, "str")
-    if continuation is not None:
-        _params["continuation"] = _SERIALIZER.query("continuation", continuation, "str")
-    if max_results is not None:
-        _params["maxResults"] = _SERIALIZER.query("max_results", max_results, "int")
-    if timeout is not None:
-        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
-
-    # Construct headers
-    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_file_system_create_request(
     *,
     resource: Union[str, _models.FileSystemResourceType],
@@ -1015,127 +979,40 @@ def build_path_undelete_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ServiceOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+def build_service_list_file_systems_request(
+    *,
+    resource: Union[str, _models.AccountResourceType],
+    prefix: Optional[str] = None,
+    continuation: Optional[str] = None,
+    max_results: Optional[int] = None,
+    timeout: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        Instead, you should access the following operations through
-        :class:`~azure.storage.filedatalake.DataLakeClient`'s
-        :attr:`service` attribute.
-    """
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-06-06"))
+    accept = _headers.pop("Accept", "application/json")
 
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DataLakeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+    # Construct URL
+    _url = ""
 
-    @distributed_trace
-    def list_file_systems(
-        self,
-        *,
-        resource: Union[str, _models.AccountResourceType],
-        prefix: Optional[str] = None,
-        continuation: Optional[str] = None,
-        max_results: Optional[int] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.FileSystemList:
-        """List filesystems and their properties in given account.
+    # Construct parameters
+    _params["resource"] = _SERIALIZER.query("resource", resource, "str")
+    if prefix is not None:
+        _params["prefix"] = _SERIALIZER.query("prefix", prefix, "str")
+    if continuation is not None:
+        _params["continuation"] = _SERIALIZER.query("continuation", continuation, "str")
+    if max_results is not None:
+        _params["maxResults"] = _SERIALIZER.query("max_results", max_results, "int")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
-        :keyword resource: The value must be "account" for all account operations. "account" Required.
-        :paramtype resource: str or ~azure.storage.filedatalake.models.AccountResourceType
-        :keyword prefix: Filters results to filesystems within the specified prefix. Default value is
-         None.
-        :paramtype prefix: str
-        :keyword continuation: Optional. When deleting a directory, the number of paths that are
-         deleted with each invocation is limited. If the number of paths to be deleted exceeds this
-         limit, a continuation token is returned in this response header. When a continuation token is
-         returned in the response, it must be specified in a subsequent invocation of the delete
-         operation to continue deleting the directory. Default value is None.
-        :paramtype continuation: str
-        :keyword max_results: An optional value that specifies the maximum number of items to return.
-         If omitted or greater than 5,000, the response will include up to 5,000 items. Default value is
-         None.
-        :paramtype max_results: int
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :return: FileSystemList. The FileSystemList is compatible with MutableMapping
-        :rtype: ~azure.storage.filedatalake._generated.models.FileSystemList
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.FileSystemList] = kwargs.pop("cls", None)
-
-        _request = build_service_list_file_systems_request(
-            resource=resource,
-            prefix=prefix,
-            continuation=continuation,
-            max_results=max_results,
-            timeout=timeout,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-continuation"] = self._deserialize("str", response.headers.get("x-ms-continuation"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.FileSystemList, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class FileSystemOperations:
@@ -3657,3 +3534,126 @@ class PathOperations:
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
+
+
+class ServiceOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.filedatalake.DataLakeClient`'s
+        :attr:`service` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataLakeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_file_systems(
+        self,
+        *,
+        resource: Union[str, _models.AccountResourceType],
+        prefix: Optional[str] = None,
+        continuation: Optional[str] = None,
+        max_results: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.FileSystemList:
+        """List filesystems and their properties in given account.
+
+        :keyword resource: The value must be "account" for all account operations. "account" Required.
+        :paramtype resource: str or ~azure.storage.filedatalake.models.AccountResourceType
+        :keyword prefix: Filters results to filesystems within the specified prefix. Default value is
+         None.
+        :paramtype prefix: str
+        :keyword continuation: Optional. When deleting a directory, the number of paths that are
+         deleted with each invocation is limited. If the number of paths to be deleted exceeds this
+         limit, a continuation token is returned in this response header. When a continuation token is
+         returned in the response, it must be specified in a subsequent invocation of the delete
+         operation to continue deleting the directory. Default value is None.
+        :paramtype continuation: str
+        :keyword max_results: An optional value that specifies the maximum number of items to return.
+         If omitted or greater than 5,000, the response will include up to 5,000 items. Default value is
+         None.
+        :paramtype max_results: int
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :return: FileSystemList. The FileSystemList is compatible with MutableMapping
+        :rtype: ~azure.storage.filedatalake._generated.models.FileSystemList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FileSystemList] = kwargs.pop("cls", None)
+
+        _request = build_service_list_file_systems_request(
+            resource=resource,
+            prefix=prefix,
+            continuation=continuation,
+            max_results=max_results,
+            timeout=timeout,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-continuation"] = self._deserialize("str", response.headers.get("x-ms-continuation"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.FileSystemList, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore

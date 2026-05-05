@@ -3,7 +3,7 @@
     "CrossLanguageDefinitionId": {
         "azure.storage.filedatalake.models.AclFailedEntry": "Storage.DataLake.AclFailedEntry",
         "azure.storage.filedatalake.models.BlobHierarchyListSegment": "Storage.DataLake.BlobHierarchyListSegment",
-        "azure.storage.filedatalake.models.BlobItemInternal": "Storage.DataLake.BlobItemInternal",
+        "azure.storage.filedatalake.models.BlobItemInternal": "Storage.DataLake.BlobItem",
         "azure.storage.filedatalake.models.BlobPrefix": "Storage.DataLake.BlobPrefix",
         "azure.storage.filedatalake.models.BlobPropertiesInternal": "Storage.DataLake.BlobPropertiesInternal",
         "azure.storage.filedatalake.models.FileSystemItem": "Storage.DataLake.FileSystemItem",
@@ -14,7 +14,6 @@
         "azure.storage.filedatalake.models.SetAccessControlRecursiveResponse": "Storage.DataLake.SetAccessControlRecursiveResponse",
         "azure.storage.filedatalake.models.StorageError": "Storage.DataLake.StorageError",
         "azure.storage.filedatalake.models.StorageErrorBody": "Storage.DataLake.StorageErrorBody",
-        "azure.storage.filedatalake.models.AccountResourceType": "Storage.DataLake.AccountResourceType",
         "azure.storage.filedatalake.models.FileSystemResourceType": "Storage.DataLake.FileSystemResourceType",
         "azure.storage.filedatalake.models.ListBlobsIncludeItem": "Storage.DataLake.ListBlobsIncludeItem",
         "azure.storage.filedatalake.models.ListBlobsShowOnly": "Storage.DataLake.ListBlobsShowOnly",
@@ -27,8 +26,7 @@
         "azure.storage.filedatalake.models.PathLeaseAction": "Storage.DataLake.PathLeaseAction",
         "azure.storage.filedatalake.models.PathGetPropertiesAction": "Storage.DataLake.PathGetPropertiesAction",
         "azure.storage.filedatalake.models.LeaseAction": "Storage.DataLake.LeaseAction",
-        "azure.storage.filedatalake.operations.ServiceOperations.list_file_systems": "Storage.DataLake.Service.listFileSystems",
-        "azure.storage.filedatalake.aio.operations.ServiceOperations.list_file_systems": "Storage.DataLake.Service.listFileSystems",
+        "azure.storage.filedatalake.models.AccountResourceType": "Storage.DataLake.AccountResourceType",
         "azure.storage.filedatalake.operations.FileSystemOperations.create": "Storage.DataLake.FileSystem.create",
         "azure.storage.filedatalake.aio.operations.FileSystemOperations.create": "Storage.DataLake.FileSystem.create",
         "azure.storage.filedatalake.operations.FileSystemOperations.set_properties": "Storage.DataLake.FileSystem.setProperties",
@@ -64,6 +62,8 @@
         "azure.storage.filedatalake.operations.PathOperations.set_expiry": "Storage.DataLake.Path.setExpiry",
         "azure.storage.filedatalake.aio.operations.PathOperations.set_expiry": "Storage.DataLake.Path.setExpiry",
         "azure.storage.filedatalake.operations.PathOperations.undelete": "Storage.DataLake.Path.undelete",
-        "azure.storage.filedatalake.aio.operations.PathOperations.undelete": "Storage.DataLake.Path.undelete"
+        "azure.storage.filedatalake.aio.operations.PathOperations.undelete": "Storage.DataLake.Path.undelete",
+        "azure.storage.filedatalake.operations.ServiceOperations.list_file_systems": "Storage.DataLake.Service.listFileSystems",
+        "azure.storage.filedatalake.aio.operations.ServiceOperations.list_file_systems": "Storage.DataLake.Service.listFileSystems"
     }
 }
