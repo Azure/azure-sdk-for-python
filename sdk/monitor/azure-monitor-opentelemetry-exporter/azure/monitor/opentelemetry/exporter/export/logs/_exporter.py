@@ -182,6 +182,11 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         stack_trace = log_record.attributes.get(EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
+    if readable_log_record and readable_log_record.instrumentation_scope is not None:
+        instrumentation_scope = readable_log_record.instrumentation_scope
+        if hasattr(instrumentation_scope, "name") and instrumentation_scope.name is not None:
+            properties.setdefault("logger_name", str(instrumentation_scope.name))
+
     # Exception telemetry
     if exc_type is not None or exc_message is not None:
         envelope.name = _EXCEPTION_ENVELOPE_NAME
