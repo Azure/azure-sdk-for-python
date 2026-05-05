@@ -11,7 +11,6 @@ from ..models._enums import AssetTypes
 from ..models._models import Output as _Output
 from ..models._patch_jobs import CommandJob, ValidationResult
 
-
 _TERMINAL_JOB_STATUSES = frozenset({"completed", "failed", "canceled", "notresponding", "paused"})
 
 _MAX_CONCURRENCY = 4
@@ -72,8 +71,7 @@ def _validate_output_for_download(output_name: str, output: _Output) -> None:
         )
 
     raise ValueError(
-        f"Output '{output_name}' has unsupported jobOutputType '{out_type}'. "
-        f"Supported types: uri_file, uri_folder."
+        f"Output '{output_name}' has unsupported jobOutputType '{out_type}'. " f"Supported types: uri_file, uri_folder."
     )
 
 
