@@ -58,7 +58,7 @@ test = [
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure._version.VERSION"}
+version = {attr = "azure.ai.voicelive._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
