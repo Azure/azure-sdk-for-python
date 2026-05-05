@@ -13,7 +13,8 @@
     "xhigh",
     "XHIGH",
     "genai",
-    "GENAI"
+    "GENAI",
+    "SSML"
   ],
     "ignorePaths": [
         "*.csv",
