@@ -610,6 +610,15 @@ The weekly pipeline also runs "next" variants of mypy, pylint, pyright, and sphi
 
 Results are posted as GitHub issues in the repository. These checks run with `continueOnError: true` and do not block PRs.
 
+#### Copilot auto-fix
+
+For `pylint`, `mypy`, `sphinx`, and `pyright` failures, the pipeline automatically assigns the Copilot coding agent to open a fix PR.
+
+- **You don't need to do anything** if Copilot opens a PR — just review and merge it like any other PR.
+- **To opt out**, add the `copilot-auto-fix-disabled` label to the issue.
+- **If Copilot fails**, the issue gets a `copilot-auto-fix-failed` label and a comment explaining what happened. Remove the label to allow a retry on the next weekly run.
+- **Weekly retry**: if no matching PR exists when the pipeline runs again, Copilot is reassigned automatically.
+
 To test a "next" check locally, use `--next`:
 
 ```bash
