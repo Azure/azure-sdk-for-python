@@ -320,7 +320,7 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
     )
 
 
-def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
+def get_merge_dates(year: int) -> typing.List[datetime.datetime]:
     """We'll merge the latest version of the type checker/linter quarterly
     on the Monday after release week. This function returns those 4 Mondays
     for the given year.
@@ -343,7 +343,7 @@ def get_merge_dates(year: str) -> typing.List[datetime.datetime]:
     return merge_dates
 
 
-def get_date_for_version_bump(today: datetime.datetime) -> str:
+def get_date_for_version_bump(today: datetime.date) -> str:
     merge_dates = get_merge_dates(today.year)
     try:
         merge_date = min(date for date in merge_dates if date >= today)
@@ -416,7 +416,7 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
     today = datetime.date.today()
     repo = g.get_repo("Azure/azure-sdk-for-python")
 
-    issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
+    issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")  # type: ignore[arg-type]
     vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
 
     version = check_version or get_version_running(check_type)
@@ -525,7 +525,7 @@ def close_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
 
     repo = g.get_repo("Azure/azure-sdk-for-python")
 
-    issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
+    issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")  # type: ignore[arg-type]
     vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
     if vnext_issue:
         logging.info(f"{package_name} passes {check_type}. Closing existing GH issue #{vnext_issue[0].number}...")
