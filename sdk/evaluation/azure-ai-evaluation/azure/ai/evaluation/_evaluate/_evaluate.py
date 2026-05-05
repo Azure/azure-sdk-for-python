@@ -276,8 +276,19 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
             )
             continue
         if evaluator_name:
-            # Count the occurrences of each unique value (pass/fail)
-            value_counts = df[col].value_counts().to_dict()
+            try:
+                # Count the occurrences of each unique value (pass/fail)
+                value_counts = df[col].value_counts().to_dict()
+            except TypeError as ex:
+                # Column contains unhashable values (e.g., lists/dicts) and is therefore
+                # not a binary pass/fail result column. Skip it instead of aborting the
+                # entire evaluation aggregation.
+                LOGGER.warning(
+                    "Skipping column '%s' for binary aggregation due to unhashable values: %s",
+                    col,
+                    ex,
+                )
+                continue
 
             # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
             total_rows = len(df)

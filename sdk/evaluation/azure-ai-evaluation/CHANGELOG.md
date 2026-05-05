@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed `evaluate()` raising `EvaluationException: (InternalError) unhashable type: 'list'` when an evaluator emitted a list value under a `_result`-suffixed column. Binary aggregation now skips such columns with a warning instead of aborting the entire run.
+
 ### Other Changes
 
 ## 1.16.6 (2026-04-27)
