@@ -37,11 +37,8 @@ LABEL_AUTO_FIX_DISABLED = "copilot-auto-fix-disabled"
 COPILOT_AUTOFIX_START = "<!-- copilot-autofix:start -->"
 COPILOT_AUTOFIX_END = "<!-- copilot-autofix:end -->"
 
-#: Copilot coding-agent bot login and node ID.
-#: The node ID was retrieved via the suggestedActors GraphQL query on
-#: Azure/azure-sdk-for-python but could potentially change.
+#: Copilot coding-agent bot login.
 DEFAULT_COPILOT_LOGIN = "copilot-swe-agent"
-DEFAULT_COPILOT_NODE_ID = "BOT_kgDOC9w8XQ"
 
 
 # ---------------------------------------------------------------------------
@@ -49,8 +46,8 @@ DEFAULT_COPILOT_NODE_ID = "BOT_kgDOC9w8XQ"
 # ---------------------------------------------------------------------------
 
 
-def _resolve_copilot_node_id(issue, github_instance) -> str:
-    """Return the Copilot bot node ID, preferring GitHub's assignable actor data."""
+def _resolve_copilot_node_id(issue, github_instance) -> Optional[str]:
+    """Return the Copilot bot node ID from GitHub's assignable actor data."""
     login = DEFAULT_COPILOT_LOGIN
     issue_node_id = issue.raw_data["node_id"]
 
@@ -95,8 +92,8 @@ def _resolve_copilot_node_id(issue, github_instance) -> str:
     except Exception as e:
         logging.warning(f"Failed to resolve Copilot node ID dynamically: {e}")
 
-    logging.warning("Using fallback Copilot node ID")
-    return DEFAULT_COPILOT_NODE_ID
+    logging.warning(f"Could not find {DEFAULT_COPILOT_LOGIN} in suggested actors for issue #{issue.number}")
+    return None
 
 
 def is_auto_fix_eligible(
@@ -209,6 +206,8 @@ def _unassign_copilot(issue, github_instance) -> bool:
     Treats "not currently assigned" as success (idempotent).
     """
     node_id = _resolve_copilot_node_id(issue, github_instance)
+    if not node_id:
+        return False
     issue_node_id = issue.raw_data["node_id"]
     try:
         github_instance._Github__requester.graphql_named_mutation(
@@ -248,6 +247,8 @@ def assign_copilot(issue, github_instance, package_name: str, check_type: str, f
             return False
 
     node_id = _resolve_copilot_node_id(issue, github_instance)
+    if not node_id:
+        return False
     issue_node_id = issue.raw_data["node_id"]
     try:
         github_instance._Github__requester.graphql_named_mutation(

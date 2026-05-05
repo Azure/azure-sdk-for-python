@@ -14,7 +14,6 @@ import pytest
 from github import GithubException
 
 from gh_tools.vnext_issue_creator import (
-    DEFAULT_COPILOT_NODE_ID,
     LABEL_AUTO_FIX,
     LABEL_AUTO_FIX_DISABLED,
     _is_copilot_already_assigned,
@@ -63,7 +62,15 @@ def _make_github_instance() -> MagicMock:
     g._Github__requester = MagicMock()
     g._Github__requester.graphql_query.return_value = (
         {},
-        {"data": {"node": {"suggestedActors": {"nodes": []}}}},
+        {
+            "data": {
+                "node": {
+                    "suggestedActors": {
+                        "nodes": [{"login": "copilot-swe-agent", "id": "BOT_dynamic"}],
+                    }
+                }
+            }
+        },
     )
     return g
 
@@ -194,7 +201,7 @@ class TestAssignCopilot:
         g._Github__requester.graphql_named_mutation.assert_called_once()
         call_args = g._Github__requester.graphql_named_mutation.call_args
         assert call_args[0][0] == "addAssigneesToAssignable"
-        assert call_args[0][1]["assigneeIds"] == [DEFAULT_COPILOT_NODE_ID]
+        assert call_args[0][1]["assigneeIds"] == ["BOT_dynamic"]
 
     def test_already_assigned_skips(self):
         issue = _make_issue(assignees=["copilot-swe-agent"])
@@ -207,6 +214,16 @@ class TestAssignCopilot:
         g = _make_github_instance()
         g._Github__requester.graphql_named_mutation.side_effect = Exception("mutation failed")
         assert assign_copilot(issue, g, "azure-ai-test", "pylint") is False
+
+    def test_returns_false_when_copilot_node_id_not_found(self):
+        issue = _make_issue()
+        g = _make_github_instance()
+        g._Github__requester.graphql_query.return_value = (
+            {},
+            {"data": {"node": {"suggestedActors": {"nodes": []}}}},
+        )
+        assert assign_copilot(issue, g, "azure-ai-test", "pylint") is False
+        g._Github__requester.graphql_named_mutation.assert_not_called()
 
     def test_resolves_node_id_dynamically(self):
         issue = _make_issue()
