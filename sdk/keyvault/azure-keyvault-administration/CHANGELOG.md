@@ -17,6 +17,7 @@
 ### Other Changes
 
 - Updated minimum `azure-core` version to 1.38.0
+- Key Vault API version `2025-07-01` is now the default
 
 ## 4.6.0 (2025-06-16)
 
