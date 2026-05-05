@@ -47,8 +47,22 @@ class TestComputePerTestingCriteria:
         # Risk categories come first
         assert result[0] == {"testing_criteria": "violence", "passed": 1, "failed": 1, "skipped": 0, "errored": 0}
         # Then attack strategies sorted alphabetically
-        assert result[1] == {"testing_criteria": "Base64", "attack_strategy": "Base64", "passed": 0, "failed": 1, "skipped": 0, "errored": 0}
-        assert result[2] == {"testing_criteria": "baseline", "attack_strategy": "baseline", "passed": 1, "failed": 0, "skipped": 0, "errored": 0}
+        assert result[1] == {
+            "testing_criteria": "Base64",
+            "attack_strategy": "Base64",
+            "passed": 0,
+            "failed": 1,
+            "skipped": 0,
+            "errored": 0,
+        }
+        assert result[2] == {
+            "testing_criteria": "baseline",
+            "attack_strategy": "baseline",
+            "passed": 1,
+            "failed": 0,
+            "skipped": 0,
+            "errored": 0,
+        }
 
     def test_multiple_risk_categories_and_strategies(self):
         """Multiple risk categories and strategies are all represented."""
@@ -259,45 +273,35 @@ class TestComputeResultCount:
 
     def test_passed_row(self):
         """A row with all passed results is classified as passed."""
-        output_items = [
-            {"results": [{"name": "v", "passed": True}, {"name": "s", "passed": True}]}
-        ]
+        output_items = [{"results": [{"name": "v", "passed": True}, {"name": "s", "passed": True}]}]
         result = ResultProcessor._compute_result_count(output_items)
         assert result["passed"] == 1
         assert result["failed"] == 0
 
     def test_failed_row(self):
         """A row with any failed result is classified as failed (failed > passed)."""
-        output_items = [
-            {"results": [{"name": "v", "passed": True}, {"name": "s", "passed": False}]}
-        ]
+        output_items = [{"results": [{"name": "v", "passed": True}, {"name": "s", "passed": False}]}]
         result = ResultProcessor._compute_result_count(output_items)
         assert result["failed"] == 1
         assert result["passed"] == 0
 
     def test_failed_takes_priority_over_passed(self):
         """ASR semantics: failed (attack succeeded) takes priority over passed."""
-        output_items = [
-            {"results": [{"name": "v", "passed": False}, {"name": "s", "passed": True}]}
-        ]
+        output_items = [{"results": [{"name": "v", "passed": False}, {"name": "s", "passed": True}]}]
         result = ResultProcessor._compute_result_count(output_items)
         assert result["failed"] == 1
         assert result["passed"] == 0
 
     def test_skipped_row(self):
         """A row where all results are skipped is classified as skipped."""
-        output_items = [
-            {"results": [{"name": "v", "passed": None, "status": "skipped"}]}
-        ]
+        output_items = [{"results": [{"name": "v", "passed": None, "status": "skipped"}]}]
         result = ResultProcessor._compute_result_count(output_items)
         assert result["skipped"] == 1
         assert result["errored"] == 0
 
     def test_errored_row(self):
         """A row where results have status='error' is classified as errored."""
-        output_items = [
-            {"results": [{"name": "v", "passed": None, "status": "error"}]}
-        ]
+        output_items = [{"results": [{"name": "v", "passed": None, "status": "error"}]}]
         result = ResultProcessor._compute_result_count(output_items)
         assert result["errored"] == 1
         assert result["skipped"] == 0
@@ -346,9 +350,7 @@ class TestComputeResultCount:
 
     def test_passed_none_without_status_is_skipped(self):
         """passed=None without explicit status is treated as skipped."""
-        output_items = [
-            {"results": [{"name": "v", "passed": None}]}
-        ]
+        output_items = [{"results": [{"name": "v", "passed": None}]}]
         result = ResultProcessor._compute_result_count(output_items)
         assert result["skipped"] == 1
 

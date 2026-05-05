@@ -1614,9 +1614,7 @@ class TestEvaluate:
         assert tca_result["passed"] is None
 
         # Row-level: should be "passed" in summary (1 pass, 0 fail, 1 skip)
-        summary = _calculate_aoai_evaluation_summary(
-            results["_evaluation_results_list"], logger, None
-        )
+        summary = _calculate_aoai_evaluation_summary(results["_evaluation_results_list"], logger, None)
         assert summary["result_counts"]["passed"] == 1
         assert summary["result_counts"]["skipped"] == 0
         assert summary["result_counts"]["failed"] == 0
@@ -2810,12 +2808,14 @@ class TestCreateResultObjectStatus:
 
     def test_error_status_with_sample_error_preserved(self):
         """Explicit status='error' with sample.error should preserve status and keep passed=None."""
-        result = self._call({
-            "score": None,
-            "passed": None,
-            "status": "error",
-            "sample": {"error": {"code": "FAILED_EXECUTION", "message": "No tool calls found"}},
-        })
+        result = self._call(
+            {
+                "score": None,
+                "passed": None,
+                "status": "error",
+                "sample": {"error": {"code": "FAILED_EXECUTION", "message": "No tool calls found"}},
+            }
+        )
         assert result["status"] == "error"
         assert result["passed"] is None
         assert result["score"] is None
@@ -2919,7 +2919,15 @@ class TestCalculateAoaiEvaluationSummary:
             self._make_row([self._make_result(name="fluency", passed=True)], "1"),
             self._make_row([self._make_result(name="fluency", passed=None, status="skipped", score=None)], "2"),
             self._make_row(
-                [self._make_result(name="fluency", passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}})],
+                [
+                    self._make_result(
+                        name="fluency",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    )
+                ],
                 "3",
             ),
         ]
@@ -3068,7 +3076,11 @@ class TestCalculateAoaiEvaluationSummary:
             self._make_row([self._make_result(passed=False)], "2"),
             self._make_row([self._make_result(passed=None, status="skipped", score=None)], "3"),
             self._make_row(
-                [self._make_result(passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}})],
+                [
+                    self._make_result(
+                        passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}}
+                    )
+                ],
                 "4",
             ),
             self._make_row([self._make_result(name="sim", passed=None, status="completed", score=0.9)], "5"),
