@@ -7,9 +7,8 @@
 
 from __future__ import annotations
 
-import os
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 from github import GithubException
@@ -18,8 +17,6 @@ from gh_tools.vnext_issue_creator import (
     DEFAULT_COPILOT_NODE_ID,
     LABEL_AUTO_FIX,
     LABEL_AUTO_FIX_DISABLED,
-    _copilot_login,
-    _copilot_node_id,
     _is_copilot_already_assigned,
     _try_auto_fix,
     assign_copilot,
@@ -64,6 +61,10 @@ def _make_github_instance() -> MagicMock:
     """Create a mock Github instance with a requester that supports graphql_named_mutation."""
     g = MagicMock()
     g._Github__requester = MagicMock()
+    g._Github__requester.graphql_query.return_value = (
+        {},
+        {"data": {"node": {"suggestedActors": {"nodes": []}}}},
+    )
     return g
 
 
@@ -207,13 +208,31 @@ class TestAssignCopilot:
         g._Github__requester.graphql_named_mutation.side_effect = Exception("mutation failed")
         assert assign_copilot(issue, g, "azure-ai-test", "pylint") is False
 
-    @patch.dict(os.environ, {"COPILOT_LOGIN": "custom-bot", "COPILOT_NODE_ID": "BOT_custom"})
-    def test_configurable_login_and_node_id(self):
+    def test_resolves_node_id_dynamically(self):
         issue = _make_issue()
         g = _make_github_instance()
+        g._Github__requester.graphql_query.return_value = (
+            {},
+            {
+                "data": {
+                    "node": {
+                        "suggestedActors": {
+                            "nodes": [{"login": "copilot-swe-agent", "id": "BOT_dynamic"}],
+                        }
+                    }
+                }
+            },
+        )
         assert assign_copilot(issue, g, "azure-ai-test", "pylint") is True
         call_args = g._Github__requester.graphql_named_mutation.call_args
-        assert call_args[0][1]["assigneeIds"] == ["BOT_custom"]
+        assert call_args[0][1]["assigneeIds"] == ["BOT_dynamic"]
+
+    def test_force_reassign_returns_false_when_unassign_fails(self):
+        issue = _make_issue(assignees=["copilot-swe-agent"])
+        g = _make_github_instance()
+        g._Github__requester.graphql_named_mutation.side_effect = Exception("remove failed")
+        assert assign_copilot(issue, g, "azure-ai-test", "pylint", force_reassign=True) is False
+        g._Github__requester.graphql_named_mutation.assert_called_once()
 
 
 # ---------------------------------------------------------------------------
@@ -263,7 +282,7 @@ class TestTryAutoFix:
     def test_eligible_with_duplicate_pr_skips(self):
         repo = MagicMock()
         repo.get_pulls.return_value = [
-            _make_pr(title="Fix pylint #1"),
+            _make_pr(body="Fixes #1"),
         ]
         issue = _make_issue(number=1, labels=["pylint"])
         g = _make_github_instance()

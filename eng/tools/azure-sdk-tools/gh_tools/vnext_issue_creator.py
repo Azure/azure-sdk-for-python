@@ -39,7 +39,7 @@ COPILOT_AUTOFIX_END = "<!-- copilot-autofix:end -->"
 
 #: Copilot coding-agent bot login and node ID.
 #: The node ID was retrieved via the suggestedActors GraphQL query on
-#: Azure/azure-sdk-for-python.  Override with env vars if needed.
+#: Azure/azure-sdk-for-python but could potentially change.
 DEFAULT_COPILOT_LOGIN = "copilot-swe-agent"
 DEFAULT_COPILOT_NODE_ID = "BOT_kgDOC9w8XQ"
 
@@ -49,14 +49,54 @@ DEFAULT_COPILOT_NODE_ID = "BOT_kgDOC9w8XQ"
 # ---------------------------------------------------------------------------
 
 
-def _copilot_login() -> str:
-    """Return the Copilot assignable login, configurable via env var."""
-    return os.getenv("COPILOT_LOGIN", DEFAULT_COPILOT_LOGIN)
+def _resolve_copilot_node_id(issue, github_instance) -> str:
+    """Return the Copilot bot node ID, preferring GitHub's assignable actor data."""
+    login = DEFAULT_COPILOT_LOGIN
+    issue_node_id = issue.raw_data["node_id"]
 
+    # dynamically query GitHub for the assignable actor node ID for the Copilot bot
+    try:
+        _, data = github_instance._Github__requester.graphql_query(
+            """
+            query($assignableId: ID!, $login: String!) {
+              node(id: $assignableId) {
+                ... on Issue {
+                  suggestedActors(first: 10, query: $login) {
+                    nodes {
+                      __typename
+                      ... on Bot {
+                        id
+                        login
+                      }
+                      ... on Mannequin {
+                        id
+                        login
+                      }
+                      ... on Organization {
+                        id
+                        login
+                      }
+                      ... on User {
+                        id
+                        login
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            """,
+            {"assignableId": issue_node_id, "login": login},
+        )
+        actors = data.get("data", {}).get("node", {}).get("suggestedActors", {}).get("nodes", [])
+        for actor in actors:
+            if actor.get("login", "").lower() == login.lower() and actor.get("id"):
+                return actor["id"]
+    except Exception as e:
+        logging.warning(f"Failed to resolve Copilot node ID dynamically: {e}")
 
-def _copilot_node_id() -> str:
-    """Return the Copilot bot node ID, configurable via env var."""
-    return os.getenv("COPILOT_NODE_ID", DEFAULT_COPILOT_NODE_ID)
+    logging.warning("Using fallback Copilot node ID")
+    return DEFAULT_COPILOT_NODE_ID
 
 
 def is_auto_fix_eligible(
@@ -155,10 +195,9 @@ def reconcile_auto_fix_labels(issue, eligible: bool) -> None:
 
 def _is_copilot_already_assigned(issue) -> bool:
     """Check whether the Copilot login is already among the issue assignees."""
-    login = _copilot_login()
     for assignee in issue.assignees:
         name = assignee.login if hasattr(assignee, "login") else str(assignee)
-        if name.lower() == login.lower():
+        if name.lower() == DEFAULT_COPILOT_LOGIN.lower():
             return True
     return False
 
@@ -169,8 +208,7 @@ def _unassign_copilot(issue, github_instance) -> bool:
     Uses the GraphQL ``removeAssigneesFromAssignable`` mutation.
     Treats "not currently assigned" as success (idempotent).
     """
-    login = _copilot_login()
-    node_id = _copilot_node_id()
+    node_id = _resolve_copilot_node_id(issue, github_instance)
     issue_node_id = issue.raw_data["node_id"]
     try:
         github_instance._Github__requester.graphql_named_mutation(
@@ -181,10 +219,10 @@ def _unassign_copilot(issue, github_instance) -> bool:
             },
             output_schema="assignable { ... on Issue { id } }",
         )
-        logging.info(f"Unassigned {login} from issue #{issue.number}")
+        logging.info(f"Unassigned {DEFAULT_COPILOT_LOGIN} from issue #{issue.number}")
         return True
     except Exception as e:
-        logging.warning(f"Failed to unassign {login} from issue #{issue.number}: {e}")
+        logging.warning(f"Failed to unassign {DEFAULT_COPILOT_LOGIN} from issue #{issue.number}: {e}")
         return False
 
 
@@ -206,10 +244,10 @@ def assign_copilot(issue, github_instance, package_name: str, check_type: str, f
             logging.info(f"Copilot already assigned to issue #{issue.number}, skipping")
             return True
         logging.info(f"Copilot already assigned to issue #{issue.number}, " f"re-assigning to trigger new session")
-        _unassign_copilot(issue, github_instance)
+        if not _unassign_copilot(issue, github_instance):
+            return False
 
-    login = _copilot_login()
-    node_id = _copilot_node_id()
+    node_id = _resolve_copilot_node_id(issue, github_instance)
     issue_node_id = issue.raw_data["node_id"]
     try:
         github_instance._Github__requester.graphql_named_mutation(
@@ -220,10 +258,10 @@ def assign_copilot(issue, github_instance, package_name: str, check_type: str, f
             },
             output_schema="assignable { ... on Issue { id } }",
         )
-        logging.info(f"Assigned {login} to issue #{issue.number} for {package_name}/{check_type}")
+        logging.info(f"Assigned {DEFAULT_COPILOT_LOGIN} to issue #{issue.number} for {package_name}/{check_type}")
         return True
     except Exception as e:
-        logging.warning(f"Failed to assign {login} to issue #{issue.number}: {e}")
+        logging.warning(f"Failed to assign {DEFAULT_COPILOT_LOGIN} to issue #{issue.number}: {e}")
         return False
 
 
