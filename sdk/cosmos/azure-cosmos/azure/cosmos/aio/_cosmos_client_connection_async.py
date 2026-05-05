@@ -3012,9 +3012,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # we need to set operation_state in kwargs as that's where it is looked at while sending the request
             kwargs.setdefault("timeout", timeout)
 
-        internal_headers_capture: Optional[Dict[str, Any]] = kwargs.pop(
-            "_internal_response_headers_capture", None
-        )
+        # Execution context injects this via request options; keep kwargs fallback
+        # for compatibility with call paths that still thread internal values there.
+        internal_headers_capture: Optional[Dict[str, Any]] = None
+        if options:
+            internal_headers_capture = options.get("_internal_response_headers_capture")
+        if internal_headers_capture is None:
+            internal_headers_capture = kwargs.pop("_internal_response_headers_capture", None)
 
         def _capture_internal_headers(headers: Mapping[str, Any]) -> None:
             # `internal_headers_capture` is Optional[Dict]; checking it
@@ -3348,7 +3352,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         partial_docs = backend_query_result.get("Documents") if backend_query_result else None
                         if isinstance(results_docs, list) and isinstance(partial_docs, list):
                             results_docs.extend(partial_docs)
-                        elif backend_query_result:
+                        elif not results and backend_query_result:
+                            # Preserve already-accumulated rows: only seed from
+                            # fallback payload when no prior merged result exists.
                             results = backend_query_result
 
                     previous_feedrange = pagination_state.head_range

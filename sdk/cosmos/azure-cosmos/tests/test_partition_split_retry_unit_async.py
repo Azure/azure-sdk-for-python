@@ -13,6 +13,7 @@ from unittest.mock import patch
 import pytest
 
 from azure.cosmos import exceptions
+from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
@@ -76,6 +77,99 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
     """
     Async unit tests for 410 partition split retry logic.
     """
+
+    @staticmethod
+    def _create_minimal_connection() -> CosmosClientConnection:
+        client = CosmosClientConnection.__new__(CosmosClientConnection)
+        client.default_headers = {}
+        client.last_response_headers = {}
+        client._UpdateSessionIfRequired = lambda *args, **kwargs: None
+        return client
+
+    async def test_queryfeed_internal_capture_uses_options_dict_async(self):
+        """Async QueryFeed should honor _internal_response_headers_capture from options."""
+        client = self._create_minimal_connection()
+        captured_headers = {"stale": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token", "x-ms-request-charge": "1.0"}
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        async def _fake_get(*args, **kwargs):
+            return {"Documents": [{"id": "doc1"}]}, expected_headers
+
+        with patch('azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async', side_effect=_noop_set_session):
+                with patch.object(client, '_CosmosClientConnection__Get', side_effect=_fake_get):
+                    docs, response_headers = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={"_internal_response_headers_capture": captured_headers},
+                    )
+
+        self.assertEqual(docs, [{"id": "doc1"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(captured_headers, expected_headers)
+        self.assertEqual(client.last_response_headers, expected_headers)
+
+    async def test_queryfeed_internal_capture_falls_back_to_kwargs_async(self):
+        """Async QueryFeed should still support kwargs-based internal capture for compatibility."""
+        client = self._create_minimal_connection()
+        kwargs_capture = {"stale": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token-kwargs", "x-ms-request-charge": "1.0"}
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        async def _fake_get(*args, **kwargs):
+            return {"Documents": [{"id": "doc2"}]}, expected_headers
+
+        with patch('azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async', side_effect=_noop_set_session):
+                with patch.object(client, '_CosmosClientConnection__Get', side_effect=_fake_get):
+                    docs, response_headers = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={},
+                        _internal_response_headers_capture=kwargs_capture,
+                    )
+
+        self.assertEqual(docs, [{"id": "doc2"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(kwargs_capture, expected_headers)
+        self.assertEqual(client.last_response_headers, expected_headers)
+
+    async def test_queryfeed_internal_capture_options_wins_over_kwargs_async(self):
+        """When both are present, async QueryFeed should prefer options-based capture dict."""
+        client = self._create_minimal_connection()
+        options_capture = {"stale-options": "value"}
+        kwargs_capture = {"stale-kwargs": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token-both", "x-ms-request-charge": "1.0"}
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        async def _fake_get(*args, **kwargs):
+            return {"Documents": [{"id": "doc3"}]}, expected_headers
+
+        with patch('azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async', side_effect=_noop_set_session):
+                with patch.object(client, '_CosmosClientConnection__Get', side_effect=_fake_get):
+                    docs, response_headers = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={"_internal_response_headers_capture": options_capture},
+                        _internal_response_headers_capture=kwargs_capture,
+                    )
+
+        self.assertEqual(docs, [{"id": "doc3"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(options_capture, expected_headers)
+        self.assertEqual(kwargs_capture, {"stale-kwargs": "value"})
+        self.assertEqual(client.last_response_headers, expected_headers)
 
     async def test_execution_context_state_reset_on_partition_split_async(self):
         """
@@ -180,6 +274,62 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert call_count[0] == 2
         assert seen_continuations == ["checkpoint-token"]
         assert result == expected_docs
+
+    @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
+    async def test_retry_with_410_uses_queryfeed_captured_checkpoint_end_to_end_async(self, mock_execute):
+        """End-to-end async: QueryFeed stamps capture dict, 410 occurs, retry resumes from checkpoint token."""
+        mock_client = MockClient()
+        query_client = self._create_minimal_connection()
+        query_client._query_compatibility_mode = query_client._QueryCompatibilityMode.Default
+
+        seen_continuations = []
+        execute_call_count = [0]
+
+        async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            continuation = req_headers.get(HttpHeaders.Continuation)
+            if continuation:
+                return {"Documents": [{"id": "resumed"}]}, {}
+            return {"Documents": [{"id": "checkpoint-page"}]}, {HttpHeaders.Continuation: "checkpoint-token"}
+
+        async def execute_side_effect(_client, _global_endpoint_manager, callback, **kwargs):
+            execute_call_count[0] += 1
+            if execute_call_count[0] == 1:
+                await callback()
+                raise create_410_partition_split_error()
+            return await callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        async def fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            docs, headers = await query_client.QueryFeed(
+                path="/dbs/db/colls/c1/docs",
+                collection_id="rid-c1",
+                query="SELECT * FROM c",
+                options=options,
+            )
+            return docs, headers
+
+        def mock_get_headers(*args, **kwargs):
+            options = args[7] if len(args) > 7 else kwargs.get("options", {})
+            headers = {}
+            if options and options.get("continuation") is not None:
+                headers[HttpHeaders.Continuation] = options.get("continuation")
+            return headers
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, fetch_function)
+
+        with patch('azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders', side_effect=mock_get_headers):
+            with patch('azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async', side_effect=_noop_set_session):
+                with patch.object(query_client, '_CosmosClientConnection__Post', side_effect=post_side_effect):
+                    result = await context._fetch_items_helper_with_retries(fetch_function)
+
+        assert execute_call_count[0] == 2
+        assert seen_continuations == [None, "checkpoint-token"]
+        assert result == [{"id": "resumed"}]
 
     @patch('azure.cosmos.aio._retry_utility_async.ExecuteAsync')
     async def test_retry_with_410_ignores_stale_shared_client_headers_async(self, mock_execute):

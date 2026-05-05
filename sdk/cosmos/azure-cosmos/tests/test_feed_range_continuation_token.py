@@ -1094,6 +1094,10 @@ class TestSelectValueProjectionParser:
         query = "SELECT VALUE ARRAY(SELECT VALUE COUNT(1) FROM d IN c.items) FROM c"
         assert _get_select_value_aggregate_function(query) is None
 
+    def test_nested_select_value_in_where_subquery_does_not_drive_outer_detection(self):
+        query = "SELECT c.count FROM c WHERE c.count IN (SELECT VALUE COUNT(1) FROM c)"
+        assert _get_select_value_aggregate_function(query) is None
+
 
 class TestAggregateClassificationHeuristics:
     def test_block_comment_prefix_does_not_drive_outer_select_value_detection(self):

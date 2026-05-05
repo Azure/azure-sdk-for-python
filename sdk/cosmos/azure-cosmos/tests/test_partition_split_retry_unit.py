@@ -13,6 +13,7 @@ from unittest.mock import patch
 import pytest
 
 from azure.cosmos import exceptions
+from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 
@@ -74,6 +75,90 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
     """
     Sync unit tests for 410 partition split retry logic.
     """
+
+    @staticmethod
+    def _create_minimal_connection() -> CosmosClientConnection:
+        client = CosmosClientConnection.__new__(CosmosClientConnection)
+        client.default_headers = {}
+        client.last_response_headers = {}
+        client._UpdateSessionIfRequired = lambda *args, **kwargs: None
+        return client
+
+    def test_queryfeed_internal_capture_uses_options_dict(self):
+        """QueryFeed should honor _internal_response_headers_capture from options."""
+        client = self._create_minimal_connection()
+        captured_headers = {"stale": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token", "x-ms-request-charge": "1.0"}
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(
+                    client,
+                    '_CosmosClientConnection__Get',
+                    return_value=({"Documents": [{"id": "doc1"}]}, expected_headers),
+                ):
+                    docs, response_headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={"_internal_response_headers_capture": captured_headers},
+                    )
+
+        self.assertEqual(docs, [{"id": "doc1"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(captured_headers, expected_headers)
+
+    def test_queryfeed_internal_capture_falls_back_to_kwargs(self):
+        """QueryFeed should still support kwargs-based internal capture for compatibility."""
+        client = self._create_minimal_connection()
+        kwargs_capture = {"stale": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token-kwargs", "x-ms-request-charge": "1.0"}
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(
+                    client,
+                    '_CosmosClientConnection__Get',
+                    return_value=({"Documents": [{"id": "doc2"}]}, expected_headers),
+                ):
+                    docs, response_headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={},
+                        _internal_response_headers_capture=kwargs_capture,
+                    )
+
+        self.assertEqual(docs, [{"id": "doc2"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(kwargs_capture, expected_headers)
+
+    def test_queryfeed_internal_capture_options_wins_over_kwargs(self):
+        """When both are present, options-based capture dict should win over kwargs fallback."""
+        client = self._create_minimal_connection()
+        options_capture = {"stale-options": "value"}
+        kwargs_capture = {"stale-kwargs": "value"}
+        expected_headers = {HttpHeaders.Continuation: "checkpoint-token-both", "x-ms-request-charge": "1.0"}
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', return_value={}):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(
+                    client,
+                    '_CosmosClientConnection__Get',
+                    return_value=({"Documents": [{"id": "doc3"}]}, expected_headers),
+                ):
+                    docs, response_headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query=None,
+                        options={"_internal_response_headers_capture": options_capture},
+                        _internal_response_headers_capture=kwargs_capture,
+                    )
+
+        self.assertEqual(docs, [{"id": "doc3"}])
+        self.assertEqual(response_headers, expected_headers)
+        self.assertEqual(options_capture, expected_headers)
+        self.assertEqual(kwargs_capture, {"stale-kwargs": "value"})
 
     def test_execution_context_state_reset_on_partition_split(self):
         """
@@ -182,6 +267,60 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert call_count[0] == 2
         assert seen_continuations == ["checkpoint-token"]
         assert result == expected_docs
+
+    @patch('azure.cosmos._retry_utility.Execute')
+    def test_retry_with_410_uses_queryfeed_captured_checkpoint_end_to_end(self, mock_execute):
+        """End-to-end: QueryFeed stamps capture dict, 410 occurs, retry resumes from checkpoint token."""
+        mock_client = MockClient()
+        query_client = self._create_minimal_connection()
+        query_client._query_compatibility_mode = query_client._QueryCompatibilityMode.Default
+
+        context = None
+        seen_continuations = []
+        execute_call_count = [0]
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            continuation = req_headers.get(HttpHeaders.Continuation)
+            if continuation:
+                return ({"Documents": [{"id": "resumed"}]}, {})
+            return ({"Documents": [{"id": "checkpoint-page"}]}, {HttpHeaders.Continuation: "checkpoint-token"})
+
+        def execute_side_effect(_client, _global_endpoint_manager, callback, **kwargs):
+            execute_call_count[0] += 1
+            if execute_call_count[0] == 1:
+                callback()
+                raise create_410_partition_split_error()
+            return callback()
+
+        mock_execute.side_effect = execute_side_effect
+
+        def fetch_function(options):
+            seen_continuations.append(options.get("continuation"))
+            docs, headers = query_client.QueryFeed(
+                path="/dbs/db/colls/c1/docs",
+                collection_id="rid-c1",
+                query="SELECT * FROM c",
+                options=options,
+            )
+            return docs, headers
+
+        def mock_get_headers(*args, **kwargs):
+            options = args[7] if len(args) > 7 else kwargs.get("options", {})
+            headers = {}
+            if options and options.get("continuation") is not None:
+                headers[HttpHeaders.Continuation] = options.get("continuation")
+            return headers
+
+        context = _DefaultQueryExecutionContext(mock_client, {}, fetch_function)
+
+        with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', side_effect=mock_get_headers):
+            with patch('azure.cosmos._cosmos_client_connection.base.set_session_token_header', return_value=None):
+                with patch.object(query_client, '_CosmosClientConnection__Post', side_effect=post_side_effect):
+                    result = context._fetch_items_helper_with_retries(fetch_function)
+
+        assert execute_call_count[0] == 2
+        assert seen_continuations == [None, "checkpoint-token"]
+        assert result == [{"id": "resumed"}]
 
     @patch('azure.cosmos._retry_utility.Execute')
     def test_retry_with_410_ignores_stale_shared_client_headers(self, mock_execute):
