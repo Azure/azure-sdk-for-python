@@ -69,7 +69,12 @@ class LocalFileBlob:
             # Use O_CREAT | O_EXCL | O_WRONLY to atomically create the file
             # and fail if it already exists, preventing race conditions.
             fd = os.open(fullpath, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-            with os.fdopen(fd, "w", encoding="utf-8") as file:
+            try:
+                file = os.fdopen(fd, "w", encoding="utf-8")
+            except Exception:
+                os.close(fd)
+                raise
+            with file:
                 for item in data:
                     file.write(json.dumps(item))
                     # The official Python doc: Do not use os.linesep as a line
@@ -258,22 +263,27 @@ class LocalFileStorage:
                     return True
             # Unix
             else:
-                dir_stat = os.lstat(self._path)
-                owner_uid = dir_stat.st_uid
-                current_uid = os.getuid()  # pylint: disable=no-member
-                if owner_uid not in (current_uid, 0):
-                    logger.error(
-                        "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
-                        "Refusing to use this directory.",
-                        self._path,
-                        owner_uid,
-                        current_uid,
-                    )
-                    set_local_storage_setup_state_exception(
-                        f"Directory owned by uid {owner_uid}, expected {current_uid} or 0"
-                    )
-                    return False
-                os.chmod(self._path, 0o700)
+                open_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW  # pylint: disable=no-member
+                dir_fd = os.open(self._path, open_flags)
+                try:
+                    dir_stat = os.fstat(dir_fd)
+                    owner_uid = dir_stat.st_uid
+                    current_uid = os.getuid()  # pylint: disable=no-member
+                    if owner_uid not in (current_uid, 0):
+                        logger.error(
+                            "Storage directory %s is owned by uid %d, not the current user (%d) or admin (uid 0). "
+                            "Refusing to use this directory.",
+                            self._path,
+                            owner_uid,
+                            current_uid,
+                        )
+                        set_local_storage_setup_state_exception(
+                            f"Directory owned by uid {owner_uid}, expected {current_uid} or 0"
+                        )
+                        return False
+                    os.fchmod(dir_fd, 0o700)  # pylint: disable=no-member
+                finally:
+                    os.close(dir_fd)
                 return True
         except OSError as error:
             if getattr(error, "errno", None) == errno.EROFS:  # cspell:disable-line
