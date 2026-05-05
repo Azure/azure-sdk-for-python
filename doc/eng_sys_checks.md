@@ -603,8 +603,9 @@ For `pylint`, `mypy`, `sphinx`, and `pyright` failures, the pipeline automatical
 
 - **You don't need to do anything** if Copilot opens a PR — just review and merge it like any other PR.
 - **To opt out**, add the `copilot-auto-fix-disabled` label to the issue.
-- **If Copilot fails**, the issue gets a `copilot-auto-fix-failed` label and a comment explaining what happened. Remove the label to allow a retry on the next weekly run.
-- **Weekly retry**: if no matching PR exists when the pipeline runs again, Copilot is reassigned automatically.
+- **If Copilot fails** to be assigned, the pipeline logs a warning and retries automatically on the next run.
+- **Version bumps**: when the checker version changes, Copilot is unassigned and reassigned to trigger a fresh fix attempt with the updated errors.
+- **Duplicate detection**: if an open PR already references the issue or mentions the package and check type, Copilot is not reassigned.
 
 To test a "next" check locally, use `--next`:
 
