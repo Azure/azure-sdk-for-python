@@ -22,7 +22,8 @@ try:
     import aiohttp
 except ImportError as exc:
     raise ImportError(
-        "aiohttp is required for azure-ai-voicelive. " "Install it with: pip install azure-ai-voicelive[aiohttp]"
+        "aiohttp is required for azure-ai-voicelive. "
+        "Install it with: pip install azure-ai-voicelive[aiohttp]"
     ) from exc
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
@@ -511,7 +512,7 @@ class VoiceLiveConnection:
                 raise ConnectionClosed(1006, "Empty WebSocket frame")
 
             payload = json.loads(raw.decode("utf-8"))
-            event = cast("ServerEvent", ServerEvent._deserialize(payload, []))
+            event = cast("ServerEvent", ServerEvent._deserialize(payload, []))  # pylint: disable=protected-access
             return event
         except (ValueError, TypeError) as e:
             log.error("Error parsing message: %s", e)
