@@ -25,7 +25,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.ledger.get(
             resource_group_name=resource_group.name,
             ledger_name="str",
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.ledger.begin_delete(
                 resource_group_name=resource_group.name,
                 ledger_name="str",
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -89,7 +89,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -140,7 +140,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -152,7 +152,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_ledger_list_by_resource_group(self, resource_group):
         response = self.client.ledger.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -162,7 +162,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_ledger_list_by_subscription(self, resource_group):
         response = self.client.ledger.list_by_subscription(
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -176,7 +176,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 ledger_name="str",
                 confidential_ledger={"uri": "str", "restoreRegion": "str"},
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -191,7 +191,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 ledger_name="str",
                 confidential_ledger={"fileShareName": "str", "restoreRegion": "str", "uri": "str"},
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

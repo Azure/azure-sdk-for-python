@@ -24,7 +24,7 @@ class TestConfidentialLedgerAsync(AzureMgmtRecordedTestCase):
     async def test_check_name_availability(self, resource_group):
         response = await self.client.check_name_availability(
             name_availability_request={"name": "str", "type": "str"},
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
 
         # please add some check logic here by yourself
