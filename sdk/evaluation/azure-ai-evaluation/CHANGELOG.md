@@ -4,11 +4,15 @@
 
 ### Features Added
 
+- Added `extra_headers` keyword argument to `RaiServiceEvaluatorBase` (and all content safety evaluators) to allow passing custom HTTP headers to all backend RAI service calls. SDK-owned headers (`Authorization`, `User-Agent`, `Content-Type`, `aml-user-token`, `x-ms-client-request-id`) cannot be overridden by `extra_headers`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Moved token usage attributes (`gen_ai.evaluation.usage.input_tokens`, `gen_ai.evaluation.usage.output_tokens`) from standard App Insights event attributes into the `internal_properties` JSON bag to align with internal telemetry conventions.
 
 ## 1.16.6 (2026-04-27)
 

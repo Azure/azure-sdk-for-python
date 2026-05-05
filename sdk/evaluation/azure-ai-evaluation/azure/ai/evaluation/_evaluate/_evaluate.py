@@ -1277,9 +1277,9 @@ def _log_events_to_app_insights(
                 usage = sample.get("usage", {})
                 usage = usage if isinstance(usage, dict) else {}
                 if usage.get("prompt_tokens") is not None:
-                    standard_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
+                    internal_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
                 if usage.get("completion_tokens") is not None:
-                    standard_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
+                    internal_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
 
                 # Combine standard and internal attributes, put internal under the properties bag
                 standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
@@ -2931,8 +2931,11 @@ def _create_result_object(
     sample = metric_values.get("sample")
     properties = metric_values.get("properties")
 
-    # Handle decrease boolean metrics
-    if is_inverse:
+    # Handle decrease boolean metrics — only apply inverse adjustment for
+    # boolean labels (from safety evaluators like indirect_attack). String
+    # labels like "pass"/"fail" (from code-based evaluators like deflection_rate)
+    # indicate the evaluator already computed direction-aware pass/fail.
+    if is_inverse and not (label is not None and isinstance(label, str)):
         score, label, passed = _adjust_for_inverse_metric(label)
 
     # Create result object

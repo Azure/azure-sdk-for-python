@@ -29,26 +29,30 @@ try:
 except ImportError:
     _HAS_OTEL = False
 
-if _HAS_OTEL:
-    # Reuse the global provider if already set by another test module,
-    # otherwise create one. This avoids overriding the provider when
-    # multiple test files run in the same process.
-    _existing = trace.get_tracer_provider()
-    if hasattr(_existing, "add_span_processor"):
-        _PROVIDER = _existing
-    else:
-        _PROVIDER = SdkTracerProvider()
-        trace.set_tracer_provider(_PROVIDER)
-    _EXPORTER = InMemorySpanExporter()
-    _PROVIDER.add_span_processor(SimpleSpanProcessor(_EXPORTER))
-else:
-    _EXPORTER = None
+# Provider setup is deferred to a fixture so that set_tracer_provider() is
+# NOT called at import time.  Module-level calls would consume the global
+# Once guard and break e2e tests that rely on the distro to set the provider.
+_PROVIDER = None
+_EXPORTER = None
+_SETUP_DONE = False
 
 pytestmark = pytest.mark.skipif(not _HAS_OTEL, reason="opentelemetry not installed")
 
 
 @pytest.fixture(autouse=True)
 def _clear():
+    """Set up the OTel provider on first use, then clear spans before each test."""
+    global _PROVIDER, _EXPORTER, _SETUP_DONE
+    if _HAS_OTEL and not _SETUP_DONE:
+        _existing = trace.get_tracer_provider()
+        if hasattr(_existing, "add_span_processor"):
+            _PROVIDER = _existing
+        else:
+            _PROVIDER = SdkTracerProvider()
+            trace.set_tracer_provider(_PROVIDER)
+        _EXPORTER = InMemorySpanExporter()
+        _PROVIDER.add_span_processor(SimpleSpanProcessor(_EXPORTER))
+        _SETUP_DONE = True
     if _EXPORTER:
         _EXPORTER.clear()
 
@@ -59,10 +63,9 @@ def _get_spans():
 
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
-            with patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                app = InvocationAgentServerHost()
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
     @app.invoke_handler
@@ -75,10 +78,9 @@ def _make_server_with_child_span():
 
 def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
-            with patch("azure.ai.agentserver.core._tracing._setup_log_export"):
-                app = InvocationAgentServerHost()
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
     @app.invoke_handler
