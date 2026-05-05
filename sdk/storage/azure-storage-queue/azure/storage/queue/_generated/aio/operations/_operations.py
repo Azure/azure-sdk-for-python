@@ -79,7 +79,8 @@ class ServiceOperations:
 
         :param queue_service_properties: The storage service properties to set. Required.
         :type queue_service_properties: ~azure.storage.queue._generated.models.QueueServiceProperties
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -147,7 +148,8 @@ class ServiceOperations:
         """Retrieves properties of a storage account's Queue service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -225,7 +227,8 @@ class ServiceOperations:
         secondary location endpoint when read-access geo-redundant replication is enabled for the
         storage account.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -306,7 +309,8 @@ class ServiceOperations:
 
         :param key_info: Key information. Required.
         :type key_info: ~azure.storage.queue._generated.models.KeyInfo
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -394,28 +398,29 @@ class ServiceOperations:
         include: Optional[list[Union[str, _models.ListQueuesIncludeType]]] = None,
         **kwargs: Any
     ) -> _models.ListQueuesResponse:
-        """returns a list of the queues under the specified account.
+        """Returns a list of queues.
 
         :keyword prefix: Filters the results to return only queues whose name begins with the specified
          prefix. Default value is None.
         :paramtype prefix: str
-        :keyword marker: A string value that identifies the portion of the list of queues to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all queues remaining to be listed with
-         the current page. The NextMarker value can be used as the value for the marker parameter in a
-         subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
+        :keyword marker: Identifies the portion of the list of queues to be returned with the next
+         listing operation. The operation
+         returns the marker value if the listing operation did not return all queues remaining. The
+         marker value can
+         be used as the value for the marker parameter in a subsequent call to request the next page of
+         list items.
+         The marker value is opaque to the client. Default value is None.
         :paramtype marker: str
         :keyword maxresults: Specifies the maximum number of queues to return. If the request does not
-         specify maxresults, or specifies a value greater than 5000, the server will return up to 5000
-         items. Default value is None.
+         specify maxresults, or specifies
+         a value greater than 5000, the server will return up to 5000 items. Default value is None.
         :paramtype maxresults: int
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
-        :keyword include: Include this parameter to specify that the queue's metadata be returned as
-         part of the response body. Default value is None.
+        :keyword include: Specify to include additional, optional information. Default value is None.
         :paramtype include: list[str or ~azure.storage.queue.models.ListQueuesIncludeType]
         :return: ListQueuesResponse. The ListQueuesResponse is compatible with MutableMapping
         :rtype: ~azure.storage.queue._generated.models.ListQueuesResponse
@@ -509,11 +514,11 @@ class QueueOperations:
 
     @distributed_trace_async
     async def create(self, *, timeout: Optional[int] = None, metadata: Optional[str] = None, **kwargs: Any) -> None:
-        """Creates a new queue under the specified account. If a queue with the same name already exists,
-        the operation succeeds when the metadata is identical and returns 204; if the metadata differs,
-        the operation returns 409.
+        """Creates a new queue. If a queue with the same name already exists, the operation succeeds when
+        the metadata is identical. If the metadata differs, the operation fails.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -576,9 +581,10 @@ class QueueOperations:
 
     @distributed_trace_async
     async def get_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
-        """returns all user-defined metadata and system properties for the specified queue.
+        """Returns all user-defined metadata and system properties for the specified queue.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -642,9 +648,10 @@ class QueueOperations:
 
     @distributed_trace_async
     async def delete(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
-        """operation permanently deletes the specified queue.
+        """Permanently deletes the specified queue.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -706,9 +713,10 @@ class QueueOperations:
     async def set_metadata(
         self, *, timeout: Optional[int] = None, metadata: Optional[str] = None, **kwargs: Any
     ) -> None:
-        """operation sets one or more user-defined name-value pairs for the specified queue.
+        """Sets user-defined metadata for the specified queue.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -771,10 +779,10 @@ class QueueOperations:
 
     @distributed_trace_async
     async def get_access_policy(self, *, timeout: Optional[int] = None, **kwargs: Any) -> _models.SignedIdentifiers:
-        """gets the permissions for the specified queue. The permissions indicate whether queue data may
-        be accessed publicly.
+        """Gets the access policy for the specified queue.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -850,11 +858,12 @@ class QueueOperations:
     async def set_access_policy(
         self, queue_acl: Optional[_models.SignedIdentifiers] = None, *, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """sets the permissions for the specified queue.
+        """Sets the permissions for the specified queue.
 
-        :param queue_acl: The access control list for the queue. Default value is None.
+        :param queue_acl: The access control list. Default value is None.
         :type queue_acl: ~azure.storage.queue._generated.models.SignedIdentifiers
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -930,21 +939,21 @@ class QueueOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ReceivedMessages:
-        """The Dequeue operation retrieves one or more messages from the front of the queue.
+        """Retrieves one or more messages from the front of the queue.
 
-        :keyword number_of_messages: Optional. A nonzero integer value that specifies the number of
-         messages to
+        :keyword number_of_messages: A nonzero integer value that specifies the number of messages to
          retrieve from the queue, up to a maximum of 32. If fewer are visible, the
          visible messages are returned. By default, a single message is retrieved from
          the queue with this operation. Default value is None.
         :paramtype number_of_messages: int
         :keyword visibility_timeout: Specifies the new visibility timeout value, in seconds, relative
-         to server time. The default value is 30 seconds. A specified value must be larger than or equal
-         to 1 second, and cannot be larger than 7 days, or larger than 2 hours on REST protocol versions
-         prior to version 2011-08-18. The visibility timeout of a message can be set to a value later
-         than the expiry time. Default value is None.
+         to server time. A specified value must be
+         larger than or equal to 1 second, and cannot be larger than 7 days. The visibility timeout of
+         a message
+         can be set to a value later than the expiry time. Default value is None.
         :paramtype visibility_timeout: int
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -1020,9 +1029,10 @@ class QueueOperations:
 
     @distributed_trace_async
     async def clear(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None:
-        """The Clear operation deletes all messages from the specified queue.
+        """Deletes all messages from the specified queue.
 
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -1090,28 +1100,27 @@ class QueueOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ListOfSentMessage:
-        """The Enqueue operation adds a new message to the back of the message queue. A visibility timeout
-        can also be specified to make the message invisible until the visibility timeout expires. A
-        message must be in a format that can be included in an XML request with UTF-8 encoding. The
-        encoded message can be up to 64 KB in size for versions 2011-08-18 and newer, or 8 KB in size
-        for previous versions.
+        """Adds a new message to the back of the message queue. A visibility timeout can also be specified
+        to make the message invisible until the visibility timeout expires.
 
-        :param queue_message: A Message object which can be stored in a Queue. Required.
+        :param queue_message: The queue message. The message must be in a format that can be included
+         in an XML request with UTF-8
+         encoding. The encoded message can be up to 64 KB in size. Required.
         :type queue_message: ~azure.storage.queue._generated.models.QueueMessage
         :keyword visibility_timeout: Specifies the new visibility timeout value, in seconds, relative
-         to server time. The default value is 30 seconds. A specified value must be larger than or equal
-         to 1 second, and cannot be larger than 7 days, or larger than 2 hours on REST protocol versions
-         prior to version 2011-08-18. The visibility timeout of a message can be set to a value later
-         than the expiry time. Default value is None.
+         to server time. A specified value must be
+         larger than or equal to 1 second, and cannot be larger than 7 days. The visibility timeout of
+         a message
+         can be set to a value later than the expiry time. Default value is None.
         :paramtype visibility_timeout: int
-        :keyword message_time_to_live: Optional. Specifies the time-to-live interval for the message,
-         in seconds.
+        :keyword message_time_to_live: Specifies the time-to-live interval for the message, in seconds.
          Prior to version 2017-07-29, the maximum time-to-live allowed is 7 days. For
          version 2017-07-29 or later, the maximum time-to-live can be any positive
          number, as well as -1 indicating that the message does not expire. If this
          parameter is omitted, the default time-to-live is 7 days. Default value is None.
         :paramtype message_time_to_live: int
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -1194,16 +1203,16 @@ class QueueOperations:
     async def peek_messages(
         self, *, number_of_messages: Optional[int] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> _models.PeekedMessages:
-        """The Peek operation retrieves one or more messages from the front of the queue, but does not
-        alter the visibility of the message.
+        """Retrieves one or more messages from the front of the queue, but does not alter the visibility
+        of the message.
 
-        :keyword number_of_messages: Optional. A nonzero integer value that specifies the number of
-         messages to
+        :keyword number_of_messages: A nonzero integer value that specifies the number of messages to
          retrieve from the queue, up to a maximum of 32. If fewer are visible, the
          visible messages are returned. By default, a single message is retrieved from
          the queue with this operation. Default value is None.
         :paramtype number_of_messages: int
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -1287,26 +1296,28 @@ class QueueOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None:
-        """The Update operation was introduced with version 2011-08-18 of the Queue service API. The
-        Update Message operation updates the visibility timeout of a message. You can also use this
-        operation to update the contents of a message. A message must be in a format that can be
-        included in an XML request with UTF-8 encoding, and the encoded message can be up to 64KB in
-        size.
+        """Updates the visibility timeout of a message. This operation can also be used to update the
+        contents of a message.
 
-        :param message_id: The id of the queue message. Required.
+        :param message_id: The ID of the queue message. Required.
         :type message_id: str
-        :param queue_message: A Message object which can be stored in a Queue. Default value is None.
+        :param queue_message: The queue message. The message must be in a format that can be included
+         in
+         an XML request with UTF-8 encoding. The encoded message can be up to 64 KB in size. Default
+         value is None.
         :type queue_message: ~azure.storage.queue._generated.models.QueueMessage
-        :keyword pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
-         call to the Get Messages or Update Message operation. Required.
+        :keyword pop_receipt: An opaque value required to delete the message. If deletion fails using
+         this
+         PopReceipt then the message has been dequeued by another client. Required.
         :paramtype pop_receipt: str
         :keyword visibility_timeout: Specifies the new visibility timeout value, in seconds, relative
-         to server time. The default value is 30 seconds. A specified value must be larger than or equal
-         to 1 second, and cannot be larger than 7 days, or larger than 2 hours on REST protocol versions
-         prior to version 2011-08-18. The visibility timeout of a message can be set to a value later
-         than the expiry time. Required.
+         to server time. A specified value must be
+         larger than or equal to 1 second, and cannot be larger than 7 days. The visibility timeout of
+         a message
+         can be set to a value later than the expiry time. Required.
         :paramtype visibility_timeout: int
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int
@@ -1384,14 +1395,16 @@ class QueueOperations:
     async def delete_message(
         self, message_id: str, *, pop_receipt: str, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
-        """The Delete operation deletes the specified message.
+        """Deletes the specified message.
 
-        :param message_id: The id of the queue message. Required.
+        :param message_id: The ID of the queue message. Required.
         :type message_id: str
-        :keyword pop_receipt: Required. Specifies the valid pop receipt value returned from an earlier
-         call to the Get Messages or Update Message operation. Required.
+        :keyword pop_receipt: An opaque value required to delete the message. If deletion fails using
+         this
+         PopReceipt then the message has been dequeued by another client. Required.
         :paramtype pop_receipt: str
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see
+         <a
          href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
          Timeouts for Queue Service Operations.</a>. Default value is None.
         :paramtype timeout: int

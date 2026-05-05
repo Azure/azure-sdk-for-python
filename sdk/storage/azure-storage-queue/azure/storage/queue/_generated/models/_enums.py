@@ -22,12 +22,10 @@ class GeoReplicationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ListQueuesIncludeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Include this parameter to specify that the queue's metadata be returned as part of the response
-    body.
-    """
+    """Specify to include additional, optional information."""
 
     METADATA = "metadata"
-    """Include metadata."""
+    """Include queue metadata."""
 
 
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

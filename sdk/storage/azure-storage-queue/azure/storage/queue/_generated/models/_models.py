@@ -18,13 +18,13 @@ if TYPE_CHECKING:
 
 
 class AccessPolicy(_Model):
-    """Represents an access policy.
+    """The access policy.
 
     :ivar start: The date-time the policy is active.
     :vartype start: str
     :ivar expiry: The date-time the policy expires.
     :vartype expiry: str
-    :ivar permission: The permissions for acl the policy.
+    :ivar permission: The permissions for the policy.
     :vartype permission: str
     """
 
@@ -42,7 +42,7 @@ class AccessPolicy(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Permission", "text": False, "unwrapped": False},
     )
-    """The permissions for acl the policy."""
+    """The permissions for the policy."""
 
     _xml = {"attribute": False, "name": "AccessPolicy", "text": False, "unwrapped": False}
 
@@ -67,10 +67,7 @@ class AccessPolicy(_Model):
 
 
 class CorsRule(_Model):
-    """CORS is an HTTP feature that enables a web application running under one domain to access
-    resources in another domain. Web browsers implement a security restriction known as same-origin
-    policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
-    way to allow one domain (the origin domain) to call APIs in another domain.
+    """The CORS rules.
 
     :ivar allowed_origins: The allowed origins. Required.
     :vartype allowed_origins: str
@@ -216,7 +213,7 @@ class Error(_Model):
 
 
 class GeoReplication(_Model):
-    """Geo-Replication information for the Secondary Storage Service.
+    """Geo replication information for the secondary storage location.
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
      "bootstrap", and "unavailable".
@@ -271,7 +268,7 @@ class KeyInfo(_Model):
     :vartype start: str
     :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
     :vartype expiry: str
-    :ivar delegated_user_tid: The delegated user tenant id in Azure AD.
+    :ivar delegated_user_tid: The delegated user tenant ID in Entra ID.
     :vartype delegated_user_tid: str
     """
 
@@ -290,7 +287,7 @@ class KeyInfo(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "DelegatedUserTid", "text": False, "unwrapped": False},
     )
-    """The delegated user tenant id in Azure AD."""
+    """The delegated user tenant ID in Entra ID."""
 
     _xml = {"attribute": False, "name": "KeyInfo", "text": False, "unwrapped": False}
 
@@ -315,9 +312,9 @@ class KeyInfo(_Model):
 
 
 class ListOfSentMessage(_Model):
-    """List wrapper for EnqueuedMessage array.
+    """The response of send message.
 
-    :ivar items_property: The list of enqueued messages. Required.
+    :ivar items_property: The list of sent messages. Required.
     :vartype items_property: ~azure.storage.queue._generated.models.SentMessage
     """
 
@@ -327,7 +324,7 @@ class ListOfSentMessage(_Model):
         xml={"attribute": False, "itemsName": "QueueMessage", "name": "QueueMessage", "text": False, "unwrapped": True},
         original_tsp_name="items",
     )
-    """The list of enqueued messages. Required."""
+    """The list of sent messages. Required."""
 
     _xml = {"attribute": False, "name": "QueueMessagesList", "text": False, "unwrapped": False}
 
@@ -350,19 +347,20 @@ class ListOfSentMessage(_Model):
 
 
 class ListQueuesResponse(_Model):
-    """The list queue segment response.
+    """The list queues response.
 
     :ivar service_endpoint: The service endpoint. Required.
     :vartype service_endpoint: str
     :ivar prefix: The prefix of the queues. Required.
     :vartype prefix: str
-    :ivar marker: The marker of the queues.
+    :ivar marker: Identifies the current position in the list queues operation.
     :vartype marker: str
-    :ivar max_results: The max results of the queues. Required.
+    :ivar max_results: The max results. Required.
     :vartype max_results: int
-    :ivar queue_items: The queue segment.
+    :ivar queue_items: The list of queues.
     :vartype queue_items: ~azure.storage.queue._generated.models.QueueItem
-    :ivar next_marker: The next marker of the queues. Required.
+    :ivar next_marker: Identifies the portion of the list of queues to be returned with the next
+     listing operation. Required.
     :vartype next_marker: str
     """
 
@@ -381,25 +379,26 @@ class ListQueuesResponse(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
     )
-    """The marker of the queues."""
+    """Identifies the current position in the list queues operation."""
     max_results: int = rest_field(
         name="maxResults",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
     )
-    """The max results of the queues. Required."""
+    """The max results. Required."""
     queue_items: Optional[list["_models.QueueItem"]] = rest_field(
         name="queueItems",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "itemsName": "Queue", "name": "Queues", "text": False, "unwrapped": False},
     )
-    """The queue segment."""
+    """The list of queues."""
     next_marker: str = rest_field(
         name="nextMarker",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
     )
-    """The next marker of the queues. Required."""
+    """Identifies the portion of the list of queues to be returned with the next listing operation.
+     Required."""
 
     _xml = {"attribute": False, "name": "EnumerationResults", "text": False, "unwrapped": False}
 
@@ -552,18 +551,18 @@ class Metrics(_Model):
 
 
 class PeekedMessage(_Model):
-    """The object returned in the QueueMessageList array when calling Peek Messages on a Queue.
+    """The peeked queue message.
 
-    :ivar message_id: The Id of the Message. Required.
+    :ivar message_id: The ID of the message. Required.
     :vartype message_id: str
-    :ivar insertion_time: The time the Message was inserted into the Queue. Required.
+    :ivar insertion_time: The time the message was inserted into the queue. Required.
     :vartype insertion_time: ~datetime.datetime
-    :ivar expiration_time: The time that the Message will expire and be automatically deleted.
+    :ivar expiration_time: The time that the message will expire and be automatically deleted.
      Required.
     :vartype expiration_time: ~datetime.datetime
     :ivar dequeue_count: The number of times the message has been dequeued. Required.
     :vartype dequeue_count: int
-    :ivar message_text: The content of the Message. Required.
+    :ivar message_text: The content of the message. Required.
     :vartype message_text: str
     """
 
@@ -572,21 +571,21 @@ class PeekedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageId", "text": False, "unwrapped": False},
     )
-    """The Id of the Message. Required."""
+    """The ID of the message. Required."""
     insertion_time: datetime.datetime = rest_field(
         name="insertionTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "InsertionTime", "text": False, "unwrapped": False},
     )
-    """The time the Message was inserted into the Queue. Required."""
+    """The time the message was inserted into the queue. Required."""
     expiration_time: datetime.datetime = rest_field(
         name="expirationTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ExpirationTime", "text": False, "unwrapped": False},
     )
-    """The time that the Message will expire and be automatically deleted. Required."""
+    """The time that the message will expire and be automatically deleted. Required."""
     dequeue_count: int = rest_field(
         name="dequeueCount",
         visibility=["read", "create", "update", "delete", "query"],
@@ -598,7 +597,7 @@ class PeekedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageText", "text": False, "unwrapped": False},
     )
-    """The content of the Message. Required."""
+    """The content of the message. Required."""
 
     _xml = {"attribute": False, "name": "QueueMessage", "text": False, "unwrapped": False}
 
@@ -625,7 +624,7 @@ class PeekedMessage(_Model):
 
 
 class PeekedMessages(_Model):
-    """List wrapper for PeekedMessageItem array.
+    """The response of peek messages.
 
     :ivar items_property: The list of peeked messages. Required.
     :vartype items_property: ~azure.storage.queue._generated.models.PeekedMessage
@@ -664,7 +663,7 @@ class QueueItem(_Model):
 
     :ivar name: The name of the queue. Required.
     :vartype name: str
-    :ivar metadata: The metadata of the container.
+    :ivar metadata: The metadata of the queue.
     :vartype metadata: dict[str, str]
     """
 
@@ -677,7 +676,7 @@ class QueueItem(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Metadata", "text": False, "unwrapped": False},
     )
-    """The metadata of the container."""
+    """The metadata of the queue."""
 
     _xml = {"attribute": False, "name": "Queue", "text": False, "unwrapped": False}
 
@@ -701,7 +700,7 @@ class QueueItem(_Model):
 
 
 class QueueMessage(_Model):
-    """A Message object which can be stored in a Queue.
+    """The queue message.
 
     :ivar message_text: The content of the message. Required.
     :vartype message_text: str
@@ -794,7 +793,7 @@ class QueueServiceProperties(_Model):
 
 
 class QueueServiceStats(_Model):
-    """Stats for the storage service.
+    """Statistics for the storage queue service.
 
     :ivar geo_replication: The geo replication stats.
     :vartype geo_replication: ~azure.storage.queue._generated.models.GeoReplication
@@ -828,19 +827,19 @@ class QueueServiceStats(_Model):
 
 
 class ReceivedMessage(_Model):
-    """The object returned in the QueueMessageList array when calling Get Messages on a Queue.
+    """The received queue message.
 
-    :ivar message_id: The Id of the Message. Required.
+    :ivar message_id: The ID of the message. Required.
     :vartype message_id: str
-    :ivar insertion_time: The time the Message was inserted into the Queue. Required.
+    :ivar insertion_time: The time the message was inserted into the queue. Required.
     :vartype insertion_time: ~datetime.datetime
-    :ivar expiration_time: The time that the Message will expire and be automatically deleted.
+    :ivar expiration_time: The time that the message will expire and be automatically deleted.
      Required.
     :vartype expiration_time: ~datetime.datetime
-    :ivar pop_receipt: This value is required to delete the Message. If deletion fails using this
+    :ivar pop_receipt: An opaque value required to delete the message. If deletion fails using this
      PopReceipt then the message has been dequeued by another client. Required.
     :vartype pop_receipt: str
-    :ivar time_next_visible: The time that the message will again become visible in the Queue.
+    :ivar time_next_visible: The time that the message will again become visible in the queue.
      Required.
     :vartype time_next_visible: ~datetime.datetime
     :ivar dequeue_count: The number of times the message has been dequeued. Required.
@@ -854,35 +853,35 @@ class ReceivedMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageId", "text": False, "unwrapped": False},
     )
-    """The Id of the Message. Required."""
+    """The ID of the message. Required."""
     insertion_time: datetime.datetime = rest_field(
         name="insertionTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "InsertionTime", "text": False, "unwrapped": False},
     )
-    """The time the Message was inserted into the Queue. Required."""
+    """The time the message was inserted into the queue. Required."""
     expiration_time: datetime.datetime = rest_field(
         name="expirationTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ExpirationTime", "text": False, "unwrapped": False},
     )
-    """The time that the Message will expire and be automatically deleted. Required."""
+    """The time that the message will expire and be automatically deleted. Required."""
     pop_receipt: str = rest_field(
         name="popReceipt",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "PopReceipt", "text": False, "unwrapped": False},
     )
-    """This value is required to delete the Message. If deletion fails using this PopReceipt then the
-     message has been dequeued by another client. Required."""
+    """An opaque value required to delete the message. If deletion fails using this PopReceipt then
+     the message has been dequeued by another client. Required."""
     time_next_visible: datetime.datetime = rest_field(
         name="timeNextVisible",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "TimeNextVisible", "text": False, "unwrapped": False},
     )
-    """The time that the message will again become visible in the Queue. Required."""
+    """The time that the message will again become visible in the queue. Required."""
     dequeue_count: int = rest_field(
         name="dequeueCount",
         visibility=["read", "create", "update", "delete", "query"],
@@ -923,9 +922,9 @@ class ReceivedMessage(_Model):
 
 
 class ReceivedMessages(_Model):
-    """List wrapper for DequeuedMessageItem array.
+    """The response of receive messages.
 
-    :ivar items_property: The list of dequeued messages. Required.
+    :ivar items_property: The list of received messages. Required.
     :vartype items_property: ~azure.storage.queue._generated.models.ReceivedMessage
     """
 
@@ -935,7 +934,7 @@ class ReceivedMessages(_Model):
         xml={"attribute": False, "itemsName": "QueueMessage", "name": "QueueMessage", "text": False, "unwrapped": True},
         original_tsp_name="items",
     )
-    """The list of dequeued messages. Required."""
+    """The list of received messages. Required."""
 
     _xml = {"attribute": False, "name": "QueueMessagesList", "text": False, "unwrapped": False}
 
@@ -999,19 +998,19 @@ class RetentionPolicy(_Model):
 
 
 class SentMessage(_Model):
-    """The object returned in the QueueMessageList array when calling Put Message on a Queue.
+    """The sent queue message.
 
-    :ivar message_id: The Id of the Message. Required.
+    :ivar message_id: The ID of the message. Required.
     :vartype message_id: str
-    :ivar insertion_time: The time the Message was inserted into the Queue. Required.
+    :ivar insertion_time: The time the message was inserted into the queue. Required.
     :vartype insertion_time: ~datetime.datetime
-    :ivar expiration_time: The time that the Message will expire and be automatically deleted.
+    :ivar expiration_time: The time that the message will expire and be automatically deleted.
      Required.
     :vartype expiration_time: ~datetime.datetime
-    :ivar pop_receipt: This value is required to delete the Message. If deletion fails using this
+    :ivar pop_receipt: An opaque value required to delete the message. If deletion fails using this
      PopReceipt then the message has been dequeued by another client. Required.
     :vartype pop_receipt: str
-    :ivar time_next_visible: The time that the message will again become visible in the Queue.
+    :ivar time_next_visible: The time that the message will again become visible in the queue.
      Required.
     :vartype time_next_visible: ~datetime.datetime
     """
@@ -1021,35 +1020,35 @@ class SentMessage(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "MessageId", "text": False, "unwrapped": False},
     )
-    """The Id of the Message. Required."""
+    """The ID of the message. Required."""
     insertion_time: datetime.datetime = rest_field(
         name="insertionTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "InsertionTime", "text": False, "unwrapped": False},
     )
-    """The time the Message was inserted into the Queue. Required."""
+    """The time the message was inserted into the queue. Required."""
     expiration_time: datetime.datetime = rest_field(
         name="expirationTime",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "ExpirationTime", "text": False, "unwrapped": False},
     )
-    """The time that the Message will expire and be automatically deleted. Required."""
+    """The time that the message will expire and be automatically deleted. Required."""
     pop_receipt: str = rest_field(
         name="popReceipt",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "PopReceipt", "text": False, "unwrapped": False},
     )
-    """This value is required to delete the Message. If deletion fails using this PopReceipt then the
-     message has been dequeued by another client. Required."""
+    """An opaque value required to delete the message. If deletion fails using this PopReceipt then
+     the message has been dequeued by another client. Required."""
     time_next_visible: datetime.datetime = rest_field(
         name="timeNextVisible",
         visibility=["read", "create", "update", "delete", "query"],
         format="rfc7231",
         xml={"attribute": False, "name": "TimeNextVisible", "text": False, "unwrapped": False},
     )
-    """The time that the message will again become visible in the Queue. Required."""
+    """The time that the message will again become visible in the queue. Required."""
 
     _xml = {"attribute": False, "name": "QueueMessage", "text": False, "unwrapped": False}
 
@@ -1118,7 +1117,7 @@ class SignedIdentifier(_Model):
 
 
 class SignedIdentifiers(_Model):
-    """Represents an array of signed identifiers.
+    """An array of signed identifiers.
 
     :ivar items_property: The list of signed identifiers. Required.
     :vartype items_property: ~azure.storage.queue._generated.models.SignedIdentifier
@@ -1161,9 +1160,9 @@ class SignedIdentifiers(_Model):
 class UserDelegationKey(_Model):
     """A user delegation key.
 
-    :ivar signed_oid: The Azure Active Directory object ID in GUID format. Required.
+    :ivar signed_oid: The Entra ID object ID in GUID format. Required.
     :vartype signed_oid: str
-    :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
+    :ivar signed_tid: The Entra ID tenant ID in GUID format. Required.
     :vartype signed_tid: str
     :ivar signed_start: The date-time the key is active. Required.
     :vartype signed_start: str
@@ -1171,9 +1170,9 @@ class UserDelegationKey(_Model):
     :vartype signed_expiry: str
     :ivar signed_service: The service that created the key. Required.
     :vartype signed_service: str
-    :ivar signed_version: The version of the service that created the key. Required.
+    :ivar signed_version: The service version used when creating the key. Required.
     :vartype signed_version: str
-    :ivar signed_delegated_user_tid: The delegated user tenant id in Azure AD. Return if
+    :ivar signed_delegated_user_tid: The delegated user tenant ID in Entra ID. Return if
      DelegatedUserTid is specified.
     :vartype signed_delegated_user_tid: str
     :ivar value: The key as a base64 string. Required.
@@ -1185,13 +1184,13 @@ class UserDelegationKey(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedOid", "text": False, "unwrapped": False},
     )
-    """The Azure Active Directory object ID in GUID format. Required."""
+    """The Entra ID object ID in GUID format. Required."""
     signed_tid: str = rest_field(
         name="signedTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
     )
-    """The Azure Active Directory tenant ID in GUID format. Required."""
+    """The Entra ID tenant ID in GUID format. Required."""
     signed_start: str = rest_field(
         name="signedStart",
         visibility=["read", "create", "update", "delete", "query"],
@@ -1215,13 +1214,13 @@ class UserDelegationKey(_Model):
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedVersion", "text": False, "unwrapped": False},
     )
-    """The version of the service that created the key. Required."""
+    """The service version used when creating the key. Required."""
     signed_delegated_user_tid: Optional[str] = rest_field(
         name="signedDelegatedUserTid",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "SignedDelegatedUserTid", "text": False, "unwrapped": False},
     )
-    """The delegated user tenant id in Azure AD. Return if DelegatedUserTid is specified."""
+    """The delegated user tenant ID in Entra ID. Return if DelegatedUserTid is specified."""
     value: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Value", "text": False, "unwrapped": False},
