@@ -34,12 +34,11 @@ LABEL_AUTO_FIX = "copilot-auto-fix"
 LABEL_AUTO_FIX_FAILED = "copilot-auto-fix-failed"
 LABEL_AUTO_FIX_DISABLED = "copilot-auto-fix-disabled"
 
-#: Copilot coding-agent bot login and node ID
+#: Copilot coding-agent bot login and node ID.
+#: The node ID was retrieved via the suggestedActors GraphQL query on
+#: Azure/azure-sdk-for-python.  Override with env vars if needed.
 DEFAULT_COPILOT_LOGIN = "copilot-swe-agent"
 DEFAULT_COPILOT_NODE_ID = "BOT_kgDOC9w8XQ"
-
-_AUTO_FIX_START = "<!-- auto-fix:start -->"
-_AUTO_FIX_END = "<!-- auto-fix:end -->"
 
 
 # ---------------------------------------------------------------------------
@@ -60,11 +59,7 @@ def _copilot_node_id() -> str:
 def is_auto_fix_eligible(
     issue_labels: list[str],
 ) -> bool:
-    """Return True when the package/check combination qualifies for auto-fix.
-
-    Eligibility requires all of:
-    1. The issue does not carry the opt-out label.
-    """
+    """Return True when the package/check combination qualifies for auto-fix."""
     if LABEL_AUTO_FIX_DISABLED in issue_labels:
         return False
     return True
@@ -93,9 +88,7 @@ def find_existing_fix_prs(
             has_issue_ref = issue_ref in title or issue_ref in body
 
             # 2. PR mentions package + check type
-            has_pkg_and_check = (
-                package_name.lower() in search_text and check_type.lower() in search_text
-            )
+            has_pkg_and_check = package_name.lower() in search_text and check_type.lower() in search_text
 
             if has_issue_ref or has_pkg_and_check:
                 matches.append(pr)
@@ -111,8 +104,7 @@ def build_copilot_instructions(package_path: str, check_type: str) -> str:
     validation_cmd = f"azpysdk {check_type} ."
 
     return (
-        f"\n\n{_AUTO_FIX_START}\n"
-        f"## Copilot auto-fix request\n\n"
+        f"\n\n## Copilot auto-fix request\n\n"
         f"Use the `{skill_name}` skill to resolve `{check_type}` failures "
         f"in `{package_path}`.\n"
         f"Do not make unrelated formatting, changelog, version, or "
@@ -125,21 +117,11 @@ def build_copilot_instructions(package_path: str, check_type: str) -> str:
         f"in response to a vnext compatibility issue.\n\n"
         f"If a safe fix is not possible, leave an issue comment with "
         f"attempted commands, the failure category, and the recommended "
-        f"manual next step.\n"
-        f"{_AUTO_FIX_END}"
+        f"manual next step."
     )
 
 
-def _strip_auto_fix_block(body: str) -> str:
-    """Remove any existing auto-fix instruction block from the issue body."""
-    start = body.find(_AUTO_FIX_START)
-    end = body.find(_AUTO_FIX_END)
-    if start != -1 and end != -1:
-        return body[:start].rstrip() + body[end + len(_AUTO_FIX_END):]
-    return body
-
-
-def reconcile_auto_fix_labels(issue, check_type: str, eligible: bool) -> None:
+def reconcile_auto_fix_labels(issue, eligible: bool) -> None:
     """Add or verify automation labels on the issue.
 
     Preserves all existing labels; only adds auto-fix labels when eligible.
@@ -233,21 +215,17 @@ def _try_auto_fix(
     if not eligible:
         return
 
-    reconcile_auto_fix_labels(issue, check_type, eligible=True)
+    reconcile_auto_fix_labels(issue, eligible=True)
 
     # Duplicate PR detection
     matching_prs = find_existing_fix_prs(repo, issue.number, package_name, check_type)
     if matching_prs:
         pr_urls = ", ".join(pr.html_url for pr in matching_prs)
-        logging.info(
-            f"Skipping Copilot assignment for issue #{issue.number}: "
-            f"matching PR(s) found: {pr_urls}"
-        )
+        logging.info(f"Skipping Copilot assignment for issue #{issue.number}: " f"matching PR(s) found: {pr_urls}")
         return
 
-    # Append / replace Copilot instructions in the issue body
+    # Append Copilot instructions to the issue body
     body = issue.body or ""
-    body = _strip_auto_fix_block(body)
     instructions = build_copilot_instructions(package_path, check_type)
     issue.edit(body=body + instructions)
 

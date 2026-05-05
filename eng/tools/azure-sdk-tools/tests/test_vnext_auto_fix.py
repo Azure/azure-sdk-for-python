@@ -19,12 +19,9 @@ from gh_tools.vnext_issue_creator import (
     LABEL_AUTO_FIX,
     LABEL_AUTO_FIX_DISABLED,
     LABEL_AUTO_FIX_FAILED,
-    _AUTO_FIX_END,
-    _AUTO_FIX_START,
     _copilot_login,
     _copilot_node_id,
     _is_copilot_already_assigned,
-    _strip_auto_fix_block,
     _try_auto_fix,
     assign_copilot,
     build_copilot_instructions,
@@ -85,20 +82,13 @@ def _make_pr(
 class TestIsAutoFixEligible:
     """Tests for is_auto_fix_eligible."""
 
-    def test_any_check_type_eligible(self):
-        assert is_auto_fix_eligible("azure-ai-test", "pylint", []) is True
-        assert is_auto_fix_eligible("azure-ai-test", "mypy", []) is True
-        assert is_auto_fix_eligible("azure-ai-test", "sphinx", []) is True
-        assert is_auto_fix_eligible("azure-ai-test", "pyright", []) is True
-        assert is_auto_fix_eligible("azure-ai-test", "bandit", []) is True
-
-    def test_mgmt_package_eligible(self):
-        assert is_auto_fix_eligible("azure-mgmt-compute", "pylint", []) is True
+    def test_eligible_by_default(self):
+        assert is_auto_fix_eligible([]) is True
+        assert is_auto_fix_eligible(["pylint"]) is True
+        assert is_auto_fix_eligible(["mypy", "some-service-label"]) is True
 
     def test_opt_out_label(self):
-        assert is_auto_fix_eligible(
-            "azure-ai-test", "pylint", [LABEL_AUTO_FIX_DISABLED]
-        ) is False
+        assert is_auto_fix_eligible([LABEL_AUTO_FIX_DISABLED]) is False
 
 
 # ---------------------------------------------------------------------------
@@ -156,31 +146,11 @@ class TestBuildCopilotInstructions:
     def test_contains_required_elements(self, check_type):
         result = build_copilot_instructions("sdk/ai/azure-ai-test", check_type)
 
-        assert _AUTO_FIX_START in result
-        assert _AUTO_FIX_END in result
         assert f"fix-{check_type}" in result
         assert f"azpysdk {check_type} ." in result
         assert "sdk/ai/azure-ai-test" in result
         assert "Automated Fix" in result
         assert "Do not make unrelated" in result
-
-
-# ---------------------------------------------------------------------------
-# Strip auto-fix block tests
-# ---------------------------------------------------------------------------
-
-class TestStripAutoFixBlock:
-
-    def test_removes_block(self):
-        body = f"Hello\n{_AUTO_FIX_START}\ncopilot stuff\n{_AUTO_FIX_END}\ntrailer"
-        result = _strip_auto_fix_block(body)
-        assert _AUTO_FIX_START not in result
-        assert "copilot stuff" not in result
-        assert "trailer" in result
-
-    def test_no_block_unchanged(self):
-        body = "No auto-fix block here"
-        assert _strip_auto_fix_block(body) == body
 
 
 # ---------------------------------------------------------------------------
@@ -318,7 +288,7 @@ class TestTryAutoFix:
         # Instructions appended
         issue.edit.assert_called_once()
         body_arg = issue.edit.call_args[1]["body"]
-        assert _AUTO_FIX_START in body_arg
+        assert "Copilot auto-fix request" in body_arg
         # Copilot assigned via GraphQL
         g._Github__requester.graphql_named_mutation.assert_called_once()
 
