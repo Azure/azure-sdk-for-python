@@ -1832,10 +1832,10 @@ def build_beta_training_jobs_list_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/training/jobs"
+    _url = "/jobs"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
     if job_type is not None:
         _params["jobType"] = _SERIALIZER.query("job_type", job_type, "str")
     if tag is not None:
@@ -1859,7 +1859,7 @@ def build_beta_training_jobs_get_request(name: str, **kwargs: Any) -> HttpReques
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/training/jobs/{name}"
+    _url = "/jobs/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1867,7 +1867,7 @@ def build_beta_training_jobs_get_request(name: str, **kwargs: Any) -> HttpReques
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1886,7 +1886,7 @@ def build_beta_training_jobs_create_or_update_request(  # pylint: disable=name-t
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/training/jobs/{name}"
+    _url = "/jobs/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1894,7 +1894,7 @@ def build_beta_training_jobs_create_or_update_request(  # pylint: disable=name-t
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     # Construct headers
     if content_type is not None:
@@ -1911,7 +1911,7 @@ def build_beta_training_jobs_begin_delete_request(  # pylint: disable=name-too-l
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/training/jobs/{name}"
+    _url = "/jobs/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1919,7 +1919,7 @@ def build_beta_training_jobs_begin_delete_request(  # pylint: disable=name-too-l
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
@@ -1931,7 +1931,7 @@ def build_beta_training_jobs_begin_cancel_request(  # pylint: disable=name-too-l
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/training/jobs/{name}/cancel"
+    _url = "/jobs/{name}/cancel"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1939,7 +1939,7 @@ def build_beta_training_jobs_begin_cancel_request(  # pylint: disable=name-too-l
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 

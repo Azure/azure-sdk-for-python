@@ -22,6 +22,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Opt-in keys for enabling preview Foundry features."""
 
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""
     SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
@@ -36,6 +38,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TOOLSET_V1_PREVIEW."""
     AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
     """AGENT_ENDPOINT_V1_PREVIEW."""
+    JOBS_V1_PREVIEW = "Jobs=V1Preview"
+    """JOBS_V1_PREVIEW."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
