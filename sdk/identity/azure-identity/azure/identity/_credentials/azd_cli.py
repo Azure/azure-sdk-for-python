@@ -265,18 +265,18 @@ def extract_cli_error_message(output: str) -> Optional[str]:
       * v1.24.0+: ``{"error":"...","message":"...","suggestion":"..."}`` (single line)
       * v1.23.7 - v1.23.15: an empty ``{"type":"consoleMessage",...}`` line followed by
         the structured ``{"error":"..."}`` line
-      * pre-v1.23.7 (legacy): one or more ``{"type":"consoleMessage","data":{"message":"..."}}``
-        lines
+      * pre-v1.23.7 (legacy): a single ``{"type":"consoleMessage","data":{"message":"..."}}``
+        line whose ``data.message`` carries the entire ``ERROR: ...`` output
 
     The structured ``"error"`` field is preferred when present; otherwise the function falls
-    back to the legacy ``consoleMessage`` parsing logic. Returns ``None`` if no message can
-    be extracted.
+    back to the first non-empty legacy ``consoleMessage`` ``data.message``. Returns ``None``
+    if no message can be extracted.
 
     :param str output: The output from the Azure Developer CLI command.
     :return: A user-friendly error message if found, otherwise None.
     :rtype: Optional[str]
     """
-    messages: List[str] = []
+    fallback: Optional[str] = None
     for line in output.splitlines():
         line = line.strip()
         if not line:
@@ -293,29 +293,15 @@ def extract_cli_error_message(output: str) -> Optional[str]:
         if isinstance(err, str) and err.strip():
             return sanitize_output(err.strip())
 
-        # Fall back to the legacy consoleMessage data.message field.
-        data = obj.get("data")
-        if isinstance(data, dict):
-            msg = data.get("message")
-            if isinstance(msg, str) and msg.strip():
-                messages.append(msg.strip())
-                continue
-        msg = obj.get("message")
-        if isinstance(msg, str) and msg.strip():
-            messages.append(msg.strip())
+        # Fall back to the first non-empty legacy consoleMessage data.message.
+        if fallback is None:
+            data = obj.get("data")
+            if isinstance(data, dict):
+                msg = data.get("message")
+                if isinstance(msg, str) and msg.strip():
+                    fallback = msg.strip()
 
-    if not messages:
-        return None
-
-    # Prefer the suggestion line if present
-    for msg in messages:
-        if "suggestion" in msg.lower():
-            return sanitize_output(msg)
-
-    # If more than one message exists, return the last one
-    if len(messages) > 1:
-        return sanitize_output(messages[-1])
-    return sanitize_output(messages[0])
+    return sanitize_output(fallback) if fallback else None
 
 
 def _run_command(command_args: List[str], timeout: int) -> str:
