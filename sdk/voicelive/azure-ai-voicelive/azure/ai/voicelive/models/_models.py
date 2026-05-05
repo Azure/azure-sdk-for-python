@@ -5065,13 +5065,13 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
     event:
 
     * The server is generating a Response, which if successful will produce
-    either one or two Items, which will be of type `message`
-    (role `assistant`) or type `function_call`.
+      either one or two Items, which will be of type `message`
+      (role `assistant`) or type `function_call`.
     * The input audio buffer has been committed, either by the client or the
-    server (in `server_vad` mode). The server will take the content of the
-    input audio buffer and add it to a new user message Item.
+      server (in `server_vad` mode). The server will take the content of the
+      input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item
-    to the Conversation.
+      to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str
