@@ -10,14 +10,14 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
-from typing import List, Any, Union
+from typing import List, Any, Optional
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI
-from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
 from .._patch import _AuthSecretsFilter
+from ..models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
@@ -47,10 +47,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
      the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
      Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
      Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
      or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
@@ -68,7 +66,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        credential: AsyncTokenCredential,
         *,
         allow_preview: bool = False,
         **kwargs: Any,
@@ -104,7 +102,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
-    def get_openai_client(self, **kwargs: Any) -> AsyncOpenAI:
+    def get_openai_client(self, *, agent_name: Optional[str] = None, **kwargs: Any) -> AsyncOpenAI:
         """Get an authenticated AsyncOpenAI client from the `openai` package.
 
         Keyword arguments are passed to the AsyncOpenAI client constructor.
@@ -112,17 +110,22 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         The AsyncOpenAI client constructor is called with:
 
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
+          If ``agent_name`` is provided (and ``allow_preview=True`` was set on the AIProjectClient), ``base_url``
+          is instead set to the Agent's endpoint ``{endpoint}/agents/{agent_name}/endpoint/protocols/openai``.
           Can be overridden by passing ``base_url`` as a keyword argument.
-        * If :class:`~azure.ai.projects.aio.AIProjectClient` was constructed with a bearer token, ``api_key`` is set
-          to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient
-          constructor, with scope ``https://ai.azure.com/.default``.
+        * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
+          AIProjectClient constructor, with scope "https://ai.azure.com/.default".
           Can be overridden by passing ``api_key`` as a keyword argument.
-        * If :class:`~azure.ai.projects.aio.AIProjectClient` was constructed with ``api-key``, it is passed to the
-          OpenAI constructor as is. Can be overridden by passing ``api_key`` as a keyword argument.
+
+        :keyword agent_name: Optional name of an Agent. When provided, the AsyncOpenAI client's ``base_url``
+            is pointed at the Agent's endpoint. Requires ``allow_preview=True`` to have been set on the
+            AIProjectClient constructor; otherwise a :exc:`ValueError` is raised.
+        :paramtype agent_name: str or None
 
         :return: An authenticated AsyncOpenAI client
         :rtype: ~openai.AsyncOpenAI
 
+        :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set on the client.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -131,35 +134,48 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         # Allow caller to override base_url
         if "base_url" in kwargs:
             base_url = kwargs.pop("base_url")
+        elif agent_name is not None:
+            if self._config.allow_preview:
+                base_url = (
+                    self._config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
+                )  # pylint: disable=protected-access
+            else:
+                raise ValueError(
+                    "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
+                    "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
+                    "\nsubject to change. They should not be used in production environments."
+                )
         else:
             base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
+
+        default_query = dict[str, str](kwargs.pop("default_query", None) or {})
+        if agent_name is not None and "api-version" not in default_query:
+            default_query["api-version"] = self._config.api_version  # pylint: disable=protected-access
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
             base_url,
         )
 
-        # Allow caller to override api_key, otherwise use api-key or token provider given during AIProjectClient constructor
+        # Allow caller to override api_key, otherwise use token provider
         if "api_key" in kwargs:
             api_key = kwargs.pop("api_key")
         else:
-            api_key = (
-                self._config.credential.key  # pylint: disable=protected-access
-                if isinstance(self._config.credential, AzureKeyCredential)
-                else get_bearer_token_provider(
-                    self._config.credential,  # pylint: disable=protected-access
-                    "https://ai.azure.com/.default",
-                )
+            api_key = get_bearer_token_provider(
+                self._config.credential,  # pylint: disable=protected-access
+                "https://ai.azure.com/.default",
             )
 
         if "http_client" in kwargs:
             http_client = kwargs.pop("http_client")
         elif self._console_logging_enabled:
-            http_client = httpx.AsyncClient(transport=OpenAILoggingTransport())
+            http_client = httpx.AsyncClient(transport=_OpenAILoggingTransport())
         else:
             http_client = None
 
         default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
+        if agent_name is not None and not _has_header_case_insensitive(default_headers, _FOUNDRY_FEATURES_HEADER_NAME):
+            default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _BETA_OPERATION_FEATURE_HEADERS["agents"]
 
         openai_custom_user_agent = default_headers.get("User-Agent", None)
 
@@ -167,6 +183,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             return AsyncOpenAI(
                 api_key=api_key,
                 base_url=base_url,
+                default_query=default_query,
                 http_client=http_client,
                 **kwargs,
             )
@@ -191,7 +208,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         return client
 
 
-class OpenAILoggingTransport(httpx.AsyncHTTPTransport):
+class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
     """Custom HTTP async transport that logs OpenAI API requests and responses to the console.
 
     This transport wraps httpx.AsyncHTTPTransport to intercept all HTTP traffic and print

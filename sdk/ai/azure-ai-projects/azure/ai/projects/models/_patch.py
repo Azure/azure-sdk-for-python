@@ -16,23 +16,44 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from ._patch_evaluation_typeddicts import (
+    AzureAIAgentTargetParam,
+    AzureAIBenchmarkPreviewEvalRunDataSource,
+    AzureAIDataSourceConfig,
+    AzureAIModelTargetParam,
+    AzureAIResponsesEvalRunDataSource,
+    EvalCsvFileIdSource,
+    EvalCsvRunDataSource,
+    TestingCriterionAzureAIEvaluator,
+    ModelSamplingConfigParam,
+    RedTeamEvalRunDataSource,
+    ResponseRetrievalItemGenerationParams,
+    TargetCompletionEvalRunDataSource,
+    ToolDescriptionParam,
+    TracesPreviewEvalRunDataSource,
+)
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
-from ._enums import FoundryFeaturesOptInKeys
-from ._patch_jobs import CommandJob, CommandJobLimits, Diagnostic, ValidationResult, load_job
+from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
 
-_BETA_OPERATION_FEATURE_HEADERS: dict = {
-    "evaluation_taxonomies": FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
-    "evaluators": FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
-    "insights": FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
-    "memory_stores": FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
-    "red_teams": FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
-    "schedules": FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolsets": FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
-    "training": FoundryFeaturesOptInKeys.JOBS_V1_PREVIEW.value,
+_BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
+    "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
+    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
+    "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
+    "agents": ",".join(
+        [
+            _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
+            _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+        ]
+    ),
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 
@@ -348,14 +369,23 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
 
 __all__: List[str] = [
-    "CommandJob",
-    "CommandJobLimits",
-    "Diagnostic",
-    "ValidationResult",
-    "load_job",
-    "CustomCredential",
-    "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
+    "AzureAIAgentTargetParam",
+    "AzureAIBenchmarkPreviewEvalRunDataSource",
+    "AzureAIDataSourceConfig",
+    "AzureAIModelTargetParam",
+    "AzureAIResponsesEvalRunDataSource",
+    "CustomCredential",
+    "EvalCsvFileIdSource",
+    "EvalCsvRunDataSource",
+    "TestingCriterionAzureAIEvaluator",
+    "ModelSamplingConfigParam",
+    "RedTeamEvalRunDataSource",
+    "ResponseRetrievalItemGenerationParams",
+    "TargetCompletionEvalRunDataSource",
+    "ToolDescriptionParam",
+    "TracesPreviewEvalRunDataSource",
+    "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

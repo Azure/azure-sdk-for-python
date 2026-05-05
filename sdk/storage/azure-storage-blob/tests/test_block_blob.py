@@ -730,6 +730,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         assert content.properties.etag == put_block_list_resp.get('etag')
         assert content.properties.last_modified == put_block_list_resp.get('last_modified')
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_put_block_with_immutability_policy(self, **kwargs):

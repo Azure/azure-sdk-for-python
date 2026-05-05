@@ -12,32 +12,21 @@ from typing import Any, List
 from ._patch_agents_async import AgentsOperations
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
-from ._patch_evaluators_async import BetaEvaluatorsOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
-from ._patch_jobs_async import TrainingJobsOperations
+from ._patch_sessions_async import BetaAgentsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
+    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
-    BetaToolsetsOperations,
-    BetaTrainingOperations as GeneratedBetaTrainingOperations,
+    BetaSkillsOperations,
+    BetaToolboxesOperations,
 )
-
-
-class BetaTrainingOperations(GeneratedBetaTrainingOperations):
-    """Training operations with patched :class:`~azure.ai.projects.aio.operations.TrainingJobsOperations`."""
-
-    jobs: TrainingJobsOperations
-    """:class:`~azure.ai.projects.aio.operations.TrainingJobsOperations` operations"""
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.jobs = TrainingJobsOperations(*args, **kwargs)
 
 
 class BetaOperations(GeneratedBetaOperations):
@@ -50,8 +39,8 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
-    training: BetaTrainingOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaTrainingOperations` operations"""
+    agents: BetaAgentsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaAgentsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations
@@ -64,15 +53,17 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaRedTeamsOperations` operations"""
     schedules: BetaSchedulesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
-    toolsets: BetaToolsetsOperations
-    """:class:`~azure.ai.projects.operations.BetaToolsetsOperations` operations"""
+    toolboxes: BetaToolboxesOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaToolboxesOperations` operations"""
+    skills: BetaSkillsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched class that returns CommandJob from get/create_or_update operations
-        self.training = BetaTrainingOperations(*args, **kwargs)
         # Replace with patched class that includes upload()
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that adds file-path overload to upload_session_file
+        self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
 
@@ -86,6 +77,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "BetaAgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
@@ -93,12 +85,12 @@ __all__: List[str] = [
     "BetaOperations",
     "BetaRedTeamsOperations",
     "BetaSchedulesOperations",
-    "BetaToolsetsOperations",
+    "BetaSkillsOperations",
+    "BetaToolboxesOperations",
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
     "TelemetryOperations",
-    "TrainingJobsOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

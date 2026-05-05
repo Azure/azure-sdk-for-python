@@ -60,7 +60,6 @@ sys.path.insert(0, str(TESTS_ROOT))
 from sample_executor import AsyncSampleExecutor, SyncSampleExecutor  # pylint: disable=wrong-import-position
 from test_base import patched_open_crlf_to_lf  # pylint: disable=wrong-import-position
 
-
 LOG_FILE_PATTERNS = {
     "AZURE_TEST_RUN_LIVE": "true",
     "SAMPLE_TEST_PASSED_LOG": "<sample_filename>_success_<timestamp>.log",

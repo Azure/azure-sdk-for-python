@@ -13,6 +13,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
+
 @pytest.mark.live_test_only
 class TestDataProtectionManagementResourceGuardsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
@@ -32,4 +33,4 @@ class TestDataProtectionManagementResourceGuardsOperationsAsync(AzureMgmtRecorde
     async def test_list_by_subscription(self, resource_group):
         response = self.client.resource_guards.get_resources_in_subscription()
         result = [r async for r in response]
-        assert response
+        assert len(result)

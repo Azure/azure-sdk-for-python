@@ -37,6 +37,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -55,37 +56,33 @@ def main() -> None:
         print("Creating an OpenAI client from the AI Project client")
 
         data_source_config = DataSourceConfigCustom(
-            {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                        "tool_definitions": {
-                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
-                        },
-                        "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    },
-                    "required": ["query", "tool_definitions"],
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {
+                    "query": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
+                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                    "tool_calls": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                 },
-                "include_sample_schema": True,
-            }
+                "required": ["query", "tool_definitions"],
+            },
+            include_sample_schema=True,
         )
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "tool_call_accuracy",
-                "evaluator_name": "builtin.tool_call_accuracy",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-                "data_mapping": {
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="tool_call_accuracy",
+                evaluator_name="builtin.tool_call_accuracy",
+                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                data_mapping={
                     "query": "{{item.query}}",
                     "tool_definitions": "{{item.tool_definitions}}",
                     "tool_calls": "{{item.tool_calls}}",
                     "response": "{{item.response}}",
                 },
-            }
+            )
         ]
 
         print("Creating Evaluation")

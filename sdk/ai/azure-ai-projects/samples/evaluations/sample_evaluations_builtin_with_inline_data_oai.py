@@ -46,20 +46,18 @@ client = OpenAI(
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
 data_source_config = DataSourceConfigCustom(
-    {
-        "type": "custom",
-        "item_schema": {
-            "type": "object",
-            "properties": {
-                "query": {"type": "string"},
-                "response": {"type": "string"},
-                "context": {"type": "string"},
-                "ground_truth": {"type": "string"},
-            },
-            "required": [],
+    type="custom",
+    item_schema={
+        "type": "object",
+        "properties": {
+            "query": {"type": "string"},
+            "response": {"type": "string"},
+            "context": {"type": "string"},
+            "ground_truth": {"type": "string"},
         },
-        "include_sample_schema": True,
-    }
+        "required": [],
+    },
+    include_sample_schema=True,
 )
 
 testing_criteria = [

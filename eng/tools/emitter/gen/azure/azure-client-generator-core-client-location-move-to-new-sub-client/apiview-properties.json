@@ -1,0 +1,9 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToNewSubClient",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.clientlocation.newsubclient.operations.ProductOperationsOperations.list_products": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToNewSubClient.ProductOperations.listProducts",
+        "specs.azure.clientgenerator.core.clientlocation.newsubclient.aio.operations.ProductOperationsOperations.list_products": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToNewSubClient.ProductOperations.listProducts",
+        "specs.azure.clientgenerator.core.clientlocation.newsubclient.operations.ArchiveOperationsOperations.archive_product": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToNewSubClient.ProductOperations.archiveProduct",
+        "specs.azure.clientgenerator.core.clientlocation.newsubclient.aio.operations.ArchiveOperationsOperations.archive_product": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToNewSubClient.ProductOperations.archiveProduct"
+    }
+}

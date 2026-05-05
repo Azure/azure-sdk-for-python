@@ -30,7 +30,6 @@ from azure.ai.projects.models import (
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.core.credentials import AzureKeyCredential
 
 # Store reference to built-in open before any mocking occurs
 _BUILTIN_OPEN = open
@@ -71,6 +70,7 @@ servicePreparer = functools.partial(
     bing_custom_user_input="Tell me more about foundry agent service",
     memory_store_chat_model_deployment_name="sanitized-model-deployment-name",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
+    foundry_agent_container_image="sanitizedregistry.azurecr.io/sanitized/sessions-agent:latest",
 )
 
 fineTuningServicePreparer = functools.partial(
@@ -296,14 +296,10 @@ class TestBase(AzureRecordedTestCase):
         return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
 
     # helper function: create projects client using environment variables
-    def create_client(self, *, allow_preview: bool = False, use_api_key: bool = False, **kwargs) -> AIProjectClient:
+    def create_client(self, *, allow_preview: bool = False, **kwargs) -> AIProjectClient:
         # fetch environment variables
         endpoint = kwargs.pop("foundry_project_endpoint")
-        if use_api_key:
-            api_key = kwargs.pop("foundry_project_api_key")
-            credential = AzureKeyCredential(api_key)
-        else:
-            credential = self.get_credential(AIProjectClient, is_async=False)
+        credential = self.get_credential(AIProjectClient, is_async=False)
 
         print(f"Creating AIProjectClient with endpoint: {endpoint}")
 
@@ -317,16 +313,10 @@ class TestBase(AzureRecordedTestCase):
         return client
 
     # helper function: create async projects client using environment variables
-    def create_async_client(
-        self, *, allow_preview: bool = False, use_api_key: bool = False, **kwargs
-    ) -> AsyncAIProjectClient:
+    def create_async_client(self, *, allow_preview: bool = False, **kwargs) -> AsyncAIProjectClient:
         # fetch environment variables
         endpoint = kwargs.pop("foundry_project_endpoint")
-        if use_api_key:
-            api_key = kwargs.pop("foundry_project_api_key")
-            credential = AzureKeyCredential(api_key)
-        else:
-            credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+        credential = self.get_credential(AsyncAIProjectClient, is_async=True)
 
         print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 

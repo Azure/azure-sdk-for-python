@@ -12,6 +12,7 @@
     "closefd",
     "cogsvc",
     "CSDL",
+    "dedup",
     "evals",
     "FineTuning",
     "fspath",
@@ -30,7 +31,8 @@
     "Tadmaq",
     "Udbk",
     "UPIA",
-    "xhigh"
+    "xhigh",
+    "Vnext"
   ],
   "ignorePaths": [
     "*.csv",

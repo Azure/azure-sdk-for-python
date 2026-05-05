@@ -44,6 +44,10 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _build_internal_log_attributes,
     _extract_testing_criteria_metadata,
     _process_criteria_metrics,
+    _log_events_to_app_insights,
+    _adjust_for_inverse_metric,
+    _is_inverse_metric,
+    _create_result_object,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -2087,3 +2091,345 @@ class TestProcessCriteriaMetricsThresholdInjection:
         )
         assert len(results) > 0
         assert results[0]["threshold"] == 3.0
+
+
+try:
+    import opentelemetry  # noqa: F401
+
+    MISSING_OPENTELEMETRY = False
+except ImportError:
+    MISSING_OPENTELEMETRY = True
+
+
+@pytest.mark.unittest
+@pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
+class TestLogEventsTokenUsage:
+    """Tests for token usage attributes in _log_events_to_app_insights."""
+
+    def _make_mock_event_logger(self):
+        """Create a mock event logger that captures emitted events."""
+        emitted = []
+
+        class FakeEventLogger:
+            def emit(self, event):
+                emitted.append(event)
+
+        return FakeEventLogger(), emitted
+
+    def test_token_usage_emitted_in_standard_attributes(self):
+        """prompt_tokens and completion_tokens from sample.usage should appear as standard attributes."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "100"
+        assert attrs["gen_ai.evaluation.usage.output_tokens"] == "50"
+
+    def test_token_usage_not_in_internal_properties(self):
+        """Token usage should be in standard attributes, not inside internal_properties."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        assert "gen_ai.evaluation.usage.input_tokens" not in internal_props
+        assert "gen_ai.evaluation.usage.output_tokens" not in internal_props
+
+    def test_token_usage_absent_when_no_sample(self):
+        """No token usage attributes when sample is missing."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+    def test_token_usage_absent_when_usage_empty(self):
+        """No token usage attributes when sample.usage is empty dict."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5, "sample": {"usage": {}}}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+    def test_token_usage_absent_when_sample_not_dict(self):
+        """When sample is not a dict (e.g. NaN), the event fails to log entirely."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5, "sample": float("nan")}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        # sample=NaN causes the event to fail; no event is emitted
+        assert len(emitted) == 0
+
+    def test_token_usage_zero_values_emitted(self):
+        """Token usage of 0 should be emitted, not dropped."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 0,
+                        "completion_tokens": 0,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "0"
+        assert attrs["gen_ai.evaluation.usage.output_tokens"] == "0"
+
+    def test_token_usage_partial_only_prompt(self):
+        """Only prompt_tokens present should emit only input_tokens."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 42,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "42"
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+
+class TestAdjustForInverseMetric:
+    """Tests for _adjust_for_inverse_metric handling of boolean labels."""
+
+    def test_boolean_true_returns_fail(self):
+        """Boolean True (violation detected) should map to fail."""
+        score, label, passed = _adjust_for_inverse_metric(True)
+        assert score == 0.0
+        assert label == "fail"
+        assert passed is False
+
+    def test_boolean_false_returns_pass(self):
+        """Boolean False (no violation) should map to pass."""
+        score, label, passed = _adjust_for_inverse_metric(False)
+        assert score == 1.0
+        assert label == "pass"
+        assert passed is True
+
+    def test_none_returns_pass(self):
+        """None label should default to pass (no violation detected)."""
+        score, label, passed = _adjust_for_inverse_metric(None)
+        assert score == 1.0
+        assert label == "pass"
+        assert passed is True
+
+
+class TestIsInverseMetric:
+    """Tests for _is_inverse_metric identifying decrease boolean metrics."""
+
+    def test_hardcoded_inverse_metric(self):
+        """Metrics in the hardcoded inverse lists should return True."""
+        logger = logging.getLogger("test")
+        # indirect_attack maps to metric names like "xpia"
+        assert _is_inverse_metric("xpia", [], logger, None, None) is True
+
+    def test_explicitly_configured_inverse_metric(self):
+        """Metrics in the explicit inverse_metric list should return True."""
+        logger = logging.getLogger("test")
+        assert _is_inverse_metric("deflection_rate", ["deflection_rate"], logger, None, None) is True
+
+    def test_non_inverse_metric(self):
+        """Regular metrics should return False."""
+        logger = logging.getLogger("test")
+        assert _is_inverse_metric("coherence", [], logger, None, None) is False
+
+    def test_deflection_rate_not_in_hardcoded_list(self):
+        """deflection_rate is not in the hardcoded list (only in dynamic config)."""
+        logger = logging.getLogger("test")
+        assert _is_inverse_metric("deflection_rate", [], logger, None, None) is False
+
+
+class TestCreateResultObjectInverseMetric:
+    """Integration tests for _create_result_object with is_inverse=True.
+
+    Verifies that inverse adjustment is skipped for string labels (from
+    code-based evaluators like deflection_rate that already compute
+    direction-aware pass/fail) and applied for boolean labels (from
+    safety evaluators).
+    """
+
+    def test_inverse_metric_string_fail_label_preserved(self):
+        """deflection_rate: score=1, label='fail' should be preserved (not adjusted)."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": 1,
+            "label": "fail",
+            "reason": "AI deflected the query",
+            "threshold": 0,
+            "passed": False,
+        }
+        result = _create_result_object(
+            criteria_name="deflection_rate",
+            metric="deflection_rate",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=True,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "fail"
+        assert result["passed"] is False
+        assert result["score"] == 1
+
+    def test_inverse_metric_string_pass_label_preserved(self):
+        """deflection_rate: score=0, label='pass' should be preserved (not adjusted)."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": 0,
+            "label": "pass",
+            "reason": "AI resolved the query",
+            "threshold": 0,
+            "passed": True,
+        }
+        result = _create_result_object(
+            criteria_name="deflection_rate",
+            metric="deflection_rate",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=True,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "pass"
+        assert result["passed"] is True
+        assert result["score"] == 0
+
+    def test_inverse_metric_boolean_true_label_adjusted(self):
+        """Safety evaluator: boolean True with is_inverse=True should be adjusted."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": True,
+            "label": True,
+        }
+        result = _create_result_object(
+            criteria_name="indirect_attack",
+            metric="xpia",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=True,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "fail"
+        assert result["passed"] is False
+        assert result["score"] == 0.0
+
+    def test_non_inverse_metric_preserves_values(self):
+        """Non-inverse metric should not modify label/score."""
+        logger = logging.getLogger("test")
+        metric_values = {
+            "score": 4,
+            "label": "pass",
+            "passed": True,
+        }
+        result = _create_result_object(
+            criteria_name="coherence",
+            metric="coherence",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=False,
+            logger=logger,
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert result["label"] == "pass"
+        assert result["passed"] is True
+        assert result["score"] == 4

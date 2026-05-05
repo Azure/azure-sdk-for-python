@@ -15,6 +15,7 @@ test_required_header_async.py (async):
   - FoundryFeaturesHeaderTestBase with utility/assertion class methods
 """
 
+from __future__ import annotations  # To make `dict[str, Any] | None` work on Python 3.9
 import inspect
 import pytest
 import tempfile
@@ -40,8 +41,9 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "memory_stores": "MemoryStores=V1Preview",
     "red_teams": "RedTeams=V1Preview",
     "schedules": "Schedules=V1Preview",
-    "toolsets": "Toolsets=V1Preview",
-    "training": "Jobs=V1Preview",
+    "toolboxes": "Toolboxes=V1Preview",
+    "skills": "Skills=V1Preview",
+    "agents": "HostedAgents=V1Preview,AgentEndpoints=V1Preview",
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
@@ -155,16 +157,20 @@ class FoundryFeaturesHeaderTestBase:
         return {}
 
     @classmethod
-    def _make_fake_call(cls, method: Any) -> Any:
+    def _make_fake_call(cls, method: Any, extra_kwargs: dict[str, Any] | None = None) -> Any:
         """Return a zero-argument callable that invokes *method* with fake args.
 
         Only required parameters (no default, or default is the _Unset sentinel
         from either the sync or async generated operations module) are populated.
         Optional ones are omitted so as not to trigger extra validation paths.
+
+        *extra_kwargs*, when provided, are merged into the keyword arguments
+        passed to *method* (useful for parameters that are optional in the
+        signature but required at runtime).
         """
         sig = inspect.signature(method)
         args: list[Any] = []
-        kwargs: dict[str, Any] = {}
+        kwargs: dict[str, Any] = dict(extra_kwargs) if extra_kwargs else {}
 
         for param_name, param in sig.parameters.items():
             if param_name in ("self", "cls"):

@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from .. import models as _models
-from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
+from ..models._enums import _AgentDefinitionOptInKeys
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 """
@@ -35,13 +35,13 @@ _PREVIEW_FEATURE_REQUIRED_CODE: Final = "preview_feature_required"
 _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
     '\n**Python SDK users**: This operation requires you to set "allow_preview=True" '
     "when calling the AIProjectClient constructor. "
-    "\nNote that preview features are under development and subject to change."
+    "\nNote that preview features are under development and subject to change. They should not be used in production environments."
 )
 _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
         _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        _FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
     ]
 )
 

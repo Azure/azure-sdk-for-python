@@ -55,7 +55,7 @@ def build_agent_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -92,7 +92,7 @@ def build_agent_pools_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -137,7 +137,7 @@ def build_agent_pools_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}"
     path_format_arguments = {
@@ -173,7 +173,7 @@ def build_agent_pools_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -200,7 +200,7 @@ def build_agent_pools_abort_latest_operation_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/abort"
     path_format_arguments = {
@@ -223,7 +223,7 @@ def build_agent_pools_complete_upgrade_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/completeUpgrade"
     path_format_arguments = {
@@ -248,7 +248,7 @@ def build_agent_pools_delete_machines_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/deleteMachines"
     path_format_arguments = {
@@ -276,7 +276,7 @@ def build_agent_pools_upgrade_node_image_version_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -305,7 +305,7 @@ def build_agent_pools_get_available_agent_pool_versions_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -333,7 +333,7 @@ def build_agent_pools_get_upgrade_profile_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -362,7 +362,7 @@ def build_managed_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -397,7 +397,7 @@ def build_managed_clusters_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -440,7 +440,7 @@ def build_managed_clusters_update_tags_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -483,7 +483,7 @@ def build_managed_clusters_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}"
     path_format_arguments = {
@@ -518,7 +518,7 @@ def build_managed_clusters_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -543,7 +543,7 @@ def build_managed_clusters_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -569,7 +569,7 @@ def build_managed_clusters_get_access_profile_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -603,7 +603,7 @@ def build_managed_clusters_list_cluster_admin_credentials_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -639,7 +639,7 @@ def build_managed_clusters_list_cluster_user_credentials_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -676,7 +676,7 @@ def build_managed_clusters_list_cluster_monitoring_user_credentials_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -707,7 +707,7 @@ def build_managed_clusters_reset_service_principal_profile_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetServicePrincipalProfile"
     path_format_arguments = {
@@ -735,7 +735,7 @@ def build_managed_clusters_reset_aad_profile_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/resetAADProfile"
     path_format_arguments = {
@@ -761,7 +761,7 @@ def build_managed_clusters_rotate_cluster_certificates_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/rotateClusterCertificates"
     path_format_arguments = {
@@ -783,7 +783,7 @@ def build_managed_clusters_abort_latest_operation_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/abort"
     path_format_arguments = {
@@ -805,7 +805,7 @@ def build_managed_clusters_rotate_service_account_signing_keys_request(  # pylin
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/rotateServiceAccountSigningKeys"
     path_format_arguments = {
@@ -827,7 +827,7 @@ def build_managed_clusters_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/stop"
     path_format_arguments = {
@@ -849,7 +849,7 @@ def build_managed_clusters_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/start"
     path_format_arguments = {
@@ -873,7 +873,7 @@ def build_managed_clusters_run_command_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -903,7 +903,7 @@ def build_managed_clusters_get_command_result_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -932,7 +932,7 @@ def build_managed_clusters_list_outbound_network_dependencies_endpoints_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -961,7 +961,7 @@ def build_managed_clusters_rebalance_load_balancers_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/rebalanceLoadBalancers"
     path_format_arguments = {
@@ -988,7 +988,7 @@ def build_managed_clusters_get_upgrade_profile_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1016,7 +1016,7 @@ def build_managed_clusters_get_guardrails_versions_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1044,7 +1044,7 @@ def build_managed_clusters_list_guardrails_versions_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1073,7 +1073,7 @@ def build_managed_clusters_get_safeguards_versions_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1101,7 +1101,7 @@ def build_managed_clusters_list_safeguards_versions_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1130,7 +1130,7 @@ def build_managed_clusters_get_mesh_revision_profile_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1158,7 +1158,7 @@ def build_managed_clusters_list_mesh_revision_profiles_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1187,7 +1187,7 @@ def build_managed_clusters_get_mesh_upgrade_profile_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1216,7 +1216,7 @@ def build_managed_clusters_list_mesh_upgrade_profiles_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1244,7 +1244,7 @@ def build_managed_clusters_list_kubernetes_versions_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1273,7 +1273,7 @@ def build_maintenance_configurations_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1303,7 +1303,7 @@ def build_maintenance_configurations_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1333,7 +1333,7 @@ def build_maintenance_configurations_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/maintenanceConfigurations/{configName}"
     path_format_arguments = {
@@ -1357,7 +1357,7 @@ def build_maintenance_configurations_list_by_managed_cluster_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1385,7 +1385,7 @@ def build_managed_namespaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1415,7 +1415,7 @@ def build_managed_namespaces_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1447,7 +1447,7 @@ def build_managed_namespaces_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1477,7 +1477,7 @@ def build_managed_namespaces_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/managedNamespaces/{managedNamespaceName}"
     path_format_arguments = {
@@ -1501,7 +1501,7 @@ def build_managed_namespaces_list_by_managed_cluster_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1529,7 +1529,7 @@ def build_managed_namespaces_list_credential_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1563,7 +1563,7 @@ def build_machines_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1602,7 +1602,7 @@ def build_machines_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1640,7 +1640,7 @@ def build_machines_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1673,7 +1673,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1709,7 +1709,7 @@ def build_private_endpoint_connections_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1745,7 +1745,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -1771,7 +1771,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1799,7 +1799,7 @@ def build_snapshots_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1828,7 +1828,7 @@ def build_snapshots_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1859,7 +1859,7 @@ def build_snapshots_update_tags_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1888,7 +1888,7 @@ def build_snapshots_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/snapshots/{resourceName}"
     path_format_arguments = {
@@ -1911,7 +1911,7 @@ def build_snapshots_list_by_resource_group_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1936,7 +1936,7 @@ def build_snapshots_list_request(subscription_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1962,7 +1962,7 @@ def build_managed_cluster_snapshots_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1991,7 +1991,7 @@ def build_managed_cluster_snapshots_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2022,7 +2022,7 @@ def build_managed_cluster_snapshots_update_tags_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2051,7 +2051,7 @@ def build_managed_cluster_snapshots_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedclustersnapshots/{resourceName}"
     path_format_arguments = {
@@ -2074,7 +2074,7 @@ def build_managed_cluster_snapshots_list_by_resource_group_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2101,7 +2101,7 @@ def build_managed_cluster_snapshots_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2131,7 +2131,7 @@ def build_trusted_access_role_bindings_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2167,7 +2167,7 @@ def build_trusted_access_role_bindings_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2203,7 +2203,7 @@ def build_trusted_access_role_bindings_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/trustedAccessRoleBindings/{trustedAccessRoleBindingName}"
     path_format_arguments = {
@@ -2229,7 +2229,7 @@ def build_trusted_access_role_bindings_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2257,7 +2257,7 @@ def build_load_balancers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2287,7 +2287,7 @@ def build_load_balancers_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2317,7 +2317,7 @@ def build_load_balancers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/loadBalancers/{loadBalancerName}"
     path_format_arguments = {
@@ -2341,7 +2341,7 @@ def build_load_balancers_list_by_managed_cluster_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2369,7 +2369,7 @@ def build_identity_bindings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2399,7 +2399,7 @@ def build_identity_bindings_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2429,7 +2429,7 @@ def build_identity_bindings_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/identityBindings/{identityBindingName}"
     path_format_arguments = {
@@ -2453,7 +2453,7 @@ def build_identity_bindings_list_by_managed_cluster_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2481,7 +2481,7 @@ def build_jwt_authenticators_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2511,7 +2511,7 @@ def build_jwt_authenticators_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2541,7 +2541,7 @@ def build_jwt_authenticators_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/jwtAuthenticators/{jwtAuthenticatorName}"
     path_format_arguments = {
@@ -2565,7 +2565,7 @@ def build_jwt_authenticators_list_by_managed_cluster_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2593,7 +2593,7 @@ def build_mesh_memberships_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2623,7 +2623,7 @@ def build_mesh_memberships_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2653,7 +2653,7 @@ def build_mesh_memberships_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/meshMemberships/{meshMembershipName}"
     path_format_arguments = {
@@ -2677,7 +2677,7 @@ def build_mesh_memberships_list_by_managed_cluster_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2703,7 +2703,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2729,7 +2729,7 @@ def build_operation_status_result_get_by_agent_pool_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2759,7 +2759,7 @@ def build_operation_status_result_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2787,7 +2787,7 @@ def build_operation_status_result_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2816,7 +2816,7 @@ def build_private_link_resources_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2845,7 +2845,7 @@ def build_resolve_private_link_service_id_post_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2873,7 +2873,7 @@ def build_trusted_access_roles_list_request(location: str, subscription_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2902,7 +2902,7 @@ def build_container_service_list_node_image_versions_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2929,7 +2929,7 @@ def build_vm_skus_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3731,9 +3731,9 @@ class AgentPoolsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3741,7 +3741,7 @@ class AgentPoolsOperations:
                 "agent_pool_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _complete_upgrade_initial(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -3810,9 +3810,9 @@ class AgentPoolsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -3820,7 +3820,7 @@ class AgentPoolsOperations:
                 "agent_pool_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_complete_upgrade(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -5058,8 +5058,8 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         )
 
     @api_version_validation(
-        params_added_on={"2026-01-02-preview": ["ignore_pod_disruption_budget"]},
-        api_versions_list=["2025-10-01", "2026-01-01", "2026-01-02-preview"],
+        params_added_on={"2026-02-02-preview": ["ignore_pod_disruption_budget"]},
+        api_versions_list=["2025-10-01", "2026-01-01", "2026-02-01", "2026-02-02-preview"],
     )
     def _delete_initial(
         self,
@@ -5143,8 +5143,8 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        params_added_on={"2026-01-02-preview": ["ignore_pod_disruption_budget"]},
-        api_versions_list=["2025-10-01", "2026-01-01", "2026-01-02-preview"],
+        params_added_on={"2026-02-02-preview": ["ignore_pod_disruption_budget"]},
+        api_versions_list=["2025-10-01", "2026-01-01", "2026-02-01", "2026-02-02-preview"],
     )
     def begin_delete(
         self,
@@ -7252,9 +7252,9 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -7262,7 +7262,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _rebalance_load_balancers_initial(
         self,
@@ -7428,9 +7428,9 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -7438,7 +7438,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_rebalance_load_balancers(
         self,
@@ -9719,9 +9719,9 @@ class MachinesOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9734,7 +9734,7 @@ class MachinesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -9953,9 +9953,9 @@ class MachinesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -9968,7 +9968,7 @@ class MachinesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_create_or_update(
         self,
@@ -11344,11 +11344,11 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.ManagedClusterSnapshot:
         """Gets a managed cluster snapshot.
@@ -11502,9 +11502,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11513,7 +11513,7 @@ class ManagedClusterSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def create_or_update(
         self,
@@ -11690,9 +11690,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11701,7 +11701,7 @@ class ManagedClusterSnapshotsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def update_tags(
         self,
@@ -11793,11 +11793,11 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name"]
+            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name"]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -11859,9 +11859,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
-        params_added_on={"2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-01-02-preview"],
+        method_added_on="2026-02-02-preview",
+        params_added_on={"2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-02-02-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -11961,9 +11961,9 @@ class ManagedClusterSnapshotsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
-        params_added_on={"2026-01-02-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-01-02-preview"],
+        method_added_on="2026-02-02-preview",
+        params_added_on={"2026-02-02-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-02-02-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models.ManagedClusterSnapshot"]:
         """Gets a list of managed cluster snapshots in the specified subscription.
@@ -12652,9 +12652,9 @@ class LoadBalancersOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12663,7 +12663,7 @@ class LoadBalancersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def get(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -12831,9 +12831,9 @@ class LoadBalancersOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12843,7 +12843,7 @@ class LoadBalancersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def create_or_update(
         self,
@@ -12938,9 +12938,9 @@ class LoadBalancersOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12948,7 +12948,7 @@ class LoadBalancersOperations:
                 "load_balancer_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -13017,9 +13017,9 @@ class LoadBalancersOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13027,7 +13027,7 @@ class LoadBalancersOperations:
                 "load_balancer_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -13092,11 +13092,11 @@ class LoadBalancersOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -13216,9 +13216,9 @@ class IdentityBindingsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13227,7 +13227,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def get(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -13304,9 +13304,9 @@ class IdentityBindingsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13316,7 +13316,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -13493,9 +13493,9 @@ class IdentityBindingsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13505,7 +13505,7 @@ class IdentityBindingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_create_or_update(
         self,
@@ -13586,9 +13586,9 @@ class IdentityBindingsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13596,7 +13596,7 @@ class IdentityBindingsOperations:
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -13665,9 +13665,9 @@ class IdentityBindingsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13675,7 +13675,7 @@ class IdentityBindingsOperations:
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -13740,11 +13740,11 @@ class IdentityBindingsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -13864,9 +13864,9 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13875,7 +13875,7 @@ class JWTAuthenticatorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def get(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -13952,9 +13952,9 @@ class JWTAuthenticatorsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13964,7 +13964,7 @@ class JWTAuthenticatorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -14141,9 +14141,9 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14153,7 +14153,7 @@ class JWTAuthenticatorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_create_or_update(
         self,
@@ -14235,9 +14235,9 @@ class JWTAuthenticatorsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14245,7 +14245,7 @@ class JWTAuthenticatorsOperations:
                 "jwt_authenticator_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -14314,9 +14314,9 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14324,7 +14324,7 @@ class JWTAuthenticatorsOperations:
                 "jwt_authenticator_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -14389,11 +14389,11 @@ class JWTAuthenticatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -14513,9 +14513,9 @@ class MeshMembershipsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14524,7 +14524,7 @@ class MeshMembershipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def get(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -14601,9 +14601,9 @@ class MeshMembershipsOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14613,7 +14613,7 @@ class MeshMembershipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -14789,9 +14789,9 @@ class MeshMembershipsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14801,7 +14801,7 @@ class MeshMembershipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_create_or_update(
         self,
@@ -14882,9 +14882,9 @@ class MeshMembershipsOperations:
         )
 
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14892,7 +14892,7 @@ class MeshMembershipsOperations:
                 "mesh_membership_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -14961,9 +14961,9 @@ class MeshMembershipsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14971,7 +14971,7 @@ class MeshMembershipsOperations:
                 "mesh_membership_name",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -15036,11 +15036,11 @@ class MeshMembershipsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -15267,9 +15267,9 @@ class OperationStatusResultOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15279,7 +15279,7 @@ class OperationStatusResultOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def get_by_agent_pool(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, operation_id: str, **kwargs: Any
@@ -15360,11 +15360,11 @@ class OperationStatusResultOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-02-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def list(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -15466,9 +15466,9 @@ class OperationStatusResultOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-01-02-preview",
+        method_added_on="2026-02-02-preview",
         params_added_on={
-            "2026-01-02-preview": [
+            "2026-02-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15477,7 +15477,7 @@ class OperationStatusResultOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-02-preview"],
+        api_versions_list=["2026-02-02-preview"],
     )
     def get(
         self, resource_group_name: str, resource_name: str, operation_id: str, **kwargs: Any

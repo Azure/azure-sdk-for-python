@@ -8,19 +8,18 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import DeploymentTemplate
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class DeploymentTemplateOperations(_ScopeDependentOperations):
     """DeploymentTemplateOperations.
 
@@ -51,10 +50,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         """
         try:
             # Import here to avoid circular dependencies
-            from azure.ai.ml.operations import RegistryOperations
             from azure.ai.ml._restclient.v2022_10_01_preview import (
                 AzureMachineLearningWorkspaces as ServiceClient102022,
             )
+            from azure.ai.ml.operations import RegistryOperations
 
             # Try to get credential from service client or operation config
             credential = None
@@ -140,9 +139,6 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
         # Handle field name variations for constructor parameters
         allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceTypes")
-        if isinstance(allowed_instance_types, str):
-            # Convert space-separated string to list
-            allowed_instance_types = allowed_instance_types.split()
 
         default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
         deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")
@@ -264,6 +260,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.List", ActivityType.PUBLICAPI)
+    @experimental
     def list(
         self,
         *,
@@ -310,6 +307,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
+    @experimental
     def get(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Get a deployment template by name and version.
 
@@ -342,6 +340,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @experimental
     def create_or_update(self, deployment_template: DeploymentTemplate, **kwargs: Any) -> DeploymentTemplate:
         """Create or update a deployment template.
 
@@ -375,6 +374,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Delete", ActivityType.PUBLICAPI)
+    @experimental
     def delete(self, name: str, version: Optional[str] = None, **kwargs: Any) -> None:
         """Delete a deployment template.
 
@@ -408,6 +408,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Archive", ActivityType.PUBLICAPI)
+    @experimental
     def archive(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Archive a deployment template by setting its stage to 'Archived'.
 
@@ -430,6 +431,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Restore", ActivityType.PUBLICAPI)
+    @experimental
     def restore(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
         """Restore a deployment template by setting its stage to 'Development'.
 

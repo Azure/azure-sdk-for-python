@@ -37,6 +37,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 )
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -55,30 +56,26 @@ def main() -> None:
         print("Creating an OpenAI client from the AI Project client")
 
         data_source_config = DataSourceConfigCustom(
-            {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {
-                        "tool_definitions": {
-                            "anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]
-                        },
-                        "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
-                    },
-                    "required": ["response"],
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {
+                    "tool_definitions": {"anyOf": [{"type": "object"}, {"type": "array", "items": {"type": "object"}}]},
+                    "response": {"anyOf": [{"type": "string"}, {"type": "array", "items": {"type": "object"}}]},
                 },
-                "include_sample_schema": True,
-            }
+                "required": ["response"],
+            },
+            include_sample_schema=True,
         )
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "tool_call_success",
-                "evaluator_name": "builtin.tool_call_success",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-                "data_mapping": {"tool_definitions": "{{item.tool_definitions}}", "response": "{{item.response}}"},
-            }
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="tool_call_success",
+                evaluator_name="builtin.tool_call_success",
+                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                data_mapping={"tool_definitions": "{{item.tool_definitions}}", "response": "{{item.response}}"},
+            )
         ]
 
         print("Creating Evaluation")
