@@ -83,7 +83,7 @@ class TestLocalFileBlob(unittest.TestCase):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "write_error_blob"))
         test_input = [1, 2, 3]
 
-        with mock.patch("builtins.open", side_effect=PermissionError("Cannot write to file")):
+        with mock.patch("os.open", side_effect=PermissionError("Cannot write to file")):
             result = blob.put(test_input)
             self.assertIsInstance(result, str)
             self.assertIn("Cannot write to file", result)
@@ -619,29 +619,34 @@ class TestLocalFileStorage(unittest.TestCase):
         # Clear any existing exception state (set to empty string, not None)
         set_local_storage_setup_state_exception("")
 
+        mock_stat_result = mock.MagicMock()
+        mock_stat_result.st_uid = 1000
+
         # Mock Unix environment and chmod failure
         with mock.patch("os.name", "posix"):  # Unix
             with mock.patch("os.makedirs"):  # Allow directory creation
-                with mock.patch("os.chmod", side_effect=OSError(test_error_message)):
-                    stor = LocalFileStorage(os.path.join(TEST_FOLDER, "chmod_failure_test"))
+                with mock.patch("os.lstat", return_value=mock_stat_result):
+                    with mock.patch("os.getuid", create=True, return_value=1000):
+                        with mock.patch("os.chmod", side_effect=OSError(test_error_message)):
+                            stor = LocalFileStorage(os.path.join(TEST_FOLDER, "chmod_failure_test"))
 
-                    # Storage should be disabled due to chmod failure
-                    self.assertFalse(stor._enabled)
+                            # Storage should be disabled due to chmod failure
+                            self.assertFalse(stor._enabled)
 
-                    # Exception state should be set with the error message
-                    exception_state = get_local_storage_setup_state_exception()
-                    self.assertEqual(exception_state, test_error_message)
+                            # Exception state should be set with the error message
+                            exception_state = get_local_storage_setup_state_exception()
+                            self.assertEqual(exception_state, test_error_message)
 
-                    # When storage is disabled, put() behavior depends on readonly state
-                    result = stor.put(test_input)
-                    if get_local_storage_setup_state_readonly():
-                        # Readonly takes priority over exception state
-                        self.assertEqual(result, StorageExportResult.CLIENT_READONLY)
-                    else:
-                        # If readonly not set, should return the exception message
-                        self.assertEqual(result, test_error_message)
+                            # When storage is disabled, put() behavior depends on readonly state
+                            result = stor.put(test_input)
+                            if get_local_storage_setup_state_readonly():
+                                # Readonly takes priority over exception state
+                                self.assertEqual(result, StorageExportResult.CLIENT_READONLY)
+                            else:
+                                # If readonly not set, should return the exception message
+                                self.assertEqual(result, test_error_message)
 
-                    stor.close()
+                            stor.close()
 
         # Clean up
         set_local_storage_setup_state_exception("")
@@ -949,26 +954,31 @@ class TestLocalFileStorage(unittest.TestCase):
             def mock_makedirs(path, mode=0o777, exist_ok=False):
                 makedirs_calls.append((path, oct(mode), exist_ok))
 
+            mock_stat_result = mock.MagicMock()
+            mock_stat_result.st_uid = 1000
+
             with mock.patch(f"{STORAGE_MODULE}.os.makedirs", side_effect=mock_makedirs):
-                with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
-                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
-                        stor = LocalFileStorage(storage_abs_path)
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_stat_result):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
 
-                        self.assertTrue(stor._enabled)
+                                self.assertTrue(stor._enabled)
 
-                        self.assertEqual(
-                            makedirs_calls,
-                            [(storage_abs_path, "0o777", True)],
-                            f"Unexpected makedirs calls: {makedirs_calls}",
-                        )
+                                self.assertEqual(
+                                    makedirs_calls,
+                                    [(storage_abs_path, "0o777", True)],
+                                    f"Unexpected makedirs calls: {makedirs_calls}",
+                                )
 
-                        self.assertEqual(
-                            {(storage_abs_path, "0o700")},
-                            set(chmod_calls),
-                            f"Unexpected chmod calls: {chmod_calls}",
-                        )
+                                self.assertEqual(
+                                    {(storage_abs_path, "0o700")},
+                                    set(chmod_calls),
+                                    f"Unexpected chmod calls: {chmod_calls}",
+                                )
 
-                        stor.close()
+                                stor.close()
 
         # Clean up
         set_local_storage_setup_state_exception("")
@@ -1024,17 +1034,211 @@ class TestLocalFileStorage(unittest.TestCase):
                     raise PermissionError(test_error_message)
                 raise OSError(f"Unexpected chmod call: {path}, {oct(mode)}")
 
+            mock_stat_result = mock.MagicMock()
+            mock_stat_result.st_uid = 1000
+
             with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
-                with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
-                    with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
-                        stor = LocalFileStorage(storage_abs_path)
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_stat_result):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod", side_effect=mock_chmod):
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
 
-                        self.assertFalse(stor._enabled)
+                                self.assertFalse(stor._enabled)
 
-                        exception_state = get_local_storage_setup_state_exception()
-                        self.assertEqual(exception_state, test_error_message)
+                                exception_state = get_local_storage_setup_state_exception()
+                                self.assertEqual(exception_state, test_error_message)
 
-                        stor.close()
+                                stor.close()
 
         # Clean up
         set_local_storage_setup_state_exception("")
+
+    def test_check_and_set_folder_permissions_unix_ownership_by_current_user(self):
+        """Directory owned by the current user should pass ownership check."""
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            set_local_storage_setup_state_exception,
+        )
+
+        set_local_storage_setup_state_exception("")
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        mock_stat_result = mock.MagicMock()
+        mock_stat_result.st_uid = 4242
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_stat_result):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=4242):
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod") as mock_chmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
+                                self.assertTrue(stor._enabled)
+                                mock_chmod.assert_called_with(storage_abs_path, 0o700)
+                                stor.close()
+
+        set_local_storage_setup_state_exception("")
+
+    def test_check_and_set_folder_permissions_unix_ownership_by_root(self):
+        """Directory owned by root (uid 0) should pass ownership check."""
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            set_local_storage_setup_state_exception,
+        )
+
+        set_local_storage_setup_state_exception("")
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        mock_stat_result = mock.MagicMock()
+        mock_stat_result.st_uid = 0  # root
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_stat_result):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=4242):
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod") as mock_chmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
+                                self.assertTrue(stor._enabled)
+                                mock_chmod.assert_called_with(storage_abs_path, 0o700)
+                                stor.close()
+
+        set_local_storage_setup_state_exception("")
+
+    def test_check_and_set_folder_permissions_unix_ownership_by_different_user(self):
+        """Directory owned by a different non-root user should fail ownership check."""
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+        )
+
+        set_local_storage_setup_state_exception("")
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        mock_stat_result = mock.MagicMock()
+        mock_stat_result.st_uid = 9999  # attacker
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_stat_result):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=4242):
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod") as mock_chmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
+                                self.assertFalse(stor._enabled)
+                                mock_chmod.assert_not_called()
+                                exception_state = get_local_storage_setup_state_exception()
+                                self.assertIn("owned by uid 9999", exception_state)
+                                stor.close()
+
+        set_local_storage_setup_state_exception("")
+
+    def test_attack_scenario_precreated_directory_by_attacker(self):
+        """
+        Simulates the attack described in the vulnerability report:
+        An unprivileged attacker pre-creates the storage directory in /tmp with
+        their own uid. When the legitimate process starts, it should detect the
+        ownership mismatch and refuse to use the directory, preventing data exfiltration.
+        """
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+        )
+
+        set_local_storage_setup_state_exception("")
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        # Attacker pre-created the directory — it is owned by attacker uid 5000
+        mock_stat_result = mock.MagicMock()
+        mock_stat_result.st_uid = 5000  # attacker's uid
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):  # dir already exists
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_stat_result):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):  # legitimate user
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod") as mock_chmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
+
+                                # Storage MUST be disabled — attacker owns the dir
+                                self.assertFalse(stor._enabled)
+                                # chmod must NOT be called — we refuse to use the directory
+                                mock_chmod.assert_not_called()
+                                # No data can be written
+                                result = stor.put([{"telemetry": "sensitive_data"}])
+                                self.assertNotEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+                                # Exception state captures the ownership mismatch
+                                exception_state = get_local_storage_setup_state_exception()
+                                self.assertIn("owned by uid 5000", exception_state)
+                                self.assertIn("expected 1000", exception_state)
+
+                                stor.close()
+
+        set_local_storage_setup_state_exception("")
+
+    def test_attack_scenario_symlink_to_attacker_controlled_path(self):
+        """
+        Simulates a symlink attack: attacker creates a symlink at the expected
+        storage path pointing to a root-owned or attacker-controlled directory.
+        os.lstat checks the symlink itself (not the target), so if the symlink
+        is owned by the attacker, the check should fail.
+        """
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
+            get_local_storage_setup_state_exception,
+            set_local_storage_setup_state_exception,
+        )
+
+        set_local_storage_setup_state_exception("")
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        # lstat on a symlink returns the symlink's own metadata, not the target.
+        # The symlink was created by attacker (uid 7777).
+        mock_symlink_stat = mock.MagicMock()
+        mock_symlink_stat.st_uid = 7777  # attacker created the symlink
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_symlink_stat):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod") as mock_chmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
+
+                                # Storage MUST be disabled — symlink owned by attacker
+                                self.assertFalse(stor._enabled)
+                                mock_chmod.assert_not_called()
+                                exception_state = get_local_storage_setup_state_exception()
+                                self.assertIn("owned by uid 7777", exception_state)
+
+                                stor.close()
+
+        set_local_storage_setup_state_exception("")
+
+    def test_attack_scenario_file_race_condition_oexcl(self):
+        """
+        Simulates O_EXCL protection: if an attacker manages to pre-create a
+        .tmp file at the exact path our blob will use, os.open with O_EXCL
+        must fail with FileExistsError, preventing data from being written
+        to an attacker-controlled file.
+        """
+        storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
+
+        mock_stat_result = mock.MagicMock()
+        mock_stat_result.st_uid = 1000
+
+        with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
+            with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
+                with mock.patch(f"{STORAGE_MODULE}.os.lstat", return_value=mock_stat_result):
+                    with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
+                        with mock.patch(f"{STORAGE_MODULE}.os.chmod"):
+                            with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
+                                stor = LocalFileStorage(storage_abs_path)
+                                self.assertTrue(stor._enabled)
+
+                                # Now simulate the attack: attacker pre-created the .tmp file
+                                with mock.patch("os.open", side_effect=FileExistsError("File exists")):
+                                    result = stor.put([{"secret": "credential_data"}])
+                                    # put() must fail — data must NOT be written
+                                    self.assertIsInstance(result, str)
+                                    self.assertIn("File exists", result)
+
+                                stor.close()
