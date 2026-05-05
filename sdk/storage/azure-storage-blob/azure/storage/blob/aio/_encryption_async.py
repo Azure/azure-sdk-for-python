@@ -19,8 +19,10 @@ class GCMBlobEncryptionStream:
     will use the same encryption key and will generate a guaranteed unique
     nonce for each encryption region.
     """
+
     def __init__(
-        self, content_encryption_key: bytes,
+        self,
+        content_encryption_key: bytes,
         data_stream: IO[bytes],
     ) -> None:
         """
@@ -31,7 +33,7 @@ class GCMBlobEncryptionStream:
         self.data_stream = data_stream
 
         self.offset = 0
-        self.current = b''
+        self.current = b""
         self.nonce_counter = 0
 
     async def read(self, size: int = -1) -> bytes:

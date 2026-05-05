@@ -213,7 +213,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         results_per_page: Optional[int] = None,
         start_from: Optional[str] = None,
         timeout: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged[str]: ...
     @distributed_trace
     def walk_blobs(

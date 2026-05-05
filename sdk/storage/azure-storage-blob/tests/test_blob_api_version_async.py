@@ -21,7 +21,7 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 INVALID_X_MS_VERSION = "2099-11-05"
-TEST_BLOB_PREFIX = 'blob'
+TEST_BLOB_PREFIX = "blob"
 
 
 class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
@@ -30,7 +30,7 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
     def _setup(self):
         self.api_version_1 = "2019-02-02"
         self.api_version_2 = X_MS_VERSION
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
 
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
         return self.get_resource_name(prefix)
@@ -47,9 +47,7 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
 
     def test_service_client_api_version_property(self):
         self._setup()
-        service_client = BlobServiceClient(
-            "https://foo.blob.core.windows.net/account",
-            credential="fake_key")
+        service_client = BlobServiceClient("https://foo.blob.core.windows.net/account", credential="fake_key")
         assert service_client.api_version == self.api_version_2
         assert service_client._client._config.version == self.api_version_2
 
@@ -57,9 +55,8 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             service_client.api_version = "foo"
 
         service_client = BlobServiceClient(
-            "https://foo.blob.core.windows.net/account",
-            credential="fake_key",
-            api_version=self.api_version_1)
+            "https://foo.blob.core.windows.net/account", credential="fake_key", api_version=self.api_version_1
+        )
         assert service_client.api_version == self.api_version_1
         assert service_client._client._config.version == self.api_version_1
 
@@ -74,9 +71,8 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
     def test_container_client_api_version_property(self):
         self._setup()
         container_client = ContainerClient(
-            "https://foo.blob.core.windows.net/account",
-            self.container_name,
-            credential="fake_key")
+            "https://foo.blob.core.windows.net/account", self.container_name, credential="fake_key"
+        )
         assert container_client.api_version == self.api_version_2
         assert container_client._client._config.version == self.api_version_2
 
@@ -84,7 +80,8 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             "https://foo.blob.core.windows.net/account",
             self.container_name,
             credential="fake_key",
-            api_version=self.api_version_1)
+            api_version=self.api_version_1,
+        )
         assert container_client.api_version == self.api_version_1
         assert container_client._client._config.version == self.api_version_1
 
@@ -99,7 +96,8 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             self.container_name,
             self._get_blob_reference(),
             credential="fake_key",
-            api_version=self.api_version_1)
+            api_version=self.api_version_1,
+        )
         assert blob_client.api_version == self.api_version_1
         assert blob_client._client._config.version == self.api_version_1
 
@@ -107,17 +105,15 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             "https://foo.blob.core.windows.net/account",
             self.container_name,
             self._get_blob_reference(),
-            credential="fake_key")
+            credential="fake_key",
+        )
         assert blob_client.api_version == self.api_version_2
         assert blob_client._client._config.version == self.api_version_2
 
     def test_invalid_api_version(self):
         self._setup()
         with pytest.raises(ValueError) as error:
-            BlobServiceClient(
-                "https://foo.blob.core.windows.net/account",
-                credential="fake_key",
-                api_version="foo")
+            BlobServiceClient("https://foo.blob.core.windows.net/account", credential="fake_key", api_version="foo")
         assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
@@ -125,7 +121,8 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
                 "https://foo.blob.core.windows.net/account",
                 self.container_name,
                 credential="fake_key",
-                api_version="foo")
+                api_version="foo",
+            )
         assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
@@ -134,7 +131,8 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
                 self.container_name,
                 self._get_blob_reference(),
                 credential="fake_key",
-                api_version="foo")
+                api_version="foo",
+            )
         assert str(error.value).startswith("Unsupported API version 'foo'.")
 
     @BlobPreparer()
@@ -149,7 +147,8 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             credential=storage_account_key.secret,
             connection_data_block_size=4 * 1024,
             max_page_size=4 * 1024,
-            api_version=self.api_version_1)
+            api_version=self.api_version_1,
+        )
         container = await self._create_container(bsc)
         blob_name = self._get_blob_reference()
 
@@ -164,7 +163,7 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
 
         # Act
         ranges1, cleared1 = await blob.get_page_ranges(previous_snapshot_diff=snapshot1)
-        ranges2, cleared2 = await blob.get_page_ranges(previous_snapshot_diff=snapshot2['snapshot'])
+        ranges2, cleared2 = await blob.get_page_ranges(previous_snapshot_diff=snapshot2["snapshot"])
 
         # Assert
         assert ranges1 is not None
@@ -172,20 +171,20 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
         assert len(ranges1) == 2
         assert isinstance(cleared1, list)
         assert len(cleared1) == 1
-        assert ranges1[0]['start'] == 0
-        assert ranges1[0]['end'] == 511
-        assert cleared1[0]['start'] == 512
-        assert cleared1[0]['end'] == 1023
-        assert ranges1[1]['start'] == 1024
-        assert ranges1[1]['end'] == 1535
+        assert ranges1[0]["start"] == 0
+        assert ranges1[0]["end"] == 511
+        assert cleared1[0]["start"] == 512
+        assert cleared1[0]["end"] == 1023
+        assert ranges1[1]["start"] == 1024
+        assert ranges1[1]["end"] == 1535
 
         assert ranges2 is not None
         assert isinstance(ranges2, list)
         assert len(ranges2) == 0
         assert isinstance(cleared2, list)
         assert len(cleared2) == 1
-        assert cleared2[0]['start'] == 512
-        assert cleared2[0]['end'] == 1023
+        assert cleared2[0]["start"] == 512
+        assert cleared2[0]["end"] == 1023
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -197,7 +196,7 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             bsc = BlobServiceClient(
                 self.account_url(storage_account_name, "blob"),
                 credential=storage_account_key.secret,
-                api_version=INVALID_X_MS_VERSION
+                api_version=INVALID_X_MS_VERSION,
             )
 
             with pytest.raises(HttpResponseError) as e:
@@ -205,5 +204,6 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
 
             assert "The provided service version is not enabled on this storage account." in e.value.message
             assert f"Please see {SV_DOCS_URL} for additional information." in e.value.message
+
 
 # ------------------------------------------------------------------------------
