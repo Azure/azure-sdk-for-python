@@ -416,15 +416,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Inner wrap: trace_stream ends the span when iteration completes.
         traced = trace_stream(response.body_iterator, otel_span)
 
-        # Outer wrap: re-attach span as current context during streaming
-        # so child spans are correctly parented.
+        # Outer wrap: re-attach the full context (span + baggage) during streaming
+        # so child spans are correctly parented and baggage is visible to processors.
+        # We capture the context now (while baggage is still attached) rather than
+        # relying on get_current() later when the iterator actually runs.
+        _captured_ctx = _otel_context.get_current()
+
         async def _iter_with_context():  # type: ignore[return]
-            token = set_current_span(otel_span)
+            token = _otel_context.attach(_captured_ctx)
             try:
                 async for chunk in traced:
                     yield chunk
             finally:
-                detach_context(token)
+                _otel_context.detach(token)
 
         response.body_iterator = _iter_with_context()
         return response
