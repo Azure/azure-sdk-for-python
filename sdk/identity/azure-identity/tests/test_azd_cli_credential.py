@@ -597,3 +597,71 @@ This is not JSON"""
 
         result = extract_cli_error_message(output)
         assert result == "suggestion: This should be found"
+
+    def test_extract_structured_error_v1_24_format(self):
+        """Should extract the 'error' field from azd v1.24.0+ structured stderr."""
+        # The AAD error here intentionally contains an embedded newline (decoded from \n in JSON).
+        aad_error = (
+            "fetching token: failed to authenticate:\n"
+            "(invalid_tenant) AADSTS90002: Tenant 'test' not found"
+        )
+        output = (
+            '{"error":"fetching token: failed to authenticate:\\n'
+            "(invalid_tenant) AADSTS90002: Tenant 'test' not found"
+            '","links":[{"title":"azd auth login reference","url":"https://example.com"}],'
+            '"message":"Authentication with Azure failed.",'
+            '"suggestion":"Run \'azd auth login\' to sign in again."}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == aad_error
+        assert "Authentication with Azure failed." not in result
+        assert "suggestion" not in result.lower()
+
+    def test_extract_structured_error_preceded_by_empty_console_message(self):
+        """v1.23.7 - v1.23.15: empty consoleMessage line precedes the structured error."""
+        aad_error = "fetching token: failed to authenticate"
+        output = (
+            '{"type":"consoleMessage","timestamp":"2026-04-13T17:43:24.7558297-07:00",'
+            '"data":{"message":"\\n"}}\n'
+            '{"error":"' + aad_error + '",'
+            '"message":"Authentication with Azure failed.",'
+            '"suggestion":"Run \'azd auth login\' to sign in again."}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == aad_error
+        assert "consoleMessage" not in result
+
+    def test_structured_error_takes_precedence_over_console_message(self):
+        """The structured 'error' field should win over a non-empty consoleMessage line."""
+        aad_error = "AADSTS70008: Refresh token expired"
+        output = (
+            '{"type":"consoleMessage","timestamp":"...",'
+            '"data":{"message":"some informational console output"}}\n'
+            '{"error":"' + aad_error + '",'
+            '"message":"Authentication with Azure failed."}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == aad_error
+        assert "informational console output" not in result
+
+    def test_structured_error_empty_falls_back_to_console_message(self):
+        """An empty 'error' field shouldn't short-circuit; legacy parsing should still run."""
+        output = (
+            '{"error":"","message":"Authentication with Azure failed."}\n'
+            '{"type":"consoleMessage","data":{"message":"ERROR: real message"}}'
+        )
+
+        result = extract_cli_error_message(output)
+        assert result == "ERROR: real message"
+
+    def test_structured_error_sanitizes_token(self):
+        """Tokens embedded in the structured 'error' field should be sanitized."""
+        output = '{"error":"got \\"token\\": \\"secret-abc\\" leaked"}'
+
+        result = extract_cli_error_message(output)
+        assert result is not None
+        assert "secret-abc" not in result
+        assert "****" in result

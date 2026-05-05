@@ -258,17 +258,23 @@ def sanitize_output(output: str) -> str:
 
 def extract_cli_error_message(output: str) -> Optional[str]:
     """
-    Extract a single, user-friendly message from azd consoleMessage JSON output.
+    Extract a single, user-friendly message from azd's stderr JSON output.
+
+    azd writes JSON error messages to stderr. The format depends on the azd version:
+
+      * v1.24.0+: ``{"error":"...","message":"...","suggestion":"..."}`` (single line)
+      * v1.23.7 - v1.23.15: an empty ``{"type":"consoleMessage",...}`` line followed by
+        the structured ``{"error":"..."}`` line
+      * pre-v1.23.7 (legacy): one or more ``{"type":"consoleMessage","data":{"message":"..."}}``
+        lines
+
+    The structured ``"error"`` field is preferred when present; otherwise the function falls
+    back to the legacy ``consoleMessage`` parsing logic. Returns ``None`` if no message can
+    be extracted.
 
     :param str output: The output from the Azure Developer CLI command.
     :return: A user-friendly error message if found, otherwise None.
     :rtype: Optional[str]
-
-    Preference order:
-    1) A message containing "Suggestion" (case-insensitive)
-    2) The second message if multiple are present
-    3) The first message if only one exists
-    Returns None if no messages can be parsed.
     """
     messages: List[str] = []
     for line in output.splitlines():
@@ -279,16 +285,24 @@ def extract_cli_error_message(output: str) -> Optional[str]:
             obj = json.loads(line)
         except json.JSONDecodeError:  # not JSON -> ignore
             continue
-        if isinstance(obj, dict):
-            data = obj.get("data")
-            if isinstance(data, dict):
-                msg = data.get("message")
-                if isinstance(msg, str) and msg.strip():
-                    messages.append(msg.strip())
-                    continue
-            msg = obj.get("message")
+        if not isinstance(obj, dict):
+            continue
+
+        # Prefer the structured "error" field (azd v1.23.7+).
+        err = obj.get("error")
+        if isinstance(err, str) and err.strip():
+            return sanitize_output(err.strip())
+
+        # Fall back to the legacy consoleMessage data.message field.
+        data = obj.get("data")
+        if isinstance(data, dict):
+            msg = data.get("message")
             if isinstance(msg, str) and msg.strip():
                 messages.append(msg.strip())
+                continue
+        msg = obj.get("message")
+        if isinstance(msg, str) and msg.strip():
+            messages.append(msg.strip())
 
     if not messages:
         return None
