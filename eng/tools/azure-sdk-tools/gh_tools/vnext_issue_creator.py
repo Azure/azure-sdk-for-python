@@ -34,6 +34,10 @@ LABEL_AUTO_FIX = "copilot-auto-fix"
 LABEL_AUTO_FIX_FAILED = "copilot-auto-fix-failed"
 LABEL_AUTO_FIX_DISABLED = "copilot-auto-fix-disabled"
 
+#: Managed block markers for Copilot instructions in issue bodies.
+COPILOT_AUTOFIX_START = "<!-- copilot-autofix:start -->"
+COPILOT_AUTOFIX_END = "<!-- copilot-autofix:end -->"
+
 #: Copilot coding-agent bot login and node ID.
 #: The node ID was retrieved via the suggestedActors GraphQL query on
 #: Azure/azure-sdk-for-python.  Override with env vars if needed.
@@ -103,8 +107,8 @@ def build_copilot_instructions(package_path: str, check_type: str) -> str:
     skill_name = f"fix-{check_type}"
     validation_cmd = f"azpysdk {check_type} ."
 
-    return (
-        f"\n\n## Copilot auto-fix request\n\n"
+    inner = (
+        f"## Copilot auto-fix request\n\n"
         f"Use the `{skill_name}` skill to resolve `{check_type}` failures "
         f"in `{package_path}`.\n"
         f"Do not make unrelated formatting, changelog, version, or "
@@ -119,6 +123,20 @@ def build_copilot_instructions(package_path: str, check_type: str) -> str:
         f"attempted commands, the failure category, and the recommended "
         f"manual next step."
     )
+    return f"\n\n{COPILOT_AUTOFIX_START}\n{inner}\n{COPILOT_AUTOFIX_END}"
+
+
+def _upsert_copilot_instructions(body: str, instructions: str) -> str:
+    """Replace existing Copilot instruction block or append if absent.
+
+    Uses managed HTML-comment markers to locate the block, preserving any
+    human-authored content outside the markers.
+    """
+    start_idx = body.find(COPILOT_AUTOFIX_START)
+    end_idx = body.find(COPILOT_AUTOFIX_END)
+    if start_idx != -1 and end_idx != -1:
+        return body[:start_idx].rstrip() + instructions
+    return body + instructions
 
 
 def reconcile_auto_fix_labels(issue, eligible: bool) -> None:
@@ -157,18 +175,50 @@ def _is_copilot_already_assigned(issue) -> bool:
     return False
 
 
-def assign_copilot(issue, github_instance, package_name: str, check_type: str) -> bool:
+def _unassign_copilot(issue, github_instance) -> bool:
+    """Remove the Copilot coding agent from the issue assignees.
+
+    Uses the GraphQL ``removeAssigneesFromAssignable`` mutation.
+    Treats "not currently assigned" as success (idempotent).
+    """
+    login = _copilot_login()
+    node_id = _copilot_node_id()
+    issue_node_id = issue.raw_data["node_id"]
+    try:
+        github_instance._Github__requester.graphql_named_mutation(
+            "removeAssigneesFromAssignable",
+            {
+                "assignableId": issue_node_id,
+                "assigneeIds": [node_id],
+            },
+            output="assignable { ... on Issue { id } }",
+        )
+        logging.info(f"Unassigned {login} from issue #{issue.number}")
+        return True
+    except Exception as e:
+        logging.warning(f"Failed to unassign {login} from issue #{issue.number}: {e}")
+        return False
+
+
+def assign_copilot(issue, github_instance, package_name: str, check_type: str, force_reassign: bool = False) -> bool:
     """Attempt to assign the Copilot coding agent to the issue.
 
     Uses the GraphQL ``addAssigneesToAssignable`` mutation because the
     Copilot bot (``copilot-swe-agent``) is not assignable via the REST
     assignees endpoint.
 
+    When *force_reassign* is True and Copilot is already assigned, the
+    agent is first unassigned then reassigned so that a new Copilot
+    session is triggered (e.g. after a checker version bump).
+
     Returns True on success, False on failure (labels/comments the issue).
     """
     if _is_copilot_already_assigned(issue):
-        logging.info(f"Copilot already assigned to issue #{issue.number}, skipping")
-        return True
+        if not force_reassign:
+            logging.info(f"Copilot already assigned to issue #{issue.number}, skipping")
+            return True
+        logging.info(f"Copilot already assigned to issue #{issue.number}, " f"re-assigning to trigger new session")
+        _unassign_copilot(issue, github_instance)
 
     login = _copilot_login()
     node_id = _copilot_node_id()
@@ -208,8 +258,13 @@ def _try_auto_fix(
     package_path: str,
     check_type: str,
     issue_labels: list[str],
+    version_changed: bool = False,
 ) -> None:
-    """Run the auto-fix eligibility → duplicate check → assign flow."""
+    """Run the auto-fix eligibility → duplicate check → assign flow.
+
+    When *version_changed* is True (e.g. checker version bump), Copilot is
+    unassigned and reassigned so a fresh session picks up the new errors.
+    """
     eligible = is_auto_fix_eligible(issue_labels)
 
     if not eligible:
@@ -224,13 +279,13 @@ def _try_auto_fix(
         logging.info(f"Skipping Copilot assignment for issue #{issue.number}: " f"matching PR(s) found: {pr_urls}")
         return
 
-    # Append Copilot instructions to the issue body
+    # Upsert Copilot instructions (replace existing block or append)
     body = issue.body or ""
     instructions = build_copilot_instructions(package_path, check_type)
-    issue.edit(body=body + instructions)
+    issue.edit(body=_upsert_copilot_instructions(body, instructions))
 
-    # Assign Copilot
-    assign_copilot(issue, github_instance, package_name, check_type)
+    # Assign Copilot (force reassignment on version bumps)
+    assign_copilot(issue, github_instance, package_name, check_type, force_reassign=version_changed)
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
@@ -432,10 +487,13 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
         labels = []
         assignees = []
 
+    # Detect version change so Copilot can be re-triggered
+    old_title = vnext_issue[0].title
     vnext_issue[0].edit(
         title=title,
         body=template,
     )
+    version_changed = old_title != title
 
     # Assign codeowners individually with error handling
     for assignee in assignees:
@@ -447,7 +505,16 @@ def create_vnext_issue(package_dir: str, check_type: CHECK_TYPE, check_version: 
 
     # Auto-fix: reconcile labels and retry assignment if no matching PR
     issue_label_names = [lbl.name if hasattr(lbl, "name") else str(lbl) for lbl in vnext_issue[0].labels]
-    _try_auto_fix(repo, vnext_issue[0], g, package_name, package_path, check_type, issue_label_names)
+    _try_auto_fix(
+        repo,
+        vnext_issue[0],
+        g,
+        package_name,
+        package_path,
+        check_type,
+        issue_label_names,
+        version_changed=version_changed,
+    )
 
 
 def close_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
