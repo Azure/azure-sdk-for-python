@@ -22,24 +22,28 @@ import sys
 
 # set up
 current_dir = os.path.dirname(os.path.abspath(__file__))
-SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
-DEST_FILE = os.path.join(current_dir, 'BlockDestination.txt')
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
+DEST_FILE = os.path.join(current_dir, "BlockDestination.txt")
 
 
 class BlobSamples(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
-    #--Begin Blob Samples-----------------------------------------------------------------
+    # --Begin Blob Samples-----------------------------------------------------------------
 
     def create_container_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: create_container_sample")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: create_container_sample"
+            )
             sys.exit(1)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
@@ -57,12 +61,14 @@ class BlobSamples(object):
 
     def block_blob_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: block_blob_sample")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: block_blob_sample"
+            )
             sys.exit(1)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
@@ -97,21 +103,24 @@ class BlobSamples(object):
 
     def stream_block_blob(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: stream_block_blob")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: stream_block_blob"
+            )
             sys.exit(1)
 
         import uuid
+
         # Instantiate a new BlobServiceClient using a connection string - set chunk size to 1MB
         from azure.storage.blob import BlobServiceClient, BlobBlock
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string,
-                                                                       max_single_get_size=1024*1024,
-                                                                       max_chunk_get_size=1024*1024)
+
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string, max_single_get_size=1024 * 1024, max_chunk_get_size=1024 * 1024
+        )
 
         # Instantiate a new ContainerClient
         container_client = blob_service_client.get_container_client("containersync1")
         # Generate 4MB of data
-        data = b'a'*4*1024*1024
+        data = b"a" * 4 * 1024 * 1024
 
         try:
             # Create new Container in the service
@@ -146,12 +155,12 @@ class BlobSamples(object):
 
     def page_blob_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: page_blob_sample")
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: page_blob_sample")
             sys.exit(1)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
@@ -165,7 +174,7 @@ class BlobSamples(object):
             blob_client = container_client.get_blob_client("mypageblob")
 
             # Upload content to the Page Blob
-            data = b'abcd'*128
+            data = b"abcd" * 128
             blob_client.upload_blob(data, blob_type="PageBlob")
 
             # Download Page Blob
@@ -182,12 +191,14 @@ class BlobSamples(object):
 
     def append_blob_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: append_blob_sample")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: append_blob_sample"
+            )
             sys.exit(1)
 
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a new ContainerClient
@@ -217,7 +228,7 @@ class BlobSamples(object):
             container_client.delete_container()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = BlobSamples()
     sample.create_container_sample()
     sample.block_blob_sample()

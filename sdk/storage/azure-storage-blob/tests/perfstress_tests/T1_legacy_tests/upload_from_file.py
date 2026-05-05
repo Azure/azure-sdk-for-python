@@ -35,7 +35,8 @@ class LegacyUploadFromFileTest(_LegacyContainerTest):
             container_name=self.container_name,
             blob_name=self.blob_name,
             file_path=LegacyUploadFromFileTest.temp_file,
-            max_connections=self.args.max_concurrency)
+            max_connections=self.args.max_concurrency,
+        )
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")

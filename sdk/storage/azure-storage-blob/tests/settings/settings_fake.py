@@ -19,7 +19,7 @@ SOFT_DELETE_STORAGE_ACCOUNT_NAME = "fakename"
 SOFT_DELETE_STORAGE_ACCOUNT_KEY = "fakekey"
 STORAGE_RESOURCE_GROUP_NAME = "fakename"
 
-ACCOUNT_URL_SUFFIX = 'core.windows.net'
+ACCOUNT_URL_SUFFIX = "core.windows.net"
 RUN_IN_LIVE = "False"
 SKIP_LIVE_RECORDING = "True"
 
