@@ -4,9 +4,18 @@
 
 ### Features Added
 
+- Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
+- Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
+- Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed row classification double-counting in `_calculate_aoai_evaluation_summary` where errored rows were counted separately and could also be counted as passed/failed. Rows are now classified into mutually exclusive buckets with priority: passed > failed > errored > skipped.
+- Fixed row classification where rows with empty or missing results lists were incorrectly counted as "passed" (the condition `passed_count == len(results) - error_count` evaluated `0 == 0` as True).
+- Fixed `_get_metric_result` prefix matching where shorter metric names (e.g., `xpia`) could match before longer, more-specific ones (e.g., `xpia_manipulated_content`). Now sorts by length descending for correct longest-prefix matching.
+- Fixed non-dict `_properties` values from evaluators causing downstream issues. Values that are not dicts are now logged and dropped gracefully.
 
 ### Other Changes
 
@@ -23,10 +32,6 @@
 ## 1.16.5 (2026-04-08)
 
 ### Features Added
-
-- Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
-- Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
-- Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
 
 ### Breaking Changes
 
