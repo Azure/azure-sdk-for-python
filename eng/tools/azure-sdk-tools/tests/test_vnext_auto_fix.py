@@ -35,6 +35,7 @@ from gh_tools.vnext_issue_creator import (
 # Helpers to build lightweight fakes
 # ---------------------------------------------------------------------------
 
+
 def _make_label(name: str) -> SimpleNamespace:
     return SimpleNamespace(name=name)
 
@@ -79,6 +80,7 @@ def _make_pr(
 # Eligibility tests
 # ---------------------------------------------------------------------------
 
+
 class TestIsAutoFixEligible:
     """Tests for is_auto_fix_eligible."""
 
@@ -94,6 +96,7 @@ class TestIsAutoFixEligible:
 # ---------------------------------------------------------------------------
 # Duplicate PR detection tests
 # ---------------------------------------------------------------------------
+
 
 class TestFindExistingFixPrs:
 
@@ -140,6 +143,7 @@ class TestFindExistingFixPrs:
 # Copilot instruction builder tests
 # ---------------------------------------------------------------------------
 
+
 class TestBuildCopilotInstructions:
 
     @pytest.mark.parametrize("check_type", ["pylint", "mypy", "sphinx", "pyright"])
@@ -156,6 +160,7 @@ class TestBuildCopilotInstructions:
 # ---------------------------------------------------------------------------
 # Label reconciliation tests
 # ---------------------------------------------------------------------------
+
 
 class TestReconcileAutoFixLabels:
 
@@ -185,6 +190,7 @@ class TestReconcileAutoFixLabels:
 # ---------------------------------------------------------------------------
 # Copilot assignment tests
 # ---------------------------------------------------------------------------
+
 
 class TestAssignCopilot:
 
@@ -226,6 +232,7 @@ class TestAssignCopilot:
 # _is_copilot_already_assigned tests
 # ---------------------------------------------------------------------------
 
+
 class TestIsCopilotAlreadyAssigned:
 
     def test_assigned(self):
@@ -244,6 +251,7 @@ class TestIsCopilotAlreadyAssigned:
 # ---------------------------------------------------------------------------
 # Integration: _try_auto_fix tests
 # ---------------------------------------------------------------------------
+
 
 class TestTryAutoFix:
 
@@ -283,7 +291,12 @@ class TestTryAutoFix:
         g = _make_github_instance()
 
         _try_auto_fix(
-            repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint",
+            repo,
+            issue,
+            g,
+            "azure-ai-test",
+            "sdk/ai/azure-ai-test",
+            "pylint",
             ["pylint", LABEL_AUTO_FIX_DISABLED],
         )
 
@@ -297,8 +310,7 @@ class TestTryAutoFix:
         issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX])
         g = _make_github_instance()
 
-        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint",
-                       ["pylint", LABEL_AUTO_FIX])
+        _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint", LABEL_AUTO_FIX])
 
         g._Github__requester.graphql_named_mutation.assert_called_once()
 
