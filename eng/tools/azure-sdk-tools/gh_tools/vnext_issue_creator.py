@@ -292,7 +292,9 @@ def _try_auto_fix(
         return
 
     # Assign Copilot (force reassignment on version bumps)
-    if assign_copilot(issue, github_instance, copilot_node_id, package_name, check_type, force_reassign=version_changed):
+    if assign_copilot(
+        issue, github_instance, copilot_node_id, package_name, check_type, force_reassign=version_changed
+    ):
         reconcile_auto_fix_labels(issue, eligible=True)
 
 
