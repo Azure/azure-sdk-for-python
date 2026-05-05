@@ -27,10 +27,17 @@ Intelligently fixes pyright issues by:
 **Command:**
 ```powershell
 cd <package-path>
+azpysdk --isolate pyright .
+```
+
+> **Note:** `azpysdk pyright` runs with a pinned version of pyright at the package level only. To focus on specific files, run the full check and filter the output by file path.
+
+**Using Latest Pyright:**
+```powershell
 azpysdk --isolate next-pyright .
 ```
 
-> **Note:** `azpysdk next-pyright` runs pyright at the package level only. To focus on specific files, run the full check and filter the output by file path.
+> Use `azpysdk next-pyright` to run with the latest version of pyright. This is useful for catching issues that may be flagged by newer pyright versions.
 
 ## Reference Documentation
 
@@ -117,7 +124,7 @@ git diff --cached --name-only | Select-String "<package-path>"
 cd <package-path>
 
 # Run pyright on the package (within activated venv)
-azpysdk --isolate next-pyright .
+azpysdk --isolate pyright .
 # Filter output for the specific files/modules from the issue
 ```
 
@@ -194,4 +201,3 @@ Create a pull request with a descriptive title and body referencing the issue. I
 - Some errors may require architectural changes - don't force fixes
 - Test the code after fixing to ensure functionality is preserved
 - Avoid using `# pyright: ignore` unless absolutely necessary and document why
-- Pyright is stricter than mypy in many cases - ensure fixes satisfy pyright's type narrowing requirements
