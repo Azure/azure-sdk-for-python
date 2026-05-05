@@ -344,7 +344,7 @@ class UploadTest(_StorageStreamTestBase):
         # Setup service clients
         blob_name = "uploadtest"
         self.blob_client = self.service_client.get_blob_client(self.container_name, blob_name)
-        self.async_blob_client = self.async_serive_client.get_blob_client(self.container_name, blob_name)
+        self.async_blob_client = self.async_service_client.get_blob_client(self.container_name, blob_name)
 
         # Setup readable file-like upload data sources, using the configurable 'size' argument
         self.upload_stream = RandomStream(self.args.size)
@@ -388,7 +388,7 @@ class DownloadTest(_StorageStreamTestBase):
         # Setup service clients
         blob_name = "downloadtest"
         self.blob_client = self.service_client.get_blob_client(self.container_name, blob_name)
-        self.async_blob_client = self.async_serive_client.get_blob_client(self.container_name, blob_name)
+        self.async_blob_client = self.async_service_client.get_blob_client(self.container_name, blob_name)
 
         self.download_stream = WriteStream()
 
@@ -475,7 +475,7 @@ perfstress_tests
 
 # Running the tests
 In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements`.
-Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
+Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment.
 Note that tests for T1 and T2 SDKs usually cannot be run from the same environment, and will need to be setup separately.
 
 ### Setup for test resources

@@ -48,7 +48,7 @@ C:\Users> env\scripts\activate.bat   # Windows CMD only
 To create virtual environment for different versions of Python use the `-p` flag to pass the specific Python executable you want to use
 
 ```cmd
-C:\Users> python -m venv -p <path/to/Python/Python38/python.exe> py38_venv
+C:\Users> python -m venv -p <path/to/Python/Python314/python.exe> py314_venv
 ```
 
 ### SDK root directory
