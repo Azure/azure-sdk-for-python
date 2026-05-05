@@ -2289,8 +2289,8 @@ class TestLogEventsTokenUsage:
 
         return FakeEventLogger(), emitted
 
-    def test_token_usage_emitted_in_standard_attributes(self):
-        """prompt_tokens and completion_tokens from sample.usage should appear as standard attributes."""
+    def test_token_usage_emitted_in_internal_properties(self):
+        """prompt_tokens and completion_tokens from sample.usage should appear inside internal_properties."""
         event_logger, emitted = self._make_mock_event_logger()
         events = [
             {
@@ -2315,11 +2315,15 @@ class TestLogEventsTokenUsage:
 
         assert len(emitted) == 1
         attrs = emitted[0].attributes
-        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "100"
-        assert attrs["gen_ai.evaluation.usage.output_tokens"] == "50"
+        internal_props = json.loads(attrs["internal_properties"])
+        assert internal_props["gen_ai.evaluation.usage.input_tokens"] == "100"
+        assert internal_props["gen_ai.evaluation.usage.output_tokens"] == "50"
+        # Should NOT be in standard attributes
+        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
 
-    def test_token_usage_not_in_internal_properties(self):
-        """Token usage should be in standard attributes, not inside internal_properties."""
+    def test_token_usage_not_in_standard_attributes(self):
+        """Token usage should be in internal_properties, not in standard attributes."""
         event_logger, emitted = self._make_mock_event_logger()
         events = [
             {
@@ -2343,9 +2347,12 @@ class TestLogEventsTokenUsage:
         )
 
         assert len(emitted) == 1
-        internal_props = json.loads(emitted[0].attributes["internal_properties"])
-        assert "gen_ai.evaluation.usage.input_tokens" not in internal_props
-        assert "gen_ai.evaluation.usage.output_tokens" not in internal_props
+        attrs = emitted[0].attributes
+        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+        internal_props = json.loads(attrs["internal_properties"])
+        assert internal_props["gen_ai.evaluation.usage.input_tokens"] == "100"
+        assert internal_props["gen_ai.evaluation.usage.output_tokens"] == "50"
 
     def test_token_usage_absent_when_no_sample(self):
         """No token usage attributes when sample is missing."""
@@ -2362,8 +2369,9 @@ class TestLogEventsTokenUsage:
 
         assert len(emitted) == 1
         attrs = emitted[0].attributes
-        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
-        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+        internal_props = json.loads(attrs["internal_properties"])
+        assert "gen_ai.evaluation.usage.input_tokens" not in internal_props
+        assert "gen_ai.evaluation.usage.output_tokens" not in internal_props
 
     def test_token_usage_absent_when_usage_empty(self):
         """No token usage attributes when sample.usage is empty dict."""
@@ -2380,8 +2388,9 @@ class TestLogEventsTokenUsage:
 
         assert len(emitted) == 1
         attrs = emitted[0].attributes
-        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
-        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+        internal_props = json.loads(attrs["internal_properties"])
+        assert "gen_ai.evaluation.usage.input_tokens" not in internal_props
+        assert "gen_ai.evaluation.usage.output_tokens" not in internal_props
 
     def test_token_usage_absent_when_sample_not_dict(self):
         """When sample is not a dict (e.g. NaN), the event fails to log entirely."""
@@ -2425,8 +2434,9 @@ class TestLogEventsTokenUsage:
 
         assert len(emitted) == 1
         attrs = emitted[0].attributes
-        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "0"
-        assert attrs["gen_ai.evaluation.usage.output_tokens"] == "0"
+        internal_props = json.loads(attrs["internal_properties"])
+        assert internal_props["gen_ai.evaluation.usage.input_tokens"] == "0"
+        assert internal_props["gen_ai.evaluation.usage.output_tokens"] == "0"
 
     def test_token_usage_partial_only_prompt(self):
         """Only prompt_tokens present should emit only input_tokens."""
@@ -2453,8 +2463,9 @@ class TestLogEventsTokenUsage:
 
         assert len(emitted) == 1
         attrs = emitted[0].attributes
-        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "42"
-        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+        internal_props = json.loads(attrs["internal_properties"])
+        assert internal_props["gen_ai.evaluation.usage.input_tokens"] == "42"
+        assert "gen_ai.evaluation.usage.output_tokens" not in internal_props
 
 
 class TestAdjustForInverseMetric:

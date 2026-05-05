@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `extra_headers` keyword argument to `RaiServiceEvaluatorBase` (and all content safety evaluators) to allow passing custom HTTP headers to all backend RAI service calls. SDK-owned headers (`Authorization`, `User-Agent`, `Content-Type`, `aml-user-token`, `x-ms-client-request-id`) cannot be overridden by `extra_headers`.
+
 - Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
 - Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
 - Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
@@ -18,6 +20,8 @@
 - Fixed non-dict `_properties` values from evaluators causing downstream issues. Values that are not dicts are now logged and dropped gracefully.
 
 ### Other Changes
+
+- Moved token usage attributes (`gen_ai.evaluation.usage.input_tokens`, `gen_ai.evaluation.usage.output_tokens`) from standard App Insights event attributes into the `internal_properties` JSON bag to align with internal telemetry conventions.
 
 ## 1.16.6 (2026-04-27)
 
