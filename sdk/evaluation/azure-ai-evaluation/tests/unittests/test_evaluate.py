@@ -1553,6 +1553,74 @@ class TestEvaluate:
         # but the skipped status fix must null it out
         assert tca_result["passed"] is None
 
+    def test_convert_results_mixed_passed_and_skipped(self):
+        """Integration: a row with one passed evaluator and one skipped evaluator.
+        Verifies per-result status propagation and that skipped doesn't block the pass."""
+        import logging
+
+        logger = logging.getLogger("test_logger")
+
+        results = {
+            "metrics": {},
+            "rows": [
+                {
+                    "inputs.query": "test query",
+                    "outputs.fluency.fluency_score": 4.0,
+                    "outputs.fluency.fluency_result": "pass",
+                    "outputs.fluency.fluency_status": "completed",
+                    "outputs.tool_call_accuracy.tool_call_accuracy_result": None,
+                    "outputs.tool_call_accuracy.tool_call_accuracy_status": "skipped",
+                }
+            ],
+            "studio_url": None,
+        }
+
+        _convert_results_to_aoai_evaluation_results(
+            results=results,
+            logger=logger,
+            eval_run_id="run1",
+            eval_id="eval1",
+            evaluators={
+                "fluency": lambda **kwargs: {"score": 4},
+                "tool_call_accuracy": lambda **kwargs: {"score": 1},
+            },
+            eval_meta_data={
+                "testing_criteria": [
+                    {
+                        "name": "fluency",
+                        "type": "azure_ai_evaluator",
+                        "metrics": ["fluency"],
+                    },
+                    {
+                        "name": "tool_call_accuracy",
+                        "type": "azure_ai_evaluator",
+                        "metrics": ["tool_call_accuracy"],
+                    },
+                ]
+            },
+        )
+
+        row = results["_evaluation_results_list"][0]
+        fluency_result = [r for r in row["results"] if r["name"] == "fluency"][0]
+        tca_result = [r for r in row["results"] if r["name"] == "tool_call_accuracy"][0]
+
+        # Fluency should be passed/completed
+        assert fluency_result["status"] == "completed"
+        assert fluency_result["passed"] is True
+        assert fluency_result["score"] == 4.0
+
+        # Tool call accuracy should be skipped with passed=None
+        assert tca_result["status"] == "skipped"
+        assert tca_result["passed"] is None
+
+        # Row-level: should be "passed" in summary (1 pass, 0 fail, 1 skip)
+        summary = _calculate_aoai_evaluation_summary(
+            results["_evaluation_results_list"], logger, None
+        )
+        assert summary["result_counts"]["passed"] == 1
+        assert summary["result_counts"]["skipped"] == 0
+        assert summary["result_counts"]["failed"] == 0
+
     @patch(
         "azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins",
         return_value={},
@@ -2729,6 +2797,19 @@ class TestCreateResultObjectStatus:
         result = self._call({"score": 3.5})
         assert result["status"] == "completed"
 
+    def test_error_status_with_sample_error_preserved(self):
+        """Explicit status='error' with sample.error should preserve status and keep passed=None."""
+        result = self._call({
+            "score": None,
+            "passed": None,
+            "status": "error",
+            "sample": {"error": {"code": "FAILED_EXECUTION", "message": "No tool calls found"}},
+        })
+        assert result["status"] == "error"
+        assert result["passed"] is None
+        assert result["score"] is None
+        assert result["sample"] == {"error": {"code": "FAILED_EXECUTION", "message": "No tool calls found"}}
+
 
 @pytest.mark.unittest
 class TestCalculateAoaiEvaluationSummary:
@@ -2815,12 +2896,17 @@ class TestCalculateAoaiEvaluationSummary:
         rows = [
             self._make_row([self._make_result(name="fluency", passed=True)], "1"),
             self._make_row([self._make_result(name="fluency", passed=None, status="skipped", score=None)], "2"),
+            self._make_row(
+                [self._make_result(name="fluency", passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}})],
+                "3",
+            ),
         ]
         summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
         criteria = {c["testing_criteria"]: c for c in summary["per_testing_criteria_results"]}
         assert "fluency" in criteria
         assert criteria["fluency"]["passed"] == 1
         assert criteria["fluency"]["skipped"] == 1
+        assert criteria["fluency"]["errored"] == 1
 
     def test_result_counts_has_skipped_key(self):
         rows = [self._make_row([self._make_result()])]
@@ -2849,16 +2935,127 @@ class TestCalculateAoaiEvaluationSummary:
         assert c["skipped"] == 1
         assert c["errored"] == 1
 
-    def test_score_only_row_classified_as_passed(self):
-        """Score-only evaluator (passed=None, status='completed') falls into else → passed."""
+    def test_score_only_row_classified_as_errored(self):
+        """Score-only evaluator (passed=None, status='completed') → errored (threshold should have set pass/fail)."""
         rows = [self._make_row([self._make_result(name="similarity", passed=None, status="completed", score=0.85)])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["passed"] == 0
+        assert c["errored"] == 1
+
+    def test_pass_plus_error_classified_as_passed(self):
+        """A row with 1 pass + 1 error is 'passed' — errors are non-executions, not failures."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=True),
+                    self._make_result(
+                        name="coherence",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        # Errors are non-executions; the one executed test passed → row is passed
+        assert c["passed"] == 1
+        assert c["errored"] == 0
+
+    def test_empty_results_list_classified_as_errored(self):
+        """A row with an empty results list should be classified as errored, not passed."""
+        rows = [self._make_row([])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["passed"] == 0
+        assert c["errored"] == 1
+
+    def test_fail_plus_error_classified_as_failed(self):
+        """A row with 1 fail + 1 error is 'failed' — fail takes priority over error."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=False),
+                    self._make_result(
+                        name="coherence",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["failed"] == 1
+        assert c["passed"] == 0
+        assert c["errored"] == 0
+
+    def test_pass_plus_skip_classified_as_passed(self):
+        """A row with 1 pass + 1 skip is 'passed' — skips are non-executions."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=True),
+                    self._make_result(name="coherence", passed=None, status="skipped", score=None),
+                ]
+            )
+        ]
         summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
         c = summary["result_counts"]
         assert c["total"] == 1
         assert c["passed"] == 1
         assert c["failed"] == 0
-        assert c["errored"] == 0
         assert c["skipped"] == 0
+
+    def test_error_plus_skip_classified_as_errored(self):
+        """A row with only errors and skips (no pass/fail) is 'errored' — error > skip."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(
+                        name="fluency",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                    self._make_result(name="coherence", passed=None, status="skipped", score=None),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["errored"] == 1
+        assert c["skipped"] == 0
+        assert c["passed"] == 0
+
+    def test_total_equals_sum_of_buckets(self):
+        """Invariant: total must always equal the sum of all classification buckets."""
+        rows = [
+            self._make_row([self._make_result(passed=True)], "1"),
+            self._make_row([self._make_result(passed=False)], "2"),
+            self._make_row([self._make_result(passed=None, status="skipped", score=None)], "3"),
+            self._make_row(
+                [self._make_result(passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}})],
+                "4",
+            ),
+            self._make_row([self._make_result(name="sim", passed=None, status="completed", score=0.9)], "5"),
+            self._make_row([], "6"),  # empty results
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        bucket_sum = c["passed"] + c["failed"] + c["errored"] + c["skipped"]
+        assert c["total"] == bucket_sum, f"total={c['total']} != sum={bucket_sum}: {c}"
 
 
 @pytest.mark.unittest

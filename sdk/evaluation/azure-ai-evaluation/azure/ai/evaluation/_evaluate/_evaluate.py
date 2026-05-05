@@ -3528,7 +3528,9 @@ def _calculate_aoai_evaluation_summary(
             error_count += 1
 
         # Update overall result counts — mutually exclusive row-level classification
-        # Priority: passed (all executed tests passed) > failed (any fail) > errored (no execution, only errors/skips) > skipped (all skipped)
+        # Priority: passed (all executed tests passed) > failed > errored > skipped
+        # "Executed" means the evaluator returned a pass/fail verdict; errors/skips are non-executions.
+        total_classified = passed_count + failed_count + error_count + skipped_count
         if passed_count > 0 and failed_count == 0:
             result_counts["passed"] += 1
         elif failed_count > 0:
@@ -3538,8 +3540,10 @@ def _calculate_aoai_evaluation_summary(
         elif skipped_count > 0:
             result_counts["skipped"] += 1
         else:
-            # Score-only evaluators with status="completed" but passed=None
-            result_counts["passed"] += 1
+            # No pass/fail/error/skipped verdict — e.g., empty results list,
+            # all results filtered out, or passed=None when a threshold should
+            # have produced a verdict. Default to errored.
+            result_counts["errored"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
