@@ -281,7 +281,7 @@ class LocalFileStorage:
                             f"Directory owned by uid {owner_uid}, expected {current_uid} or 0"
                         )
                         return False
-                    os.fchmod(dir_fd, 0o700)  # pylint: disable=no-member
+                    os.fchmod(dir_fd, 0o700)  # pylint: disable=no-member  # cspell:disable-line
                 finally:
                     os.close(dir_fd)
                 return True

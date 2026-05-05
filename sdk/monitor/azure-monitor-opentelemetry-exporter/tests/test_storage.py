@@ -631,17 +631,17 @@ class TestLocalFileStorage(unittest.TestCase):
         mock_stat_result = mock.MagicMock()
         mock_stat_result.st_uid = 1000
 
-        # Mock Unix environment and fchmod failure
+        # Mock Unix environment and fchmod failure  # cspell:disable-line
         with mock.patch("os.name", "posix"):  # Unix
             with mock.patch("os.makedirs"):  # Allow directory creation
                 with mock.patch("os.open", return_value=99):
                     with mock.patch("os.fstat", return_value=mock_stat_result):
                         with mock.patch("os.getuid", create=True, return_value=1000):
-                            with mock.patch("os.fchmod", create=True, side_effect=OSError(test_error_message)):
+                            with mock.patch("os.fchmod", create=True, side_effect=OSError(test_error_message)):  # cspell:disable-line
                                 with mock.patch("os.close"):
                                     stor = LocalFileStorage(os.path.join(TEST_FOLDER, "chmod_failure_test"))
 
-                                    # Storage should be disabled due to fchmod failure
+                                    # Storage should be disabled due to fchmod failure  # cspell:disable-line
                                     self.assertFalse(stor._enabled)
 
                                     # Exception state should be set with the error message
@@ -956,10 +956,10 @@ class TestLocalFileStorage(unittest.TestCase):
         storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
 
         with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
-            fchmod_calls = []
+            fchmod_calls = []  # cspell:disable-line
             makedirs_calls = []
 
-            def mock_fchmod(fd, mode):
+            def mock_fchmod(fd, mode):  # cspell:disable-line
                 fchmod_calls.append((fd, oct(mode)))
 
             def mock_makedirs(path, mode=0o777, exist_ok=False):
@@ -1210,8 +1210,8 @@ class TestLocalFileStorage(unittest.TestCase):
         set_local_storage_setup_state_exception("")
         storage_abs_path = _get_storage_directory(DUMMY_INSTRUMENTATION_KEY)
 
-        # os.open with O_NOFOLLOW raises OSError (ELOOP) when path is a symlink
-        symlink_error = OSError(errno.ELOOP, "Too many levels of symbolic links")
+        # os.open with O_NOFOLLOW raises OSError (ELOOP) when path is a symlink  # cspell:disable-line
+        symlink_error = OSError(errno.ELOOP, "Too many levels of symbolic links")  # cspell:disable-line
 
         with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
             with mock.patch(f"{STORAGE_MODULE}.os.makedirs"):
@@ -1228,7 +1228,7 @@ class TestLocalFileStorage(unittest.TestCase):
 
         set_local_storage_setup_state_exception("")
 
-    def test_attack_scenario_file_race_condition_oexcl(self):
+    def test_attack_scenario_file_race_condition_oexcl(self):  # cspell:disable-line
         """
         Simulates O_EXCL protection: if an attacker manages to pre-create a
         .tmp file at the exact path our blob will use, os.open with O_EXCL
