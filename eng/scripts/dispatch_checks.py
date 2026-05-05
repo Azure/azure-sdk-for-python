@@ -479,7 +479,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         dest="filter_type",
         default="Build",
         help="Filter type to identify eligible packages. for e.g. packages filtered in Build can pass filter type as Build,",
-        choices=["Build", "Docs", "Regression", "Omit_management", "None"],
+        choices=["Build", "Docs", "Regression", "Omit_management", "Only_management", "None"],
     )
 
     parser.add_argument(
