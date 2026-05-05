@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import unittest
 import time
-import datetime
 import json
 import base64
 from unittest.mock import patch, Mock
