@@ -199,22 +199,19 @@ def _is_copilot_already_assigned(issue) -> bool:
     return False
 
 
-def _unassign_copilot(issue, github_instance) -> bool:
+def _unassign_copilot(issue, github_instance, copilot_node_id: str) -> bool:
     """Remove the Copilot coding agent from the issue assignees.
 
     Uses the GraphQL ``removeAssigneesFromAssignable`` mutation.
     Treats "not currently assigned" as success (idempotent).
     """
-    node_id = _resolve_copilot_node_id(issue, github_instance)
-    if not node_id:
-        return False
     issue_node_id = issue.raw_data["node_id"]
     try:
         github_instance._Github__requester.graphql_named_mutation(
             "removeAssigneesFromAssignable",
             {
                 "assignableId": issue_node_id,
-                "assigneeIds": [node_id],
+                "assigneeIds": [copilot_node_id],
             },
             output_schema="assignable { ... on Issue { id } }",
         )
@@ -225,7 +222,14 @@ def _unassign_copilot(issue, github_instance) -> bool:
         return False
 
 
-def assign_copilot(issue, github_instance, package_name: str, check_type: str, force_reassign: bool = False) -> bool:
+def assign_copilot(
+    issue,
+    github_instance,
+    copilot_node_id: str,
+    package_name: str,
+    check_type: str,
+    force_reassign: bool = False,
+) -> bool:
     """Attempt to assign the Copilot coding agent to the issue.
 
     Uses the GraphQL ``addAssigneesToAssignable`` mutation because the
@@ -243,19 +247,16 @@ def assign_copilot(issue, github_instance, package_name: str, check_type: str, f
             logging.info(f"Copilot already assigned to issue #{issue.number}, skipping")
             return True
         logging.info(f"Copilot already assigned to issue #{issue.number}, " f"re-assigning to trigger new session")
-        if not _unassign_copilot(issue, github_instance):
+        if not _unassign_copilot(issue, github_instance, copilot_node_id):
             return False
 
-    node_id = _resolve_copilot_node_id(issue, github_instance)
-    if not node_id:
-        return False
     issue_node_id = issue.raw_data["node_id"]
     try:
         github_instance._Github__requester.graphql_named_mutation(
             "addAssigneesToAssignable",
             {
                 "assignableId": issue_node_id,
-                "assigneeIds": [node_id],
+                "assigneeIds": [copilot_node_id],
             },
             output_schema="assignable { ... on Issue { id } }",
         )
@@ -300,8 +301,12 @@ def _try_auto_fix(
     instructions = build_copilot_instructions(package_path, check_type)
     issue.edit(body=_upsert_copilot_instructions(body, instructions))
 
+    copilot_node_id = _resolve_copilot_node_id(issue, github_instance)
+    if not copilot_node_id:
+        return
+
     # Assign Copilot (force reassignment on version bumps)
-    assign_copilot(issue, github_instance, package_name, check_type, force_reassign=version_changed)
+    assign_copilot(issue, github_instance, copilot_node_id, package_name, check_type, force_reassign=version_changed)
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
