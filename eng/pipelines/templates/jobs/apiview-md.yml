@@ -92,9 +92,14 @@ jobs:
           fi
         displayName: 'Stage and commit api.md changes'
 
+      # login to azure a single time. we will source and target the same owner, so a single login is sufficient for the PR creation step
+      # versus allowing multiple logins to occur for `Azure` twice
+      - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
       - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
         parameters:
-          AuthToken: ''
+          AuthToken: '$(GH_TOKEN)'
+          PROwner: 'Azure'
           PRBranchName: 'automated/apiview-md-regen-$(Build.BuildId)'
           CommitMsg: '[Auto] Regenerate api.md for all packages'
           PRTitle: '[Auto] Regenerate api.md for all packages'
