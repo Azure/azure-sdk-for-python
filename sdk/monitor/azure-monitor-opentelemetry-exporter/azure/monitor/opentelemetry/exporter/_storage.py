@@ -66,9 +66,9 @@ class LocalFileBlob:
     def put(self, data: List[Any], lease_period: int = 0) -> Union[StorageExportResult, str]:
         try:
             fullpath = self.fullpath + ".tmp"
-            # Use O_CREAT | O_EXCL | O_WRONLY to atomically create the file
+            # Use O_CREAT | O_EXCL | O_WRONLY to atomically create the file  # cspell:disable-line
             # and fail if it already exists, preventing race conditions.
-            fd = os.open(fullpath, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            fd = os.open(fullpath, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)  # cspell:disable-line
             try:
                 file = os.fdopen(fd, "w", encoding="utf-8")
             except Exception:
@@ -263,7 +263,7 @@ class LocalFileStorage:
                     return True
             # Unix
             else:
-                open_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW  # pylint: disable=no-member
+                open_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW  # pylint: disable=no-member  # cspell:disable-line
                 dir_fd = os.open(self._path, open_flags)
                 try:
                     dir_stat = os.fstat(dir_fd)
