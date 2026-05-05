@@ -152,10 +152,7 @@ async def _collect_audio_trans_outputs(conn, duration_s: float) -> int:
         except asyncio.TimeoutError:
             break
 
-        if (
-            event.type == ServerEventType.RESPONSE_AUDIO_DELTA
-            or event.type == ServerEventType.RESPONSE_AUDIO_DONE
-        ):
+        if event.type == ServerEventType.RESPONSE_AUDIO_DELTA or event.type == ServerEventType.RESPONSE_AUDIO_DONE:
             audio_events += 1
 
         if (
@@ -733,7 +730,10 @@ class TestRealtimeService(AzureRecordedTestCase):
             function_call_output = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
             assert isinstance(function_call_output, ServerEventResponseFunctionCallArgumentsDone)
             assert function_call_output.name == "get_weather"
-            assert function_call_output.arguments.replace(" ", "").replace("\n", "") in ['{"location":"北京"}', '{"location":"Beijing"}']
+            assert function_call_output.arguments.replace(" ", "").replace("\n", "") in [
+                '{"location":"北京"}',
+                '{"location":"Beijing"}',
+            ]
 
             await conn.response.create()
             transcripts, audio_bytes = await _collect_event(
@@ -825,7 +825,14 @@ class TestRealtimeService(AzureRecordedTestCase):
         self,
         test_data_dir: Path,
         model: str,
-        transcription_model: Literal["whisper-1", "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize", "azure-speech", "mai-transcribe-1"],
+        transcription_model: Literal[
+            "whisper-1",
+            "gpt-4o-transcribe",
+            "gpt-4o-mini-transcribe",
+            "gpt-4o-transcribe-diarize",
+            "azure-speech",
+            "mai-transcribe-1",
+        ],
         api_version: str,
         **kwargs,
     ):
@@ -891,7 +898,8 @@ class TestRealtimeService(AzureRecordedTestCase):
         model: str,
         turn_detection_cls: Type[Union["ServerVad", "AzureSemanticVad", "AzureSemanticVadMultilingual"]],
         end_of_detection: Type[Union["AzureSemanticDetection", "AzureSemanticDetectionEn"]],
-        api_version: str, **kwargs,
+        api_version: str,
+        **kwargs,
     ):
         file = test_data_dir / "4-1.wav"
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
@@ -1189,7 +1197,13 @@ class TestRealtimeService(AzureRecordedTestCase):
     )
     @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_with_input_audio_format(
-        self, test_data_dir: Path, model: str, audio_format: InputAudioFormat, turn_detection: TurnDetection, api_version: str, **kwargs
+        self,
+        test_data_dir: Path,
+        model: str,
+        audio_format: InputAudioFormat,
+        turn_detection: TurnDetection,
+        api_version: str,
+        **kwargs,
     ):
         """Test that all supported input_audio_format values work correctly with all models.
 

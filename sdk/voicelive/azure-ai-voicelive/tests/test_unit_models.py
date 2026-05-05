@@ -5,11 +5,17 @@
 # --------------------------------------------------------------------------
 
 from azure.ai.voicelive.models import (
+    ActionFind,
+    ActionOpenPage,
+    ActionSearch,
+    ActionSearchSource,
     AssistantMessageItem,
+    AzureAvatarVoiceSyncVoice,
     AzureCustomVoice,
     AzurePersonalVoice,
     AzureStandardVoice,
     AzureVoiceType,
+    FileSearchResult,
     InputAudioContentPart,
     InputTextContentPart,
     ItemParamStatus,
@@ -26,11 +32,13 @@ from azure.ai.voicelive.models import (
     OutputTextContentPart,
     PersonalVoiceModels,
     RequestSession,
+    ResponseFileSearchCallItem,
     ResponseMCPApprovalRequestItem,
     ResponseMCPApprovalResponseItem,
     ResponseMCPCallItem,
     ResponseMCPListToolItem,
     ResponseSession,
+    ResponseWebSearchCallItem,
     ServerEventMcpListToolsCompleted,
     ServerEventMcpListToolsFailed,
     ServerEventMcpListToolsInProgress,
@@ -39,6 +47,8 @@ from azure.ai.voicelive.models import (
     ServerEventType,
     SystemMessageItem,
     ToolType,
+    TranscriptionPhrase,
+    TranscriptionWord,
     UserMessageItem,
 )
 
@@ -572,6 +582,102 @@ class TestMCPResponseItems:
         assert len(item.tools) == 0
         assert item.server_label == "empty-server"
 
+
+class TestActionModels:
+    """Test web search action models."""
+
+    def test_action_find(self):
+        action = ActionFind(pattern="test query", url="https://example.com")
+        assert action.type == "find"
+        assert action.pattern == "test query"
+        assert action.url == "https://example.com"
+
+    def test_action_open_page(self):
+        action = ActionOpenPage(url="https://example.com/page")
+        assert action.type == "open_page"
+        assert action.url == "https://example.com/page"
+
+    def test_action_search(self):
+        source = ActionSearchSource(url="https://example.com")
+        action = ActionSearch(query="weather", sources=[source])
+        assert action.type == "search"
+        assert action.query == "weather"
+        assert len(action.sources) == 1
+        assert action.sources[0].url == "https://example.com"
+
+    def test_action_search_source(self):
+        source = ActionSearchSource(url="https://example.com/source")
+        assert source.type == "url"
+        assert source.url == "https://example.com/source"
+
+    def test_action_search_optional_fields(self):
+        action = ActionSearch()
+        assert action.type == "search"
+        assert action.query is None
+        assert action.sources is None
+
+
+class TestAzureAvatarVoiceSyncVoice:
+    """Test AzureAvatarVoiceSyncVoice model."""
+
+    def test_basic_creation(self):
+        voice = AzureAvatarVoiceSyncVoice(model=PersonalVoiceModels.DRAGON_LATEST_NEURAL)
+        assert voice.type == AzureVoiceType.AVATAR_VOICE_SYNC
+        assert voice.model == PersonalVoiceModels.DRAGON_LATEST_NEURAL
+
+    def test_with_optional_params(self):
+        voice = AzureAvatarVoiceSyncVoice(
+            model=PersonalVoiceModels.MAI_VOICE1,
+            temperature=0.8,
+            locale="en-US",
+            style="cheerful",
+        )
+        assert voice.model == PersonalVoiceModels.MAI_VOICE1
+        assert voice.temperature == 0.8
+        assert voice.locale == "en-US"
+        assert voice.style == "cheerful"
+
+
+class TestFileSearchResult:
+    """Test FileSearchResult model."""
+
+    def test_basic(self):
+        result = FileSearchResult(file_id="file-123", filename="doc.pdf", score=0.95)
+        assert result.file_id == "file-123"
+        assert result.filename == "doc.pdf"
+        assert result.score == 0.95
+
+
+class TestResponseWebSearchCallItem:
+    """Test ResponseWebSearchCallItem model."""
+
+    def test_basic(self):
+        item = ResponseWebSearchCallItem(status="completed")
+        assert item.type == ItemType.WEB_SEARCH_CALL
+
+
+class TestResponseFileSearchCallItem:
+    """Test ResponseFileSearchCallItem model."""
+
+    def test_basic(self):
+        item = ResponseFileSearchCallItem(status="completed")
+        assert item.type == ItemType.FILE_SEARCH_CALL
+
+
+class TestTranscriptionModels:
+    """Test transcription-related models."""
+
+    def test_transcription_word(self):
+        word = TranscriptionWord(text="hello", offset_milliseconds=0, duration_milliseconds=500)
+        assert word.text == "hello"
+        assert word.offset_milliseconds == 0
+        assert word.duration_milliseconds == 500
+
+    def test_transcription_phrase(self):
+        phrase = TranscriptionPhrase(text="hello world", offset_milliseconds=0, duration_milliseconds=1000)
+        assert phrase.text == "hello world"
+        assert phrase.offset_milliseconds == 0
+        assert phrase.duration_milliseconds == 1000
 
 class TestMCPServerEvents:
     """Test MCP-related server event models."""

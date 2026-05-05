@@ -77,6 +77,7 @@ if TYPE_CHECKING:
 def setup_telemetry(enable_content_recording: bool = False):
     """Set up OpenTelemetry tracing with console exporter and VoiceLive instrumentation."""
     from azure.core.settings import settings
+
     settings.tracing_implementation = "opentelemetry"
 
     from opentelemetry import trace
@@ -92,9 +93,11 @@ def setup_telemetry(enable_content_recording: bool = False):
         os.environ.setdefault("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
 
     from azure.ai.voicelive.telemetry import VoiceLiveInstrumentor
+
     VoiceLiveInstrumentor().instrument()
 
     return trace.get_tracer(__name__)
+
 
 ## Change to the directory where this script is located
 os.chdir(os.path.dirname(os.path.abspath(__file__)))

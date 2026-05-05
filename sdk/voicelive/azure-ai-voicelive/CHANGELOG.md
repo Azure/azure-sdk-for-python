@@ -1,14 +1,68 @@
 # Release History
 
-## 1.2.0b6 (Unreleased)
+## 1.2.0 (Unreleased)
 
 ### Features Added
 
+- **Web Search & File Search**: Added support for built-in web search and file search tools:
+  - New item types: `ResponseWebSearchCallItem`, `ResponseFileSearchCallItem`
+  - New server events for web/file search lifecycle (`searching`, `in_progress`, `completed`)
+  - New models: `ActionFind`, `ActionOpenPage`, `ActionSearch`, `ActionSearchSource`, `FileSearchResult`
+  - New enum values: `ItemType.WEB_SEARCH_CALL`, `ItemType.FILE_SEARCH_CALL`
+  - New `SessionIncludeOption` enum for controlling what data is included in session responses
+- **MCP (Model Context Protocol) Support**: Added comprehensive support for Model Context Protocol integration:
+  - `MCPServer` tool type for defining MCP server configurations with authorization, headers, and approval requirements
+  - `MCPTool` model for representing MCP tool definitions with input schemas and annotations
+  - `MCPApprovalType` enum for controlling approval workflows (`never`, `always`, or tool-specific)
+  - New item types for MCP approval and call workflows
+  - New server events for MCP tool listing, call lifecycle, and approval flows
+- **Avatar Enhancements**:
+  - Added `AzureAvatarVoiceSyncVoice` for avatar voice sync configuration
+  - Added `ServerEventSessionAvatarSwitchToIdle` and `ServerEventSessionAvatarSwitchToSpeaking` events
+  - Added `ServerEventResponseVideoDelta` for avatar video frame streaming
+  - Added `ClientEventOutputAudioBufferClear` and `ServerEventOutputAudioBufferCleared` for output buffer management
+  - Added `AvatarConfigTypes` enum with support for `video-avatar` and `photo-avatar` types
+  - Added `AvatarOutputProtocol` enum for avatar streaming protocols (`webrtc`, `websocket`)
+  - Added `Scene` model for controlling avatar zoom, position, rotation, and movement amplitude
+  - Added `output_audit_audio` field to `AvatarConfig`
+- **OpenTelemetry Tracing Support**: Added `VoiceLiveInstrumentor` for opt-in OpenTelemetry-based
+  tracing of VoiceLive WebSocket connections, following Azure SDK and GenAI semantic conventions.
+  - Enable via `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` environment variable
+  - Content recording controlled by `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`
+  - Comprehensive session-level telemetry: session ID, audio format, first-token latency,
+    turn count, interruption count, audio bytes sent/received, message size
+  - Response & function call ID tracking for end-to-end tracing
+  - Agent v2 telemetry with agent identity and configuration tracking
+  - MCP telemetry with tool call and approval flow tracking
+- **Agent Session Configuration**: Added `AgentSessionConfig` for configuring Azure AI Foundry agents
+  at connection time with `agent_name`, `project_name`, `agent_version`, `conversation_id`, and more
+- **Transcription Improvements**:
+  - Added `TranscriptionPhrase` and `TranscriptionWord` models for detailed transcription data
+  - Added `ServerEventResponseAudioTranscriptAnnotationAdded` event
+  - Added `gpt-4o-transcribe-diarize` and `mai-transcribe-1` transcription model support
+- **Interim Response Configuration**: Added `StaticInterimResponseConfig` and `LlmInterimResponseConfig`
+  for generating interim responses during latency or tool calls
+- **Image Content Support**: Added `RequestImageContentPart` for image inputs in conversations
+- **Reasoning Effort Control**: Added `reasoning_effort` field with `ReasoningEffort` enum
+- **Response Metadata**: Added `metadata` field to `Response` and `ResponseCreateParams`
+- **Server Warning Events**: Added `ServerEventWarning` for handling non-fatal warnings
+- **Personal Voice Models**: Added `DragonHDOmniLatestNeural` and `MAI-Voice-1` model options
+- **Enhanced OpenAI Voices**: Added `marin` and `cedar` voices to `OpenAIVoiceName` enum
+- **Enhanced Azure Personal Voice**: Added `custom_lexicon_url`, `prefer_locales`, `locale`, `style`,
+  `pitch`, `rate`, and `volume` properties
+- **Pre-generated Assistant Messages**: Added `pre_generated_assistant_message` in `ResponseCreateParams`
+- **Explicit Null Values**: Enhanced `RequestSession` to properly serialize explicitly set `None` values
+
 ### Breaking Changes
 
-### Bugs Fixed
+- Removed `PersonalVoiceModels.PHOENIX_V2_NEURAL` enum value (replaced by `DRAGON_HD_OMNI_LATEST_NEURAL`
+  and `MAI_VOICE1`)
+- Removed Foundry Agent Tool classes (`FoundryAgentTool`, `ResponseFoundryAgentCallItem`, etc.) —
+  use `AgentSessionConfig` with `connect()` instead
 
 ### Other Changes
+
+- Updated default API version to `2026-04-10`
 
 ## 1.2.0b5 (2026-04-06)
 
