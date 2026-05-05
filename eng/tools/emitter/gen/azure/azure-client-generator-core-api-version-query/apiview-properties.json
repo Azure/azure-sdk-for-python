@@ -1,0 +1,7 @@
+{
+    "CrossLanguagePackageId": "Client.AlternateApiVersion.Service.Query",
+    "CrossLanguageDefinitionId": {
+        "client.alternateapiversion.service.query.QueryClient.query_api_version": "Client.AlternateApiVersion.Service.Query.queryApiVersion",
+        "client.alternateapiversion.service.query.aio.QueryClient.query_api_version": "Client.AlternateApiVersion.Service.Query.queryApiVersion"
+    }
+}

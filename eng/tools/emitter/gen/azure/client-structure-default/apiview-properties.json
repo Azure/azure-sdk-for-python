@@ -1,0 +1,20 @@
+{
+    "CrossLanguagePackageId": "Client.Structure.Service",
+    "CrossLanguageDefinitionId": {
+        "client.structure.service.models.ClientType": "Client.Structure.Service.ClientType",
+        "client.structure.service.operations.QuxOperations.eight": "Client.Structure.Service.Qux.eight",
+        "client.structure.service.aio.operations.QuxOperations.eight": "Client.Structure.Service.Qux.eight",
+        "client.structure.service.operations.FooOperations.three": "Client.Structure.Service.Foo.three",
+        "client.structure.service.aio.operations.FooOperations.three": "Client.Structure.Service.Foo.three",
+        "client.structure.service.operations.FooOperations.four": "Client.Structure.Service.Foo.four",
+        "client.structure.service.aio.operations.FooOperations.four": "Client.Structure.Service.Foo.four",
+        "client.structure.service.operations.BarOperations.five": "Client.Structure.Service.Bar.five",
+        "client.structure.service.aio.operations.BarOperations.five": "Client.Structure.Service.Bar.five",
+        "client.structure.service.operations.BarOperations.six": "Client.Structure.Service.Bar.six",
+        "client.structure.service.aio.operations.BarOperations.six": "Client.Structure.Service.Bar.six",
+        "client.structure.service.ServiceClient.one": "Client.Structure.Service.one",
+        "client.structure.service.aio.ServiceClient.one": "Client.Structure.Service.one",
+        "client.structure.service.ServiceClient.two": "Client.Structure.Service.two",
+        "client.structure.service.aio.ServiceClient.two": "Client.Structure.Service.two"
+    }
+}

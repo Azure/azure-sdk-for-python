@@ -1,0 +1,11 @@
+{
+    "CrossLanguagePackageId": "Service.MultiService.ServiceA",
+    "CrossLanguageDefinitionId": {
+        "service.multiservice.models.VersionsA": "Service.MultiService.ServiceA.VersionsA",
+        "service.multiservice.models.VersionsB": "Service.MultiService.ServiceB.VersionsB",
+        "service.multiservice.operations.FooOperations.test": "Service.MultiService.ServiceA.Foo.test",
+        "service.multiservice.aio.operations.FooOperations.test": "Service.MultiService.ServiceA.Foo.test",
+        "service.multiservice.operations.BarOperations.test": "Service.MultiService.ServiceB.Bar.test",
+        "service.multiservice.aio.operations.BarOperations.test": "Service.MultiService.ServiceB.Bar.test"
+    }
+}

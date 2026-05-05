@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed missing `disable_redirect_cleanup=True` in the async client, which could cause authentication failures on redirects.
+- Replaced `assert` statements in receipt verification with explicit checks raising `ValueError`. This prevents validation from being silently skipped when Python is run with the `-O` (optimize) flag, which strips `assert` statements.
 
 ## 2.0.0b2 (2026-01-29)
 
