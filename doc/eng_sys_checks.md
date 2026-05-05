@@ -1,4 +1,4 @@
-gi# Azure SDK for Python - Engineering System
+# Azure SDK for Python - Engineering System
 
 - [Azure SDK for Python - Engineering System](#azure-sdk-for-python---engineering-system)
   - [Targeting a specific package at build queue time](#targeting-a-specific-package-at-build-queue-time)

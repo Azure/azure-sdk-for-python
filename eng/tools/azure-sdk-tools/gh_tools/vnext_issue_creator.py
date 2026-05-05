@@ -228,7 +228,7 @@ def assign_copilot(
     agent is first unassigned then reassigned so that a new Copilot
     session is triggered (e.g. after a checker version bump).
 
-    Returns True on success, False on failure (labels/comments the issue).
+    Returns True on success, False on failure after logging a warning.
     """
     if _is_copilot_already_assigned(issue):
         if not force_reassign:
@@ -285,7 +285,15 @@ def _try_auto_fix(
     # Upsert Copilot instructions (replace existing block or append)
     body = issue.body or ""
     instructions = build_copilot_instructions(package_path, check_type)
-    issue.edit(body=_upsert_copilot_instructions(body, instructions))
+    updated_body = _upsert_copilot_instructions(body, instructions)
+    try:
+        issue.edit(body=updated_body)
+    except GithubException as exc:
+        logging.warning(
+            "Failed to update Copilot instructions for issue #%s: %s",
+            issue.number,
+            exc,
+        )
 
     copilot_node_id = _resolve_copilot_node_id(issue, github_instance)
     if not copilot_node_id:
@@ -330,7 +338,7 @@ def get_build_link(check_type: CHECK_TYPE) -> str:
     )
 
 
-def get_merge_dates(year: int) -> typing.List[datetime.datetime]:
+def get_merge_dates(year: int) -> typing.List[datetime.date]:
     """We'll merge the latest version of the type checker/linter quarterly
     on the Monday after release week. This function returns those 4 Mondays
     for the given year.
