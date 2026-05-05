@@ -808,7 +808,7 @@ class _VoiceLiveInstrumentorPreview:
                     if message_size is not None:
                         span.add_attribute(GEN_AI_VOICE_MESSAGE_SIZE, message_size)
                     # Extract call_id from send events (e.g. conversation.item.create with function_call_output)
-                    instrumentor._extract_send_event_ids(conn_self, event, span)
+                    instrumentor._extract_send_event_ids(event, span)
                     instrumentor._add_send_event(span, event_type, content_str)
                     return await original_send(conn_self, event, *args, **kwargs)
             except Exception as exc:
@@ -1271,16 +1271,14 @@ class _VoiceLiveInstrumentorPreview:
 
     @staticmethod
     def _extract_send_event_ids(
-        conn_self: Any, event: Any, span: "AbstractSpan"
-    ) -> None:  # pylint: disable=unused-argument
+        event: Any, span: "AbstractSpan"
+    ) -> None:
         """Extract call_id and response_id from send events.
 
         For ``conversation.item.create`` events, the nested ``item`` may carry
         a ``call_id`` (for function_call_output items). For ``response.cancel``
         events, ``response_id`` may be present.
 
-        :param conn_self: The ``VoiceLiveConnection`` instance.
-        :type conn_self: ~azure.ai.voicelive.aio.VoiceLiveConnection
         :param event: The client event being sent.
         :type event: any
         :param span: The current send span.
