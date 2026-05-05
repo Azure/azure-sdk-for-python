@@ -161,23 +161,23 @@ class TestReconcileAutoFixLabels:
 
     def test_adds_auto_fix_label(self):
         issue = _make_issue(labels=["pylint"])
-        reconcile_auto_fix_labels(issue, "pylint", eligible=True)
+        reconcile_auto_fix_labels(issue, eligible=True)
         issue.add_to_labels.assert_called_once_with(LABEL_AUTO_FIX)
 
     def test_skips_if_already_labeled(self):
         issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX])
-        reconcile_auto_fix_labels(issue, "pylint", eligible=True)
+        reconcile_auto_fix_labels(issue, eligible=True)
         issue.add_to_labels.assert_not_called()
 
     def test_removes_failed_label_on_retry(self):
         issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX_FAILED])
-        reconcile_auto_fix_labels(issue, "pylint", eligible=True)
+        reconcile_auto_fix_labels(issue, eligible=True)
         issue.remove_from_labels.assert_called_once_with(LABEL_AUTO_FIX_FAILED)
         issue.add_to_labels.assert_called_once_with(LABEL_AUTO_FIX)
 
     def test_not_eligible_no_op(self):
         issue = _make_issue(labels=["pylint"])
-        reconcile_auto_fix_labels(issue, "pylint", eligible=False)
+        reconcile_auto_fix_labels(issue, eligible=False)
         issue.add_to_labels.assert_not_called()
         issue.remove_from_labels.assert_not_called()
 
@@ -220,34 +220,6 @@ class TestAssignCopilot:
         assert assign_copilot(issue, g, "azure-ai-test", "pylint") is True
         call_args = g._Github__requester.graphql_named_mutation.call_args
         assert call_args[0][1]["assigneeIds"] == ["BOT_custom"]
-
-
-# ---------------------------------------------------------------------------
-# Copilot login helper tests
-# ---------------------------------------------------------------------------
-
-class TestCopilotLogin:
-
-    def test_default(self):
-        with patch.dict(os.environ, {}, clear=True):
-            os.environ.pop("COPILOT_LOGIN", None)
-            assert _copilot_login() == "copilot-swe-agent"
-
-    @patch.dict(os.environ, {"COPILOT_LOGIN": "my-bot"})
-    def test_env_override(self):
-        assert _copilot_login() == "my-bot"
-
-
-class TestCopilotNodeId:
-
-    def test_default(self):
-        with patch.dict(os.environ, {}, clear=True):
-            os.environ.pop("COPILOT_NODE_ID", None)
-            assert _copilot_node_id() == "BOT_kgDOC9w8XQ"
-
-    @patch.dict(os.environ, {"COPILOT_NODE_ID": "BOT_custom"})
-    def test_env_override(self):
-        assert _copilot_node_id() == "BOT_custom"
 
 
 # ---------------------------------------------------------------------------
