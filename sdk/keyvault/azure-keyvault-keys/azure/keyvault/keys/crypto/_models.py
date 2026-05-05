@@ -415,8 +415,8 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The signature, as bytes.
         :rtype: bytes
         """
-        if not isinstance(algorithm, HashAlgorithm):
-            raise ValueError("Only `HashAlgorithm`s are supported. Please provide a `HashAlgorithm` instead.")
+        if isinstance(algorithm, Prehashed):
+            raise ValueError("`Prehashed` algorithms are unsupported. Please provide a `HashAlgorithm` instead.")
         mapped_algorithm = get_signature_algorithm(padding, algorithm)
         digest = Hash(algorithm)
         digest.update(data)
