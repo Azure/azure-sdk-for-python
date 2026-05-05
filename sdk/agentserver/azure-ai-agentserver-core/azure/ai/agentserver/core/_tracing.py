@@ -225,6 +225,7 @@ def _setup_distro_export(
         kwargs["enable_a365"] = True
         kwargs["a365_use_s2s_endpoint"] = True
         kwargs["a365_enable_observability_exporter"] = True
+        kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
     use_microsoft_opentelemetry(**kwargs)
 
