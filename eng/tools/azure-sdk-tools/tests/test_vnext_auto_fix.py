@@ -319,8 +319,7 @@ class TestTryAutoFix:
 
         _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint"])
 
-        # Should still have reconciled labels before the failed assignment
-        issue.add_to_labels.assert_any_call(LABEL_AUTO_FIX)
+        issue.add_to_labels.assert_not_called()
 
     def test_missing_copilot_node_id_skips_assignment(self):
         repo = MagicMock()
@@ -336,3 +335,4 @@ class TestTryAutoFix:
 
         g._Github__requester.graphql_query.assert_called_once()
         g._Github__requester.graphql_named_mutation.assert_not_called()
+        issue.add_to_labels.assert_not_called()

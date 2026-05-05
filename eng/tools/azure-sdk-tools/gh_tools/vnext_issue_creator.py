@@ -65,18 +65,6 @@ def _resolve_copilot_node_id(issue, github_instance) -> Optional[str]:
                         id
                         login
                       }
-                      ... on Mannequin {
-                        id
-                        login
-                      }
-                      ... on Organization {
-                        id
-                        login
-                      }
-                      ... on User {
-                        id
-                        login
-                      }
                     }
                   }
                 }
@@ -287,8 +275,6 @@ def _try_auto_fix(
     if not eligible:
         return
 
-    reconcile_auto_fix_labels(issue, eligible=True)
-
     # Duplicate PR detection
     matching_prs = find_existing_fix_prs(repo, issue.number, package_name, check_type)
     if matching_prs:
@@ -306,7 +292,8 @@ def _try_auto_fix(
         return
 
     # Assign Copilot (force reassignment on version bumps)
-    assign_copilot(issue, github_instance, copilot_node_id, package_name, check_type, force_reassign=version_changed)
+    if assign_copilot(issue, github_instance, copilot_node_id, package_name, check_type, force_reassign=version_changed):
+        reconcile_auto_fix_labels(issue, eligible=True)
 
 
 def get_version_running(check_type: CHECK_TYPE) -> str:
