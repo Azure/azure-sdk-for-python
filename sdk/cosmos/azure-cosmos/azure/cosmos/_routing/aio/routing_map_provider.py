@@ -24,12 +24,14 @@ Cosmos database service.
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
+import threading
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
 from azure.core.utils import CaseInsensitiveDict
 from ... import _base, http_constants
 from ..collection_routing_map import CollectionRoutingMap
 from ...exceptions import CosmosHttpResponseError
 from .._routing_map_provider_common import (
+    _resolve_endpoint,
     prepare_fetch_options_and_headers,
     process_fetched_ranges,
     is_cache_unchanged_since_previous,
@@ -41,6 +43,60 @@ from .._routing_map_provider_common import (
 
 if TYPE_CHECKING:
     from ...aio._cosmos_client_connection_async import CosmosClientConnection
+
+# Module-level shared state, keyed by endpoint URL. All four dicts and the
+# refcount are mutated only while holding ``_shared_cache_lock``. Sharing across
+# every async CosmosClient that targets the same endpoint is what eliminates
+# the per-client duplicate copies of the routing map (the memory win driving
+# this change), and what lets concurrent readers single-flight a single
+# refresh.
+
+# endpoint -> { collection_id -> CollectionRoutingMap }. The actual cached
+# routing maps. The inner dict is shared by every client for that endpoint, so
+# a routing-map populated by one client is immediately visible to all others.
+_shared_routing_map_cache: dict = {}
+
+# endpoint -> { (loop_id, collection_id) -> asyncio.Lock }. Per-collection
+# refresh lock, scoped to the asyncio event loop that owns it. We key by loop
+# id (``id(asyncio.get_running_loop())``) because ``asyncio.Lock`` instances
+# bind to the loop on first ``acquire()`` (CPython 3.10+) and raise
+# ``RuntimeError: ... bound to a different event loop`` if reused from a
+# different running loop. Single-flighting only needs to be per-loop in
+# practice — coroutines on different loops have different connection pools
+# and are effectively independent clients.
+_shared_collection_locks: Dict[str, Dict[tuple, asyncio.Lock]] = {}
+
+# endpoint -> threading.Lock. Guards the creation of new entries in the inner
+# dict of ``_shared_collection_locks``. Was an ``asyncio.Lock`` previously,
+# but its critical sections are pure dict reads/writes (no await), so a
+# ``threading.Lock`` works identically and avoids the same loop-binding
+# hazard described above. Without this guard, two coroutines racing on a
+# brand-new (loop, collection_id) could each create a different Lock object
+# and defeat the single-flight invariant.
+_shared_locks_locks: Dict[str, threading.Lock] = {}
+
+# endpoint -> int. Number of live async ``PartitionKeyRangeCache`` instances
+# using this endpoint. Incremented on construction and decremented in
+# ``release`` (called from ``CosmosClient.__aexit__`` / ``close`` / ``__del__``).
+# When the count hits zero we drop the entry from all four dicts so an idle
+# endpoint does not pin memory forever. ``clear_cache`` does NOT touch this
+# count — it only wipes routing-map contents.
+_shared_cache_refcounts: Dict[str, int] = {}
+
+# Process-wide lock guarding the four dicts above for *this* (async) module.
+# Note: the sync module ``_routing/routing_map_provider.py`` defines its own
+# independent set of module-level dicts and its own ``_shared_cache_lock`` —
+# state is NOT shared between the sync and async modules. A sync and an async
+# ``CosmosClient`` targeting the same endpoint maintain separate routing-map
+# caches. Using a ``threading.Lock`` (not an ``asyncio.Lock``) is also
+# essential for correctness across multiple event loops in the same process:
+# an ``asyncio.Lock`` binds to the loop that first acquires it. The critical
+# sections this lock guards are pure dict reads/writes — never await, never
+# network I/O — so a brief threading-lock acquisition from a coroutine is
+# safe and does not block the event loop in any meaningful way.
+_shared_cache_lock = threading.Lock()
+
+
 # pylint: disable=protected-access
 
 logger = logging.getLogger(__name__)
@@ -64,25 +120,99 @@ class PartitionKeyRangeCache(object):
         """
 
         self._document_client = client
+        self._endpoint = _resolve_endpoint(client)
+        self._released = False
 
-        # keeps the cached collection routing map by collection id
-        self._collection_routing_map_by_item: Dict[str, CollectionRoutingMap] = {}
-        # A lock to control access to the locks dictionary itself
-        self._locks_lock = asyncio.Lock()
-        # A dictionary to hold a lock for each collection ID
-        self._collection_locks: Dict[str, asyncio.Lock] = {}
+        # Share routing map cache, per-collection asyncio locks, and the
+        # per-endpoint meta-lock that guards the per-collection-lock dict
+        # across all clients with the same endpoint. Refcount lets us evict
+        # the entry when the last sharing client releases it (see ``release``).
+        with _shared_cache_lock:
+            if self._endpoint not in _shared_routing_map_cache:
+                _shared_routing_map_cache[self._endpoint] = {}
+                _shared_collection_locks[self._endpoint] = {}
+                _shared_locks_locks[self._endpoint] = threading.Lock()
+                _shared_cache_refcounts[self._endpoint] = 0
+            _shared_cache_refcounts[self._endpoint] += 1
+            self._collection_routing_map_by_item = _shared_routing_map_cache[self._endpoint]
+            self._collection_locks: Dict[tuple, asyncio.Lock] = _shared_collection_locks[self._endpoint]
+            self._locks_lock: threading.Lock = _shared_locks_locks[self._endpoint]
+
+    def clear_cache(self):
+        """Clear the shared routing map cache for this endpoint.
+
+        Uses in-place ``.clear()`` on the routing-map dict to preserve all
+        client references to the same dict object, so concurrent clients
+        sharing the endpoint continue to share a single cache instance.
+
+        The per-collection locks dict is intentionally **not** cleared here:
+        an in-flight ``_fetch_routing_map`` caller holds one of those locks
+        and will write its result into the (now-empty) shared cache when it
+        completes. Keeping the lock in place ensures that any concurrent
+        arrival serialises behind the in-flight refresh (single-flight
+        invariant) instead of racing it with a fresh lock. The locks dict
+        is evicted in ``release()`` once the endpoint refcount hits zero.
+        """
+        with _shared_cache_lock:
+            if self._endpoint in _shared_routing_map_cache:
+                _shared_routing_map_cache[self._endpoint].clear()
+
+    def release(self) -> None:
+        """Decrement the per-endpoint refcount and evict shared state at zero.
+
+        Safe to call multiple times concurrently. Best-effort: never raises.
+
+        The ``_released`` check-and-set is performed *inside* the shared
+        cache lock to close the TOCTOU window between two concurrent callers
+        (e.g. ``CosmosClient.__aexit__`` racing the GC's ``__del__``).
+        Without the lock, both callers could pass the early-return guard
+        before either set the flag, then both would decrement the refcount.
+        """
+        endpoint = self._endpoint
+        try:
+            with _shared_cache_lock:
+                if self._released:
+                    return
+                self._released = True
+                count = _shared_cache_refcounts.get(endpoint, 0) - 1
+                if count <= 0:
+                    _shared_cache_refcounts.pop(endpoint, None)
+                    _shared_routing_map_cache.pop(endpoint, None)
+                    _shared_collection_locks.pop(endpoint, None)
+                    _shared_locks_locks.pop(endpoint, None)
+                else:
+                    _shared_cache_refcounts[endpoint] = count
+        except Exception:  # pylint: disable=broad-except
+            # release() may be called from __del__ during interpreter shutdown
+            # where module globals may already be torn down.
+            pass
+
+    def __del__(self):
+        # Defensive fallback in case the owning client teardown path didn't
+        # call release(). Must never raise.
+        try:
+            self.release()
+        except Exception:  # pylint: disable=broad-except
+            pass
 
     async def _get_lock_for_collection(self, collection_id: str) -> asyncio.Lock:
-        """Safely gets or creates a lock for a given collection ID.
+        """Safely gets or creates a lock for a given (loop, collection) pair.
+
+        Scoped to the running event loop so the returned ``asyncio.Lock`` is
+        always bound to the loop that will await it — see the comment on
+        ``_shared_collection_locks`` for the loop-binding rationale.
 
         :param str collection_id: The ID of the collection.
-        :return: An asyncio.Lock specific to the collection ID.
+        :return: An asyncio.Lock specific to the (loop, collection) pair.
         :rtype: asyncio.Lock
         """
-        async with self._locks_lock:
-            if collection_id not in self._collection_locks:
-                self._collection_locks[collection_id] = asyncio.Lock()
-            return self._collection_locks[collection_id]
+        key = (id(asyncio.get_running_loop()), collection_id)
+        with self._locks_lock:
+            lock = self._collection_locks.get(key)
+            if lock is None:
+                lock = asyncio.Lock()
+                self._collection_locks[key] = lock
+            return lock
 
     def _is_cache_stale(
             self,
@@ -235,7 +365,8 @@ class PartitionKeyRangeCache(object):
                     ranges.append(item)
 
             except CosmosHttpResponseError as e:
-                logger.error("Failed to read partition key ranges for collection '%s': %s", collection_link, e)
+                logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
+                    "Failed to read partition key ranges for collection '%s': %s", collection_link, e)
                 raise
 
             new_etag = response_headers.get(http_constants.HttpHeaders.ETag)

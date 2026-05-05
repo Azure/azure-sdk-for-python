@@ -25,6 +25,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
 from ._middleware import InboundRequestLoggingMiddleware
+from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
 from ._version import VERSION as _CORE_VERSION
 
@@ -278,6 +279,7 @@ class AgentServerHost(Starlette):
                     _PlatformHeaderMiddleware,
                     get_server_version=self._build_server_version,
                 ),
+                Middleware(_RequestIdMiddleware),  # type: ignore[arg-type]
             ],
             **kwargs,
         )

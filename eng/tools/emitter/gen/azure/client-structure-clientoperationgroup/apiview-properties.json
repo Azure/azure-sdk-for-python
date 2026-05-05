@@ -1,0 +1,18 @@
+{
+    "CrossLanguagePackageId": "Client.Structure.Service",
+    "CrossLanguageDefinitionId": {
+        "client.structure.clientoperationgroup.models.ClientType": "Client.Structure.Service.ClientType",
+        "client.structure.clientoperationgroup.operations.Group3Operations.two": "Client.Structure.ClientOperationGroup.Group3.two",
+        "client.structure.clientoperationgroup.aio.operations.Group3Operations.two": "Client.Structure.ClientOperationGroup.Group3.two",
+        "client.structure.clientoperationgroup.operations.Group3Operations.three": "Client.Structure.ClientOperationGroup.Group3.three",
+        "client.structure.clientoperationgroup.aio.operations.Group3Operations.three": "Client.Structure.ClientOperationGroup.Group3.three",
+        "client.structure.clientoperationgroup.operations.Group4Operations.four": "Client.Structure.ClientOperationGroup.Group4.four",
+        "client.structure.clientoperationgroup.aio.operations.Group4Operations.four": "Client.Structure.ClientOperationGroup.Group4.four",
+        "client.structure.clientoperationgroup.FirstClient.one": "Client.Structure.ClientOperationGroup.one",
+        "client.structure.clientoperationgroup.aio.FirstClient.one": "Client.Structure.ClientOperationGroup.one",
+        "client.structure.clientoperationgroup.operations.Group5Operations.six": "Client.Structure.AnotherClientOperationGroup.Group5.six",
+        "client.structure.clientoperationgroup.aio.operations.Group5Operations.six": "Client.Structure.AnotherClientOperationGroup.Group5.six",
+        "client.structure.clientoperationgroup.SecondClient.five": "Client.Structure.AnotherClientOperationGroup.five",
+        "client.structure.clientoperationgroup.aio.SecondClient.five": "Client.Structure.AnotherClientOperationGroup.five"
+    }
+}

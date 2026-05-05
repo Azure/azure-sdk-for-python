@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.entities.create_or_update(
+    response = client.entities.begin_create_or_update(
         resource_group_name="rgopenapi",
         health_model_name="myHealthModel",
         entity_name="uszrxbdkxesdrxhmagmzywebgbjj",
@@ -58,33 +58,87 @@ def main():
                 "healthObjective": 62,
                 "icon": {"customData": "rcitntvapruccrhtxmkqjphbxunkz", "iconName": "Custom"},
                 "impact": "Standard",
-                "labels": {"key1376": "ixfvzsfnpvkkbrce"},
-                "signals": {
+                "signalGroups": {
                     "azureLogAnalytics": {
-                        "authenticationSetting": "B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX",
+                        "authenticationSetting": "auth123",
                         "logAnalyticsWorkspaceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.OperationalInsights/workspaces/myworkspace",
-                        "signalAssignments": [
-                            {"signalDefinitions": ["B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX"]}
+                        "signals": [
+                            {
+                                "dataUnit": "my unit",
+                                "displayName": "Test LA signal",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "GreaterThan", "threshold": 1},
+                                    "unhealthyRule": {"operator": "GreaterThan", "threshold": 5},
+                                },
+                                "name": "uniqueSignalName2",
+                                "queryText": "print 1",
+                                "refreshInterval": "PT1M",
+                                "signalDefinitionName": None,
+                                "signalKind": "LogAnalyticsQuery",
+                                "timeGrain": "PT30M",
+                                "valueColumnName": "result",
+                            }
                         ],
                     },
                     "azureMonitorWorkspace": {
-                        "authenticationSetting": "B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX",
+                        "authenticationSetting": "auth123",
                         "azureMonitorWorkspaceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.OperationalInsights/workspaces/myworkspace",
-                        "signalAssignments": [{"signalDefinitions": ["sigdef2"]}, {"signalDefinitions": ["sigdef3"]}],
+                        "signals": [
+                            {
+                                "dataUnit": "Percent",
+                                "displayName": "Pod CPU Usage",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "GreaterThan", "threshold": 70},
+                                    "unhealthyRule": {"operator": "GreaterThan", "threshold": 90},
+                                },
+                                "name": "pod-cpu-usage",
+                                "queryText": 'rate(container_cpu_usage_seconds_total{pod=~"my-app-.*"}[5m]) * 100',
+                                "refreshInterval": "PT1M",
+                                "signalDefinitionName": "PodCpuUsageDefinition",
+                                "signalKind": "PrometheusMetricsQuery",
+                                "timeGrain": "PT5M",
+                            }
+                        ],
                     },
                     "azureResource": {
-                        "authenticationSetting": "B3P1X3e-FZtZ-4Ak-2VLHGQ-4m4-05DE-XNW5zW3P-46XY-DC3SSX",
+                        "authenticationSetting": "auth123",
                         "azureResourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/rg1/providers/Microsoft.Compute/virtualMachines/vm1",
-                        "signalAssignments": [{"signalDefinitions": ["sigdef1"]}],
+                        "azureResourceKind": "functionapp",
+                        "signals": [
+                            {
+                                "aggregationType": "None",
+                                "dataUnit": "Count",
+                                "dimension": "nodename",
+                                "dimensionFilter": "node1",
+                                "displayName": "CPU usage",
+                                "evaluationRules": {
+                                    "degradedRule": {"operator": "LowerThan", "threshold": 10},
+                                    "unhealthyRule": {"operator": "LowerThan", "threshold": 1},
+                                },
+                                "metricName": "cpuusage",
+                                "metricNamespace": "microsoft.compute/virtualMachines",
+                                "name": "uniqueSignalName1",
+                                "refreshInterval": "PT1M",
+                                "signalDefinitionName": "sigdef1",
+                                "signalKind": "AzureResourceMetric",
+                                "timeGrain": "PT1M",
+                            }
+                        ],
                     },
-                    "dependencies": {"aggregationType": "WorstOf"},
+                    "dependencies": {
+                        "aggregationType": "MinHealthy",
+                        "degradedThreshold": 80,
+                        "unhealthyThreshold": 50,
+                        "unit": "Percentage",
+                    },
                 },
+                "tags": {"key1376": "sample tag"},
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/Entities_CreateOrUpdate.json
+# x-ms-original-file: 2026-01-01-preview/Entities_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

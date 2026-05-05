@@ -1,0 +1,14 @@
+{
+    "CrossLanguagePackageId": "Type.Enum.Extensible",
+    "CrossLanguageDefinitionId": {
+        "typetest.enum.extensible.models.DaysOfWeekExtensibleEnum": "Type.Enum.Extensible.DaysOfWeekExtensibleEnum",
+        "typetest.enum.extensible.operations.StringOperations.get_known_value": "Type.Enum.Extensible.String.getKnownValue",
+        "typetest.enum.extensible.aio.operations.StringOperations.get_known_value": "Type.Enum.Extensible.String.getKnownValue",
+        "typetest.enum.extensible.operations.StringOperations.get_unknown_value": "Type.Enum.Extensible.String.getUnknownValue",
+        "typetest.enum.extensible.aio.operations.StringOperations.get_unknown_value": "Type.Enum.Extensible.String.getUnknownValue",
+        "typetest.enum.extensible.operations.StringOperations.put_known_value": "Type.Enum.Extensible.String.putKnownValue",
+        "typetest.enum.extensible.aio.operations.StringOperations.put_known_value": "Type.Enum.Extensible.String.putKnownValue",
+        "typetest.enum.extensible.operations.StringOperations.put_unknown_value": "Type.Enum.Extensible.String.putUnknownValue",
+        "typetest.enum.extensible.aio.operations.StringOperations.put_unknown_value": "Type.Enum.Extensible.String.putUnknownValue"
+    }
+}

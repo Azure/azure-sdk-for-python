@@ -8,6 +8,8 @@ from collections.abc import Mapping, MutableMapping
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
+from .._platform_headers import REQUEST_ID
+
 if TYPE_CHECKING:
     from ._execution_context import _ExecutionContext
 
@@ -211,7 +213,7 @@ def extract_request_id(headers: Mapping[str, str]) -> str | None:
     :return: Truncated request ID string, or ``None``.
     :rtype: str | None
     """
-    raw = headers.get("x-request-id") or headers.get("X-Request-Id")
+    raw = headers.get(REQUEST_ID) or headers.get("X-Request-Id")
     return raw[:_MAX_REQUEST_ID_LEN] if raw else None
 
 

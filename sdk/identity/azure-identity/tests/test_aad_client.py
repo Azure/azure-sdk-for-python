@@ -120,6 +120,7 @@ def test_request_url(authority):
         assert actual.scheme == "https"
         assert actual.netloc == expected_netloc
         assert actual.path.startswith("/" + tenant_id)
+        assert "x-ms-client-request-id" in request.headers
         return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
     client = AadClient(tenant_id, "client id", transport=Mock(send=send), authority=authority)

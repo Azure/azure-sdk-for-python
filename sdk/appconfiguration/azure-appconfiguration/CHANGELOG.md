@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue where authorization failures caused crashes. Now an `HttpResponseError` is returned when the required data plane role is missing.
+
 ### Other Changes
 
 ## 1.8.0 (2026-01-26)
