@@ -18,7 +18,6 @@ from gh_tools.vnext_issue_creator import (
     DEFAULT_COPILOT_NODE_ID,
     LABEL_AUTO_FIX,
     LABEL_AUTO_FIX_DISABLED,
-    LABEL_AUTO_FIX_FAILED,
     _copilot_login,
     _copilot_node_id,
     _is_copilot_already_assigned,
@@ -151,7 +150,6 @@ class TestBuildCopilotInstructions:
         result = build_copilot_instructions("sdk/ai/azure-ai-test", check_type)
 
         assert f"fix-{check_type}" in result
-        assert f"azpysdk {check_type} ." in result
         assert "sdk/ai/azure-ai-test" in result
         assert "Automated Fix" in result
         assert "Do not make unrelated" in result
@@ -173,12 +171,6 @@ class TestReconcileAutoFixLabels:
         issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX])
         reconcile_auto_fix_labels(issue, eligible=True)
         issue.add_to_labels.assert_not_called()
-
-    def test_removes_failed_label_on_retry(self):
-        issue = _make_issue(labels=["pylint", LABEL_AUTO_FIX_FAILED])
-        reconcile_auto_fix_labels(issue, eligible=True)
-        issue.remove_from_labels.assert_called_once_with(LABEL_AUTO_FIX_FAILED)
-        issue.add_to_labels.assert_called_once_with(LABEL_AUTO_FIX)
 
     def test_not_eligible_no_op(self):
         issue = _make_issue(labels=["pylint"])
@@ -209,15 +201,11 @@ class TestAssignCopilot:
         assert assign_copilot(issue, g, "azure-ai-test", "pylint") is True
         g._Github__requester.graphql_named_mutation.assert_not_called()
 
-    def test_failure_adds_label_and_comment(self):
+    def test_failure_returns_false(self):
         issue = _make_issue()
         g = _make_github_instance()
         g._Github__requester.graphql_named_mutation.side_effect = Exception("mutation failed")
         assert assign_copilot(issue, g, "azure-ai-test", "pylint") is False
-        issue.add_to_labels.assert_called_once_with(LABEL_AUTO_FIX_FAILED)
-        issue.create_comment.assert_called_once()
-        comment_text = issue.create_comment.call_args[0][0]
-        assert "auto-fix assignment failed" in comment_text
 
     @patch.dict(os.environ, {"COPILOT_LOGIN": "custom-bot", "COPILOT_NODE_ID": "BOT_custom"})
     def test_configurable_login_and_node_id(self):
@@ -268,7 +256,7 @@ class TestTryAutoFix:
         # Instructions appended
         issue.edit.assert_called_once()
         body_arg = issue.edit.call_args[1]["body"]
-        assert "Copilot auto-fix request" in body_arg
+        assert "Copilot instructions" in body_arg
         # Copilot assigned via GraphQL
         g._Github__requester.graphql_named_mutation.assert_called_once()
 
@@ -314,7 +302,7 @@ class TestTryAutoFix:
 
         g._Github__requester.graphql_named_mutation.assert_called_once()
 
-    def test_assignment_failure_adds_failed_label(self):
+    def test_assignment_failure_does_not_crash(self):
         repo = MagicMock()
         repo.get_pulls.return_value = []
         issue = _make_issue(labels=["pylint"])
@@ -323,6 +311,5 @@ class TestTryAutoFix:
 
         _try_auto_fix(repo, issue, g, "azure-ai-test", "sdk/ai/azure-ai-test", "pylint", ["pylint"])
 
-        # Should have tried to add the failed label
-        issue.add_to_labels.assert_any_call(LABEL_AUTO_FIX_FAILED)
-        issue.create_comment.assert_called_once()
+        # Should still have reconciled labels before the failed assignment
+        issue.add_to_labels.assert_any_call(LABEL_AUTO_FIX)
