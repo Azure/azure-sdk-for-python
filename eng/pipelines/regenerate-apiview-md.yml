@@ -22,7 +22,11 @@ pr: none
 
 parameters:
   - name: IncludeManagement
-    displayName: 'Include mgmt packages when regenerating api.md (uncheck to skip mgmt packages).'
+    displayName: 'Generate mgmt packages'
+    type: boolean
+    default: true
+  - name: IncludeDataPlane
+    displayName: 'Generate data plane packages'
     type: boolean
     default: true
 
@@ -39,3 +43,4 @@ extends:
           - template: /eng/pipelines/templates/jobs/apiview-md.yml
             parameters:
               IncludeManagement: ${{ parameters.IncludeManagement }}
+              IncludeDataPlane: ${{ parameters.IncludeDataPlane }}
