@@ -1,4 +1,4 @@
-# Azure SDK for Python - Engineering System
+gi# Azure SDK for Python - Engineering System
 
 - [Azure SDK for Python - Engineering System](#azure-sdk-for-python---engineering-system)
   - [Targeting a specific package at build queue time](#targeting-a-specific-package-at-build-queue-time)
@@ -599,9 +599,9 @@ Results are posted as GitHub issues in the repository. These checks run with `co
 
 #### Copilot auto-fix
 
-For `pylint`, `mypy`, `sphinx`, and `pyright` failures, the pipeline automatically assigns the Copilot coding agent to open a fix PR.
+For `pylint`, `mypy`, `sphinx`, and `pyright` failures, the weekly pipeline automatically assigns the Copilot coding agent to open a fix PR.
 
-- **You don't need to do anything** if Copilot opens a PR — just review and merge it like any other PR.
+- **Review the PR**: review and merge it like any other PR.
 - **To opt out**, add the `copilot-auto-fix-disabled` label to the issue.
 - **If Copilot fails** to be assigned, the pipeline logs a warning and retries automatically on the next run.
 - **Version bumps**: when the checker version changes, Copilot is unassigned and reassigned to trigger a fresh fix attempt with the updated errors.
