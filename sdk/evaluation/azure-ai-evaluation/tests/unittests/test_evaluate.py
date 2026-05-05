@@ -2810,6 +2810,17 @@ class TestCreateResultObjectStatus:
         assert result["score"] is None
         assert result["sample"] == {"error": {"code": "FAILED_EXECUTION", "message": "No tool calls found"}}
 
+    def test_skipped_inverse_metric_nulls_passed(self):
+        """Inverse metric (e.g. indirect_attack) with status=skipped must have passed=None.
+
+        Regression: _adjust_for_inverse_metric returns a boolean passed value which
+        would overwrite the None set for skipped evaluations if not guarded."""
+        # label=True would produce passed=False via inverse adjustment; label=None would produce passed=True
+        for label in (True, False, None):
+            result = self._call({"score": None, "label": label, "status": "skipped"}, is_inverse=True)
+            assert result["status"] == "skipped"
+            assert result["passed"] is None, f"passed should be None for skipped inverse metric with label={label}"
+
 
 @pytest.mark.unittest
 class TestCalculateAoaiEvaluationSummary:

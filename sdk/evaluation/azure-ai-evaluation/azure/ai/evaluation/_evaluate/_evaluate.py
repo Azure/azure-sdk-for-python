@@ -2967,8 +2967,6 @@ def _create_result_object(
     status = metric_values.get("status")
     if status not in ("completed", "error", "skipped"):
         status = "completed" if (passed is not None or not _is_none_or_nan(score)) else "error"
-    if status == "skipped":
-        passed = None  # For skipped evaluations, passed should be None regardless of other values
 
     # Handle decrease boolean metrics — only apply inverse adjustment for
     # boolean labels (from safety evaluators like indirect_attack). String
@@ -2976,6 +2974,9 @@ def _create_result_object(
     # indicate the evaluator already computed direction-aware pass/fail.
     if is_inverse and not (label is not None and isinstance(label, str)):
         score, label, passed = _adjust_for_inverse_metric(label)
+
+    if status == "skipped":
+        passed = None  # For skipped evaluations, passed should be None regardless of other values
 
     # Create result object
     result_obj = {
