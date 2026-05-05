@@ -66,8 +66,8 @@ class ConfidentialLedgerClient(GeneratedClient):
         file does not exist yet, the Confidential Ledger's TLS certificate will be fetched and saved
         to this file.
     :paramtype ledger_certificate_path: Union[bytes, str, os.PathLike]
-    :keyword api_version: Api Version. Default value is "2022-05-13". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: API version for Confidential Ledger operations. Default value is "2024-12-09-preview".
+        This aligns with the latest preview specification. Overriding may lead to unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -79,6 +79,10 @@ class ConfidentialLedgerClient(GeneratedClient):
         ledger_certificate_path: Union[bytes, str, os.PathLike],
         **kwargs: Any,
     ) -> None:
+        # Align default to latest preview used by generated configuration
+        api_version = kwargs.pop("api_version", "2024-12-09-preview")
+        kwargs["api_version"] = api_version
+        
         # Remove some kwargs first so that there aren't unexpected kwargs passed to
         # get_ledger_identity.
 
