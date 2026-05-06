@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Type
 import geojson
+from geojson.geometry import Geometry
 from .._utils.model_base import TYPE_HANDLER_REGISTRY
 
 
@@ -41,7 +42,7 @@ def feature_deserializer(cls: Type[geojson.Feature], data: dict) -> geojson.Feat
     """
     return cls(
         type=data.get("type"),
-        geometry=geojson.geometry.Geometry(
+        geometry=Geometry(
             type=data["geometry"].get("type"), coordinates=data["geometry"].get("coordinates")
         ),
         properties=data.get("properties"),
