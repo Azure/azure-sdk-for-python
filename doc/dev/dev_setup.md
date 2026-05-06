@@ -26,17 +26,18 @@ or execute the various commands available in the toolbox.
 
     ```
     python -m venv env # Might be "python3" or "py" depending on your Python installation
-    source env/bin/activate      # Linux shell (Bash, ZSH, etc.) only
-    ./env/scripts/activate       # PowerShell only
-    ./env/scripts/activate.bat   # Windows CMD only
+    source env/bin/activate        # Linux shell (Bash, ZSH, etc.)
+    .\env\Scripts\Activate.ps1     # PowerShell
+    .\env\Scripts\activate.bat     # Windows CMD
     ```
 
     Alternatively, you can use [uv][uv] which is faster and handles Python version management automatically:
 
     ```
     uv venv
-    source .venv/bin/activate    # Linux shell (Bash, ZSH, etc.) only
-    .venv\Scripts\activate       # PowerShell only
+    source .venv/bin/activate    # Linux shell (Bash, ZSH, etc.)
+    .\.venv\Scripts\Activate.ps1 # PowerShell
+    .\.venv\Scripts\activate.bat # Windows CMD
     ```
 
 4. Setup your development environment

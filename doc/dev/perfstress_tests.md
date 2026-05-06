@@ -475,7 +475,7 @@ perfstress_tests
 
 # Running the tests
 In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements`.
-Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment.
+Start by creating a new virtual environment for your perf tests. This will need to be a Python 3 environment.
 Note that tests for T1 and T2 SDKs usually cannot be run from the same environment, and will need to be setup separately.
 
 ### Setup for test resources

@@ -17,7 +17,7 @@ Python packages are uploaded to [PyPI](https://pypi.org/). Once you've uploaded 
 
 ### Production - Deploy with Azure DevOps
 
-To avoid "accidental" pushes to our target repositories, [approval](https://learn.microsoft.com/azure/devops/pipelines/release/approvals/approvals?view=azure-devops) will be requested directly prior to the final PyPI publish. Reference this [page](https://aka.ms/azsdk/access)
+To avoid "accidental" pushes to our target repositories, [approval](https://learn.microsoft.com/azure/devops/pipelines/release/approvals/approvals?view=azure-devops) will be requested directly prior to the final PyPI publish. Reference this [page](https://aka.ms/azsdk/access) to learn how to request access to Azure SDK DevOps for release approval.
 
 Instead of a single central pipeline, the python SDK has moved to `service directory` associated build pipelines. These are driven by yml templates at the root of each service folder. [Example for storage service folder.](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/ci.yml#L44)
 
