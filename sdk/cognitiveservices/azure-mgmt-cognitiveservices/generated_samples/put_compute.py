@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python post_outbound_rules_v2.py
+    python put_compute.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,24 +31,25 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.outbound_rules.begin_post(
-        resource_group_name="test-rg",
-        account_name="cognitive-account-name",
-        managed_network_name="default",
-        body={
+    response = client.computes.begin_create_or_update(
+        resource_group_name="rgcognitiveservices",
+        account_name="myAccount",
+        compute_name="myCompute",
+        resource={
+            "identity": {"type": "None"},
+            "location": "eastus",
             "properties": {
-                "firewallSku": "Standard",
-                "isolationMode": "AllowOnlyApprovedOutbound",
-                "outboundRules": {
-                    "rule_name_1": {"category": "UserDefined", "destination": "destination_endpoint", "type": "FQDN"}
-                },
-            }
+                "computeType": "Cluster",
+                "pools": [
+                    {"instanceType": "Standard_DS3_v2", "name": "default", "nodeCount": 2, "vmPriority": "Regular"}
+                ],
+                "subnetArmId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/rgcognitiveservices/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/default",
+            },
         },
     ).result()
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-03-15-preview/ManagedNetwork/postOutboundRulesV2.json
+# x-ms-original-file: 2026-03-15-preview/PutCompute.json
 if __name__ == "__main__":
     main()

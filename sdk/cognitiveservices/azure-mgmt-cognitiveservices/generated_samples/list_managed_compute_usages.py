@@ -15,7 +15,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python post_outbound_rules_v2.py
+    python list_managed_compute_usages.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,24 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.outbound_rules.begin_post(
-        resource_group_name="test-rg",
-        account_name="cognitive-account-name",
-        managed_network_name="default",
-        body={
-            "properties": {
-                "firewallSku": "Standard",
-                "isolationMode": "AllowOnlyApprovedOutbound",
-                "outboundRules": {
-                    "rule_name_1": {"category": "UserDefined", "destination": "destination_endpoint", "type": "FQDN"}
-                },
-            }
-        },
-    ).result()
+    response = client.managed_compute_usages_operation_group.list(
+        location="global",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-03-15-preview/ManagedNetwork/postOutboundRulesV2.json
+# x-ms-original-file: 2026-03-15-preview/ListManagedComputeUsages.json
 if __name__ == "__main__":
     main()

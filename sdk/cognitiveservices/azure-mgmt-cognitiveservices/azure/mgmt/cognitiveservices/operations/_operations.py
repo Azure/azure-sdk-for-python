@@ -375,6 +375,61 @@ def build_accounts_list_models_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_accounts_evaluate_deployment_policies_request(  # pylint: disable=name-too-long
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/evaluateDeploymentPolicies"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_deleted_accounts_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/deletedAccounts"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_deleted_accounts_get_request(
     location: str, resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -425,30 +480,6 @@ def build_deleted_accounts_purge_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_deleted_accounts_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/deletedAccounts"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-long
@@ -3276,6 +3307,282 @@ def build_compute_operations_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_managed_compute_usages_operation_group_list_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/managedComputeUsages"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_computes_get_request(
+    resource_group_name: str, account_name: str, compute_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes/{computeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "computeName": _SERIALIZER.url("compute_name", compute_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_computes_create_or_update_request(
+    resource_group_name: str, account_name: str, compute_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes/{computeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "computeName": _SERIALIZER.url("compute_name", compute_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_computes_update_request(
+    resource_group_name: str, account_name: str, compute_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes/{computeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "computeName": _SERIALIZER.url("compute_name", compute_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_computes_delete_request(
+    resource_group_name: str, account_name: str, compute_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes/{computeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "computeName": _SERIALIZER.url("compute_name", compute_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_computes_list_request(
+    resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_computes_start_request(
+    resource_group_name: str, account_name: str, compute_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes/{computeName}/start"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "computeName": _SERIALIZER.url("compute_name", compute_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
+def build_computes_stop_request(
+    resource_group_name: str, account_name: str, compute_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes/{computeName}/stop"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "computeName": _SERIALIZER.url("compute_name", compute_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
+def build_computes_restart_request(
+    resource_group_name: str, account_name: str, compute_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/computes/{computeName}/restart"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "computeName": _SERIALIZER.url("compute_name", compute_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
+def build_managed_compute_capacities_list_request(  # pylint: disable=name-too-long
+    subscription_id: str,
+    *,
+    offer: str,
+    accelerator_type: Optional[str] = None,
+    deployment_id: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/managedComputeCapacities"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["offer"] = _SERIALIZER.query("offer", offer, "str")
+    if accelerator_type is not None:
+        _params["acceleratorType"] = _SERIALIZER.query("accelerator_type", accelerator_type, "str")
+    if deployment_id is not None:
+        _params["deploymentId"] = _SERIALIZER.query("deployment_id", deployment_id, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_private_link_resources_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -5979,6 +6286,195 @@ class AccountsOperations:
 
         return ItemPaged(get_next, extract_data)
 
+    @overload
+    def evaluate_deployment_policies(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: _models.EvaluateDeploymentPoliciesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluateDeploymentPoliciesResponse:
+        """Evaluate Azure Policy compliance for a set of hypothetical deployments without creating them.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluateDeploymentPoliciesResponse. The EvaluateDeploymentPoliciesResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def evaluate_deployment_policies(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluateDeploymentPoliciesResponse:
+        """Evaluate Azure Policy compliance for a set of hypothetical deployments without creating them.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluateDeploymentPoliciesResponse. The EvaluateDeploymentPoliciesResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def evaluate_deployment_policies(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EvaluateDeploymentPoliciesResponse:
+        """Evaluate Azure Policy compliance for a set of hypothetical deployments without creating them.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluateDeploymentPoliciesResponse. The EvaluateDeploymentPoliciesResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def evaluate_deployment_policies(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        body: Union[_models.EvaluateDeploymentPoliciesRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.EvaluateDeploymentPoliciesResponse:
+        """Evaluate Azure Policy compliance for a set of hypothetical deployments without creating them.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param body: The content of the action request. Is one of the following types:
+         EvaluateDeploymentPoliciesRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesRequest or JSON or
+         IO[bytes]
+        :return: EvaluateDeploymentPoliciesResponse. The EvaluateDeploymentPoliciesResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.EvaluateDeploymentPoliciesResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluateDeploymentPoliciesResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_accounts_evaluate_deployment_policies_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EvaluateDeploymentPoliciesResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class DeletedAccountsOperations:
     """
@@ -5998,6 +6494,96 @@ class DeletedAccountsOperations:
         )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Account"]:
+        """Returns all the resources of a particular type belonging to a subscription.
+
+        :return: An iterator like instance of Account
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.Account]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Account]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_deleted_accounts_list_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Account],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def get(self, location: str, resource_group_name: str, account_name: str, **kwargs: Any) -> _models.Account:
@@ -6193,96 +6779,6 @@ class DeletedAccountsOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.Account"]:
-        """Returns all the resources of a particular type belonging to a subscription.
-
-        :return: An iterator like instance of Account
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.Account]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.Account]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_deleted_accounts_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Account],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
 
 
 class PrivateEndpointConnectionsOperations:
@@ -15315,7 +15811,7 @@ class ProjectsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -18923,7 +19419,7 @@ class ManagedComputeDeploymentsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [202, 204]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -18937,10 +19433,7 @@ class ManagedComputeDeploymentsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -19229,6 +19722,1651 @@ class ComputeOperationsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class ManagedComputeUsagesOperationGroupOperations:  # pylint: disable=name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cognitiveservices.CognitiveServicesManagementClient`'s
+        :attr:`managed_compute_usages_operation_group` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CognitiveServicesManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={"2026-03-15-preview": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def list(self, location: str, **kwargs: Any) -> ItemPaged["_models.ManagedComputeUsage"]:
+        """List managed compute quota usages for a subscription and location.
+
+        :param location: The location name. Required.
+        :type location: str
+        :return: An iterator like instance of ManagedComputeUsage
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.ManagedComputeUsage]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ManagedComputeUsage]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_managed_compute_usages_operation_group_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ManagedComputeUsage],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ComputesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cognitiveservices.CognitiveServicesManagementClient`'s
+        :attr:`computes` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CognitiveServicesManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def get(self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any) -> _models.Compute:
+        """Gets the specified compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :return: Compute. The Compute is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.Compute
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Compute] = kwargs.pop("cls", None)
+
+        _request = build_computes_get_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            compute_name=compute_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Compute, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        resource: Union[_models.Compute, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_computes_create_or_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            compute_name=compute_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        resource: _models.Compute,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Creates or updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param resource: The compute properties. Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.Compute
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Creates or updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param resource: The compute properties. Required.
+        :type resource: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Creates or updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param resource: The compute properties. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        resource: Union[_models.Compute, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Creates or updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param resource: The compute properties. Is one of the following types: Compute, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.Compute or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Compute] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                compute_name=compute_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Compute, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Compute].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Compute](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        properties: Union[_models.Compute, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_computes_update_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            compute_name=compute_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        properties: _models.Compute,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param properties: The compute properties to update. Required.
+        :type properties: ~azure.mgmt.cognitiveservices.models.Compute
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        properties: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param properties: The compute properties to update. Required.
+        :type properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param properties: The compute properties to update. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        compute_name: str,
+        properties: Union[_models.Compute, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.Compute]:
+        """Updates a compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :param properties: The compute properties to update. Is one of the following types: Compute,
+         JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.cognitiveservices.models.Compute or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns Compute. The Compute is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Compute] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                compute_name=compute_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Compute, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Compute].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Compute](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_computes_delete_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            compute_name=compute_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes the specified compute associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                compute_name=compute_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> ItemPaged["_models.Compute"]:
+        """Gets the computes associated with the Cognitive Services account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :return: An iterator like instance of Compute
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.Compute]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Compute]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_computes_list_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Compute],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def _start_initial(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_computes_start_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            compute_name=compute_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def begin_start(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Starts a stopped ContainerInstance compute resource. This is a long-running operation that
+        returns 202 Accepted. Only applicable when computeType is ContainerInstance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._start_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                compute_name=compute_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def _stop_initial(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_computes_stop_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            compute_name=compute_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def begin_stop(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Stops a running ContainerInstance compute resource. This is a long-running operation that
+        returns 202 Accepted. Only applicable when computeType is ContainerInstance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._stop_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                compute_name=compute_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def _restart_initial(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_computes_restart_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            compute_name=compute_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "compute_name",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def begin_restart(
+        self, resource_group_name: str, account_name: str, compute_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Restarts a running ContainerInstance compute resource. This is a long-running operation that
+        returns 202 Accepted. Only applicable when computeType is ContainerInstance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The name of Cognitive Services account. Required.
+        :type account_name: str
+        :param compute_name: The name of the compute associated with the Cognitive Services Account.
+         Required.
+        :type compute_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._restart_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                compute_name=compute_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class ManagedComputeCapacitiesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cognitiveservices.CognitiveServicesManagementClient`'s
+        :attr:`managed_compute_capacities` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CognitiveServicesManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-15-preview",
+        params_added_on={
+            "2026-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "offer",
+                "accelerator_type",
+                "deployment_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-15-preview"],
+    )
+    def list(
+        self, *, offer: str, accelerator_type: Optional[str] = None, deployment_id: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ManagedComputeCapacity"]:
+        """Gets the managed compute capacities for a subscription. Returns available capacity per
+        accelerator type, including deployment size information.
+
+        :keyword offer: The offer name to query capacity for (required). Required.
+        :paramtype offer: str
+        :keyword accelerator_type: Optional accelerator type filter to narrow results to a specific
+         accelerator type. Default value is None.
+        :paramtype accelerator_type: str
+        :keyword deployment_id: Optional deployment resource ID. When provided, returns capacity for
+         the specific region
+         where the deployment is hosted rather than the best available region. Default value is None.
+        :paramtype deployment_id: str
+        :return: An iterator like instance of ManagedComputeCapacity
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.ManagedComputeCapacity]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ManagedComputeCapacity]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_managed_compute_capacities_list_request(
+                    subscription_id=self._config.subscription_id,
+                    offer=offer,
+                    accelerator_type=accelerator_type,
+                    deployment_id=deployment_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ManagedComputeCapacity],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
 
 class PrivateLinkResourcesOperations:
@@ -19629,7 +21767,7 @@ class RaiExternalSafetyProviderOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[_models.RaiExternalSafetyProviderSchema, _models.RaiExternalSafetyProvider]:
+    ) -> _models.RaiExternalSafetyProviderSchema:
         """Create the rai safety provider associated with the subscription.
 
         :param safety_provider_name: The name of the Rai External Safety Provider associated with the
@@ -19640,17 +21778,16 @@ class RaiExternalSafetyProviderOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RaiExternalSafetyProviderSchema or RaiExternalSafetyProvider. The
-         RaiExternalSafetyProviderSchema is compatible with MutableMapping
-        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema or
-         ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProvider
+        :return: RaiExternalSafetyProviderSchema. The RaiExternalSafetyProviderSchema is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_or_update(
         self, safety_provider_name: str, safety_provider: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Union[_models.RaiExternalSafetyProviderSchema, _models.RaiExternalSafetyProvider]:
+    ) -> _models.RaiExternalSafetyProviderSchema:
         """Create the rai safety provider associated with the subscription.
 
         :param safety_provider_name: The name of the Rai External Safety Provider associated with the
@@ -19661,10 +21798,9 @@ class RaiExternalSafetyProviderOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RaiExternalSafetyProviderSchema or RaiExternalSafetyProvider. The
-         RaiExternalSafetyProviderSchema is compatible with MutableMapping
-        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema or
-         ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProvider
+        :return: RaiExternalSafetyProviderSchema. The RaiExternalSafetyProviderSchema is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19676,7 +21812,7 @@ class RaiExternalSafetyProviderOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[_models.RaiExternalSafetyProviderSchema, _models.RaiExternalSafetyProvider]:
+    ) -> _models.RaiExternalSafetyProviderSchema:
         """Create the rai safety provider associated with the subscription.
 
         :param safety_provider_name: The name of the Rai External Safety Provider associated with the
@@ -19687,10 +21823,9 @@ class RaiExternalSafetyProviderOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RaiExternalSafetyProviderSchema or RaiExternalSafetyProvider. The
-         RaiExternalSafetyProviderSchema is compatible with MutableMapping
-        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema or
-         ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProvider
+        :return: RaiExternalSafetyProviderSchema. The RaiExternalSafetyProviderSchema is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19700,7 +21835,7 @@ class RaiExternalSafetyProviderOperations:
         safety_provider_name: str,
         safety_provider: Union[_models.RaiExternalSafetyProviderSchema, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> Union[_models.RaiExternalSafetyProviderSchema, _models.RaiExternalSafetyProvider]:
+    ) -> _models.RaiExternalSafetyProviderSchema:
         """Create the rai safety provider associated with the subscription.
 
         :param safety_provider_name: The name of the Rai External Safety Provider associated with the
@@ -19710,10 +21845,9 @@ class RaiExternalSafetyProviderOperations:
          following types: RaiExternalSafetyProviderSchema, JSON, IO[bytes] Required.
         :type safety_provider: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema or
          JSON or IO[bytes]
-        :return: RaiExternalSafetyProviderSchema or RaiExternalSafetyProvider. The
-         RaiExternalSafetyProviderSchema is compatible with MutableMapping
-        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema or
-         ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProvider
+        :return: RaiExternalSafetyProviderSchema. The RaiExternalSafetyProviderSchema is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.RaiExternalSafetyProviderSchema
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -19728,9 +21862,7 @@ class RaiExternalSafetyProviderOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Union[_models.RaiExternalSafetyProviderSchema, _models.RaiExternalSafetyProvider]] = kwargs.pop(
-            "cls", None
-        )
+        cls: ClsType[_models.RaiExternalSafetyProviderSchema] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -19774,17 +21906,10 @@ class RaiExternalSafetyProviderOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-            else:
-                deserialized = _deserialize(_models.RaiExternalSafetyProviderSchema, response.json())
-
-        if response.status_code == 201:
-            if _stream:
-                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-            else:
-                deserialized = _deserialize(_models.RaiExternalSafetyProvider, response.json())
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RaiExternalSafetyProviderSchema, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -22575,7 +24700,7 @@ class ManagedNetworkSettingsOperations:
                 "managed_network_name",
             ]
         },
-        api_versions_list=["2026-01-15-preview", "2026-03-15-preview"],
+        api_versions_list=["2026-01-15-preview", "2026-03-01", "2026-03-15-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, account_name: str, managed_network_name: str, **kwargs: Any
@@ -22651,7 +24776,7 @@ class ManagedNetworkSettingsOperations:
                 "managed_network_name",
             ]
         },
-        api_versions_list=["2026-01-15-preview", "2026-03-15-preview"],
+        api_versions_list=["2026-01-15-preview", "2026-03-01", "2026-03-15-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, account_name: str, managed_network_name: str, **kwargs: Any
@@ -22926,7 +25051,7 @@ class OutboundRulesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OutboundRuleListResult]:
+    ) -> LROPoller[ItemPaged["_models.OutboundRuleBasicResource"]]:
         """The POST API for updating the outbound rules of the managed network associated with the
         cognitive services account.
 
@@ -22946,10 +25071,10 @@ class OutboundRulesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OutboundRuleListResult. The
-         OutboundRuleListResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns an iterator like instance of list of
+         OutboundRuleBasicResource
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.OutboundRuleListResult]
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.OutboundRuleBasicResource]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -22963,7 +25088,7 @@ class OutboundRulesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OutboundRuleListResult]:
+    ) -> LROPoller[ItemPaged["_models.OutboundRuleBasicResource"]]:
         """The POST API for updating the outbound rules of the managed network associated with the
         cognitive services account.
 
@@ -22983,10 +25108,10 @@ class OutboundRulesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OutboundRuleListResult. The
-         OutboundRuleListResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns an iterator like instance of list of
+         OutboundRuleBasicResource
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.OutboundRuleListResult]
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.OutboundRuleBasicResource]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -23000,7 +25125,7 @@ class OutboundRulesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OutboundRuleListResult]:
+    ) -> LROPoller[ItemPaged["_models.OutboundRuleBasicResource"]]:
         """The POST API for updating the outbound rules of the managed network associated with the
         cognitive services account.
 
@@ -23020,10 +25145,10 @@ class OutboundRulesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OutboundRuleListResult. The
-         OutboundRuleListResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns an iterator like instance of list of
+         OutboundRuleBasicResource
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.OutboundRuleListResult]
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.OutboundRuleBasicResource]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -23035,7 +25160,7 @@ class OutboundRulesOperations:
         managed_network_name: str,
         body: Union[_models.ManagedNetworkSettingsBasicResource, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.OutboundRuleListResult]:
+    ) -> LROPoller[ItemPaged["_models.OutboundRuleBasicResource"]]:
         """The POST API for updating the outbound rules of the managed network associated with the
         cognitive services account.
 
@@ -23054,17 +25179,105 @@ class OutboundRulesOperations:
          ManagedNetworkSettingsBasicResource, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.cognitiveservices.models.ManagedNetworkSettingsBasicResource or JSON or
          IO[bytes]
-        :return: An instance of LROPoller that returns OutboundRuleListResult. The
-         OutboundRuleListResult is compatible with MutableMapping
+        :return: An instance of LROPoller that returns an iterator like instance of list of
+         OutboundRuleBasicResource
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.OutboundRuleListResult]
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.OutboundRuleBasicResource]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OutboundRuleListResult] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.OutboundRuleBasicResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_outbound_rules_post_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    managed_network_name=managed_network_name,
+                    subscription_id=self._config.subscription_id,
+                    content_type=content_type,
+                    api_version=self._config.api_version,
+                    content=_content,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.OutboundRuleBasicResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -23084,15 +25297,12 @@ class OutboundRulesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                return get_next(next_link)
 
-            deserialized = _deserialize(_models.OutboundRuleListResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
+            return ItemPaged(internal_get_next, extract_data)
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -23107,13 +25317,13 @@ class OutboundRulesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.OutboundRuleListResult].from_continuation_token(
+            return LROPoller[ItemPaged["_models.OutboundRuleBasicResource"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.OutboundRuleListResult](
+        return LROPoller[ItemPaged["_models.OutboundRuleBasicResource"]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 

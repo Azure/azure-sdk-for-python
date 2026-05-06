@@ -15,7 +15,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python post_outbound_rules_v2.py
+    python evaluate_deployment_policies.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,24 +30,28 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.outbound_rules.begin_post(
-        resource_group_name="test-rg",
-        account_name="cognitive-account-name",
-        managed_network_name="default",
+    response = client.accounts.evaluate_deployment_policies(
+        resource_group_name="resourceGroupName",
+        account_name="accountName",
         body={
-            "properties": {
-                "firewallSku": "Standard",
-                "isolationMode": "AllowOnlyApprovedOutbound",
-                "outboundRules": {
-                    "rule_name_1": {"category": "UserDefined", "destination": "destination_endpoint", "type": "FQDN"}
+            "deployments": [
+                {
+                    "name": "gpt4o-deployment",
+                    "properties": {
+                        "model": {"format": "OpenAI", "name": "gpt-4o", "version": "2024-11-20"},
+                        "raiPolicyName": "Microsoft.DefaultV2",
+                    },
                 },
-            }
+                {
+                    "name": "ada-embedding",
+                    "properties": {"model": {"format": "OpenAI", "name": "text-embedding-ada-002", "version": "2"}},
+                },
+            ]
         },
-    ).result()
-    for item in response:
-        print(item)
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-03-15-preview/ManagedNetwork/postOutboundRulesV2.json
+# x-ms-original-file: 2026-03-15-preview/EvaluateDeploymentPolicies.json
 if __name__ == "__main__":
     main()

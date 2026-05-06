@@ -28,12 +28,15 @@ from .operations import (
     CommitmentPlansOperations,
     CommitmentTiersOperations,
     ComputeOperationsOperations,
+    ComputesOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
     EncryptionScopesOperations,
     LocationBasedModelCapacitiesOperations,
+    ManagedComputeCapacitiesOperations,
     ManagedComputeDeploymentsOperations,
+    ManagedComputeUsagesOperationGroupOperations,
     ManagedNetworkProvisionsOperations,
     ManagedNetworkSettingsOperations,
     ModelCapacitiesOperations,
@@ -131,6 +134,15 @@ class CognitiveServicesManagementClient(
     :ivar compute_operations: ComputeOperationsOperations operations
     :vartype compute_operations:
      azure.mgmt.cognitiveservices.operations.ComputeOperationsOperations
+    :ivar managed_compute_usages_operation_group: ManagedComputeUsagesOperationGroupOperations
+     operations
+    :vartype managed_compute_usages_operation_group:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeUsagesOperationGroupOperations
+    :ivar computes: ComputesOperations operations
+    :vartype computes: azure.mgmt.cognitiveservices.operations.ComputesOperations
+    :ivar managed_compute_capacities: ManagedComputeCapacitiesOperations operations
+    :vartype managed_compute_capacities:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeCapacitiesOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cognitiveservices.operations.PrivateLinkResourcesOperations
@@ -287,6 +299,13 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.compute_operations = ComputeOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_compute_usages_operation_group = ManagedComputeUsagesOperationGroupOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.computes = ComputesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_compute_capacities = ManagedComputeCapacitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(

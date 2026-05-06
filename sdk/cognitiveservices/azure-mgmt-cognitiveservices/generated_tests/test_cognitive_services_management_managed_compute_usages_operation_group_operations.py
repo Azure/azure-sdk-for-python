@@ -14,38 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestCognitiveServicesManagementDeletedAccountsOperations(AzureMgmtRecordedTestCase):
+class TestCognitiveServicesManagementManagedComputeUsagesOperationGroupOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(CognitiveServicesManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_deleted_accounts_list(self, resource_group):
-        response = self.client.deleted_accounts.list()
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_deleted_accounts_get(self, resource_group):
-        response = self.client.deleted_accounts.get(
+    def test_managed_compute_usages_operation_group_list(self, resource_group):
+        response = self.client.managed_compute_usages_operation_group.list(
             location="str",
-            resource_group_name=resource_group.name,
-            account_name="str",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_deleted_accounts_begin_purge(self, resource_group):
-        response = self.client.deleted_accounts.begin_purge(
-            location="str",
-            resource_group_name=resource_group.name,
-            account_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

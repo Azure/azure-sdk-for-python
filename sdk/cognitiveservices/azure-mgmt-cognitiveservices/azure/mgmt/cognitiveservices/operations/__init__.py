@@ -36,6 +36,9 @@ from ._operations import QuotaTiersOperations  # type: ignore
 from ._operations import AgentApplicationsOperations  # type: ignore
 from ._operations import ManagedComputeDeploymentsOperations  # type: ignore
 from ._operations import ComputeOperationsOperations  # type: ignore
+from ._operations import ManagedComputeUsagesOperationGroupOperations  # type: ignore
+from ._operations import ComputesOperations  # type: ignore
+from ._operations import ManagedComputeCapacitiesOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import TestRaiExternalSafetyProviderOperations  # type: ignore
 from ._operations import RaiExternalSafetyProviderOperations  # type: ignore
@@ -83,6 +86,9 @@ __all__ = [
     "AgentApplicationsOperations",
     "ManagedComputeDeploymentsOperations",
     "ComputeOperationsOperations",
+    "ManagedComputeUsagesOperationGroupOperations",
+    "ComputesOperations",
+    "ManagedComputeCapacitiesOperations",
     "PrivateLinkResourcesOperations",
     "TestRaiExternalSafetyProviderOperations",
     "RaiExternalSafetyProviderOperations",
