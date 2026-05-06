@@ -453,6 +453,84 @@ def test_agent_name_only_in_span_name():
 
 
 # ---------------------------------------------------------------------------
+# Incoming W3C baggage propagation
+# ---------------------------------------------------------------------------
+
+def test_incoming_baggage_merged_into_context():
+    """Incoming W3C baggage header entries are merged into OTel context."""
+    from opentelemetry import baggage as _otel_baggage, context as _otel_context
+    from opentelemetry.sdk.trace import SpanProcessor
+
+    captured_baggage = {}
+
+    class BaggageCaptureProcessor(SpanProcessor):
+        """Captures baggage visible when span starts."""
+        def on_start(self, span, parent_context=None):
+            ctx = parent_context or _otel_context.get_current()
+            captured_baggage.update(_otel_baggage.get_all(context=ctx))
+
+    # Add our capture processor to the module provider
+    _MODULE_PROVIDER.add_span_processor(BaggageCaptureProcessor())
+
+    server = _make_tracing_server()
+    client = TestClient(server)
+    client.post(
+        "/invocations",
+        content=b"test",
+        headers={"baggage": "user.id=test-user-123,custom.key=custom-value"},
+    )
+
+    # Incoming baggage entries should be present
+    assert captured_baggage.get("user.id") == "test-user-123"
+    assert captured_baggage.get("custom.key") == "custom-value"
+    # Server-added entries should also be present
+    assert "azure.ai.agentserver.invocation_id" in captured_baggage
+
+
+def test_incoming_baggage_does_not_break_span_parenting():
+    """Incoming baggage header does not break parent-child span relationships."""
+    server = _make_tracing_server()
+
+    # Create a traceparent to verify parenting is preserved
+    trace_id_hex = uuid.uuid4().hex
+    span_id_hex = uuid.uuid4().hex[:16]
+    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+
+    client = TestClient(server)
+    client.post(
+        "/invocations",
+        content=b"test",
+        headers={
+            "traceparent": traceparent,
+            "baggage": "user.id=test-user-456",
+        },
+    )
+
+    spans = _get_spans()
+    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
+    assert len(invoke_spans) >= 1
+    span = invoke_spans[0]
+    # The span should still have the same trace ID (parent-child preserved)
+    actual_trace_id = format(span.context.trace_id, "032x")
+    assert actual_trace_id == trace_id_hex
+    # And the parent span ID should match the traceparent
+    actual_parent_id = format(span.parent.span_id, "016x")
+    assert actual_parent_id == span_id_hex
+
+
+def test_incoming_baggage_empty_header():
+    """Empty baggage header does not cause errors."""
+    server = _make_tracing_server()
+    client = TestClient(server)
+    resp = client.post(
+        "/invocations",
+        content=b"test",
+        headers={"baggage": ""},
+    )
+    assert resp.status_code == 200
+
+
+# ---------------------------------------------------------------------------
 # Project endpoint attribute
 # ---------------------------------------------------------------------------
 

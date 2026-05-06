@@ -16,6 +16,7 @@ from collections.abc import Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry.baggage.propagation import W3CBaggagePropagator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
@@ -367,7 +368,14 @@ class InvocationAgentServerHost(AgentServerHost):
 
             # Propagate invocation/session IDs as W3C baggage so downstream
             # services receive them automatically via the baggage header.
+            # Extract incoming baggage from request headers (only baggage, not traceparent)
+            # to preserve parent-child span relationships while inheriting caller's baggage entries.
+            _incoming_baggage_ctx = W3CBaggagePropagator().extract(
+                carrier={"baggage": request.headers.get("baggage", "")}
+            )
             ctx = _otel_context.get_current()
+            for _bkey, _bval in _otel_baggage.get_all(context=_incoming_baggage_ctx).items():
+                ctx = _otel_baggage.set_baggage(_bkey, _bval, context=ctx)
             ctx = _otel_baggage.set_baggage(
                 "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
             )

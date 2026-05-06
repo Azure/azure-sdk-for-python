@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
@@ -215,3 +216,105 @@ def test_tracing__span_tags_omit_request_id_when_header_absent() -> None:
     )
 
     assert "request.id" not in hook.spans[0].tags
+
+
+# ---------------------------------------------------------------------------
+# Incoming W3C baggage propagation
+# ---------------------------------------------------------------------------
+
+
+def test_tracing__incoming_baggage_merged_into_context() -> None:
+    """Incoming W3C baggage header entries are merged into OTel context."""
+    try:
+        from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
+        from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider, SpanProcessor
+        from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+        from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    except ImportError:
+        pytest.skip("opentelemetry SDK not installed")
+
+    captured_baggage: dict = {}
+
+    class BaggageCaptureProcessor(SpanProcessor):
+        """Captures baggage visible when span starts."""
+        def on_start(self, span, parent_context=None):
+            ctx = parent_context or _otel_context.get_current()
+            captured_baggage.update(_otel_baggage.get_all(context=ctx))
+
+    # Get or create a provider with our capture processor
+    existing = trace.get_tracer_provider()
+    if hasattr(existing, "add_span_processor"):
+        existing.add_span_processor(BaggageCaptureProcessor())
+    else:
+        provider = SdkTracerProvider()
+        provider.add_span_processor(BaggageCaptureProcessor())
+        trace.set_tracer_provider(provider)
+
+    client = _build_client()
+    client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+        headers={"baggage": "user.id=test-user-789,custom.key=custom-value"},
+    )
+
+    # Incoming baggage entries should be present
+    assert captured_baggage.get("user.id") == "test-user-789"
+    assert captured_baggage.get("custom.key") == "custom-value"
+    # Server-added entries should also be present
+    assert "azure.ai.agentserver.response_id" in captured_baggage
+
+
+def test_tracing__incoming_baggage_does_not_break_span_parenting() -> None:
+    """Incoming baggage header does not break parent-child span relationships."""
+    try:
+        from opentelemetry import trace
+        from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
+        from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+        from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    except ImportError:
+        pytest.skip("opentelemetry SDK not installed")
+
+    import uuid
+
+    exporter = InMemorySpanExporter()
+    existing = trace.get_tracer_provider()
+    if hasattr(existing, "add_span_processor"):
+        existing.add_span_processor(SimpleSpanProcessor(exporter))
+    else:
+        provider = SdkTracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(exporter))
+        trace.set_tracer_provider(provider)
+
+    trace_id_hex = uuid.uuid4().hex
+    span_id_hex = uuid.uuid4().hex[:16]
+    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+
+    client = _build_client()
+    client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+        headers={
+            "traceparent": traceparent,
+            "baggage": "user.id=test-user-parenting",
+        },
+    )
+
+    spans = exporter.get_finished_spans()
+    # Find the create_response span
+    create_spans = [s for s in spans if "create_response" in s.name]
+    assert len(create_spans) >= 1
+    span = create_spans[0]
+    # The span should have the same trace ID (parent-child preserved)
+    actual_trace_id = format(span.context.trace_id, "032x")
+    assert actual_trace_id == trace_id_hex
+
+
+def test_tracing__incoming_baggage_empty_header_no_error() -> None:
+    """Empty baggage header does not cause errors."""
+    client = _build_client()
+    resp = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+        headers={"baggage": ""},
+    )
+    assert resp.status_code == 200
