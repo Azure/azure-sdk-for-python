@@ -139,6 +139,36 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
 
         super().__init__(threshold=1.0)
 
+    @staticmethod
+    def _maybe_json_decode(value: Any, field_name: str) -> Any:
+        """Decode a JSON-encoded string into a Python object.
+
+        The cloud Foundry / ACA evaluation runtime delivers list/object fields
+        to code-type evaluators as JSON-encoded strings via dataMapping
+        templating (e.g. ``${data.response}``). Accept that shape transparently
+        so that callers using either the in-process Python SDK or the cloud
+        runtime get consistent behaviour.
+
+        :param value: The value to potentially decode.
+        :type value: Any
+        :param field_name: The field name used in error messages.
+        :type field_name: str
+        :return: The decoded Python object, or the original value if not a string.
+        :rtype: Any
+        :raises EvaluationException: If ``value`` is a string but not valid JSON.
+        """
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError as exc:
+                raise EvaluationException(
+                    message=(f"'{field_name}' arrived as a string but is not valid JSON: {exc}"),
+                    internal_message=str(exc),
+                    target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                )
+        return value
+
     @override
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
@@ -148,6 +178,10 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
+        if "response" in kwargs:
+            kwargs["response"] = self._maybe_json_decode(kwargs["response"], "response")
+        if "ground_truth" in kwargs:
+            kwargs["ground_truth"] = self._maybe_json_decode(kwargs["ground_truth"], "ground_truth")
         self._validator.validate_eval_input(kwargs)
         return await super()._real_call(**kwargs)
 
@@ -275,8 +309,14 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         ground_truth_names = []
         ground_truth_params_dict: Dict[str, Dict[str, Any]] = {}
 
-        if isinstance(ground_truth, tuple) and len(ground_truth) == 2:
+        if (isinstance(ground_truth, tuple) and len(ground_truth) == 2) or (
+            isinstance(ground_truth, list)
+            and len(ground_truth) == 2
+            and isinstance(ground_truth[0], list)
+            and isinstance(ground_truth[1], dict)
+        ):
             # Tuple format: (tool_names, parameters_dict)
+            # Also handles a 2-element list [list, dict] which is the JSON round-tripped form of a tuple.
             tool_names_list, params_dict = ground_truth
 
             if not isinstance(tool_names_list, list) or not all(isinstance(name, str) for name in tool_names_list):

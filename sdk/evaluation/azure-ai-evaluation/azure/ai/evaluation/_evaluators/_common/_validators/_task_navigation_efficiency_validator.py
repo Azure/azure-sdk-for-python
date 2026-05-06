@@ -115,6 +115,65 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
 
         return None
 
+    def _validate_tool_names_and_params(
+        self, tool_names: Any, parameters: Any
+    ) -> Optional[EvaluationException]:
+        """Validate the (tool_names_list, parameters_dict) pair used in the tuple form of ground_truth.
+
+        :param tool_names: The first element of the tuple/2-element list.
+        :type tool_names: Any
+        :param parameters: The second element of the tuple/2-element list.
+        :type parameters: Any
+        :return: An :class:`EvaluationException` if validation fails, or ``None`` on success.
+        :rtype: Optional[EvaluationException]
+        """
+        # Validate tool names list
+        if not isinstance(tool_names, list):
+            return EvaluationException(
+                message="First element of 'ground_truth' tuple must be a list of tool names.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=self.error_target,
+            )
+
+        if len(tool_names) == 0:
+            return EvaluationException(
+                message="Tool names list in 'ground_truth' cannot be empty.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=self.error_target,
+            )
+
+        for idx, name in enumerate(tool_names):
+            if not isinstance(name, str):
+                return EvaluationException(
+                    message=f"Tool name at index {idx} in 'ground_truth' must be a string, got {type(name).__name__}.",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=self.error_target,
+                )
+
+        # Validate parameters dict
+        if not isinstance(parameters, dict):
+            return EvaluationException(
+                message="Second element of 'ground_truth' tuple must be a dictionary of parameters.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=self.error_target,
+            )
+
+        # Validate parameter values are dicts
+        for tool_name, params in parameters.items():
+            if not isinstance(params, dict):
+                return EvaluationException(
+                    message=f"Parameters for tool '{tool_name}' in 'ground_truth' must be a dictionary, got {type(params).__name__}.",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=self.error_target,
+                )
+
+        return None
+
     def _validate_ground_truth(self, ground_truth: Any) -> Optional[EvaluationException]:
         """Validate the ground_truth parameter."""
         if not ground_truth:
@@ -128,6 +187,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
         # ground_truth can be either:
         # 1. A list of tool names (strings)
         # 2. A tuple of (list of tool names, dict of parameters)
+        # 3. A 2-element list [list, dict] — the JSON round-tripped form of (2)
 
         if isinstance(ground_truth, tuple):
             # Validate tuple format: (list, dict)
@@ -140,51 +200,7 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
                 )
 
             tool_names, parameters = ground_truth
-
-            # Validate tool names list
-            if not isinstance(tool_names, list):
-                return EvaluationException(
-                    message="First element of 'ground_truth' tuple must be a list of tool names.",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=self.error_target,
-                )
-
-            if len(tool_names) == 0:
-                return EvaluationException(
-                    message="Tool names list in 'ground_truth' cannot be empty.",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=self.error_target,
-                )
-
-            for idx, name in enumerate(tool_names):
-                if not isinstance(name, str):
-                    return EvaluationException(
-                        message=f"Tool name at index {idx} in 'ground_truth' must be a string, got {type(name).__name__}.",
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=self.error_target,
-                    )
-
-            # Validate parameters dict
-            if not isinstance(parameters, dict):
-                return EvaluationException(
-                    message="Second element of 'ground_truth' tuple must be a dictionary of parameters.",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=self.error_target,
-                )
-
-            # Validate parameter values are dicts
-            for tool_name, params in parameters.items():
-                if not isinstance(params, dict):
-                    return EvaluationException(
-                        message=f"Parameters for tool '{tool_name}' in 'ground_truth' must be a dictionary, got {type(params).__name__}.",
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=self.error_target,
-                    )
+            return self._validate_tool_names_and_params(tool_names, parameters)
 
         elif isinstance(ground_truth, list):
             # Validate list of tool names
@@ -196,6 +212,20 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
                     target=self.error_target,
                 )
 
+            if all(isinstance(name, str) for name in ground_truth):
+                # Plain list of tool name strings — nothing further to validate.
+                return None
+
+            if (
+                len(ground_truth) == 2
+                and isinstance(ground_truth[0], list)
+                and isinstance(ground_truth[1], dict)
+            ):
+                # 2-element list [list, dict] — the JSON round-tripped form of a
+                # (tool_names_list, parameters_dict) tuple.  Validate it the same way.
+                return self._validate_tool_names_and_params(ground_truth[0], ground_truth[1])
+
+            # Identify the first non-string element to give a helpful error.
             for idx, name in enumerate(ground_truth):
                 if not isinstance(name, str):
                     return EvaluationException(

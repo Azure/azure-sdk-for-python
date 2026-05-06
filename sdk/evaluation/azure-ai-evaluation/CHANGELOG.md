@@ -14,6 +14,7 @@
 
 ### Bugs Fixed
 
+- Fixed `_TaskNavigationEfficiencyEvaluator` failing with `'response' must be a list of messages.` when invoked through the cloud Foundry / ACA evaluation runtime, which delivers list/object fields as JSON-encoded strings via dataMapping templating. The evaluator now transparently JSON-decodes string-typed `response` and `ground_truth` inputs before validation. The validator also now accepts the JSON round-tripped tuple form of `ground_truth` (a 2-element `[list, dict]`) as equivalent to the native `(list, dict)` tuple form.
 - Fixed row classification double-counting in `_calculate_aoai_evaluation_summary` where errored rows were counted separately and could also be counted as passed/failed. Rows are now classified into mutually exclusive buckets with priority: passed > failed > errored > skipped.
 - Fixed row classification where rows with empty or missing results lists were incorrectly counted as "passed" (the condition `passed_count == len(results) - error_count` evaluated `0 == 0` as True).
 - Fixed `_get_metric_result` prefix matching where shorter metric names (e.g., `xpia`) could match before longer, more-specific ones (e.g., `xpia_manipulated_content`). Now sorts by length descending for correct longest-prefix matching.
