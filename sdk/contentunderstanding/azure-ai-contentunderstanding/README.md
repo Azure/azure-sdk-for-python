@@ -11,6 +11,8 @@ Use the client library for Azure AI Content Understanding to:
 * **Create custom analyzers** - Build domain-specific analyzers for specialized content extraction needs across all four modalities (documents, video, audio, and images)
 * **Classify documents and video** - Automatically categorize and extract information from documents and video by type
 
+If you have encountered issues or want to suggest features, please [file an issue][file_issue].
+
 [Source code][python_cu_src] | [Package (PyPI)][python_cu_pypi] | [Product documentation][python_cu_product_docs] | [Samples][python_cu_samples]
 
 ## Table of Contents
@@ -520,6 +522,9 @@ asyncio.run(analyze_invoice())
 
 #### Convert results to LLM-ready text
 
+> **Note:** `to_llm_input()` is currently in preview and may change in future
+> releases. We welcome feedback — please [file an issue][file_issue].
+
 Use the `to_llm_input()` helper to convert any analysis result into a text format that LLMs
 can consume directly — YAML front matter with extracted fields followed by the markdown body.
 This works with all content types (documents, images, audio, video) and handles multi-segment
@@ -695,6 +700,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [pip]: https://pypi.org/project/pip/
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[file_issue]: https://github.com/Azure/azure-sdk-for-python/issues/new?labels=Cognitive%20-%20Content%20Understanding&title=[ContentUnderstanding]%20&body=%23%23%20Library%20Version%0A%0A%23%23%20Repro%20Steps%0A%0A%23%23%20Expected%20Result%0A%0A%23%23%20Actual%20Result
 [code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [opencode_email]: mailto:opencode@microsoft.com
 [aiohttp]: https://pypi.org/project/aiohttp/

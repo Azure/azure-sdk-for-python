@@ -23,7 +23,6 @@ from .next_sphinx import next_sphinx
 from .black import black
 from .pyright import pyright
 from .next_pyright import next_pyright
-from .ruff import ruff
 from .verifytypes import verifytypes
 from .apistub import apistub
 from .verify_sdist import verify_sdist
@@ -138,7 +137,6 @@ def build_parser() -> argparse.ArgumentParser:
     black().register(subparsers, [common])
     pyright().register(subparsers, [common])
     next_pyright().register(subparsers, [common])
-    ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
     apistub().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])

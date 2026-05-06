@@ -44,5 +44,6 @@
         "encode.datetime.aio.operations.ResponseHeaderOperations.rfc7231": "Encode.Datetime.ResponseHeader.rfc7231",
         "encode.datetime.operations.ResponseHeaderOperations.unix_timestamp": "Encode.Datetime.ResponseHeader.unixTimestamp",
         "encode.datetime.aio.operations.ResponseHeaderOperations.unix_timestamp": "Encode.Datetime.ResponseHeader.unixTimestamp"
-    }
+    },
+    "CrossLanguageVersion": "c452f01bc0cc"
 }
