@@ -317,7 +317,16 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         """
         return self
 
-    def verifier(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPublicKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by deepcopy.
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
+        """
+        return self
+
+    def verifier(# pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
     ) -> NoReturn:
         """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
@@ -494,6 +503,15 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
     def __copy__(self) -> KeyVaultRSAPrivateKey:
         """Returns this instance since it is treated as immutable.
 
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
+        """
+        return self
+
+    def __deepcopy__(self, memo: dict) -> KeyVaultRSAPrivateKey:
+        """Returns this instance since it is treated as immutable.
+
+        :param dict memo: The memo dictionary used by deepcopy.
         :returns: This instance.
         :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
         """

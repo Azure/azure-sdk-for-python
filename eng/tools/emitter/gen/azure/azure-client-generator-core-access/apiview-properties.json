@@ -11,5 +11,6 @@
         "specs.azure.clientgenerator.core.access.aio.operations.PublicOperationOperations.public_decorator_in_public": "_Specs_.Azure.ClientGenerator.Core.Access.PublicOperation.publicDecoratorInPublic",
         "specs.azure.clientgenerator.core.access.operations.SharedModelInOperationOperations.public": "_Specs_.Azure.ClientGenerator.Core.Access.SharedModelInOperation.public",
         "specs.azure.clientgenerator.core.access.aio.operations.SharedModelInOperationOperations.public": "_Specs_.Azure.ClientGenerator.Core.Access.SharedModelInOperation.public"
-    }
+    },
+    "CrossLanguageVersion": "4b421510b80e"
 }

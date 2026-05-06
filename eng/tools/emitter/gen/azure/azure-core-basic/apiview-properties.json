@@ -18,5 +18,6 @@
         "specs.azure.core.basic.aio.BasicClient.export": "_Specs_.Azure.Core.Basic.export",
         "specs.azure.core.basic.BasicClient.export_all_users": "_Specs_.Azure.Core.Basic.exportAllUsers",
         "specs.azure.core.basic.aio.BasicClient.export_all_users": "_Specs_.Azure.Core.Basic.exportAllUsers"
-    }
+    },
+    "CrossLanguageVersion": "78b6e03b60cd"
 }
