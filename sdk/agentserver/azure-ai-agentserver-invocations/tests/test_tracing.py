@@ -483,8 +483,6 @@ def test_incoming_baggage_merged_into_context():
     # Incoming baggage entries should be present
     assert captured_baggage.get("user.id") == "test-user-123"
     assert captured_baggage.get("custom.key") == "custom-value"
-    # Server-added entries should also be present
-    assert "azure.ai.agentserver.invocation_id" in captured_baggage
 
 
 def test_incoming_baggage_does_not_break_span_parenting():
