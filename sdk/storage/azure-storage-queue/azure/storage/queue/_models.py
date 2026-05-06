@@ -124,7 +124,7 @@ class Metrics(GeneratedMetrics):
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the service."""
-    include_apis: Optional[bool] = None
+    include_apis: Optional[bool]
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
@@ -339,9 +339,13 @@ class AccessPolicy(GenAccessPolicy):
         be interpreted as UTC.
     """
 
-    start: Optional[Union["datetime", str]]  # type: ignore[assignment]
-    expiry: Optional[Union["datetime", str]]  # type: ignore[assignment]
-    permission: Optional[Union[QueueSasPermissions, str]]  # type: ignore[assignment]
+    permission: Optional[Union[QueueSasPermissions, str]]  # type: ignore [assignment]
+    """The permissions associated with the shared access signature. The user is restricted to
+        operations allowed by the permissions."""
+    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    """The time at which the shared access signature becomes invalid."""
+    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    """The time at which the shared access signature becomes valid."""
 
     def __init__(
         self,
@@ -349,11 +353,9 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        super().__init__(
-            start=start,  # type: ignore[arg-type]
-            expiry=expiry,  # type: ignore[arg-type]
-            permission=permission,  # type: ignore[arg-type]
-        )
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
 
 class QueueMessage(DictMixin):
