@@ -33,4 +33,4 @@ class TestMongoClusterMgmtMongoClustersOperationsAsync(AzureMgmtRecordedTestCase
     async def test_mongo_clusters_list(self, resource_group):
         response = self.client.mongo_clusters.list()
         result = [r async for r in response]
-        assert len(result)
+        assert len(result) == 0

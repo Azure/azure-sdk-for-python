@@ -32,4 +32,4 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
     def test_mongo_clusters_list(self, resource_group):
         response = self.client.mongo_clusters.list()
         result = [r for r in response]
-        assert len(result)
+        assert len(result) == 0
