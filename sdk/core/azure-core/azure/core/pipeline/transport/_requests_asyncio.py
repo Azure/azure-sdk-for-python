@@ -62,6 +62,7 @@ from ._requests_basic import (
     RequestsTransportResponse,
     _read_raw_stream,
     AzureErrorUnion,
+    _pop_requests_send_options,
 )
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import is_rest as _is_rest
@@ -155,7 +156,13 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
-        loop = kwargs.get("loop", _get_running_loop())
+        loop = kwargs.pop("loop", None)
+        if loop is None:
+            loop = _get_running_loop()
+        stream, connection_verify, connection_cert, timeout = _pop_requests_send_options(
+            "AsyncioRequestsTransport", self.connection_config, kwargs
+        )
+
         response = None
         error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)
@@ -169,12 +176,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     headers=request.headers,
                     data=data_to_send,
                     files=request.files,
-                    verify=kwargs.pop("connection_verify", self.connection_config.verify),
-                    timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
-                    cert=kwargs.pop("connection_cert", self.connection_config.cert),
+                    verify=connection_verify,
+                    timeout=timeout,
+                    cert=connection_cert,
                     allow_redirects=False,
                     proxies=proxies,
-                    **kwargs
+                    stream=stream,
                 ),
             )
             response.raw.enforce_content_length = True
@@ -214,7 +221,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,
             )
-            if not kwargs.get("stream"):
+            if not stream:
                 await _handle_no_stream_rest_response(retval)
             return retval
 

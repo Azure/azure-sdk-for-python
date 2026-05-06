@@ -8,6 +8,9 @@
 
 ### Breaking Changes
 
+- Built-in transports now reject unsupported per-request keyword arguments instead of forwarding them
+  to the underlying HTTP library. #46365
+
 ### Bugs Fixed
 
 ### Other Changes

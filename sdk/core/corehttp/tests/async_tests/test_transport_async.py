@@ -7,8 +7,10 @@ from unittest import mock
 import asyncio
 from packaging.version import Version
 
+import httpx
 from corehttp.rest import HttpRequest
 from corehttp.transport.aiohttp import AioHttpTransport
+from corehttp.transport.httpx import AsyncHttpXTransport
 from corehttp.runtime.pipeline import AsyncPipeline
 from corehttp.exceptions import (
     ServiceResponseError,
@@ -19,6 +21,155 @@ from corehttp.exceptions import (
 
 import aiohttp
 import pytest
+
+
+class MockAioHttpSession:
+    auto_decompress = False
+
+    def __init__(self):
+        self.request = mock.AsyncMock(side_effect=RuntimeError("request sent"))
+
+    async def __aenter__(self):
+        return self
+
+    async def close(self):
+        pass
+
+
+def _make_async_httpx_client_mock():
+    client = mock.create_autospec(httpx.AsyncClient, instance=True)
+    client.request.side_effect = RuntimeError("request sent")
+    return client
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_rejects_unknown_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_async_pipeline_aiohttp_transport_rejects_unknown_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    pipeline = AsyncPipeline(transport)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        await pipeline.run(request, query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_consumes_supported_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            stream=True,
+            proxy="http://proxy",
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert=None,
+        )
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["proxy"] == "http://proxy"
+    assert kwargs["timeout"].sock_connect == 1
+    assert kwargs["timeout"].sock_read == 2
+    assert "connection_timeout" not in kwargs
+    assert "read_timeout" not in kwargs
+    assert "connection_verify" not in kwargs
+    assert "connection_cert" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_forwards_aiohttp_ssl_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+    ssl_context = object()
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            connection_verify=False,
+            server_hostname="token.proxy.local",
+            ssl=ssl_context,
+        )
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["server_hostname"] == "token.proxy.local"
+    assert kwargs["ssl"] is ssl_context
+    assert "connection_verify" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_httpx_transport_rejects_unknown_kwargs():
+    client = _make_async_httpx_client_mock()
+    transport = AsyncHttpXTransport(client=client, client_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"AsyncHttpXTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    client.request.assert_not_awaited()
+
+
+@pytest.mark.parametrize("tls_kwarg", ["connection_verify", "connection_cert"])
+@pytest.mark.asyncio
+async def test_httpx_transport_rejects_per_request_tls_kwargs(tls_kwarg):
+    client = _make_async_httpx_client_mock()
+    transport = AsyncHttpXTransport(client=client, client_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=f"AsyncHttpXTransport.send\\(\\) got an unexpected keyword argument '{tls_kwarg}'",
+    ):
+        await transport.send(request, **{tls_kwarg: "cert.pem"})
+
+    client.request.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_httpx_transport_consumes_supported_kwargs():
+    client = _make_async_httpx_client_mock()
+    transport = AsyncHttpXTransport(client=client, client_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            connection_timeout=1,
+            read_timeout=2,
+        )
+
+    kwargs = client.request.await_args.kwargs
+    assert kwargs["timeout"].connect == 1
+    assert kwargs["timeout"].read == 2
+    assert "connection_timeout" not in kwargs
+    assert "read_timeout" not in kwargs
 
 
 @pytest.mark.asyncio
@@ -70,7 +221,9 @@ async def test_aiohttp_timeout_response(port):
         request = HttpRequest("GET", f"http://localhost:{port}/basic/string")
 
         with mock.patch.object(
-            aiohttp.ClientResponse, "start", side_effect=asyncio.TimeoutError("Too slow!")
+            aiohttp.ClientResponse,
+            "start",
+            side_effect=asyncio.TimeoutError("Too slow!"),
         ) as mock_method:
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 await transport.send(request)
@@ -84,7 +237,9 @@ async def test_aiohttp_timeout_response(port):
 
         stream_resp = await transport.send(stream_resp, stream=True)
         with mock.patch.object(
-            aiohttp.streams.StreamReader, "read", side_effect=asyncio.TimeoutError("Too slow!")
+            aiohttp.streams.StreamReader,
+            "read",
+            side_effect=asyncio.TimeoutError("Too slow!"),
         ) as mock_method:
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 await stream_resp.read()

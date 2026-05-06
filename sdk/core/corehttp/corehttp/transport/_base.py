@@ -27,7 +27,17 @@ from __future__ import annotations
 import abc
 import logging
 import time
-from typing import Generic, TypeVar, Any, ContextManager, Union, Optional, MutableMapping, TYPE_CHECKING
+from typing import (
+    Generic,
+    TypeVar,
+    Any,
+    ContextManager,
+    Union,
+    Optional,
+    MutableMapping,
+    Mapping,
+    TYPE_CHECKING,
+)
 
 if TYPE_CHECKING:
     from ..rest import HttpResponse
@@ -36,6 +46,18 @@ HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _raise_for_unexpected_kwargs(class_name: str, kwargs: Mapping[str, Any]) -> None:
+    """Raise TypeError if unexpected kwargs remain after consuming known transport options.
+
+    :param str class_name: The transport class name to use in the error message.
+    :param Mapping[str, Any] kwargs: Remaining kwargs after supported options have been removed.
+    :raises TypeError: If kwargs is non-empty.
+    """
+    if kwargs:
+        key = next(iter(kwargs))
+        raise TypeError(f"{class_name}.send() got an unexpected keyword argument '{key}'")
 
 
 def _create_connection_config(  # pylint: disable=unused-argument
