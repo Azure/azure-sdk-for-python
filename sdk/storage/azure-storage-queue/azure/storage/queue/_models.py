@@ -42,10 +42,16 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted.
     """
 
+    enabled: bool = False
+    """Indicates whether a retention policy is enabled for the storage service."""
+    days: Optional[int] = None
+    """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
+
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        if enabled and days is None:
+        self.enabled = enabled
+        self.days = days
+        if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
-        super().__init__(enabled=enabled, days=days)
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -69,14 +75,23 @@ class QueueAnalyticsLogging(GeneratedLogging):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
+    version: str = "1.0"
+    """The version of Storage Analytics to configure."""
+    delete: bool = False
+    """Indicates whether all delete requests should be logged."""
+    read: bool = False
+    """Indicates whether all read requests should be logged."""
+    write: bool = False
+    """Indicates whether all write requests should be logged."""
+    retention_policy: RetentionPolicy = RetentionPolicy()
+    """The retention policy for the metrics."""
+
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(
-            version=kwargs.get("version", "1.0"),
-            delete=kwargs.get("delete", False),
-            read=kwargs.get("read", False),
-            write=kwargs.get("write", False),
-            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
-        )
+        self.version = kwargs.get("version", "1.0")
+        self.delete = kwargs.get("delete", False)
+        self.read = kwargs.get("read", False)
+        self.write = kwargs.get("write", False)
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -105,13 +120,20 @@ class Metrics(GeneratedMetrics):
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
 
+    version: str = "1.0"
+    """The version of Storage Analytics to configure."""
+    enabled: bool = False
+    """Indicates whether metrics are enabled for the service."""
+    include_apis: Optional[bool] = None
+    """Indicates whether metrics should generate summary statistics for called API operations."""
+    retention_policy: RetentionPolicy = RetentionPolicy()
+    """The retention policy for the metrics."""
+
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(
-            version=kwargs.get("version", "1.0"),
-            enabled=kwargs.get("enabled", False),
-            include_apis=kwargs.get("include_apis"),
-            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
-        )
+        self.version = kwargs.get("version", "1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -157,14 +179,25 @@ class CorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
+    allowed_origins: str
+    """The comma-delimited string representation of the list of origin domains that will be allowed via
+        CORS, or "*" to allow all domains."""
+    allowed_methods: str
+    """The comma-delimited string representation of the list of HTTP methods that are allowed to be executed
+        by the origin."""
+    allowed_headers: str
+    """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin request."""
+    exposed_headers: str
+    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
+    max_age_in_seconds: int
+    """The number of seconds that the client/browser should cache a pre-flight response."""
+
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        super().__init__(
-            allowed_origins=",".join(allowed_origins),
-            allowed_methods=",".join(allowed_methods),
-            allowed_headers=",".join(kwargs.get("allowed_headers", [])),
-            exposed_headers=",".join(kwargs.get("exposed_headers", [])),
-            max_age_in_seconds=kwargs.get("max_age_in_seconds", 0),
-        )
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
     def _to_generated(
