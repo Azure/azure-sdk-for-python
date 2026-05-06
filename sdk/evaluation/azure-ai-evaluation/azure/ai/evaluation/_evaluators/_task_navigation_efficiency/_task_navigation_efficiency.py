@@ -143,11 +143,11 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     def _maybe_json_decode(value: Any, field_name: str) -> Any:
         """Decode a JSON-encoded string into a Python object.
 
-        The cloud Foundry / ACA evaluation runtime delivers list/object fields
-        to code-type evaluators as JSON-encoded strings via dataMapping
-        templating (e.g. ``${data.response}``). Accept that shape transparently
-        so that callers using either the in-process Python SDK or the cloud
-        runtime get consistent behaviour.
+        The cloud Foundry / ACA evaluation runtime serializes list/object fields
+        to JSON-encoded strings via ``dataMapping`` template substitution
+        (e.g. ``${data.response}``) before invoking the Python evaluator entry-point.
+        This method accepts that shape transparently so callers using either the
+        in-process Python SDK or the cloud runtime get consistent behaviour.
 
         :param value: The value to potentially decode.
         :type value: Any
