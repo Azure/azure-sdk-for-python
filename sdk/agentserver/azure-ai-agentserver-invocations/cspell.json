@@ -4,6 +4,8 @@
         "appinsights",
         "ASGI",
         "autouse",
+        "bkey",
+        "bval",
         "caplog",
         "genai",
         "hypercorn",
