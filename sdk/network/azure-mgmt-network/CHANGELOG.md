@@ -1,5 +1,1437 @@
 # Release History
 
+## 31.0.0b1 (2026-05-06)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added method `send_request`
+  - Client `NetworkManagementClient` added operation group `p2s_vpn_gateways`
+  - Model `ActiveConnectivityConfiguration` added property `properties`
+  - Model `ActiveDefaultSecurityAdminRule` added property `properties`
+  - Model `ActiveSecurityAdminRule` added property `properties`
+  - Model `AdminRule` added property `properties`
+  - Model `AdminRuleCollection` added property `properties`
+  - Model `ApplicationGateway` added property `properties`
+  - Model `ApplicationGatewayAuthenticationCertificate` added property `properties`
+  - Model `ApplicationGatewayAvailableSslOptions` added property `properties`
+  - Model `ApplicationGatewayBackendAddressPool` added property `properties`
+  - Model `ApplicationGatewayBackendHttpSettings` added property `properties`
+  - Model `ApplicationGatewayBackendSettings` added property `properties`
+  - Model `ApplicationGatewayEntraJWTValidationConfig` added property `properties`
+  - Model `ApplicationGatewayFirewallRuleSet` added property `properties`
+  - Model `ApplicationGatewayFrontendIPConfiguration` added property `properties`
+  - Model `ApplicationGatewayFrontendPort` added property `properties`
+  - Model `ApplicationGatewayHttpListener` added property `properties`
+  - Model `ApplicationGatewayIPConfiguration` added property `properties`
+  - Model `ApplicationGatewayListener` added property `properties`
+  - Model `ApplicationGatewayLoadDistributionPolicy` added property `properties`
+  - Model `ApplicationGatewayLoadDistributionTarget` added property `properties`
+  - Model `ApplicationGatewayPathRule` added property `properties`
+  - Model `ApplicationGatewayProbe` added property `properties`
+  - Model `ApplicationGatewayRedirectConfiguration` added property `properties`
+  - Model `ApplicationGatewayRequestRoutingRule` added property `properties`
+  - Model `ApplicationGatewayRewriteRuleSet` added property `properties`
+  - Model `ApplicationGatewayRoutingRule` added property `properties`
+  - Model `ApplicationGatewaySslCertificate` added property `properties`
+  - Model `ApplicationGatewaySslPredefinedPolicy` added property `properties`
+  - Model `ApplicationGatewaySslProfile` added property `properties`
+  - Model `ApplicationGatewayTrustedClientCertificate` added property `properties`
+  - Model `ApplicationGatewayTrustedRootCertificate` added property `properties`
+  - Model `ApplicationGatewayUrlPathMap` added property `properties`
+  - Model `ApplicationGatewayWafDynamicManifestResult` added property `properties`
+  - Model `ApplicationSecurityGroup` added property `properties`
+  - Model `AzureFirewall` added property `properties`
+  - Model `AzureFirewallApplicationRuleCollection` added property `properties`
+  - Model `AzureFirewallFqdnTag` added property `properties`
+  - Model `AzureFirewallIPConfiguration` added property `properties`
+  - Model `AzureFirewallNetworkRuleCollection` added property `properties`
+  - Model `AzureWebCategory` added property `properties`
+  - Model `BackendAddressPool` added property `properties`
+  - Model `BastionHost` added property `properties`
+  - Model `BastionHostIPConfiguration` added property `properties`
+  - Model `BgpServiceCommunity` added property `properties`
+  - Model `ConfigurationGroup` added property `properties`
+  - Model `ConnectionMonitor` added property `properties`
+  - Model `ConnectionMonitorEndpointFilter` added property `items_property`
+  - Model `ConnectionMonitorResult` added property `properties`
+  - Model `ContainerNetworkInterface` added property `properties`
+  - Model `ContainerNetworkInterfaceConfiguration` added property `properties`
+  - Model `ContainerNetworkInterfaceIpConfiguration` added property `properties`
+  - Model `CustomIpPrefix` added property `properties`
+  - Model `DdosCustomPolicy` added property `properties`
+  - Model `DdosDetectionRule` added property `properties`
+  - Model `DdosProtectionPlan` added property `properties`
+  - Model `DefaultAdminRule` added property `properties`
+  - Model `Delegation` added property `properties`
+  - Model `DscpConfiguration` added property `properties`
+  - Model `EffectiveConnectivityConfiguration` added property `properties`
+  - Model `EffectiveDefaultSecurityAdminRule` added property `properties`
+  - Model `EffectiveSecurityAdminRule` added property `properties`
+  - Model `ExceptionEntry` added property `values_property`
+  - Model `ExpressRouteCircuit` added property `properties`
+  - Model `ExpressRouteCircuitAuthorization` added property `properties`
+  - Model `ExpressRouteCircuitConnection` added property `properties`
+  - Model `ExpressRouteCircuitPeering` added property `properties`
+  - Model `ExpressRouteLink` added property `properties`
+  - Model `ExpressRoutePort` added property `properties`
+  - Model `ExpressRoutePortAuthorization` added property `properties`
+  - Model `ExpressRoutePortsLocation` added property `properties`
+  - Model `ExpressRouteServiceProvider` added property `properties`
+  - Model `FilterItems` added property `values_property`
+  - Model `FirewallPolicy` added property `properties`
+  - Model `FlowLogInformation` added property `properties`
+  - Model `FrontendIPConfiguration` added property `properties`
+  - Model `HubIpConfiguration` added property `properties`
+  - Model `IPConfiguration` added property `properties`
+  - Model `IPConfigurationProfile` added property `properties`
+  - Model `InboundNatPool` added property `properties`
+  - Model `InboundNatRule` added property `properties`
+  - Model `IpAllocation` added property `properties`
+  - Model `IpGroup` added property `properties`
+  - Model `IpamPoolPrefixAllocation` added property `pool`
+  - Model `LoadBalancer` added property `properties`
+  - Model `LoadBalancerBackendAddress` added property `properties`
+  - Model `LoadBalancingRule` added property `properties`
+  - Model `LocalNetworkGateway` added property `properties`
+  - Model `NatGateway` added property `properties`
+  - Model `NetworkInterface` added property `properties`
+  - Model `NetworkInterfaceIPConfiguration` added property `properties`
+  - Model `NetworkInterfaceTapConfiguration` added property `properties`
+  - Model `NetworkManagerRoutingConfiguration` added property `properties`
+  - Model `NetworkProfile` added property `properties`
+  - Model `NetworkSecurityGroup` added property `properties`
+  - Model `NetworkVirtualAppliance` added property `properties`
+  - Model `NetworkVirtualApplianceSku` added property `properties`
+  - Model `NetworkWatcher` added property `properties`
+  - Model `Operation` added property `properties`
+  - Model `OutboundRule` added property `properties`
+  - Model `PacketCaptureResult` added property `properties`
+  - Model `PeerExpressRouteCircuitConnection` added property `properties`
+  - Model `PrivateDnsZoneConfig` added property `properties`
+  - Model `PrivateDnsZoneGroup` added property `properties`
+  - Model `Probe` added property `properties`
+  - Model `PublicIPAddress` added property `properties`
+  - Model `PublicIPPrefix` added property `properties`
+  - Model `ResourceNavigationLink` added property `properties`
+  - Model `Route` added property `properties`
+  - Model `RouteFilter` added property `properties`
+  - Model `RouteFilterRule` added property `properties`
+  - Model `RouteTable` added property `properties`
+  - Model `RoutingRule` added property `properties`
+  - Model `RoutingRuleCollection` added property `properties`
+  - Model `SecurityAdminConfiguration` added property `properties`
+  - Model `SecurityPartnerProvider` added property `properties`
+  - Model `SecurityRule` added property `properties`
+  - Model `SecurityUserConfiguration` added property `properties`
+  - Model `SecurityUserRule` added property `properties`
+  - Model `SecurityUserRuleCollection` added property `properties`
+  - Model `ServiceAssociationLink` added property `properties`
+  - Model `ServiceEndpointPolicy` added property `properties`
+  - Model `ServiceEndpointPolicyDefinition` added property `properties`
+  - Model `ServiceGateway` added property `properties`
+  - Model `ServiceGatewayService` added property `properties`
+  - Model `ServiceTagsListResult` added property `values_property`
+  - Model `Subnet` added property `properties`
+  - Model `TroubleshootingParameters` added property `properties`
+  - Model `VirtualNetwork` added property `properties`
+  - Model `VirtualNetworkAppliance` added property `properties`
+  - Model `VirtualNetworkGateway` added property `properties`
+  - Model `VirtualNetworkGatewayConnection` added property `properties`
+  - Model `VirtualNetworkGatewayConnectionListEntity` added property `properties`
+  - Model `VirtualNetworkGatewayIPConfiguration` added property `properties`
+  - Model `VirtualNetworkPeering` added property `properties`
+  - Model `VirtualNetworkTap` added property `properties`
+  - Model `VirtualRouter` added property `properties`
+  - Model `VirtualWAN` added property `properties`
+  - Model `VpnClientRevokedCertificate` added property `properties`
+  - Model `VpnClientRootCertificate` added property `properties`
+  - Model `WebApplicationFirewallPolicy` added property `properties`
+  - Added model `AdminPropertiesFormat`
+  - Added model `AdminRuleCollectionPropertiesFormat`
+  - Added model `ApplicationGatewayAuthenticationCertificatePropertiesFormat`
+  - Added model `ApplicationGatewayAvailableSslOptionsPropertiesFormat`
+  - Added model `ApplicationGatewayBackendAddressPoolPropertiesFormat`
+  - Added model `ApplicationGatewayBackendHttpSettingsPropertiesFormat`
+  - Added model `ApplicationGatewayBackendSettingsPropertiesFormat`
+  - Added model `ApplicationGatewayEntraJWTValidationConfigPropertiesFormat`
+  - Added model `ApplicationGatewayFirewallRuleSetPropertiesFormat`
+  - Added model `ApplicationGatewayFrontendIPConfigurationPropertiesFormat`
+  - Added model `ApplicationGatewayFrontendPortPropertiesFormat`
+  - Added model `ApplicationGatewayHttpListenerPropertiesFormat`
+  - Added model `ApplicationGatewayIPConfigurationPropertiesFormat`
+  - Added model `ApplicationGatewayListenerPropertiesFormat`
+  - Added model `ApplicationGatewayLoadDistributionPolicyPropertiesFormat`
+  - Added model `ApplicationGatewayLoadDistributionTargetPropertiesFormat`
+  - Added model `ApplicationGatewayPathRulePropertiesFormat`
+  - Added model `ApplicationGatewayProbePropertiesFormat`
+  - Added model `ApplicationGatewayPropertiesFormat`
+  - Added model `ApplicationGatewayRedirectConfigurationPropertiesFormat`
+  - Added model `ApplicationGatewayRequestRoutingRulePropertiesFormat`
+  - Added model `ApplicationGatewayRewriteRuleSetPropertiesFormat`
+  - Added model `ApplicationGatewayRoutingRulePropertiesFormat`
+  - Added model `ApplicationGatewaySslCertificatePropertiesFormat`
+  - Added model `ApplicationGatewaySslPredefinedPolicyPropertiesFormat`
+  - Added model `ApplicationGatewaySslProfilePropertiesFormat`
+  - Added model `ApplicationGatewayTrustedClientCertificatePropertiesFormat`
+  - Added model `ApplicationGatewayTrustedRootCertificatePropertiesFormat`
+  - Added model `ApplicationGatewayUrlPathMapPropertiesFormat`
+  - Added model `ApplicationGatewayWafDynamicManifestPropertiesResult`
+  - Added model `ApplicationSecurityGroupPropertiesFormat`
+  - Added model `AuthorizationPropertiesFormat`
+  - Added model `AzureFirewallApplicationRuleCollectionPropertiesFormat`
+  - Added model `AzureFirewallFqdnTagPropertiesFormat`
+  - Added model `AzureFirewallIPConfigurationPropertiesFormat`
+  - Added model `AzureFirewallNetworkRuleCollectionPropertiesFormat`
+  - Added model `AzureFirewallPropertiesFormat`
+  - Added model `AzureWebCategoryPropertiesFormat`
+  - Added model `BackendAddressPoolPropertiesFormat`
+  - Added model `BastionHostIPConfigurationPropertiesFormat`
+  - Added model `BastionHostPropertiesFormat`
+  - Added model `BgpServiceCommunityPropertiesFormat`
+  - Added model `CloudError`
+  - Added model `ContainerNetworkInterfaceConfigurationPropertiesFormat`
+  - Added model `ContainerNetworkInterfaceIpConfigurationPropertiesFormat`
+  - Added model `ContainerNetworkInterfacePropertiesFormat`
+  - Added model `CustomIpPrefixPropertiesFormat`
+  - Added model `DdosCustomPolicyPropertiesFormat`
+  - Added model `DdosDetectionRulePropertiesFormat`
+  - Added model `DdosProtectionPlanPropertiesFormat`
+  - Added model `DefaultAdminPropertiesFormat`
+  - Added model `DefaultRuleSetPropertyFormat`
+  - Added model `DscpConfigurationPropertiesFormat`
+  - Added model `ExpressRouteCircuitConnectionPropertiesFormat`
+  - Added model `ExpressRouteCircuitPeeringPropertiesFormat`
+  - Added model `ExpressRouteCircuitPropertiesFormat`
+  - Added model `ExpressRouteLinkPropertiesFormat`
+  - Added model `ExpressRoutePortAuthorizationPropertiesFormat`
+  - Added model `ExpressRoutePortPropertiesFormat`
+  - Added model `ExpressRoutePortsLocationPropertiesFormat`
+  - Added model `ExpressRouteServiceProviderPropertiesFormat`
+  - Added model `FirewallPolicyPropertiesFormat`
+  - Added model `FlowLogPropertiesFormat`
+  - Added model `FrontendIPConfigurationPropertiesFormat`
+  - Added model `HubIPConfigurationPropertiesFormat`
+  - Added model `IPConfigurationProfilePropertiesFormat`
+  - Added model `IPConfigurationPropertiesFormat`
+  - Added model `InboundNatPoolPropertiesFormat`
+  - Added model `InboundNatRulePropertiesFormat`
+  - Added model `IpAllocationPropertiesFormat`
+  - Added model `IpGroupPropertiesFormat`
+  - Added model `IpamPoolPrefixAllocationPool`
+  - Added model `LoadBalancerBackendAddressPropertiesFormat`
+  - Added model `LoadBalancerPropertiesFormat`
+  - Added model `LoadBalancingRulePropertiesFormat`
+  - Added model `LocalNetworkGatewayPropertiesFormat`
+  - Added model `ManagedServiceIdentityUserAssignedIdentities`
+  - Added model `NatGatewayPropertiesFormat`
+  - Added model `NetworkInterfaceIPConfigurationPropertiesFormat`
+  - Added model `NetworkInterfacePropertiesFormat`
+  - Added model `NetworkInterfaceTapConfigurationPropertiesFormat`
+  - Added model `NetworkManagerRoutingConfigurationPropertiesFormat`
+  - Added model `NetworkProfilePropertiesFormat`
+  - Added model `NetworkSecurityGroupPropertiesFormat`
+  - Added model `NetworkVirtualAppliancePropertiesFormat`
+  - Added model `NetworkVirtualApplianceSkuPropertiesFormat`
+  - Added model `NetworkWatcherPropertiesFormat`
+  - Added model `OperationPropertiesFormat`
+  - Added model `OutboundRulePropertiesFormat`
+  - Added model `PeerExpressRouteCircuitConnectionPropertiesFormat`
+  - Added model `PrivateDnsZoneGroupPropertiesFormat`
+  - Added model `PrivateDnsZonePropertiesFormat`
+  - Added model `ProbePropertiesFormat`
+  - Added model `ProxyResourceWithReadOnlyID`
+  - Added model `ProxyResourceWithSettableId`
+  - Added model `PublicIPAddressPropertiesFormat`
+  - Added model `PublicIPPrefixPropertiesFormat`
+  - Added model `ReadOnlySubResourceModel`
+  - Added model `ResourceNavigationLinkFormat`
+  - Added model `RouteFilterPropertiesFormat`
+  - Added model `RouteFilterRulePropertiesFormat`
+  - Added model `RoutePropertiesFormat`
+  - Added model `RouteTablePropertiesFormat`
+  - Added model `RoutingRuleCollectionPropertiesFormat`
+  - Added model `RoutingRulePropertiesFormat`
+  - Added model `SecurityAdminConfigurationPropertiesFormat`
+  - Added model `SecurityPartnerProviderPropertiesFormat`
+  - Added model `SecurityPerimeterTrackedResource`
+  - Added model `SecurityRulePropertiesFormat`
+  - Added model `SecurityUserConfigurationPropertiesFormat`
+  - Added model `SecurityUserRuleCollectionPropertiesFormat`
+  - Added model `SecurityUserRulePropertiesFormat`
+  - Added model `ServiceAssociationLinkPropertiesFormat`
+  - Added model `ServiceDelegationPropertiesFormat`
+  - Added model `ServiceEndpointPolicyDefinitionPropertiesFormat`
+  - Added model `ServiceEndpointPolicyPropertiesFormat`
+  - Added model `ServiceGatewayPropertiesFormat`
+  - Added model `ServiceGatewayServicePropertiesFormat`
+  - Added model `SubResourceModel`
+  - Added model `SubnetPropertiesFormat`
+  - Added model `TrackedResourceWithEtag`
+  - Added model `TrackedResourceWithOptionalLocation`
+  - Added model `TrackedResourceWithSettableIdOptionalLocation`
+  - Added model `TrackedResourceWithSettableName`
+  - Added model `TroubleshootingProperties`
+  - Added model `VirtualNetworkAppliancePropertiesFormat`
+  - Added model `VirtualNetworkGatewayConnectionListEntityPropertiesFormat`
+  - Added model `VirtualNetworkGatewayConnectionPropertiesFormat`
+  - Added model `VirtualNetworkGatewayIPConfigurationPropertiesFormat`
+  - Added model `VirtualNetworkGatewayPropertiesFormat`
+  - Added model `VirtualNetworkPeeringPropertiesFormat`
+  - Added model `VirtualNetworkPropertiesFormat`
+  - Added model `VirtualNetworkTapPropertiesFormat`
+  - Added model `VirtualRouterPropertiesFormat`
+  - Added model `VirtualWanProperties`
+  - Added model `VpnClientRevokedCertificatePropertiesFormat`
+  - Added model `VpnClientRootCertificatePropertiesFormat`
+  - Added model `WebApplicationFirewallPolicyPropertiesFormat`
+  - Added model `WritableResource`
+  - Model `IpamPoolsOperations` added parameter `etag` in method `begin_create`
+  - Model `IpamPoolsOperations` added parameter `match_condition` in method `begin_create`
+  - Model `IpamPoolsOperations` added parameter `etag` in method `begin_delete`
+  - Model `IpamPoolsOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `IpamPoolsOperations` added parameter `etag` in method `update`
+  - Model `IpamPoolsOperations` added parameter `match_condition` in method `update`
+  - Model `NetworkGroupsOperations` added parameter `etag` in method `create_or_update`
+  - Model `NetworkGroupsOperations` added parameter `match_condition` in method `create_or_update`
+  - Model `VerifierWorkspacesOperations` added parameter `etag` in method `begin_delete`
+  - Model `VerifierWorkspacesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `VerifierWorkspacesOperations` added parameter `etag` in method `create`
+  - Model `VerifierWorkspacesOperations` added parameter `match_condition` in method `create`
+  - Model `VerifierWorkspacesOperations` added parameter `etag` in method `update`
+  - Model `VerifierWorkspacesOperations` added parameter `match_condition` in method `update`
+  - Added model `P2sVpnGatewaysOperations`
+
+### Breaking Changes
+
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `description`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `connectivity_topology`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `hubs`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `is_global`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `connectivity_capabilities`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `applies_to_groups`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `delete_existing_peering`
+  - Model `ActiveConnectivityConfiguration` deleted or renamed its instance variable `resource_guid`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `description`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `flag`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `protocol`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `sources`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `destinations`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `access`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `priority`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `direction`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `ActiveDefaultSecurityAdminRule` deleted or renamed its instance variable `resource_guid`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `description`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `protocol`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `sources`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `destinations`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `access`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `priority`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `direction`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `ActiveSecurityAdminRule` deleted or renamed its instance variable `resource_guid`
+  - Model `AdminRule` deleted or renamed its instance variable `description`
+  - Model `AdminRule` deleted or renamed its instance variable `protocol`
+  - Model `AdminRule` deleted or renamed its instance variable `sources`
+  - Model `AdminRule` deleted or renamed its instance variable `destinations`
+  - Model `AdminRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `AdminRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `AdminRule` deleted or renamed its instance variable `access`
+  - Model `AdminRule` deleted or renamed its instance variable `priority`
+  - Model `AdminRule` deleted or renamed its instance variable `direction`
+  - Model `AdminRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `AdminRule` deleted or renamed its instance variable `resource_guid`
+  - Model `AdminRuleCollection` deleted or renamed its instance variable `description`
+  - Model `AdminRuleCollection` deleted or renamed its instance variable `applies_to_groups`
+  - Model `AdminRuleCollection` deleted or renamed its instance variable `provisioning_state`
+  - Model `AdminRuleCollection` deleted or renamed its instance variable `resource_guid`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `sku`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `ssl_policy`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `operational_state`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `gateway_ip_configurations`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `authentication_certificates`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `trusted_root_certificates`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `trusted_client_certificates`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `ssl_certificates`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `frontend_ip_configurations`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `frontend_ports`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `probes`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `backend_address_pools`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `backend_http_settings_collection`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `backend_settings_collection`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `http_listeners`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `listeners`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `ssl_profiles`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `url_path_maps`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `request_routing_rules`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `routing_rules`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `rewrite_rule_sets`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `redirect_configurations`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `web_application_firewall_configuration`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `firewall_policy`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `enable_http2`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `enable_fips`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `autoscale_configuration`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `private_link_configurations`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `resource_guid`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `custom_error_configurations`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `force_firewall_policy_association`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `load_distribution_policies`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `entra_jwt_validation_configs`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `global_configuration`
+  - Model `ApplicationGateway` deleted or renamed its instance variable `default_predefined_ssl_policy`
+  - Model `ApplicationGatewayAuthenticationCertificate` deleted or renamed its instance variable `data`
+  - Model `ApplicationGatewayAuthenticationCertificate` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayAvailableSslOptions` deleted or renamed its instance variable `predefined_policies`
+  - Model `ApplicationGatewayAvailableSslOptions` deleted or renamed its instance variable `default_policy`
+  - Model `ApplicationGatewayAvailableSslOptions` deleted or renamed its instance variable `available_cipher_suites`
+  - Model `ApplicationGatewayAvailableSslOptions` deleted or renamed its instance variable `available_protocols`
+  - Model `ApplicationGatewayBackendAddressPool` deleted or renamed its instance variable `backend_ip_configurations`
+  - Model `ApplicationGatewayBackendAddressPool` deleted or renamed its instance variable `backend_addresses`
+  - Model `ApplicationGatewayBackendAddressPool` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `port`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `protocol`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `cookie_based_affinity`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `request_timeout`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `probe`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `authentication_certificates`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `trusted_root_certificates`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `connection_draining`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `host_name`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `pick_host_name_from_backend_address`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `affinity_cookie_name`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `probe_enabled`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `path`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `dedicated_backend_connection`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `validate_cert_chain_and_expiry`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `validate_sni`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `sni_name`
+  - Model `ApplicationGatewayBackendHttpSettings` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `port`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `protocol`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `timeout`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `probe`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `trusted_root_certificates`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `host_name`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `pick_host_name_from_backend_address`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `enable_l4_client_ip_preservation`
+  - Model `ApplicationGatewayBackendSettings` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayEntraJWTValidationConfig` deleted or renamed its instance variable `un_authorized_request_action`
+  - Model `ApplicationGatewayEntraJWTValidationConfig` deleted or renamed its instance variable `tenant_id`
+  - Model `ApplicationGatewayEntraJWTValidationConfig` deleted or renamed its instance variable `client_id`
+  - Model `ApplicationGatewayEntraJWTValidationConfig` deleted or renamed its instance variable `audiences`
+  - Model `ApplicationGatewayEntraJWTValidationConfig` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayFirewallRuleSet` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayFirewallRuleSet` deleted or renamed its instance variable `rule_set_type`
+  - Model `ApplicationGatewayFirewallRuleSet` deleted or renamed its instance variable `rule_set_version`
+  - Model `ApplicationGatewayFirewallRuleSet` deleted or renamed its instance variable `rule_groups`
+  - Model `ApplicationGatewayFirewallRuleSet` deleted or renamed its instance variable `tiers`
+  - Model `ApplicationGatewayFrontendIPConfiguration` deleted or renamed its instance variable `private_ip_address`
+  - Model `ApplicationGatewayFrontendIPConfiguration` deleted or renamed its instance variable `private_ip_allocation_method`
+  - Model `ApplicationGatewayFrontendIPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `ApplicationGatewayFrontendIPConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `ApplicationGatewayFrontendIPConfiguration` deleted or renamed its instance variable `private_link_configuration`
+  - Model `ApplicationGatewayFrontendIPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayFrontendPort` deleted or renamed its instance variable `port`
+  - Model `ApplicationGatewayFrontendPort` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `frontend_ip_configuration`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `frontend_port`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `protocol`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `host_name`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `ssl_certificate`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `ssl_profile`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `require_server_name_indication`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `custom_error_configurations`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `firewall_policy`
+  - Model `ApplicationGatewayHttpListener` deleted or renamed its instance variable `host_names`
+  - Model `ApplicationGatewayIPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `ApplicationGatewayIPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayListener` deleted or renamed its instance variable `frontend_ip_configuration`
+  - Model `ApplicationGatewayListener` deleted or renamed its instance variable `frontend_port`
+  - Model `ApplicationGatewayListener` deleted or renamed its instance variable `protocol`
+  - Model `ApplicationGatewayListener` deleted or renamed its instance variable `ssl_certificate`
+  - Model `ApplicationGatewayListener` deleted or renamed its instance variable `ssl_profile`
+  - Model `ApplicationGatewayListener` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayListener` deleted or renamed its instance variable `host_names`
+  - Model `ApplicationGatewayLoadDistributionPolicy` deleted or renamed its instance variable `load_distribution_targets`
+  - Model `ApplicationGatewayLoadDistributionPolicy` deleted or renamed its instance variable `load_distribution_algorithm`
+  - Model `ApplicationGatewayLoadDistributionPolicy` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayLoadDistributionTarget` deleted or renamed its instance variable `weight_per_server`
+  - Model `ApplicationGatewayLoadDistributionTarget` deleted or renamed its instance variable `backend_address_pool`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `paths`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `backend_address_pool`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `backend_http_settings`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `redirect_configuration`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `rewrite_rule_set`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `load_distribution_policy`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayPathRule` deleted or renamed its instance variable `firewall_policy`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `protocol`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `host`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `path`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `interval`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `timeout`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `unhealthy_threshold`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `pick_host_name_from_backend_http_settings`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `pick_host_name_from_backend_settings`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `min_servers`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `match`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `enable_probe_proxy_protocol_header`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayProbe` deleted or renamed its instance variable `port`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `redirect_type`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `target_listener`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `target_url`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `include_path`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `include_query_string`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `request_routing_rules`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `url_path_maps`
+  - Model `ApplicationGatewayRedirectConfiguration` deleted or renamed its instance variable `path_rules`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `rule_type`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `priority`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `backend_address_pool`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `backend_http_settings`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `http_listener`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `url_path_map`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `rewrite_rule_set`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `redirect_configuration`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `load_distribution_policy`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `entra_jwt_validation_config`
+  - Model `ApplicationGatewayRequestRoutingRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayRewriteRuleSet` deleted or renamed its instance variable `rewrite_rules`
+  - Model `ApplicationGatewayRewriteRuleSet` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayRoutingRule` deleted or renamed its instance variable `rule_type`
+  - Model `ApplicationGatewayRoutingRule` deleted or renamed its instance variable `priority`
+  - Model `ApplicationGatewayRoutingRule` deleted or renamed its instance variable `backend_address_pool`
+  - Model `ApplicationGatewayRoutingRule` deleted or renamed its instance variable `backend_settings`
+  - Model `ApplicationGatewayRoutingRule` deleted or renamed its instance variable `listener`
+  - Model `ApplicationGatewayRoutingRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewaySslCertificate` deleted or renamed its instance variable `data`
+  - Model `ApplicationGatewaySslCertificate` deleted or renamed its instance variable `password`
+  - Model `ApplicationGatewaySslCertificate` deleted or renamed its instance variable `public_cert_data`
+  - Model `ApplicationGatewaySslCertificate` deleted or renamed its instance variable `key_vault_secret_id`
+  - Model `ApplicationGatewaySslCertificate` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewaySslPredefinedPolicy` deleted or renamed its instance variable `cipher_suites`
+  - Model `ApplicationGatewaySslPredefinedPolicy` deleted or renamed its instance variable `min_protocol_version`
+  - Model `ApplicationGatewaySslProfile` deleted or renamed its instance variable `trusted_client_certificates`
+  - Model `ApplicationGatewaySslProfile` deleted or renamed its instance variable `ssl_policy`
+  - Model `ApplicationGatewaySslProfile` deleted or renamed its instance variable `client_auth_configuration`
+  - Model `ApplicationGatewaySslProfile` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayTrustedClientCertificate` deleted or renamed its instance variable `data`
+  - Model `ApplicationGatewayTrustedClientCertificate` deleted or renamed its instance variable `validated_cert_data`
+  - Model `ApplicationGatewayTrustedClientCertificate` deleted or renamed its instance variable `client_cert_issuer_dn`
+  - Model `ApplicationGatewayTrustedClientCertificate` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayTrustedRootCertificate` deleted or renamed its instance variable `data`
+  - Model `ApplicationGatewayTrustedRootCertificate` deleted or renamed its instance variable `key_vault_secret_id`
+  - Model `ApplicationGatewayTrustedRootCertificate` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayUrlPathMap` deleted or renamed its instance variable `default_backend_address_pool`
+  - Model `ApplicationGatewayUrlPathMap` deleted or renamed its instance variable `default_backend_http_settings`
+  - Model `ApplicationGatewayUrlPathMap` deleted or renamed its instance variable `default_rewrite_rule_set`
+  - Model `ApplicationGatewayUrlPathMap` deleted or renamed its instance variable `default_redirect_configuration`
+  - Model `ApplicationGatewayUrlPathMap` deleted or renamed its instance variable `default_load_distribution_policy`
+  - Model `ApplicationGatewayUrlPathMap` deleted or renamed its instance variable `path_rules`
+  - Model `ApplicationGatewayUrlPathMap` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApplicationGatewayWafDynamicManifestResult` deleted or renamed its instance variable `available_rule_sets`
+  - Model `ApplicationGatewayWafDynamicManifestResult` deleted or renamed its instance variable `rule_set_type`
+  - Model `ApplicationGatewayWafDynamicManifestResult` deleted or renamed its instance variable `rule_set_version`
+  - Model `ApplicationSecurityGroup` deleted or renamed its instance variable `resource_guid`
+  - Model `ApplicationSecurityGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `AzureFirewall` deleted or renamed its instance variable `application_rule_collections`
+  - Model `AzureFirewall` deleted or renamed its instance variable `nat_rule_collections`
+  - Model `AzureFirewall` deleted or renamed its instance variable `network_rule_collections`
+  - Model `AzureFirewall` deleted or renamed its instance variable `ip_configurations`
+  - Model `AzureFirewall` deleted or renamed its instance variable `management_ip_configuration`
+  - Model `AzureFirewall` deleted or renamed its instance variable `provisioning_state`
+  - Model `AzureFirewall` deleted or renamed its instance variable `threat_intel_mode`
+  - Model `AzureFirewall` deleted or renamed its instance variable `virtual_hub`
+  - Model `AzureFirewall` deleted or renamed its instance variable `firewall_policy`
+  - Model `AzureFirewall` deleted or renamed its instance variable `hub_ip_addresses`
+  - Model `AzureFirewall` deleted or renamed its instance variable `ip_groups`
+  - Model `AzureFirewall` deleted or renamed its instance variable `sku`
+  - Model `AzureFirewall` deleted or renamed its instance variable `autoscale_configuration`
+  - Model `AzureFirewallApplicationRuleCollection` deleted or renamed its instance variable `priority`
+  - Model `AzureFirewallApplicationRuleCollection` deleted or renamed its instance variable `action`
+  - Model `AzureFirewallApplicationRuleCollection` deleted or renamed its instance variable `rules`
+  - Model `AzureFirewallApplicationRuleCollection` deleted or renamed its instance variable `provisioning_state`
+  - Model `AzureFirewallFqdnTag` deleted or renamed its instance variable `provisioning_state`
+  - Model `AzureFirewallFqdnTag` deleted or renamed its instance variable `fqdn_tag_name`
+  - Model `AzureFirewallIPConfiguration` deleted or renamed its instance variable `private_ip_address`
+  - Model `AzureFirewallIPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `AzureFirewallIPConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `AzureFirewallIPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `AzureFirewallNetworkRuleCollection` deleted or renamed its instance variable `priority`
+  - Model `AzureFirewallNetworkRuleCollection` deleted or renamed its instance variable `action`
+  - Model `AzureFirewallNetworkRuleCollection` deleted or renamed its instance variable `rules`
+  - Model `AzureFirewallNetworkRuleCollection` deleted or renamed its instance variable `provisioning_state`
+  - Model `AzureWebCategory` deleted or renamed its instance variable `group`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `location`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `tunnel_interfaces`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `load_balancer_backend_addresses`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `backend_ip_configurations`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `load_balancing_rules`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `outbound_rule`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `outbound_rules`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `inbound_nat_rules`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `provisioning_state`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `drain_period_in_seconds`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `virtual_network`
+  - Model `BackendAddressPool` deleted or renamed its instance variable `sync_mode`
+  - Model `BastionHost` deleted or renamed its instance variable `ip_configurations`
+  - Model `BastionHost` deleted or renamed its instance variable `dns_name`
+  - Model `BastionHost` deleted or renamed its instance variable `virtual_network`
+  - Model `BastionHost` deleted or renamed its instance variable `network_acls`
+  - Model `BastionHost` deleted or renamed its instance variable `provisioning_state`
+  - Model `BastionHost` deleted or renamed its instance variable `scale_units`
+  - Model `BastionHost` deleted or renamed its instance variable `disable_copy_paste`
+  - Model `BastionHost` deleted or renamed its instance variable `enable_file_copy`
+  - Model `BastionHost` deleted or renamed its instance variable `enable_ip_connect`
+  - Model `BastionHost` deleted or renamed its instance variable `enable_shareable_link`
+  - Model `BastionHost` deleted or renamed its instance variable `enable_tunneling`
+  - Model `BastionHost` deleted or renamed its instance variable `enable_kerberos`
+  - Model `BastionHost` deleted or renamed its instance variable `enable_session_recording`
+  - Model `BastionHost` deleted or renamed its instance variable `enable_private_only_bastion`
+  - Model `BastionHostIPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `BastionHostIPConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `BastionHostIPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `BastionHostIPConfiguration` deleted or renamed its instance variable `private_ip_allocation_method`
+  - Model `BgpServiceCommunity` deleted or renamed its instance variable `service_name`
+  - Model `BgpServiceCommunity` deleted or renamed its instance variable `bgp_communities`
+  - Model `ConfigurationGroup` deleted or renamed its instance variable `description`
+  - Model `ConfigurationGroup` deleted or renamed its instance variable `member_type`
+  - Model `ConfigurationGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `ConfigurationGroup` deleted or renamed its instance variable `resource_guid`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `source`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `destination`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `auto_start`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `monitoring_interval_in_seconds`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `endpoints`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `test_configurations`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `test_groups`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `outputs`
+  - Model `ConnectionMonitor` deleted or renamed its instance variable `notes`
+  - Model `ConnectionMonitorEndpointFilter` deleted or renamed its instance variable `items`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `source`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `destination`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `auto_start`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `monitoring_interval_in_seconds`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `endpoints`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `test_configurations`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `test_groups`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `outputs`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `notes`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `provisioning_state`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `start_time`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `monitoring_status`
+  - Model `ConnectionMonitorResult` deleted or renamed its instance variable `connection_monitor_type`
+  - Model `ContainerNetworkInterface` deleted or renamed its instance variable `container_network_interface_configuration`
+  - Model `ContainerNetworkInterface` deleted or renamed its instance variable `container`
+  - Model `ContainerNetworkInterface` deleted or renamed its instance variable `ip_configurations`
+  - Model `ContainerNetworkInterface` deleted or renamed its instance variable `provisioning_state`
+  - Model `ContainerNetworkInterfaceConfiguration` deleted or renamed its instance variable `ip_configurations`
+  - Model `ContainerNetworkInterfaceConfiguration` deleted or renamed its instance variable `container_network_interfaces`
+  - Model `ContainerNetworkInterfaceConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `ContainerNetworkInterfaceIpConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `asn`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `cidr`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `signed_message`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `authorization_message`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `custom_ip_prefix_parent`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `child_custom_ip_prefixes`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `commissioned_state`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `express_route_advertise`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `geo`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `no_internet_advertise`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `prefix_type`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `public_ip_prefixes`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `resource_guid`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `failed_reason`
+  - Model `CustomIpPrefix` deleted or renamed its instance variable `provisioning_state`
+  - Model `DdosCustomPolicy` deleted or renamed its instance variable `resource_guid`
+  - Model `DdosCustomPolicy` deleted or renamed its instance variable `provisioning_state`
+  - Model `DdosCustomPolicy` deleted or renamed its instance variable `detection_rules`
+  - Model `DdosCustomPolicy` deleted or renamed its instance variable `front_end_ip_configuration`
+  - Model `DdosDetectionRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `DdosDetectionRule` deleted or renamed its instance variable `detection_mode`
+  - Model `DdosDetectionRule` deleted or renamed its instance variable `traffic_detection_rule`
+  - Model `DdosProtectionPlan` deleted or renamed its instance variable `resource_guid`
+  - Model `DdosProtectionPlan` deleted or renamed its instance variable `provisioning_state`
+  - Model `DdosProtectionPlan` deleted or renamed its instance variable `public_ip_addresses`
+  - Model `DdosProtectionPlan` deleted or renamed its instance variable `virtual_networks`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `description`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `flag`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `protocol`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `sources`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `destinations`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `access`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `priority`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `direction`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `DefaultAdminRule` deleted or renamed its instance variable `resource_guid`
+  - Model `Delegation` deleted or renamed its instance variable `service_name`
+  - Model `Delegation` deleted or renamed its instance variable `actions`
+  - Model `Delegation` deleted or renamed its instance variable `provisioning_state`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `markings`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `source_ip_ranges`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `destination_ip_ranges`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `source_port_ranges`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `protocol`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `qos_definition_collection`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `qos_collection_id`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `associated_network_interfaces`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `resource_guid`
+  - Model `DscpConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `description`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `connectivity_topology`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `hubs`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `is_global`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `connectivity_capabilities`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `applies_to_groups`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `delete_existing_peering`
+  - Model `EffectiveConnectivityConfiguration` deleted or renamed its instance variable `resource_guid`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `description`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `flag`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `protocol`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `sources`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `destinations`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `access`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `priority`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `direction`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `EffectiveDefaultSecurityAdminRule` deleted or renamed its instance variable `resource_guid`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `description`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `protocol`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `sources`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `destinations`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `access`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `priority`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `direction`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `EffectiveSecurityAdminRule` deleted or renamed its instance variable `resource_guid`
+  - Model `ExceptionEntry` deleted or renamed its instance variable `values`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `allow_classic_operations`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `circuit_provisioning_state`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `service_provider_provisioning_state`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `authorizations`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `peerings`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `service_key`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `service_provider_notes`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `service_provider_properties`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `express_route_port`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `bandwidth_in_gbps`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `stag`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `gateway_manager_etag`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `global_reach_enabled`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `authorization_key`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `authorization_status`
+  - Model `ExpressRouteCircuit` deleted or renamed its instance variable `enable_direct_port_rate_limit`
+  - Model `ExpressRouteCircuitAuthorization` deleted or renamed its instance variable `authorization_key`
+  - Model `ExpressRouteCircuitAuthorization` deleted or renamed its instance variable `authorization_use_status`
+  - Model `ExpressRouteCircuitAuthorization` deleted or renamed its instance variable `connection_resource_uri`
+  - Model `ExpressRouteCircuitAuthorization` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRouteCircuitConnection` deleted or renamed its instance variable `express_route_circuit_peering`
+  - Model `ExpressRouteCircuitConnection` deleted or renamed its instance variable `peer_express_route_circuit_peering`
+  - Model `ExpressRouteCircuitConnection` deleted or renamed its instance variable `address_prefix`
+  - Model `ExpressRouteCircuitConnection` deleted or renamed its instance variable `authorization_key`
+  - Model `ExpressRouteCircuitConnection` deleted or renamed its instance variable `ipv6_circuit_connection_config`
+  - Model `ExpressRouteCircuitConnection` deleted or renamed its instance variable `circuit_connection_status`
+  - Model `ExpressRouteCircuitConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `peering_type`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `state`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `azure_asn`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `peer_asn`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `primary_peer_address_prefix`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `secondary_peer_address_prefix`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `primary_azure_port`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `secondary_azure_port`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `shared_key`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `vlan_id`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `microsoft_peering_config`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `stats`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `gateway_manager_etag`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `last_modified_by`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `route_filter`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `ipv6_peering_config`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `express_route_connection`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `connections`
+  - Model `ExpressRouteCircuitPeering` deleted or renamed its instance variable `peered_connections`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `router_name`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `interface_name`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `patch_panel_id`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `rack_id`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `colo_location`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `connector_type`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `admin_state`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRouteLink` deleted or renamed its instance variable `mac_sec_config`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `peering_location`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `bandwidth_in_gbps`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `provisioned_bandwidth_in_gbps`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `mtu`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `encapsulation`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `ether_type`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `allocation_date`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `links`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `circuits`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `resource_guid`
+  - Model `ExpressRoutePort` deleted or renamed its instance variable `billing_type`
+  - Model `ExpressRoutePortAuthorization` deleted or renamed its instance variable `authorization_key`
+  - Model `ExpressRoutePortAuthorization` deleted or renamed its instance variable `authorization_use_status`
+  - Model `ExpressRoutePortAuthorization` deleted or renamed its instance variable `circuit_resource_uri`
+  - Model `ExpressRoutePortAuthorization` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRoutePortsLocation` deleted or renamed its instance variable `address`
+  - Model `ExpressRoutePortsLocation` deleted or renamed its instance variable `contact`
+  - Model `ExpressRoutePortsLocation` deleted or renamed its instance variable `available_bandwidths`
+  - Model `ExpressRoutePortsLocation` deleted or renamed its instance variable `provisioning_state`
+  - Model `ExpressRouteServiceProvider` deleted or renamed its instance variable `peering_locations`
+  - Model `ExpressRouteServiceProvider` deleted or renamed its instance variable `bandwidths_offered`
+  - Model `ExpressRouteServiceProvider` deleted or renamed its instance variable `provisioning_state`
+  - Model `FilterItems` deleted or renamed its instance variable `values`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `size`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `rule_collection_groups`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `provisioning_state`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `base_policy`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `firewalls`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `child_policies`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `threat_intel_mode`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `threat_intel_whitelist`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `insights`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `snat`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `sql`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `dns_settings`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `explicit_proxy`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `intrusion_detection`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `transport_security`
+  - Model `FirewallPolicy` deleted or renamed its instance variable `sku`
+  - Model `FlowLogInformation` deleted or renamed its instance variable `storage_id`
+  - Model `FlowLogInformation` deleted or renamed its instance variable `enabled_filtering_criteria`
+  - Model `FlowLogInformation` deleted or renamed its instance variable `record_types`
+  - Model `FlowLogInformation` deleted or renamed its instance variable `enabled`
+  - Model `FlowLogInformation` deleted or renamed its instance variable `retention_policy`
+  - Model `FlowLogInformation` deleted or renamed its instance variable `format`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `inbound_nat_rules`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `inbound_nat_pools`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `outbound_rules`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `load_balancing_rules`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `private_ip_address`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `private_ip_allocation_method`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `private_ip_address_version`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `public_ip_prefix`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `gateway_load_balancer`
+  - Model `FrontendIPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `HubIpConfiguration` deleted or renamed its instance variable `private_ip_address`
+  - Model `HubIpConfiguration` deleted or renamed its instance variable `private_ip_allocation_method`
+  - Model `HubIpConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `HubIpConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `HubIpConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `IPConfiguration` deleted or renamed its instance variable `private_ip_address`
+  - Model `IPConfiguration` deleted or renamed its instance variable `private_ip_allocation_method`
+  - Model `IPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `IPConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `IPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `IPConfigurationProfile` deleted or renamed its instance variable `subnet`
+  - Model `IPConfigurationProfile` deleted or renamed its instance variable `provisioning_state`
+  - Model `InboundNatPool` deleted or renamed its instance variable `frontend_ip_configuration`
+  - Model `InboundNatPool` deleted or renamed its instance variable `protocol`
+  - Model `InboundNatPool` deleted or renamed its instance variable `frontend_port_range_start`
+  - Model `InboundNatPool` deleted or renamed its instance variable `frontend_port_range_end`
+  - Model `InboundNatPool` deleted or renamed its instance variable `backend_port`
+  - Model `InboundNatPool` deleted or renamed its instance variable `idle_timeout_in_minutes`
+  - Model `InboundNatPool` deleted or renamed its instance variable `enable_floating_ip`
+  - Model `InboundNatPool` deleted or renamed its instance variable `enable_tcp_reset`
+  - Model `InboundNatPool` deleted or renamed its instance variable `provisioning_state`
+  - Model `InboundNatRule` deleted or renamed its instance variable `frontend_ip_configuration`
+  - Model `InboundNatRule` deleted or renamed its instance variable `backend_ip_configuration`
+  - Model `InboundNatRule` deleted or renamed its instance variable `protocol`
+  - Model `InboundNatRule` deleted or renamed its instance variable `frontend_port`
+  - Model `InboundNatRule` deleted or renamed its instance variable `backend_port`
+  - Model `InboundNatRule` deleted or renamed its instance variable `idle_timeout_in_minutes`
+  - Model `InboundNatRule` deleted or renamed its instance variable `enable_floating_ip`
+  - Model `InboundNatRule` deleted or renamed its instance variable `enable_tcp_reset`
+  - Model `InboundNatRule` deleted or renamed its instance variable `frontend_port_range_start`
+  - Model `InboundNatRule` deleted or renamed its instance variable `frontend_port_range_end`
+  - Model `InboundNatRule` deleted or renamed its instance variable `backend_address_pool`
+  - Model `InboundNatRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `IpAllocation` deleted or renamed its instance variable `subnet`
+  - Model `IpAllocation` deleted or renamed its instance variable `virtual_network`
+  - Model `IpAllocation` deleted or renamed its instance variable `type_properties_type`
+  - Model `IpAllocation` deleted or renamed its instance variable `prefix`
+  - Model `IpAllocation` deleted or renamed its instance variable `prefix_length`
+  - Model `IpAllocation` deleted or renamed its instance variable `prefix_type`
+  - Model `IpAllocation` deleted or renamed its instance variable `ipam_allocation_id`
+  - Model `IpAllocation` deleted or renamed its instance variable `allocation_tags`
+  - Model `IpGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `IpGroup` deleted or renamed its instance variable `ip_addresses`
+  - Model `IpGroup` deleted or renamed its instance variable `firewalls`
+  - Model `IpGroup` deleted or renamed its instance variable `firewall_policies`
+  - Model `IpamPoolPrefixAllocation` deleted or renamed its instance variable `id`
+  - Model `LoadBalancer` deleted or renamed its instance variable `frontend_ip_configurations`
+  - Model `LoadBalancer` deleted or renamed its instance variable `backend_address_pools`
+  - Model `LoadBalancer` deleted or renamed its instance variable `load_balancing_rules`
+  - Model `LoadBalancer` deleted or renamed its instance variable `probes`
+  - Model `LoadBalancer` deleted or renamed its instance variable `inbound_nat_rules`
+  - Model `LoadBalancer` deleted or renamed its instance variable `inbound_nat_pools`
+  - Model `LoadBalancer` deleted or renamed its instance variable `outbound_rules`
+  - Model `LoadBalancer` deleted or renamed its instance variable `resource_guid`
+  - Model `LoadBalancer` deleted or renamed its instance variable `provisioning_state`
+  - Model `LoadBalancer` deleted or renamed its instance variable `scope`
+  - Model `LoadBalancerBackendAddress` deleted or renamed its instance variable `virtual_network`
+  - Model `LoadBalancerBackendAddress` deleted or renamed its instance variable `subnet`
+  - Model `LoadBalancerBackendAddress` deleted or renamed its instance variable `ip_address`
+  - Model `LoadBalancerBackendAddress` deleted or renamed its instance variable `network_interface_ip_configuration`
+  - Model `LoadBalancerBackendAddress` deleted or renamed its instance variable `load_balancer_frontend_ip_configuration`
+  - Model `LoadBalancerBackendAddress` deleted or renamed its instance variable `inbound_nat_rules_port_mapping`
+  - Model `LoadBalancerBackendAddress` deleted or renamed its instance variable `admin_state`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `frontend_ip_configuration`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `backend_address_pool`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `backend_address_pools`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `probe`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `protocol`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `load_distribution`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `frontend_port`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `backend_port`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `idle_timeout_in_minutes`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `enable_floating_ip`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `enable_tcp_reset`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `disable_outbound_snat`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `enable_connection_tracking`
+  - Model `LoadBalancingRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `LocalNetworkGateway` deleted or renamed its instance variable `local_network_address_space`
+  - Model `LocalNetworkGateway` deleted or renamed its instance variable `gateway_ip_address`
+  - Model `LocalNetworkGateway` deleted or renamed its instance variable `fqdn`
+  - Model `LocalNetworkGateway` deleted or renamed its instance variable `bgp_settings`
+  - Model `LocalNetworkGateway` deleted or renamed its instance variable `resource_guid`
+  - Model `LocalNetworkGateway` deleted or renamed its instance variable `provisioning_state`
+  - Model `NatGateway` deleted or renamed its instance variable `idle_timeout_in_minutes`
+  - Model `NatGateway` deleted or renamed its instance variable `public_ip_addresses`
+  - Model `NatGateway` deleted or renamed its instance variable `public_ip_addresses_v6`
+  - Model `NatGateway` deleted or renamed its instance variable `public_ip_prefixes`
+  - Model `NatGateway` deleted or renamed its instance variable `public_ip_prefixes_v6`
+  - Model `NatGateway` deleted or renamed its instance variable `subnets`
+  - Model `NatGateway` deleted or renamed its instance variable `source_virtual_network`
+  - Model `NatGateway` deleted or renamed its instance variable `service_gateway`
+  - Model `NatGateway` deleted or renamed its instance variable `resource_guid`
+  - Model `NatGateway` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkInterface` deleted or renamed its instance variable `virtual_machine`
+  - Model `NetworkInterface` deleted or renamed its instance variable `network_security_group`
+  - Model `NetworkInterface` deleted or renamed its instance variable `private_endpoint`
+  - Model `NetworkInterface` deleted or renamed its instance variable `ip_configurations`
+  - Model `NetworkInterface` deleted or renamed its instance variable `tap_configurations`
+  - Model `NetworkInterface` deleted or renamed its instance variable `dns_settings`
+  - Model `NetworkInterface` deleted or renamed its instance variable `mac_address`
+  - Model `NetworkInterface` deleted or renamed its instance variable `primary`
+  - Model `NetworkInterface` deleted or renamed its instance variable `vnet_encryption_supported`
+  - Model `NetworkInterface` deleted or renamed its instance variable `default_outbound_connectivity_enabled`
+  - Model `NetworkInterface` deleted or renamed its instance variable `enable_accelerated_networking`
+  - Model `NetworkInterface` deleted or renamed its instance variable `disable_tcp_state_tracking`
+  - Model `NetworkInterface` deleted or renamed its instance variable `enable_ip_forwarding`
+  - Model `NetworkInterface` deleted or renamed its instance variable `hosted_workloads`
+  - Model `NetworkInterface` deleted or renamed its instance variable `dscp_configuration`
+  - Model `NetworkInterface` deleted or renamed its instance variable `resource_guid`
+  - Model `NetworkInterface` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkInterface` deleted or renamed its instance variable `workload_type`
+  - Model `NetworkInterface` deleted or renamed its instance variable `nic_type`
+  - Model `NetworkInterface` deleted or renamed its instance variable `private_link_service`
+  - Model `NetworkInterface` deleted or renamed its instance variable `migration_phase`
+  - Model `NetworkInterface` deleted or renamed its instance variable `auxiliary_mode`
+  - Model `NetworkInterface` deleted or renamed its instance variable `auxiliary_sku`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `gateway_load_balancer`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `virtual_network_taps`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `application_gateway_backend_address_pools`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `load_balancer_backend_address_pools`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `load_balancer_inbound_nat_rules`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `private_ip_address`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `private_ip_address_prefix_length`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `private_ip_allocation_method`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `private_ip_address_version`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `primary`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `application_security_groups`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkInterfaceIPConfiguration` deleted or renamed its instance variable `private_link_connection_properties`
+  - Model `NetworkInterfaceTapConfiguration` deleted or renamed its instance variable `virtual_network_tap`
+  - Model `NetworkInterfaceTapConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkManagerRoutingConfiguration` deleted or renamed its instance variable `description`
+  - Model `NetworkManagerRoutingConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkManagerRoutingConfiguration` deleted or renamed its instance variable `resource_guid`
+  - Model `NetworkManagerRoutingConfiguration` deleted or renamed its instance variable `route_table_usage_mode`
+  - Model `NetworkProfile` deleted or renamed its instance variable `container_network_interfaces`
+  - Model `NetworkProfile` deleted or renamed its instance variable `container_network_interface_configurations`
+  - Model `NetworkProfile` deleted or renamed its instance variable `resource_guid`
+  - Model `NetworkProfile` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `flush_connection`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `security_rules`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `default_security_rules`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `network_interfaces`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `subnets`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `flow_logs`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `resource_guid`
+  - Model `NetworkSecurityGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `nva_sku`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `address_prefix`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `boot_strap_configuration_blobs`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `virtual_hub`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `cloud_init_configuration_blobs`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `cloud_init_configuration`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `virtual_appliance_asn`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `ssh_public_key`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `virtual_appliance_nics`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `network_profile`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `additional_nics`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `internet_ingress_public_ips`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `virtual_appliance_sites`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `virtual_appliance_connections`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `inbound_security_rules`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `deployment_type`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `delegation`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `partner_managed_resource`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `nva_interface_configurations`
+  - Model `NetworkVirtualAppliance` deleted or renamed its instance variable `private_ip_address`
+  - Model `NetworkVirtualApplianceSku` deleted or renamed its instance variable `vendor`
+  - Model `NetworkVirtualApplianceSku` deleted or renamed its instance variable `available_versions`
+  - Model `NetworkVirtualApplianceSku` deleted or renamed its instance variable `available_scale_units`
+  - Model `NetworkWatcher` deleted or renamed its instance variable `provisioning_state`
+  - Model `Operation` deleted or renamed its instance variable `service_specification`
+  - Model `OutboundRule` deleted or renamed its instance variable `allocated_outbound_ports`
+  - Model `OutboundRule` deleted or renamed its instance variable `frontend_ip_configurations`
+  - Model `OutboundRule` deleted or renamed its instance variable `backend_address_pool`
+  - Model `OutboundRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `OutboundRule` deleted or renamed its instance variable `protocol`
+  - Model `OutboundRule` deleted or renamed its instance variable `enable_tcp_reset`
+  - Model `OutboundRule` deleted or renamed its instance variable `idle_timeout_in_minutes`
+  - Model `PacketCapture` deleted or renamed its instance variable `target`
+  - Model `PacketCapture` deleted or renamed its instance variable `scope`
+  - Model `PacketCapture` deleted or renamed its instance variable `target_type`
+  - Model `PacketCapture` deleted or renamed its instance variable `bytes_to_capture_per_packet`
+  - Model `PacketCapture` deleted or renamed its instance variable `total_bytes_per_session`
+  - Model `PacketCapture` deleted or renamed its instance variable `time_limit_in_seconds`
+  - Model `PacketCapture` deleted or renamed its instance variable `storage_location`
+  - Model `PacketCapture` deleted or renamed its instance variable `filters`
+  - Model `PacketCapture` deleted or renamed its instance variable `continuous_capture`
+  - Model `PacketCapture` deleted or renamed its instance variable `capture_settings`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `target`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `scope`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `target_type`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `bytes_to_capture_per_packet`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `total_bytes_per_session`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `time_limit_in_seconds`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `storage_location`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `filters`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `continuous_capture`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `capture_settings`
+  - Model `PacketCaptureResult` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeerExpressRouteCircuitConnection` deleted or renamed its instance variable `express_route_circuit_peering`
+  - Model `PeerExpressRouteCircuitConnection` deleted or renamed its instance variable `peer_express_route_circuit_peering`
+  - Model `PeerExpressRouteCircuitConnection` deleted or renamed its instance variable `address_prefix`
+  - Model `PeerExpressRouteCircuitConnection` deleted or renamed its instance variable `circuit_connection_status`
+  - Model `PeerExpressRouteCircuitConnection` deleted or renamed its instance variable `connection_name`
+  - Model `PeerExpressRouteCircuitConnection` deleted or renamed its instance variable `auth_resource_guid`
+  - Model `PeerExpressRouteCircuitConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateDnsZoneConfig` deleted or renamed its instance variable `private_dns_zone_id`
+  - Model `PrivateDnsZoneConfig` deleted or renamed its instance variable `record_sets`
+  - Model `PrivateDnsZoneGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateDnsZoneGroup` deleted or renamed its instance variable `private_dns_zone_configs`
+  - Model `Probe` deleted or renamed its instance variable `load_balancing_rules`
+  - Model `Probe` deleted or renamed its instance variable `protocol`
+  - Model `Probe` deleted or renamed its instance variable `port`
+  - Model `Probe` deleted or renamed its instance variable `interval_in_seconds`
+  - Model `Probe` deleted or renamed its instance variable `no_healthy_backends_behavior`
+  - Model `Probe` deleted or renamed its instance variable `number_of_probes`
+  - Model `Probe` deleted or renamed its instance variable `probe_threshold`
+  - Model `Probe` deleted or renamed its instance variable `request_path`
+  - Model `Probe` deleted or renamed its instance variable `provisioning_state`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `public_ip_allocation_method`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `public_ip_address_version`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `ip_configuration`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `dns_settings`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `ddos_settings`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `ip_tags`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `ip_address`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `public_ip_prefix`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `idle_timeout_in_minutes`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `resource_guid`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `provisioning_state`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `service_public_ip_address`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `nat_gateway`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `migration_phase`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `linked_public_ip_address`
+  - Model `PublicIPAddress` deleted or renamed its instance variable `delete_option`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `public_ip_address_version`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `ip_tags`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `prefix_length`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `ip_prefix`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `public_ip_addresses`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `load_balancer_frontend_ip_configuration`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `custom_ip_prefix`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `resource_guid`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `provisioning_state`
+  - Model `PublicIPPrefix` deleted or renamed its instance variable `nat_gateway`
+  - Model `ResourceNavigationLink` deleted or renamed its instance variable `linked_resource_type`
+  - Model `ResourceNavigationLink` deleted or renamed its instance variable `link`
+  - Model `ResourceNavigationLink` deleted or renamed its instance variable `provisioning_state`
+  - Model `Route` deleted or renamed its instance variable `address_prefix`
+  - Model `Route` deleted or renamed its instance variable `next_hop_type`
+  - Model `Route` deleted or renamed its instance variable `next_hop_ip_address`
+  - Model `Route` deleted or renamed its instance variable `provisioning_state`
+  - Model `Route` deleted or renamed its instance variable `has_bgp_override`
+  - Model `RouteFilter` deleted or renamed its instance variable `rules`
+  - Model `RouteFilter` deleted or renamed its instance variable `peerings`
+  - Model `RouteFilter` deleted or renamed its instance variable `ipv6_peerings`
+  - Model `RouteFilter` deleted or renamed its instance variable `provisioning_state`
+  - Model `RouteFilterRule` deleted or renamed its instance variable `access`
+  - Model `RouteFilterRule` deleted or renamed its instance variable `route_filter_rule_type`
+  - Model `RouteFilterRule` deleted or renamed its instance variable `communities`
+  - Model `RouteFilterRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `RouteTable` deleted or renamed its instance variable `routes`
+  - Model `RouteTable` deleted or renamed its instance variable `subnets`
+  - Model `RouteTable` deleted or renamed its instance variable `disable_bgp_route_propagation`
+  - Model `RouteTable` deleted or renamed its instance variable `provisioning_state`
+  - Model `RouteTable` deleted or renamed its instance variable `resource_guid`
+  - Model `RoutingRule` deleted or renamed its instance variable `description`
+  - Model `RoutingRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `RoutingRule` deleted or renamed its instance variable `resource_guid`
+  - Model `RoutingRule` deleted or renamed its instance variable `destination`
+  - Model `RoutingRule` deleted or renamed its instance variable `next_hop`
+  - Model `RoutingRuleCollection` deleted or renamed its instance variable `description`
+  - Model `RoutingRuleCollection` deleted or renamed its instance variable `provisioning_state`
+  - Model `RoutingRuleCollection` deleted or renamed its instance variable `resource_guid`
+  - Model `RoutingRuleCollection` deleted or renamed its instance variable `applies_to`
+  - Model `RoutingRuleCollection` deleted or renamed its instance variable `disable_bgp_route_propagation`
+  - Model `SecurityAdminConfiguration` deleted or renamed its instance variable `description`
+  - Model `SecurityAdminConfiguration` deleted or renamed its instance variable `apply_on_network_intent_policy_based_services`
+  - Model `SecurityAdminConfiguration` deleted or renamed its instance variable `network_group_address_space_aggregation_option`
+  - Model `SecurityAdminConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityAdminConfiguration` deleted or renamed its instance variable `resource_guid`
+  - Model `SecurityPartnerProvider` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityPartnerProvider` deleted or renamed its instance variable `security_provider_name`
+  - Model `SecurityPartnerProvider` deleted or renamed its instance variable `connection_status`
+  - Model `SecurityPartnerProvider` deleted or renamed its instance variable `virtual_hub`
+  - Model `SecurityRule` deleted or renamed its instance variable `description`
+  - Model `SecurityRule` deleted or renamed its instance variable `protocol`
+  - Model `SecurityRule` deleted or renamed its instance variable `source_port_range`
+  - Model `SecurityRule` deleted or renamed its instance variable `destination_port_range`
+  - Model `SecurityRule` deleted or renamed its instance variable `source_address_prefix`
+  - Model `SecurityRule` deleted or renamed its instance variable `source_address_prefixes`
+  - Model `SecurityRule` deleted or renamed its instance variable `source_application_security_groups`
+  - Model `SecurityRule` deleted or renamed its instance variable `destination_address_prefix`
+  - Model `SecurityRule` deleted or renamed its instance variable `destination_address_prefixes`
+  - Model `SecurityRule` deleted or renamed its instance variable `destination_application_security_groups`
+  - Model `SecurityRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `SecurityRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `SecurityRule` deleted or renamed its instance variable `access`
+  - Model `SecurityRule` deleted or renamed its instance variable `priority`
+  - Model `SecurityRule` deleted or renamed its instance variable `direction`
+  - Model `SecurityRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityUserConfiguration` deleted or renamed its instance variable `description`
+  - Model `SecurityUserConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityUserConfiguration` deleted or renamed its instance variable `resource_guid`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `description`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `protocol`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `sources`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `destinations`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `source_port_ranges`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `destination_port_ranges`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `direction`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityUserRule` deleted or renamed its instance variable `resource_guid`
+  - Model `SecurityUserRuleCollection` deleted or renamed its instance variable `description`
+  - Model `SecurityUserRuleCollection` deleted or renamed its instance variable `applies_to_groups`
+  - Model `SecurityUserRuleCollection` deleted or renamed its instance variable `provisioning_state`
+  - Model `SecurityUserRuleCollection` deleted or renamed its instance variable `resource_guid`
+  - Model `ServiceAssociationLink` deleted or renamed its instance variable `linked_resource_type`
+  - Model `ServiceAssociationLink` deleted or renamed its instance variable `link`
+  - Model `ServiceAssociationLink` deleted or renamed its instance variable `provisioning_state`
+  - Model `ServiceAssociationLink` deleted or renamed its instance variable `allow_delete`
+  - Model `ServiceAssociationLink` deleted or renamed its instance variable `locations`
+  - Model `ServiceEndpointPolicy` deleted or renamed its instance variable `service_endpoint_policy_definitions`
+  - Model `ServiceEndpointPolicy` deleted or renamed its instance variable `subnets`
+  - Model `ServiceEndpointPolicy` deleted or renamed its instance variable `resource_guid`
+  - Model `ServiceEndpointPolicy` deleted or renamed its instance variable `provisioning_state`
+  - Model `ServiceEndpointPolicy` deleted or renamed its instance variable `service_alias`
+  - Model `ServiceEndpointPolicy` deleted or renamed its instance variable `contextual_service_endpoint_policies`
+  - Model `ServiceEndpointPolicyDefinition` deleted or renamed its instance variable `description`
+  - Model `ServiceEndpointPolicyDefinition` deleted or renamed its instance variable `service`
+  - Model `ServiceEndpointPolicyDefinition` deleted or renamed its instance variable `service_resources`
+  - Model `ServiceEndpointPolicyDefinition` deleted or renamed its instance variable `provisioning_state`
+  - Model `ServiceGateway` deleted or renamed its instance variable `virtual_network`
+  - Model `ServiceGateway` deleted or renamed its instance variable `route_target_address`
+  - Model `ServiceGateway` deleted or renamed its instance variable `route_target_address_v6`
+  - Model `ServiceGateway` deleted or renamed its instance variable `resource_guid`
+  - Model `ServiceGateway` deleted or renamed its instance variable `provisioning_state`
+  - Model `ServiceGatewayService` deleted or renamed its instance variable `service_type`
+  - Model `ServiceGatewayService` deleted or renamed its instance variable `is_default`
+  - Model `ServiceGatewayService` deleted or renamed its instance variable `load_balancer_backend_pools`
+  - Model `ServiceGatewayService` deleted or renamed its instance variable `public_nat_gateway_id`
+  - Model `ServiceTagsListResult` deleted or renamed its instance variable `values`
+  - Model `Subnet` deleted or renamed its instance variable `address_prefix`
+  - Model `Subnet` deleted or renamed its instance variable `address_prefixes`
+  - Model `Subnet` deleted or renamed its instance variable `network_security_group`
+  - Model `Subnet` deleted or renamed its instance variable `route_table`
+  - Model `Subnet` deleted or renamed its instance variable `nat_gateway`
+  - Model `Subnet` deleted or renamed its instance variable `service_endpoints`
+  - Model `Subnet` deleted or renamed its instance variable `service_endpoint_policies`
+  - Model `Subnet` deleted or renamed its instance variable `private_endpoints`
+  - Model `Subnet` deleted or renamed its instance variable `ip_configurations`
+  - Model `Subnet` deleted or renamed its instance variable `ip_configuration_profiles`
+  - Model `Subnet` deleted or renamed its instance variable `ip_allocations`
+  - Model `Subnet` deleted or renamed its instance variable `resource_navigation_links`
+  - Model `Subnet` deleted or renamed its instance variable `service_association_links`
+  - Model `Subnet` deleted or renamed its instance variable `delegations`
+  - Model `Subnet` deleted or renamed its instance variable `purpose`
+  - Model `Subnet` deleted or renamed its instance variable `provisioning_state`
+  - Model `Subnet` deleted or renamed its instance variable `private_endpoint_network_policies`
+  - Model `Subnet` deleted or renamed its instance variable `private_link_service_network_policies`
+  - Model `Subnet` deleted or renamed its instance variable `application_gateway_ip_configurations`
+  - Model `Subnet` deleted or renamed its instance variable `sharing_scope`
+  - Model `Subnet` deleted or renamed its instance variable `default_outbound_access`
+  - Model `Subnet` deleted or renamed its instance variable `ipam_pool_prefix_allocations`
+  - Model `Subnet` deleted or renamed its instance variable `service_gateway`
+  - Model `TroubleshootingParameters` deleted or renamed its instance variable `storage_id`
+  - Model `TroubleshootingParameters` deleted or renamed its instance variable `storage_path`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `address_space`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `dhcp_options`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `flow_timeout_in_minutes`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `subnets`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `virtual_network_peerings`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `resource_guid`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `enable_ddos_protection`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `enable_vm_protection`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `ddos_protection_plan`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `bgp_communities`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `encryption`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `ip_allocations`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `flow_logs`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `private_endpoint_v_net_policies`
+  - Model `VirtualNetwork` deleted or renamed its instance variable `default_public_nat_gateway`
+  - Model `VirtualNetworkAppliance` deleted or renamed its instance variable `bandwidth_in_gbps`
+  - Model `VirtualNetworkAppliance` deleted or renamed its instance variable `ip_configurations`
+  - Model `VirtualNetworkAppliance` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkAppliance` deleted or renamed its instance variable `resource_guid`
+  - Model `VirtualNetworkAppliance` deleted or renamed its instance variable `subnet`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `auto_scale_configuration`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `ip_configurations`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `gateway_type`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `vpn_type`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `vpn_gateway_generation`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `enable_bgp`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `enable_private_ip_address`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `virtual_network_gateway_migration_status`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `active`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `enable_high_bandwidth_vpn_gateway`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `disable_ip_sec_replay_protection`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `gateway_default_site`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `sku`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `vpn_client_configuration`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `virtual_network_gateway_policy_groups`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `bgp_settings`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `custom_routes`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `resource_guid`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `enable_dns_forwarding`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `inbound_dns_forwarding_endpoint`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `v_net_extended_location_resource_id`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `nat_rules`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `enable_bgp_route_translation_for_nat`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `allow_virtual_wan_traffic`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `allow_remote_vnet_traffic`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `admin_state`
+  - Model `VirtualNetworkGateway` deleted or renamed its instance variable `resiliency_model`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `authorization_key`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `virtual_network_gateway1`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `virtual_network_gateway2`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `local_network_gateway2`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `ingress_nat_rules`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `egress_nat_rules`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `connection_type`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `connection_protocol`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `routing_weight`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `dpd_timeout_seconds`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `connection_mode`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `tunnel_properties`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `shared_key`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `connection_status`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `tunnel_connection_status`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `egress_bytes_transferred`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `ingress_bytes_transferred`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `peer`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `enable_bgp`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `gateway_custom_bgp_ip_addresses`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `use_local_azure_ip_address`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `use_policy_based_traffic_selectors`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `ipsec_policies`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `traffic_selector_policies`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `resource_guid`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `express_route_gateway_bypass`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `enable_private_link_fast_path`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `authentication_type`
+  - Model `VirtualNetworkGatewayConnection` deleted or renamed its instance variable `certificate_authentication`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `authorization_key`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `virtual_network_gateway1`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `virtual_network_gateway2`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `local_network_gateway2`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `connection_type`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `connection_protocol`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `routing_weight`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `connection_mode`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `shared_key`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `connection_status`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `tunnel_connection_status`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `egress_bytes_transferred`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `ingress_bytes_transferred`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `peer`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `enable_bgp`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `gateway_custom_bgp_ip_addresses`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `use_policy_based_traffic_selectors`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `ipsec_policies`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `traffic_selector_policies`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `resource_guid`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `express_route_gateway_bypass`
+  - Model `VirtualNetworkGatewayConnectionListEntity` deleted or renamed its instance variable `enable_private_link_fast_path`
+  - Model `VirtualNetworkGatewayIPConfiguration` deleted or renamed its instance variable `private_ip_allocation_method`
+  - Model `VirtualNetworkGatewayIPConfiguration` deleted or renamed its instance variable `subnet`
+  - Model `VirtualNetworkGatewayIPConfiguration` deleted or renamed its instance variable `public_ip_address`
+  - Model `VirtualNetworkGatewayIPConfiguration` deleted or renamed its instance variable `private_ip_address`
+  - Model `VirtualNetworkGatewayIPConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_virtual_network_access`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_forwarded_traffic`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `allow_gateway_transit`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `use_remote_gateways`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_virtual_network`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `local_address_space`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `local_virtual_network_address_space`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_address_space`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_virtual_network_address_space`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_bgp_communities`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_virtual_network_encryption`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `peering_state`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `peering_sync_level`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `do_not_verify_remote_gateways`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `resource_guid`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `peer_complete_vnets`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `enable_only_i_pv6_peering`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `local_subnet_names`
+  - Model `VirtualNetworkPeering` deleted or renamed its instance variable `remote_subnet_names`
+  - Model `VirtualNetworkTap` deleted or renamed its instance variable `network_interface_tap_configurations`
+  - Model `VirtualNetworkTap` deleted or renamed its instance variable `resource_guid`
+  - Model `VirtualNetworkTap` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkTap` deleted or renamed its instance variable `destination_network_interface_ip_configuration`
+  - Model `VirtualNetworkTap` deleted or renamed its instance variable `destination_load_balancer_front_end_ip_configuration`
+  - Model `VirtualNetworkTap` deleted or renamed its instance variable `destination_port`
+  - Model `VirtualRouter` deleted or renamed its instance variable `virtual_router_asn`
+  - Model `VirtualRouter` deleted or renamed its instance variable `virtual_router_ips`
+  - Model `VirtualRouter` deleted or renamed its instance variable `hosted_subnet`
+  - Model `VirtualRouter` deleted or renamed its instance variable `hosted_gateway`
+  - Model `VirtualRouter` deleted or renamed its instance variable `peerings`
+  - Model `VirtualRouter` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualWAN` deleted or renamed its instance variable `disable_vpn_encryption`
+  - Model `VirtualWAN` deleted or renamed its instance variable `virtual_hubs`
+  - Model `VirtualWAN` deleted or renamed its instance variable `vpn_sites`
+  - Model `VirtualWAN` deleted or renamed its instance variable `allow_branch_to_branch_traffic`
+  - Model `VirtualWAN` deleted or renamed its instance variable `allow_vnet_to_vnet_traffic`
+  - Model `VirtualWAN` deleted or renamed its instance variable `office365_local_breakout_category`
+  - Model `VirtualWAN` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualWAN` deleted or renamed its instance variable `type_properties_type`
+  - Model `VpnClientRevokedCertificate` deleted or renamed its instance variable `thumbprint`
+  - Model `VpnClientRevokedCertificate` deleted or renamed its instance variable `provisioning_state`
+  - Model `VpnClientRootCertificate` deleted or renamed its instance variable `public_cert_data`
+  - Model `VpnClientRootCertificate` deleted or renamed its instance variable `provisioning_state`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `policy_settings`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `custom_rules`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `application_gateways`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `provisioning_state`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `resource_state`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `managed_rules`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `http_listeners`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `path_based_rules`
+  - Model `WebApplicationFirewallPolicy` deleted or renamed its instance variable `application_gateway_for_containers`
+  - Deleted or renamed model `ApplicationGatewayAvailableSslPredefinedPolicies`
+  - Deleted or renamed model `ApplicationGatewayWafDynamicManifestResultList`
+  - Deleted or renamed model `AutoApprovedPrivateLinkServicesResult`
+  - Deleted or renamed model `AvailableDelegationsResult`
+  - Deleted or renamed model `AvailablePrivateEndpointTypesResult`
+  - Deleted or renamed model `AvailableServiceAliasesResult`
+  - Deleted or renamed model `AzureAsyncOperationResult`
+  - Deleted or renamed model `BastionSessionDeleteResult`
+  - Deleted or renamed model `Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties`
+  - Deleted or renamed model `ConnectionMonitorQueryResult`
+  - Deleted or renamed model `ConnectionMonitorSourceStatus`
+  - Deleted or renamed model `ConnectionSharedKeyResultList`
+  - Deleted or renamed model `ConnectionState`
+  - Deleted or renamed model `ConnectionStateSnapshot`
+  - Deleted or renamed model `EvaluationState`
+  - Deleted or renamed model `ExpressRouteCrossConnectionPeeringList`
+  - Deleted or renamed model `GetServiceGatewayAddressLocationsResult`
+  - Deleted or renamed model `GetServiceGatewayServicesResult`
+  - Deleted or renamed model `HubVirtualNetworkConnectionStatus`
+  - Deleted or renamed model `IpamPoolList`
+  - Deleted or renamed model `ListHubRouteTablesResult`
+  - Deleted or renamed model `ListHubVirtualNetworkConnectionsResult`
+  - Deleted or renamed model `ListP2SVpnGatewaysResult`
+  - Deleted or renamed model `ListRouteMapsResult`
+  - Deleted or renamed model `ListRoutingIntentResult`
+  - Deleted or renamed model `ListVirtualHubBgpConnectionResults`
+  - Deleted or renamed model `ListVirtualHubIpConfigurationResults`
+  - Deleted or renamed model `ListVirtualHubRouteTableV2SResult`
+  - Deleted or renamed model `ListVirtualHubsResult`
+  - Deleted or renamed model `ListVirtualNetworkGatewayNatRulesResult`
+  - Deleted or renamed model `ListVirtualWANsResult`
+  - Deleted or renamed model `ListVpnConnectionsResult`
+  - Deleted or renamed model `ListVpnGatewayNatRulesResult`
+  - Deleted or renamed model `ListVpnGatewaysResult`
+  - Deleted or renamed model `ListVpnServerConfigurationPolicyGroupsResult`
+  - Deleted or renamed model `ListVpnServerConfigurationsResult`
+  - Deleted or renamed model `ListVpnSiteLinkConnectionsResult`
+  - Deleted or renamed model `ListVpnSiteLinksResult`
+  - Deleted or renamed model `ListVpnSitesResult`
+  - Deleted or renamed model `NetworkOperationStatus`
+  - Deleted or renamed model `NetworkVirtualApplianceConnectionList`
+  - Deleted or renamed model `PatchRouteFilter`
+  - Deleted or renamed model `PatchRouteFilterRule`
+  - Deleted or renamed model `PoolAssociationList`
+  - Deleted or renamed model `StaticCidrList`
+  - Deleted or renamed model `TrackedResource`
+  - Deleted or renamed model `TunnelConnectionStatus`
+  - Deleted or renamed model `VirtualNetworkDdosProtectionStatusResult`
+  - Deleted or renamed model `VirtualNetworkGatewayListConnectionsResult`
+  - Deleted or renamed model `VirtualNetworkListUsageResult`
+  - Deleted or renamed model `VpnSiteId`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.begin_create_or_update`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.begin_delete`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.begin_disconnect_p2_s_vpn_connections`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.begin_generate_vpn_profile`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.begin_get_p2_s_vpn_connection_health`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.begin_get_p2_s_vpn_connection_health_detailed`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.begin_update_tags`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.get`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.list`
+  - Deleted or renamed method `P2SVpnGatewaysOperations.list_by_resource_group`
+
 ## 30.2.0 (2026-02-11)
 
 ### Features Added
