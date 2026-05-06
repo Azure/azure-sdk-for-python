@@ -11,6 +11,43 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessBridgeAllowedName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The allowed names for the access bridge."""
+
+    BASTION = "Bastion"
+    """The access bridge for bare metal machine bastion access."""
+    PRIVATE_VAULT = "PrivateVault"
+    """The access bridge for cluster access to private vault."""
+    STORAGE_DASHBOARD = "StorageDashboard"
+    """The access bridge for access to the storage dashboard."""
+
+
+class AccessBridgeDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The detailed status reported by the access bridge."""
+
+    RUNNING = "Running"
+    """The access bridge is healthy and operating normally."""
+    DEGRADED = "Degraded"
+    """The access bridge is experiencing degraded performance or partial outages."""
+    FAILED = "Failed"
+    """The access bridge is not operational."""
+
+
+class AccessBridgeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the access bridge."""
+
+    ACCEPTED = "Accepted"
+    """The Accepted status."""
+    CANCELED = "Canceled"
+    """The Canceled status."""
+    FAILED = "Failed"
+    """The Failed status."""
+    PROVISIONING = "Provisioning"
+    """The Provisioning status."""
+    SUCCEEDED = "Succeeded"
+    """The Succeeded status."""
+
+
 class ActionStateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the action."""
 
@@ -188,6 +225,28 @@ class BareMetalMachineKeySetUserSetupStatus(str, Enum, metaclass=CaseInsensitive
     """The user is not valid and has no access."""
 
 
+class BareMetalMachineMetricsConfigurationStatusLogLevel(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The log level for the monitoring configuration status of the bare metal machine."""
+
+    DEFAULT = "Default"
+    """Logs are emitted at the default log level."""
+    NEXUS = "Nexus"
+    """Logs are emitted at the Nexus log level."""
+
+
+class BareMetalMachineMetricsConfigurationStatusMetricsLevel(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The metrics level for the monitoring configuration status of the bare metal machine."""
+
+    DEFAULT = "Default"
+    """Metrics are emitted at the default metrics level."""
+    NEXUS = "Nexus"
+    """Metrics are emitted at the Nexus metrics level."""
+
+
 class BareMetalMachinePowerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The power state derived from the baseboard management controller."""
 
@@ -221,6 +280,18 @@ class BareMetalMachineReadyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The bare metal machine is ready to receive workloads."""
     FALSE = "False"
     """The bare metal machine is not ready to receive workloads."""
+
+
+class BareMetalMachineReimageSafeguardMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The safeguard mode to use for the reimage action, where None indicates to bypass safeguards and
+    All indicates to utilize all safeguards.
+    """
+
+    ALL = "All"
+    """Run all pre‑operation validation checks before performing the reimage. If any check fails, the
+    request is rejected and no changes are made."""
+    NONE = "None"
+    """Skip all safeguards and perform the reimage without running pre‑operation validation checks."""
 
 
 class BareMetalMachineReplaceSafeguardMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -373,6 +444,12 @@ class CloudServicesNetworkStorageStatusStatus(str, Enum, metaclass=CaseInsensiti
     """The storage allocation is expanding the volume."""
     EXPANSION_FAILED = "ExpansionFailed"
     """The expansion of the storage allocation has failed."""
+    INITIALIZING = "Initializing"
+    """The storage allocation is initializing."""
+    NONE = "None"
+    """The storage allocation has no status."""
+    REPAIRING = "Repairing"
+    """The storage allocation is being repaired."""
 
 
 class ClusterConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -397,6 +474,21 @@ class ClusterContinueUpdateVersionMachineGroupTargetingMode(  # pylint: disable=
     """Racks will be targeted for update in alphabetical order based on the rack name."""
 
 
+class ClusterContinueUpdateVersionSafeguardMode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """ClusterContinueUpdateVersionSafeguardMode represents the mode of the cluster continue update
+    safeguards.
+    """
+
+    ALL = "All"
+    """Run all pre‑operation validation checks before continuing the version update. If any check
+    fails, the request is rejected and no changes are made."""
+    NONE = "None"
+    """Skip all safeguards and continue the version update without running pre‑operation validation
+    checks."""
+
+
 class ClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current detailed status of the cluster."""
 
@@ -418,6 +510,15 @@ class ClusterDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Disconnected status."""
     FAILED = "Failed"
     """The Failed status."""
+
+
+class ClusterInspectAdditionalAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Additional actions supplement the default non-disruptive cluster inspection. Additional actions
+    may be disallowed if the cluster is in a deployed and running state.
+    """
+
+    RESET_HARDWARE = "ResetHardware"
+    """Indicates that hardware reset should be performed during inspection."""
 
 
 class ClusterManagerConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -546,6 +647,17 @@ class ClusterUpdateStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Pause after each rack is updated."""
 
 
+class ClusterUpdateVersionSafeguardMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ClusterUpdateVersionSafeguardMode represents the mode of the cluster update safeguards."""
+
+    ALL = "All"
+    """Run all pre‑operation validation checks before performing the version update. If any check
+    fails, the request is rejected and no changes are made."""
+    NONE = "None"
+    """Skip all safeguards and perform the version update without running pre‑operation validation
+    checks."""
+
+
 class CommandOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of command output for the override."""
 
@@ -555,6 +667,9 @@ class CommandOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BareMetalMachineRunDataExtracts output type."""
     BARE_METAL_MACHINE_RUN_READ_COMMANDS = "BareMetalMachineRunReadCommands"
     """BareMetalMachineRunReadCommands output type."""
+    CLUSTER_SUPPORT_ADMINISTRATIVE_ACTIONS = "ClusterSupportAdministrativeActions"
+    """ClusterSupportAdministrativeActions output type supporting administrative actions that can be
+    run on a cluster for support purposes."""
     STORAGE_RUN_READ_COMMANDS = "StorageRunReadCommands"
     """StorageRunReadCommands output type."""
     BARE_METAL_MACHINE_RUN_DATA_EXTRACTS_RESTRICTED = "BareMetalMachineRunDataExtractsRestricted"
@@ -625,6 +740,18 @@ class DefaultGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This is the default gateway."""
     FALSE = "False"
     """This is not the default gateway."""
+
+
+class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type (kind) of the cluster. When specified, the value must exactly match the kind
+    configured on the cluster manager that manages the cluster. If omitted, the service will
+    default the value to the kind value of the cluster manager.
+    """
+
+    NEXUS = "Nexus"
+    """Azure Operator Nexus."""
+    AZURE_LOCAL = "AzureLocal"
+    """Azure Local."""
 
 
 class DeviceConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -857,6 +984,19 @@ class KubernetesPluginType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IPVLAN plugin type."""
 
 
+class KubernetesVersionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the Kubernetes version resource."""
+
+    ACCEPTED = "Accepted"
+    """The Accepted status."""
+    CANCELED = "Canceled"
+    """The Canceled status."""
+    FAILED = "Failed"
+    """The Failed status."""
+    SUCCEEDED = "Succeeded"
+    """The Succeeded status."""
+
+
 class L2NetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The more detailed status of the L2 network."""
 
@@ -1034,6 +1174,15 @@ class RackSkuType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Combination of Aggregator Rack and Compute Rack for a single rack cluster."""
 
 
+class RelayPrivateEndpointConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state to set for the private endpoint connection."""
+
+    APPROVED = "Approved"
+    """The private endpoint connection is approved."""
+    REJECTED = "Rejected"
+    """The private endpoint connection is rejected."""
+
+
 class RelayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The indicator of which relay type the machine should be assigned to use. Platform indicates the
     use of a platform-dedicated relay. Public indicates the use of the standard public relay for
@@ -1068,6 +1217,33 @@ class RemoteVendorManagementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Remote vendor management is unsupported."""
 
 
+class RuntimeProtectionAgentHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The runtime protection agent health status."""
+
+    HEALTHY = "Healthy"
+    """The runtime protection agent is healthy."""
+    UNHEALTHY = "Unhealthy"
+    """The runtime protection agent has health issues."""
+
+
+class RuntimeProtectionAgentLicenseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The runtime protection agent license status."""
+
+    LICENSED = "Licensed"
+    """The runtime protection agent license is valid."""
+    UNLICENSED = "Unlicensed"
+    """The runtime protection agent license is not valid."""
+
+
+class RuntimeProtectionDefinitionUpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The definition update mode for runtime protection."""
+
+    AUTOMATIC = "Automatic"
+    """Update definitions automatically through the connected runtime protection agent."""
+    NONE = "None"
+    """Do not update definitions."""
+
+
 class RuntimeProtectionEnforcementLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode of operation for runtime protection."""
 
@@ -1081,6 +1257,15 @@ class RuntimeProtectionEnforcementLevel(str, Enum, metaclass=CaseInsensitiveEnum
     """Real-time scans are disabled but can be triggered to detect issues without remediation."""
     REAL_TIME = "RealTime"
     """Real-time scans detect and remediate detected issues."""
+
+
+class SecurityRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of allowed network traffic based on the rule."""
+
+    INBOUND = "Inbound"
+    """Inbound traffic toward the on-premsises cluster."""
+    OUTBOUND = "Outbound"
+    """Outbound traffic from the on-premises cluster."""
 
 
 class SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1120,6 +1305,28 @@ class StorageApplianceDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMet
     """The Provisioning status."""
 
 
+class StorageApplianceMetricsConfigurationStatusLogLevel(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The log level for the monitoring configuration status of the storage appliance."""
+
+    DEFAULT = "Default"
+    """Logs are emitted at the default log level."""
+    NEXUS = "Nexus"
+    """Logs are emitted at the Nexus log level."""
+
+
+class StorageApplianceMetricsConfigurationStatusMetricsLevel(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The metrics level for the monitoring configuration status of the storage appliance."""
+
+    DEFAULT = "Default"
+    """Metrics are emitted at the default metrics level."""
+    NEXUS = "Nexus"
+    """Metrics are emitted at the Nexus metrics level."""
+
+
 class StorageApplianceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the storage appliance."""
 
@@ -1133,6 +1340,15 @@ class StorageApplianceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnum
     """The Provisioning status."""
     ACCEPTED = "Accepted"
     """The Accepted status."""
+
+
+class TransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol advertised by the access bridge endpoints."""
+
+    TCP = "TCP"
+    """The TCP transport protocol."""
+    UDP = "UDP"
+    """The UDP transport protocol."""
 
 
 class TrunkedNetworkDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

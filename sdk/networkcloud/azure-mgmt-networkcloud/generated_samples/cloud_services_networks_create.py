@@ -51,7 +51,7 @@ def main():
                 "storageOptions": {
                     "mode": "Standard",
                     "sizeMiB": 1048576,
-                    "storageApplianceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/StorageAppliances/storageApplianceName",
+                    "storageApplianceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/storageAppliances/storageApplianceName",
                 },
             },
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
@@ -60,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/CloudServicesNetworks_Create.json
+# x-ms-original-file: 2026-05-01-preview/CloudServicesNetworks_Create.json
 if __name__ == "__main__":
     main()

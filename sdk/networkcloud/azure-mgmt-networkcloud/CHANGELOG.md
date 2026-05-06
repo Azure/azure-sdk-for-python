@@ -1,5 +1,79 @@
 # Release History
 
+## 3.0.0b2 (2026-05-06)
+
+### Features Added
+
+  - Client `NetworkCloudMgmtClient` added operation group `access_bridges`
+  - Client `NetworkCloudMgmtClient` added operation group `kubernetes_versions`
+  - Model `BareMetalMachineProperties` added property `bmc_ipv4_address`
+  - Model `BareMetalMachineProperties` added property `bmc_ipv6_address`
+  - Model `BareMetalMachineProperties` added property `monitoring_configuration_status`
+  - Enum `CloudServicesNetworkStorageStatusStatus` added member `INITIALIZING`
+  - Enum `CloudServicesNetworkStorageStatusStatus` added member `NONE`
+  - Enum `CloudServicesNetworkStorageStatusStatus` added member `REPAIRING`
+  - Model `Cluster` added property `kind`
+  - Model `ClusterContinueUpdateVersionParameters` added property `safeguard_mode`
+  - Model `ClusterManager` added property `kind`
+  - Model `ClusterManagerProperties` added property `relay_configuration`
+  - Model `ClusterProperties` added property `last_successful_version_update_time`
+  - Model `ClusterProperties` added property `managed_credentials`
+  - Model `ClusterUpdateVersionParameters` added property `safeguard_mode`
+  - Enum `CommandOutputType` added member `CLUSTER_SUPPORT_ADMINISTRATIVE_ACTIONS`
+  - Model `RackSkuProperties` added property `deployment_type`
+  - Model `RuntimeProtectionConfiguration` added property `definition_update_mode`
+  - Model `RuntimeProtectionStatus` added property `agent_health_status`
+  - Model `RuntimeProtectionStatus` added property `agent_health_status_issues`
+  - Model `RuntimeProtectionStatus` added property `agent_license_status`
+  - Model `RuntimeProtectionStatus` added property `definition_update_mode`
+  - Model `RuntimeProtectionStatus` added property `enforcement_level`
+  - Model `StorageApplianceProperties` added property `expansion_shelves`
+  - Model `StorageApplianceProperties` added property `monitoring_configuration_status`
+  - Model `VolumeProperties` added property `assigned_storage_appliance_id`
+  - Added model `AccessBridge`
+  - Added enum `AccessBridgeAllowedName`
+  - Added enum `AccessBridgeDetailedStatus`
+  - Added model `AccessBridgeEndpoint`
+  - Added model `AccessBridgePatchParameters`
+  - Added model `AccessBridgePatchProperties`
+  - Added model `AccessBridgeProperties`
+  - Added enum `AccessBridgeProvisioningState`
+  - Added model `AccessBridgeSecurityRule`
+  - Added enum `BareMetalMachineMetricsConfigurationStatusLogLevel`
+  - Added enum `BareMetalMachineMetricsConfigurationStatusMetricsLevel`
+  - Added model `BareMetalMachineMonitoringConfigurationStatus`
+  - Added model `BareMetalMachineReimageParameters`
+  - Added enum `BareMetalMachineReimageSafeguardMode`
+  - Added enum `ClusterContinueUpdateVersionSafeguardMode`
+  - Added enum `ClusterInspectAdditionalAction`
+  - Added model `ClusterInspectParameters`
+  - Added model `ClusterManagerRelayConfiguration`
+  - Added model `ClusterManagerUpdateRelayPrivateEndpointConnectionParameters`
+  - Added model `ClusterRotateCredentialParameters`
+  - Added enum `ClusterUpdateVersionSafeguardMode`
+  - Added enum `DeploymentType`
+  - Added model `FilterDevices`
+  - Added model `KubernetesVersion`
+  - Added model `KubernetesVersionPatchParameters`
+  - Added model `KubernetesVersionProperties`
+  - Added enum `KubernetesVersionProvisioningState`
+  - Added model `KubernetesVersionValue`
+  - Added enum `RelayPrivateEndpointConnectionState`
+  - Added enum `RuntimeProtectionAgentHealthStatus`
+  - Added enum `RuntimeProtectionAgentLicenseStatus`
+  - Added enum `RuntimeProtectionDefinitionUpdateMode`
+  - Added enum `SecurityRuleDirection`
+  - Added model `StorageApplianceExpansionShelf`
+  - Added enum `StorageApplianceMetricsConfigurationStatusLogLevel`
+  - Added enum `StorageApplianceMetricsConfigurationStatusMetricsLevel`
+  - Added model `StorageApplianceMonitoringConfigurationStatus`
+  - Added enum `TransportProtocol`
+  - Model `ClusterManagersOperations` added method `begin_update_relay_private_endpoint_connection`
+  - Model `ClustersOperations` added method `begin_inspect`
+  - Model `ClustersOperations` added method `begin_rotate_credential`
+  - Added model `AccessBridgesOperations`
+  - Added model `KubernetesVersionsOperations`
+
 ## 3.0.0b1 (2026-04-02)
 
 ### Features Added
