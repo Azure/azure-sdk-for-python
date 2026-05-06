@@ -18,6 +18,8 @@ jobs:
 
     variables:
       - template: /eng/pipelines/templates/variables/globals.yml
+      - name: ExcludedPackages
+        value: 'nspkg,azure-storage-extensions,azure-mgmt-app,azure-mgmt-videoanalyzer,azure-mgmt-changeanalysis,azure-mgmt-apimanagement'
       - ${{ if and(parameters.IncludeManagement, parameters.IncludeDataPlane) }}:
         - name: FilterTypeArg
           value: ''
@@ -86,7 +88,7 @@ jobs:
             --disablecov
             $(FilterTypeArg)
             --max-parallel 8
-            --exclude-packages="nspkg,azure-storage-extensions,azure-mgmt-app,azure-mgmt-videoanalyzer,azure-mgmt-changeanalysis,azure-mgmt-apimanagement"
+            --exclude-packages="$(ExcludedPackages)"
 
       # Stage only api.md files so the PR contains exclusively api.md updates.
       - bash: |
