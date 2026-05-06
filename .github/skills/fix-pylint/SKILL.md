@@ -24,9 +24,15 @@ Intelligently fixes pylint issues by:
 
 ## Running Pylint
 
+**Prerequisites:**
+- Use a Python 3.10 virtual environment
+- Ensure `azpysdk` is installed in the venv
+
 **Command:**
 ```powershell
 cd <package-path>
+# 1. activate venv
+# 2. install dev_requirements.txt
 azpysdk --isolate pylint .
 ```
 
@@ -64,22 +70,11 @@ Read the issue to understand which package and files/modules are affected, and t
 Run pylint checks directly on the package.
 
 **If virtual environment is missing:**
-Ask: "Do you have an existing virtual environment path, or should I create 'env'?"
+Ask: "Do you have an existing virtual environment path, or should I create 'env' with Python 3.10?"
 
-### Step 1: CRITICAL - Activate Virtual Environment FIRST
+### Step 1: CRITICAL - Activate Python 3.10 Virtual Environment FIRST
 
-**IMMEDIATELY activate the virtual environment before ANY other command:**
-
-```powershell
-# Activate the provided virtual environment (e.g., env, venv)
-.\<venv-name>\Scripts\Activate.ps1
-
-# If creating new virtual environment:
-python -m venv env
-.\env\Scripts\Activate.ps1
-```
-
-**⚠️ IMPORTANT: ALL subsequent commands MUST run within the activated virtual environment. Never run commands outside the venv.**
+**⚠️ IMPORTANT: ALL subsequent commands MUST run within the activated Python 3.10+ virtual environment. Never run commands outside the venv.**
 
 ### Step 2: Install Dependencies (within activated venv)
 
