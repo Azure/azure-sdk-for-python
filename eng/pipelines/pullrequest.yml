@@ -10,12 +10,6 @@ pr:
   paths:
     include:
     - "*"
-    # Note: The ExcludePaths template below needs to duplicate
-    # any excludes here. The reason being is that we can't access
-    # pr->paths->exclude
-    exclude:
-    - sdk/cosmos/
-
 parameters:
   - name: Service
     type: string
@@ -28,7 +22,8 @@ extends:
     BuildTargetingString: "*"
     TestProxy: true
     TestTimeOutInMinutes: 180
-    # See pr->paths->exclude comment above. Anything added/removed there
-    # needs to be added/removed here.
+    # we still exclude cosmos, because of the implicit dependency on the cosmos emulator. Within a pullrequest pipeline we do not
+    # currently have the ability to inject steps from a different ci.yml, which is required to start the cosmos emulator.
+    # As such, the pullrequest pipeline itself will not invoke the cosmos tests, but the triggered `python - cosmos - ci` public build WILL.
     ExcludePaths:
       - sdk/cosmos/

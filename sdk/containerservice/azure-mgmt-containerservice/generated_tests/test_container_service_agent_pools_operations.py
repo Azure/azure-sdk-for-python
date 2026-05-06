@@ -150,7 +150,6 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                         "applicationSecurityGroups": ["str"],
                         "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
                     },
-                    "nodeCustomizationProfile": {"nodeCustomizationId": "str"},
                     "nodeImageVersion": "str",
                     "nodeInitializationTaints": ["str"],
                     "nodeLabels": {"str": "str"},
@@ -164,6 +163,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "podIPAllocationMode": "str",
                     "podSubnetID": "str",
                     "powerState": {"code": "str"},
+                    "preparedImageSpecificationProfile": {"preparedImageSpecificationId": "str"},
                     "provisioningState": "str",
                     "proximityPlacementGroupID": "str",
                     "scaleDownMode": "str",
@@ -200,7 +200,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "virtualMachineNodesStatus": [{"count": 0, "size": "str"}],
                     "virtualMachinesProfile": {
                         "scale": {
-                            "autoscale": {"maxCount": 0, "minCount": 0, "size": "str"},
+                            "autoscale": [{"maxCount": 0, "minCount": 0, "size": "str"}],
                             "manual": [{"count": 0, "size": "str"}],
                         }
                     },

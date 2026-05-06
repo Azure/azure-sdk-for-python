@@ -12,7 +12,7 @@ You can find service libraries in the `/sdk` directory.
 
 ### Prerequisites
 
-The client libraries are supported on Python 3.9 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+The client libraries support multiple versions of Python. For more details, please see the [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ## Packages available
 
@@ -83,7 +83,7 @@ class NoUserAgentPolicy(UserAgentPolicy):
 # Create the BlobServiceClient object
 blob_service_client = BlobServiceClient(account_url, credential=mi_credential, user_agent_policy=NoUserAgentPolicy())
 
-container_client = blob_service_client.get_container_client(container=<container_name>) 
+container_client = blob_service_client.get_container_client(container=<container_name>)
 # TODO: do something with the container client like download blob to a file
 ```
 

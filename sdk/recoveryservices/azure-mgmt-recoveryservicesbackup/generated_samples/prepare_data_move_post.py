@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.begin_bms_prepare_data_move(
+    client.begin_bms_prepare_data_move(
         vault_name="source-rsv",
         resource_group_name="sourceRG",
         parameters={
@@ -40,9 +40,8 @@ def main():
             "targetResourceId": "/subscriptions/04cf684a-d41f-4550-9f70-7708a3a2283b/resourceGroups/targetRG/providers/Microsoft.RecoveryServices/vaults/target-rsv",
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/BackupDataMove/PrepareDataMove_Post.json
+# x-ms-original-file: 2026-01-31-preview/BackupDataMove/PrepareDataMove_Post.json
 if __name__ == "__main__":
     main()

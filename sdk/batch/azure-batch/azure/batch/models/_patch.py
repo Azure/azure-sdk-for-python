@@ -21,10 +21,12 @@ __all__: List[str] = [
 class CreateTasksError(HttpResponseError):
     """Aggregate Exception containing details for any failures from a task add operation.
 
-    :param str message: Error message describing exit reason
-    :param [~TaskAddParameter] pending_tasks: List of tasks remaining to be submitted.
-    :param [~TaskAddResult] failure_tasks: List of tasks which failed to add
-    :param [~Exception] errors: List of unknown errors forcing early termination
+    :param pending_tasks: List of tasks remaining to be submitted.
+    :type pending_tasks: Optional[List[~_models.BatchTaskCreateOptions]]
+    :param failure_tasks: List of tasks which failed to add
+    :type failure_tasks: Optional[List[~_models.BatchTaskCreateResult]]
+    :param errors: List of unknown errors forcing early termination
+    :type errors: Optional[List[~Exception]]
     """
 
     def __init__(self, pending_tasks=None, failure_tasks=None, errors=None) -> None:

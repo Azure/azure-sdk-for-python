@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-postgresql-auth"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "Microsoft Azure PostgreSQL Auth Library for Python"
+keywords = ["azure", "azure sdk", "postgresql", "entra"]
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "azure-core>=1.31.0",
+]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+psycopg3 = [
+    "psycopg[binary]>=3.1.0",
+    "psycopg-pool>=3.1.0",
+]
+psycopg2 = [
+    "psycopg2-binary>=2.9.0",
+]
+sqlalchemy = [
+    "sqlalchemy>=2.0.0",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/postgresql/azure-postgresql-auth"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure_postgresql_auth._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+include = ["azure_postgresql_auth*"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
+[tool.azure-sdk-build]
+mypy = true
+pyright = false
+black = true
+
+[tool.azure-sdk-conda]
+in_bundle = false

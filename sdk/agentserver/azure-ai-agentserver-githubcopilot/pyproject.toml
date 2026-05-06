@@ -1,0 +1,53 @@
+[project]
+name = "azure-ai-agentserver-githubcopilot"
+dynamic = ["version", "readme"]
+description = "GitHub Copilot SDK adapter for Azure AI Agent Server"
+requires-python = ">=3.11"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+keywords = ["azure", "azure sdk"]
+
+dependencies = [
+    "azure-ai-agentserver-core>=2.0.0a1",
+    "azure-ai-agentserver-responses>=1.0.0a1",
+    "github-copilot-sdk>=0.2.0,<0.3.0",
+    "azure-identity",
+    "httpx>=0.24.0",
+    "pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "samples*", "doc*", "azure", "azure.ai"]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.githubcopilot._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
+[tool.azure-sdk-build]
+analyze_python_version = "3.11"
+breaking = false
+pyright = false
+verifytypes = false
+latestdependency = false
+verify_keywords = false
+mindependency = false
+whl_no_aio = false

@@ -17,8 +17,12 @@ from opentelemetry.sdk.metrics.export import (
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource, ResourceAttributes
 from azure.core.exceptions import HttpResponseError
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import LiveMetricsClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import MonitoringDataPoint
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client import (
+    LiveMetricsClient,
+)
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
+    MonitoringDataPoint,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _POST_INTERVAL_SECONDS,
     _QuickpulseExporter,
@@ -115,7 +119,45 @@ class TestQuickpulse(unittest.TestCase):
         self.assertIs(exporter._client, client_mock.return_value)
         client_mock.assert_called_once()
         call_kwargs = client_mock.call_args
-        self.assertEqual(call_kwargs.kwargs["endpoint"], "https://eastus.livediagnostics.monitor.azure.com/")
+        self.assertEqual(
+            call_kwargs.kwargs["endpoint"],
+            "https://eastus.livediagnostics.monitor.azure.com/",
+        )
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.LiveMetricsClient")
+    def test_init_credential_single_auth_policy(self, client_mock):
+        """Ensure only one BearerTokenCredentialPolicy exists when credential is provided.
+
+        Regression test for #46013: the TypeSpec-generated LiveMetricsClientConfiguration
+        auto-creates an auth policy, which was previously duplicated alongside _get_auth_policy().
+        """
+        from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+
+        class _FakeCredential:
+            def get_token(self, *scopes, **kwargs):
+                return mock.MagicMock(token="fake", expires_on=9999999999)
+
+        credential = _FakeCredential()
+        exporter = _QuickpulseExporter(
+            connection_string=(
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                "LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+            ),
+            credential=credential,
+        )
+        client_mock.assert_called_once()
+        policies = client_mock.call_args.kwargs["policies"]
+        bearer_policies = [p for p in policies if isinstance(p, BearerTokenCredentialPolicy)]
+        self.assertEqual(
+            len(bearer_policies),
+            1,
+            "Expected exactly one BearerTokenCredentialPolicy in the pipeline",
+        )
+        self.assertEqual(
+            bearer_policies[0]._scopes,
+            ("https://monitor.azure.com//.default",),
+            "Auth policy scope must use double-slash format",
+        )
 
     def test_export_missing_data_point(self):
         result = self._exporter.export(OTMetricsData(resource_metrics=[]))
