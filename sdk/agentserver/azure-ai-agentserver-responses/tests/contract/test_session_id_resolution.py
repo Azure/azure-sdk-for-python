@@ -55,7 +55,7 @@ def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_handler)
+    app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
 
@@ -138,6 +138,8 @@ class TestPayloadSessionId:
 
         assert response.status_code == 200
         assert response.json()["agent_session_id"] == session_id
+        # §8: x-agent-session-id response header echoes the resolved value
+        assert response.headers.get("x-agent-session-id") == session_id
 
     def test_streaming_payload_session_id_stamped_on_response(self) -> None:
         """B39 P1: streaming response.created and response.completed carry the payload session ID."""
@@ -154,6 +156,8 @@ class TestPayloadSessionId:
             },
         ) as resp:
             assert resp.status_code == 200
+            # §8: x-agent-session-id response header on streaming responses
+            assert resp.headers.get("x-agent-session-id") == session_id
             events = _collect_sse_events(resp)
 
         # Check response.created event
@@ -212,6 +216,8 @@ class TestEnvVarFallback:
 
         assert response.status_code == 200
         assert response.json()["agent_session_id"] == env_session_id
+        # §8: x-agent-session-id response header echoes the resolved value
+        assert response.headers.get("x-agent-session-id") == env_session_id
 
     def test_payload_session_id_overrides_env_var(self) -> None:
         """B39: payload field takes precedence over env var."""
@@ -230,6 +236,8 @@ class TestEnvVarFallback:
 
         assert response.status_code == 200
         assert response.json()["agent_session_id"] == payload_session_id
+        # §8: header echoes the resolved value (payload wins over env var)
+        assert response.headers.get("x-agent-session-id") == payload_session_id
 
 
 # ════════════════════════════════════════════════════════════
@@ -259,6 +267,8 @@ class TestGeneratedSessionIdFallback:
         # Verify it's a valid 63-char lowercase hex string
         assert len(session_id) == 63
         assert re.fullmatch(r"[0-9a-f]+", session_id)
+        # §8: x-agent-session-id response header echoes generated value
+        assert response.headers.get("x-agent-session-id") == session_id
 
     def test_generated_session_id_is_different_per_request(self) -> None:
         """B39 P3: generated session IDs are unique per request."""
@@ -302,6 +312,9 @@ class TestCrossModeConsistency:
                     json={"model": "test", "stream": True},
                 ) as resp:
                     assert resp.status_code == 200
+                    # §8: header present even for generated session IDs
+                    header_sid = resp.headers.get("x-agent-session-id")
+                    assert header_sid is not None and header_sid != ""
                     events = _collect_sse_events(resp)
 
         completed_events = [e for e in events if e["type"] == "response.completed"]
@@ -310,6 +323,8 @@ class TestCrossModeConsistency:
         assert session_id is not None and session_id != ""
         assert len(session_id) == 63
         assert re.fullmatch(r"[0-9a-f]+", session_id)
+        # Header must match the body session ID
+        assert header_sid == session_id
 
     def test_background_no_payload_or_env_stamps_generated_session_id(self) -> None:
         """B39: background mode generates and stamps a hex session ID."""
@@ -426,3 +441,90 @@ class TestCrossModeConsistency:
                 assert resp_payload.get("agent_session_id") == session_id, (
                     f"SSE replay {event['type']} missing agent_session_id"
                 )
+
+
+# ════════════════════════════════════════════════════════════
+# §8: x-agent-session-id header on non-POST endpoints
+# ════════════════════════════════════════════════════════════
+
+
+class TestSessionIdHeaderOnNonPostEndpoints:
+    """x-agent-session-id header MUST appear on all protocol endpoint responses (§8).
+
+    Non-POST endpoints resolve the session ID from the
+    ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+    """
+
+    def test_get_response_has_session_id_header(self) -> None:
+        """GET /responses/{id} includes x-agent-session-id header."""
+        env_session_id = "env-session-for-get"
+        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": env_session_id}):
+            client = _build_client()
+            create_resp = client.post("/responses", json={"model": "test"})
+            assert create_resp.status_code == 200
+            response_id = create_resp.json()["id"]
+
+            get_resp = client.get(f"/responses/{response_id}")
+        assert get_resp.status_code == 200
+        assert get_resp.headers.get("x-agent-session-id") == env_session_id
+
+    def test_delete_response_has_session_id_header(self) -> None:
+        """DELETE /responses/{id} includes x-agent-session-id header."""
+        env_session_id = "env-session-for-delete"
+        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": env_session_id}):
+            client = _build_client()
+            create_resp = client.post("/responses", json={"model": "test"})
+            assert create_resp.status_code == 200
+            response_id = create_resp.json()["id"]
+
+            delete_resp = client.delete(f"/responses/{response_id}")
+        assert delete_resp.status_code == 200
+        assert delete_resp.headers.get("x-agent-session-id") == env_session_id
+
+    def test_cancel_response_has_session_id_header(self) -> None:
+        """POST /responses/{id}/cancel includes x-agent-session-id header."""
+        env_session_id = "env-session-for-cancel"
+        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": env_session_id}):
+            client = _build_client()
+            create_resp = client.post(
+                "/responses",
+                json={"model": "test", "background": True},
+            )
+            assert create_resp.status_code == 200
+            response_id = create_resp.json()["id"]
+
+            cancel_resp = client.post(f"/responses/{response_id}/cancel")
+        # Cancel may return 200 (cancelled) or 400 (already completed) —
+        # either way the header must be present.
+        assert cancel_resp.headers.get("x-agent-session-id") == env_session_id
+
+    def test_input_items_has_session_id_header(self) -> None:
+        """GET /responses/{id}/input_items includes x-agent-session-id header."""
+        env_session_id = "env-session-for-input-items"
+        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": env_session_id}):
+            client = _build_client()
+            create_resp = client.post(
+                "/responses",
+                json={
+                    "model": "test",
+                    "input": [{"role": "user", "content": "hi"}],
+                },
+            )
+            assert create_resp.status_code == 200
+            response_id = create_resp.json()["id"]
+
+            items_resp = client.get(f"/responses/{response_id}/input_items")
+        assert items_resp.status_code == 200
+        assert items_resp.headers.get("x-agent-session-id") == env_session_id
+
+    def test_error_response_has_session_id_header(self) -> None:
+        """Error responses (e.g. 404) on protocol endpoints include the header."""
+        env_session_id = "env-session-for-errors"
+        from azure.ai.agentserver.responses._id_generator import IdGenerator
+
+        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": env_session_id}):
+            client = _build_client()
+            unknown_id = IdGenerator.new_response_id()
+            get_resp = client.get(f"/responses/{unknown_id}")
+        assert get_resp.status_code == 404
+        assert get_resp.headers.get("x-agent-session-id") == env_session_id

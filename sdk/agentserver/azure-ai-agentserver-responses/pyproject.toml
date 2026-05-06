@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b1",
+    "azure-ai-agentserver-core>=2.0.0b3",
     "azure-core>=1.30.0",
     "isodate>=0.6.1",
     "aiohttp>=3.10.0,<4.0.0",
@@ -50,14 +50,6 @@ exclude = [
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
 
-[tool.ruff]
-target-version = "py310"
-line-length = 120
-exclude = ["azure/ai/agentserver/responses/models/_generated"]
-
-[tool.ruff.lint]
-select = ["E", "F", "W", "I"]
-
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
@@ -73,3 +65,7 @@ pythonpath = ["."]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
 azure-core = { path = "../../core/azure-core" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+
+[tool.azure-sdk-build]
+verifytypes = false
+latestdependency = false

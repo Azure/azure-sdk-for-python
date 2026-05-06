@@ -74,7 +74,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_handler)
+    app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
 
@@ -643,7 +643,7 @@ def test_output_item__agent_reference_stamped_on_item() -> None:
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_handler_with_agent_ref)
+    app.response_handler(_handler_with_agent_ref)
     client = TestClient(app)
 
     agent_ref = {"type": "agent_reference", "name": "my-agent", "version": "v2"}

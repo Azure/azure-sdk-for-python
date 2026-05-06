@@ -16,7 +16,10 @@ from typing import Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentServerHost, build_server_version
+from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
+    AgentServerHost,
+    build_server_version,
+)
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
@@ -68,7 +71,7 @@ class ResponsesAgentServerHost(AgentServerHost):
     """Responses protocol host for Azure AI Hosted Agents.
 
     A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
-    the Responses API endpoints.  Use the :meth:`create_handler` decorator
+    the Responses API endpoints.  Use the :meth:`response_handler` decorator
     to wire a handler function to the create endpoint.
 
     For multi-protocol agents, compose via cooperative inheritance::
@@ -82,7 +85,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         app = ResponsesAgentServerHost()
 
-        @app.create_handler
+        @app.response_handler
         def my_handler(request, context, cancellation_signal):
             yield event
 
@@ -108,7 +111,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         store: ResponseProviderProtocol | None = None,
         **kwargs: Any,
     ) -> None:
-        # Handler slot — populated via @app.create_handler decorator
+        # Handler slot — populated via @app.response_handler decorator
         self._create_fn: Optional[CreateHandlerFn] = None
 
         # Normalize prefix
@@ -120,9 +123,16 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Build internal components
         runtime_options = options or ResponsesServerOptions()
 
+        # Server version string — the responses segment is built once and
+        # registered on the host.  The full x-platform-server value is
+        # assembled lazily by _build_server_version() (joining all
+        # registered segments) and is also used as the Foundry storage
+        # User-Agent via callback so both headers are always identical.
+        _responses_version = build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION)
+
         # Resolve AgentConfig — used for Foundry auto-activation and
         # merging platform env-vars (SSE keep-alive) into runtime options.
-        from azure.ai.agentserver.core._config import AgentConfig
+        from azure.ai.agentserver.core._config import AgentConfig  # pylint: disable=import-error,no-name-in-module
 
         config = AgentConfig.from_env()
 
@@ -151,10 +161,18 @@ class ResponsesAgentServerHost(AgentServerHost):
                     logger.warning("azure-identity not installed; Foundry auto-activation disabled")
                 else:
                     settings = FoundryStorageSettings.from_endpoint(config.project_endpoint)
-                    store = FoundryStorageProvider(DefaultAzureCredential(), settings)
+                    store = FoundryStorageProvider(
+                        DefaultAzureCredential(),
+                        settings,
+                        get_server_version=self._build_server_version,
+                    )
 
         resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
-        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
+        stream_provider: ResponseStreamProviderProtocol = (
+            resolved_provider
+            if isinstance(resolved_provider, ResponseStreamProviderProtocol)
+            else InMemoryResponseProvider()
+        )
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
             create_fn=self._dispatch_create,
@@ -212,9 +230,10 @@ class ResponsesAgentServerHost(AgentServerHost):
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + response_routes, **kwargs)
 
-        # Register the responses protocol version on the host so the
-        # x-platform-server header includes this package's version.
-        self.register_server_version(build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION))
+        # Register the responses protocol version (and any additional version
+        # from the handler developer) on the host so the x-platform-server
+        # header includes this package's version.
+        self.register_server_version(_responses_version)
 
         # Allow handler developers to append their own version segment.
         if runtime_options.additional_server_version:
@@ -223,11 +242,21 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Register shutdown handler on self (inherited from AgentServerHost)
         self.shutdown_handler(endpoint.handle_shutdown)
 
+        # --- Responses startup configuration logging ---
+        logger.info(
+            "Responses protocol: storage_provider=%s, default_model=%s, "
+            "default_fetch_history_count=%s, shutdown_grace_period=%ss",
+            type(resolved_provider).__name__,
+            runtime_options.default_model or "(not set)",
+            runtime_options.default_fetch_history_count,
+            runtime_options.shutdown_grace_period_seconds,
+        )
+
     # ------------------------------------------------------------------
     # Handler decorator
     # ------------------------------------------------------------------
 
-    def create_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn:
+    def response_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn:
         """Register a function as the create-response handler.
 
         The handler function must accept exactly three positional parameters:
@@ -236,7 +265,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         Usage::
 
-            @app.create_handler
+            @app.response_handler
             def my_handler(request, context, cancellation_signal):
                 yield event
 
@@ -279,7 +308,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if self._create_fn is None:
-            raise NotImplementedError("No create handler registered. Use the @app.create_handler decorator.")
+            raise NotImplementedError("No create handler registered. Use the @app.response_handler decorator.")
         result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 

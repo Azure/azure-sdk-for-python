@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, IO, Optional, Union, overload
 from azure.core.tracing.decorator import distributed_trace
 
 from ._client import ContentUnderstandingClient as GeneratedClient
+from ._helpers import to_llm_input
 from . import models as _models
 from .models import AnalyzeLROPoller
 
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
 JSON = dict[str, Any]
 _Unset: Any = object()
 
-__all__ = ["ContentUnderstandingClient"]
+__all__ = ["ContentUnderstandingClient", "to_llm_input"]
 
 
 class ContentUnderstandingClient(GeneratedClient):

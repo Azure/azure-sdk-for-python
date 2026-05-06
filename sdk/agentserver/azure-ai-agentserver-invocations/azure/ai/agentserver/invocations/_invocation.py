@@ -167,6 +167,12 @@ class InvocationAgentServerHost(AgentServerHost):
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + invocation_routes, **kwargs)
 
+        # --- Invocations startup configuration logging ---
+        logger.info(
+            "Invocations protocol: openapi_spec_configured=%s",
+            self._openapi_spec is not None,
+        )
+
     # ------------------------------------------------------------------
     # Handler decorators
     # ------------------------------------------------------------------

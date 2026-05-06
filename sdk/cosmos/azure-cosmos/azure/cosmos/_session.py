@@ -383,7 +383,7 @@ class SessionContainer(object):
 
     def _resolve_partition_local_session_token(self, pk_range, token_dict):
         parent_session_token = None
-        parents = pk_range[0].get('parents').copy()
+        parents = list(pk_range[0].get('parents') or ())
         parents.append(pk_range[0]['id'])
         for parent in parents:
             session_token = token_dict.get(parent)

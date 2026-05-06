@@ -21,14 +21,13 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b1",
+    "azure-ai-agentserver-core>=2.0.0b3",
 ]
 
 [dependency-groups]
 # keep in sync with dev_requirements.txt
 dev = [
     "azure-identity",
-    "azure-monitor-opentelemetry-exporter",
     "azure-monitor-query",
     "azure-sdk-tools",
     "httpx",
@@ -62,29 +61,18 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.invocations" = ["py.typed"]
 
-[tool.ruff]
-line-length = 120
-target-version = "py310"
-lint.select = ["E", "F", "B", "I"]
-lint.ignore = []
-fix = false
-
-[tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.invocations"]
-combine-as-imports = true
-
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"
 breaking = false
 mypy = true
 pyright = true
-verifytypes = true
+verifytypes = false
+latestdependency = false
 pylint = true
 type_check_samples = false
 
 [tool.uv.sources]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
 azure-identity = { path = "../../identity/azure-identity" }
-azure-monitor-opentelemetry-exporter = { path = "../../monitor/azure-monitor-opentelemetry-exporter" }
 azure-monitor-query = { path = "../../monitor/azure-monitor-query" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }

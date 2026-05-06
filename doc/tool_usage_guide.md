@@ -21,7 +21,6 @@ The following checks are available via the `azpysdk` entrypoint.
 |`pyright`| Runs `pyright` checks or `next-pyright` checks. (based on presence of `--next` argument) | `azpysdk pyright .` |
 |`black`| Runs `black` checks. | `azpysdk black .` |
 |`verifytypes`| Runs `verifytypes` checks. | `azpysdk verifytypes .` |
-|`ruff`| Runs `ruff` checks. | `azpysdk ruff .` |
 |`apistub`| Generates an api stub for the package. | `azpysdk apistub .` |
 |`bandit`| Runs `bandit` checks, which detect common security issues. | `azpysdk bandit .` |
 |`verifywhl`| Verifies that the root directory in whl is azure, and verifies manifest so that all directories in source are included in sdist. | `azpysdk verifywhl .` |
@@ -64,8 +63,25 @@ To utilize this feature, add `--isolate` to any `azpysdk` invocation:
 ## Prerequisite
 
 - You need to have Python installed
-- The monorepo requires a minimum of `python 3.9`, but `>=3.11` is required for the `sphinx` check due to compatibility constraints with external processes.
+- The monorepo requires a minimum of `python 3.10`, but `>=3.11` is required for the `sphinx` check due to compatibility constraints with external processes.
 - You may optionally use the ["uv"](https://docs.astral.sh/uv/) tool, which is fast and handles Python version and venv creation automatically.
+
+## Package Index (CFS)
+
+This repo defaults to using Central Feed Services (CFS) as the package source instead of PyPI directly. This provides a security layer between the repo and PyPI for all package installs.
+
+**How it works:**
+- A repo-root `uv.toml` configures uv to use the CFS feed automatically for all `uv pip install` / `uv sync` commands run within the repo.
+- `azpysdk` sets `PIP_INDEX_URL` and `UV_DEFAULT_INDEX` environment variables so pip and uv subprocesses also use the CFS feed. If you have already set these variables to a different feed, `azpysdk` will respect your configuration and won't override them.
+
+**Authentication for upstream pull-through:**
+When a package version is not yet cached in the CFS feed, uv/pip pulls it through from PyPI upstream, which requires authentication. See [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#authentication-for-upstream-pull-through) for details.
+
+**Bypassing CFS:**
+If you need to install directly from PyPI (e.g., for a package not yet in the feed and auth isn't set up), use:
+```bash
+azpysdk --pypi <command>
+```
 
 ## Initial setup
 
