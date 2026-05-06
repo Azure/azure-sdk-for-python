@@ -119,7 +119,7 @@ config = load(endpoint=endpoint, credential=credential, selects=selects, **kwarg
 
 ### Loading from Snapshots
 
-You can load configuration settings from a snapshot by providing `snapshot_name` on `SettingSelector`. When `snapshot_name` is specified, all configuration settings from the snapshot are loaded. Note that `snapshot_name` cannot be used together with `key_filter`, `label_filter`, or `tag_filters`. In the examples below, `endpoint`, `credential`, and `snapshot_name` are assumed to be defined. See the [snapshot sample](samples/snapshot_sample.py) for complete setup.
+You can load configuration settings from a snapshot by providing `snapshot_name` on `SettingSelector`. When `snapshot_name` is specified, all configuration settings from the snapshot are loaded. Note that `snapshot_name` cannot be used together with `key_filter`, `label_filter`, or `tag_filters`. In the examples below, `endpoint`, `credential`, and `snapshot_name` are assumed to be defined. See the [snapshot sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration-provider/samples/snapshot_sample.py) for complete setup.
 
 <!-- SNIPPET:snapshot_sample.load_snapshot -->
 
