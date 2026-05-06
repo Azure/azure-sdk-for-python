@@ -4,6 +4,15 @@
 
 ### Features Added
 
+- Added WebSocket invocation protocol (`invocations_ws`) — merged from the standalone `azure-ai-agentserver-websocket` package.
+  - New `InvocationWSAgentServerHost` class exposing a single persistent WebSocket endpoint at `/invocations_ws/ws` for invoke / get_invocation / cancel_invocation actions, with built-in streaming support via async generators.
+  - New `InvocationWSContext` and `InvocationWSError` types passed to handler functions.
+  - Decorator-based handler registration: `@app.ws_invoke_handler`, `@app.ws_get_invocation_handler`, `@app.ws_cancel_invocation_handler`.
+  - Built-in WebSocket keep-alive with configurable `ws_ping_interval` (default 30 s) to survive Azure APIM / Load Balancer idle timeouts.
+  - OpenAPI spec discovery endpoint at `GET /invocations_ws/docs/openapi.json`.
+  - Distributed tracing with GenAI semantic-convention spans (`invoke_agent`, `get_invocation`, `cancel_invocation`) and span attributes under the `azure.ai.agentserver.invocations_ws.*` namespace.
+  - Cooperative multiple inheritance with `InvocationAgentServerHost` so a single host can serve both HTTP (`invocations`) and WebSocket (`invocations_ws`) protocols.
+
 ### Breaking Changes
 
 ### Bugs Fixed

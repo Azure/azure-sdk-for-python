@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations", "websocket"]
 
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b3",

@@ -13,6 +13,22 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
+# Re-export WebSocket (invocations_ws) fixtures so they are auto-discovered
+# by pytest for tests under this directory.
+from conftest_ws import (  # noqa: F401  (re-exported fixtures)
+    WS_SAMPLE_OPENAPI_SPEC,
+    ws_async_storage_app,
+    ws_async_storage_client,
+    ws_echo_app,
+    ws_echo_client,
+    ws_failing_app,
+    ws_failing_client,
+    ws_no_spec_client,
+    ws_streaming_app,
+    ws_streaming_client,
+    ws_validated_client,
+)
+
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
