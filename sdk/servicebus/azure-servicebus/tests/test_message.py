@@ -384,9 +384,11 @@ def test_servicebus_received_message_from_bytes():
         data=[b"hello world"],
     )
 
-    # Encode to bytes then decode via from_bytes
+    # Encode to bytes then decode via from_bytes.
+    # _encode_payload returns the bytearray buffer it was given; wrap in bytes()
+    # so the test exercises the public from_bytes(bytes) contract.
     output = bytearray()
-    payload = _encode_payload(output, original)
+    payload = bytes(_encode_payload(output, original))
     received = ServiceBusReceivedMessage.from_bytes(payload)
 
     # Validate message body
@@ -424,7 +426,7 @@ def test_servicebus_received_message_from_bytes_minimal():
 
     original = PyamqpMessage(data=[b"minimal payload"])
     output = bytearray()
-    payload = _encode_payload(output, original)
+    payload = bytes(_encode_payload(output, original))
     received = ServiceBusReceivedMessage.from_bytes(payload)
 
     body = b"".join(received.body)
@@ -442,7 +444,7 @@ def test_servicebus_received_message_from_bytes_value_body():
 
     original = PyamqpMessage(value={"key": "value"})
     output = bytearray()
-    payload = _encode_payload(output, original)
+    payload = bytes(_encode_payload(output, original))
     received = ServiceBusReceivedMessage.from_bytes(payload)
 
     assert received.body_type == AmqpMessageBodyType.VALUE
@@ -457,10 +459,12 @@ def test_servicebus_received_message_from_bytes_sequence_body():
 
     original = PyamqpMessage(sequence=[1, 2, 3])
     output = bytearray()
-    payload = _encode_payload(output, original)
+    payload = bytes(_encode_payload(output, original))
     received = ServiceBusReceivedMessage.from_bytes(payload)
 
     assert received.body_type == AmqpMessageBodyType.SEQUENCE
+    # Confirm the decoded sequence contents round-trip, not just the body type.
+    assert list(received.body) == [1, 2, 3]
 
 
 class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
