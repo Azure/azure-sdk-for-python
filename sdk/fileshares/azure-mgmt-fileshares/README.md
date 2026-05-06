@@ -1,6 +1,6 @@
 # Microsoft Azure SDK for Python
 
-This is the Microsoft Azure Fileshares Management Client Library.
+This is the Microsoft Azure FileShares Management Client Library.
 This package has been tested with Python 3.10+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
@@ -46,7 +46,7 @@ client = FileSharesMgmtClient(credential=DefaultAzureCredential(), subscription_
 ## Examples
 
 Code samples for this package can be found at:
-- [Search Fileshares Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
+- [Search FileShares Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
 - [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
 
