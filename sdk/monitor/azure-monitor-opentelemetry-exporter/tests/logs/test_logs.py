@@ -232,7 +232,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
-            instrumentation_scope=InstrumentationScope("test_name"),
+            instrumentation_scope=InstrumentationScope("custom-event-logger"),
         )
         cls._exc_data = _logs.ReadWriteLogRecord(
             LogRecord(
@@ -283,7 +283,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
-            instrumentation_scope=InstrumentationScope("test_name"),
+            instrumentation_scope=InstrumentationScope("blank_exception_logger"),
         )
         cls._exc_data_empty = _logs.ReadWriteLogRecord(
             LogRecord(
@@ -467,6 +467,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "test-user")
         self.assertNotIn("enduser.id", envelope.data.base_data.properties)
         self.assertNotIn("enduser.pseudo.id", envelope.data.base_data.properties)
+        self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "test_name")
 
     def test_log_to_envelope_log_none(self):
         exporter = self._exporter
@@ -577,6 +578,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.exceptions[0].message, "test exception")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
+        self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "blank_exception_logger")
 
     def test_log_to_envelope_event(self):
         exporter = self._exporter
@@ -618,6 +620,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, "event_name")
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+        self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "custom-event-logger")
 
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter

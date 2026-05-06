@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -31,6 +31,11 @@ from ._operations import (
     _IndividuallyNestedWithQueryClientOperationsMixin,
 )
 from ._utils.serialization import Deserializer, Serializer
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class IndividuallyNestedWithPathClient(
