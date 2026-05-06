@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Any, cast
 
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
+from opentelemetry.baggage.propagation import W3CBaggagePropagator
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
@@ -720,7 +721,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id, project_id=_project_id))
 
             # Set W3C baggage per spec §7.3
+            # Extract incoming baggage from request headers (only baggage, not traceparent)
+            # to preserve parent-child span relationships while inheriting caller's baggage entries.
+            _incoming_baggage_ctx = W3CBaggagePropagator().extract(
+                carrier={"baggage": request.headers.get("baggage", "")}
+            )
             bag_ctx = _otel_context.get_current()
+            # Merge incoming baggage entries (e.g. user.id) onto current context
+            for _bkey, _bval in _otel_baggage.get_all(context=_incoming_baggage_ctx).items():
+                bag_ctx = _otel_baggage.set_baggage(_bkey, _bval, context=bag_ctx)
+
             bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.response_id", response_id, context=bag_ctx)
             bag_ctx = _otel_baggage.set_baggage(
                 "azure.ai.agentserver.conversation_id", ctx.conversation_id or "", context=bag_ctx
