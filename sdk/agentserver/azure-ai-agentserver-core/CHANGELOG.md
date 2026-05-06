@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
+## 2.0.0b4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 2.0.0b3 (2026-04-22)
+
+### Features Added
+
+- `RequestIdMiddleware` — pure-ASGI middleware that sets an `x-request-id` response header on every response. The request ID is resolved from the OpenTelemetry trace ID, an incoming `x-request-id` header, or a generated UUID (in that priority). The resolved value is stored in ASGI scope state under the well-known key `agentserver.request_id` for use by sibling protocol packages. Automatically wired into `AgentServerHost`.
 
 ## 2.0.0b2 (2026-04-17)
 

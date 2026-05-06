@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.relationships.create_or_update(
+    response = client.relationships.begin_create_or_update(
         resource_group_name="rgopenapi",
         health_model_name="model1",
         relationship_name="rel1",
@@ -38,14 +38,14 @@ def main():
             "properties": {
                 "childEntityName": "Entity2",
                 "displayName": "My relationship",
-                "labels": {"key9681": "ixfvzsfnpvkkbrce"},
                 "parentEntityName": "Entity1",
+                "tags": {"key9681": "ixfvzsfnpvkkbrce"},
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01-preview/Relationships_CreateOrUpdate.json
+# x-ms-original-file: 2026-01-01-preview/Relationships_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

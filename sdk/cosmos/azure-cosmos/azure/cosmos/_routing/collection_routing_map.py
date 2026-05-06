@@ -27,7 +27,7 @@ import bisect
 from typing import Optional, Union
 
 from azure.cosmos._routing import routing_range
-from azure.cosmos._routing.routing_range import PartitionKeyRange
+from azure.cosmos._routing.routing_range import PartitionKeyRange, PKRange
 
 # pylint: disable=line-too-long
 class CollectionRoutingMap(object):
@@ -288,7 +288,10 @@ def _build_routing_map_from_ranges(
         if PartitionKeyRange.Parents in r and r[PartitionKeyRange.Parents]:
             gone_range_ids.update(r[PartitionKeyRange.Parents])
 
-    filtered_ranges = [r for r in ranges if r[PartitionKeyRange.Id] not in gone_range_ids]
+    filtered_ranges = [
+        PKRange.from_dict(r)
+        for r in ranges if r[PartitionKeyRange.Id] not in gone_range_ids
+    ]
     range_tuples = [(r, True) for r in filtered_ranges]
 
     routing_map = CollectionRoutingMap.CompleteRoutingMap(

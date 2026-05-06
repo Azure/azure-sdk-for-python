@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/restorePointExamples/RestorePoint_Get_WithInstanceView.json
+# x-ms-original-file: 2025-11-01/restorePointExamples/RestorePoint_Get_WithInstanceView.json
 if __name__ == "__main__":
     main()
