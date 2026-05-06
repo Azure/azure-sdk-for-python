@@ -158,6 +158,9 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "vally",
+    "regen",
+    "pylintrc",
     "qnas",
     "msedge",
     "spinup",
@@ -1973,7 +1976,8 @@
         "wday",
         "mday",
         "deseralize",
-        "astimezone"
+        "astimezone",
+        "Merkle"
       ]
     },
     {
