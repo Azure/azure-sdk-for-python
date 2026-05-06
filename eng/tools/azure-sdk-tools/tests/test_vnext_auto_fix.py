@@ -14,10 +14,13 @@ import pytest
 from github import GithubException
 
 from gh_tools.vnext_issue_creator import (
+    COPILOT_AUTOFIX_END,
+    COPILOT_AUTOFIX_START,
     LABEL_AUTO_FIX,
     LABEL_AUTO_FIX_DISABLED,
     _is_copilot_already_assigned,
     _try_auto_fix,
+    _upsert_copilot_instructions,
     assign_copilot,
     build_copilot_instructions,
     find_existing_fix_prs,
@@ -123,6 +126,22 @@ class TestFindExistingFixPrs:
         result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
         assert len(result) == 1
 
+    def test_match_by_repo_qualified_issue_ref(self):
+        repo = MagicMock()
+        repo.get_pulls.return_value = [
+            _make_pr(body="Fixes Azure/azure-sdk-for-python#42"),
+        ]
+        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        assert len(result) == 1
+
+    def test_match_by_issue_url(self):
+        repo = MagicMock()
+        repo.get_pulls.return_value = [
+            _make_pr(body="Fixes https://github.com/Azure/azure-sdk-for-python/issues/42"),
+        ]
+        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        assert len(result) == 1
+
     def test_match_by_package_and_check(self):
         repo = MagicMock()
         repo.get_pulls.return_value = [
@@ -135,6 +154,14 @@ class TestFindExistingFixPrs:
         repo = MagicMock()
         repo.get_pulls.return_value = [
             _make_pr(title="Unrelated PR", body="Nothing here"),
+        ]
+        result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
+        assert len(result) == 0
+
+    def test_issue_ref_does_not_match_longer_issue_number(self):
+        repo = MagicMock()
+        repo.get_pulls.return_value = [
+            _make_pr(title="Fix issue #420"),
         ]
         result = find_existing_fix_prs(repo, 42, "azure-ai-test", "pylint")
         assert len(result) == 0
@@ -161,6 +188,42 @@ class TestBuildCopilotInstructions:
         assert "sdk/ai/azure-ai-test" in result
         assert "Automated Fix" in result
         assert "Do not make unrelated" in result
+
+
+class TestUpsertCopilotInstructions:
+
+    def test_appends_when_no_existing_block(self):
+        instructions = build_copilot_instructions("sdk/ai/azure-ai-test", "pylint")
+        body = "Existing issue body"
+
+        result = _upsert_copilot_instructions(body, instructions)
+
+        assert result == body + instructions
+
+    def test_replaces_existing_block_and_preserves_tail(self):
+        instructions = build_copilot_instructions("sdk/ai/azure-ai-test", "pyright")
+        body = (
+            "Existing issue body\n\n"
+            f"{COPILOT_AUTOFIX_START}\n"
+            "old instructions\n"
+            f"{COPILOT_AUTOFIX_END}\n\n"
+            "Human-authored follow-up"
+        )
+
+        result = _upsert_copilot_instructions(body, instructions)
+
+        assert "old instructions" not in result
+        assert result.startswith("Existing issue body")
+        assert instructions in result
+        assert result.endswith("\n\nHuman-authored follow-up")
+
+    def test_appends_when_existing_markers_are_malformed(self):
+        instructions = build_copilot_instructions("sdk/ai/azure-ai-test", "mypy")
+        body = f"Existing issue body\n\n{COPILOT_AUTOFIX_END}\nold instructions\n{COPILOT_AUTOFIX_START}"
+
+        result = _upsert_copilot_instructions(body, instructions)
+
+        assert result == body + instructions
 
 
 # ---------------------------------------------------------------------------

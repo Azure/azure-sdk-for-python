@@ -93,6 +93,12 @@ def is_auto_fix_eligible(
     return True
 
 
+def _references_issue(text: str, issue_number: int) -> bool:
+    """Return True when text contains an exact issue reference."""
+    issue_number_text = re.escape(str(issue_number))
+    return bool(re.search(rf"(?:#|/issues/){issue_number_text}(?![0-9A-Za-z_-])", text))
+
+
 def find_existing_fix_prs(
     repo,
     issue_number: int,
@@ -112,8 +118,7 @@ def find_existing_fix_prs(
             search_text = f"{title} {body}".lower()
 
             # 1. PR explicitly references the issue number
-            issue_ref = f"#{issue_number}"
-            has_issue_ref = issue_ref in title or issue_ref in body
+            has_issue_ref = _references_issue(f"{title} {body}", issue_number)
 
             # 2. PR mentions package + check type
             has_pkg_and_check = package_name.lower() in search_text and check_type.lower() in search_text
@@ -154,8 +159,9 @@ def _upsert_copilot_instructions(body: str, instructions: str) -> str:
     """
     start_idx = body.find(COPILOT_AUTOFIX_START)
     end_idx = body.find(COPILOT_AUTOFIX_END)
-    if start_idx != -1 and end_idx != -1:
-        return body[:start_idx].rstrip() + instructions
+    if start_idx != -1 and end_idx != -1 and start_idx < end_idx:
+        tail_idx = end_idx + len(COPILOT_AUTOFIX_END)
+        return body[:start_idx].rstrip() + instructions + body[tail_idx:]
     return body + instructions
 
 
