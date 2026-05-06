@@ -81,7 +81,8 @@ config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=T
 from azure.appconfiguration.provider import load
 
 config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
-alpha = config["feature_management"]["feature_flags"]["Alpha"]
+feature_flags = config["feature_management"]["feature_flags"]
+alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
 print(alpha["enabled"])
 # [END feature_flag_loading]
 
@@ -95,7 +96,8 @@ config = load(
     feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")],
     **kwargs,
 )
-alpha = config["feature_management"]["feature_flags"]["Alpha"]
+feature_flags = config["feature_management"]["feature_flags"]
+alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
 print(alpha["enabled"])
 # [END feature_flag_selector]
 

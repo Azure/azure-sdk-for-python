@@ -99,7 +99,7 @@ config = load(
 
 <!-- END SNIPPET -->
 
-In this example all configuration with empty label and the dev label are loaded. Because the dev selector is listed last, any configurations from dev take priority over those with `(No Label)` when duplicates are found.
+In this example, configuration settings with keys matching `message*` are loaded. Feature flags are also enabled, so the default feature flags (those with no label) will be loaded.
 
 ### Filtering by Tags
 
@@ -119,7 +119,7 @@ config = load(endpoint=endpoint, credential=credential, selects=selects, **kwarg
 
 ### Loading from Snapshots
 
-You can load configuration settings from a snapshot by providing `snapshot_name` on `SettingSelector`. When `snapshot_name` is specified, all configuration settings from the snapshot are loaded. Note that `snapshot_name` cannot be used together with `key_filter`, `label_filter`, or `tag_filters`.
+You can load configuration settings from a snapshot by providing `snapshot_name` on `SettingSelector`. When `snapshot_name` is specified, all configuration settings from the snapshot are loaded. Note that `snapshot_name` cannot be used together with `key_filter`, `label_filter`, or `tag_filters`. In the examples below, `endpoint`, `credential`, and `snapshot_name` are assumed to be defined. See the [snapshot sample](samples/snapshot_sample.py) for complete setup.
 
 <!-- SNIPPET:snapshot_sample.load_snapshot -->
 
@@ -155,16 +155,15 @@ The provider can be configured to refresh configurations from the store on a set
 <!-- SNIPPET:refresh_sample.refresh_provider -->
 
 ```python
+import os
 from azure.appconfiguration.provider import load, WatchKey
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
-# changes
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
 config = load(
     connection_string=connection_string,
-    refresh_on=[watch_key],
-    refresh_interval=1,
-    on_refresh_error=my_callback_on_fail,
-    **kwargs,
+    refresh_on=[WatchKey("Sentinel")],
+    refresh_interval=60,
 )
 ```
 
@@ -316,7 +315,7 @@ config = load(endpoint=endpoint, credential=credential, load_balancing_enabled=T
 
 ## Loading Feature Flags
 
-Feature Flags can be loaded from config stores using the provider. Feature flags are loaded as a dictionary of key/value pairs stored in the provider under the `feature_management`, then `feature_flags`.
+Feature Flags can be loaded from config stores using the provider. Feature flags are loaded as a list of feature flag objects stored in the provider under `feature_management`, then `feature_flags`.
 
 <!-- SNIPPET:entra_id_sample.feature_flag_loading -->
 
@@ -324,7 +323,8 @@ Feature Flags can be loaded from config stores using the provider. Feature flags
 from azure.appconfiguration.provider import load
 
 config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
-alpha = config["feature_management"]["feature_flags"]["Alpha"]
+feature_flags = config["feature_management"]["feature_flags"]
+alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
 print(alpha["enabled"])
 ```
 
@@ -344,7 +344,8 @@ config = load(
     feature_flag_selectors=[SettingSelector(key_filter="*", label_filter="dev")],
     **kwargs,
 )
-alpha = config["feature_management"]["feature_flags"]["Alpha"]
+feature_flags = config["feature_management"]["feature_flags"]
+alpha = next(flag for flag in feature_flags if flag["id"] == "Alpha")
 print(alpha["enabled"])
 ```
 
@@ -355,19 +356,18 @@ To enable refresh for feature flags you need to enable refresh. This will allow 
 <!-- SNIPPET:refresh_sample_feature_flags.refresh_feature_flags -->
 
 ```python
+import os
 from azure.appconfiguration.provider import load, WatchKey
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
-# changes
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
 config = load(
     connection_string=connection_string,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
-    refresh_interval=1,
-    on_refresh_error=my_callback_on_fail,
+    refresh_interval=60,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
-    **kwargs,
 )
 ```
 

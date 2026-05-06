@@ -32,10 +32,19 @@ rand = random.random()
 watch_key = WatchKey("message" + str(rand))
 
 # [START refresh_provider]
+import os
 from azure.appconfiguration.provider import load, WatchKey
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
-# changes
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
+config = load(
+    connection_string=connection_string,
+    refresh_on=[WatchKey("Sentinel")],
+    refresh_interval=60,
+)
+# [END refresh_provider]
+
+# Reload with test-specific configuration
 config = load(
     connection_string=connection_string,
     refresh_on=[watch_key],
@@ -43,7 +52,6 @@ config = load(
     on_refresh_error=my_callback_on_fail,
     **kwargs,
 )
-# [END refresh_provider]
 
 print(config["message"])
 print(config["my_json"]["key"])

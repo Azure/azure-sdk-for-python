@@ -31,10 +31,22 @@ def my_callback_on_fail(_):
 
 
 # [START refresh_feature_flags]
+import os
 from azure.appconfiguration.provider import load, WatchKey
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
-# changes
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
+config = load(
+    connection_string=connection_string,
+    refresh_on=[WatchKey("message")],
+    refresh_on_feature_flags=True,
+    refresh_interval=60,
+    feature_flag_enabled=True,
+    feature_flag_refresh_enabled=True,
+)
+# [END refresh_feature_flags]
+
+# Reload with test-specific configuration
 config = load(
     connection_string=connection_string,
     refresh_on=[WatchKey("message")],
@@ -45,7 +57,6 @@ config = load(
     feature_flag_refresh_enabled=True,
     **kwargs,
 )
-# [END refresh_feature_flags]
 
 print(config["message"])
 print(config["my_json"]["key"])
