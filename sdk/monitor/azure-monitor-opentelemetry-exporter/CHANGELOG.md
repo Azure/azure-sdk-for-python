@@ -1,18 +1,43 @@
 # Release History
 
-## 1.0.0b50 (Unreleased)
+## 1.0.0b52 (Unreleased)
 
 ### Features Added
+- Add logger name to custom dimensions for Message, Exception and Event telemetry
+  ([#46096](https://github.com/Azure/azure-sdk-for-python/pull/46096))
+- Add support for populating SDK version from distro and Microsoft OpenTelemetry distro environment variables
+  ([#46613](https://github.com/Azure/azure-sdk-for-python/pull/46613))
 
 ### Breaking Changes
+- Dropped support for Python 3.9. This package now supports Python 3.10+. [Follows upstream otel dropping support](https://github.com/open-telemetry/opentelemetry-python/pull/5076)
+  ([#46694](https://github.com/Azure/azure-sdk-for-python/pull/46694))
 
 ### Bugs Fixed
+- Fix `success` field on HTTP request telemetry resolving to an integer instead of a boolean when no status code is present
+  ([#46311](https://github.com/Azure/azure-sdk-for-python/pull/46311))
+
+### Other Changes
+
+## 1.0.0b51 (2026-04-07)
+
+### Bugs Fixed
+- Added credential authentication support for customer sdkstats
+  ([#46143](https://github.com/Azure/azure-sdk-for-python/pull/46143))
+
+## 1.0.0b50 (2026-04-03)
+
+### Bugs Fixed
+- Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
+  for authenticated Application Insights resources
+  ([#46024](https://github.com/Azure/azure-sdk-for-python/pull/46024))
 - Suppress internal sdkstats HTTP pipeline logs from appearing in user's logs
   ([#45966](https://github.com/Azure/azure-sdk-for-python/pull/45966))
 - Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
   ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
 
 ### Other Changes
+- Revert custom properties limit to 8kb
+  ([#46066](https://github.com/Azure/azure-sdk-for-python/pull/46066))
 
 ## 1.0.0b49 (2026-03-19)
 

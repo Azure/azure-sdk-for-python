@@ -1,6 +1,63 @@
 # Release History
 
-## 1.16.2 (Unreleased)
+## 1.16.7 (Unreleased)
+
+### Features Added
+
+- Added `extra_headers` keyword argument to `RaiServiceEvaluatorBase` (and all content safety evaluators) to allow passing custom HTTP headers to all backend RAI service calls. SDK-owned headers (`Authorization`, `User-Agent`, `Content-Type`, `aml-user-token`, `x-ms-client-request-id`) cannot be overridden by `extra_headers`.
+
+- Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
+- Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
+- Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `evaluate()` raising `EvaluationException: (InternalError) unhashable type: 'list'` when an evaluator emitted a list value under a `_result`-suffixed column. Binary aggregation now skips such columns with a warning instead of aborting the entire run.
+- Fixed row classification double-counting in `_calculate_aoai_evaluation_summary` where errored rows were counted separately and could also be counted as passed/failed. Rows are now classified into mutually exclusive buckets with priority: passed > failed > errored > skipped.
+- Fixed row classification where rows with empty or missing results lists were incorrectly counted as "passed" (the condition `passed_count == len(results) - error_count` evaluated `0 == 0` as True).
+- Fixed `_get_metric_result` prefix matching where shorter metric names (e.g., `xpia`) could match before longer, more-specific ones (e.g., `xpia_manipulated_content`). Now sorts by length descending for correct longest-prefix matching.
+- Fixed non-dict `_properties` values from evaluators causing downstream issues. Values that are not dicts are now logged and dropped gracefully.
+
+### Other Changes
+
+- Moved token usage attributes (`gen_ai.evaluation.usage.input_tokens`, `gen_ai.evaluation.usage.output_tokens`) from standard App Insights event attributes into the `internal_properties` JSON bag to align with internal telemetry conventions.
+
+## 1.16.6 (2026-04-27)
+
+### Bugs Fixed
+
+- Fixed evaluation token usage not being emitted in the genai evaluation event, causing token consumption metrics to be missing from telemetry.
+- Fixed multi-turn red team attacks (`RedTeamingAttack`-based strategies like `MultiTurn`) failing silently with PyRIT 0.11. Two bugs were patched at the SDK level: (1) `RedTeamingAttack._setup_async` raised `RuntimeError: Conversation already exists` because it seeded prepended conversation messages before calling `set_system_prompt`; now patched per-instance on the adversarial chat target to tolerate existing conversation history. (2) `RedTeamingAttack._generate_next_prompt_async` returned `context.next_message` without calling `.duplicate_message()`, causing `sqlite3.IntegrityError: UNIQUE constraint failed: PromptMemoryEntries.id` on the second turn; now patched at module load with an idempotent wrapper that duplicates the message before returning.
+- Fixed `sensitive_data_leakage` red team attacks producing 100% false-pass rates. `_extract_context_items` in the Foundry execution path only handled `list` or `dict` shapes for `messages[0].context`; pre-curated SDL attack objectives store the document text as a `str` with sibling `context_type`/`tool_name` fields, so the document was silently dropped and a fallback synthesized a context item from the user prompt. The agent never received the sensitive document content and could not leak it, causing the evaluator to score every attempt as a pass. Added `str` handling (both message-level and top-level), normalized raw string entries inside list-shaped context, and gated the `context_type` fallback so it only runs when no usable context was extracted (including the `context: null` case).
+
+### Other Changes
+
+## 1.16.5 (2026-04-08)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `sensitive_data_leakage` risk category producing 0% attack success rate (false negatives) in the Foundry execution path. Agent-specific tool context (e.g., `document_client_smode`, `email_client_smode`) was stored in `SeedObjective.metadata` but never propagated to the target callback, so the agent could not access the sensitive data it was supposed to leak. Context is now delivered via `prepended_conversation` SeedPrompts and extracted from conversation history metadata, enabling the ACA runtime to build FunctionTool injections.
+- Fixed multi-turn and crescendo red team strategies producing output items identical to their baseline counterparts. The Foundry execution path was writing all strategies' conversations to a single shared JSONL file, causing each strategy to read all conversations and mislabel them. Now writes per-strategy JSONL files using PyRIT's scenario result grouping.
+
+### Other Changes
+
+## 1.16.4 (2026-04-03)
+
+### Features Added
+
+- Added support for evaluator `properties` passthrough in AOAI evaluation results. When an evaluator returns a `properties` dict, it is included alongside `score`, `label`, `reason`, `threshold`, and `passed` in the result object.
+
+### Bugs Fixed
+
+- Fixed stray space in `_eval_metric.value` attribute access in `_base_rai_svc_eval.py`.
+
+## 1.16.3 (2026-04-01)
 
 ### Features Added
 
@@ -9,11 +66,23 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed attack success rate (ASR) always reporting 0% because the sync eval API's `passed` field indicates task completion, not content safety. Replaced `passed`-based logic with score-based threshold comparison matching `_evaluation_processor.py`.
+
+- Fixed partial red team results being discarded when some objectives fail. Previously, if PyRIT raised due to incomplete objectives (e.g., evaluator model refuses to score), all completed results were lost. Now recovers partial results from PyRIT's memory database.
+
+- Fixed evaluator token metrics (`promptTokens`, `completionTokens`) not persisted in red teaming output items. The sync eval API returns camelCase keys but the extraction code only checked for snake_case, silently dropping all evaluator token usage data.
+
+### Other Changes
+
+## 1.16.2 (2026-03-24)
+
+### Bugs Fixed
 - Fixed adversarial chat target incorrectly using user's callback instead of RAI service, causing callback response to appear as user message in red team scan results when using converter strategies (e.g., `DIFFICULT`, `Tense`).
 - Fixed `hate_unfairness` attack success rate always reporting 0% due to metric name mapping using legacy `hate_fairness` name instead of canonical `hate_unfairness`.
 - Fixed `TypeError` in multi-turn and crescendo attacks caused by PyRIT 0.11+ renaming `send_prompt_async` parameter from `prompt_request` to `message`.
 - Expanded endpoint normalization (`/openai/v1` suffix) to all Azure OpenAI host suffixes (including sovereign clouds), fixing 404 errors for classic AOAI endpoints with PyRIT 0.11+.
 - Added `aml-aca-token` credential fallback for agent-type seed requests when running locally without ACA managed identity.
+- Extract RAI scorer token metrics (prompt_tokens, completion_tokens, total_tokens) into Score metadata and propagate through result processing for downstream aggregation.
 
 ## 1.16.1 (2026-03-18)
 

@@ -1,5 +1,13 @@
 # Release History
 
+## 1.33.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.32.0 (unreleased)
 
 ### Features Added
@@ -8,6 +16,7 @@
 
 - Fixed default deployment template check to verify `asset_id` is not None before logging template information.
 - Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
+- Deployment templates `allowed_instance_types` now accepts a list instead of string.
 
 ### Other Changes
 

@@ -438,3 +438,29 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             result[f"{self._result_key}_details"] = {}
 
         return result
+
+    # TODO: After all evaluators output are updated, we can remove the _not_applicable_result method and replace calls to it with _return_not_applicable_result, which returns a "skipped" status instead of "pass" to avoid confusion.
+    def _return_not_applicable_result(
+        self, error_message: str, threshold: Union[int, float]
+    ) -> Dict[str, Union[str, float, Dict, None]]:
+        """Return a result indicating that the tool call is not applicable for evaluation.
+
+        :param error_message: The error message indicating why the evaluation is not applicable.
+        :type error_message: str
+        :param threshold: The threshold value for the evaluation.
+        :type threshold: Union[int, float]
+        :return: A dictionary containing the result of the evaluation.
+        :rtype: Dict[str, Union[str, float, None]]
+        """
+        return {
+            f"{self._result_key}": None,
+            f"{self._result_key}_score": None,
+            # TODO: Return "not_applicable" instead of "pass" once the
+            # evaluation service accepts it as a valid result value.
+            f"{self._result_key}_result": "pass",
+            f"{self._result_key}_passed": None,
+            f"{self._result_key}_reason": f"Not applicable: {error_message}",
+            f"{self._result_key}_status": "skipped",
+            f"{self._result_key}_threshold": threshold,
+            f"{self._result_key}_properties": None,
+        }

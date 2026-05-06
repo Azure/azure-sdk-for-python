@@ -50,6 +50,17 @@ class _PartitionHealthInfo(object):
     """
     This internal class keeps the health and statistics for a partition.
     """
+    # __slots__ reduces per-instance memory by using a fixed-size C array
+    # instead of a per-instance __dict__. Significant when tracking many partitions.
+    __slots__ = (
+        'write_failure_count',
+        'read_failure_count',
+        'write_success_count',
+        'read_success_count',
+        'read_consecutive_failure_count',
+        'write_consecutive_failure_count',
+        'unavailability_info',
+    )
 
     def __init__(self) -> None:
         self.write_failure_count: int = 0
