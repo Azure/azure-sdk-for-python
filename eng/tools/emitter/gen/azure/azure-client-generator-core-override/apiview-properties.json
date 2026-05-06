@@ -10,5 +10,6 @@
         "specs.azure.clientgenerator.core.override.aio.operations.RequireOptionalParameterOperations.require_optional": "_Specs_.Azure.ClientGenerator.Core.Override.RequireOptionalParameter.requireOptional",
         "specs.azure.clientgenerator.core.override.operations.RemoveOptionalParameterOperations.remove_optional": "_Specs_.Azure.ClientGenerator.Core.Override.RemoveOptionalParameter.removeOptional",
         "specs.azure.clientgenerator.core.override.aio.operations.RemoveOptionalParameterOperations.remove_optional": "_Specs_.Azure.ClientGenerator.Core.Override.RemoveOptionalParameter.removeOptional"
-    }
+    },
+    "CrossLanguageVersion": "fc5c408205a7"
 }

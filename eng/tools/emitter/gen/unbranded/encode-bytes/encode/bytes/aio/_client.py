@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient, policies
@@ -14,6 +14,11 @@ from ..query.aio.operations import QueryOperations
 from ..requestbody.aio.operations import RequestBodyOperations
 from ..responsebody.aio.operations import ResponseBodyOperations
 from ._configuration import BytesClientConfiguration
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class BytesClient:  # pylint: disable=client-accepts-api-version-keyword

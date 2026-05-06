@@ -1,4 +1,4 @@
-# Operationtemplates Management client library for Python
+# Azure Resourcemanager Operationtemplates client library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -13,11 +13,7 @@ python -m pip install azure-resourcemanager-operationtemplates
 
 - Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Operationtemplates Management instance.
-
-### Use with AI tools
-
-AI coding tools such as VS Code and GitHub Copilot can help you write and debug code that uses this library. See [Using the Azure SDK for Python with AI tools](https://aka.ms/azsdk/python/ai) for available integrations.
+- An existing Azure Resourcemanager Operationtemplates instance.
 
 #### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
