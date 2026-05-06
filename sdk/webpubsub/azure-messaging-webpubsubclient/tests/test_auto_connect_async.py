@@ -7,7 +7,7 @@
 import asyncio
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testcase_async import WebpubsubClientTestAsync, TEST_RESULT_ASYNC, on_group_message
+from testcase_async import WebpubsubClientTestAsync, TEST_RESULT_ASYNC
 from testcase import WebpubsubClientPowerShellPreparer
 from azure.messaging.webpubsubclient.models import WebPubSubProtocolType
 
@@ -26,30 +26,16 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
             reconnect_retry_backoff_factor=0.1,
         )
         name = "test_auto_connect_async"
+        connected_event, message_event = await self.setup_events(client)
         async with client:
-            # wait for connection_id to be updated
-            for _ in range(30):
-                if client._connection_id is not None:
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
             conn_id0 = client._connection_id
-            group_name = name
-            await client.subscribe("group-message", on_group_message)
-            await client.join_group(group_name)
-            await client._ws.sock.close(
-                code=1001
-            )  # close the connection to trigger auto connect
+            await client.join_group(name)
+            connected_event.clear()  # reset for reconnection detection
+            await client._ws.sock.close(code=1001)  # close the connection to trigger auto connect
             # wait for reconnect
-            for _ in range(30):
-                if client.is_connected() and client._connection_id != conn_id0:
-                    break
-                await asyncio.sleep(1)
-            await client.send_to_group(group_name, name, "text")
-            # wait for on_group_message callback to fire
-            for _ in range(10):
-                if name in TEST_RESULT_ASYNC:
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
+            await self.retry_send_until_message(client, name, name, message_event, retries=10)
             conn_id1 = client._connection_id
         assert conn_id0 is not None
         assert conn_id1 is not None

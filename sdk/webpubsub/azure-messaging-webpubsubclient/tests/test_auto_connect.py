@@ -4,10 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT, on_group_message
+from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT
 from azure.messaging.webpubsubclient.models import WebPubSubProtocolType
 
 
@@ -26,28 +25,16 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
             reconnect_retry_backoff_factor=0.1,
         )
         name = "test_auto_connect"
+        connected_event, message_event = self.setup_events(client)
         with client:
-            # wait for connection_id to be updated
-            for _ in range(30):
-                if client._connection_id is not None:
-                    break
-                time.sleep(1)
+            assert connected_event.wait(timeout=30), "Timed out waiting for initial connection"
             conn_id0 = client._connection_id
-            group_name = name
-            client.subscribe("group-message", on_group_message)
-            client.join_group(group_name)
+            client.join_group(name)
+            connected_event.clear()  # reset for reconnection detection
             client._ws.sock.close(1001)  # close the connection to trigger auto connect
             # wait for reconnect
-            for _ in range(30):
-                if client.is_connected() and client._connection_id != conn_id0:
-                    break
-                time.sleep(1)
-            # retry send_to_group to allow async group rejoin to complete
-            for _ in range(10):
-                client.send_to_group(group_name, name, "text")
-                time.sleep(1)
-                if name in TEST_RESULT:
-                    break
+            assert connected_event.wait(timeout=30), "Timed out waiting for reconnection"
+            self.retry_send_until_message(client, name, name, message_event, retries=10)
             conn_id1 = client._connection_id
         assert conn_id0 is not None
         assert conn_id1 is not None

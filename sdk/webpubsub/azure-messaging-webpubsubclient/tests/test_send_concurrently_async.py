@@ -20,4 +20,8 @@ class TestWebpubsubClientSendConcurrentlyAsync(WebpubsubClientTestAsync):
         async with client:
             group_name = "test_send_concurrently_async"
             await client.join_group(group_name)
+            for _ in range(30):
+                if client.is_connected():
+                    break
+                await asyncio.sleep(1)
             await asyncio.gather(*[client.send_to_group(group_name, f"hello_{idx}", "text") for idx in range(100)])

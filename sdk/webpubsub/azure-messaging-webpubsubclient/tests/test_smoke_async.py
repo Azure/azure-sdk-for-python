@@ -11,7 +11,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import WebpubsubClientPowerShellPreparer
 from testcase_async import (
     WebpubsubClientTestAsync,
-    on_group_message,
     TEST_RESULT_ASYNC,
 )
 from azure.messaging.webpubsubclient.aio import WebPubSubClient as AsyncWebPubSubClient, WebPubSubClientCredential as AsyncWebPubSubClientCredential
@@ -146,24 +145,23 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
                 endpoint=webpubsubclient_endpoint,
                 auto_rejoin_groups=enable_auto_rejoin,
             )
-            group_name = test_group_name
-            await client.subscribe("group-message", on_group_message)
+            connected_event, message_event = await self.setup_events(client)
             async with client:
-                await client.join_group(group_name)
+                await client.join_group(test_group_name)
 
+            connected_event.clear()
+            message_event.clear()
             async with client:
-                # wait for connection and auto-rejoin to complete
-                for _ in range(30):
-                    if client.is_connected():
-                        break
-                    await asyncio.sleep(1)
-                await asyncio.sleep(2)  # extra time for auto-rejoin
-                await client.send_to_group(group_name, group_name, "text")
+                await asyncio.wait_for(connected_event.wait(), timeout=30)
+                if enable_auto_rejoin:
+                    await self.retry_send_until_message(client, test_group_name, test_group_name, message_event)
+                else:
+                    await client.send_to_group(test_group_name, test_group_name, "text")
                 # wait for on_group_message callback to fire
-                for _ in range(10):
-                    if assert_func(test_group_name):
-                        break
-                    await asyncio.sleep(1)
+                try:
+                    await asyncio.wait_for(message_event.wait(), timeout=10)
+                except asyncio.TimeoutError:
+                    pass
                 assert assert_func(test_group_name)
 
         await _test(

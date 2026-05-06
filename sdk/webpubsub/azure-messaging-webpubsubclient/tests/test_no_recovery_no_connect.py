@@ -64,6 +64,12 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
         with client:
             group_name = "test_disable_recovery_and_autoconnect_send_concurrently"
             client.join_group(group_name)
+            client._ws.sock.close(1001)  # close connection
+            for _ in range(30):
+                if not client.is_connected():
+                    break
+                time.sleep(1)
+            assert not client.is_connected()
 
             def send(idx):
                 client.send_to_group(group_name, f"hello_{idx}", "text")
@@ -73,10 +79,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
                 t = SafeThread(target=send, args=(i,))
                 t.start()
                 all_threads.append(t)
-                if i == 50:
-                    client._ws.sock.close(1001)  # close connection
 
-            for i, t in enumerate(all_threads):
-                if i > 50:
-                    with pytest.raises(Exception):
-                        t.join()
+            for t in all_threads:
+                with pytest.raises(SendMessageError):
+                    t.join()

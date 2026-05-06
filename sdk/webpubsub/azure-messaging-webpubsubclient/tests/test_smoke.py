@@ -12,7 +12,6 @@ from devtools_testutils import recorded_by_proxy
 from testcase import (
     WebpubsubClientTest,
     WebpubsubClientPowerShellPreparer,
-    on_group_message,
     TEST_RESULT,
 )
 from azure.messaging.webpubsubclient import WebPubSubClient, WebPubSubClientCredential
@@ -149,29 +148,20 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 auto_rejoin_groups=enable_auto_rejoin,
                 message_retry_total=10,
             )
-            group_name = test_group_name
-            client.subscribe("group-message", on_group_message)
+            connected_event, message_event = self.setup_events(client)
             with client:
-                client.join_group(group_name)
+                client.join_group(test_group_name)
 
+            connected_event.clear()
+            message_event.clear()
             with client:
-                # retry send until connection is ready (open() runs in background thread)
-                for attempt in range(30):
-                    try:
-                        if not client.is_connected():
-                            time.sleep(1)
-                            continue
-                        client.send_to_group(group_name, group_name, "text")
-                        break
-                    except SendMessageError:
-                        time.sleep(1)
+                assert connected_event.wait(timeout=30), "Timed out waiting for connection"
+                if enable_auto_rejoin:
+                    self.retry_send_until_message(client, test_group_name, test_group_name, message_event)
                 else:
-                    raise RuntimeError("Failed to send after 30 attempts")
+                    client.send_to_group(test_group_name, test_group_name, "text")
             # wait for on_group_message callback to fire
-            for _ in range(10):
-                if assert_func(test_group_name):
-                    break
-                time.sleep(1)
+            message_event.wait(timeout=10)
             assert assert_func(test_group_name)
 
         _test(

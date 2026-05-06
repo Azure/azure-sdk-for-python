@@ -28,8 +28,20 @@ import re
 import pytest
 from dotenv import load_dotenv
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
+from testcase import TEST_RESULT
+from testcase_async import TEST_RESULT_ASYNC
 
 load_dotenv()
+
+
+@pytest.fixture(autouse=True)
+def clear_test_results():
+    TEST_RESULT.clear()
+    TEST_RESULT_ASYNC.clear()
+    yield
+    TEST_RESULT.clear()
+    TEST_RESULT_ASYNC.clear()
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

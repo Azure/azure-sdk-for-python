@@ -8,7 +8,7 @@ import asyncio
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import WebpubsubClientPowerShellPreparer
-from testcase_async import WebpubsubClientTestAsync, TEST_RESULT_ASYNC, on_group_message
+from testcase_async import WebpubsubClientTestAsync, TEST_RESULT_ASYNC
 
 
 @pytest.mark.live_test_only
@@ -19,24 +19,14 @@ class TestWebpubsubClientRecoveryAsync(WebpubsubClientTestAsync):
     async def test_recovery_async(self, webpubsubclient_endpoint):
         client = await self.create_client(endpoint=webpubsubclient_endpoint, message_retry_total=10)
         name = "test_recovery_async"
+        connected_event, message_event = await self.setup_events(client)
         async with client:
-            # wait for connection_id to be updated
-            for _ in range(30):
-                if client._connection_id is not None:
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
             conn_id0 = client._connection_id
-            group_name = name
-            await client.subscribe("group-message", on_group_message)
-            await client.join_group(group_name)
+            await client.join_group(name)
             await client._ws.session.close()  # close connection to trigger recovery
-            await client.send_to_group(group_name, name, "text")
+            await self.retry_send_until_message(client, name, name, message_event)
             conn_id1 = client._connection_id
-            # wait for on_group_message callback to fire
-            for _ in range(10):
-                if name in TEST_RESULT_ASYNC:
-                    break
-                await asyncio.sleep(1)
 
         assert name in TEST_RESULT_ASYNC
         assert conn_id0 is not None

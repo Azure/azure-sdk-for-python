@@ -59,9 +59,15 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
         async with client:
             group_name = "test_disable_recovery_and_autoconnect_send_concurrently_async"
             await client.join_group(group_name)
-            count = 10
-            tasks = [client.send_to_group(group_name, "hello", "text") for _ in range(10)]
             await client._ws.session.close()  # close connection
+            # wait for client to detect disconnection
+            for _ in range(30):
+                if not client.is_connected():
+                    break
+                await asyncio.sleep(1)
+            assert not client.is_connected()
+
+            tasks = [client.send_to_group(group_name, "hello", "text") for _ in range(10)]
             for task in asyncio.as_completed(tasks):
                 with pytest.raises(SendMessageError):
                     await task
