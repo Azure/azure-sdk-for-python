@@ -1198,15 +1198,11 @@ def _drop_mcp_approval_messages(messages):
             and (
                 (
                     msg.get("role") == "assistant"
-                    and any(
-                        isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"]
-                    )
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"])
                 )
                 or (
                     msg.get("role") == "tool"
-                    and any(
-                        isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"]
-                    )
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"])
                 )
             )
         )
