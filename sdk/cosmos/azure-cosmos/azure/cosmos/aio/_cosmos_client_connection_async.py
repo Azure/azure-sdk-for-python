@@ -259,8 +259,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
 
         self._inference_service: Optional[_InferenceService] = None
-        if self.aad_credentials:
-            self._inference_service = _InferenceService(self)
 
         self._setup_kwargs: dict[str, Any] = kwargs
         self.session: Optional[_session.Session] = None
@@ -295,7 +293,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.__container_properties_cache[container_link] = {}
 
     def _get_inference_service(self) -> Optional[_InferenceService]:
-        """Get async inference service instance"""
+        """Get async inference service instance, lazily initializing on first access."""
+        if self._inference_service is None and self.aad_credentials:
+            try:
+                self._inference_service = _InferenceService(self)
+            except ValueError as e:
+                raise exceptions.CosmosHttpResponseError(
+                    message=f"Failed to initialize inference service: {e}",
+                    response=None,
+                    status_code=http_constants.StatusCodes.BAD_REQUEST
+                ) from e
         return self._inference_service
 
     @property
@@ -3490,12 +3497,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     status_code,
                 )
         else:
-            # Full refresh - create a new provider instance. This clears all cached routing maps.
-            self._routing_map_provider = SmartRoutingMapProvider(self)
+            # Full refresh - clear the shared routing map cache for this endpoint.
+            self._routing_map_provider.clear_cache()
             return
 
         # Fallback to full refresh when targeted refresh fails transiently.
-        self._routing_map_provider = SmartRoutingMapProvider(self)
+        self._routing_map_provider.clear_cache()
 
     async def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.

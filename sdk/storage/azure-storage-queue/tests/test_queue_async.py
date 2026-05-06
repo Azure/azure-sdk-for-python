@@ -4,12 +4,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-public-methods, locally-disabled, multiple-statements, too-many-lines
 
-import jwt
 import unittest
 from datetime import date, datetime, timedelta
 
+import jwt
 import pytest
+
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -17,7 +24,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
 )
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 from azure.storage.queue import (
     AccessPolicy,
     AccountSasPermissions,
@@ -28,15 +35,10 @@ from azure.storage.queue import (
 )
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
-from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "pyqueueasync"
 # ------------------------------------------------------------------------------
-# pylint: disable=locally-disabled, multiple-statements, fixme, too-many-lines
 
 
 class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
@@ -291,7 +293,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue_client = self._get_queue_reference(qsc)
 
-        created = await queue_client.create_queue()
+        await queue_client.create_queue()
         deleted = await queue_client.delete_queue()
 
         # Asserts
@@ -543,7 +545,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
-            if len(messages):
+            if messages:
                 break
         message = messages[0]
         # Asserts
@@ -872,7 +874,6 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
     @QueuePreparer()
     async def test_account_sas_raises_if_sas_already_in_uri(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
 
         with pytest.raises(ValueError):
             QueueServiceClient(
@@ -884,9 +885,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
     @QueuePreparer()
     async def test_token_credential(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
 
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         token_credential = self.get_credential(QueueServiceClient, is_async=True)
 
         # Action 1: make sure token works
@@ -1044,7 +1043,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             credential=token,
         )
         messages = []
-        async for m in queue_client.receive_messages():
+        async for m in service.receive_messages():
             messages.append(m)
         message = messages[0]
 
@@ -1073,7 +1072,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         identifiers = {"testid": access_policy}
 
         queue_client = await self._create_queue(qsc)
-        resp = await queue_client.set_queue_access_policy(identifiers)
+        await queue_client.set_queue_access_policy(identifiers)
 
         await queue_client.send_message("message1")
 
@@ -1131,8 +1130,6 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         # Act
         acl = await queue_client.get_queue_access_policy()
-        for signed_identifier in acl:
-            pass
 
         # Assert
         assert acl is not None
@@ -1165,7 +1162,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         queue_client = await self._create_queue(qsc)
 
         # Act
-        resp = await queue_client.set_queue_access_policy(signed_identifiers=dict())
+        resp = await queue_client.set_queue_access_policy(signed_identifiers={})
 
         # Assert
         assert resp is None
@@ -1275,7 +1272,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceNotFoundError):
-            await queue_client.set_queue_access_policy(signed_identifiers=dict())
+            await queue_client.set_queue_access_policy(signed_identifiers={})
 
     @QueuePreparer()
     @recorded_by_proxy_async
@@ -1364,7 +1361,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         ) as qsc:
             await qsc.get_service_properties()
             assert transport.session is not None
-            async with qsc.get_queue_client(queue_name) as qc:
+            async with qsc.get_queue_client(queue_name):
                 assert transport.session is not None
             await qsc.get_service_properties()
             assert transport.session is not None
@@ -1406,7 +1403,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"),
             credential=token_credential,
-            audience=f"https://badaudience.queue.core.windows.net",
+            audience="https://badaudience.queue.core.windows.net",
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
@@ -1461,7 +1458,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "queue"),
             queue_name,
             credential=token_credential,
-            audience=f"https://badaudience.queue.core.windows.net",
+            audience="https://badaudience.queue.core.windows.net",
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
