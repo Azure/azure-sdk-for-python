@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-07-01-preview",
+  "apiVersions": {
+    "Microsoft.SecurityInsights": "2025-07-01-preview"
+  },
+  "commit": "7120d6832ca8c7295a908f616945c35f7a60bd19",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/securityinsights/resource-manager/Microsoft.SecurityInsights/SecurityInsights",
+  "emitterVersion": "0.61.3"
+}
