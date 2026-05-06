@@ -134,7 +134,7 @@ def _make_blocking_sync_response_handler(started_gate: EventGate, release_gate: 
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_response_handler)
+    app.response_handler(handler or _noop_response_handler)
     return TestClient(app)
 
 
@@ -183,6 +183,7 @@ def _assert_error(
     expected_status: int,
     expected_type: str,
     expected_message: str | None = None,
+    expected_code: str | None = None,
 ) -> None:
     assert response.status_code == expected_status
     payload = response.json()
@@ -190,6 +191,10 @@ def _assert_error(
     assert payload["error"].get("type") == expected_type
     if expected_message is not None:
         assert payload["error"].get("message") == expected_message
+    if expected_code is not None:
+        assert payload["error"].get("code") == expected_code, (
+            f"Expected error.code={expected_code!r}, got {payload['error'].get('code')!r}"
+        )
 
 
 def test_cancel__cancels_background_response_and_clears_output() -> None:
@@ -237,6 +242,7 @@ def test_cancel__returns_400_for_completed_background_response() -> None:
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a completed response.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -291,7 +297,7 @@ async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> N
 
     app = ResponsesAgentServerHost()
 
-    @app.create_handler
+    @app.response_handler
     def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -362,7 +368,7 @@ async def test_cancel__background_stream_disconnect_does_not_cancel_handler() ->
 
     app = ResponsesAgentServerHost()
 
-    @app.create_handler
+    @app.response_handler
     def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -420,6 +426,8 @@ def test_cancel__returns_400_for_incomplete_background_response() -> None:
         cancel_response,
         expected_status=400,
         expected_type="invalid_request_error",
+        expected_message="Cannot cancel a response in terminal state.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -444,7 +452,11 @@ def test_cancel__returns_400_for_synchronous_response() -> None:
         cancel_response,
         expected_status=400,
         expected_type="invalid_request_error",
+        # After eager eviction the in-memory record is gone.  The provider
+        # fallback loads the persisted response and checks background first (B1),
+        # returning the correct "synchronous" message.
         expected_message="Cannot cancel a synchronous response.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -483,6 +495,7 @@ def test_cancel__returns_404_for_in_flight_synchronous_response() -> None:
         cancel_response,
         expected_status=404,
         expected_type="invalid_request_error",
+        expected_code="invalid_request_error",
     )
 
     release_gate.set()
@@ -497,13 +510,17 @@ def test_cancel__returns_404_for_in_flight_synchronous_response() -> None:
 
 
 def test_cancel__returns_404_for_unknown_response_id() -> None:
-    client = _build_client()
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-    cancel_response = client.post("/responses/resp_does_not_exist/cancel")
+    client = _build_client()
+    unknown_id = IdGenerator.new_response_id()
+
+    cancel_response = client.post(f"/responses/{unknown_id}/cancel")
     _assert_error(
         cancel_response,
         expected_status=404,
         expected_type="invalid_request_error",
+        expected_code="invalid_request_error",
     )
 
 
@@ -600,14 +617,14 @@ def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> 
 
     # First app instance: create and complete a response
     app1 = ResponsesAgentServerHost(store=provider)
-    app1.create_handler(_noop_response_handler)
+    app1.response_handler(_noop_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "completed")
 
     # Second app instance (simulating restart): fresh runtime state, same provider
     app2 = ResponsesAgentServerHost(store=provider)
-    app2.create_handler(_noop_response_handler)
+    app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
     cancel_response = client2.post(f"/responses/{response_id}/cancel")
@@ -616,6 +633,7 @@ def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> 
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a completed response.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -627,14 +645,14 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
 
     # First app instance: create a response that fails
     app1 = ResponsesAgentServerHost(store=provider)
-    app1.create_handler(_raising_response_handler)
+    app1.response_handler(_raising_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "failed")
 
     # Second app instance (simulating restart)
     app2 = ResponsesAgentServerHost(store=provider)
-    app2.create_handler(_noop_response_handler)
+    app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
     cancel_response = client2.post(f"/responses/{response_id}/cancel")
@@ -643,6 +661,7 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a failed response.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -675,7 +694,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
         return _events()
 
     app = ResponsesAgentServerHost(store=provider)
-    app.create_handler(_uncooperative_handler)
+    app.response_handler(_uncooperative_handler)
     client = TestClient(app)
 
     create = client.post(
