@@ -87,7 +87,7 @@ def _resolve_copilot_node_id(issue, github_instance) -> Optional[str]:
 def is_auto_fix_eligible(
     issue_labels: list[str],
 ) -> bool:
-    """Return True when the package/check combination qualifies for auto-fix."""
+    """Return True when the issue is eligible for auto-fix."""
     if LABEL_AUTO_FIX_DISABLED in issue_labels:
         return False
     return True
@@ -226,9 +226,7 @@ def assign_copilot(
 ) -> bool:
     """Attempt to assign the Copilot coding agent to the issue.
 
-    Uses the GraphQL ``addAssigneesToAssignable`` mutation because the
-    Copilot bot (``copilot-swe-agent``) is not assignable via the REST
-    assignees endpoint.
+    Uses the GraphQL ``addAssigneesToAssignable`` mutation.
 
     When *force_reassign* is True and Copilot is already assigned, the
     agent is first unassigned then reassigned so that a new Copilot
