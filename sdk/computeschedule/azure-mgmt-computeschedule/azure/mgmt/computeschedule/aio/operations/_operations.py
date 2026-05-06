@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -61,6 +61,7 @@ from ...operations._operations import (
     build_scheduled_actions_trigger_manual_occurrence_request,
     build_scheduled_actions_update_request,
     build_scheduled_actions_virtual_machines_cancel_operations_request,
+    build_scheduled_actions_virtual_machines_execute_create_flex_request,
     build_scheduled_actions_virtual_machines_execute_create_request,
     build_scheduled_actions_virtual_machines_execute_deallocate_request,
     build_scheduled_actions_virtual_machines_execute_delete_request,
@@ -75,8 +76,9 @@ from ...operations._operations import (
 from .._configuration import ComputeScheduleMgmtClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 
 class Operations:
@@ -156,7 +158,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -172,7 +177,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -201,7 +209,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_submit_deallocate(
         self,
         locationparameter: str,
-        request_body: _models.SubmitDeallocateRequest,
+        request_body: _models.SubmitDeallocateContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -212,7 +220,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -266,7 +274,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_submit_deallocate(
         self,
         locationparameter: str,
-        request_body: Union[_models.SubmitDeallocateRequest, JSON, IO[bytes]],
+        request_body: Union[_models.SubmitDeallocateContent, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesSubmitDeallocate: Schedule deallocate operation for a batch of virtual machines
@@ -274,9 +282,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: SubmitDeallocateRequest,
+        :param request_body: The request body. Is one of the following types: SubmitDeallocateContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateRequest or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateContent or JSON or
          IO[bytes]
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
          compatible with MutableMapping
@@ -318,6 +326,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -332,11 +341,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeallocateResourceOperationResponse, response.json())
 
@@ -349,7 +361,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_submit_hibernate(
         self,
         locationparameter: str,
-        request_body: _models.SubmitHibernateRequest,
+        request_body: _models.SubmitHibernateContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -360,7 +372,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -414,7 +426,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_submit_hibernate(
         self,
         locationparameter: str,
-        request_body: Union[_models.SubmitHibernateRequest, JSON, IO[bytes]],
+        request_body: Union[_models.SubmitHibernateContent, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesSubmitHibernate: Schedule hibernate operation for a batch of virtual machines at
@@ -422,9 +434,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: SubmitHibernateRequest,
+        :param request_body: The request body. Is one of the following types: SubmitHibernateContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateRequest or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateContent or JSON or
          IO[bytes]
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
          compatible with MutableMapping
@@ -466,6 +478,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -480,11 +493,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.HibernateResourceOperationResponse, response.json())
 
@@ -497,7 +513,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_submit_start(
         self,
         locationparameter: str,
-        request_body: _models.SubmitStartRequest,
+        request_body: _models.SubmitStartContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -508,7 +524,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -560,16 +576,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def virtual_machines_submit_start(
-        self, locationparameter: str, request_body: Union[_models.SubmitStartRequest, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.SubmitStartContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesSubmitStart: Schedule start operation for a batch of virtual machines at
         datetime in future.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: SubmitStartRequest, JSON,
+        :param request_body: The request body. Is one of the following types: SubmitStartContent, JSON,
          IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartRequest or JSON or IO[bytes]
+        :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartContent or JSON or IO[bytes]
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.StartResourceOperationResponse
@@ -610,6 +626,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -624,11 +641,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StartResourceOperationResponse, response.json())
 
@@ -641,7 +661,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_deallocate(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteDeallocateRequest,
+        request_body: _models.ExecuteDeallocateContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -652,7 +672,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -706,7 +726,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_deallocate(
         self,
         locationparameter: str,
-        request_body: Union[_models.ExecuteDeallocateRequest, JSON, IO[bytes]],
+        request_body: Union[_models.ExecuteDeallocateContent, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesExecuteDeallocate: Execute deallocate operation for a batch of virtual machines,
@@ -714,9 +734,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteDeallocateRequest,
+        :param request_body: The request body. Is one of the following types: ExecuteDeallocateContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateRequest or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateContent or JSON or
          IO[bytes]
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
          compatible with MutableMapping
@@ -758,6 +778,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -772,11 +793,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeallocateResourceOperationResponse, response.json())
 
@@ -789,7 +813,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_hibernate(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteHibernateRequest,
+        request_body: _models.ExecuteHibernateContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -800,7 +824,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -854,7 +878,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_hibernate(
         self,
         locationparameter: str,
-        request_body: Union[_models.ExecuteHibernateRequest, JSON, IO[bytes]],
+        request_body: Union[_models.ExecuteHibernateContent, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesExecuteHibernate: Execute hibernate operation for a batch of virtual machines,
@@ -862,9 +886,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteHibernateRequest,
+        :param request_body: The request body. Is one of the following types: ExecuteHibernateContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateRequest or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateContent or JSON or
          IO[bytes]
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
          compatible with MutableMapping
@@ -906,6 +930,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -920,11 +945,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.HibernateResourceOperationResponse, response.json())
 
@@ -937,7 +965,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_start(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteStartRequest,
+        request_body: _models.ExecuteStartContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -948,7 +976,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1000,16 +1028,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def virtual_machines_execute_start(
-        self, locationparameter: str, request_body: Union[_models.ExecuteStartRequest, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.ExecuteStartContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesExecuteStart: Execute start operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteStartRequest,
+        :param request_body: The request body. Is one of the following types: ExecuteStartContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartRequest or JSON or IO[bytes]
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartContent or JSON or IO[bytes]
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.StartResourceOperationResponse
@@ -1050,6 +1078,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1064,13 +1093,171 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.StartResourceOperationResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def virtual_machines_execute_create_flex(
+        self,
+        locationparameter: str,
+        body: _models.ExecuteCreateFlexContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Required.
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexContent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def virtual_machines_execute_create_flex(
+        self, locationparameter: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def virtual_machines_execute_create_flex(
+        self, locationparameter: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
+        },
+        api_versions_list=["2026-03-01-preview", "2026-04-15-preview"],
+    )
+    async def virtual_machines_execute_create_flex(
+        self, locationparameter: str, body: Union[_models.ExecuteCreateFlexContent, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.CreateFlexResourceOperationResponse:
+        """VirtualMachinesExecuteCreateFlex: Execute create operation for a batch of virtual machines with
+        flex properties, this operation is triggered as soon as Computeschedule receives it.
+
+        :param locationparameter: The location name. Required.
+        :type locationparameter: str
+        :param body: The request body. Is one of the following types: ExecuteCreateFlexContent, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.mgmt.computeschedule.models.ExecuteCreateFlexContent or JSON or IO[bytes]
+        :return: CreateFlexResourceOperationResponse. The CreateFlexResourceOperationResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.computeschedule.models.CreateFlexResourceOperationResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CreateFlexResourceOperationResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_scheduled_actions_virtual_machines_execute_create_flex_request(
+            locationparameter=locationparameter,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CreateFlexResourceOperationResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1081,18 +1268,18 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_create(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteCreateRequest,
+        request_body: _models.ExecuteCreateContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1106,8 +1293,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_create(
         self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -1126,8 +1313,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_create(
         self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -1148,19 +1335,25 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
         },
-        api_versions_list=["2025-05-01", "2025-04-15-preview"],
+        api_versions_list=[
+            "2025-05-01",
+            "2025-04-15-preview",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-04-15-preview",
+        ],
     )
     async def virtual_machines_execute_create(
-        self, locationparameter: str, request_body: Union[_models.ExecuteCreateRequest, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.ExecuteCreateContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
-        """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteCreate: Execute create operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteCreateRequest,
+        :param request_body: The request body. Is one of the following types: ExecuteCreateContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateRequest or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateContent or JSON or
          IO[bytes]
         :return: CreateResourceOperationResponse. The CreateResourceOperationResponse is compatible
          with MutableMapping
@@ -1202,6 +1395,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1216,11 +1410,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CreateResourceOperationResponse, response.json())
 
@@ -1233,18 +1430,18 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_delete(
         self,
         locationparameter: str,
-        request_body: _models.ExecuteDeleteRequest,
+        request_body: _models.ExecuteDeleteContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1258,8 +1455,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_delete(
         self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -1278,8 +1475,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_execute_delete(
         self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
@@ -1300,19 +1497,25 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         params_added_on={
             "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
         },
-        api_versions_list=["2025-05-01", "2025-04-15-preview"],
+        api_versions_list=[
+            "2025-05-01",
+            "2025-04-15-preview",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+            "2026-04-15-preview",
+        ],
     )
     async def virtual_machines_execute_delete(
-        self, locationparameter: str, request_body: Union[_models.ExecuteDeleteRequest, JSON, IO[bytes]], **kwargs: Any
+        self, locationparameter: str, request_body: Union[_models.ExecuteDeleteContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
-        """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
-        operation is triggered as soon as Computeschedule receives it.
+        """[PRIVATE PREVIEW]: VirtualMachinesExecuteDelete: Execute delete operation for a batch of
+        virtual machines, this operation is triggered as soon as Computeschedule receives it.
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: ExecuteDeleteRequest,
+        :param request_body: The request body. Is one of the following types: ExecuteDeleteContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteRequest or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteContent or JSON or
          IO[bytes]
         :return: DeleteResourceOperationResponse. The DeleteResourceOperationResponse is compatible
          with MutableMapping
@@ -1354,6 +1557,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1368,11 +1572,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeleteResourceOperationResponse, response.json())
 
@@ -1385,7 +1592,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_get_operation_status(
         self,
         locationparameter: str,
-        request_body: _models.GetOperationStatusRequest,
+        request_body: _models.GetOperationStatusContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1396,7 +1603,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1450,7 +1657,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_get_operation_status(
         self,
         locationparameter: str,
-        request_body: Union[_models.GetOperationStatusRequest, JSON, IO[bytes]],
+        request_body: Union[_models.GetOperationStatusContent, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
         """VirtualMachinesGetOperationStatus: Polling endpoint to read status of operations performed on
@@ -1459,8 +1666,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Is one of the following types:
-         GetOperationStatusRequest, JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusRequest or JSON or
+         GetOperationStatusContent, JSON, IO[bytes] Required.
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusContent or JSON or
          IO[bytes]
         :return: GetOperationStatusResponse. The GetOperationStatusResponse is compatible with
          MutableMapping
@@ -1502,6 +1709,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1516,11 +1724,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GetOperationStatusResponse, response.json())
 
@@ -1533,7 +1744,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_cancel_operations(
         self,
         locationparameter: str,
-        request_body: _models.CancelOperationsRequest,
+        request_body: _models.CancelOperationsContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1544,7 +1755,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1598,7 +1809,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_cancel_operations(
         self,
         locationparameter: str,
-        request_body: Union[_models.CancelOperationsRequest, JSON, IO[bytes]],
+        request_body: Union[_models.CancelOperationsContent, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
         """VirtualMachinesCancelOperations: Cancel a previously submitted (start/deallocate/hibernate)
@@ -1606,9 +1817,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         :param locationparameter: The location name. Required.
         :type locationparameter: str
-        :param request_body: The request body. Is one of the following types: CancelOperationsRequest,
+        :param request_body: The request body. Is one of the following types: CancelOperationsContent,
          JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsRequest or JSON or
+        :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsContent or JSON or
          IO[bytes]
         :return: CancelOperationsResponse. The CancelOperationsResponse is compatible with
          MutableMapping
@@ -1650,6 +1861,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1664,11 +1876,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CancelOperationsResponse, response.json())
 
@@ -1681,7 +1896,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_get_operation_errors(
         self,
         locationparameter: str,
-        request_body: _models.GetOperationErrorsRequest,
+        request_body: _models.GetOperationErrorsContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1692,7 +1907,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsRequest
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1746,7 +1961,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     async def virtual_machines_get_operation_errors(
         self,
         locationparameter: str,
-        request_body: Union[_models.GetOperationErrorsRequest, JSON, IO[bytes]],
+        request_body: Union[_models.GetOperationErrorsContent, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.GetOperationErrorsResponse:
         """VirtualMachinesGetOperationErrors: Get error details on operation errors (like transient errors
@@ -1755,8 +1970,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param locationparameter: The location name. Required.
         :type locationparameter: str
         :param request_body: The request body. Is one of the following types:
-         GetOperationErrorsRequest, JSON, IO[bytes] Required.
-        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsRequest or JSON or
+         GetOperationErrorsContent, JSON, IO[bytes] Required.
+        :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsContent or JSON or
          IO[bytes]
         :return: GetOperationErrorsResponse. The GetOperationErrorsResponse is compatible with
          MutableMapping
@@ -1798,6 +2013,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1812,11 +2028,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GetOperationErrorsResponse, response.json())
 
@@ -1837,7 +2056,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
         """Get a ScheduledAction.
@@ -1877,6 +2096,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1891,11 +2111,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScheduledAction, response.json())
 
@@ -1916,7 +2139,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -1961,6 +2184,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1974,7 +2198,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1984,7 +2211,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2088,7 +2315,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -2258,7 +2485,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def update(
         self,
@@ -2317,6 +2544,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2331,11 +2559,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScheduledAction, response.json())
 
@@ -2347,15 +2578,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -2386,6 +2611,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2399,7 +2625,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2407,7 +2636,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2418,15 +2647,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -2490,7 +2713,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -2559,7 +2782,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledAction], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledAction],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2575,7 +2801,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2586,7 +2815,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledAction"]:
         """List ScheduledAction resources by subscription ID.
@@ -2649,7 +2878,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledAction], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledAction],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2665,7 +2897,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2684,7 +2919,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -2756,7 +2991,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledActionResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledActionResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2772,7 +3010,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2876,7 +3117,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def attach_resources(
         self,
@@ -2936,6 +3177,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2950,11 +3192,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
@@ -3060,7 +3305,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def detach_resources(
         self,
@@ -3120,6 +3365,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3134,11 +3380,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
@@ -3244,7 +3493,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def patch_resources(
         self,
@@ -3304,6 +3553,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3318,11 +3568,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
@@ -3335,15 +3588,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def disable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> None:
         """A synchronous resource action.
@@ -3392,7 +3639,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3402,15 +3652,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
+            "2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "scheduled_action_name"]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def enable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> None:
         """A synchronous resource action.
@@ -3459,7 +3703,10 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3562,7 +3809,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def cancel_next_occurrence(
         self,
@@ -3622,6 +3869,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3636,11 +3884,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
@@ -3661,7 +3912,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def trigger_manual_occurrence(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -3703,6 +3954,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3717,11 +3969,14 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Occurrence, response.json())
 
@@ -3752,7 +4007,7 @@ class ScheduledActionExtensionOperations:
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_vms(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledActionResources"]:
         """List ScheduledActionResources resources by parent.
@@ -3818,7 +4073,10 @@ class ScheduledActionExtensionOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduledActionResources], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduledActionResources],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3834,7 +4092,10 @@ class ScheduledActionExtensionOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3872,7 +4133,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def get(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -3917,6 +4178,7 @@ class OccurrencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3931,11 +4193,14 @@ class OccurrencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Occurrence, response.json())
 
@@ -3956,7 +4221,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_by_scheduled_action(
         self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
@@ -4027,7 +4292,10 @@ class OccurrencesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Occurrence], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Occurrence],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4043,7 +4311,10 @@ class OccurrencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4063,7 +4334,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_resources(
         self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
@@ -4138,7 +4409,10 @@ class OccurrencesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OccurrenceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OccurrenceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4154,7 +4428,10 @@ class OccurrencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4268,7 +4545,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def cancel(
         self,
@@ -4332,6 +4609,7 @@ class OccurrencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4346,11 +4624,14 @@ class OccurrencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RecurringActionsResourceOperationResult, response.json())
 
@@ -4372,7 +4653,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def _delay_initial(
         self,
@@ -4419,6 +4700,7 @@ class OccurrencesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4432,7 +4714,10 @@ class OccurrencesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4440,7 +4725,7 @@ class OccurrencesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4557,7 +4842,7 @@ class OccurrencesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     async def begin_delay(
         self,
@@ -4664,7 +4949,7 @@ class OccurrenceExtensionOperations:
     @api_version_validation(
         method_added_on="2025-04-15-preview",
         params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
+        api_versions_list=["2025-04-15-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-04-15-preview"],
     )
     def list_occurrence_by_vms(
         self, resource_uri: str, **kwargs: Any
@@ -4732,7 +5017,10 @@ class OccurrenceExtensionOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OccurrenceExtensionResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OccurrenceExtensionResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4748,7 +5036,10 @@ class OccurrenceExtensionOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
