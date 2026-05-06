@@ -960,7 +960,7 @@ class TestLocalFileStorage(unittest.TestCase):
             makedirs_calls = []
 
             def mock_fchmod(fd, mode):  # cspell:disable-line
-                fchmod_calls.append((fd, oct(mode)))
+                fchmod_calls.append((fd, oct(mode)))  # cspell:disable-line
 
             def mock_makedirs(path, mode=0o777, exist_ok=False):
                 makedirs_calls.append((path, oct(mode), exist_ok))
@@ -972,7 +972,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch(f"{STORAGE_MODULE}.os.open", return_value=99):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
-                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True, side_effect=mock_fchmod):
+                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True, side_effect=mock_fchmod):  # cspell:disable-line
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
                                         stor = LocalFileStorage(storage_abs_path)
@@ -987,8 +987,8 @@ class TestLocalFileStorage(unittest.TestCase):
 
                                         self.assertEqual(
                                             [(99, "0o700")],
-                                            fchmod_calls,
-                                            f"Unexpected fchmod calls: {fchmod_calls}",
+                                            fchmod_calls,  # cspell:disable-line
+                                            f"Unexpected fchmod calls: {fchmod_calls}",  # cspell:disable-line
                                         )
 
                                 stor.close()
