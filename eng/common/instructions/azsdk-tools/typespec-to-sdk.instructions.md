@@ -71,7 +71,7 @@ Follow the steps in #file:.github/skills/azsdk-common-generate-sdk-locally/SKILL
 3. Prompt the user to provide the API spec pull request link if not already available in the current context.
 4. If unsure, check if a release plan already exists for API spec pull request.
 5. Prompt user to find the service id and product id in service tree `aka.ms/st` and provide them. Stress the importance of correct service id and product id for proper release plan creation.
-6. If a new release plan is needed, refer to #file:.github/skills/azsdk-common-prepare-release-plan/SKILL.md to create a release plan using the spec pull request. API spec pull request is required to create a release plan.
+6. If a new release plan is needed, refer to #file:.github/skills/azsdk-common-prepare-release-plan/SKILL.md to create a release plan using the spec pull request or TypeSpec project path.
 7. Prompt user to change spec PR to ready for review: "Please change the spec pull request to ready for review status"
 8. Suggest users to follow the instructions on spec PR to get approval from API reviewers and merge the spec PR.
 9. Link SDK pull requests to the release plan.
