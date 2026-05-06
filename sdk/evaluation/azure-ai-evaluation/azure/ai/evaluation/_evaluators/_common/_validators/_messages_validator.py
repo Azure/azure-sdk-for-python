@@ -88,32 +88,6 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
                 )
-            if messages[-1]["role"] != MessageRole.ASSISTANT:
-                raise EvaluationException(
-                    message=(
-                        f"The last message must have role 'assistant', " f"but found role '{messages[-1]['role']}'."
-                    ),
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=self.error_target,
-                )
-            # The final assistant message must contain text
-            last_content = messages[-1].get("content", "")
-            if isinstance(last_content, list):
-                has_text = any(
-                    isinstance(c, dict) and c.get("type") in ("text",) or isinstance(c, str) for c in last_content
-                )
-                if not has_text:
-                    raise EvaluationException(
-                        message=(
-                            "The last assistant message must contain text content, "
-                            "not only tool calls. The conversation appears to be "
-                            "mid-execution — provide the agent's final text response."
-                        ),
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=self.error_target,
-                    )
 
             tool_definitions = eval_input.get("tool_definitions")
             tool_definitions_error = self._validate_tool_definitions(tool_definitions)

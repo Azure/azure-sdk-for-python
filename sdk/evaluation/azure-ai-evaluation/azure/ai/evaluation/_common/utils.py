@@ -1128,7 +1128,7 @@ def _resolve_evaluation_level(evaluation_level, error_target):
     from .constants import EvaluationLevel
 
     valid = [level.value for level in EvaluationLevel]
-    if evaluation_level is None:
+    if evaluation_level is None or evaluation_level == "":
         return None
     if isinstance(evaluation_level, EvaluationLevel):
         return evaluation_level
@@ -1148,6 +1148,119 @@ def _resolve_evaluation_level(evaluation_level, error_target):
         category=ErrorCategory.INVALID_VALUE,
         target=error_target,
     )
+
+
+def _is_intermediate_response(response):
+    """Check if response is intermediate (last content item is function_call or mcp_approval_request).
+
+    An intermediate response is one where the assistant's last message ends with a
+    function_call or mcp_approval_request content type, meaning the conversation is
+    still in progress and not yet ready for evaluation.
+
+    :param response: The response messages.
+    :type response: List[dict]
+    :return: True if the response is intermediate, False otherwise.
+    :rtype: bool
+    """
+    if isinstance(response, list) and len(response) > 0:
+        last_msg = response[-1]
+        if isinstance(last_msg, dict) and last_msg.get("role") == "assistant":
+            content = last_msg.get("content", [])
+            if isinstance(content, list) and len(content) > 0:
+                last_content = content[-1]
+                if isinstance(last_content, dict) and last_content.get("type") in (
+                    "function_call",
+                    "mcp_approval_request",
+                ):
+                    return True
+    return False
+
+
+def _drop_mcp_approval_messages(messages):
+    """Remove MCP approval request/response messages from a conversation.
+
+    MCP approval messages are protocol-level messages that should not be included
+    in the evaluation input.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: The filtered messages without MCP approval request/response messages.
+    :rtype: List[dict]
+    """
+    if not isinstance(messages, list):
+        return messages
+    return [
+        msg
+        for msg in messages
+        if not (
+            isinstance(msg, dict)
+            and isinstance(msg.get("content"), list)
+            and (
+                (
+                    msg.get("role") == "assistant"
+                    and any(
+                        isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"]
+                    )
+                )
+                or (
+                    msg.get("role") == "tool"
+                    and any(
+                        isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"]
+                    )
+                )
+            )
+        )
+    ]
+
+
+def _normalize_function_call_types(messages):
+    """Normalize function_call/function_call_output/openapi_call/openapi_call_output types to tool_call/tool_result.
+
+    This ensures a consistent content type vocabulary for downstream evaluators
+    regardless of how the original messages were authored.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: The messages with normalized content types.
+    :rtype: List[dict]
+    """
+    if not isinstance(messages, list):
+        return messages
+    for msg in messages:
+        if not isinstance(msg, dict) or not isinstance(msg.get("content"), list):
+            continue
+        for item in msg["content"]:
+            if not isinstance(item, dict):
+                continue
+            t = item.get("type")
+            if t == "function_call":
+                item["type"] = "tool_call"
+            elif t == "function_call_output":
+                item["type"] = "tool_result"
+                if "function_call_output" in item:
+                    item["tool_result"] = item.pop("function_call_output")
+            elif t == "openapi_call":
+                item["type"] = "tool_call"
+            elif t == "openapi_call_output":
+                item["type"] = "tool_result"
+                if "openapi_call_output" in item:
+                    item["tool_result"] = item.pop("openapi_call_output")
+    return messages
+
+
+def _preprocess_messages(messages):
+    """Preprocess conversation messages by dropping MCP approval messages and normalizing function call types.
+
+    This should be called before passing messages to serialization or evaluation functions.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: The preprocessed messages.
+    :rtype: List[dict]
+    """
+    messages = _drop_mcp_approval_messages(messages)
+    messages = _normalize_function_call_types(messages)
+    return messages
 
 
 # endregion Multi-turn utilities
