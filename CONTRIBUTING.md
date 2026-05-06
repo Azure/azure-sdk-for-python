@@ -101,7 +101,7 @@ We maintain an [additional document](https://github.com/Azure/azure-sdk-for-pyth
 - [Install and test checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#install-and-test-checks) (whl, sdist, mindependency, latestdependency, devtest, regression)
 - [PR validation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation) (subset that runs on every pull request)
 - [Nightly and release checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#nightly-and-release) (full check set including latestdependency, whl_no_aio, import_all)
-- [Weekly analyze checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#weekly-analyze-checks) (ruff, next-generation tool versions)
+- [Weekly analyze checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#weekly-analyze-checks) (next-generation tool versions)
 - [pyproject.toml configuration](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml) (enabling/disabling checks per package, analyze_python_version override)
 - [Skipping checks at queue time](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#skipping-checks-at-queue-time)
 
