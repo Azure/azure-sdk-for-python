@@ -44,6 +44,9 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _build_internal_log_attributes,
     _extract_testing_criteria_metadata,
     _process_criteria_metrics,
+    _create_result_object,
+    _calculate_aoai_evaluation_summary,
+    _get_metric_from_criteria,
     _log_events_to_app_insights,
     _adjust_for_inverse_metric,
     _is_inverse_metric,
@@ -1448,6 +1451,174 @@ class TestEvaluate:
             "str",
         )
 
+    def test_convert_results_skipped_evaluator(self):
+        """Test that skipped evaluator status propagates to result_counts and per_testing_criteria."""
+        import logging
+
+        logger = logging.getLogger("test_logger")
+
+        # A row where one evaluator completed and another was skipped
+        skipped_results = {
+            "metrics": {},
+            "rows": [
+                {
+                    "inputs.query": "test query",
+                    "outputs.coherence.coherence_score": 4.0,
+                    "outputs.coherence.coherence_status": "completed",
+                    "outputs.violence.violence_score": math.nan,
+                    "outputs.violence.violence_status": "skipped",
+                }
+            ],
+            "studio_url": None,
+        }
+
+        _convert_results_to_aoai_evaluation_results(
+            results=skipped_results,
+            logger=logger,
+            eval_run_id="run1",
+            eval_id="eval1",
+            evaluators={
+                "coherence": lambda **kwargs: {"score": 1},
+                "violence": lambda **kwargs: {"score": 1},
+            },
+            eval_meta_data={
+                "testing_criteria": [
+                    {"name": "coherence", "type": "quality", "metrics": ["score"]},
+                    {"name": "violence", "type": "azure_ai_evaluator", "metrics": ["score"]},
+                ]
+            },
+        )
+
+        summary = skipped_results["_evaluation_summary"]
+
+        # Row-level: coherence is score-only (no passed), violence is skipped
+        # skipped_count > 0 fires before else clause → row classified as skipped
+        assert summary["result_counts"]["total"] == 1
+        assert summary["result_counts"]["skipped"] == 1
+
+        # Per-criteria level: violence should show 1 skipped
+        per_criteria = {c["testing_criteria"]: c for c in summary["per_testing_criteria_results"]}
+        assert per_criteria["violence"]["skipped"] == 1
+        assert per_criteria["violence"]["passed"] == 0
+
+        # Verify the skipped evaluator result item has status="skipped"
+        row = skipped_results["_evaluation_results_list"][0]
+        violence_result = [r for r in row["results"] if r["metric"] == "violence"][0]
+        assert violence_result["status"] == "skipped"
+
+    def test_convert_results_skipped_with_label_nulls_passed(self):
+        """When a _result key eagerly derives passed=False but _status is skipped,
+        the final result must have passed=None — skipped means 'not evaluated'."""
+        import logging
+
+        logger = logging.getLogger("test_logger")
+
+        # Simulate an evaluator that returns both _result (which derives passed)
+        # and _status="skipped" — e.g. tool_call_accuracy with no tool calls
+        results = {
+            "metrics": {},
+            "rows": [
+                {
+                    "inputs.query": "test query",
+                    "outputs.tool_call_accuracy.tool_call_accuracy_result": None,
+                    "outputs.tool_call_accuracy.tool_call_accuracy_status": "skipped",
+                }
+            ],
+            "studio_url": None,
+        }
+
+        _convert_results_to_aoai_evaluation_results(
+            results=results,
+            logger=logger,
+            eval_run_id="run1",
+            eval_id="eval1",
+            evaluators={
+                "tool_call_accuracy": lambda **kwargs: {"score": 1},
+            },
+            eval_meta_data={
+                "testing_criteria": [
+                    {
+                        "name": "tool_call_accuracy",
+                        "type": "azure_ai_evaluator",
+                        "metrics": ["tool_call_accuracy"],
+                    },
+                ]
+            },
+        )
+
+        row = results["_evaluation_results_list"][0]
+        tca_result = [r for r in row["results"] if r["name"] == "tool_call_accuracy"][0]
+        assert tca_result["status"] == "skipped"
+        # The _result branch would have derived passed=False from label=None,
+        # but the skipped status fix must null it out
+        assert tca_result["passed"] is None
+
+    def test_convert_results_mixed_passed_and_skipped(self):
+        """Integration: a row with one passed evaluator and one skipped evaluator.
+        Verifies per-result status propagation and that skipped doesn't block the pass."""
+        import logging
+
+        logger = logging.getLogger("test_logger")
+
+        results = {
+            "metrics": {},
+            "rows": [
+                {
+                    "inputs.query": "test query",
+                    "outputs.fluency.fluency_score": 4.0,
+                    "outputs.fluency.fluency_result": "pass",
+                    "outputs.fluency.fluency_status": "completed",
+                    "outputs.tool_call_accuracy.tool_call_accuracy_result": None,
+                    "outputs.tool_call_accuracy.tool_call_accuracy_status": "skipped",
+                }
+            ],
+            "studio_url": None,
+        }
+
+        _convert_results_to_aoai_evaluation_results(
+            results=results,
+            logger=logger,
+            eval_run_id="run1",
+            eval_id="eval1",
+            evaluators={
+                "fluency": lambda **kwargs: {"score": 4},
+                "tool_call_accuracy": lambda **kwargs: {"score": 1},
+            },
+            eval_meta_data={
+                "testing_criteria": [
+                    {
+                        "name": "fluency",
+                        "type": "azure_ai_evaluator",
+                        "metrics": ["fluency"],
+                    },
+                    {
+                        "name": "tool_call_accuracy",
+                        "type": "azure_ai_evaluator",
+                        "metrics": ["tool_call_accuracy"],
+                    },
+                ]
+            },
+        )
+
+        row = results["_evaluation_results_list"][0]
+        fluency_result = [r for r in row["results"] if r["name"] == "fluency"][0]
+        tca_result = [r for r in row["results"] if r["name"] == "tool_call_accuracy"][0]
+
+        # Fluency should be passed/completed
+        assert fluency_result["status"] == "completed"
+        assert fluency_result["passed"] is True
+        assert fluency_result["score"] == 4.0
+
+        # Tool call accuracy should be skipped with passed=None
+        assert tca_result["status"] == "skipped"
+        assert tca_result["passed"] is None
+
+        # Row-level: should be "passed" in summary (1 pass, 0 fail, 1 skip)
+        summary = _calculate_aoai_evaluation_summary(results["_evaluation_results_list"], logger, None)
+        assert summary["result_counts"]["passed"] == 1
+        assert summary["result_counts"]["skipped"] == 0
+        assert summary["result_counts"]["failed"] == 0
+
     @patch(
         "azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins",
         return_value={},
@@ -2444,3 +2615,531 @@ class TestCreateResultObjectInverseMetric:
         assert result["label"] == "pass"
         assert result["passed"] is True
         assert result["score"] == 4
+
+
+@pytest.mark.unittest
+class TestUpdateMetricValueStatusAndProperties:
+    """Tests for _status and _properties suffix routing in _update_metric_value."""
+
+    @staticmethod
+    def _call(metric_key, metric_value):
+        metric_dict = {}
+        _update_metric_value(
+            criteria_type="azure_ai_evaluator",
+            metric_dict=metric_dict,
+            metric_key=metric_key,
+            metric="test_metric",
+            metric_value=metric_value,
+            logger=logging.getLogger("test"),
+        )
+        return metric_dict
+
+    def test_status_suffix_routed(self):
+        result = self._call("fluency_status", "skipped")
+        assert result["status"] == "skipped"
+
+    def test_bare_status_routed(self):
+        result = self._call("status", "completed")
+        assert result["status"] == "completed"
+
+    def test_properties_suffix_routed(self):
+        props = {"detail": "some info"}
+        result = self._call("fluency_properties", props)
+        assert result["properties"] == props
+
+    def test_bare_properties_routed(self):
+        props = {"key": "value"}
+        result = self._call("properties", props)
+        assert result["properties"] == props
+
+    def test_properties_non_dict_ignored(self):
+        result = self._call("fluency_properties", "not-a-dict")
+        assert "properties" not in result
+
+    def test_status_not_treated_as_score(self):
+        """_status suffix must NOT fall through to the score fallback."""
+        result = self._call("fluency_status", "completed")
+        assert "score" not in result
+        assert result.get("status") == "completed"
+
+    def test_properties_not_treated_as_score(self):
+        """_properties suffix must NOT fall through to the score fallback."""
+        result = self._call("fluency_properties", {"a": 1})
+        assert "score" not in result
+        assert result.get("properties") == {"a": 1}
+
+    def test_label_none_sets_passed_false(self):
+        """When _label/_result value is None, passed must be set to False (preserves original behavior)."""
+        result = self._call("fluency_label", None)
+        assert result.get("label") is None
+        assert result.get("passed") is False
+
+    def test_label_pass_sets_passed_true(self):
+        """When _label value is 'Pass', passed must be True."""
+        result = self._call("fluency_label", "Pass")
+        assert result.get("label") == "Pass"
+        assert result.get("passed") is True
+
+    def test_label_fail_sets_passed_false(self):
+        """When _label value is 'Fail', passed must be False."""
+        result = self._call("fluency_label", "Fail")
+        assert result.get("label") == "Fail"
+        assert result.get("passed") is False
+
+
+@pytest.mark.unittest
+class TestCreateResultObjectStatus:
+    """Tests for status field behavior in _create_result_object."""
+
+    @staticmethod
+    def _call(metric_values, is_inverse=False):
+        return _create_result_object(
+            criteria_name="test_criteria",
+            metric="score",
+            metric_values=metric_values,
+            criteria_type="azure_ai_evaluator",
+            is_inverse=is_inverse,
+            logger=logging.getLogger("test"),
+            eval_id=None,
+            eval_run_id=None,
+        )
+
+    def test_status_completed_when_passed_true(self):
+        result = self._call({"score": 4.0, "passed": True})
+        assert result["status"] == "completed"
+
+    def test_status_completed_when_passed_false(self):
+        result = self._call({"score": 1.0, "passed": False})
+        assert result["status"] == "completed"
+
+    def test_status_error_when_passed_none(self):
+        result = self._call({"score": None, "passed": None})
+        assert result["status"] == "error"
+        assert result["passed"] is None
+
+    def test_evaluator_status_takes_priority(self):
+        result = self._call({"score": None, "passed": None, "status": "skipped"})
+        assert result["status"] == "skipped"
+        assert result["passed"] is None
+
+    def test_skipped_status_nulls_derived_passed(self):
+        """When _result/_label eagerly derived passed=False but status is skipped,
+        passed must be nulled — skipped means 'not evaluated', not 'failed'."""
+        result = self._call({"score": None, "passed": False, "status": "skipped"})
+        assert result["status"] == "skipped"
+        assert result["passed"] is None
+
+    def test_skipped_status_nulls_derived_passed_true(self):
+        """Even if passed was True, skipped status should still null it out."""
+        result = self._call({"score": 5.0, "passed": True, "status": "skipped"})
+        assert result["status"] == "skipped"
+        assert result["passed"] is None
+
+    def test_nan_score_becomes_none(self):
+        result = self._call({"score": float("nan"), "passed": None})
+        assert result["score"] is None
+        assert result["passed"] is None
+        assert result["status"] == "error"
+
+    def test_status_always_present(self):
+        result = self._call({"score": 3.5, "passed": True})
+        assert "status" in result
+        assert result["passed"] is True
+
+    def test_status_error_from_error_summary(self):
+        """Error result dicts (from _add_error_summaries path) should have status=error."""
+        error_result = {
+            "type": "quality",
+            "name": "coherence",
+            "metric": "score",
+            "score": None,
+            "label": None,
+            "reason": None,
+            "threshold": None,
+            "passed": None,
+            "status": "error",
+            "sample": {"error": {"code": "TIMEOUT", "message": "Timed out"}},
+        }
+        assert error_result["status"] == "error"
+
+    def test_status_empty_string_falls_back_to_passed(self):
+        """Empty string is not a valid status — should infer from passed."""
+        result = self._call({"score": 3.0, "passed": True, "status": ""})
+        assert result["status"] == "completed"
+
+    def test_status_invalid_value_falls_back_to_passed(self):
+        """Unrecognized status value should infer from passed."""
+        result = self._call({"score": 2.0, "passed": False, "status": "unknown"})
+        assert result["status"] == "completed"
+
+    def test_status_explicit_none_falls_back_to_passed(self):
+        """Explicitly provided status=None should infer from passed."""
+        result = self._call({"score": 5.0, "passed": True, "status": None})
+        assert result["status"] == "completed"
+
+    def test_status_completed_preserved_when_passed_is_none(self):
+        """Explicit 'completed' status should not be overridden even if passed=None."""
+        result = self._call({"score": None, "passed": None, "status": "completed"})
+        assert result["status"] == "completed"
+
+    def test_status_fallback_passed_false_is_completed(self):
+        """passed=False with no status should infer 'completed' (evaluated but failed)."""
+        result = self._call({"score": 1.0, "passed": False})
+        assert result["status"] == "completed"
+        assert result["passed"] is False
+
+    def test_status_completed_for_score_only_evaluator(self):
+        """Score-only evaluator (valid score, no passed) should get status='completed'."""
+        result = self._call({"score": 0.85, "passed": None})
+        assert result["status"] == "completed"
+        assert result["passed"] is None
+        assert result["score"] == 0.85
+
+    def test_status_error_when_nan_score_and_no_passed(self):
+        """NaN score with no passed is a genuine failure — status='error'."""
+        result = self._call({"score": float("nan"), "passed": None})
+        assert result["status"] == "error"
+        assert result["score"] is None
+
+    def test_status_completed_for_score_only_no_explicit_status(self):
+        """Score-only evaluator without explicit status or passed should infer 'completed'."""
+        result = self._call({"score": 3.5})
+        assert result["status"] == "completed"
+
+    def test_error_status_with_sample_error_preserved(self):
+        """Explicit status='error' with sample.error should preserve status and keep passed=None."""
+        result = self._call(
+            {
+                "score": None,
+                "passed": None,
+                "status": "error",
+                "sample": {"error": {"code": "FAILED_EXECUTION", "message": "No tool calls found"}},
+            }
+        )
+        assert result["status"] == "error"
+        assert result["passed"] is None
+        assert result["score"] is None
+        assert result["sample"] == {"error": {"code": "FAILED_EXECUTION", "message": "No tool calls found"}}
+
+    def test_skipped_inverse_metric_nulls_passed(self):
+        """Inverse metric (e.g. indirect_attack) with status=skipped must have passed=None.
+
+        Regression: _adjust_for_inverse_metric returns a boolean passed value which
+        would overwrite the None set for skipped evaluations if not guarded."""
+        # label=True would produce passed=False via inverse adjustment; label=None would produce passed=True
+        for label in (True, False, None):
+            result = self._call({"score": None, "label": label, "status": "skipped"}, is_inverse=True)
+            assert result["status"] == "skipped"
+            assert result["passed"] is None, f"passed should be None for skipped inverse metric with label={label}"
+
+
+@pytest.mark.unittest
+class TestCalculateAoaiEvaluationSummary:
+    """Tests for row classification and skipped/errored counting in _calculate_aoai_evaluation_summary."""
+
+    @staticmethod
+    def _make_row(results, row_id="1"):
+        return {
+            "object": "eval.run.output_item",
+            "id": row_id,
+            "results": results,
+        }
+
+    @staticmethod
+    def _make_result(name="fluency", passed=True, status="completed", score=4.0, sample=None):
+        r = {
+            "type": "azure_ai_evaluator",
+            "name": name,
+            "metric": "score",
+            "score": score,
+            "passed": passed,
+            "status": status,
+        }
+        if sample is not None:
+            r["sample"] = sample
+        return r
+
+    def test_passed_row(self):
+        rows = [self._make_row([self._make_result(passed=True)])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        assert summary["result_counts"]["passed"] == 1
+        assert summary["result_counts"]["failed"] == 0
+
+    def test_failed_row(self):
+        rows = [self._make_row([self._make_result(passed=False)])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        assert summary["result_counts"]["failed"] == 1
+        assert summary["result_counts"]["passed"] == 0
+
+    def test_skipped_row(self):
+        rows = [self._make_row([self._make_result(passed=None, status="skipped", score=None)])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        assert summary["result_counts"]["skipped"] == 1
+        assert summary["result_counts"]["passed"] == 0
+        assert summary["result_counts"]["failed"] == 0
+        assert summary["result_counts"]["errored"] == 0
+
+    def test_errored_row(self):
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(
+                        passed=None, status="error", score=None, sample={"error": {"code": "PARSE", "message": "bad"}}
+                    )
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        assert summary["result_counts"]["errored"] == 1
+
+    def test_mutually_exclusive_classification(self):
+        """A row should only be counted in ONE bucket (no double-counting)."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=False),
+                    self._make_result(
+                        name="coherence",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        counts = summary["result_counts"]
+        assert counts["total"] == 1
+        classified = counts["passed"] + counts["failed"] + counts["errored"] + counts["skipped"]
+        assert classified == 1
+
+    def test_per_testing_criteria_has_skipped_errored(self):
+        rows = [
+            self._make_row([self._make_result(name="fluency", passed=True)], "1"),
+            self._make_row([self._make_result(name="fluency", passed=None, status="skipped", score=None)], "2"),
+            self._make_row(
+                [
+                    self._make_result(
+                        name="fluency",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    )
+                ],
+                "3",
+            ),
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        criteria = {c["testing_criteria"]: c for c in summary["per_testing_criteria_results"]}
+        assert "fluency" in criteria
+        assert criteria["fluency"]["passed"] == 1
+        assert criteria["fluency"]["skipped"] == 1
+        assert criteria["fluency"]["errored"] == 1
+
+    def test_result_counts_has_skipped_key(self):
+        rows = [self._make_row([self._make_result()])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        assert "skipped" in summary["result_counts"]
+
+    def test_mixed_rows(self):
+        rows = [
+            self._make_row([self._make_result(passed=True)], "1"),
+            self._make_row([self._make_result(passed=False)], "2"),
+            self._make_row([self._make_result(passed=None, status="skipped", score=None)], "3"),
+            self._make_row(
+                [
+                    self._make_result(
+                        passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}}
+                    )
+                ],
+                "4",
+            ),
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 4
+        assert c["passed"] == 1
+        assert c["failed"] == 1
+        assert c["skipped"] == 1
+        assert c["errored"] == 1
+
+    def test_score_only_row_classified_as_errored(self):
+        """Score-only evaluator (passed=None, status='completed') → errored (threshold should have set pass/fail)."""
+        rows = [self._make_row([self._make_result(name="similarity", passed=None, status="completed", score=0.85)])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["passed"] == 0
+        assert c["errored"] == 1
+
+    def test_pass_plus_error_classified_as_passed(self):
+        """A row with 1 pass + 1 error is 'passed' — errors are non-executions, not failures."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=True),
+                    self._make_result(
+                        name="coherence",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        # Errors are non-executions; the one executed test passed → row is passed
+        assert c["passed"] == 1
+        assert c["errored"] == 0
+
+    def test_empty_results_list_classified_as_errored(self):
+        """A row with an empty results list should be classified as errored, not passed."""
+        rows = [self._make_row([])]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["passed"] == 0
+        assert c["errored"] == 1
+
+    def test_fail_plus_error_classified_as_failed(self):
+        """A row with 1 fail + 1 error is 'failed' — fail takes priority over error."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=False),
+                    self._make_result(
+                        name="coherence",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["failed"] == 1
+        assert c["passed"] == 0
+        assert c["errored"] == 0
+
+    def test_pass_plus_skip_classified_as_passed(self):
+        """A row with 1 pass + 1 skip is 'passed' — skips are non-executions."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=True),
+                    self._make_result(name="coherence", passed=None, status="skipped", score=None),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["passed"] == 1
+        assert c["failed"] == 0
+        assert c["skipped"] == 0
+
+    def test_error_plus_skip_classified_as_errored(self):
+        """A row with only errors and skips (no pass/fail) is 'errored' — error > skip."""
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(
+                        name="fluency",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                    self._make_result(name="coherence", passed=None, status="skipped", score=None),
+                ]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["errored"] == 1
+        assert c["skipped"] == 0
+        assert c["passed"] == 0
+
+    def test_total_equals_sum_of_buckets(self):
+        """Invariant: total must always equal the sum of all classification buckets."""
+        rows = [
+            self._make_row([self._make_result(passed=True)], "1"),
+            self._make_row([self._make_result(passed=False)], "2"),
+            self._make_row([self._make_result(passed=None, status="skipped", score=None)], "3"),
+            self._make_row(
+                [
+                    self._make_result(
+                        passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}}
+                    )
+                ],
+                "4",
+            ),
+            self._make_row([self._make_result(name="sim", passed=None, status="completed", score=0.9)], "5"),
+            self._make_row([], "6"),  # empty results
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        bucket_sum = c["passed"] + c["failed"] + c["errored"] + c["skipped"]
+        assert c["total"] == bucket_sum, f"total={c['total']} != sum={bucket_sum}: {c}"
+
+
+@pytest.mark.unittest
+class TestGetMetricFromCriteria:
+    """Tests for metric resolution in _get_metric_from_criteria."""
+
+    def test_direct_match(self):
+        assert _get_metric_from_criteria("tc", "f1_score", ["f1_score"]) == "f1_score"
+
+    def test_f1_result_resolves_to_f1_score(self):
+        """f1_result should resolve to f1_score via f1 special case."""
+        assert _get_metric_from_criteria("tc", "f1_result", ["f1_score"]) == "f1_score"
+
+    def test_f1_threshold_resolves_to_f1_score(self):
+        assert _get_metric_from_criteria("tc", "f1_threshold", ["f1_score"]) == "f1_score"
+
+    def test_f1_status_resolves_to_f1_score(self):
+        assert _get_metric_from_criteria("tc", "f1_status", ["f1_score"]) == "f1_score"
+
+    def test_f1_properties_resolves_to_f1_score(self):
+        assert _get_metric_from_criteria("tc", "f1_properties", ["f1_score"]) == "f1_score"
+
+    def test_coherence_reason_prefix_match(self):
+        assert _get_metric_from_criteria("tc", "coherence_reason", ["coherence"]) == "coherence"
+
+    def test_xpia_prefix_match_single_metric(self):
+        """XPIA sub-metric variants match via prefix fallback."""
+        assert (
+            _get_metric_from_criteria("tc", "xpia_manipulated_content_result", ["xpia_manipulated_content"])
+            == "xpia_manipulated_content"
+        )
+
+    def test_xpia_prefix_ordering_uses_longest_match(self):
+        """With full indirect_attack metric list, longer metric names match before shorter ones."""
+        full_list = ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]
+        assert (
+            _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content_result", full_list)
+            == "xpia_manipulated_content"
+        )
+        assert _get_metric_from_criteria("indirect_attack", "xpia_intrusion_reason", full_list) == "xpia_intrusion"
+        assert _get_metric_from_criteria("indirect_attack", "xpia_result", full_list) == "xpia"
+
+    def test_xpia_direct_match_in_full_list(self):
+        """XPIA sub-metric names that are in the list should direct-match."""
+        full_list = ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]
+        assert (
+            _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content", full_list)
+            == "xpia_manipulated_content"
+        )
+        assert _get_metric_from_criteria("indirect_attack", "xpia", full_list) == "xpia"
+
+    def test_fallback_to_criteria_name(self):
+        assert _get_metric_from_criteria("my_criteria", "unknown_key", ["f1_score"]) == "my_criteria"
