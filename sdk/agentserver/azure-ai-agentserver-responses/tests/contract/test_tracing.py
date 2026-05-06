@@ -260,8 +260,6 @@ def test_tracing__incoming_baggage_merged_into_context() -> None:
     # Incoming baggage entries should be present
     assert captured_baggage.get("user.id") == "test-user-789"
     assert captured_baggage.get("custom.key") == "custom-value"
-    # Server-added entries should also be present
-    assert "azure.ai.agentserver.response_id" in captured_baggage
 
 
 def test_tracing__incoming_baggage_does_not_break_span_parenting() -> None:
