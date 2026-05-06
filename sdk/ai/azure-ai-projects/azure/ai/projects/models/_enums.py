@@ -21,6 +21,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CONTAINER_AGENTS_V1_PREVIEW."""
     AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
     """AGENT_ENDPOINT_V1_PREVIEW."""
+    CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
+    """CODE_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -234,6 +236,16 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_semantic_hybrid``."""
 
 
+class CodeDependencyResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How package dependencies are resolved at deployment time for a code-based hosted agent."""
+
+    BUNDLED = "bundled"
+    """The caller has bundled all dependencies into the uploaded zip; the service performs no remote
+    build."""
+    REMOTE_BUILD = "remote_build"
+    """The service builds dependencies remotely from the manifest included in the uploaded zip."""
+
+
 class ComputerEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ComputerEnvironment."""
 
@@ -375,9 +387,6 @@ class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Single turn query and response from agent traces."""
     TOOL_USE = "tool_use"
     """Tool calling conversation between user and agent."""
-    TASK = "task"
-    """Task helps in providing a scenario description for generating multi turn conversation between
-    user and agent."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
