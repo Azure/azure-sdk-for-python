@@ -42,6 +42,10 @@ stages:
                 inputs:
                   versionSpec: '3.12'
 
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
               - template: /eng/common/pipelines/templates/steps/retain-run.yml
 
               - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -120,10 +124,16 @@ stages:
                 runOnce:
                   deploy:
                     steps:
+                      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                        parameters:
+                          DevFeedName: ${{ parameters.DevFeedName }}
+                          EnableTwineAuth: false
+                          EnablePipAuth: true
+                          EnableUvAuth: false
 
                       - task: UsePythonVersion@0
                         inputs:
-                          versionSpec: '3.9'
+                          versionSpec: '3.10'
 
                       - script: |
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
@@ -141,22 +151,9 @@ stages:
                             Get-ChildItem $esrpDirectory
                           displayName: Isolate files for ESRP Publish
 
-                        - task: EsrpRelease@9
-                          displayName: 'Publish to ESRP'
-                          inputs:
-                            ConnectedServiceName: 'Azure SDK PME Managed Identity'
-                            ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-                            DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-                            UseManagedIdentity: true
-                            KeyVaultName: 'kv-azuresdk-codesign'
-                            SignCertName: 'azure-sdk-esrp-release-certificate'
-                            Intent: 'PackageDistribution'
-                            ContentType: 'PyPI'
-                            FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
-                            Owners: $(Build.RequestedForEmail)
-                            Approvers: $(Build.RequestedForEmail)
-                            ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-                            MainPublisher: 'ESRPRELPACMANTEST'
+                        - template: /eng/pipelines/templates/steps/esrp-publish.yml
+                          parameters:
+                            targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                       - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
                         - task: TwineAuthenticate@0
@@ -201,9 +198,16 @@ stages:
                 artifact: ${{parameters.ArtifactName}}
                 timeoutInMinutes: 5
 
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+                  EnableTwineAuth: false
+                  EnablePipAuth: true
+                  EnableUvAuth: false
+
               - task: UsePythonVersion@0
                 inputs:
-                  versionSpec: '3.9'
+                  versionSpec: '3.10'
 
               - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
                 parameters:
@@ -287,11 +291,15 @@ stages:
 
                 - download: current
 
-                # py2docfx requires Python >= 3.11
+                # py2docfx requires Python >= 3.12.x, match docs pipeline version specification
                 - task: UsePythonVersion@0
-                  displayName: 'Use Python 3.11'
+                  displayName: 'Use Python 3.12.x'
                   inputs:
-                    versionSpec: '3.11'
+                    versionSpec: '3.12.x'
+
+                - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                  parameters:
+                    DevFeedName: ${{ parameters.DevFeedName }}
 
                 - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
@@ -306,7 +314,6 @@ stages:
                     SparseCheckoutPaths:
                       - docs-ref-services/
                       - metadata/
-                    PackageSourceOverride: ${{parameters.PackageSourceOverride}}
 
           - job: UpdatePackageVersion
             displayName: "Update Package Version"
@@ -321,6 +328,11 @@ stages:
             steps:
               - checkout: self
               - task: UsePythonVersion@0
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
               - script: |
                   python -m pip install "./eng/tools/azure-sdk-tools"
                 displayName: Install versioning tool dependencies
@@ -347,6 +359,7 @@ stages:
                 Daily: false
                 ArtifactName: ${{ parameters.ArtifactName }}
                 Artifact: ${{ artifact }}
+                DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
@@ -364,20 +377,35 @@ stages:
         - download: current
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5
+
         - task: UsePythonVersion@0
+
+        - template: ../steps/auth-dev-feed.yml
+          parameters:
+            DevFeedName: ${{ parameters.DevFeedName }}
+        
         - script: |
             set -e
             python -m pip install twine
           displayName: Install Twine
 
-        - template: ../steps/auth-dev-feed.yml
-          parameters:
-            DevFeedName: ${{ parameters.DevFeedName }}
-
         - ${{ each artifact in parameters.Artifacts }}:
           - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
 
             - pwsh: |
+                # If BuildTargetingString is set, check whether this artifact matches any of the
+                # (possibly comma-separated) glob patterns before attempting to publish.
+                # This handles scoped builds where only a subset of packages are built.
+                $targetingString = $env:BUILDTARGETINGSTRING
+                if ($targetingString) {
+                  $globs = $targetingString -split ","
+                  $isTargeted = $globs | Where-Object { "${{artifact.name}}" -like $_.Trim() }
+                  if (-not $isTargeted) {
+                    Write-Host "Package '${{artifact.name}}' does not match BuildTargetingString '$targetingString'. Skipping integration publish."
+                    exit 0
+                  }
+                }
+
                 $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
                 if ($fileCount -eq 0) {
@@ -425,6 +453,10 @@ stages:
             displayName: 'Use Python 3.11'
             inputs:
               versionSpec: '3.11'
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
 
           - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 

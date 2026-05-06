@@ -22,6 +22,8 @@ class AzureDataLakeStorageRESTAPIConfiguration:  # pylint: disable=too-many-inst
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation. Required.
     :type url: str
+    :param version: Specifies the version of the operation to use for this request. Required.
+    :type version: str
     :param x_ms_lease_duration: The lease duration is required to acquire a lease, and specifies
      the duration of the lease in seconds.  The lease duration must be between 15 and 60 seconds or
      -1 for infinite lease. Default value is None.
@@ -29,22 +31,20 @@ class AzureDataLakeStorageRESTAPIConfiguration:  # pylint: disable=too-many-inst
     :keyword resource: The value must be "filesystem" for all filesystem operations. Default value
      is "filesystem". Note that overriding this default value may result in unsupported behavior.
     :paramtype resource: str
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2026-02-06". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
     """
 
-    def __init__(self, url: str, x_ms_lease_duration: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, url: str, version: str, x_ms_lease_duration: Optional[int] = None, **kwargs: Any) -> None:
         resource: Literal["filesystem"] = kwargs.pop("resource", "filesystem")
-        version: Literal["2026-02-06"] = kwargs.pop("version", "2026-02-06")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
+        if version is None:
+            raise ValueError("Parameter 'version' must not be None.")
 
         self.url = url
+        self.version = version
         self.x_ms_lease_duration = x_ms_lease_duration
         self.resource = resource
-        self.version = version
         kwargs.setdefault("sdk_moniker", "azuredatalakestoragerestapi/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)

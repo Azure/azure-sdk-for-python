@@ -16,15 +16,15 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import KeyVaultClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import KeyVaultClientOperationsMixin, RoleAssignmentsOperations, RoleDefinitionsOperations
+from .operations import RoleAssignmentsOperations, RoleDefinitionsOperations, _KeyVaultClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class KeyVaultClient(KeyVaultClientOperationsMixin):
-    """The key vault client performs cryptographic key operations and vault operations against the Key
-    Vault service.
+class KeyVaultClient(_KeyVaultClientOperationsMixin):
+    """The Azure Key Vault Administration service client performs administrative operations including
+    RBAC, BackupRestore, and settings management against the Azure Key Vault service.
 
     :ivar role_definitions: RoleDefinitionsOperations operations
     :vartype role_definitions:
@@ -32,12 +32,14 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     :ivar role_assignments: RoleAssignmentsOperations operations
     :vartype role_assignments:
      azure.keyvault.administration._generated.operations.RoleAssignmentsOperations
-    :param vault_base_url: Required.
+    :param vault_base_url: The base URL of the Key Vault instance (e.g.
+     `https://myvault.vault.azure.net/ <https://myvault.vault.azure.net/>`_). Required.
     :type vault_base_url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "7.6". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-07-01".
+     Default value is "2025-07-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

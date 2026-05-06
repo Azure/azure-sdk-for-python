@@ -1,0 +1,78 @@
+[project]
+name = "azure-ai-agentserver-invocations"
+dynamic = ["version", "readme"]
+description = "Invocations protocol for Azure AI Hosted Agents"
+requires-python = ">=3.10"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
+
+dependencies = [
+    "azure-ai-agentserver-core>=2.0.0b3",
+]
+
+[dependency-groups]
+# keep in sync with dev_requirements.txt
+dev = [
+    "azure-identity",
+    "azure-monitor-query",
+    "azure-sdk-tools",
+    "httpx",
+    "opentelemetry-api>=1.40.0",
+    "opentelemetry-sdk>=1.40.0",
+    "pytest-asyncio",
+    "pytest",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+    "azure.ai.agentserver",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.invocations._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+"azure.ai.agentserver.invocations" = ["py.typed"]
+
+[tool.azure-sdk-build]
+analyze_python_version = "3.11"
+breaking = false
+mypy = true
+pyright = true
+verifytypes = false
+latestdependency = false
+pylint = true
+type_check_samples = false
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
+azure-identity = { path = "../../identity/azure-identity" }
+azure-monitor-query = { path = "../../monitor/azure-monitor-query" }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }

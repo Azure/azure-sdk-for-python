@@ -17,7 +17,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry portal.
     2) MODEL_NAME - Optional. The base model name to use for fine-tuning. Default to the `o4-mini` model.
     3) TRAINING_FILE_PATH - Optional. Path to the training data file. Default to the `data` folder.
@@ -27,13 +27,13 @@ USAGE:
 import os
 from typing import Any, Dict
 from dotenv import load_dotenv
+from fine_tuning_sample_helper import resolve_data_file_path  # pylint: disable=import-error
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "o4-mini")
 training_file_path = resolve_data_file_path(__file__, "TRAINING_FILE_PATH", "rft_training_set.jsonl")
 validation_file_path = resolve_data_file_path(__file__, "VALIDATION_FILE_PATH", "rft_validation_set.jsonl")
