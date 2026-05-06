@@ -10,6 +10,9 @@
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* New code-based agent operations on `agents`: `create_agent_from_code`, `update_agent_from_code`, `create_agent_version_from_code`, `download_agent_code`, `download_agent_version_code`.
+* New models `CreateAgentFromCodeContent`, `CreateAgentVersionFromCodeContent`, `CreateAgentVersionFromCodeRequest`.
+* New enum `CodeDependencyResolution` with values `BUNDLED` and `REMOTE_BUILD`.
 
 ### Breaking Changes
 
@@ -18,6 +21,8 @@ Breaking changes in beta operations:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
 * Required keyword argument `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
+* Removed enum value `DataGenerationJobType.TASK`.
+* Removed model `TaskDataGenerationJobOptions`.
 
 ### Bugs Fixed
 
