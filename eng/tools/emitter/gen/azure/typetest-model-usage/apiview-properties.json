@@ -10,5 +10,6 @@
         "typetest.model.usage.aio.UsageClient.output": "Type.Model.Usage.output",
         "typetest.model.usage.UsageClient.input_and_output": "Type.Model.Usage.inputAndOutput",
         "typetest.model.usage.aio.UsageClient.input_and_output": "Type.Model.Usage.inputAndOutput"
-    }
+    },
+    "CrossLanguageVersion": "f962027db695"
 }

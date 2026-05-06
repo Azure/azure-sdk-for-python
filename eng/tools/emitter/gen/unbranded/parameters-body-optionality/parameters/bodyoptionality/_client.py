@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from corehttp.rest import HttpRequest, HttpResponse
 from corehttp.runtime import PipelineClient, policies
@@ -11,6 +11,11 @@ from ._configuration import BodyOptionalityClientConfiguration
 from ._operations import _BodyOptionalityClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 from .optionalexplicit.operations import OptionalExplicitOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class BodyOptionalityClient(

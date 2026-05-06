@@ -24,5 +24,6 @@
         "azure.resourcemanager.methodsubscriptionid.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.resourcemanager.methodsubscriptionid.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.resourcemanager.methodsubscriptionid.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list"
-    }
+    },
+    "CrossLanguageVersion": "ddbfce991264"
 }

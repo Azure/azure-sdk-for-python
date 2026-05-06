@@ -6,5 +6,6 @@
         "parameters.basic.aio.operations.ExplicitBodyOperations.simple": "Parameters.Basic.ExplicitBody.simple",
         "parameters.basic.operations.ImplicitBodyOperations.simple": "Parameters.Basic.ImplicitBody.simple",
         "parameters.basic.aio.operations.ImplicitBodyOperations.simple": "Parameters.Basic.ImplicitBody.simple"
-    }
+    },
+    "CrossLanguageVersion": "2e5cbd1480f6"
 }
