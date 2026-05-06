@@ -5,6 +5,7 @@
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
+
 # pylint: disable=enum-must-be-uppercase
 class KeyWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key wrapping algorithms"""

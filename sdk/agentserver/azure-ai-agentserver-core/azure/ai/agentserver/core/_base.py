@@ -6,7 +6,14 @@ import contextlib
 import logging
 import os
 import signal
-from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
+import urllib.parse
+from collections.abc import (  # pylint: disable=import-error
+    AsyncGenerator,
+    AsyncIterable,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+)
 from typing import Any, MutableMapping, Optional, Union
 
 from starlette.applications import Starlette
@@ -17,6 +24,8 @@ from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
+from ._middleware import InboundRequestLoggingMiddleware
+from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
 from ._version import VERSION as _CORE_VERSION
 
@@ -24,6 +33,35 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
+
+_NOT_SET = "(not set)"
+
+
+def _mask_uri(uri: str) -> str:
+    """Return only the scheme and host of a URI, hiding path/query/credentials.
+
+    Returns ``"(not set)"`` for empty or whitespace-only values, or
+    ``"(redacted)"`` when the URI cannot be parsed into scheme + host.
+
+    :param uri: The URI to mask.
+    :type uri: str
+    :return: ``"scheme://host[:port]"``, ``"(not set)"``, or ``"(redacted)"``.
+    :rtype: str
+    """
+    stripped = uri.strip() if uri else ""
+    if not stripped:
+        return _NOT_SET
+    try:
+        parsed = urllib.parse.urlparse(stripped)
+        scheme = parsed.scheme or ""
+        host = parsed.hostname or ""
+        if scheme and host:
+            port_suffix = f":{parsed.port}" if parsed.port else ""
+            return f"{scheme}://{host}{port_suffix}"
+        # Best-effort: if parsing fails to extract components, redact entirely
+        return "(redacted)"
+    except Exception:  # pylint: disable=broad-exception-caught
+        return "(redacted)"
 
 
 class _PlatformHeaderMiddleware:
@@ -176,6 +214,32 @@ class AgentServerHost(Starlette):
         @contextlib.asynccontextmanager
         async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
             logger.info("AgentServerHost started")
+
+            # --- Startup configuration logging ---
+            cfg = self.config
+            logger.info(
+                "Platform environment: is_hosted=%s, agent_name=%s, agent_version=%s, "
+                "port=%s, session_id=%s, sse_keepalive_interval=%s",
+                cfg.is_hosted,
+                cfg.agent_name or _NOT_SET,
+                cfg.agent_version or _NOT_SET,
+                cfg.port,
+                cfg.session_id or _NOT_SET,
+                cfg.sse_keepalive_interval if cfg.sse_keepalive_interval > 0 else "disabled",
+            )
+            logger.info(
+                "Connectivity: project_endpoint=%s, otlp_endpoint=%s, appinsights_configured=%s",
+                _mask_uri(cfg.project_endpoint),
+                _mask_uri(cfg.otlp_endpoint),
+                bool(cfg.appinsights_connection_string),
+            )
+            protocols = ", ".join(self._server_version_segments) if self._server_version_segments else _NOT_SET
+            logger.info(
+                "Host options: shutdown_timeout=%ss, protocols=%s",
+                self._graceful_shutdown_timeout,
+                protocols,
+            )
+
             yield
 
             # --- SHUTDOWN: runs once when the server is stopping ---
@@ -197,7 +261,7 @@ class AgentServerHost(Starlette):
                         self._graceful_shutdown_timeout,
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
-                    logger.exception("Error in on_shutdown")
+                    logger.warning("Error in on_shutdown", exc_info=True)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])
@@ -210,7 +274,12 @@ class AgentServerHost(Starlette):
             routes=all_routes,
             lifespan=_lifespan,
             middleware=[
-                Middleware(_PlatformHeaderMiddleware, get_server_version=self._build_server_version),
+                Middleware(InboundRequestLoggingMiddleware),  # type: ignore[arg-type]
+                Middleware(  # type: ignore[arg-type]
+                    _PlatformHeaderMiddleware,
+                    get_server_version=self._build_server_version,
+                ),
+                Middleware(_RequestIdMiddleware),  # type: ignore[arg-type]
             ],
             **kwargs,
         )

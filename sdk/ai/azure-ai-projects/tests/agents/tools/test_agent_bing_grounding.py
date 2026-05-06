@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression
+# pylint: disable=too-many-lines,line-too-long,useless-suppression,too-many-nested-blocks
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -45,7 +45,7 @@ class TestAgentBingGrounding(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Note: This test requires bing_project_connection_id environment variable
         # to be set with a valid Bing connection ID from the project
@@ -100,7 +100,7 @@ class TestAgentBingGrounding(TestBase):
                 elif event.type == "response.output_text.delta":
                     print(f"Delta: {event.delta}")
                 elif event.type == "response.text.done":
-                    print(f"Follow-up response done!")
+                    print("Follow-up response done!")
                 elif event.type == "response.output_item.done":
                     if event.item.type == "message":
                         item = event.item
@@ -112,7 +112,7 @@ class TestAgentBingGrounding(TestBase):
                                         print(f"URL Citation: {annotation.url}")
                                         url_citations.append(annotation.url)
                 elif event.type == "response.completed":
-                    print(f"Follow-up completed!")
+                    print("Follow-up completed!")
                     print(f"Full response: {event.response.output_text}")
                     output_text = event.response.output_text
 
@@ -145,7 +145,7 @@ class TestAgentBingGrounding(TestBase):
         Bing grounding and provide accurate responses with citations.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         bing_connection_id = kwargs.get("bing_project_connection_id")
 

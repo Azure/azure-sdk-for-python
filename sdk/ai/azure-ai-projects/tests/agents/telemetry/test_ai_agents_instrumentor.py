@@ -3,54 +3,34 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cSpell:disable# cSpell:disable
-import pytest
+# cSpell:disable
 import os
 from typing import Optional
-from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.core.settings import settings
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
-
-from azure.ai.projects.models import (
-    Reasoning,
-    FunctionTool,
-    # ResponseTextFormatConfigurationText,
-)
+import pytest
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
 from devtools_testutils import (
     recorded_by_proxy,
 )
-
 from test_base import servicePreparer
-from test_ai_instrumentor_base import (
+from test_ai_instrumentor_base import (  # pylint: disable=import-error
     TestAiAgentsInstrumentorBase,
-    MessageCreationMode,
     CONTENT_TRACING_ENV_VARIABLE,
 )
-
+from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.core.settings import settings
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 from azure.ai.projects.telemetry._utils import (
-    AZ_NAMESPACE,
-    AZ_NAMESPACE_VALUE,
     GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
     GEN_AI_AGENT_VERSION,
-    GEN_AI_CONVERSATION_ID,
     GEN_AI_EVENT_CONTENT,
     GEN_AI_OPERATION_NAME,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_REQUEST_MODEL,
-    GEN_AI_RESPONSE_FINISH_REASONS,
-    GEN_AI_RESPONSE_ID,
-    GEN_AI_RESPONSE_MODEL,
-    GEN_AI_SYSTEM,
-    GEN_AI_USAGE_INPUT_TOKENS,
-    GEN_AI_USAGE_OUTPUT_TOKENS,
     SERVER_ADDRESS,
     GEN_AI_AGENT_TYPE,
     GEN_AI_SYSTEM_INSTRUCTION_EVENT,
     GEN_AI_AGENT_WORKFLOW_EVENT,
-    GEN_AI_CONVERSATION_ITEM_TYPE,
-    AZURE_AI_AGENTS_SYSTEM,
     AGENTS_PROVIDER,
     AGENT_TYPE_PROMPT,
     AGENT_TYPE_WORKFLOW,
@@ -58,10 +38,10 @@ from azure.ai.projects.telemetry._utils import (
 )
 
 settings.tracing_implementation = "OpenTelemetry"
-_utils._span_impl_type = settings.tracing_implementation()
+_utils._span_impl_type = settings.tracing_implementation()  # pylint: disable=not-callable
 
 
-class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
+class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disable=too-many-public-methods
     """Tests for AI agents instrumentor."""
 
     @pytest.fixture(scope="function")
@@ -78,7 +58,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         yield
         self.cleanup()
 
-    def test_instrumentation(self, **kwargs):
+    def test_instrumentation(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -96,7 +76,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
+    def test_instrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -112,7 +92,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
-    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
+    def test_uninstrumenting_uninstrumented_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         exception_caught = False
@@ -123,7 +103,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             print(e)
         assert exception_caught == False
 
-    def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
+    def test_uninstrumenting_twice_does_not_cause_exception(self):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
         os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
@@ -178,7 +158,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             from opentelemetry import trace
             from opentelemetry.sdk.trace import TracerProvider
             from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-            from memory_trace_exporter import MemoryTraceExporter
+            from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-error
 
             tracer_provider = TracerProvider()
             trace._TRACER_PROVIDER = tracer_provider
@@ -203,6 +183,178 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             exporter.shutdown()
             AIProjectInstrumentor().uninstrument()
             trace._TRACER_PROVIDER = None
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
+
+    @pytest.mark.parametrize(
+        "env_value, instrument_kwarg, expected_propagated, baggage_env_value, baggage_kwarg, expected_baggage",
+        [
+            # --- trace context propagation (baggage defaults off) ---
+            (None, None, True, None, None, False),  # default: traceparent on, baggage off
+            ("true", None, True, None, None, False),  # explicit true
+            ("True", None, True, None, None, False),  # case-insensitive
+            ("TRUE", None, True, None, None, False),  # case-insensitive
+            ("false", None, False, None, None, False),  # propagation off → no headers at all
+            ("False", None, False, None, None, False),  # case-insensitive
+            (None, True, True, None, None, False),  # parameter override: True
+            (None, False, False, None, None, False),  # parameter override: False
+            # --- baggage propagation (trace context on via default) ---
+            (None, None, True, "true", None, True),  # baggage env=true → baggage header present
+            (None, None, True, "false", None, False),  # baggage env=false → baggage header absent
+            (None, None, True, None, True, True),  # baggage kwarg=True → baggage header present
+            (None, None, True, None, False, False),  # baggage kwarg=False → baggage header absent
+            # baggage enabled but trace propagation disabled → hook not installed, baggage still absent
+            (None, False, False, None, True, False),
+        ],
+    )
+    def test_trace_context_propagation(
+        self,
+        env_value: Optional[str],
+        instrument_kwarg: Optional[bool],
+        expected_propagated: bool,
+        baggage_env_value: Optional[str],
+        baggage_kwarg: Optional[bool],
+        expected_baggage: bool,
+    ):
+        """
+        Test that trace context and baggage propagation are controlled correctly by their
+        respective environment variables and instrument() parameters, and that the traceparent
+        and baggage headers are (or are not) injected into outgoing HTTP requests accordingly.
+
+        Uses a mock httpx transport to capture the outgoing request and inspect its headers,
+        and exercises the same _inject_openai_client wrapper that the instrumented
+        get_openai_client() uses, so no live service is required.
+
+        Args:
+            env_value: Value for AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION, or None to leave unset.
+            instrument_kwarg: Value passed as enable_trace_context_propagation to instrument(), or None to omit.
+            expected_propagated: Whether traceparent should appear in outgoing request headers.
+            baggage_env_value: Value for AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE, or None to leave unset.
+            baggage_kwarg: Value passed as enable_baggage_propagation to instrument(), or None to omit.
+            expected_baggage: Whether baggage should appear in outgoing request headers.
+        """
+        import httpx
+        from openai import OpenAI
+        from opentelemetry import baggage as otel_baggage
+        from opentelemetry import trace
+        from opentelemetry.sdk.trace import TracerProvider
+        from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+        from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-error
+
+        TRACE_ENV_VAR = "AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION"
+        BAGGAGE_ENV_VAR = "AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE"
+        AIProjectInstrumentor().uninstrument()
+        os.environ.pop(TRACE_ENV_VAR, None)
+        os.environ.pop(BAGGAGE_ENV_VAR, None)
+        if env_value is not None:
+            os.environ[TRACE_ENV_VAR] = env_value
+        if baggage_env_value is not None:
+            os.environ[BAGGAGE_ENV_VAR] = baggage_env_value
+
+        from opentelemetry.baggage.propagation import W3CBaggagePropagator
+        from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+        from opentelemetry.propagators.composite import CompositePropagator
+        from opentelemetry import propagate as otel_propagate
+
+        tracer_provider = TracerProvider()
+        trace._TRACER_PROVIDER = tracer_provider
+        exporter = MemoryTraceExporter()
+        tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
+
+        # Ensure both W3C TraceContext and Baggage propagators are active.
+        # The test environment may only have TraceContext registered by default.
+        original_propagator = otel_propagate.get_global_textmap()
+        otel_propagate.set_global_textmap(
+            CompositePropagator([TraceContextTextMapPropagator(), W3CBaggagePropagator()])
+        )
+
+        try:
+            os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
+            instrument_kwargs: dict = {}
+            if instrument_kwarg is not None:
+                instrument_kwargs["enable_trace_context_propagation"] = instrument_kwarg
+            if baggage_kwarg is not None:
+                instrument_kwargs["enable_baggage_propagation"] = baggage_kwarg
+            AIProjectInstrumentor().instrument(**instrument_kwargs)
+
+            import azure.ai.projects.telemetry._ai_project_instrumentor as _instrumentor_mod
+
+            # Verify the module-level global for trace context propagation reflects the correct state.
+            assert (
+                _instrumentor_mod._trace_context_propagation_enabled == expected_propagated
+            ), (  # pylint: disable=protected-access
+                f"Expected _trace_context_propagation_enabled={expected_propagated} "
+                f"for env={env_value!r} / kwarg={instrument_kwarg!r}"
+            )
+
+            # ---- Mock transport: capture outgoing HTTP request headers ----
+            class CapturingTransport(httpx.BaseTransport):
+                def __init__(self):
+                    self.last_request: Optional[httpx.Request] = None
+
+                def handle_request(self, request: httpx.Request) -> httpx.Response:
+                    self.last_request = request
+                    return httpx.Response(200, content=b"{}")
+
+            transport = CapturingTransport()
+            http_client = httpx.Client(transport=transport)
+            openai_client = OpenAI(api_key="fake-key", base_url="http://fake.test/", http_client=http_client)
+
+            # Exercise the same wrapper that get_openai_client() uses after instrumentation.
+            # _inject_openai_client(factory, ...) wraps the factory and conditionally registers
+            # the traceparent/baggage-injection hook based on the propagation globals.
+            def fake_factory(*args, **kwargs):
+                return openai_client
+
+            wrapped_factory = AIProjectInstrumentor()._impl._inject_openai_client(  # pylint: disable=protected-access
+                fake_factory, None, "get_openai_client"
+            )
+            wrapped_factory()  # This either registers the hook or not
+
+            # Make an HTTP request within an active span with baggage seeded into the context,
+            # so OTel propagate.inject() has both a trace context and baggage to inject.
+            # Note: baggage must be attached *before* starting the span. Passing context= to
+            # start_as_current_span only sets the parent span; the new span is still attached
+            # on top of the current global context, so baggage set only in that context arg
+            # would be silently dropped.
+            from opentelemetry import context as otel_context
+
+            tracer = trace.get_tracer(__name__)
+            ctx_with_baggage = otel_baggage.set_baggage("test-key", "test-value")
+            token = otel_context.attach(ctx_with_baggage)
+            try:
+                with tracer.start_as_current_span("test_span"):
+                    http_client.get("http://fake.test/test")
+            finally:
+                otel_context.detach(token)
+
+            assert transport.last_request is not None
+            header_names = [h.lower() for h in transport.last_request.headers.keys()]
+
+            if expected_propagated:
+                assert (
+                    "traceparent" in header_names
+                ), f"Expected traceparent header to be present (env={env_value!r}, kwarg={instrument_kwarg!r})"
+            else:
+                assert (
+                    "traceparent" not in header_names
+                ), f"Expected traceparent header to be absent (env={env_value!r}, kwarg={instrument_kwarg!r})"
+
+            if expected_baggage:
+                assert (
+                    "baggage" in header_names
+                ), f"Expected baggage header to be present (baggage_env={baggage_env_value!r}, baggage_kwarg={baggage_kwarg!r})"
+            else:
+                assert (
+                    "baggage" not in header_names
+                ), f"Expected baggage header to be absent (baggage_env={baggage_env_value!r}, baggage_kwarg={baggage_kwarg!r})"
+
+        finally:
+            exporter.shutdown()
+            AIProjectInstrumentor().uninstrument()
+            trace._TRACER_PROVIDER = None
+            otel_propagate.set_global_textmap(original_propagator)
+            os.environ.pop(TRACE_ENV_VAR, None)
+            os.environ.pop(BAGGAGE_ENV_VAR, None)
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
 
     @pytest.mark.parametrize(
@@ -273,7 +425,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
             print(f"Using model deployment: {model}")
 
             agent_definition = PromptAgentDefinition(
@@ -387,7 +539,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful AI assistant. Always be polite and provide accurate information.",
@@ -490,7 +642,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         from azure.ai.projects.models import WorkflowAgentDefinition
 
         operation_group = "tracing" if content_recording_enabled else "agents"
-        with self.create_client(operation_group=operation_group, **kwargs) as project_client:
+        with self.create_client(operation_group=operation_group, allow_preview=True, **kwargs) as project_client:
 
             workflow_yaml = """
 kind: workflow
@@ -588,7 +740,7 @@ trigger:
 
     def _test_agent_with_structured_output_with_instructions_impl(
         self, use_events: bool, content_recording_enabled: bool, **kwargs
-    ):
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Implementation for agent with structured output and instructions test.
 
         :param use_events: If True, use events for messages. If False, use attributes.
@@ -609,7 +761,7 @@ trigger:
         operation_group = "tracing" if content_recording_enabled else "agents"
         with self.create_client(operation_group=operation_group, **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",
@@ -776,7 +928,7 @@ trigger:
 
     def _test_agent_with_structured_output_without_instructions_impl(
         self, use_events: bool, content_recording_enabled: bool, **kwargs
-    ):
+    ):  # pylint: disable=too-many-locals,too-many-statements
         """Implementation for agent with structured output but NO instructions test.
 
         :param use_events: If True, use events for messages. If False, use attributes.
@@ -797,7 +949,7 @@ trigger:
         operation_group = "tracing" if content_recording_enabled else "agents"
         with self.create_client(operation_group=operation_group, **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_model_deployment_name")
+            model = kwargs.get("foundry_model_name")
 
             test_schema = {
                 "type": "object",

@@ -25,8 +25,7 @@ dependencies = [
     "hypercorn>=0.17.0",
     "opentelemetry-api>=1.40.0",
     "opentelemetry-sdk>=1.40.0",
-    "opentelemetry-exporter-otlp-proto-grpc>=1.40.0",
-    "azure-monitor-opentelemetry-exporter>=1.0.0b49",
+    "microsoft-opentelemetry>=0.1.0b1",
 ]
 
 [build-system]
@@ -53,24 +52,13 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.core" = ["py.typed"]
 
-[tool.ruff]
-line-length = 120
-target-version = "py310"
-lint.select = ["E", "F", "B", "I"]
-lint.ignore = []
-fix = false
-
-[tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.core"]
-combine-as-imports = true
-
 [tool.azure-sdk-build]
 breaking = false
 mypy = true
 pyright = true
-verifytypes = true
+verifytypes = false
+latestdependency = false
 pylint = true
 type_check_samples = false
 
 [tool.uv.sources]
-azure-monitor-opentelemetry-exporter = { path = "../../monitor/azure-monitor-opentelemetry-exporter" }

@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
+from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator, cast
 
 from ...models import _generated as generated_models
-from ._base import EVENT_TYPE, BaseOutputItemBuilder, BuilderLifecycleState
+from ._base import BaseOutputItemBuilder, BuilderLifecycleState
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -62,42 +62,48 @@ class TextContentBuilder:
         """
         return self._content_index
 
-    def emit_added(self) -> generated_models.ResponseStreamEvent:
+    def emit_added(self) -> generated_models.ResponseContentPartAddedEvent:
         """Emit a ``content_part.added`` event for this text content.
 
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseContentPartAddedEvent
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "part": {"type": "output_text", "text": "", "annotations": [], "logprobs": []},
-            }
+        return cast(
+            generated_models.ResponseContentPartAddedEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "part": {"type": "output_text", "text": "", "annotations": [], "logprobs": []},
+                }
+            ),
         )
 
-    def emit_delta(self, text: str) -> generated_models.ResponseStreamEvent:
+    def emit_delta(self, text: str) -> generated_models.ResponseTextDeltaEvent:
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
             raise ValueError(f"cannot call emit_delta in '{self._lifecycle_state.value}' state")
         self._delta_fragments.append(text)
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DELTA.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "delta": text,
-                "logprobs": [],
-            }
+        return cast(
+            generated_models.ResponseTextDeltaEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "delta": text,
+                    "logprobs": [],
+                }
+            ),
         )
 
-    def emit_text_done(self, final_text: str | None = None) -> generated_models.ResponseStreamEvent:
+    def emit_text_done(self, final_text: str | None = None) -> generated_models.ResponseTextDoneEvent:
         """Emit an ``output_text.done`` event with the merged final text.
 
         Call this after all deltas have been emitted. After this, you may
@@ -106,7 +112,7 @@ class TextContentBuilder:
         :param final_text: Optional override for the final text; uses merged deltas if ``None``.
         :type final_text: str | None
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseTextDoneEvent
         :raises ValueError: If the builder is not in ``ADDED`` state or text is already done.
         """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
@@ -118,24 +124,27 @@ class TextContentBuilder:
         if not merged_text and final_text is not None:
             merged_text = final_text
         self._final_text = merged_text
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DONE.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "text": merged_text,
-                "logprobs": [],
-            }
+        return cast(
+            generated_models.ResponseTextDoneEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "text": merged_text,
+                    "logprobs": [],
+                }
+            ),
         )
 
-    def emit_done(self) -> generated_models.ResponseStreamEvent:
+    def emit_done(self) -> generated_models.ResponseContentPartDoneEvent:
         """Emit a ``content_part.done`` event, closing this content part.
 
         Must be called after ``emit_text_done()``.
 
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseContentPartDoneEvent
         :raises ValueError: If text has not been finalized or builder is already done.
         """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
@@ -143,49 +152,50 @@ class TextContentBuilder:
         if not self._text_done:
             raise ValueError("must call emit_text_done() before emit_done()")
         self._lifecycle_state = BuilderLifecycleState.DONE
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_CONTENT_PART_DONE.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "part": {
-                    "type": "output_text",
-                    "text": self._final_text or "",
-                    "annotations": [],
-                    "logprobs": [],
-                },
-            }
+        return cast(
+            generated_models.ResponseContentPartDoneEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "part": {
+                        "type": "output_text",
+                        "text": self._final_text or "",
+                        "annotations": [],
+                        "logprobs": [],
+                    },
+                }
+            ),
         )
 
     def emit_annotation_added(
-        self, annotation: generated_models.Annotation | dict[str, Any]
-    ) -> generated_models.ResponseStreamEvent:
+        self, annotation: generated_models.Annotation
+    ) -> generated_models.ResponseOutputTextAnnotationAddedEvent:
         """Emit a text annotation added event.
 
-        :param annotation: The annotation to attach—either a typed
-            :class:`~azure.ai.agentserver.responses.models.Annotation` subclass
-            or a raw dict.
-        :type annotation: Annotation | dict[str, Any]
+        :param annotation: The annotation to attach—a typed
+            :class:`~azure.ai.agentserver.responses.models.Annotation` subclass.
+        :type annotation: Annotation
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputTextAnnotationAddedEvent
         """
         annotation_index = self._annotation_index
         self._annotation_index += 1
-        annotation_payload: dict[str, Any]
-        if isinstance(annotation, dict):
-            annotation_payload = deepcopy(annotation)
-        else:
-            annotation_payload = deepcopy(annotation.as_dict())
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "annotation_index": annotation_index,
-                "annotation": annotation_payload,
-            }
+        annotation_payload = deepcopy(annotation.as_dict())
+        return cast(
+            generated_models.ResponseOutputTextAnnotationAddedEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "annotation_index": annotation_index,
+                    "annotation": annotation_payload,
+                }
+            ),
         )
 
 
@@ -234,45 +244,51 @@ class RefusalContentBuilder:
         """
         return self._content_index
 
-    def emit_added(self) -> generated_models.ResponseStreamEvent:
+    def emit_added(self) -> generated_models.ResponseContentPartAddedEvent:
         """Emit a ``content_part.added`` event for this refusal content.
 
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseContentPartAddedEvent
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "part": {"type": "refusal", "refusal": ""},
-            }
+        return cast(
+            generated_models.ResponseContentPartAddedEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "part": {"type": "refusal", "refusal": ""},
+                }
+            ),
         )
 
-    def emit_delta(self, text: str) -> generated_models.ResponseStreamEvent:
+    def emit_delta(self, text: str) -> generated_models.ResponseRefusalDeltaEvent:
         """Emit a refusal delta event.
 
         :param text: The incremental refusal text fragment.
         :type text: str
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseRefusalDeltaEvent
         """
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_REFUSAL_DELTA.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "delta": text,
-            }
+        return cast(
+            generated_models.ResponseRefusalDeltaEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_REFUSAL_DELTA.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "delta": text,
+                }
+            ),
         )
 
-    def emit_refusal_done(self, final_refusal: str) -> generated_models.ResponseStreamEvent:
+    def emit_refusal_done(self, final_refusal: str) -> generated_models.ResponseRefusalDoneEvent:
         """Emit a ``refusal.done`` event.
 
         Call this after all deltas have been emitted and before ``emit_done()``.
@@ -280,7 +296,7 @@ class RefusalContentBuilder:
         :param final_refusal: The final, complete refusal text.
         :type final_refusal: str
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseRefusalDoneEvent
         :raises ValueError: If the builder is not in ``ADDED`` state or refusal is already done.
         """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
@@ -289,23 +305,26 @@ class RefusalContentBuilder:
             raise ValueError("emit_refusal_done has already been called")
         self._refusal_done = True
         self._final_refusal = final_refusal
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_REFUSAL_DONE.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "refusal": final_refusal,
-            }
+        return cast(
+            generated_models.ResponseRefusalDoneEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_REFUSAL_DONE.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "refusal": final_refusal,
+                }
+            ),
         )
 
-    def emit_done(self) -> generated_models.ResponseStreamEvent:
+    def emit_done(self) -> generated_models.ResponseContentPartDoneEvent:
         """Emit a ``content_part.done`` event, closing this content part.
 
         Must be called after ``emit_refusal_done()``.
 
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseContentPartDoneEvent
         :raises ValueError: If refusal has not been finalized or builder is already done.
         """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
@@ -313,17 +332,20 @@ class RefusalContentBuilder:
         if not self._refusal_done:
             raise ValueError("must call emit_refusal_done() before emit_done()")
         self._lifecycle_state = BuilderLifecycleState.DONE
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_CONTENT_PART_DONE.value,
-                "item_id": self._item_id,
-                "output_index": self._output_index,
-                "content_index": self._content_index,
-                "part": {
-                    "type": "refusal",
-                    "refusal": self._final_refusal or "",
-                },
-            }
+        return cast(
+            generated_models.ResponseContentPartDoneEvent,
+            self._stream._emit_event(  # pylint: disable=protected-access
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE.value,
+                    "item_id": self._item_id,
+                    "output_index": self._output_index,
+                    "content_index": self._content_index,
+                    "part": {
+                        "type": "refusal",
+                        "refusal": self._final_refusal or "",
+                    },
+                }
+            ),
         )
 
 
@@ -349,11 +371,11 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         self._content_index = 0
         self._content_builders: list[TextContentBuilder | RefusalContentBuilder] = []
 
-    def emit_added(self) -> generated_models.ResponseStreamEvent:
+    def emit_added(self) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this message item.
 
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemAddedEvent
         """
         return self._emit_added(
             {
@@ -399,13 +421,13 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         self._content_builders.append(rc)
         return rc
 
-    def emit_done(self) -> generated_models.ResponseStreamEvent:
+    def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this message item.
 
         Builds the content list from the tracked child content builders.
 
         :returns: The emitted event dict.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemDoneEvent
         :raises ValueError: If no content parts have been created.
         """
         if len(self._content_builders) == 0:

@@ -16,19 +16,16 @@ from typing import Any, cast
 from ..models import _generated as generated_models
 from ..models._generated import AgentReference
 
-EVENT_TYPE = generated_models.ResponseStreamEventType
-
-
 # Event types whose ``response`` field is a full Response snapshot.
 # Only these events should carry id/response_id/object/agent_reference/model.
 _RESPONSE_SNAPSHOT_EVENT_TYPES: frozenset[str] = frozenset(
     {
-        EVENT_TYPE.RESPONSE_QUEUED.value,
-        EVENT_TYPE.RESPONSE_CREATED.value,
-        EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-        EVENT_TYPE.RESPONSE_COMPLETED.value,
-        EVENT_TYPE.RESPONSE_FAILED.value,
-        EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+        generated_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_CREATED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
+        generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
     }
 )
 
@@ -188,7 +185,7 @@ def track_completed_output_item(
     :type event: ResponseStreamEvent
     :rtype: None
     """
-    if event.get("type") != EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
+    if event.get("type") != generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
         return
 
     output_index = event.get("output_index")
@@ -210,7 +207,7 @@ def track_completed_output_item(
         response.output = output_items
 
     try:
-        typed_item: Any = generated_models.OutputItem(item_dict)
+        typed_item: Any = generated_models.OutputItem._deserialize(item_dict, [])  # pylint: disable=protected-access
     except Exception:  # pylint: disable=broad-exception-caught
         typed_item = deepcopy(item_dict)
 
