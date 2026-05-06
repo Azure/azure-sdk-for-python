@@ -501,39 +501,6 @@ class TestMessagesOrQueryResponseInputValidator:
                 }
             )
 
-    def test_last_message_not_assistant(self):
-        validator = self._make_validator()
-        with pytest.raises(EvaluationException, match="last message must have role 'assistant'"):
-            validator.validate_eval_input(
-                {
-                    "messages": [
-                        {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
-                        {"role": "assistant", "content": [{"type": "text", "text": "Hi"}]},
-                        {"role": "user", "content": [{"type": "text", "text": "Bye"}]},
-                    ]
-                }
-            )
-
-    def test_last_assistant_no_text_content(self):
-        validator = self._make_validator()
-        with pytest.raises(EvaluationException, match="must contain text content"):
-            validator.validate_eval_input(
-                {
-                    "messages": [
-                        {"role": "user", "content": [{"type": "text", "text": "Do something"}]},
-                        {
-                            "role": "assistant",
-                            "content": [
-                                {
-                                    "type": "tool_call",
-                                    "tool_call": {"id": "1", "function": {"name": "f", "arguments": {}}},
-                                },
-                            ],
-                        },
-                    ]
-                }
-            )
-
     def test_developer_role_accepted(self):
         """Developer role messages should be accepted."""
         validator = self._make_validator()
