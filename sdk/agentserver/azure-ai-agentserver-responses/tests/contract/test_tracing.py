@@ -298,10 +298,10 @@ def test_tracing__incoming_baggage_does_not_break_span_parenting() -> None:
     )
 
     spans = exporter.get_finished_spans()
-    # Find the create_response span
-    create_spans = [s for s in spans if "create_response" in s.name]
-    assert len(create_spans) >= 1
-    span = create_spans[0]
+    # Find the invoke_agent span
+    matching_spans = [s for s in spans if "invoke_agent" in s.name]
+    assert len(matching_spans) >= 1
+    span = matching_spans[0]
     # The span should have the same trace ID (parent-child preserved)
     actual_trace_id = format(span.context.trace_id, "032x")
     assert actual_trace_id == trace_id_hex
