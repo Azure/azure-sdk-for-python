@@ -150,5 +150,6 @@
         "typetest.property.valuetypes.aio.operations.UnionEnumValueOperations.get": "Type.Property.ValueTypes.UnionEnumValue.get",
         "typetest.property.valuetypes.operations.UnionEnumValueOperations.put": "Type.Property.ValueTypes.UnionEnumValue.put",
         "typetest.property.valuetypes.aio.operations.UnionEnumValueOperations.put": "Type.Property.ValueTypes.UnionEnumValue.put"
-    }
+    },
+    "CrossLanguageVersion": "00b131ecd54d"
 }

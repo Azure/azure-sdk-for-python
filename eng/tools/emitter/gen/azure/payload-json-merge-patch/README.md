@@ -11,13 +11,9 @@ python -m pip install payload-jsonmergepatch
 
 #### Prequisites
 
-- Python 3.10 or later is required to use this package.
+- Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Payload Jsonmergepatch instance.
-
-### Use with AI tools
-
-AI coding tools such as VS Code and GitHub Copilot can help you write and debug code that uses this library. See [Using the Azure SDK for Python with AI tools](https://aka.ms/azsdk/python/ai) for available integrations.
 
 
 ## Contributing

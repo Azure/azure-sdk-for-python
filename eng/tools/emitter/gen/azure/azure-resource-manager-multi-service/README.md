@@ -11,13 +11,9 @@ python -m pip install azure-resourcemanager-multiservice-combined
 
 #### Prequisites
 
-- Python 3.10 or later is required to use this package.
+- Python 3.9 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Combined Management instance.
-
-### Use with AI tools
-
-AI coding tools such as VS Code and GitHub Copilot can help you write and debug code that uses this library. See [Using the Azure SDK for Python with AI tools](https://aka.ms/azsdk/python/ai) for available integrations.
 
 #### Create with an Azure Active Directory Credential
 To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
@@ -35,19 +31,19 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.resourcemanager.multiservice.combined import CombinedClient
+>>> from azure.resourcemanager.multiservice.combined import Combined
 >>> from azure.identity import DefaultAzureCredential
->>> client = CombinedClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = Combined(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
 ## Examples
 
 ```python
->>> from azure.resourcemanager.multiservice.combined import CombinedClient
+>>> from azure.resourcemanager.multiservice.combined import Combined
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 
->>> client = CombinedClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = Combined(endpoint='<endpoint>', credential=DefaultAzureCredential())
 >>> try:
         <!-- write test code here -->
     except HttpResponseError as e:
