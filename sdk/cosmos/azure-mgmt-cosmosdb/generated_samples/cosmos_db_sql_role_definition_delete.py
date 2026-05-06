@@ -31,9 +31,9 @@ def main():
     )
 
     client.sql_resources.begin_delete_sql_role_definition(
+        role_definition_id="myRoleDefinitionId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
-        role_definition_id="myRoleDefinitionId",
     ).result()
 
 

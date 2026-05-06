@@ -31,9 +31,9 @@ def main():
     )
 
     client.mongo_db_resources.begin_delete_mongo_user_definition(
+        mongo_user_definition_id="myMongoUserDefinitionId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
-        mongo_user_definition_id="myMongoUserDefinitionId",
     ).result()
 
 

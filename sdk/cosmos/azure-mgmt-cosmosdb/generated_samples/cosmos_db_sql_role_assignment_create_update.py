@@ -32,9 +32,9 @@ def main():
     )
 
     response = client.sql_resources.begin_create_update_sql_role_assignment(
+        role_assignment_id="myRoleAssignmentId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
-        role_assignment_id="myRoleAssignmentId",
         create_update_sql_role_assignment_parameters={
             "properties": {
                 "principalId": "myPrincipalId",

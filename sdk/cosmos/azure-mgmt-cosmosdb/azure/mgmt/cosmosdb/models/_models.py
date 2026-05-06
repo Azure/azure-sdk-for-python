@@ -1175,6 +1175,143 @@ class CapacityModeChangeTransitionState(_Model):
         super().__init__(*args, **kwargs)
 
 
+class CassandraClusterDataCenterNodeItem(_Model):
+    """CassandraClusterDataCenterNodeItem.
+
+    :ivar address: The node's IP address.
+    :vartype address: str
+    :ivar state: The state of the node in Cassandra ring. Known values are: "Normal", "Leaving",
+     "Joining", "Moving", and "Stopped".
+    :vartype state: str or ~azure.mgmt.cosmosdb.models.NodeState
+    :ivar status:
+    :vartype status: str
+    :ivar cassandra_process_status: Cassandra service status on this node.
+    :vartype cassandra_process_status: str
+    :ivar load: The amount of file system data in the data directory (e.g., 47.66 kB), excluding
+     all content in the snapshots subdirectories. Because all SSTable data files are included, any
+     data that is not cleaned up (such as TTL-expired cells or tombstones) is counted.
+    :vartype load: str
+    :ivar tokens: List of tokens this node covers.
+    :vartype tokens: list[str]
+    :ivar size:
+    :vartype size: int
+    :ivar host_id: The network ID of the node.
+    :vartype host_id: str
+    :ivar rack: The rack this node is part of.
+    :vartype rack: str
+    :ivar timestamp: The timestamp when these statistics were captured.
+    :vartype timestamp: str
+    :ivar disk_used_kb: The amount of disk used, in kB, of the directory /var/lib/cassandra.
+    :vartype disk_used_kb: int
+    :ivar disk_free_kb: The amount of disk free, in kB, of the directory /var/lib/cassandra.
+    :vartype disk_free_kb: int
+    :ivar memory_used_kb: Used memory (calculated as total - free - buffers - cache), in kB.
+    :vartype memory_used_kb: int
+    :ivar memory_buffers_and_cached_kb: Memory used by kernel buffers (Buffers in /proc/meminfo)
+     and page cache and slabs (Cached and SReclaimable in /proc/meminfo), in kB.
+    :vartype memory_buffers_and_cached_kb: int
+    :ivar memory_free_kb: Unused memory (MemFree and SwapFree in /proc/meminfo), in kB.
+    :vartype memory_free_kb: int
+    :ivar memory_total_kb: Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in kB.
+    :vartype memory_total_kb: int
+    :ivar cpu_usage: A float representing the current system-wide CPU utilization as a percentage.
+    :vartype cpu_usage: float
+    :ivar is_latest_model: If node has been updated to latest model.
+    :vartype is_latest_model: bool
+    """
+
+    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The node's IP address."""
+    state: Optional[Union[str, "_models.NodeState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The state of the node in Cassandra ring. Known values are: \"Normal\", \"Leaving\",
+     \"Joining\", \"Moving\", and \"Stopped\"."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cassandra_process_status: Optional[str] = rest_field(
+        name="cassandraProcessStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cassandra service status on this node."""
+    load: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The amount of file system data in the data directory (e.g., 47.66 kB), excluding all content in
+     the snapshots subdirectories. Because all SSTable data files are included, any data that is not
+     cleaned up (such as TTL-expired cells or tombstones) is counted."""
+    tokens: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of tokens this node covers."""
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    host_id: Optional[str] = rest_field(name="hostID", visibility=["read", "create", "update", "delete", "query"])
+    """The network ID of the node."""
+    rack: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The rack this node is part of."""
+    timestamp: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The timestamp when these statistics were captured."""
+    disk_used_kb: Optional[int] = rest_field(
+        name="diskUsedKB", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of disk used, in kB, of the directory /var/lib/cassandra."""
+    disk_free_kb: Optional[int] = rest_field(
+        name="diskFreeKB", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount of disk free, in kB, of the directory /var/lib/cassandra."""
+    memory_used_kb: Optional[int] = rest_field(
+        name="memoryUsedKB", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used memory (calculated as total - free - buffers - cache), in kB."""
+    memory_buffers_and_cached_kb: Optional[int] = rest_field(
+        name="memoryBuffersAndCachedKB", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Memory used by kernel buffers (Buffers in /proc/meminfo) and page cache and slabs (Cached and
+     SReclaimable in /proc/meminfo), in kB."""
+    memory_free_kb: Optional[int] = rest_field(
+        name="memoryFreeKB", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unused memory (MemFree and SwapFree in /proc/meminfo), in kB."""
+    memory_total_kb: Optional[int] = rest_field(
+        name="memoryTotalKB", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in kB."""
+    cpu_usage: Optional[float] = rest_field(name="cpuUsage", visibility=["read", "create", "update", "delete", "query"])
+    """A float representing the current system-wide CPU utilization as a percentage."""
+    is_latest_model: Optional[bool] = rest_field(
+        name="isLatestModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If node has been updated to latest model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        address: Optional[str] = None,
+        state: Optional[Union[str, "_models.NodeState"]] = None,
+        status: Optional[str] = None,
+        cassandra_process_status: Optional[str] = None,
+        load: Optional[str] = None,
+        tokens: Optional[list[str]] = None,
+        size: Optional[int] = None,
+        host_id: Optional[str] = None,
+        rack: Optional[str] = None,
+        timestamp: Optional[str] = None,
+        disk_used_kb: Optional[int] = None,
+        disk_free_kb: Optional[int] = None,
+        memory_used_kb: Optional[int] = None,
+        memory_buffers_and_cached_kb: Optional[int] = None,
+        memory_free_kb: Optional[int] = None,
+        memory_total_kb: Optional[int] = None,
+        cpu_usage: Optional[float] = None,
+        is_latest_model: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CassandraClusterPublicStatus(_Model):
     """Properties of a managed Cassandra cluster public status.
 
@@ -1240,8 +1377,7 @@ class CassandraClusterPublicStatusDataCentersItem(_Model):  # pylint: disable=na
     :ivar seed_nodes: A list of all seed nodes in the cluster, managed and unmanaged.
     :vartype seed_nodes: list[str]
     :ivar nodes:
-    :vartype nodes:
-     list[~azure.mgmt.cosmosdb.models.ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems]
+    :vartype nodes: list[~azure.mgmt.cosmosdb.models.CassandraClusterDataCenterNodeItem]
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1250,11 +1386,9 @@ class CassandraClusterPublicStatusDataCentersItem(_Model):  # pylint: disable=na
         name="seedNodes", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of all seed nodes in the cluster, managed and unmanaged."""
-    nodes: Optional[
-        list[
-            "_models.ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems"
-        ]
-    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    nodes: Optional[list["_models.CassandraClusterDataCenterNodeItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
 
     @overload
     def __init__(
@@ -1262,11 +1396,7 @@ class CassandraClusterPublicStatusDataCentersItem(_Model):  # pylint: disable=na
         *,
         name: Optional[str] = None,
         seed_nodes: Optional[list[str]] = None,
-        nodes: Optional[
-            list[
-                "_models.ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems"
-            ]
-        ] = None,
+        nodes: Optional[list["_models.CassandraClusterDataCenterNodeItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -4009,145 +4139,6 @@ class CommandPublicResource(_Model):
         result: Optional[str] = None,
         status: Optional[Union[str, "_models.CommandStatus"]] = None,
         output_file: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems(
-    _Model
-):  # pylint: disable=name-too-long
-    """ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems.
-
-    :ivar address: The node's IP address.
-    :vartype address: str
-    :ivar state: The state of the node in Cassandra ring. Known values are: "Normal", "Leaving",
-     "Joining", "Moving", and "Stopped".
-    :vartype state: str or ~azure.mgmt.cosmosdb.models.NodeState
-    :ivar status:
-    :vartype status: str
-    :ivar cassandra_process_status: Cassandra service status on this node.
-    :vartype cassandra_process_status: str
-    :ivar load: The amount of file system data in the data directory (e.g., 47.66 kB), excluding
-     all content in the snapshots subdirectories. Because all SSTable data files are included, any
-     data that is not cleaned up (such as TTL-expired cells or tombstones) is counted.
-    :vartype load: str
-    :ivar tokens: List of tokens this node covers.
-    :vartype tokens: list[str]
-    :ivar size:
-    :vartype size: int
-    :ivar host_id: The network ID of the node.
-    :vartype host_id: str
-    :ivar rack: The rack this node is part of.
-    :vartype rack: str
-    :ivar timestamp: The timestamp when these statistics were captured.
-    :vartype timestamp: str
-    :ivar disk_used_kb: The amount of disk used, in kB, of the directory /var/lib/cassandra.
-    :vartype disk_used_kb: int
-    :ivar disk_free_kb: The amount of disk free, in kB, of the directory /var/lib/cassandra.
-    :vartype disk_free_kb: int
-    :ivar memory_used_kb: Used memory (calculated as total - free - buffers - cache), in kB.
-    :vartype memory_used_kb: int
-    :ivar memory_buffers_and_cached_kb: Memory used by kernel buffers (Buffers in /proc/meminfo)
-     and page cache and slabs (Cached and SReclaimable in /proc/meminfo), in kB.
-    :vartype memory_buffers_and_cached_kb: int
-    :ivar memory_free_kb: Unused memory (MemFree and SwapFree in /proc/meminfo), in kB.
-    :vartype memory_free_kb: int
-    :ivar memory_total_kb: Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in kB.
-    :vartype memory_total_kb: int
-    :ivar cpu_usage: A float representing the current system-wide CPU utilization as a percentage.
-    :vartype cpu_usage: float
-    :ivar is_latest_model: If node has been updated to latest model.
-    :vartype is_latest_model: bool
-    """
-
-    address: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The node's IP address."""
-    state: Optional[Union[str, "_models.NodeState"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The state of the node in Cassandra ring. Known values are: \"Normal\", \"Leaving\",
-     \"Joining\", \"Moving\", and \"Stopped\"."""
-    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    cassandra_process_status: Optional[str] = rest_field(
-        name="cassandraProcessStatus", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Cassandra service status on this node."""
-    load: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The amount of file system data in the data directory (e.g., 47.66 kB), excluding all content in
-     the snapshots subdirectories. Because all SSTable data files are included, any data that is not
-     cleaned up (such as TTL-expired cells or tombstones) is counted."""
-    tokens: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """List of tokens this node covers."""
-    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    host_id: Optional[str] = rest_field(name="hostID", visibility=["read", "create", "update", "delete", "query"])
-    """The network ID of the node."""
-    rack: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The rack this node is part of."""
-    timestamp: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The timestamp when these statistics were captured."""
-    disk_used_kb: Optional[int] = rest_field(
-        name="diskUsedKB", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The amount of disk used, in kB, of the directory /var/lib/cassandra."""
-    disk_free_kb: Optional[int] = rest_field(
-        name="diskFreeKB", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The amount of disk free, in kB, of the directory /var/lib/cassandra."""
-    memory_used_kb: Optional[int] = rest_field(
-        name="memoryUsedKB", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Used memory (calculated as total - free - buffers - cache), in kB."""
-    memory_buffers_and_cached_kb: Optional[int] = rest_field(
-        name="memoryBuffersAndCachedKB", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Memory used by kernel buffers (Buffers in /proc/meminfo) and page cache and slabs (Cached and
-     SReclaimable in /proc/meminfo), in kB."""
-    memory_free_kb: Optional[int] = rest_field(
-        name="memoryFreeKB", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Unused memory (MemFree and SwapFree in /proc/meminfo), in kB."""
-    memory_total_kb: Optional[int] = rest_field(
-        name="memoryTotalKB", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Total installed memory (MemTotal and SwapTotal in /proc/meminfo), in kB."""
-    cpu_usage: Optional[float] = rest_field(name="cpuUsage", visibility=["read", "create", "update", "delete", "query"])
-    """A float representing the current system-wide CPU utilization as a percentage."""
-    is_latest_model: Optional[bool] = rest_field(
-        name="isLatestModel", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """If node has been updated to latest model."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        address: Optional[str] = None,
-        state: Optional[Union[str, "_models.NodeState"]] = None,
-        status: Optional[str] = None,
-        cassandra_process_status: Optional[str] = None,
-        load: Optional[str] = None,
-        tokens: Optional[list[str]] = None,
-        size: Optional[int] = None,
-        host_id: Optional[str] = None,
-        rack: Optional[str] = None,
-        timestamp: Optional[str] = None,
-        disk_used_kb: Optional[int] = None,
-        disk_free_kb: Optional[int] = None,
-        memory_used_kb: Optional[int] = None,
-        memory_buffers_and_cached_kb: Optional[int] = None,
-        memory_free_kb: Optional[int] = None,
-        memory_total_kb: Optional[int] = None,
-        cpu_usage: Optional[float] = None,
-        is_latest_model: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -10679,7 +10670,7 @@ class ManagedServiceIdentity(_Model):
      identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.cosmosdb.models.ManagedServiceIdentityUserAssignedIdentities]
+     ~azure.mgmt.cosmosdb.models.ManagedServiceIdentityUserAssignedIdentity]
     """
 
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
@@ -10695,7 +10686,7 @@ class ManagedServiceIdentity(_Model):
      both an implicitly created identity and a set of user assigned identities. The type 'None' will
      remove any identities from the service. Known values are: \"SystemAssigned\", \"UserAssigned\",
      \"SystemAssigned,UserAssigned\", and \"None\"."""
-    user_assigned_identities: Optional[dict[str, "_models.ManagedServiceIdentityUserAssignedIdentities"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.ManagedServiceIdentityUserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of user identities associated with resource. The user identity dictionary key
@@ -10707,7 +10698,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[dict[str, "_models.ManagedServiceIdentityUserAssignedIdentities"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.ManagedServiceIdentityUserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -10721,8 +10712,8 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentityUserAssignedIdentities(_Model):  # pylint: disable=name-too-long
-    """ManagedServiceIdentityUserAssignedIdentities.
+class ManagedServiceIdentityUserAssignedIdentity(_Model):  # pylint: disable=name-too-long
+    """ManagedServiceIdentityUserAssignedIdentity.
 
     :ivar principal_id: The principal id of user assigned identity.
     :vartype principal_id: str

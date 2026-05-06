@@ -10824,17 +10824,17 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_sql_role_definition(
-        self, resource_group_name: str, account_name: str, role_definition_id: str, **kwargs: Any
+        self, role_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> _models.SqlRoleDefinitionGetResults:
         """Retrieves the properties of an existing Azure Cosmos DB SQL Role Definition with the given Id.
 
+        :param role_definition_id: The GUID for the Role Definition. Required.
+        :type role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_definition_id: The GUID for the Role Definition. Required.
-        :type role_definition_id: str
         :return: SqlRoleDefinitionGetResults. The SqlRoleDefinitionGetResults is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.SqlRoleDefinitionGetResults
@@ -10854,9 +10854,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.SqlRoleDefinitionGetResults] = kwargs.pop("cls", None)
 
         _request = build_sql_resources_get_sql_role_definition_request(
+            role_definition_id=role_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            role_definition_id=role_definition_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -10900,9 +10900,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
     async def _create_update_sql_role_definition_initial(  # pylint: disable=name-too-long
         self,
+        role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        role_definition_id: str,
         create_update_sql_role_definition_parameters: Union[
             _models.SqlRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -10930,9 +10930,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(create_update_sql_role_definition_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_sql_resources_create_update_sql_role_definition_request(
+            role_definition_id=role_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            role_definition_id=role_definition_id,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -10980,9 +10980,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_sql_role_definition(
         self,
+        role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        role_definition_id: str,
         create_update_sql_role_definition_parameters: _models.SqlRoleDefinitionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
@@ -10990,13 +10990,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Definition.
 
+        :param role_definition_id: The GUID for the Role Definition. Required.
+        :type role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_definition_id: The GUID for the Role Definition. Required.
-        :type role_definition_id: str
         :param create_update_sql_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
         :type create_update_sql_role_definition_parameters:
@@ -11014,9 +11014,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_sql_role_definition(
         self,
+        role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        role_definition_id: str,
         create_update_sql_role_definition_parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -11024,13 +11024,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Definition.
 
+        :param role_definition_id: The GUID for the Role Definition. Required.
+        :type role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_definition_id: The GUID for the Role Definition. Required.
-        :type role_definition_id: str
         :param create_update_sql_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
         :type create_update_sql_role_definition_parameters: JSON
@@ -11047,9 +11047,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_sql_role_definition(
         self,
+        role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        role_definition_id: str,
         create_update_sql_role_definition_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -11057,13 +11057,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Definition.
 
+        :param role_definition_id: The GUID for the Role Definition. Required.
+        :type role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_definition_id: The GUID for the Role Definition. Required.
-        :type role_definition_id: str
         :param create_update_sql_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
         :type create_update_sql_role_definition_parameters: IO[bytes]
@@ -11080,9 +11080,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_create_update_sql_role_definition(
         self,
+        role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        role_definition_id: str,
         create_update_sql_role_definition_parameters: Union[
             _models.SqlRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -11090,13 +11090,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Definition.
 
+        :param role_definition_id: The GUID for the Role Definition. Required.
+        :type role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_definition_id: The GUID for the Role Definition. Required.
-        :type role_definition_id: str
         :param create_update_sql_role_definition_parameters: The properties required to create or
          update a Role Definition. Is one of the following types:
          SqlRoleDefinitionCreateUpdateParameters, JSON, IO[bytes] Required.
@@ -11118,9 +11118,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_update_sql_role_definition_initial(
+                role_definition_id=role_definition_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                role_definition_id=role_definition_id,
                 create_update_sql_role_definition_parameters=create_update_sql_role_definition_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -11162,7 +11162,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         )
 
     async def _delete_sql_role_definition_initial(
-        self, resource_group_name: str, account_name: str, role_definition_id: str, **kwargs: Any
+        self, role_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11178,9 +11178,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_sql_resources_delete_sql_role_definition_request(
+            role_definition_id=role_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            role_definition_id=role_definition_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11225,17 +11225,17 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_delete_sql_role_definition(
-        self, resource_group_name: str, account_name: str, role_definition_id: str, **kwargs: Any
+        self, role_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing Azure Cosmos DB SQL Role Definition.
 
+        :param role_definition_id: The GUID for the Role Definition. Required.
+        :type role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_definition_id: The GUID for the Role Definition. Required.
-        :type role_definition_id: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11249,9 +11249,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_sql_role_definition_initial(
+                role_definition_id=role_definition_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                role_definition_id=role_definition_id,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -11387,17 +11387,17 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_sql_role_assignment(
-        self, resource_group_name: str, account_name: str, role_assignment_id: str, **kwargs: Any
+        self, role_assignment_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> _models.SqlRoleAssignmentGetResults:
         """Retrieves the properties of an existing Azure Cosmos DB SQL Role Assignment with the given Id.
 
+        :param role_assignment_id: The GUID for the Role Assignment. Required.
+        :type role_assignment_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_assignment_id: The GUID for the Role Assignment. Required.
-        :type role_assignment_id: str
         :return: SqlRoleAssignmentGetResults. The SqlRoleAssignmentGetResults is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.SqlRoleAssignmentGetResults
@@ -11417,9 +11417,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.SqlRoleAssignmentGetResults] = kwargs.pop("cls", None)
 
         _request = build_sql_resources_get_sql_role_assignment_request(
+            role_assignment_id=role_assignment_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            role_assignment_id=role_assignment_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11463,9 +11463,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
     async def _create_update_sql_role_assignment_initial(  # pylint: disable=name-too-long
         self,
+        role_assignment_id: str,
         resource_group_name: str,
         account_name: str,
-        role_assignment_id: str,
         create_update_sql_role_assignment_parameters: Union[
             _models.SqlRoleAssignmentCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -11493,9 +11493,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(create_update_sql_role_assignment_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_sql_resources_create_update_sql_role_assignment_request(
+            role_assignment_id=role_assignment_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            role_assignment_id=role_assignment_id,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -11543,9 +11543,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_sql_role_assignment(
         self,
+        role_assignment_id: str,
         resource_group_name: str,
         account_name: str,
-        role_assignment_id: str,
         create_update_sql_role_assignment_parameters: _models.SqlRoleAssignmentCreateUpdateParameters,
         *,
         content_type: str = "application/json",
@@ -11553,13 +11553,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleAssignmentGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Assignment.
 
+        :param role_assignment_id: The GUID for the Role Assignment. Required.
+        :type role_assignment_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_assignment_id: The GUID for the Role Assignment. Required.
-        :type role_assignment_id: str
         :param create_update_sql_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
         :type create_update_sql_role_assignment_parameters:
@@ -11577,9 +11577,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_sql_role_assignment(
         self,
+        role_assignment_id: str,
         resource_group_name: str,
         account_name: str,
-        role_assignment_id: str,
         create_update_sql_role_assignment_parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -11587,13 +11587,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleAssignmentGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Assignment.
 
+        :param role_assignment_id: The GUID for the Role Assignment. Required.
+        :type role_assignment_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_assignment_id: The GUID for the Role Assignment. Required.
-        :type role_assignment_id: str
         :param create_update_sql_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
         :type create_update_sql_role_assignment_parameters: JSON
@@ -11610,9 +11610,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_sql_role_assignment(
         self,
+        role_assignment_id: str,
         resource_group_name: str,
         account_name: str,
-        role_assignment_id: str,
         create_update_sql_role_assignment_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -11620,13 +11620,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleAssignmentGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Assignment.
 
+        :param role_assignment_id: The GUID for the Role Assignment. Required.
+        :type role_assignment_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_assignment_id: The GUID for the Role Assignment. Required.
-        :type role_assignment_id: str
         :param create_update_sql_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
         :type create_update_sql_role_assignment_parameters: IO[bytes]
@@ -11643,9 +11643,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_create_update_sql_role_assignment(
         self,
+        role_assignment_id: str,
         resource_group_name: str,
         account_name: str,
-        role_assignment_id: str,
         create_update_sql_role_assignment_parameters: Union[
             _models.SqlRoleAssignmentCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -11653,13 +11653,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.SqlRoleAssignmentGetResults]:
         """Creates or updates an Azure Cosmos DB SQL Role Assignment.
 
+        :param role_assignment_id: The GUID for the Role Assignment. Required.
+        :type role_assignment_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_assignment_id: The GUID for the Role Assignment. Required.
-        :type role_assignment_id: str
         :param create_update_sql_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Is one of the following types:
          SqlRoleAssignmentCreateUpdateParameters, JSON, IO[bytes] Required.
@@ -11681,9 +11681,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_update_sql_role_assignment_initial(
+                role_assignment_id=role_assignment_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                role_assignment_id=role_assignment_id,
                 create_update_sql_role_assignment_parameters=create_update_sql_role_assignment_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -11725,7 +11725,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         )
 
     async def _delete_sql_role_assignment_initial(
-        self, resource_group_name: str, account_name: str, role_assignment_id: str, **kwargs: Any
+        self, role_assignment_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11741,9 +11741,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_sql_resources_delete_sql_role_assignment_request(
+            role_assignment_id=role_assignment_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            role_assignment_id=role_assignment_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11788,17 +11788,17 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_delete_sql_role_assignment(
-        self, resource_group_name: str, account_name: str, role_assignment_id: str, **kwargs: Any
+        self, role_assignment_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing Azure Cosmos DB SQL Role Assignment.
 
+        :param role_assignment_id: The GUID for the Role Assignment. Required.
+        :type role_assignment_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param role_assignment_id: The GUID for the Role Assignment. Required.
-        :type role_assignment_id: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11812,9 +11812,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_sql_role_assignment_initial(
+                role_assignment_id=role_assignment_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                role_assignment_id=role_assignment_id,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -16242,18 +16242,18 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_mongo_role_definition(
-        self, resource_group_name: str, account_name: str, mongo_role_definition_id: str, **kwargs: Any
+        self, mongo_role_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> _models.MongoRoleDefinitionGetResults:
         """Retrieves the properties of an existing Azure Cosmos DB Mongo Role Definition with the given
         Id.
 
+        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
+        :type mongo_role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
-        :type mongo_role_definition_id: str
         :return: MongoRoleDefinitionGetResults. The MongoRoleDefinitionGetResults is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.MongoRoleDefinitionGetResults
@@ -16273,9 +16273,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.MongoRoleDefinitionGetResults] = kwargs.pop("cls", None)
 
         _request = build_mongo_db_resources_get_mongo_role_definition_request(
+            mongo_role_definition_id=mongo_role_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            mongo_role_definition_id=mongo_role_definition_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -16319,9 +16319,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     async def _create_update_mongo_role_definition_initial(  # pylint: disable=name-too-long
         self,
+        mongo_role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_role_definition_id: str,
         create_update_mongo_role_definition_parameters: Union[
             _models.MongoRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -16349,9 +16349,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(create_update_mongo_role_definition_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_mongo_db_resources_create_update_mongo_role_definition_request(
+            mongo_role_definition_id=mongo_role_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            mongo_role_definition_id=mongo_role_definition_id,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -16399,9 +16399,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_mongo_role_definition(  # pylint: disable=name-too-long
         self,
+        mongo_role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_role_definition_id: str,
         create_update_mongo_role_definition_parameters: _models.MongoRoleDefinitionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
@@ -16409,13 +16409,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo Role Definition.
 
+        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
+        :type mongo_role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
-        :type mongo_role_definition_id: str
         :param create_update_mongo_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
         :type create_update_mongo_role_definition_parameters:
@@ -16433,9 +16433,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_mongo_role_definition(  # pylint: disable=name-too-long
         self,
+        mongo_role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_role_definition_id: str,
         create_update_mongo_role_definition_parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -16443,13 +16443,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo Role Definition.
 
+        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
+        :type mongo_role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
-        :type mongo_role_definition_id: str
         :param create_update_mongo_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
         :type create_update_mongo_role_definition_parameters: JSON
@@ -16466,9 +16466,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_mongo_role_definition(  # pylint: disable=name-too-long
         self,
+        mongo_role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_role_definition_id: str,
         create_update_mongo_role_definition_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -16476,13 +16476,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo Role Definition.
 
+        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
+        :type mongo_role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
-        :type mongo_role_definition_id: str
         :param create_update_mongo_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
         :type create_update_mongo_role_definition_parameters: IO[bytes]
@@ -16499,9 +16499,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_create_update_mongo_role_definition(  # pylint: disable=name-too-long
         self,
+        mongo_role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_role_definition_id: str,
         create_update_mongo_role_definition_parameters: Union[
             _models.MongoRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -16509,13 +16509,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoRoleDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo Role Definition.
 
+        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
+        :type mongo_role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
-        :type mongo_role_definition_id: str
         :param create_update_mongo_role_definition_parameters: The properties required to create or
          update a Role Definition. Is one of the following types:
          MongoRoleDefinitionCreateUpdateParameters, JSON, IO[bytes] Required.
@@ -16537,9 +16537,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_update_mongo_role_definition_initial(
+                mongo_role_definition_id=mongo_role_definition_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                mongo_role_definition_id=mongo_role_definition_id,
                 create_update_mongo_role_definition_parameters=create_update_mongo_role_definition_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -16581,7 +16581,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         )
 
     async def _delete_mongo_role_definition_initial(
-        self, resource_group_name: str, account_name: str, mongo_role_definition_id: str, **kwargs: Any
+        self, mongo_role_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16597,9 +16597,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_mongo_db_resources_delete_mongo_role_definition_request(
+            mongo_role_definition_id=mongo_role_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            mongo_role_definition_id=mongo_role_definition_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -16644,17 +16644,17 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_delete_mongo_role_definition(
-        self, resource_group_name: str, account_name: str, mongo_role_definition_id: str, **kwargs: Any
+        self, mongo_role_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing Azure Cosmos DB Mongo Role Definition.
 
+        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
+        :type mongo_role_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_role_definition_id: The ID for the Role Definition {dbName.roleName}. Required.
-        :type mongo_role_definition_id: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16668,9 +16668,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_mongo_role_definition_initial(
+                mongo_role_definition_id=mongo_role_definition_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                mongo_role_definition_id=mongo_role_definition_id,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -16806,18 +16806,18 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_mongo_user_definition(
-        self, resource_group_name: str, account_name: str, mongo_user_definition_id: str, **kwargs: Any
+        self, mongo_user_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> _models.MongoUserDefinitionGetResults:
         """Retrieves the properties of an existing Azure Cosmos DB Mongo User Definition with the given
         Id.
 
+        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
+        :type mongo_user_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
-        :type mongo_user_definition_id: str
         :return: MongoUserDefinitionGetResults. The MongoUserDefinitionGetResults is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.MongoUserDefinitionGetResults
@@ -16837,9 +16837,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.MongoUserDefinitionGetResults] = kwargs.pop("cls", None)
 
         _request = build_mongo_db_resources_get_mongo_user_definition_request(
+            mongo_user_definition_id=mongo_user_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            mongo_user_definition_id=mongo_user_definition_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -16883,9 +16883,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     async def _create_update_mongo_user_definition_initial(  # pylint: disable=name-too-long
         self,
+        mongo_user_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_user_definition_id: str,
         create_update_mongo_user_definition_parameters: Union[
             _models.MongoUserDefinitionCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -16913,9 +16913,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(create_update_mongo_user_definition_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_mongo_db_resources_create_update_mongo_user_definition_request(
+            mongo_user_definition_id=mongo_user_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            mongo_user_definition_id=mongo_user_definition_id,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -16963,9 +16963,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_mongo_user_definition(  # pylint: disable=name-too-long
         self,
+        mongo_user_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_user_definition_id: str,
         create_update_mongo_user_definition_parameters: _models.MongoUserDefinitionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
@@ -16973,13 +16973,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoUserDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo User Definition.
 
+        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
+        :type mongo_user_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
-        :type mongo_user_definition_id: str
         :param create_update_mongo_user_definition_parameters: The properties required to create or
          update a User Definition. Required.
         :type create_update_mongo_user_definition_parameters:
@@ -16997,9 +16997,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_mongo_user_definition(  # pylint: disable=name-too-long
         self,
+        mongo_user_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_user_definition_id: str,
         create_update_mongo_user_definition_parameters: JSON,
         *,
         content_type: str = "application/json",
@@ -17007,13 +17007,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoUserDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo User Definition.
 
+        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
+        :type mongo_user_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
-        :type mongo_user_definition_id: str
         :param create_update_mongo_user_definition_parameters: The properties required to create or
          update a User Definition. Required.
         :type create_update_mongo_user_definition_parameters: JSON
@@ -17030,9 +17030,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def begin_create_update_mongo_user_definition(  # pylint: disable=name-too-long
         self,
+        mongo_user_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_user_definition_id: str,
         create_update_mongo_user_definition_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -17040,13 +17040,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoUserDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo User Definition.
 
+        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
+        :type mongo_user_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
-        :type mongo_user_definition_id: str
         :param create_update_mongo_user_definition_parameters: The properties required to create or
          update a User Definition. Required.
         :type create_update_mongo_user_definition_parameters: IO[bytes]
@@ -17063,9 +17063,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def begin_create_update_mongo_user_definition(  # pylint: disable=name-too-long
         self,
+        mongo_user_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        mongo_user_definition_id: str,
         create_update_mongo_user_definition_parameters: Union[
             _models.MongoUserDefinitionCreateUpdateParameters, JSON, IO[bytes]
         ],
@@ -17073,13 +17073,13 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.MongoUserDefinitionGetResults]:
         """Creates or updates an Azure Cosmos DB Mongo User Definition.
 
+        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
+        :type mongo_user_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
-        :type mongo_user_definition_id: str
         :param create_update_mongo_user_definition_parameters: The properties required to create or
          update a User Definition. Is one of the following types:
          MongoUserDefinitionCreateUpdateParameters, JSON, IO[bytes] Required.
@@ -17101,9 +17101,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_update_mongo_user_definition_initial(
+                mongo_user_definition_id=mongo_user_definition_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                mongo_user_definition_id=mongo_user_definition_id,
                 create_update_mongo_user_definition_parameters=create_update_mongo_user_definition_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -17145,7 +17145,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         )
 
     async def _delete_mongo_user_definition_initial(
-        self, resource_group_name: str, account_name: str, mongo_user_definition_id: str, **kwargs: Any
+        self, mongo_user_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17161,9 +17161,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_mongo_db_resources_delete_mongo_user_definition_request(
+            mongo_user_definition_id=mongo_user_definition_id,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            mongo_user_definition_id=mongo_user_definition_id,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -17208,17 +17208,17 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_delete_mongo_user_definition(
-        self, resource_group_name: str, account_name: str, mongo_user_definition_id: str, **kwargs: Any
+        self, mongo_user_definition_id: str, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes an existing Azure Cosmos DB Mongo User Definition.
 
+        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
+        :type mongo_user_definition_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param mongo_user_definition_id: The ID for the User Definition {dbName.userName}. Required.
-        :type mongo_user_definition_id: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17232,9 +17232,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_mongo_user_definition_initial(
+                mongo_user_definition_id=mongo_user_definition_id,
                 resource_group_name=resource_group_name,
                 account_name=account_name,
-                mongo_user_definition_id=mongo_user_definition_id,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,

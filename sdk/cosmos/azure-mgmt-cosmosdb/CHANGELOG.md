@@ -1,6 +1,6 @@
 # Release History
 
-## 10.0.0b6 (2026-04-30)
+## 10.0.0b6 (2026-05-06)
 
 ### Features Added
 
@@ -141,7 +141,6 @@
   - Added model `ClientEncryptionKeyCreateUpdateProperties`
   - Added model `ClientEncryptionKeyGetProperties`
   - Added model `CloudError`
-  - Added model `ComponentsM9L909SchemasCassandraclusterpublicstatusPropertiesDatacentersItemsPropertiesNodesItems`
   - Added model `CopyJobGetResults`
   - Added enum `CopyJobMode`
   - Added model `CopyJobProperties`
@@ -192,7 +191,6 @@
   - Added model `GremlinRoleAssignmentResourceProperties`
   - Added model `GremlinRoleDefinitionResource`
   - Added model `GremlinRoleDefinitionResourceProperties`
-  - Added model `ManagedServiceIdentityUserAssignedIdentities`
   - Added model `MaterializedViewDetails`
   - Added model `MaterializedViewsProperties`
   - Added model `MongoDBCollectionCreateUpdateProperties`
@@ -517,7 +515,6 @@
   - Model `ThroughputPoolUpdate` deleted or renamed its instance variable `max_throughput`
   - Model `ThroughputSettingsGetResults` deleted or renamed its instance variable `resource`
   - Model `ThroughputSettingsUpdateParameters` deleted or renamed its instance variable `resource`
-  - Deleted or renamed model `CassandraClusterDataCenterNodeItem`
   - Deleted or renamed model `ChaosFaultListResponse`
   - Deleted or renamed model `DataTransferJobFeedResults`
   - Deleted or renamed model `DataTransferServiceResource`
@@ -528,7 +525,6 @@
   - Deleted or renamed model `ListCommands`
   - Deleted or renamed model `ListDataCenters`
   - Deleted or renamed model `ManagedCassandraARMResourceProperties`
-  - Deleted or renamed model `ManagedServiceIdentityUserAssignedIdentity`
   - Deleted or renamed model `MaterializedViewsBuilderServiceResource`
   - Deleted or renamed model `NodeStatus`
   - Deleted or renamed model `PartitionUsagesResult`
@@ -556,18 +552,6 @@
   - Method `RestorableTableResourcesOperations.list` changed its parameter `restore_timestamp_in_utc` from `positional_or_keyword` to `keyword_only`
   - Method `RestorableTablesOperations.list` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
   - Method `RestorableTablesOperations.list` changed its parameter `end_time` from `positional_or_keyword` to `keyword_only`
-  - Method `SqlResourcesOperations.begin_create_update_sql_role_definition` re-ordered its parameters from `['self', 'role_definition_id', 'resource_group_name', 'account_name', 'create_update_sql_role_definition_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_definition_id', 'create_update_sql_role_definition_parameters', 'kwargs']`
-  - Method `SqlResourcesOperations.begin_create_update_sql_role_assignment` re-ordered its parameters from `['self', 'role_assignment_id', 'resource_group_name', 'account_name', 'create_update_sql_role_assignment_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_assignment_id', 'create_update_sql_role_assignment_parameters', 'kwargs']`
-  - Method `SqlResourcesOperations.get_sql_role_definition` re-ordered its parameters from `['self', 'role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_definition_id', 'kwargs']`
-  - Method `SqlResourcesOperations.begin_delete_sql_role_assignment` re-ordered its parameters from `['self', 'role_assignment_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_assignment_id', 'kwargs']`
-  - Method `SqlResourcesOperations.get_sql_role_assignment` re-ordered its parameters from `['self', 'role_assignment_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_assignment_id', 'kwargs']`
-  - Method `SqlResourcesOperations.begin_delete_sql_role_definition` re-ordered its parameters from `['self', 'role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'role_definition_id', 'kwargs']`
-  - Method `MongoDBResourcesOperations.begin_delete_mongo_user_definition` re-ordered its parameters from `['self', 'mongo_user_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_user_definition_id', 'kwargs']`
-  - Method `MongoDBResourcesOperations.begin_create_update_mongo_user_definition` re-ordered its parameters from `['self', 'mongo_user_definition_id', 'resource_group_name', 'account_name', 'create_update_mongo_user_definition_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_user_definition_id', 'create_update_mongo_user_definition_parameters', 'kwargs']`
-  - Method `MongoDBResourcesOperations.begin_create_update_mongo_role_definition` re-ordered its parameters from `['self', 'mongo_role_definition_id', 'resource_group_name', 'account_name', 'create_update_mongo_role_definition_parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_role_definition_id', 'create_update_mongo_role_definition_parameters', 'kwargs']`
-  - Method `MongoDBResourcesOperations.begin_delete_mongo_role_definition` re-ordered its parameters from `['self', 'mongo_role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_role_definition_id', 'kwargs']`
-  - Method `MongoDBResourcesOperations.get_mongo_user_definition` re-ordered its parameters from `['self', 'mongo_user_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_user_definition_id', 'kwargs']`
-  - Method `MongoDBResourcesOperations.get_mongo_role_definition` re-ordered its parameters from `['self', 'mongo_role_definition_id', 'resource_group_name', 'account_name', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'mongo_role_definition_id', 'kwargs']`
 
 ## 9.9.0 (2025-11-14)
 

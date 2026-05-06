@@ -869,9 +869,9 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
     @recorded_by_proxy_async
     async def test_sql_resources_get_sql_role_definition(self, resource_group):
         response = await self.client.sql_resources.get_sql_role_definition(
+            role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            role_definition_id="str",
         )
 
         # please add some check logic here by yourself
@@ -882,9 +882,9 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_sql_resources_begin_create_update_sql_role_definition(self, resource_group):
         response = await (
             await self.client.sql_resources.begin_create_update_sql_role_definition(
+                role_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                role_definition_id="str",
                 create_update_sql_role_definition_parameters={
                     "properties": {
                         "assignableScopes": ["str"],
@@ -904,9 +904,9 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_sql_resources_begin_delete_sql_role_definition(self, resource_group):
         response = await (
             await self.client.sql_resources.begin_delete_sql_role_definition(
+                role_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                role_definition_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -928,9 +928,9 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
     @recorded_by_proxy_async
     async def test_sql_resources_get_sql_role_assignment(self, resource_group):
         response = await self.client.sql_resources.get_sql_role_assignment(
+            role_assignment_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            role_assignment_id="str",
         )
 
         # please add some check logic here by yourself
@@ -941,9 +941,9 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_sql_resources_begin_create_update_sql_role_assignment(self, resource_group):
         response = await (
             await self.client.sql_resources.begin_create_update_sql_role_assignment(
+                role_assignment_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                role_assignment_id="str",
                 create_update_sql_role_assignment_parameters={
                     "properties": {"principalId": "str", "roleDefinitionId": "str", "scope": "str"}
                 },
@@ -958,9 +958,9 @@ class TestCosmosDBManagementSqlResourcesOperationsAsync(AzureMgmtRecordedTestCas
     async def test_sql_resources_begin_delete_sql_role_assignment(self, resource_group):
         response = await (
             await self.client.sql_resources.begin_delete_sql_role_assignment(
+                role_assignment_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                role_assignment_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 

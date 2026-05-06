@@ -31,9 +31,9 @@ def main():
     )
 
     client.mongo_db_resources.begin_delete_mongo_role_definition(
+        mongo_role_definition_id="myMongoRoleDefinitionId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
-        mongo_role_definition_id="myMongoRoleDefinitionId",
     ).result()
 
 

@@ -31,9 +31,9 @@ def main():
     )
 
     response = client.mongo_db_resources.begin_create_update_mongo_user_definition(
+        mongo_user_definition_id="myMongoUserDefinitionId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
-        mongo_user_definition_id="myMongoUserDefinitionId",
         create_update_mongo_user_definition_parameters={
             "properties": {
                 "customData": "My custom data",

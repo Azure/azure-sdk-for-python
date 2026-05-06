@@ -31,9 +31,9 @@ def main():
     )
 
     client.sql_resources.begin_delete_sql_role_assignment(
+        role_assignment_id="myRoleAssignmentId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
-        role_assignment_id="myRoleAssignmentId",
     ).result()
 
 

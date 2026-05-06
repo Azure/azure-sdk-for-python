@@ -32,9 +32,9 @@ def main():
     )
 
     response = client.sql_resources.begin_create_update_sql_role_definition(
+        role_definition_id="myRoleDefinitionId",
         resource_group_name="myResourceGroupName",
         account_name="myAccountName",
-        role_definition_id="myRoleDefinitionId",
         create_update_sql_role_definition_parameters={
             "properties": {
                 "assignableScopes": [

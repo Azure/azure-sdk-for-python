@@ -496,9 +496,9 @@ class TestCosmosDBManagementMongoDBResourcesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_mongo_db_resources_get_mongo_role_definition(self, resource_group):
         response = self.client.mongo_db_resources.get_mongo_role_definition(
+            mongo_role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            mongo_role_definition_id="str",
         )
 
         # please add some check logic here by yourself
@@ -508,9 +508,9 @@ class TestCosmosDBManagementMongoDBResourcesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_mongo_db_resources_begin_create_update_mongo_role_definition(self, resource_group):
         response = self.client.mongo_db_resources.begin_create_update_mongo_role_definition(
+            mongo_role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            mongo_role_definition_id="str",
             create_update_mongo_role_definition_parameters={
                 "properties": {
                     "databaseName": "str",
@@ -529,9 +529,9 @@ class TestCosmosDBManagementMongoDBResourcesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_mongo_db_resources_begin_delete_mongo_role_definition(self, resource_group):
         response = self.client.mongo_db_resources.begin_delete_mongo_role_definition(
+            mongo_role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            mongo_role_definition_id="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -552,9 +552,9 @@ class TestCosmosDBManagementMongoDBResourcesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_mongo_db_resources_get_mongo_user_definition(self, resource_group):
         response = self.client.mongo_db_resources.get_mongo_user_definition(
+            mongo_user_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            mongo_user_definition_id="str",
         )
 
         # please add some check logic here by yourself
@@ -564,9 +564,9 @@ class TestCosmosDBManagementMongoDBResourcesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_mongo_db_resources_begin_create_update_mongo_user_definition(self, resource_group):
         response = self.client.mongo_db_resources.begin_create_update_mongo_user_definition(
+            mongo_user_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            mongo_user_definition_id="str",
             create_update_mongo_user_definition_parameters={
                 "properties": {
                     "customData": "str",
@@ -586,9 +586,9 @@ class TestCosmosDBManagementMongoDBResourcesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_mongo_db_resources_begin_delete_mongo_user_definition(self, resource_group):
         response = self.client.mongo_db_resources.begin_delete_mongo_user_definition(
+            mongo_user_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            mongo_user_definition_id="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
