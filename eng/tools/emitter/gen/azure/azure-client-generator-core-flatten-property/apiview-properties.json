@@ -1,0 +1,20 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.flattenproperty.models.ChildFlattenModel": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.ChildFlattenModel",
+        "specs.azure.clientgenerator.core.flattenproperty.models.ChildModel": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.ChildModel",
+        "specs.azure.clientgenerator.core.flattenproperty.models.FlattenModel": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.FlattenModel",
+        "specs.azure.clientgenerator.core.flattenproperty.models.FlattenUnknownModel": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.FlattenUnknownModel",
+        "specs.azure.clientgenerator.core.flattenproperty.models.NestedFlattenModel": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.NestedFlattenModel",
+        "specs.azure.clientgenerator.core.flattenproperty.models.Solution": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.Solution",
+        "specs.azure.clientgenerator.core.flattenproperty.models.SolutionProperties": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.SolutionProperties",
+        "specs.azure.clientgenerator.core.flattenproperty.FlattenPropertyClient.put_flatten_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenModel",
+        "specs.azure.clientgenerator.core.flattenproperty.aio.FlattenPropertyClient.put_flatten_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenModel",
+        "specs.azure.clientgenerator.core.flattenproperty.FlattenPropertyClient.put_nested_flatten_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putNestedFlattenModel",
+        "specs.azure.clientgenerator.core.flattenproperty.aio.FlattenPropertyClient.put_nested_flatten_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putNestedFlattenModel",
+        "specs.azure.clientgenerator.core.flattenproperty.FlattenPropertyClient.put_flatten_unknown_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenUnknownModel",
+        "specs.azure.clientgenerator.core.flattenproperty.aio.FlattenPropertyClient.put_flatten_unknown_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenUnknownModel",
+        "specs.azure.clientgenerator.core.flattenproperty.FlattenPropertyClient.put_flatten_read_only_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenReadOnlyModel",
+        "specs.azure.clientgenerator.core.flattenproperty.aio.FlattenPropertyClient.put_flatten_read_only_model": "_Specs_.Azure.ClientGenerator.Core.FlattenProperty.putFlattenReadOnlyModel"
+    }
+}

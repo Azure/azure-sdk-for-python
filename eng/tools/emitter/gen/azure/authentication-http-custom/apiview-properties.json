@@ -1,0 +1,10 @@
+{
+    "CrossLanguagePackageId": "Authentication.Http.Custom",
+    "CrossLanguageDefinitionId": {
+        "authentication.http.custom.models.InvalidAuth": "Authentication.Http.Custom.InvalidAuth",
+        "authentication.http.custom.CustomClient.valid": "Authentication.Http.Custom.valid",
+        "authentication.http.custom.aio.CustomClient.valid": "Authentication.Http.Custom.valid",
+        "authentication.http.custom.CustomClient.invalid": "Authentication.Http.Custom.invalid",
+        "authentication.http.custom.aio.CustomClient.invalid": "Authentication.Http.Custom.invalid"
+    }
+}

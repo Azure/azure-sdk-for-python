@@ -1,0 +1,26 @@
+{
+    "CrossLanguagePackageId": "Azure.ResourceManager.MultiServiceSharedModels.Compute",
+    "CrossLanguageDefinitionId": {
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.SharedMetadata": "Azure.ResourceManager.MultiServiceSharedModels.Shared.SharedMetadata",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.StorageAccount": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccount",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.StorageAccountProperties": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccountProperties",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.VirtualMachine": "Azure.ResourceManager.MultiServiceSharedModels.Compute.VirtualMachine",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.VirtualMachineProperties": "Azure.ResourceManager.MultiServiceSharedModels.Compute.VirtualMachineProperties",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.resourcemanager.multiservicesharedmodels.combined.models.ResourceProvisioningState": "Azure.ResourceManager.ResourceProvisioningState",
+        "azure.resourcemanager.multiservicesharedmodels.combined.operations.VirtualMachinesOperations.get": "Azure.ResourceManager.MultiServiceSharedModels.Compute.VirtualMachines.get",
+        "azure.resourcemanager.multiservicesharedmodels.combined.aio.operations.VirtualMachinesOperations.get": "Azure.ResourceManager.MultiServiceSharedModels.Compute.VirtualMachines.get",
+        "azure.resourcemanager.multiservicesharedmodels.combined.operations.VirtualMachinesOperations.begin_create_or_update": "Azure.ResourceManager.MultiServiceSharedModels.Compute.VirtualMachines.createOrUpdate",
+        "azure.resourcemanager.multiservicesharedmodels.combined.aio.operations.VirtualMachinesOperations.begin_create_or_update": "Azure.ResourceManager.MultiServiceSharedModels.Compute.VirtualMachines.createOrUpdate",
+        "azure.resourcemanager.multiservicesharedmodels.combined.operations.StorageAccountsOperations.get": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccounts.get",
+        "azure.resourcemanager.multiservicesharedmodels.combined.aio.operations.StorageAccountsOperations.get": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccounts.get",
+        "azure.resourcemanager.multiservicesharedmodels.combined.operations.StorageAccountsOperations.begin_create_or_update": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccounts.createOrUpdate",
+        "azure.resourcemanager.multiservicesharedmodels.combined.aio.operations.StorageAccountsOperations.begin_create_or_update": "Azure.ResourceManager.MultiServiceSharedModels.Storage.StorageAccounts.createOrUpdate"
+    }
+}

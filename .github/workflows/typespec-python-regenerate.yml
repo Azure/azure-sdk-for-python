@@ -1,0 +1,228 @@
+name: TypeSpec Python Regenerate Tests
+
+on:
+  # Trigger when eng/emitter-package.json is updated on main (branded emitter version bump)
+  push:
+    branches: [main]
+    paths:
+      - "eng/emitter-package.json"
+  # Allow manual triggering with emitter choice
+  workflow_dispatch:
+    inputs:
+      emitter:
+        description: "Which emitter to regenerate with"
+        required: true
+        type: choice
+        options:
+          - "branded (@azure-tools/typespec-python)"
+          - "unbranded (@typespec/http-client-python)"
+        default: "branded (@azure-tools/typespec-python)"
+      version:
+        description: "Emitter version (leave empty to use version from emitter-package.json for branded, or latest for unbranded)"
+        required: false
+      typespec_ref:
+        description: "Git ref (branch, tag, or SHA) of typespec repo to build regeneration infrastructure from"
+        required: false
+        default: "main"
+      typespec_repo:
+        description: "TypeSpec repository (owner/repo) to checkout from (default: microsoft/typespec)"
+        required: false
+        default: "microsoft/typespec"
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  regenerate:
+    name: "Regenerate TypeSpec Python tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout azure-sdk-for-python
+        # SHA corresponds to actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+
+      - name: Determine emitter to use
+        id: emitter-info
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # Push trigger: always use branded emitter at version from emitter-package.json
+            EMITTER_NAME="@azure-tools/typespec-python"
+            VERSION=$(jq -r '.dependencies["@azure-tools/typespec-python"]' eng/emitter-package.json)
+            echo "Push trigger: using branded emitter @ $VERSION"
+          elif [[ "${{ github.event.inputs.emitter }}" == branded* ]]; then
+            EMITTER_NAME="@azure-tools/typespec-python"
+            VERSION="${{ github.event.inputs.version }}"
+            if [ -z "$VERSION" ]; then
+              VERSION=$(jq -r '.dependencies["@azure-tools/typespec-python"]' eng/emitter-package.json)
+              echo "No version specified, using emitter-package.json version: $VERSION"
+            fi
+          else
+            EMITTER_NAME="@typespec/http-client-python"
+            VERSION="${{ github.event.inputs.version }}"
+            if [ -z "$VERSION" ]; then
+              VERSION=$(npm view @typespec/http-client-python version 2>/dev/null)
+              echo "No version specified, using latest npm version: $VERSION"
+            fi
+          fi
+          echo "emitter_name=$EMITTER_NAME" >> $GITHUB_OUTPUT
+          echo "emitter_version=$VERSION" >> $GITHUB_OUTPUT
+          echo "::notice::Regenerating with $EMITTER_NAME@$VERSION"
+
+      - name: Checkout microsoft/typespec
+        # SHA corresponds to actions/checkout@v6
+        # Checkout to "_typespec" (not "typespec") to avoid the workspace path
+        # "azure-sdk-for-python" causing spec.includes("azure") to match all specs
+        # in regenerate.ts, which breaks unbranded package name detection
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          repository: ${{ github.event.inputs.typespec_repo || 'microsoft/typespec' }}
+          ref: ${{ github.event.inputs.typespec_ref || 'main' }}
+          path: _typespec
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        # SHA corresponds to actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
+        with:
+          node-version: lts/*
+
+      - name: Setup Python
+        # SHA corresponds to actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
+      - name: Build http-client-python
+        working-directory: _typespec/packages/http-client-python
+        run: |
+          npm install --ignore-scripts
+          npm run build
+
+      - name: Install target emitter
+        working-directory: _typespec/packages/http-client-python
+        run: |
+          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
+          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
+          echo "Installing $EMITTER@$VERSION"
+          npm install "${EMITTER}@${VERSION}"
+
+      - name: Prepare Python environment
+        working-directory: _typespec/packages/http-client-python
+        run: |
+          npm run install
+          npm run prepare
+
+      - name: Regenerate tests
+        working-directory: _typespec/packages/http-client-python
+        run: |
+          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
+          npm run regenerate -- --emitterName "$EMITTER"
+
+      - name: Copy regenerated tests
+        run: |
+          set -euo pipefail
+          TARGET="eng/tools/emitter/gen"
+          rm -rf "$TARGET/azure" "$TARGET/unbranded"
+          mkdir -p "$TARGET"
+          cp -r "_typespec/packages/http-client-python/tests/generated/azure" "$TARGET/azure"
+          cp -r "_typespec/packages/http-client-python/tests/generated/unbranded" "$TARGET/unbranded"
+
+      - name: Clean up typespec checkout
+        run: rm -rf "_typespec"
+
+      - name: Commit and push changes
+        id: push-changes
+        run: |
+          set -euo pipefail
+          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
+          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
+          BRANCH="auto/typespec-python-regenerate"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add eng/tools/emitter/gen/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          git checkout -B "$BRANCH"
+          git commit -m "[typespec-python] Regenerate tests with ${EMITTER}@${VERSION}"
+          git push origin "$BRANCH" --force
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Create or update Pull Request
+        id: create-pr
+        if: steps.push-changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
+          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
+          BRANCH="${{ steps.push-changes.outputs.branch }}"
+          TITLE="[typespec-python] Regenerate tests with ${EMITTER}@${VERSION}"
+          BODY="Automated regeneration of TypeSpec Python generated tests.
+
+          - Emitter: \`${EMITTER}@${VERSION}\`
+          - Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          This PR was auto-generated."
+
+          # Check if a PR already exists for this branch
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number' || echo "")
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Updating existing PR #$EXISTING_PR"
+            gh pr edit "$EXISTING_PR" --title "$TITLE" --body "$BODY" --add-reviewer iscai-msft,msyyc
+            PR_NUMBER="$EXISTING_PR"
+          else
+            echo "Creating new PR"
+            PR_NUMBER=$(gh pr create --head "$BRANCH" --base main \
+              --title "$TITLE" --body "$BODY" \
+              --reviewer iscai-msft,msyyc | grep -oP '\d+$')
+            echo "Created PR #$PR_NUMBER"
+          fi
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Enable auto-merge
+        if: steps.push-changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr merge "${{ steps.create-pr.outputs.pr_number }}" --auto --squash || \
+            echo "::warning::Auto-merge could not be enabled (may require branch protection rules)"
+
+  notify-on-failure:
+    name: "Notify on failure"
+    needs: regenerate
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send failure notification
+        # SHA corresponds to actions/github-script@v7
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '[typespec-python] Regeneration workflow failed',
+              body: `The TypeSpec Python test regeneration workflow failed.\n\n` +
+                    `- **Run:** ${runUrl}\n` +
+                    `- **Trigger:** ${context.eventName}\n\n` +
+                    `cc @iscai-msft @msyyc`,
+              labels: ['typespec-python'],
+              assignees: ['iscai-msft', 'msyyc']
+            });
