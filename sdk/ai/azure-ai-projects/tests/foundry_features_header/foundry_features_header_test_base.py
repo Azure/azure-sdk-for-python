@@ -44,7 +44,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "toolboxes": "Toolboxes=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "HostedAgents=V1Preview,AgentEndpoints=V1Preview",
+    "agents": "HostedAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview",
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.

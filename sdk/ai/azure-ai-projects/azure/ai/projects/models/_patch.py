@@ -53,6 +53,7 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
         [
             _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
             _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+            _AgentDefinitionOptInKeys.CODE_AGENTS_V1_PREVIEW.value,
         ]
     ),
 }
