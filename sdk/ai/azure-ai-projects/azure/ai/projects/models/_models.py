@@ -3653,12 +3653,12 @@ class CreateAgentVersionFromCodeContent(_Model):
     POST /agents/{name}/versions).
 
     :ivar metadata: JSON metadata including description and hosted definition. Required.
-    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeRequest
+    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeMetadata
     :ivar code: The code zip file (max 250 MB). Required.
     :vartype code: ~azure.ai.projects._utils.utils.FileType
     """
 
-    metadata: "_models.CreateAgentVersionFromCodeRequest" = rest_field(
+    metadata: "_models.CreateAgentVersionFromCodeMetadata" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """JSON metadata including description and hosted definition. Required."""
@@ -3671,7 +3671,7 @@ class CreateAgentVersionFromCodeContent(_Model):
     def __init__(
         self,
         *,
-        metadata: "_models.CreateAgentVersionFromCodeRequest",
+        metadata: "_models.CreateAgentVersionFromCodeMetadata",
         code: FileType,
     ) -> None: ...
 
@@ -3686,7 +3686,7 @@ class CreateAgentVersionFromCodeContent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateAgentVersionFromCodeRequest(_Model):
+class CreateAgentVersionFromCodeMetadata(_Model):
     """JSON metadata for code-based agent operations (create, update, create version). The agent name
     comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
     this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``

@@ -86,7 +86,7 @@
         "azure.ai.projects.models.ContinuousEvaluationRuleAction": "Azure.AI.Projects.ContinuousEvaluationRuleAction",
         "azure.ai.projects.models.CosmosDBIndex": "Azure.AI.Projects.CosmosDBIndex",
         "azure.ai.projects.models.CreateAgentVersionFromCodeContent": "Azure.AI.Projects.CreateAgentVersionFromCodeContent",
-        "azure.ai.projects.models.CreateAgentVersionFromCodeRequest": "Azure.AI.Projects.CreateAgentVersionFromCodeRequest",
+        "azure.ai.projects.models.CreateAgentVersionFromCodeMetadata": "Azure.AI.Projects.CreateAgentVersionFromCodeMetadata",
         "azure.ai.projects.models.Trigger": "Azure.AI.Projects.Trigger",
         "azure.ai.projects.models.CronTrigger": "Azure.AI.Projects.CronTrigger",
         "azure.ai.projects.models.CustomCredential": "Azure.AI.Projects.CustomCredential",

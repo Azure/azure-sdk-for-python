@@ -25,10 +25,19 @@ or execute the various commands available in the toolbox.
     You can initialize a virtual environment this way:
 
     ```
-    python -m venv env # Might be "python3" or "py -3.8" depending on your Python installation
-    source env/bin/activate      # Linux shell (Bash, ZSH, etc.) only
-    ./env/scripts/activate       # PowerShell only
-    ./env/scripts/activate.bat   # Windows CMD only
+    python -m venv env # Might be "python3" or "py" depending on your Python installation
+    source env/bin/activate        # Linux shell (Bash, ZSH, etc.)
+    .\env\Scripts\Activate.ps1     # PowerShell
+    .\env\Scripts\activate.bat     # Windows CMD
+    ```
+
+    Alternatively, you can use [uv][uv] which is faster and handles Python version management automatically:
+
+    ```
+    uv venv
+    source .venv/bin/activate    # Linux shell (Bash, ZSH, etc.)
+    .\.venv\Scripts\Activate.ps1 # PowerShell
+    .\.venv\Scripts\activate.bat # Windows CMD
     ```
 
 4. Setup your development environment
@@ -40,9 +49,15 @@ or execute the various commands available in the toolbox.
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -e .
     ```
 
+    Or with uv:
+    ```
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> uv pip install -r dev_requirements.txt
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> uv pip install -e .
+    ```
+
 5.  Create a .env file to store your secrets.
 
-    The recommended place to store your .env file in the root of the SDK repository, as it will be gitignored.
+    Create a `.env` file to store secrets needed for live tests (e.g. connection strings, resource endpoints). Place it in the root of the SDK repository where it is gitignored. See [tests.md][tests] for details on which environment variables are needed for each package.
 
 ## Follow test-running guidance
 
@@ -54,3 +69,4 @@ After following the steps above, you'll be able to run recorded SDK tests with `
 [python_312]: https://apps.microsoft.com/detail/9ncvdn91xzqp
 [tests]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [virtual_environment]: https://docs.python.org/3/tutorial/venv.html
+[uv]: https://docs.astral.sh/uv/

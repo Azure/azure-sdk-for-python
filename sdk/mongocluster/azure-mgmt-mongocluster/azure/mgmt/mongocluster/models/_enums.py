@@ -145,6 +145,15 @@ class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mongo cluster resource is being dropped."""
 
 
+class NetworkBypassMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network bypass mode for the Mongo cluster."""
+
+    NONE = "None"
+    """No network bypass is enabled."""
+    AZURE_COSMOS_DB = "AzureCosmosDB"
+    """Allows Azure Cosmos DB service to bypass network restrictions."""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -166,28 +175,30 @@ class PreviewFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     enable linking a geo-replica cluster to it."""
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
-    """Connection has been provisioned"""
+    """Connection has been provisioned."""
     CREATING = "Creating"
-    """Connection is being created"""
+    """Connection is being created."""
     DELETING = "Deleting"
-    """Connection is being deleted"""
+    """Connection is being deleted."""
     FAILED = "Failed"
-    """Connection provisioning has failed"""
+    """Connection provisioning has failed."""
 
 
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private endpoint connection status."""
 
     PENDING = "Pending"
-    """Connection waiting for approval or rejection"""
+    """Connection waiting for approval or rejection."""
     APPROVED = "Approved"
-    """Connection approved"""
+    """Connection approved."""
     REJECTED = "Rejected"
-    """Connection Rejected"""
+    """Connection Rejected."""
 
 
 class PromoteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

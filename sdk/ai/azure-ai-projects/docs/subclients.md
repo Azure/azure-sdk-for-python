@@ -19,7 +19,7 @@ This document lists all subclients available on `AIProjectClient` and their publ
 
 | Subclient | Class Name | Public Methods |
 |-----------|------------|----------------|
-| `beta.agents` | BetaAgentsOperations | 10 |
+| `beta.agents` | BetaAgentsOperations | 14 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 11 |
 | `beta.insights` | BetaInsightsOperations | 3 |
@@ -32,7 +32,7 @@ This document lists all subclients available on `AIProjectClient` and their publ
 
 ## Summary
 
-**Total: 98 unique public methods across all subclients**
+**Total: 102 unique public methods across all subclients**
 
 ---
 
@@ -59,8 +59,8 @@ This document lists all subclients available on `AIProjectClient` and their publ
 #### TelemetryOperations (1)
 `get_application_insights_connection_string`
 
-#### BetaAgentsOperations (10)
-`patch_agent_details`, `create_session`, `get_session`, `delete_session`, `list_sessions`, `get_session_log_stream`, `download_session_file`, `get_session_files`, `delete_session_file`, `upload_session_file`
+#### BetaAgentsOperations (14)
+`create_agent_version_from_code`, `create_session`, `delete_session`, `delete_session_file`, `download_agent_code`, `download_agent_version_code`, `download_session_file`, `get_session`, `get_session_files`, `get_session_log_stream`, `list_sessions`, `patch_agent_details`, `update_agent_from_code`, `upload_session_file`
 
 #### BetaEvaluationTaxonomiesOperations (5)
 `get`, `list`, `delete`, `create`, `update`
