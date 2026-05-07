@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,7 +47,7 @@ class SecurityDomainClient(KeyVaultClient):
         :mod:`azure.identity`
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
-    :keyword str api_version: The API version to use for this operation. Default value is "7.5". Note that overriding
+    :keyword str api_version: The API version to use for this operation. Default value is "2025-07-01". Note that overriding
         this default value may result in unsupported behavior.
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
