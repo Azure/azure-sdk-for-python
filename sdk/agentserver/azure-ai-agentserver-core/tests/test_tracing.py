@@ -74,6 +74,7 @@ class TestTracingToggle:
         mock_configure.assert_called_once_with(
             connection_string="InstrumentationKey=ctor",
             log_level=None,
+            enable_sensitive_data=True,
         )
 
     def test_observability_disabled_when_none(self) -> None:
@@ -160,6 +161,7 @@ class TestConstructorConnectionString:
         mock_configure.assert_called_once_with(
             connection_string="InstrumentationKey=ctor",
             log_level=None,
+            enable_sensitive_data=True,
         )
 
 
