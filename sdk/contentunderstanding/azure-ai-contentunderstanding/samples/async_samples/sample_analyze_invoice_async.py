@@ -60,6 +60,7 @@ import os
 from typing import cast
 
 from dotenv import load_dotenv
+from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     AnalysisInput,
@@ -241,6 +242,19 @@ async def main() -> None:
                 for model, count in usage.tokens.items():
                     print(f"    {model}: {count}")
         # [END get_usage]
+
+        # [START invoice_to_llm_input_async]
+        # The fields above can also be packaged into a single LLM-ready text block.
+        # to_llm_input() renders all extracted fields as YAML front matter followed by
+        # the markdown body, so an LLM can consume both structured data and document text
+        # in one shot. For advanced options, see sample_to_llm_input_async.py.
+        print("\n" + "=" * 60)
+        print("LLM-READY OUTPUT (fields + markdown)")
+        print("=" * 60)
+
+        text = to_llm_input(result)
+        print(text)
+        # [END invoice_to_llm_input_async]
 
         if not isinstance(credential, AzureKeyCredential):
             await credential.close()
