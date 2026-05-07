@@ -3030,61 +3030,9 @@ class BetaAgentsOperations:
 
     @overload
     async def update_agent_from_code(
-        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates a code-based agent by uploading new code and creating a new version. If the code and
-        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
-        version. The request body is multipart/form-data with a JSON metadata part and a binary code
-        part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_agent_from_code(
-        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates a code-based agent by uploading new code and creating a new version. If the code and
-        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
-        version. The request body is multipart/form-data with a JSON metadata part and a binary code
-        part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_agent_from_code(
         self,
         agent_name: str,
-        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        content: _models.CreateAgentVersionFromCodeContent,
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -3101,8 +3049,65 @@ class BetaAgentsOperations:
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :param content: Required.
+        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_agent_from_code(
+        self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param content: Required.
+        :type content: JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_agent_from_code(
+        self,
+        agent_name: str,
+        content: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param content: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str
@@ -3123,7 +3128,7 @@ class BetaAgentsOperations:
 
         cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
-        _body = body.as_dict() if isinstance(body, _Model) else body
+        _body = content.as_dict() if isinstance(content, _Model) else content
         _file_fields: list[str] = ["code"]
         _data_fields: list[str] = ["metadata"]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
@@ -3328,55 +3333,9 @@ class BetaAgentsOperations:
 
     @overload
     async def create_agent_version_from_code(
-        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """create_agent_version_from_code.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_agent_version_from_code(
-        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """create_agent_version_from_code.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_agent_version_from_code(
         self,
         agent_name: str,
-        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        content: _models.CreateAgentVersionFromCodeContent,
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -3390,8 +3349,59 @@ class BetaAgentsOperations:
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :param content: Required.
+        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_agent_version_from_code(
+        self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param content: Required.
+        :type content: JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_agent_version_from_code(
+        self,
+        agent_name: str,
+        content: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param content: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str
@@ -3412,7 +3422,7 @@ class BetaAgentsOperations:
 
         cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
-        _body = body.as_dict() if isinstance(body, _Model) else body
+        _body = content.as_dict() if isinstance(content, _Model) else content
         _file_fields: list[str] = ["code"]
         _data_fields: list[str] = ["metadata"]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
