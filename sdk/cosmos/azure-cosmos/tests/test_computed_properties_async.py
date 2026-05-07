@@ -247,10 +247,11 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             expected_count=3)
 
         # Test 1 Negative: Test if using non-existent computed property name returns nothing
-        queried_items = [q async for q in
-                         replaced_collection.query_items(query='Select * from c Where c.cp_lower = "group1"',
-                                                         partition_key="test")]
-        self.assertEqual(len(queried_items), 0)
+        await self._assert_query_count_eventually(
+            replaced_collection,
+            query='Select * from c Where c.cp_lower = "group1"',
+            partition_key="test",
+            expected_count=0)
 
         # Test 2: Test Second Computed Property
         await self._assert_query_count_eventually(
@@ -260,10 +261,11 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             expected_count=2)
 
         # Test 2 Negative: Test Str length using old computed properties name
-        queried_items = [q async for q in
-                         replaced_collection.query_items(query='Select * from c Where c.cp_str_len = 9',
-                                                         partition_key="test")]
-        self.assertEqual(len(queried_items), 0)
+        await self._assert_query_count_eventually(
+            replaced_collection,
+            query='Select * from c Where c.cp_str_len = 9',
+            partition_key="test",
+            expected_count=0)
         await self.key_db.delete_container(created_collection_ref.id)
 
     async def test_replace_with_incorrect_computed_properties_async(self):

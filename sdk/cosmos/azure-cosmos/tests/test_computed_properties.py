@@ -204,9 +204,11 @@ class TestComputedPropertiesQuery(unittest.TestCase):
             expected_count=3)
 
         # Test 1 Negative: Test if using non-existent computed property name returns nothing
-        queried_items = list(
-            replaced_collection.query_items(query='Select * from c Where c.cp_lower = "group1"', partition_key="test"))
-        self.assertEqual(len(queried_items), 0)
+        self._assert_query_count_eventually(
+            replaced_collection,
+            query='Select * from c Where c.cp_lower = "group1"',
+            partition_key="test",
+            expected_count=0)
 
         # Test 2: Test Second Computed Property
         self._assert_query_count_eventually(
@@ -216,9 +218,11 @@ class TestComputedPropertiesQuery(unittest.TestCase):
             expected_count=2)
 
         # Test 2 Negative: Test Str length using old computed properties name
-        queried_items = list(
-            replaced_collection.query_items(query='Select * from c Where c.cp_str_len = 9', partition_key="test"))
-        self.assertEqual(len(queried_items), 0)
+        self._assert_query_count_eventually(
+            replaced_collection,
+            query='Select * from c Where c.cp_str_len = 9',
+            partition_key="test",
+            expected_count=0)
         self.key_db.delete_container(created_collection.id)
 
     def test_replace_with_incorrect_computed_properties(self):

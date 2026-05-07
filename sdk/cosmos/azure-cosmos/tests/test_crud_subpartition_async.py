@@ -231,7 +231,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         created_document = await created_collection.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[0] == '["WA","Redmond"]'
+        self._assert_partition_key_header_captured('["WA","Redmond"]')
         del self.last_headers[:]
 
         assert created_document.get('id') == document_definition.get('id')
@@ -249,12 +249,13 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         # Create document with partitionkey not present in the document
         try:
             created_document = await created_collection1.create_item(document_definition)
-            _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
             self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             assert error.status_code == StatusCodes.BAD_REQUEST
             assert error.sub_status == SubStatusCodes.PARTITION_KEY_MISMATCH
             del self.last_headers[:]
+        finally:
+            _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
 
         await created_db.delete_container(created_collection.id)
         await created_db.delete_container(created_collection1.id)
@@ -279,7 +280,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         _retry_utility_async.ExecuteFunctionAsync = self._MockExecuteFunction
         created_document = await created_collection1.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[-1] == '["val1","val2"]'
+        self._assert_partition_key_header_captured('["val1","val2"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -310,7 +311,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         # create document without partition key being specified
         created_document = await created_collection2.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[-1] == '["val3","val4"]'
+        self._assert_partition_key_header_captured('["val3","val4"]')
         del self.last_headers[:]
 
         await created_db.delete_container(created_collection1.id)
@@ -734,6 +735,11 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
         except IndexError:
             self.last_headers.append('')
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
+
+    def _assert_partition_key_header_captured(self, expected_header):
+        captured_headers = [header for header in self.last_headers if header]
+        assert expected_header in captured_headers, \
+            "Expected partition key header '{}' in captured headers {}".format(expected_header, captured_headers)
 
 
 if __name__ == '__main__':

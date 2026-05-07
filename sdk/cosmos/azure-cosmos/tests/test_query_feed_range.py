@@ -1,6 +1,8 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import time
+import os
+import re
 
 import pytest
 import test_config
@@ -15,7 +17,23 @@ CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
 KEY = CONFIG.masterKey
 DATABASE_ID = CONFIG.TEST_DATABASE_ID
-TEST_NAME = "Query FeedRange "
+
+
+def _build_lane_suffix():
+    auth_mode = os.getenv("COSMOS_TEST_DATA_AUTH_MODE", "key")
+    run_id = (
+        os.getenv("SYSTEM_JOBID")
+        or os.getenv("BUILD_BUILDID")
+        or os.getenv("GITHUB_RUN_ID")
+        or os.getenv("TF_BUILD_BUILDID")
+        or "local"
+    )
+    raw = f"{auth_mode}-{run_id}"
+    safe = re.sub(r"[^A-Za-z0-9-]", "-", raw).strip("-")
+    return safe[:40] if safe else "local"
+
+
+TEST_NAME = "Query FeedRange sync-" + _build_lane_suffix() + " "
 SINGLE_PARTITION_CONTAINER_ID = TEST_NAME + CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID
 MULTI_PARTITION_CONTAINER_ID = TEST_NAME + CONFIG.TEST_MULTI_PARTITION_CONTAINER_ID
 TEST_CONTAINERS_IDS = [SINGLE_PARTITION_CONTAINER_ID, MULTI_PARTITION_CONTAINER_ID]

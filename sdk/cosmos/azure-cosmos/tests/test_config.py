@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import collections
+import asyncio
 import logging
 import os
 import random
@@ -301,6 +302,7 @@ class TestConfig(object):
     @staticmethod
     def trigger_split(container, throughput):
         print("Triggering a split in session token helpers")
+        # Use a single control-plane attempt to avoid masking contention failures.
         container.replace_throughput(throughput)
         print(f"changed offer to {throughput}")
         print("--------------------------------")
@@ -322,6 +324,7 @@ class TestConfig(object):
     @staticmethod
     async def trigger_split_async(container, throughput):
         print("Triggering a split in session token helpers")
+        # Use a single control-plane attempt to avoid masking contention failures.
         await container.replace_throughput(throughput)
         print(f"changed offer to {throughput}")
         print("--------------------------------")
@@ -335,7 +338,7 @@ class TestConfig(object):
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
-                    time.sleep(SLEEP_TIME)
+                    await asyncio.sleep(SLEEP_TIME)
             else:
                 break
         print("Split in session token helpers has completed")

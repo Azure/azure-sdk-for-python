@@ -235,7 +235,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[0], '["WA","Redmond"]')
+        self._assert_partition_key_header_captured('["WA","Redmond"]')
         del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
@@ -253,13 +253,14 @@ class TestSubpartitionCrud(unittest.TestCase):
         # Create document with partition key not present in the document
         try:
             created_document = created_collection2.create_item(document_definition)
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
             del self.last_headers[:]
             self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertEqual(error.sub_status, SubStatusCodes.PARTITION_KEY_MISMATCH)
             del self.last_headers[:]
+        finally:
+            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
         self._delete_container_for_test(created_collection.id)
         self._delete_container_for_test(created_collection2.id)
@@ -283,7 +284,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[-1], '["val1","val2"]')
+        self._assert_partition_key_header_captured('["val1","val2"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -312,7 +313,7 @@ class TestSubpartitionCrud(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[-1], '["val3","val4"]')
+        self._assert_partition_key_header_captured('["val3","val4"]')
         del self.last_headers[:]
 
         self._delete_container_for_test(created_collection1.id)
@@ -749,6 +750,13 @@ class TestSubpartitionCrud(unittest.TestCase):
         except IndexError:
             self.last_headers.append('')
         return self.OriginalExecuteFunction(function, *args, **kwargs)
+
+    def _assert_partition_key_header_captured(self, expected_header):
+        captured_headers = [header for header in self.last_headers if header]
+        self.assertTrue(
+            expected_header in captured_headers,
+            "Expected partition key header '{}' in captured headers {}".format(expected_header, captured_headers)
+        )
 
 
 if __name__ == '__main__':

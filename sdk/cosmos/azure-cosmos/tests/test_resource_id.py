@@ -34,7 +34,14 @@ class TestResourceIds(unittest.TestCase):
 
     def test_id_unicode_validation(self):
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        resource_id1 = u'à¤¹à¤¿à¤¨à¥à¤¦à¥€ à¤­à¤¾à¤°à¤¤ à¤•à¥€ à¤°à¤¾à¤·à¥à¤Ÿà¥à¤°à¥€à¤¯ à¤­à¤¾à¤·à¤¾ à¤¹à¥ˆ' + str(uuid.uuid4())  # cspell:disable-line
+        resource_id1 = (
+            u'\u0939\u093f\u0928\u094d\u0926\u0940 '
+            u'\u092d\u093e\u0930\u0924 '
+            u'\u0915\u0940 '
+            u'\u0930\u093e\u0937\u094d\u091f\u094d\u0930\u0940\u092f '
+            u'\u092d\u093e\u0937\u093e '
+            u'\u0939\u0948'
+        ) + str(uuid.uuid4())  # cspell:disable-line
 
         # Special allowed chars for Id
         resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>" + str(uuid.uuid4())
