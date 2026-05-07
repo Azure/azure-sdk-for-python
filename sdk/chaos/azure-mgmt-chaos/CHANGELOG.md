@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `ChaosManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ChaosManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `ChaosManagementClient` added method `send_request`
   - Client `ChaosManagementClient` added operation group `private_accesses`
   - Client `ChaosManagementClient` added operation group `actions`
@@ -86,23 +86,22 @@
   - Added model `ZoneResolutionInfo`
   - Added model `ZoneResolutionMapping`
   - Added enum `ZoneResolutionMode`
-  - Added model `ActionVersionsOperations`
-  - Added model `ActionsOperations`
-  - Added model `DiscoveredResourcesOperations`
-  - Added model `PrivateAccessesOperations`
-  - Added model `ScenarioConfigurationsOperations`
-  - Added model `ScenarioRunsOperations`
-  - Added model `ScenariosOperations`
-  - Added model `WorkspacesOperations`
+  - Added operation group `ActionVersionsOperations`
+  - Added operation group `ActionsOperations`
+  - Added operation group `DiscoveredResourcesOperations`
+  - Added operation group `PrivateAccessesOperations`
+  - Added operation group `ScenarioConfigurationsOperations`
+  - Added operation group `ScenarioRunsOperations`
+  - Added operation group `ScenariosOperations`
+  - Added operation group `WorkspacesOperations`
 
 ### Breaking Changes
 
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Method `CapabilitiesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `CapabilityTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list` changed its parameter `running` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list_all` changed its parameter `running` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list_all` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list` changed its parameter `running`/`continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list_all` changed its parameter `running`/`continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `TargetTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `TargetsOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
 
