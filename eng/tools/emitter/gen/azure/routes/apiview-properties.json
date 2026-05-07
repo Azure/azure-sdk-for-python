@@ -17,5 +17,6 @@
         "routes.aio.operations.InInterfaceOperations.fixed": "Routes.InInterface.fixed",
         "routes.RoutesClient.fixed": "Routes.fixed",
         "routes.aio.RoutesClient.fixed": "Routes.fixed"
-    }
+    },
+    "CrossLanguageVersion": "61e0326a00d1"
 }

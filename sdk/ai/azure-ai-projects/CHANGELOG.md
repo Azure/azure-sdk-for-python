@@ -10,6 +10,7 @@
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
+* New methods on `.beta.agents` sub-client for code-based hosted agents: `update_agent_from_code()`, `create_agent_version_from_code()`, `download_agent_version_code()`, `download_agent_code()`.
 
 ### Breaking Changes
 

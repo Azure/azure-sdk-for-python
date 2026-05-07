@@ -3,5 +3,6 @@
     "CrossLanguageDefinitionId": {
         "client.alternateapiversion.service.query.QueryClient.query_api_version": "Client.AlternateApiVersion.Service.Query.queryApiVersion",
         "client.alternateapiversion.service.query.aio.QueryClient.query_api_version": "Client.AlternateApiVersion.Service.Query.queryApiVersion"
-    }
+    },
+    "CrossLanguageVersion": "d27c30b7fd80"
 }

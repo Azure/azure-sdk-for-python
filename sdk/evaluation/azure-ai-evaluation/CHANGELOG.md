@@ -4,11 +4,28 @@
 
 ### Features Added
 
+- Added `extra_headers` keyword argument to `RaiServiceEvaluatorBase` (and all content safety evaluators) to allow passing custom HTTP headers to all backend RAI service calls. SDK-owned headers (`Authorization`, `User-Agent`, `Content-Type`, `aml-user-token`, `x-ms-client-request-id`) cannot be overridden by `extra_headers`.
+
+- Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
+- Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
+- Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Fixed error blame attribution in `_get_single_run_results` to perform a case-insensitive comparison when checking the AOAI error code for `UserError`, ensuring failed evaluation runs are correctly classified as user errors regardless of server-side casing.
+- Fixed `deflection_rate` evaluator showing incorrect pass/fail labels where all results were labeled "pass" regardless of the actual score. The inverse metric adjustment was overriding the evaluator's correct string labels, remapping every result to "pass".
+- Fixed `evaluate()` raising `EvaluationException: (InternalError) unhashable type: 'list'` when an evaluator emitted a list value under a `_result`-suffixed column. Binary aggregation now skips such columns with a warning instead of aborting the entire run.
+- Fixed `task_adherence` red team scoring by adding `scenario=redteam` to the RAI scorer evaluation payload, ensuring the server-side score mapping correctly routes to Direct mapping for attack success determination.
+- Fixed row classification double-counting in `_calculate_aoai_evaluation_summary` where errored rows were counted separately and could also be counted as passed/failed. Rows are now classified into mutually exclusive buckets with priority: passed > failed > errored > skipped.
+- Fixed row classification where rows with empty or missing results lists were incorrectly counted as "passed" (the condition `passed_count == len(results) - error_count` evaluated `0 == 0` as True).
+- Fixed `_get_metric_result` prefix matching where shorter metric names (e.g., `xpia`) could match before longer, more-specific ones (e.g., `xpia_manipulated_content`). Now sorts by length descending for correct longest-prefix matching.
+- Fixed non-dict `_properties` values from evaluators causing downstream issues. Values that are not dicts are now logged and dropped gracefully.
+
 ### Other Changes
+
+- Moved token usage attributes (`gen_ai.evaluation.usage.input_tokens`, `gen_ai.evaluation.usage.output_tokens`) from standard App Insights event attributes into the `internal_properties` JSON bag to align with internal telemetry conventions.
 
 ## 1.16.6 (2026-04-27)
 

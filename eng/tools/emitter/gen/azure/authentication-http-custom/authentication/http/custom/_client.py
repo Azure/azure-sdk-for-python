@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -18,6 +18,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import CustomClientConfiguration
 from ._operations import _CustomClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class CustomClient(_CustomClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword

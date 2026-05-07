@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -23,6 +23,11 @@ from .operations import (
     UnionEnumOperations,
     _NamingClientOperationsMixin,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class NamingClient(_NamingClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword

@@ -276,8 +276,19 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
             )
             continue
         if evaluator_name:
-            # Count the occurrences of each unique value (pass/fail)
-            value_counts = df[col].value_counts().to_dict()
+            try:
+                # Count the occurrences of each unique value (pass/fail)
+                value_counts = df[col].value_counts().to_dict()
+            except TypeError as ex:
+                # Column contains unhashable values (e.g., lists/dicts) and is therefore
+                # not a binary pass/fail result column. Skip it instead of aborting the
+                # entire evaluation aggregation.
+                LOGGER.warning(
+                    "Skipping column '%s' for binary aggregation due to unhashable values: %s",
+                    col,
+                    ex,
+                )
+                continue
 
             # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
             total_rows = len(df)
@@ -1277,9 +1288,9 @@ def _log_events_to_app_insights(
                 usage = sample.get("usage", {})
                 usage = usage if isinstance(usage, dict) else {}
                 if usage.get("prompt_tokens") is not None:
-                    standard_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
+                    internal_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
                 if usage.get("completion_tokens") is not None:
-                    standard_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
+                    internal_log_attributes["gen_ai.evaluation.usage.output_tokens"] = str(usage["completion_tokens"])
 
                 # Combine standard and internal attributes, put internal under the properties bag
                 standard_log_attributes["internal_properties"] = json.dumps(internal_log_attributes)
@@ -2673,12 +2684,22 @@ def _update_metric_value(
     metric: str,
     metric_value: Any,
     logger: logging.Logger,
-) -> Tuple[str, str, str]:
-    """Update metric dictionary with the appropriate field based on metric key.
+) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[bool]]:
+    """Update metric dictionary with the appropriate field based on metric key suffix.
 
-    This method processes a single metric key-value pair and updates the metric dictionary
-    with the appropriate field assignment based on the key pattern. It handles various
-    metric types including scores, results, reasons, thresholds, and sample data.
+    Processes a single metric key-value pair and routes it to the correct output field
+    based on the key's suffix pattern. The suffix-to-field mapping is:
+
+    - ``*_score`` / ``score``           → ``metric_dict["score"]``
+    - ``passed``                        → ``metric_dict["passed"]``
+    - ``*_result`` / ``*_label``        → ``metric_dict["label"]`` (+ derives ``passed`` for azure_ai_evaluator)
+    - ``*_reason`` (not *_finish_reason) → ``metric_dict["reason"]``
+    - ``*_threshold``                   → ``metric_dict["threshold"]``
+    - ``*_status`` / ``status``         → ``metric_dict["status"]`` (evaluator-reported execution status)
+    - ``*_properties`` / ``properties`` → ``metric_dict["properties"]`` (must be dict; non-dict values are
+      logged at INFO level and dropped)
+    - ``*_finish_reason`` / ``*_model`` / ``*_sample_*`` / ``*_*_tokens`` → nested under ``metric_dict["sample"]``
+    - Unrecognized keys that don't match known suffixes → ``metric_dict[metric_key]``
 
     :param criteria_type: Type of the evaluation criteria (e.g. 'azure_ai_evaluator')
     :type criteria_type: str
@@ -2693,25 +2714,32 @@ def _update_metric_value(
     :param logger: Logger instance for warnings/errors
     :type logger: logging.Logger
     :return: Tuple of (result_name, result_name_child_level, result_name_nested_child_level, derived_passed)
-    :rtype: Tuple[str, str, str]
+    :rtype: Tuple[Optional[str], Optional[str], Optional[str], Optional[bool]]
 
-    Example Input:
-        metric_dict = {}
-        metric_key = "coherence_score"
-        metric_value = 4.5
-
-    Example Output:
+    Example — score key:
+        >>> _update_metric_value("quality", {}, "coherence_score", "coherence", 4.5, logger)
         metric_dict becomes {"score": 4.5}
         Returns: ("score", None, None, None)
 
-    Example Input:
-        metric_dict = {}
-        metric_key = "coherence_result"
-        metric_value = "pass"
-
-    Example Output:
+    Example — label key (azure_ai_evaluator derives passed):
+        >>> _update_metric_value("azure_ai_evaluator", {}, "coherence_result", "coherence", "pass", logger)
         metric_dict becomes {"label": "pass", "passed": True}
         Returns: ("label", None, None, True)
+
+    Example — status key:
+        >>> _update_metric_value("quality", {}, "coherence_status", "coherence", "completed", logger)
+        metric_dict becomes {"status": "completed"}
+        Returns: ("status", None, None, None)
+
+    Example — properties key (dict value):
+        >>> _update_metric_value("quality", {}, "coherence_properties", "coherence", {"k": "v"}, logger)
+        metric_dict becomes {"properties": {"k": "v"}}
+        Returns: ("properties", None, None, None)
+
+    Example — properties key (non-dict value, dropped with log):
+        >>> _update_metric_value("quality", {}, "coherence_properties", "coherence", "bad", logger)
+        metric_dict unchanged; logs INFO "Evaluator returned 'properties' as str instead of dict; ignoring."
+        Returns: (None, None, None, None)
     """
     result_name = None
     result_name_child_level = None
@@ -2728,7 +2756,10 @@ def _update_metric_value(
         metric_dict["label"] = metric_value
         result_name = "label"
         if criteria_type == "azure_ai_evaluator":
-            passed = str(metric_value).lower() in ["pass", "true"]
+            if metric_value is None:
+                passed = False
+            else:
+                passed = str(metric_value).lower() in ["pass", "true"]
             metric_dict["passed"] = passed
             derived_passed = passed
     elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
@@ -2790,6 +2821,18 @@ def _update_metric_value(
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "completion_tokens"
+    elif metric_key.endswith("_status") or metric_key == "status":
+        metric_dict["status"] = metric_value
+        result_name = "status"
+    elif metric_key.endswith("_properties") or metric_key == "properties":
+        if isinstance(metric_value, dict):
+            metric_dict["properties"] = metric_value
+            result_name = "properties"
+        else:
+            logger.info(
+                "Evaluator returned 'properties' as %s instead of dict; ignoring.",
+                type(metric_value).__name__,
+            )
     elif not any(
         metric_key.endswith(suffix)
         for suffix in [
@@ -2805,6 +2848,8 @@ def _update_metric_value(
             "_total_tokens",
             "_prompt_tokens",
             "_completion_tokens",
+            "_status",
+            "_properties",
         ]
     ):
         # If no score found yet and this doesn't match other patterns, use as score
@@ -2930,6 +2975,9 @@ def _create_result_object(
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
     properties = metric_values.get("properties")
+    status = metric_values.get("status")
+    if status not in ("completed", "error", "skipped"):
+        status = "completed" if (passed is not None or not _is_none_or_nan(score)) else "error"
 
     # Handle decrease boolean metrics — only apply inverse adjustment for
     # boolean labels (from safety evaluators like indirect_attack). String
@@ -2937,6 +2985,9 @@ def _create_result_object(
     # indicate the evaluator already computed direction-aware pass/fail.
     if is_inverse and not (label is not None and isinstance(label, str)):
         score, label, passed = _adjust_for_inverse_metric(label)
+
+    if status == "skipped":
+        passed = None  # For skipped evaluations, passed should be None regardless of other values
 
     # Create result object
     result_obj = {
@@ -2948,6 +2999,7 @@ def _create_result_object(
         "reason": reason,
         "threshold": threshold,
         "passed": passed,
+        "status": status,
     }
 
     if sample is not None:
@@ -3145,6 +3197,7 @@ def _add_error_summaries(
                 "reason": None,
                 "threshold": None,
                 "passed": None,
+                "status": "error",
                 "sample": sample,
             }
             run_output_results.append(error_result)
@@ -3324,6 +3377,14 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     """
     Get the metric name from the testing criteria and metric key.
 
+    Resolution order:
+    1. Direct match against metric_list.
+    2. Legacy f1 special case — the f1 evaluator emits ``f1_result``, ``f1_threshold``
+       (not ``f1_score_result``), so we match the first segment to handle this.
+    3. Prefix-based fallback — sorted longest-first so more-specific metrics
+       match before shorter ones (e.g. ``xpia_manipulated_content`` before ``xpia``).
+    4. Falls back to the testing criteria name.
+
     :param testing_criteria_name: The name of the testing criteria
     :type testing_criteria_name: str
     :param metric_key: The metric key to look for
@@ -3333,27 +3394,21 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     :return: The metric name if found, otherwise the testing criteria name
     :rtype: str
     """
-    metric = None
+    # Direct match against metric list
+    if metric_key in metric_list:
+        return metric_key
 
-    if metric_key == "xpia_manipulated_content":
-        metric = "xpia_manipulated_content"
-        return metric
-    elif metric_key == "xpia_intrusion":
-        metric = "xpia_intrusion"
-        return metric
-    elif metric_key == "xpia_information_gathering":
-        metric = "xpia_information_gathering"
-        return metric
-    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
-        metric = "f1_score"
-        return metric
-    for expected_metric in metric_list:
+    # Legacy: f1 evaluator uses non-standard naming (f1_result instead of f1_score_result)
+    if metric_key.split("_", 1)[0] == "f1":
+        return "f1_score"
+
+    # Prefix-based fallback — sort by length descending so longer (more-specific)
+    # metric names match first (e.g. xpia_manipulated_content before xpia)
+    for expected_metric in sorted(metric_list, key=len, reverse=True):
         if metric_key.startswith(expected_metric):
-            metric = expected_metric
-            break
-    if metric is None:
-        metric = testing_criteria_name
-    return metric
+            return expected_metric
+
+    return testing_criteria_name
 
 
 def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
@@ -3401,13 +3456,13 @@ def _calculate_aoai_evaluation_summary(
 
     Return structure:
     {
-        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int},
+        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int, "skipped": int},
         "per_model_usage": [{"model_name": str, "invocation_count": int, "total_tokens": int, ...}],
-        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int}]
+        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int, "skipped": int, "errored": int}]
     }
     """
     # Calculate result counts based on aoaiResults
-    result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0}
+    result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0, "skipped": 0}
 
     # Count results by status and calculate per model usage
     model_usage_stats = {}  # Dictionary to aggregate usage by model
@@ -3421,6 +3476,7 @@ def _calculate_aoai_evaluation_summary(
         passed_count = 0
         failed_count = 0
         error_count = 0
+        skipped_count = 0
         if isinstance(aoai_result, dict) and "results" in aoai_result:
             logger.info(
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
@@ -3449,43 +3505,57 @@ def _calculate_aoai_evaluation_summary(
                             f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
                         )
                         continue
-                    # Check if the result has a 'passed' field
-                    if "passed" in result_item and result_item["passed"] is not None:
-                        if testing_criteria not in result_counts_stats:
-                            result_counts_stats[testing_criteria] = {
-                                "testing_criteria": testing_criteria,
-                                "failed": 0,
-                                "passed": 0,
-                            }
-                        if result_item["passed"] is True:
-                            passed_count += 1
-                            result_counts_stats[testing_criteria]["passed"] += 1
-
-                        elif result_item["passed"] is False:
-                            failed_count += 1
-                            result_counts_stats[testing_criteria]["failed"] += 1
+                    # Initialize per-criteria tracking if needed
+                    if testing_criteria not in result_counts_stats:
+                        result_counts_stats[testing_criteria] = {
+                            "testing_criteria": testing_criteria,
+                            "passed": 0,
+                            "failed": 0,
+                            "skipped": 0,
+                            "errored": 0,
+                        }
+                    # Check if the result indicates a skipped status
+                    if result_item.get("status") == "skipped":
+                        skipped_count += 1
+                        result_counts_stats[testing_criteria]["skipped"] += 1
                     # Check if the result indicates an error status
-                    elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
+                    elif result_item.get("status") in ("error", "errored") or (
                         "sample" in result_item
                         and isinstance(result_item["sample"], dict)
                         and result_item["sample"].get("error", None) is not None
                     ):
                         error_count += 1
+                        result_counts_stats[testing_criteria]["errored"] += 1
+                    # Check if the result has a 'passed' field
+                    elif result_item.get("passed") is not None:
+                        if result_item["passed"] is True:
+                            passed_count += 1
+                            result_counts_stats[testing_criteria]["passed"] += 1
+                        elif result_item["passed"] is False:
+                            failed_count += 1
+                            result_counts_stats[testing_criteria]["failed"] += 1
         elif hasattr(aoai_result, "status") and aoai_result.status == "error":
             error_count += 1
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
             error_count += 1
 
-        # Update overall result counts, error counts will not be considered for passed/failed
-        if error_count > 0:
-            result_counts["errored"] += 1
-
-        if failed_count > 0:
-            result_counts["failed"] += 1
-        elif (
-            failed_count == 0 and passed_count > 0 and passed_count == len(aoai_result.get("results", [])) - error_count
-        ):
+        # Update overall result counts — mutually exclusive row-level classification
+        # Priority: passed (all executed tests passed) > failed > errored > skipped
+        # "Executed" means the evaluator returned a pass/fail verdict; errors/skips are non-executions.
+        total_classified = passed_count + failed_count + error_count + skipped_count
+        if passed_count > 0 and failed_count == 0:
             result_counts["passed"] += 1
+        elif failed_count > 0:
+            result_counts["failed"] += 1
+        elif error_count > 0:
+            result_counts["errored"] += 1
+        elif skipped_count > 0:
+            result_counts["skipped"] += 1
+        else:
+            # No pass/fail/error/skipped verdict — e.g., empty results list,
+            # all results filtered out, or passed=None when a threshold should
+            # have produced a verdict. Default to errored.
+            result_counts["errored"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
@@ -3567,11 +3637,19 @@ def _calculate_aoai_evaluation_summary(
             cur_failed_count = stats_val.get("failed", 0)
             if _is_none_or_nan(cur_failed_count):
                 cur_failed_count = 0
+            cur_skipped = stats_val.get("skipped", 0)
+            if _is_none_or_nan(cur_skipped):
+                cur_skipped = 0
+            cur_errored = stats_val.get("errored", 0)
+            if _is_none_or_nan(cur_errored):
+                cur_errored = 0
             result_counts_stats_val.append(
                 {
                     "testing_criteria": criteria_name if not _is_none_or_nan(criteria_name) else "unknown",
                     "passed": cur_passed,
                     "failed": cur_failed_count,
+                    "skipped": cur_skipped,
+                    "errored": cur_errored,
                 }
             )
     return {
