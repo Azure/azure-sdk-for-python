@@ -146,7 +146,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 key_bundle = await self._client.get_key(
                     self._key_id.name if self._key_id else None,
                     self._key_id.version if self._key_id else None,
-                    **kwargs
+                    **kwargs,
                 )
                 key = KeyVaultKey._from_key_bundle(key_bundle)
                 self._key = key.key
@@ -229,7 +229,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(
                 algorithm=algorithm, value=plaintext, iv=iv, aad=additional_authenticated_data
             ),
-            **kwargs
+            **kwargs,
         )
 
         result_iv = operation_result.iv if hasattr(operation_result, "iv") else None
@@ -319,7 +319,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(
                 algorithm=algorithm, value=ciphertext, iv=iv, tag=authentication_tag, aad=additional_authenticated_data
             ),
-            **kwargs
+            **kwargs,
         )
 
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
@@ -362,7 +362,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=key),
-            **kwargs
+            **kwargs,
         )
 
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
@@ -404,7 +404,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
-            **kwargs
+            **kwargs,
         )
 
         return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
@@ -447,7 +447,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeySignParameters(algorithm=algorithm, value=digest),
-            **kwargs
+            **kwargs,
         )
 
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=operation_result.result)
@@ -493,7 +493,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature),
-            **kwargs
+            **kwargs,
         )
 
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)

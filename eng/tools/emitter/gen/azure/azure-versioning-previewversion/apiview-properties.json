@@ -10,5 +10,6 @@
         "specs.azure.versioning.previewversion.aio.PreviewVersionClient.update_widget_color": "_Specs_.Azure.Versioning.PreviewVersion.updateWidgetColor",
         "specs.azure.versioning.previewversion.PreviewVersionClient.list_widgets": "_Specs_.Azure.Versioning.PreviewVersion.listWidgets",
         "specs.azure.versioning.previewversion.aio.PreviewVersionClient.list_widgets": "_Specs_.Azure.Versioning.PreviewVersion.listWidgets"
-    }
+    },
+    "CrossLanguageVersion": "15e16bb34cd0"
 }

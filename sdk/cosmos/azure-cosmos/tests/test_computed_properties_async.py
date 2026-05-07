@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
 import unittest
 import uuid
 import pytest
@@ -181,10 +182,31 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         container = await replaced_collection.read()
         assert new_computed_properties == container["computedProperties"]
 
+        # Diagnostic: query all items and their computed property values to understand indexing state
+        all_items = [q async for q in
+                     replaced_collection.query_items(
+                         query='SELECT c.id, c.db_group, c.cp_upper FROM c',
+                         partition_key="test")]
+        print(f"\n[DIAG] Total items after replace: {len(all_items)}")
+        for diag_item in all_items[:3]:
+            print(f"[DIAG] Item id={diag_item.get('id', '?')}, "
+                  f"db_group={diag_item.get('db_group', '?')}, "
+                  f"cp_upper={diag_item.get('cp_upper', 'MISSING')}")
+
+        # Polling: retry the cp_upper query with delays to detect emulator reindexing lag
+        queried_items = []
+        for attempt in range(10):
+            queried_items = [q async for q in
+                             replaced_collection.query_items(
+                                 query='Select * from c Where c.cp_upper = "GROUP2"',
+                                 partition_key="test")]
+            if len(queried_items) == 3:
+                print(f"[DIAG] cp_upper query succeeded on attempt {attempt + 1}")
+                break
+            print(f"[DIAG] cp_upper query attempt {attempt + 1}: got {len(queried_items)}, expected 3")
+            await asyncio.sleep(1)
+
         # Test 1: Test first computed property
-        queried_items = [q async for q in
-                         replaced_collection.query_items(query='Select * from c Where c.cp_upper = "GROUP2"',
-                                                        partition_key="test")]
         self.assertEqual(len(queried_items), 3)
 
         # Test 1 Negative: Test if using non-existent computed property name returns nothing

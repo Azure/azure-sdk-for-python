@@ -51,5 +51,6 @@
         "azure.resourcemanager.operationtemplates.aio.operations.OptionalBodyOperations.post": "Azure.ResourceManager.OperationTemplates.OptionalBody.post",
         "azure.resourcemanager.operationtemplates.operations.OptionalBodyOperations.provider_post": "Azure.ResourceManager.OperationTemplates.OptionalBody.providerPost",
         "azure.resourcemanager.operationtemplates.aio.operations.OptionalBodyOperations.provider_post": "Azure.ResourceManager.OperationTemplates.OptionalBody.providerPost"
-    }
+    },
+    "CrossLanguageVersion": "e0bce2cfa9ae"
 }
