@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_hello_world.py
@@ -49,7 +48,7 @@ class BlobSamples(object):
             # Create new container in the service
             container_client.create_container()
             # List containers in the storage account
-            _list_response = blob_service_client.list_containers()
+            list_response = blob_service_client.list_containers()
 
         finally:
             # Delete the container

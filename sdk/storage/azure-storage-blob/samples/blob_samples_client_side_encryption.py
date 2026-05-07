@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_client_side_encryption.py
@@ -180,8 +179,8 @@ class BlobEncryptionSamples:
             # Downloading works as usual with support for decrypting both entire blobs
             # and decrypting range gets.
             block_blob_client = self.container_client.get_blob_client(block_blob_name)
-            _blob_full = block_blob_client.download_blob().readall()
-            _blob_range = block_blob_client.download_blob(offset=len(data) // 2,
+            blob_full = block_blob_client.download_blob().readall()
+            blob_range = block_blob_client.download_blob(offset=len(data) // 2,
                                                          length=len(data) // 4).readall()
         finally:
             self.container_client.delete_container()
@@ -203,7 +202,7 @@ class BlobEncryptionSamples:
             # key_encryption_key are set, the result of the key_resolver will take precedence
             # and the decryption will fail if that key is not successful.
             self.container_client.key_resolver_function = None
-            _blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
+            blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
         finally:
             self.container_client.delete_container()
 
@@ -273,7 +272,7 @@ class BlobEncryptionSamples:
             self.container_client.encryption_version = '2.0'
 
             self.container_client.upload_blob(block_blob_name, b'ABC')
-            _blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
+            blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
         finally:
             self.container_client.delete_container()
 

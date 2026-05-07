@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_authentication.py
@@ -49,18 +48,18 @@ class AuthSamples(object):
 
         # [START auth_from_connection_string_container]
         from azure.storage.blob import ContainerClient
-        _container_client = ContainerClient.from_connection_string(
+        container_client = ContainerClient.from_connection_string(
             self.connection_string, container_name="mycontainer")
         # [END auth_from_connection_string_container]
 
         # [START auth_from_connection_string_blob]
         from azure.storage.blob import BlobClient
-        _blob_client = BlobClient.from_connection_string(
+        blob_client = BlobClient.from_connection_string(
             self.connection_string, container_name="mycontainer", blob_name="blobname.txt")
         # [END auth_from_connection_string_blob]
 
         # Get account information for the Blob Service
-        _account_info = blob_service_client.get_account_information()
+        account_info = blob_service_client.get_account_information()
 
     def auth_shared_key(self):
         if self.shared_access_key is None:
@@ -73,12 +72,12 @@ class AuthSamples(object):
         # [END create_blob_service_client]
 
         # Get account information for the Blob Service
-        _account_info = blob_service_client.get_account_information()
+        account_info = blob_service_client.get_account_information()
 
     def auth_blob_url(self):
         # [START create_blob_client]
         from azure.storage.blob import BlobClient
-        _blob_client = BlobClient.from_blob_url(blob_url="https://account.blob.core.windows.net/container/blob-name")
+        blob_client = BlobClient.from_blob_url(blob_url="https://account.blob.core.windows.net/container/blob-name")
         # [END create_blob_client]
 
         # [START create_blob_client_sas_url]
@@ -108,7 +107,7 @@ class AuthSamples(object):
         from datetime import datetime, timedelta
         from azure.storage.blob import ResourceTypes, AccountSasPermissions, generate_account_sas
 
-        _sas_token = generate_account_sas(
+        sas_token = generate_account_sas(
             blob_service_client.account_name,
             account_key=blob_service_client.credential.account_key,
             resource_types=ResourceTypes(object=True),
@@ -139,7 +138,7 @@ class AuthSamples(object):
         # [END create_blob_service_client_oauth]
 
         # Get account information for the Blob Service
-        _account_info = blob_service_client.get_service_properties()
+        account_info = blob_service_client.get_service_properties()
 
 
 if __name__ == '__main__':

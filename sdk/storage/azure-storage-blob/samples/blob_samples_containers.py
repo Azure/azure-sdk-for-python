@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_container.py
@@ -60,7 +61,7 @@ class ContainerSamples(object):
             "&spr=https"
             "&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
         )
-        _container = ContainerClient.from_container_url(sas_url)
+        container = ContainerClient.from_container_url(sas_url)
         # [END create_container_client_sasurl]
 
         try:
@@ -69,7 +70,7 @@ class ContainerSamples(object):
             # [END create_container]
 
             # [START get_container_properties]
-            _properties = container_client.get_container_properties()
+            properties = container_client.get_container_properties()
             # [END get_container_properties]
 
         finally:
@@ -130,7 +131,7 @@ class ContainerSamples(object):
             # [END set_container_metadata]
 
             # Get container properties
-            _properties = container_client.get_container_properties().metadata
+            properties = container_client.get_container_properties().metadata
 
         finally:
             # Delete container
@@ -170,7 +171,7 @@ class ContainerSamples(object):
             # [END set_container_access_policy]
 
             # [START get_container_access_policy]
-            _policy = container_client.get_container_access_policy()
+            policy = container_client.get_container_access_policy()
             # [END get_container_access_policy]
 
             # [START generate_sas_token]
@@ -188,7 +189,7 @@ class ContainerSamples(object):
             # Use the sas token to authenticate a new client
             # [START create_container_client_sastoken]
             from azure.storage.blob import ContainerClient
-            _container = ContainerClient.from_container_url(
+            container = ContainerClient.from_container_url(
                 container_url="https://account.blob.core.windows.net/mycontainer",
                 credential=sas_token
             )
@@ -218,7 +219,7 @@ class ContainerSamples(object):
         with open(SOURCE_FILE, "rb") as data:
             blob_client = container_client.upload_blob(name="myblob", data=data)
 
-        _properties = blob_client.get_blob_properties()
+        properties = blob_client.get_blob_properties()
         # [END upload_blob_to_container]
 
         # [START list_blobs_in_container]
@@ -251,7 +252,7 @@ class ContainerSamples(object):
 
         # [START get_blob_client]
         # Get the BlobClient from the ContainerClient to interact with a specific blob
-        _blob_client = container_client.get_blob_client("mynewblob")
+        blob_client = container_client.get_blob_client("mynewblob")
         # [END get_blob_client]
 
         # Delete container

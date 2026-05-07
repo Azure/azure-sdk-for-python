@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_common.py
@@ -112,7 +111,7 @@ class CommonBlobSamples(object):
         # [END undelete_blob]
 
         # [START get_blob_properties]
-        _properties = blob_client.get_blob_properties()
+        properties = blob_client.get_blob_properties()
         # [END get_blob_properties]
 
         # Delete container
@@ -217,7 +216,7 @@ class CommonBlobSamples(object):
             copied_blob = blob_service_client.get_blob_client("copyblobcontainer", '59466-0.txt')
 
             # start copy and check copy status
-            _copy = copied_blob.start_copy_from_url(source_blob)
+            copy = copied_blob.start_copy_from_url(source_blob)
             props = copied_blob.get_blob_properties()
             print(props.copy.status)
             # [END copy_blob_from_url]

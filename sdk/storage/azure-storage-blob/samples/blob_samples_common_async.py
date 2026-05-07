@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_common_async.py
@@ -112,7 +111,7 @@ class CommonBlobSamplesAsync(object):
             # [END undelete_blob]
 
             # [START get_blob_properties]
-            _properties = await blob_client.get_blob_properties()
+            properties = await blob_client.get_blob_properties()
             # [END get_blob_properties]
 
             # Delete container
@@ -220,7 +219,7 @@ class CommonBlobSamplesAsync(object):
                 copied_blob = blob_service_client.get_blob_client("copyblobcontainerasync", '59466-0.txt')
 
                 # start copy and check copy status
-                _copy = await copied_blob.start_copy_from_url(source_blob)
+                copy = await copied_blob.start_copy_from_url(source_blob)
                 props = await copied_blob.get_blob_properties()
                 print(props.copy.status)
                 # [END copy_blob_from_url]
