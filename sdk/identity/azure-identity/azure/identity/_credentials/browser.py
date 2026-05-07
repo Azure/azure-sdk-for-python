@@ -115,6 +115,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
             prompt="select_account",
             claims_challenge=claims,
             login_hint=self._login_hint,
+            response_mode="form_post",
         )
         if "auth_uri" not in flow:
             raise CredentialUnavailableError("Failed to begin authentication flow")
