@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2023-12-01-preview",
+  "apiVersions": {
+    "Azure.ResourceManager.LargeHeader": "2023-12-01-preview"
+  }
+}
