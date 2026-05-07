@@ -27,18 +27,6 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
             await asyncio.sleep(1)
         return None
 
-    async def _wait_for_server_cleanup(self, delay_seconds=2):
-        """
-        Wait for server-side cleanup after closing a connection.
-        
-        The server needs time to process the disconnection before accepting new connections.
-        This is a pragmatic wait since we don't have a direct signal for when cleanup completes.
-        
-        Args:
-            delay_seconds: Time to wait in seconds (default 2 seconds for server cleanup)
-        """
-        await asyncio.sleep(delay_seconds)
-
     async def _wait_for_connection_removed(self, client, connection_id):
         for _ in range(30):
             if not await client.connection_exists(connection_id=connection_id):
@@ -214,7 +202,7 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
 
                 # close_group_connections (connection auto-joins group_1 via token)
                 await ws.close()
-                await self._wait_for_server_cleanup()
+                await self._wait_for_connection_removed(client, connection_id)
                 ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
@@ -223,7 +211,6 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_user_connections
-                await self._wait_for_server_cleanup()
                 ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
@@ -232,7 +219,6 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_connection
-                await self._wait_for_server_cleanup()
                 ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None
@@ -241,7 +227,6 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
                 assert not await client.connection_exists(connection_id=conn)
 
                 # close_all_connections
-                await self._wait_for_server_cleanup()
                 ws = await ws_connect(access_token["url"], open_timeout=30)
                 conn = await self._find_connection_id(client, group_1, user_id)
                 assert conn is not None

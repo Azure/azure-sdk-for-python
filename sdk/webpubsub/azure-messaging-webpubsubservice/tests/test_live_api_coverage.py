@@ -25,9 +25,6 @@ class TestLiveApiCoverage(WebpubsubTest):
             time.sleep(1)
         return None
 
-    def _wait_for_server_cleanup(self, delay_seconds=2):
-        time.sleep(delay_seconds)
-
     def _wait_for_connection_removed(self, client, connection_id):
         for _ in range(30):
             if not client.connection_exists(connection_id=connection_id):
@@ -175,7 +172,7 @@ class TestLiveApiCoverage(WebpubsubTest):
 
             # close_group_connections (connection auto-joins group_1 via token)
             ws.close()
-            self._wait_for_server_cleanup()
+            self._wait_for_connection_removed(client, connection_id)
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
@@ -184,7 +181,6 @@ class TestLiveApiCoverage(WebpubsubTest):
             assert not client.connection_exists(connection_id=conn)
 
             # close_user_connections
-            self._wait_for_server_cleanup()
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
@@ -193,7 +189,6 @@ class TestLiveApiCoverage(WebpubsubTest):
             assert not client.connection_exists(connection_id=conn)
 
             # close_connection
-            self._wait_for_server_cleanup()
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
@@ -202,7 +197,6 @@ class TestLiveApiCoverage(WebpubsubTest):
             assert not client.connection_exists(connection_id=conn)
 
             # close_all_connections
-            self._wait_for_server_cleanup()
             ws = ws_connect(access_token["url"], open_timeout=30)
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None

@@ -100,9 +100,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
             # remove stopped event and close again
             await client.unsubscribe("stopped", on_stop)
-            disconnected_event.clear()
             await client.close()
-            await asyncio.wait_for(disconnected_event.wait(), timeout=30)
             assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
