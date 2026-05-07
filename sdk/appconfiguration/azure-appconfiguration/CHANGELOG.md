@@ -1,10 +1,6 @@
 # Release History
 
-## 1.8.1 (2026-05-05)
-
-### Features Added
-
-### Breaking Changes
+## 1.8.1 (2026-05-07)
 
 ### Bugs Fixed
 
