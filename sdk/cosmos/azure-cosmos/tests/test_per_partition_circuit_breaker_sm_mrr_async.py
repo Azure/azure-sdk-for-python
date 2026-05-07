@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_sm_mrr import validate_unhealthy_partiti
 COLLECTION = "created_collection"
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionCircuitBreakerSmMrrAsync:
     host = test_config.TestConfig.host

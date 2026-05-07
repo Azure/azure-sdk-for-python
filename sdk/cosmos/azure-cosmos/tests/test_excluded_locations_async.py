@@ -75,7 +75,7 @@ async def setup_and_teardown_async():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestExcludedLocationsAsync:

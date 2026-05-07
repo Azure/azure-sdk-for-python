@@ -9,7 +9,7 @@ from azure.cosmos import PartitionKey
 
 
 @pytest.mark.cosmosSplit
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestReadItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
     """Tests the behavior of read_items in scenarios involving partition splits."""
 

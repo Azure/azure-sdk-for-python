@@ -16,7 +16,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestCrossPartitionTopOrderBy(unittest.TestCase):
     """Orderby Tests.
     """

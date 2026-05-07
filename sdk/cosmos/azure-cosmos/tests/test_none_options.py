@@ -11,7 +11,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestNoneOptions(unittest.TestCase):
     configs = test_config.TestConfig
     host = configs.host

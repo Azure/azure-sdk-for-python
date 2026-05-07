@@ -16,7 +16,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestReadItems(unittest.TestCase):
     """Test cases for the read_items API."""
 

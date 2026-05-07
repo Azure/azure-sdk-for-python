@@ -16,7 +16,7 @@ from azure.cosmos.http_constants import HttpHeaders
 # TODO: add query tests once those changes are available
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
     """Python Cosmos Responses Tests.
     """

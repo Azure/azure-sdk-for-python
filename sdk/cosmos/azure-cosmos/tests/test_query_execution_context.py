@@ -23,7 +23,7 @@ def get_document_collection_link(database, document_collection):
 
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestQueryExecutionContextEndToEnd(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.
     """

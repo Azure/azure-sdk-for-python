@@ -53,7 +53,7 @@ def preferred_locations():
     ]
 
 @pytest.mark.asyncio
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocationsAsync:
     host = test_config.TestConfig.host

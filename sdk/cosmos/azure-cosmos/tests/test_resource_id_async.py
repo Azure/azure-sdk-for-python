@@ -12,7 +12,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host

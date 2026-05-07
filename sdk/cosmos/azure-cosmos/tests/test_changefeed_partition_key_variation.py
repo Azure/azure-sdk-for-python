@@ -11,7 +11,7 @@ from azure.cosmos.partition_key import PartitionKey, _get_partition_key_from_par
 from azure.cosmos.container import _get_epk_range_for_partition_key
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestChangeFeedPKVariation(unittest.TestCase):
     """Test change feed with different partition key variations."""
 

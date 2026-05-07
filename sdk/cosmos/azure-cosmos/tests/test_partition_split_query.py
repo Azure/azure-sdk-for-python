@@ -34,7 +34,7 @@ def run_queries(container, iterations):
 
 
 @pytest.mark.cosmosSplit
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestPartitionSplitQuery(unittest.TestCase):
     # AAD client/database  -  data-plane (create_item, query_items, _routing_map_provider introspection,
     # patch.object on client_connection._ReadPartitionKeyRanges)

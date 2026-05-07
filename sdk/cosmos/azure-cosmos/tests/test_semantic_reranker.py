@@ -12,7 +12,7 @@ import test_config
 
 
 @pytest.mark.semanticReranker
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestSemanticReranker(unittest.TestCase):
     """Test to check semantic reranker behavior."""
     client: cosmos_client.CosmosClient = None

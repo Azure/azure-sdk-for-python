@@ -260,7 +260,7 @@ def _get_operation_type(test_operation_type: str) -> str:
     raise ValueError("invalid operationType")
 
 @pytest.mark.cosmosMultiRegion
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestAvailabilityStrategy:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey

@@ -24,7 +24,7 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
 @pytest.mark.cosmosPerPartitionAutomaticFailover
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionAutomaticFailoverAsync:
     host = test_config.TestConfig.host

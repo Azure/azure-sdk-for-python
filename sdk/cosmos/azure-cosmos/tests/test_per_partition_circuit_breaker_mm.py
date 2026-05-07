@@ -185,7 +185,7 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
             pass
 
 @pytest.mark.cosmosCircuitBreaker
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestPerPartitionCircuitBreakerMM:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey

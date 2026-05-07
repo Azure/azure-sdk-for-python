@@ -61,7 +61,7 @@ def get_container(setup, container_id: str):
     return setup["data_db"].get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 class TestQueryFeedRange:
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_feed_range_for_all_partitions(self, setup, container_id):

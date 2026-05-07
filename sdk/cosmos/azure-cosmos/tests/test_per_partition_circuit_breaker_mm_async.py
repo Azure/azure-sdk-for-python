@@ -104,7 +104,7 @@ async def cleanup_method(initialized_objects: list[dict[str, Any]]):
         await method_client.close()
 
 @pytest.mark.cosmosCircuitBreaker
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionCircuitBreakerMMAsync:
     host = test_config.TestConfig.host
