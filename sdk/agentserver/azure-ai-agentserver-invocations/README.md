@@ -224,7 +224,7 @@ All operations use a single persistent WebSocket connection:
 
 All messages are JSON text frames with an `action` field:
 
-```json
+```text
 {"action": "invoke", "payload": {...}, "invocation_id": "optional", "session_id": "optional"}
 {"action": "get_invocation", "invocation_id": "required"}
 {"action": "cancel_invocation", "invocation_id": "required"}
@@ -234,7 +234,7 @@ All messages are JSON text frames with an `action` field:
 
 ### Server → Client messages
 
-```json
+```text
 {"type": "result", "invocation_id": "...", "session_id": "...", "payload": {...}}
 {"type": "stream_chunk", "invocation_id": "...", "session_id": "...", "payload": {...}}
 {"type": "stream_end", "invocation_id": "...", "session_id": "..."}
