@@ -123,6 +123,8 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
+        self.container_name = self.get_resource_name('utcontainer')
+        self.bytes = b'Foo'
         self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
                                      credential=storage_account_key.secret)
         self.bsc.require_encryption = True
@@ -133,7 +135,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
             self._create_small_blob(BlobType.BlockBlob)
             pytest.fail()
         except AttributeError as e:
-            assert str(e), _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm')
+            assert str(e) == _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm')
 
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.key_encryption_key.get_kid = None

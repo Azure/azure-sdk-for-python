@@ -59,7 +59,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(bsc.delete_container(self.container_name))
-            except ResourceExistsError:
+            except HttpResponseError:
                 pass
 
     # --Helpers-----------------------------------------------------------------

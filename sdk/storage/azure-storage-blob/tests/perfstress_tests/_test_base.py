@@ -46,10 +46,10 @@ class _ServiceTest(PerfStressTest):
             use_managed_identity = os.environ.get("AZURE_STORAGE_USE_MANAGED_IDENTITY", "false").lower() == "true"
             if self.args.use_entra_id or use_managed_identity:
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
-                _ServiceTest.sync_token_credential = SyncManagedIdentityCredential(
-                ) if use_managed_identity else self.get_credential(is_async=False)
-                _ServiceTest.async_token_credential = AsyncManagedIdentityCredential(
-                ) if use_managed_identity else self.get_credential(is_async=True)
+                _ServiceTest.sync_token_credential = SyncManagedIdentityCredential() if (
+                    use_managed_identity) else self.get_credential(is_async=False)
+                _ServiceTest.async_token_credential = AsyncManagedIdentityCredential() if (
+                    use_managed_identity) else self.get_credential(is_async=True)
 
                 # We assume these tests will only be run on the Azure public cloud for now.
                 url = f"https://{account_name}.blob.core.windows.net"

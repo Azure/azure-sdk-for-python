@@ -251,28 +251,6 @@ class ContainerSamplesAsync(object):
             # Delete container
             await container_client.delete_container()
 
-    async def get_container_client_from_blob_async(self):
-        if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_container_client_from_blob_client_async")
-            sys.exit(1)
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-
-        async with blob_service_client:
-            # [START get_container_client_from_blob_client]
-            container_client1 = blob_service_client.get_container_client("blobcontainer1async")
-            await container_client1.create_container()
-            print(await container_client1.get_container_properties())
-            blob_client1 = container_client1.get_blob_client("blob1")
-            await blob_client1.upload_blob("hello")
-
-            container_client2 = blob_client1._get_container_client()  # pylint: disable=protected-access
-            print(await container_client2.get_container_properties())
-            await container_client2.delete_container()
-            # [END get_container_client_from_blob_client]
-
 
 async def main():
     sample = ContainerSamplesAsync()
@@ -282,7 +260,6 @@ async def main():
     await sample.container_access_policy_async()
     await sample.list_blobs_in_container_async()
     await sample.get_blob_client_from_container_async()
-    await sample.get_container_client_from_blob_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

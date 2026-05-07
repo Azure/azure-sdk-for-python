@@ -41,6 +41,9 @@ from azure.storage.blob import BlobServiceClient
 from azure.core.exceptions import HttpResponseError
 
 
+MAX_SINGLE_PUT_SIZE = 64 * 1024 * 1024
+
+
 # Sample implementations of the encryption-related interfaces.
 class KeyWrapper:
     def __init__(self, kid):
@@ -151,8 +154,7 @@ class BlobEncryptionSamples:
 
             # Even when encrypting, uploading large blobs will still automatically
             # chunk the data.
-            max_single_put_size = self.bsc._config.max_single_put_size  # pylint: disable=protected-access
-            self.container_client.upload_blob(block_blob_name, b'ABC' * max_single_put_size, overwrite=True)
+            self.container_client.upload_blob(block_blob_name, b'ABC' * MAX_SINGLE_PUT_SIZE, overwrite=True)
         finally:
             self.container_client.delete_container()
 
@@ -165,7 +167,7 @@ class BlobEncryptionSamples:
             self.container_client.key_encryption_key = kek
             self.container_client.encryption_version = '2.0'
 
-            data = os.urandom(13 * self.bsc._config.max_single_put_size + 1)  # pylint: disable=protected-access
+            data = os.urandom(13 * MAX_SINGLE_PUT_SIZE + 1)
             self.container_client.upload_blob(block_blob_name, data)
 
             # Setting the key_resolver_function will tell the service to automatically

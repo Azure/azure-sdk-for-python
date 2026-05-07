@@ -59,7 +59,7 @@ class TestStorageCPKN(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.delete_container(self.container_name)
-            except ResourceExistsError:
+            except HttpResponseError:
                 pass
 
     # --Helpers-----------------------------------------------------------------
