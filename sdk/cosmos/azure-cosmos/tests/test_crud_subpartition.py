@@ -79,6 +79,13 @@ class TestSubpartitionCrud(unittest.TestCase):
         cls.key_client, cls.key_databaseForTest, cls.client, cls.databaseForTest = (
             test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID))
 
+    @classmethod
+    def tearDownClass(cls):
+        if cls.client:
+            cls.client.close()
+        if cls.key_client:
+            cls.key_client.close()
+
     def _create_container_for_test(self, container_id, partition_key, **kwargs):
         """Create container via key-auth setup client (control-plane), return data-plane proxy."""
         self.key_databaseForTest.create_container(id=container_id, partition_key=partition_key, **kwargs)

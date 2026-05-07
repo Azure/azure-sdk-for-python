@@ -505,28 +505,31 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 ]
             }
         )
-        await collection.create_item(
-            body={
-                'id': 'loc1',
-                'Location': {
-                    'type': 'Point',
-                    'coordinates': [20.0, 20.0]
+        try:
+            await collection.create_item(
+                body={
+                    'id': 'loc1',
+                    'Location': {
+                        'type': 'Point',
+                        'coordinates': [20.0, 20.0]
+                    }
                 }
-            }
-        )
-        await collection.create_item(
-            body={
-                'id': 'loc2',
-                'Location': {
-                    'type': 'Point',
-                    'coordinates': [100.0, 100.0]
+            )
+            await collection.create_item(
+                body={
+                    'id': 'loc2',
+                    'Location': {
+                        'type': 'Point',
+                        'coordinates': [100.0, 100.0]
+                    }
                 }
-            }
-        )
-        results = [result async for result in collection.query_items(
-            query="SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000)")]
-        assert len(results) == 1
-        assert 'loc1' == results[0]['id']
+            )
+            results = [result async for result in collection.query_items(
+                query="SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000)")]
+            assert len(results) == 1
+            assert 'loc1' == results[0]['id']
+        finally:
+            await self._delete_container_for_test(collection.id)
 
     # CRUD test for User resource
 
@@ -1100,59 +1103,62 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=11000
         )
-        pk_ranges = [
-            pk async for pk in
-            created_container.client_connection._ReadPartitionKeyRanges(created_container.container_link)
-        ]
-        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+        try:
+            pk_ranges = [
+                pk async for pk in
+                created_container.client_connection._ReadPartitionKeyRanges(created_container.container_link)
+            ]
+            self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
 
-        # 2. Create items across different logical partitions
-        items_to_read = []
-        all_item_ids = set()
-        for i in range(200):
-            doc_id = f"item_{i}_{uuid.uuid4()}"
-            pk = i % 10
-            all_item_ids.add(doc_id)
-            await created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
-            items_to_read.append((doc_id, pk))
+            # 2. Create items across different logical partitions
+            items_to_read = []
+            all_item_ids = set()
+            for i in range(200):
+                doc_id = f"item_{i}_{uuid.uuid4()}"
+                pk = i % 10
+                all_item_ids.add(doc_id)
+                await created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+                items_to_read.append((doc_id, pk))
 
-        # Create a custom transport that introduces delays
-        class DelayedTransport(AioHttpTransport):
-            def __init__(self, delay_per_request=3):
-                self.delay_per_request = delay_per_request
-                self.request_count = 0
-                super().__init__()
+            # Create a custom transport that introduces delays
+            class DelayedTransport(AioHttpTransport):
+                def __init__(self, delay_per_request=3):
+                    self.delay_per_request = delay_per_request
+                    self.request_count = 0
+                    super().__init__()
 
-            async def send(self, request, **kwargs):
-                self.request_count += 1
-                # Delay each request to simulate slow network
-                await asyncio.sleep(self.delay_per_request)  # 3 second delay
-                return await super().send(request, **kwargs)
+                async def send(self, request, **kwargs):
+                    self.request_count += 1
+                    # Delay each request to simulate slow network
+                    await asyncio.sleep(self.delay_per_request)  # 3 second delay
+                    return await super().send(request, **kwargs)
 
-        # Verify timeout fails when cumulative time exceeds limit
-        delayed_transport = DelayedTransport(delay_per_request=3)
+            # Verify timeout fails when cumulative time exceeds limit
+            delayed_transport = DelayedTransport(delay_per_request=3)
 
-        async with CosmosClient(
-                self.host, self.masterKey, transport=delayed_transport
-        ) as client_with_delay:
+            async with CosmosClient(
+                    self.host, self.masterKey, transport=delayed_transport
+            ) as client_with_delay:
 
-            container_with_delay = client_with_delay.get_database_client(
-                self.database_for_test.id
-            ).get_container_client(created_container.id)
+                container_with_delay = client_with_delay.get_database_client(
+                    self.database_for_test.id
+                ).get_container_client(created_container.id)
 
-            start_time = time.time()
+                start_time = time.time()
 
-            with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                # This should timeout because multiple partition requests * 3s delay > 5s timeout
-                await container_with_delay.read_items(
-                    items=items_to_read,
-                    timeout=5  # 5 second total timeout
-                )
+                with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                    # This should timeout because multiple partition requests * 3s delay > 5s timeout
+                    await container_with_delay.read_items(
+                        items=items_to_read,
+                        timeout=5  # 5 second total timeout
+                    )
 
-        elapsed_time = time.time() - start_time
-        # Should fail close to 5 seconds (not wait for all requests)
-        self.assertLess(elapsed_time, 7)  # Allow some overhead
-        self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
+            elapsed_time = time.time() - start_time
+            # Should fail close to 5 seconds (not wait for all requests)
+            self.assertLess(elapsed_time, 7)  # Allow some overhead
+            self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
+        finally:
+            await self._delete_container_for_test(created_container.id)
 
     async def test_request_level_timeout_overrides_client_read_timeout_async(self):
         """Test that request-level read_timeout overrides client-level timeout for reads and writes """
@@ -1328,22 +1334,24 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             container_id='point_op_timeout_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk")
         )
+        try:
+            # Create a test item
+            test_item = {
+                'id': 'test_item_1',
+                'pk': 'partition1',
+                'data': 'test_data'
+            }
+            await created_container.create_item(test_item)
 
-        # Create a test item
-        test_item = {
-            'id': 'test_item_1',
-            'pk': 'partition1',
-            'data': 'test_data'
-        }
-        await created_container.create_item(test_item)
-
-        # Long timeout should succeed
-        result = await created_container.read_item(
-            item='test_item_1',
-            partition_key='partition1',
-            timeout=1.0  # 1 second timeout
-        )
-        self.assertEqual(result['id'], 'test_item_1')
+            # Long timeout should succeed
+            result = await created_container.read_item(
+                item='test_item_1',
+                partition_key='partition1',
+                timeout=1.0  # 1 second timeout
+            )
+            self.assertEqual(result['id'], 'test_item_1')
+        finally:
+            await self._delete_container_for_test(created_container.id)
 
     async def test_timeout_for_paged_request_async(self):
         """Test that timeout applies to each individual page request, not cumulatively"""

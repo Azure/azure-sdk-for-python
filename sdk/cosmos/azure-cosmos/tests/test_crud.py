@@ -103,6 +103,13 @@ class TestCRUDOperations(unittest.TestCase):
         cls.key_client, cls.key_databaseForTest, cls.client, cls.databaseForTest = (
             test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
 
+    @classmethod
+    def tearDownClass(cls):
+        if cls.client:
+            cls.client.close()
+        if cls.key_client:
+            cls.key_client.close()
+
     def _create_container_for_test(self, container_id, partition_key, **kwargs):
         """Create container via key-auth setup client (control-plane), return data-plane proxy."""
         # Container creation is a control-plane operation routed through key_client (key-auth).
@@ -1337,73 +1344,79 @@ class TestCRUDOperations(unittest.TestCase):
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=11000
         )
-        pk_ranges = list(created_container.client_connection._ReadPartitionKeyRanges(
-            created_container.container_link))
-        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+        client_with_delay = None
+        try:
+            pk_ranges = list(created_container.client_connection._ReadPartitionKeyRanges(
+                created_container.container_link))
+            self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
 
-        # 2. Create items across different logical partitions
-        items_to_read = []
-        all_item_ids = set()
-        for i in range(200):
-            doc_id = f"item_{i}_{uuid.uuid4()}"
-            pk = i % 10
-            all_item_ids.add(doc_id)
-            created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
-            items_to_read.append((doc_id, pk))
+            # 2. Create items across different logical partitions
+            items_to_read = []
+            all_item_ids = set()
+            for i in range(200):
+                doc_id = f"item_{i}_{uuid.uuid4()}"
+                pk = i % 10
+                all_item_ids.add(doc_id)
+                created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+                items_to_read.append((doc_id, pk))
 
-        # Create a custom transport that introduces delays
-        class DelayedTransport(RequestsTransport):
-            def __init__(self, delay_per_request=3):
-                self.delay_per_request = delay_per_request
-                self.request_count = 0
-                super().__init__()
+            # Create a custom transport that introduces delays
+            class DelayedTransport(RequestsTransport):
+                def __init__(self, delay_per_request=3):
+                    self.delay_per_request = delay_per_request
+                    self.request_count = 0
+                    super().__init__()
 
-            def send(self, request, **kwargs):
-                self.request_count += 1
-                # Delay each request to simulate slow network (3s, exceeds 5s timeout with >=2 partitions)
-                time.sleep(self.delay_per_request)
-                return super().send(request, **kwargs)
+                def send(self, request, **kwargs):
+                    self.request_count += 1
+                    # Delay each request to simulate slow network (3s, exceeds 5s timeout with >=2 partitions)
+                    time.sleep(self.delay_per_request)
+                    return super().send(request, **kwargs)
 
-        # Verify timeout fails when cumulative time exceeds limit
-        delayed_transport = DelayedTransport(delay_per_request=3)
-        client_with_delay = cosmos_client.CosmosClient(
-            self.host,
-            self.masterKey,
-            transport=delayed_transport
-        )
-        container_with_delay = client_with_delay.get_database_client(
-            self.databaseForTest.id
-        ).get_container_client(created_container.id)
+            # Verify timeout fails when cumulative time exceeds limit
+            delayed_transport = DelayedTransport(delay_per_request=3)
+            client_with_delay = cosmos_client.CosmosClient(
+                self.host,
+                self.masterKey,
+                transport=delayed_transport
+            )
+            container_with_delay = client_with_delay.get_database_client(
+                self.databaseForTest.id
+            ).get_container_client(created_container.id)
 
-        start_time = time.time()
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            # This should timeout because multiple partition requests * 3s delay > 5s timeout
-            list(container_with_delay.read_items(
-                items = items_to_read,
-                timeout = 5  # 5 second total timeout
+            start_time = time.time()
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                # This should timeout because multiple partition requests * 3s delay > 5s timeout
+                list(container_with_delay.read_items(
+                    items = items_to_read,
+                    timeout = 5  # 5 second total timeout
+                ))
+
+            elapsed_time = time.time() - start_time
+
+            # Should fail close to 5 seconds (not wait for all requests)
+            self.assertLess(elapsed_time, 7)  # Allow some overhead
+            self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
+
+            # Verify operation succeeds when no timeout is passed(default is close to 7 days)
+            start_time = time.time()
+            # add few more items
+            for i in range(500):
+                doc_id = f"item_{i}_{uuid.uuid4()}"
+                pk = i % 10
+                all_item_ids.add(doc_id)
+                created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+                items_to_read.append((doc_id, pk))
+
+            items = list(container_with_delay.read_items(
+                items=items_to_read,
             ))
 
-        elapsed_time = time.time() - start_time
-
-        # Should fail close to 5 seconds (not wait for all requests)
-        self.assertLess(elapsed_time, 7)  # Allow some overhead
-        self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
-
-        # Verify operation succeeds when no timeout is passed(default is close to 7 days)
-        start_time = time.time()
-        # add few more items
-        for i in range(500):
-            doc_id = f"item_{i}_{uuid.uuid4()}"
-            pk = i % 10
-            all_item_ids.add(doc_id)
-            created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
-            items_to_read.append((doc_id, pk))
-
-        items = list(container_with_delay.read_items(
-            items=items_to_read,
-        ))
-
-        elapsed_time = time.time() - start_time
+            elapsed_time = time.time() - start_time
+        finally:
+            if client_with_delay:
+                client_with_delay.close()
+            self._delete_container_for_test(created_container.id)
 
 
     def test_timeout_for_paged_request(self):
@@ -1476,30 +1489,32 @@ class TestCRUDOperations(unittest.TestCase):
             container_id='point_op_timeout_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk")
         )
+        try:
+            # Create a test item
+            test_item = {
+                'id': 'test_item_1',
+                'pk': 'partition1',
+                'data': 'test_data'
+            }
+            created_container.create_item(test_item)
 
-        # Create a test item
-        test_item = {
-            'id': 'test_item_1',
-            'pk': 'partition1',
-            'data': 'test_data'
-        }
-        created_container.create_item(test_item)
+            # Test 1: Short timeout should fail
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                created_container.read_item(
+                    item='test_item_1',
+                    partition_key='partition1',
+                    timeout=0.00000002  # very small timeout to force failure
+                )
 
-        # Test 1: Short timeout should fail
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            created_container.read_item(
+            # Test 2: Long timeout should succeed
+            result = created_container.read_item(
                 item='test_item_1',
                 partition_key='partition1',
-                timeout=0.00000002  # very small timeout to force failure
+                timeout=3.0
             )
-
-        # Test 2: Long timeout should succeed
-        result = created_container.read_item(
-            item='test_item_1',
-            partition_key='partition1',
-            timeout=3.0
-        )
-        self.assertEqual(result['id'], 'test_item_1')
+            self.assertEqual(result['id'], 'test_item_1')
+        finally:
+            self._delete_container_for_test(created_container.id)
 
     def test_request_level_timeout_overrides_client_read_timeout(self):
         """Test that request-level read_timeout overrides client-level timeout for reads and writes"""
