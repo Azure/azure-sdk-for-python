@@ -7,12 +7,14 @@ from ._models import (
     EncryptResult,
     KeyVaultRSAPrivateKey,
     KeyVaultRSAPublicKey,
+    SecureUnwrapResult,
+    SecureWrapResult,
     SignResult,
     WrapResult,
     VerifyResult,
     UnwrapResult,
 )
-from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from ._enums import EncryptionAlgorithm, KeySecureWrapAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from ._client import CryptographyClient
 
 
@@ -21,9 +23,12 @@ __all__ = [
     "DecryptResult",
     "EncryptionAlgorithm",
     "EncryptResult",
+    "KeySecureWrapAlgorithm",
     "KeyVaultRSAPrivateKey",
     "KeyVaultRSAPublicKey",
     "KeyWrapAlgorithm",
+    "SecureUnwrapResult",
+    "SecureWrapResult",
     "SignatureAlgorithm",
     "SignResult",
     "WrapResult",

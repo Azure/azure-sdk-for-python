@@ -93,6 +93,34 @@ class KeyAttestation:
         )
 
 
+class ExternalKey:
+    """A reference to a key whose material lives outside Azure Key Vault.
+
+    Used with :func:`~azure.keyvault.keys.KeyClient.create_external_key` (and its async equivalent)
+    to register a Key Vault key that points at material stored in an external HSM. Only available
+    with API version ``2026-01-01-preview`` and newer.
+
+    :keyword str id: The external key identifier. Must contain only characters in the set
+        ``[a-zA-Z0-9-]`` and be at most 64 characters long. Required.
+    """
+
+    def __init__(self, *, id: str) -> None:  # pylint: disable=redefined-builtin
+        self.id = id
+
+    def __repr__(self) -> str:
+        return f"<ExternalKey [{self.id}]>"[:1024]
+
+    @classmethod
+    def _from_generated(cls, external_key: "_models.ExternalKey") -> "ExternalKey":
+        return cls(id=external_key.id)
+
+    def _to_generated(self) -> "_models.ExternalKey":
+        # Imported lazily to avoid importing the generated layer when this class is not used.
+        from ._generated.models import ExternalKey as _ExternalKey
+
+        return _ExternalKey(id=self.id)
+
+
 class KeyProperties(object):
     """A key's ID and attributes.
 
@@ -315,6 +343,32 @@ class KeyProperties(object):
             attestation = getattr(self._attributes, "attestation", None)
             if attestation:
                 return KeyAttestation._from_generated(attestation=attestation)  # pylint:disable=protected-access
+        return None
+
+    @property
+    def external_key(self) -> Optional[ExternalKey]:
+        """The external key reference, if available.
+
+        :returns: A reference to the external key material backing this key, or None.
+        :rtype: ~azure.keyvault.keys.ExternalKey or None
+        """
+        # external_key was added in 2026-01-01-preview
+        if self._attributes:
+            external_key = getattr(self._attributes, "external_key", None)
+            if external_key:
+                return ExternalKey._from_generated(external_key=external_key)  # pylint:disable=protected-access
+        return None
+
+    @property
+    def key_size(self) -> Optional[int]:
+        """The optional key size in bits for symmetric keys (e.g. 128, 192, or 256 for AES).
+
+        :returns: The key size in bits, or None when not applicable.
+        :rtype: int or None
+        """
+        # key_size was added in 2026-01-01-preview
+        if self._attributes:
+            return getattr(self._attributes, "key_size", None)
         return None
 
 

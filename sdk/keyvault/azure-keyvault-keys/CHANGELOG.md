@@ -1,5 +1,30 @@
 # Release History
 
+## 4.12.0b1 (Unreleased)
+
+### Features Added
+
+- Added support for service API version `2026-01-01-preview`, available via
+  `ApiVersion.V2026_01_01_PREVIEW`.
+- Added `CryptographyClient.secure_wrap_key` and `secure_unwrap_key` (sync and async)
+  for wrap/unwrap of keys generated inside, and released into, a trusted execution
+  environment (TEE) attested by a Microsoft Azure Attestation (MAA) token.
+- Added the `KeySecureWrapAlgorithm` enum, listing the algorithms supported by the
+  secure wrap/unwrap operations.
+- Added the `SecureWrapResult` and `SecureUnwrapResult` model classes wrapping the
+  results of `secure_wrap_key` and `secure_unwrap_key`, respectively.
+- Added the `ExternalKey` model and the new `KeyClient.create_external_key` method
+  (sync and async) for registering a Key Vault key whose material is held in an
+  external HSM.
+- Added the `KeyProperties.external_key` and `KeyProperties.key_size` read-only
+  properties.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 4.11.1 (2026-05-18)
 
 ### Features Added

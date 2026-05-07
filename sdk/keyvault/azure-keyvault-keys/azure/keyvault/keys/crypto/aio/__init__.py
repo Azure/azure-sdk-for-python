@@ -25,6 +25,10 @@ def __getattr__(name: str):
         from .. import EncryptionAlgorithm
 
         requested = EncryptionAlgorithm
+    if name == "KeySecureWrapAlgorithm":
+        from .. import KeySecureWrapAlgorithm
+
+        requested = KeySecureWrapAlgorithm
     if name == "KeyWrapAlgorithm":
         from .. import KeyWrapAlgorithm
 
@@ -37,6 +41,14 @@ def __getattr__(name: str):
         from .. import EncryptResult
 
         requested = EncryptResult
+    if name == "SecureUnwrapResult":
+        from .. import SecureUnwrapResult
+
+        requested = SecureUnwrapResult
+    if name == "SecureWrapResult":
+        from .. import SecureWrapResult
+
+        requested = SecureWrapResult
     if name == "SignResult":
         from .. import SignResult
 

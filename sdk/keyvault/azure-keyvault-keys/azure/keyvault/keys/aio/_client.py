@@ -20,6 +20,7 @@ from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
 from .. import (
     DeletedKey,
+    ExternalKey,
     JsonWebKey,
     KeyProperties,
     KeyReleasePolicy,
@@ -63,6 +64,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime],
         expires_on: Optional[datetime],
         exportable: Optional[bool] = None,
+        external_key: Optional[ExternalKey] = None,
     ) -> Optional[KeyAttributes]:
         """Return a KeyAttributes object if non-None attributes are provided, or None otherwise.
 
@@ -74,13 +76,25 @@ class KeyClient(AsyncKeyVaultClientBase):
         :type expires_on: ~datetime.datetime or None
         :param exportable: Whether the private key can be exported.
         :type exportable: bool or None
+        :param external_key: A reference to an external key, when registering an external key.
+        :type external_key: ~azure.keyvault.keys.ExternalKey or None
 
         :returns: An autorest-generated model of the key's attributes.
         :rtype: KeyAttributes
         """
-        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
+        if (
+            enabled is not None
+            or not_before is not None
+            or expires_on is not None
+            or exportable is not None
+            or external_key is not None
+        ):
             return self._models.KeyAttributes(
-                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
+                enabled=enabled,
+                not_before=not_before,
+                expires=expires_on,
+                exportable=exportable,
+                external_key=external_key._to_generated() if external_key is not None else None,
             )
         return None
 
@@ -408,6 +422,64 @@ class KeyClient(AsyncKeyVaultClientBase):
             release_policy=release_policy,
             **kwargs,
         )
+
+    @distributed_trace_async
+    async def create_external_key(
+        self,
+        name: str,
+        external_key: ExternalKey,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
+        """Register a Key Vault key that points at material managed by an external HSM.
+
+        Requires the keys/create permission. Only available with API version
+        ``2026-01-01-preview`` and newer.
+
+        :param str name: The name for the new key.
+        :param external_key: A reference identifying the external key material.
+        :type external_key: ~azure.keyvault.keys.ExternalKey
+
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str] or None
+        :keyword not_before: Not before date of the key in UTC.
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC.
+        :paramtype expires_on: ~datetime.datetime or None
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
+
+        :returns: The created key.
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
+
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        attributes = self._get_attributes(
+            enabled=enabled, not_before=not_before, expires_on=expires_on, external_key=external_key
+        )
+
+        policy = release_policy
+        if policy is not None:
+            policy = self._models.KeyReleasePolicy(
+                encoded_policy=policy.encoded_policy, content_type=policy.content_type, immutable=policy.immutable
+            )
+        # External keys are mutually exclusive with `kty`. The generated overload requires `kty`,
+        # but the runtime constructor accepts arbitrary kwargs.
+        parameters = self._models.KeyCreateParameters(  # type: ignore[call-overload]
+            key_attributes=attributes,
+            tags=tags,
+            release_policy=policy,
+        )
+
+        bundle = await self._client.create_key(key_name=name, parameters=parameters, **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
     async def delete_key(self, name: str, **kwargs: Any) -> DeletedKey:
