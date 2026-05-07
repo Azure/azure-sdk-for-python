@@ -12,6 +12,7 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from .._utils.utils import FileType
 from ._enums import (
     AgentBlueprintReferenceType,
     AgentEndpointAuthorizationSchemeType,
@@ -2926,6 +2927,12 @@ class CodeConfiguration(_Model):
     :vartype runtime: str
     :ivar entry_point: The entry point command and arguments for the code execution. Required.
     :vartype entry_point: list[str]
+    :ivar dependency_resolution: How package dependencies are resolved at deployment time. Defaults
+     to ``bundled``, where the caller bundles all dependencies into the uploaded zip and the service
+     performs no remote build. ``remote_build`` instructs the service to build dependencies remotely
+     from the manifest included in the uploaded zip. Required. Known values are: "bundled" and
+     "remote_build".
+    :vartype dependency_resolution: str or ~azure.ai.projects.models.CodeDependencyResolution
     :ivar content_hash: The SHA-256 hex digest of the uploaded code zip. Set by the service from
      the ``x-ms-code-zip-sha256`` request header; read-only in responses and never accepted in
      request payloads.
@@ -2937,6 +2944,13 @@ class CodeConfiguration(_Model):
      Required."""
     entry_point: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The entry point command and arguments for the code execution. Required."""
+    dependency_resolution: Union[str, "_models.CodeDependencyResolution"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How package dependencies are resolved at deployment time. Defaults to ``bundled``, where the
+     caller bundles all dependencies into the uploaded zip and the service performs no remote build.
+     ``remote_build`` instructs the service to build dependencies remotely from the manifest
+     included in the uploaded zip. Required. Known values are: \"bundled\" and \"remote_build\"."""
     content_hash: Optional[str] = rest_field(visibility=["read"])
     """The SHA-256 hex digest of the uploaded code zip. Set by the service from the
      ``x-ms-code-zip-sha256`` request header; read-only in responses and never accepted in request
@@ -2948,6 +2962,7 @@ class CodeConfiguration(_Model):
         *,
         runtime: str,
         entry_point: list[str],
+        dependency_resolution: Union[str, "_models.CodeDependencyResolution"],
     ) -> None: ...
 
     @overload
@@ -3633,6 +3648,97 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         self.type = IndexType.COSMOS_DB  # type: ignore
 
 
+class CreateAgentVersionFromCodeContent(_Model):
+    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
+    POST /agents/{name}/versions).
+
+    :ivar metadata: JSON metadata including description and hosted definition. Required.
+    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeRequest
+    :ivar code: The code zip file (max 250 MB). Required.
+    :vartype code: ~azure.ai.projects._utils.utils.FileType
+    """
+
+    metadata: "_models.CreateAgentVersionFromCodeRequest" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """JSON metadata including description and hosted definition. Required."""
+    code: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The code zip file (max 250 MB). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models.CreateAgentVersionFromCodeRequest",
+        code: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateAgentVersionFromCodeRequest(_Model):
+    """JSON metadata for code-based agent operations (create, update, create version). The agent name
+    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
+    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
+    header.
+
+    :ivar description: A human-readable description of the agent.
+    :vartype description: str
+    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters.
+    :vartype metadata: dict[str, str]
+    :ivar definition: The hosted agent definition including code_configuration (runtime,
+     entry_point), cpu, memory, and protocol_versions. Required.
+    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description of the agent."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+     
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters."""
+    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
+     and protocol_versions. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        definition: "_models.HostedAgentDefinition",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Trigger(_Model):
     """Base model for Trigger of the schedule.
 
@@ -4073,11 +4179,11 @@ class DataGenerationJobOptions(_Model):
     """Options for managing data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SimpleQnADataGenerationJobOptions, TaskDataGenerationJobOptions,
-    ToolUseFineTuningDataGenerationJobOptions, TracesDataGenerationJobOptions
+    SimpleQnADataGenerationJobOptions, ToolUseFineTuningDataGenerationJobOptions,
+    TracesDataGenerationJobOptions
 
     :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
-     "tool_use", and "task".
+     and "tool_use".
     :vartype type: str or ~azure.ai.projects.models.DataGenerationJobType
     :ivar max_samples: Maximum number of samples to generate. Required.
     :vartype max_samples: int
@@ -4090,8 +4196,8 @@ class DataGenerationJobOptions(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\",
-     \"tool_use\", and \"task\"."""
+    """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\", and
+     \"tool_use\"."""
     max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of samples to generate. Required."""
     train_split: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4229,20 +4335,20 @@ class DataGenerationModelOptions(_Model):
 class DataGenerationTokenUsage(_Model):
     """Token usage information for a data generation job.
 
-    :ivar prompt_tokens: The number of prompt tokens used.
+    :ivar prompt_tokens: The number of prompt tokens used. Required.
     :vartype prompt_tokens: int
-    :ivar completion_tokens: The number of completion tokens generated.
+    :ivar completion_tokens: The number of completion tokens generated. Required.
     :vartype completion_tokens: int
-    :ivar total_tokens: Total number of tokens used.
+    :ivar total_tokens: Total number of tokens used. Required.
     :vartype total_tokens: int
     """
 
-    prompt_tokens: Optional[int] = rest_field(visibility=["read"])
-    """The number of prompt tokens used."""
-    completion_tokens: Optional[int] = rest_field(visibility=["read"])
-    """The number of completion tokens generated."""
-    total_tokens: Optional[int] = rest_field(visibility=["read"])
-    """Total number of tokens used."""
+    prompt_tokens: int = rest_field(visibility=["read"])
+    """The number of prompt tokens used. Required."""
+    completion_tokens: int = rest_field(visibility=["read"])
+    """The number of completion tokens generated. Required."""
+    total_tokens: int = rest_field(visibility=["read"])
+    """Total number of tokens used. Required."""
 
 
 class DatasetCredential(_Model):
@@ -10569,46 +10675,6 @@ class StructuredOutputDefinition(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class TaskDataGenerationJobOptions(DataGenerationJobOptions, discriminator="task"):
-    """The options for a data generation job with Task type.
-
-    :ivar max_samples: Maximum number of samples to generate. Required.
-    :vartype max_samples: int
-    :ivar train_split: The proportion of the generated data to be used for training when the data
-     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
-    :vartype train_split: float
-    :ivar model_options: The LLM model options.
-    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
-    :ivar type: The data generation job type, which is Task for this model. Required. Task helps in
-     providing a scenario description for generating multi turn conversation between user and agent.
-    :vartype type: str or ~azure.ai.projects.models.TASK
-    """
-
-    type: Literal[DataGenerationJobType.TASK] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The data generation job type, which is Task for this model. Required. Task helps in providing a
-     scenario description for generating multi turn conversation between user and agent."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_samples: int,
-        train_split: Optional[float] = None,
-        model_options: Optional["_models.DataGenerationModelOptions"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = DataGenerationJobType.TASK  # type: ignore
 
 
 class TaxonomyCategory(_Model):

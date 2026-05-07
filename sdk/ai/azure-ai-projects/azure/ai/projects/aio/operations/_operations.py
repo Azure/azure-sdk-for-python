@@ -33,8 +33,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
@@ -44,15 +45,19 @@ from ...operations._operations import (
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_versions_request,
+    build_beta_agents_create_agent_version_from_code_request,
     build_beta_agents_create_session_request,
     build_beta_agents_delete_session_file_request,
     build_beta_agents_delete_session_request,
+    build_beta_agents_download_agent_code_request,
+    build_beta_agents_download_agent_version_code_request,
     build_beta_agents_download_session_file_request,
     build_beta_agents_get_session_files_request,
     build_beta_agents_get_session_log_stream_request,
     build_beta_agents_get_session_request,
     build_beta_agents_list_sessions_request,
     build_beta_agents_patch_agent_details_request,
+    build_beta_agents_update_agent_from_code_request,
     build_beta_agents_upload_session_file_request,
     build_beta_datasets_cancel_generation_job_request,
     build_beta_datasets_create_generation_job_request,
@@ -3024,6 +3029,150 @@ class BetaAgentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
+    async def update_agent_from_code(
+        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_agent_from_code(
+        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_agent_from_code(
+        self,
+        agent_name: str,
+        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["code"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_beta_agents_update_agent_from_code_request(
+            agent_name=agent_name,
+            code_zip_sha256=code_zip_sha256,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
     async def patch_agent_details(
         self,
         agent_name: str,
@@ -3174,6 +3323,281 @@ class BetaAgentsOperations:
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_agent_version_from_code(
+        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_agent_version_from_code(
+        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_agent_version_from_code(
+        self,
+        agent_name: str,
+        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["code"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_beta_agents_create_agent_version_from_code_request(
+            agent_name=agent_name,
+            code_zip_sha256=code_zip_sha256,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def download_agent_version_code(
+        self, agent_name: str, agent_version: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Download the code zip for a specific version of a code-based hosted agent. Returns the
+        previously-uploaded zip (``application/zip``). The SHA-256 digest of the returned bytes matches
+        the ``content_hash`` on the agent version's ``code_configuration``.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param agent_version: The version of the agent whose code zip should be downloaded. Required.
+        :type agent_version: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_download_agent_version_code_request(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def download_agent_code(self, agent_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Download the code zip for the latest version of a code-based hosted agent. Returns the
+        previously-uploaded zip (``application/zip``). The SHA-256 digest of the returned bytes matches
+        the ``content_hash`` on the latest version's ``code_configuration``.
+
+        :param agent_name: The name of the agent whose latest-version code zip should be downloaded.
+         Required.
+        :type agent_name: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_download_agent_code_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
