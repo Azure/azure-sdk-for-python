@@ -13,7 +13,6 @@ from azure.cosmos import ThroughputProperties, PartitionKey
 
 @pytest.mark.cosmosLong
 class TestAutoScale(unittest.TestCase):
-    client: CosmosClient = None
     key_client: CosmosClient = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -29,7 +28,6 @@ class TestAutoScale(unittest.TestCase):
                 "tests.")
 
         cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.key_client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):

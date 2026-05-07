@@ -44,6 +44,7 @@ class ClientIDVerificationError(Exception):
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAAD
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
+    key_client: CosmosClient = None
     client: CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
@@ -61,19 +62,19 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
         # Key-auth client is used for control-plane operations in this test class.
-        self.client = CosmosClient(self.host, self.masterKey)
-        self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
+        self.key_client = CosmosClient(self.host, self.masterKey)
+        self.database = self.key_client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.container = self.database.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # AAD (or key) client for data-plane operations
-        self.data_client = test_config.TestConfig.create_data_client_async()
-        self.data_database = self.data_client.get_database_client(self.configs.TEST_DATABASE_ID)
+        self.client = test_config.TestConfig.create_data_client_async()
+        self.data_database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.data_container = self.data_database.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
     async def asyncTearDown(self):
+        if self.key_client:
+            await self.key_client.close()
         if self.client:
             await self.client.close()
-        if self.data_client:
-            await self.data_client.close()
 
     async def test_client_level_throughput_bucket_async(self):
         CosmosClient(self.host, self.masterKey,

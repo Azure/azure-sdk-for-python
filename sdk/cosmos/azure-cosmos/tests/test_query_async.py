@@ -64,7 +64,7 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Close the sync key-auth setup client created in setUpClass to release its
         # underlying requests.Session (otherwise it leaks until process exit).
         if cls.key_client is not None:
-            cls.key_client.__exit__(None, None, None)
+            cls.key_client.close()
 
     async def asyncSetUp(self):
         # AAD (or key, depending on env var) async client for data-plane operations

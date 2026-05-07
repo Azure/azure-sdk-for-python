@@ -44,6 +44,7 @@ def partition_merge_support_response_hook(raw_response):
 @pytest.mark.cosmosAAD
 class TestHeaders(unittest.TestCase):
     database: DatabaseProxy = None
+    key_client: cosmos_client.CosmosClient = None
     client: cosmos_client.CosmosClient = None
     configs = test_config.TestConfig
     host = configs.host
@@ -56,12 +57,12 @@ class TestHeaders(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Key-auth client is used for control-plane operations in this test class.
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.database = cls.key_client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # AAD (or key) client for data-plane operations
-        cls.data_client = test_config.TestConfig.create_data_client()
-        cls.data_database = cls.data_client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.client = test_config.TestConfig.create_data_client()
+        cls.data_database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.data_container = cls.data_database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
     def side_effect_dedicated_gateway_max_age_thousand(self, *args, **kwargs):

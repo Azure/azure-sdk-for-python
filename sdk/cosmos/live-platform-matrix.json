@@ -114,16 +114,7 @@
     },
     {
       "AADTestConfig": {
-        "Ubuntu2404_312_aad_sync": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.12",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosAAD and not cosmosEmulator",
-          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
-        },
-        "Ubuntu2404_312_aad_async": {
+        "Ubuntu2404_312_aad": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.12",

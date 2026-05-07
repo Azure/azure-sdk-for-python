@@ -51,6 +51,10 @@ class TestConfig(object):
     credential = masterKey if is_emulator else get_credential()
     credential_async = masterKey if is_emulator else get_credential(is_async=True)
     data_auth_mode = os.getenv('COSMOS_TEST_DATA_AUTH_MODE', 'key').strip().lower()
+    if data_auth_mode not in ('key', 'aad'):
+        raise ValueError(
+            "Unknown COSMOS_TEST_DATA_AUTH_MODE: {!r}. Expected 'key' or 'aad'.".format(data_auth_mode)
+        )
 
     @classmethod
     def create_data_client(cls, **kwargs):
