@@ -1,5 +1,345 @@
 # Release History
 
+## 25.0.0 (2026-05-07)
+
+### Features Added
+
+  - Client `StorageManagementClient` added method `send_request`
+  - Client `StorageManagementClient` added operation group `connectors`
+  - Client `StorageManagementClient` added operation group `data_shares`
+  - Enum `AccessTier` added member `SMART`
+  - Enum `AllowedCopyScope` added member `ALL`
+  - Model `AzureEntityResource` added property `system_data`
+  - Model `BlobContainer` added property `container_properties`
+  - Model `BlobContainer` added property `system_data`
+  - Model `BlobServiceProperties` added property `blob_service_properties`
+  - Model `BlobServiceProperties` added property `system_data`
+  - Model `DeletedAccount` added property `system_data`
+  - Model `EncryptionScope` added property `encryption_scope_properties`
+  - Model `EncryptionScope` added property `system_data`
+  - Model `FileServiceProperties` added property `file_service_properties`
+  - Model `FileServiceProperties` added property `system_data`
+  - Model `FileServiceUsage` added property `system_data`
+  - Model `FileShare` added property `file_share_properties`
+  - Model `FileShare` added property `system_data`
+  - Model `FileShareItem` added property `properties`
+  - Model `FileShareItem` added property `system_data`
+  - Model `ImmutabilityPolicy` added property `properties`
+  - Model `ImmutabilityPolicy` added property `system_data`
+  - Model `ImmutabilityPolicyProperties` added property `properties`
+  - Model `ListContainerItem` added property `properties`
+  - Model `ListContainerItem` added property `system_data`
+  - Model `ListQueue` added property `queue_properties`
+  - Model `ListQueue` added property `system_data`
+  - Model `ManagementPolicy` added property `system_data`
+  - Model `ObjectReplicationPolicy` added property `system_data`
+  - Model `Operation` added property `operation_properties`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `QueueServiceProperties` added property `queue_service_properties`
+  - Model `QueueServiceProperties` added property `system_data`
+  - Model `Restriction` added property `values_property`
+  - Model `StorageAccount` added property `system_data`
+  - Model `StorageAccountCheckNameAvailabilityParameters` added property `type`
+  - Model `StorageAccountCreateParameters` added property `properties`
+  - Model `StorageAccountMigration` added property `storage_account_migration_details`
+  - Model `StorageAccountMigration` added property `system_data`
+  - Model `StorageAccountUpdateParameters` added property `properties`
+  - Model `StorageQueue` added property `queue_properties`
+  - Model `StorageQueue` added property `system_data`
+  - Model `StorageTaskAssignment` added property `system_data`
+  - Model `StorageTaskReportInstance` added property `system_data`
+  - Model `Table` added property `table_properties`
+  - Model `Table` added property `system_data`
+  - Model `TableServiceProperties` added property `table_service_properties`
+  - Model `TableServiceProperties` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Enum `TriggerType` added member `MOCK_RUN`
+  - Model `UpdateHistoryProperty` added property `update_property`
+  - Added model `BlobServicePropertiesProperties`
+  - Added model `CloudError`
+  - Added model `Connector`
+  - Added model `ContainerProperties`
+  - Added model `DataShare`
+  - Added model `DataShareConnection`
+  - Added model `DataShareSource`
+  - Added model `EncryptionScopeProperties`
+  - Added model `FileServicePropertiesProperties`
+  - Added model `FileShareProperties`
+  - Added model `ImmutabilityPolicyProperty`
+  - Added enum `LeaseContainerRequestAction`
+  - Added model `ListQueueProperties`
+  - Added model `ManagedIdentityAuthProperties`
+  - Added enum `NativeDataSharingProvisioningState`
+  - Added model `ObjectReplicationPolicyPropertiesTagsReplication`
+  - Added model `OperationProperties`
+  - Added model `QueueProperties`
+  - Added model `QueueServicePropertiesProperties`
+  - Added model `ServiceSharedKeyAccessProperties`
+  - Added model `StaticWebsite`
+  - Added model `StorageAccountMigrationProperties`
+  - Added model `StorageAccountPropertiesCreateParameters`
+  - Added model `StorageAccountPropertiesUpdateParameters`
+  - Added model `StorageAccountSharedKeyAccessProperties`
+  - Added model `StorageConnectorAuthProperties`
+  - Added enum `StorageConnectorAuthType`
+  - Added model `StorageConnectorConnection`
+  - Added enum `StorageConnectorConnectionType`
+  - Added enum `StorageConnectorDataSourceType`
+  - Added model `StorageConnectorProperties`
+  - Added model `StorageConnectorSource`
+  - Added enum `StorageConnectorSourceType`
+  - Added enum `StorageConnectorState`
+  - Added model `StorageDataCollaborationPolicyProperties`
+  - Added model `StorageDataShareAccessPolicy`
+  - Added enum `StorageDataShareAccessPolicyPermission`
+  - Added model `StorageDataShareAsset`
+  - Added model `StorageDataShareProperties`
+  - Added enum `StorageTaskAssignmentProvisioningState`
+  - Added model `TableProperties`
+  - Added model `TableServicePropertiesProperties`
+  - Added model `TestConnectionResponse`
+  - Added model `TestExistingConnectionRequest`
+  - Model `BlobContainersOperations` added parameter `etag` in method `create_or_update_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `match_condition` in method `create_or_update_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `etag` in method `delete_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `match_condition` in method `delete_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `etag` in method `extend_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `match_condition` in method `extend_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `etag` in method `get_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `match_condition` in method `get_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `etag` in method `lock_immutability_policy`
+  - Model `BlobContainersOperations` added parameter `match_condition` in method `lock_immutability_policy`
+  - Model `StorageTaskAssignmentsOperations` added method `begin_stop_assignment`
+  - Added model `ConnectorsOperations`
+  - Added model `DataSharesOperations`
+
+### Breaking Changes
+
+  - Model `BlobContainer` deleted or renamed its instance variable `version`
+  - Model `BlobContainer` deleted or renamed its instance variable `deleted`
+  - Model `BlobContainer` deleted or renamed its instance variable `deleted_time`
+  - Model `BlobContainer` deleted or renamed its instance variable `remaining_retention_days`
+  - Model `BlobContainer` deleted or renamed its instance variable `default_encryption_scope`
+  - Model `BlobContainer` deleted or renamed its instance variable `deny_encryption_scope_override`
+  - Model `BlobContainer` deleted or renamed its instance variable `public_access`
+  - Model `BlobContainer` deleted or renamed its instance variable `last_modified_time`
+  - Model `BlobContainer` deleted or renamed its instance variable `lease_status`
+  - Model `BlobContainer` deleted or renamed its instance variable `lease_state`
+  - Model `BlobContainer` deleted or renamed its instance variable `lease_duration`
+  - Model `BlobContainer` deleted or renamed its instance variable `metadata`
+  - Model `BlobContainer` deleted or renamed its instance variable `immutability_policy`
+  - Model `BlobContainer` deleted or renamed its instance variable `legal_hold`
+  - Model `BlobContainer` deleted or renamed its instance variable `has_legal_hold`
+  - Model `BlobContainer` deleted or renamed its instance variable `has_immutability_policy`
+  - Model `BlobContainer` deleted or renamed its instance variable `immutable_storage_with_versioning`
+  - Model `BlobContainer` deleted or renamed its instance variable `enable_nfs_v3_root_squash`
+  - Model `BlobContainer` deleted or renamed its instance variable `enable_nfs_v3_all_squash`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `cors`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `default_service_version`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `delete_retention_policy`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `is_versioning_enabled`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `automatic_snapshot_policy_enabled`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `change_feed`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `restore_policy`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `container_delete_retention_policy`
+  - Model `BlobServiceProperties` deleted or renamed its instance variable `last_access_time_tracking_policy`
+  - Model `EncryptionScope` deleted or renamed its instance variable `source`
+  - Model `EncryptionScope` deleted or renamed its instance variable `state`
+  - Model `EncryptionScope` deleted or renamed its instance variable `creation_time`
+  - Model `EncryptionScope` deleted or renamed its instance variable `last_modified_time`
+  - Model `EncryptionScope` deleted or renamed its instance variable `key_vault_properties`
+  - Model `EncryptionScope` deleted or renamed its instance variable `require_infrastructure_encryption`
+  - Model `FileServiceProperties` deleted or renamed its instance variable `cors`
+  - Model `FileServiceProperties` deleted or renamed its instance variable `share_delete_retention_policy`
+  - Model `FileServiceProperties` deleted or renamed its instance variable `protocol_settings`
+  - Model `FileShare` deleted or renamed its instance variable `last_modified_time`
+  - Model `FileShare` deleted or renamed its instance variable `metadata`
+  - Model `FileShare` deleted or renamed its instance variable `share_quota`
+  - Model `FileShare` deleted or renamed its instance variable `provisioned_iops`
+  - Model `FileShare` deleted or renamed its instance variable `provisioned_bandwidth_mibps`
+  - Model `FileShare` deleted or renamed its instance variable `included_burst_iops`
+  - Model `FileShare` deleted or renamed its instance variable `max_burst_credits_for_iops`
+  - Model `FileShare` deleted or renamed its instance variable `next_allowed_quota_downgrade_time`
+  - Model `FileShare` deleted or renamed its instance variable `next_allowed_provisioned_iops_downgrade_time`
+  - Model `FileShare` deleted or renamed its instance variable `next_allowed_provisioned_bandwidth_downgrade_time`
+  - Model `FileShare` deleted or renamed its instance variable `enabled_protocols`
+  - Model `FileShare` deleted or renamed its instance variable `root_squash`
+  - Model `FileShare` deleted or renamed its instance variable `version`
+  - Model `FileShare` deleted or renamed its instance variable `deleted`
+  - Model `FileShare` deleted or renamed its instance variable `deleted_time`
+  - Model `FileShare` deleted or renamed its instance variable `remaining_retention_days`
+  - Model `FileShare` deleted or renamed its instance variable `access_tier`
+  - Model `FileShare` deleted or renamed its instance variable `access_tier_change_time`
+  - Model `FileShare` deleted or renamed its instance variable `access_tier_status`
+  - Model `FileShare` deleted or renamed its instance variable `share_usage_bytes`
+  - Model `FileShare` deleted or renamed its instance variable `lease_status`
+  - Model `FileShare` deleted or renamed its instance variable `lease_state`
+  - Model `FileShare` deleted or renamed its instance variable `lease_duration`
+  - Model `FileShare` deleted or renamed its instance variable `signed_identifiers`
+  - Model `FileShare` deleted or renamed its instance variable `snapshot_time`
+  - Model `FileShare` deleted or renamed its instance variable `file_share_paid_bursting`
+  - Model `FileShareItem` deleted or renamed its instance variable `last_modified_time`
+  - Model `FileShareItem` deleted or renamed its instance variable `metadata`
+  - Model `FileShareItem` deleted or renamed its instance variable `share_quota`
+  - Model `FileShareItem` deleted or renamed its instance variable `provisioned_iops`
+  - Model `FileShareItem` deleted or renamed its instance variable `provisioned_bandwidth_mibps`
+  - Model `FileShareItem` deleted or renamed its instance variable `included_burst_iops`
+  - Model `FileShareItem` deleted or renamed its instance variable `max_burst_credits_for_iops`
+  - Model `FileShareItem` deleted or renamed its instance variable `next_allowed_quota_downgrade_time`
+  - Model `FileShareItem` deleted or renamed its instance variable `next_allowed_provisioned_iops_downgrade_time`
+  - Model `FileShareItem` deleted or renamed its instance variable `next_allowed_provisioned_bandwidth_downgrade_time`
+  - Model `FileShareItem` deleted or renamed its instance variable `enabled_protocols`
+  - Model `FileShareItem` deleted or renamed its instance variable `root_squash`
+  - Model `FileShareItem` deleted or renamed its instance variable `version`
+  - Model `FileShareItem` deleted or renamed its instance variable `deleted`
+  - Model `FileShareItem` deleted or renamed its instance variable `deleted_time`
+  - Model `FileShareItem` deleted or renamed its instance variable `remaining_retention_days`
+  - Model `FileShareItem` deleted or renamed its instance variable `access_tier`
+  - Model `FileShareItem` deleted or renamed its instance variable `access_tier_change_time`
+  - Model `FileShareItem` deleted or renamed its instance variable `access_tier_status`
+  - Model `FileShareItem` deleted or renamed its instance variable `share_usage_bytes`
+  - Model `FileShareItem` deleted or renamed its instance variable `lease_status`
+  - Model `FileShareItem` deleted or renamed its instance variable `lease_state`
+  - Model `FileShareItem` deleted or renamed its instance variable `lease_duration`
+  - Model `FileShareItem` deleted or renamed its instance variable `signed_identifiers`
+  - Model `FileShareItem` deleted or renamed its instance variable `snapshot_time`
+  - Model `FileShareItem` deleted or renamed its instance variable `file_share_paid_bursting`
+  - Model `ImmutabilityPolicy` deleted or renamed its instance variable `immutability_period_since_creation_in_days`
+  - Model `ImmutabilityPolicy` deleted or renamed its instance variable `state`
+  - Model `ImmutabilityPolicy` deleted or renamed its instance variable `allow_protected_append_writes`
+  - Model `ImmutabilityPolicy` deleted or renamed its instance variable `allow_protected_append_writes_all`
+  - Model `ImmutabilityPolicyProperties` deleted or renamed its instance variable `immutability_period_since_creation_in_days`
+  - Model `ImmutabilityPolicyProperties` deleted or renamed its instance variable `state`
+  - Model `ImmutabilityPolicyProperties` deleted or renamed its instance variable `allow_protected_append_writes`
+  - Model `ImmutabilityPolicyProperties` deleted or renamed its instance variable `allow_protected_append_writes_all`
+  - Model `ListContainerItem` deleted or renamed its instance variable `version`
+  - Model `ListContainerItem` deleted or renamed its instance variable `deleted`
+  - Model `ListContainerItem` deleted or renamed its instance variable `deleted_time`
+  - Model `ListContainerItem` deleted or renamed its instance variable `remaining_retention_days`
+  - Model `ListContainerItem` deleted or renamed its instance variable `default_encryption_scope`
+  - Model `ListContainerItem` deleted or renamed its instance variable `deny_encryption_scope_override`
+  - Model `ListContainerItem` deleted or renamed its instance variable `public_access`
+  - Model `ListContainerItem` deleted or renamed its instance variable `last_modified_time`
+  - Model `ListContainerItem` deleted or renamed its instance variable `lease_status`
+  - Model `ListContainerItem` deleted or renamed its instance variable `lease_state`
+  - Model `ListContainerItem` deleted or renamed its instance variable `lease_duration`
+  - Model `ListContainerItem` deleted or renamed its instance variable `metadata`
+  - Model `ListContainerItem` deleted or renamed its instance variable `immutability_policy`
+  - Model `ListContainerItem` deleted or renamed its instance variable `legal_hold`
+  - Model `ListContainerItem` deleted or renamed its instance variable `has_legal_hold`
+  - Model `ListContainerItem` deleted or renamed its instance variable `has_immutability_policy`
+  - Model `ListContainerItem` deleted or renamed its instance variable `immutable_storage_with_versioning`
+  - Model `ListContainerItem` deleted or renamed its instance variable `enable_nfs_v3_root_squash`
+  - Model `ListContainerItem` deleted or renamed its instance variable `enable_nfs_v3_all_squash`
+  - Model `ListQueue` deleted or renamed its instance variable `metadata`
+  - Model `Operation` deleted or renamed its instance variable `service_specification`
+  - Deleted or renamed enum value `ProvisioningState.ACCEPTED`
+  - Deleted or renamed enum value `ProvisioningState.CANCELED`
+  - Deleted or renamed enum value `ProvisioningState.DELETING`
+  - Deleted or renamed enum value `ProvisioningState.FAILED`
+  - Deleted or renamed enum value `ProvisioningState.VALIDATE_SUBSCRIPTION_QUOTA_BEGIN`
+  - Deleted or renamed enum value `ProvisioningState.VALIDATE_SUBSCRIPTION_QUOTA_END`
+  - Model `QueueServiceProperties` deleted or renamed its instance variable `cors`
+  - Model `Restriction` deleted or renamed its instance variable `values`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `allowed_copy_scope`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `sas_policy`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `key_policy`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `custom_domain`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `encryption`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `network_rule_set`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `access_tier`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `azure_files_identity_based_authentication`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `enable_https_traffic_only`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `is_sftp_enabled`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `is_local_user_enabled`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `enable_extended_groups`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `is_hns_enabled`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `large_file_shares_state`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `routing_preference`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `dual_stack_endpoint_preference`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `allow_blob_public_access`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `minimum_tls_version`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `allow_shared_key_access`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `enable_nfs_v3`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `allow_cross_tenant_replication`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `default_to_o_auth_authentication`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `immutable_storage_with_versioning`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `dns_endpoint_type`
+  - Model `StorageAccountCreateParameters` deleted or renamed its instance variable `geo_priority_replication_status`
+  - Model `StorageAccountListKeysResult` deleted or renamed its instance variable `keys`
+  - Model `StorageAccountMigration` deleted or renamed its instance variable `target_sku_name`
+  - Model `StorageAccountMigration` deleted or renamed its instance variable `migration_status`
+  - Model `StorageAccountMigration` deleted or renamed its instance variable `migration_failed_reason`
+  - Model `StorageAccountMigration` deleted or renamed its instance variable `migration_failed_detailed_reason`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `custom_domain`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `encryption`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `sas_policy`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `key_policy`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `access_tier`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `azure_files_identity_based_authentication`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `enable_https_traffic_only`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `is_sftp_enabled`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `is_local_user_enabled`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `enable_extended_groups`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `network_rule_set`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `large_file_shares_state`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `routing_preference`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `dual_stack_endpoint_preference`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `allow_blob_public_access`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `minimum_tls_version`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `allow_shared_key_access`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `allow_cross_tenant_replication`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `default_to_o_auth_authentication`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `immutable_storage_with_versioning`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `allowed_copy_scope`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `dns_endpoint_type`
+  - Model `StorageAccountUpdateParameters` deleted or renamed its instance variable `geo_priority_replication_status`
+  - Model `StorageQueue` deleted or renamed its instance variable `metadata`
+  - Model `StorageQueue` deleted or renamed its instance variable `approximate_message_count`
+  - Model `Table` deleted or renamed its instance variable `table_name`
+  - Model `Table` deleted or renamed its instance variable `signed_identifiers`
+  - Model `TableServiceProperties` deleted or renamed its instance variable `cors`
+  - Model `UpdateHistoryProperty` deleted or renamed its instance variable `update`
+  - Deleted or renamed model `BlobServiceItems`
+  - Deleted or renamed model `FileServiceUsages`
+  - Deleted or renamed model `FileShareItems`
+  - Deleted or renamed model `LeaseContainerRequestEnum`
+  - Deleted or renamed model `ListBlobInventoryPolicy`
+  - Deleted or renamed model `ListContainerItems`
+  - Deleted or renamed model `ListQueueResource`
+  - Deleted or renamed model `ListTableResource`
+  - Deleted or renamed model `LocalUsers`
+  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationList`
+  - Deleted or renamed model `ObjectReplicationPolicies`
+  - Deleted or renamed model `ProxyResourceAutoGenerated`
+  - Deleted or renamed model `Resource`
+  - Deleted or renamed model `StorageTaskAssignmentsList`
+  - Deleted or renamed model `StorageTaskReportSummary`
+  - Method `BlobContainersOperations.create_or_update_immutability_policy` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BlobContainersOperations.delete_immutability_policy` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BlobContainersOperations.extend_immutability_policy` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BlobContainersOperations.get_immutability_policy` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BlobContainersOperations.list` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `BlobContainersOperations.lock_immutability_policy` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `EncryptionScopesOperations.list` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.create` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.delete` changed its parameter `x_ms_snapshot` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.delete` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.get` changed its parameter `x_ms_snapshot` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.lease` changed its parameter `x_ms_snapshot` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `LocalUsersOperations.list` changed its parameter `include` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.begin_failover` changed its parameter `failover_type` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.begin_hierarchical_namespace_migration` changed its parameter `request_type` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.get_properties` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAccountsOperations.list_keys` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `FileSharesOperations.lease` re-ordered its parameters from `['self', 'resource_group_name', 'account_name', 'share_name', 'x_ms_snapshot', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'share_name', 'parameters', 'x_ms_snapshot', 'kwargs']`
+
 ## 24.0.1 (2026-03-24)
 
 ### Other Changes
