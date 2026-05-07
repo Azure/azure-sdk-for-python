@@ -19,6 +19,7 @@ from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local
 from azure.keyvault.keys.crypto.aio import (
     CryptographyClient,
     EncryptionAlgorithm,  # Shouldn't be imported from aio namespace, but do so to test backwards compatibility
+    KeySecureWrapAlgorithm,
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )
@@ -26,7 +27,7 @@ from azure.keyvault.keys._generated._serialization import Deserializer
 from azure.keyvault.keys._generated.models import KeySignParameters
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import AsyncKeysClientPreparer
+from _async_test_case import AsyncKeysClientPreparer, get_attestation_token
 from _test_case import get_decorator
 from _shared.helpers_async import get_completed_future
 from _shared.test_case_async import KeyVaultTestCase
@@ -35,6 +36,9 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
+only_hsm_2026_preview = get_decorator(
+    only_hsm=True, is_async=True, api_versions=[ApiVersion.V2026_01_01_PREVIEW]
+)
 only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 
 
@@ -298,6 +302,36 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
 
         result = await crypto_client.unwrap_key(result.algorithm, result.encrypted_key)
         assert result.key == self.plaintext
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_2026_preview)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_secure_wrap_and_unwrap(self, key_client, **kwargs):
+        """Securely wrap a TEE-generated key and unwrap it back into a target TEE."""
+        key_name = self.get_resource_name("secure-wrap-key")
+        wrapping_key = await self._create_rsa_key(key_client, key_name, hardware_protected=True)
+        crypto_client = self.create_crypto_client(wrapping_key, is_async=True, api_version=key_client.api_version)
+
+        wrap_result = await crypto_client.secure_wrap_key(KeySecureWrapAlgorithm.rsa_oaep_256)
+        assert wrap_result.key_id == wrapping_key.id
+        assert wrap_result.algorithm == KeySecureWrapAlgorithm.rsa_oaep_256
+        assert wrap_result.encrypted_key
+
+        attestation_uri = self._get_attestation_uri()
+        target_attestation_token = await get_attestation_token(attestation_uri)
+        try:
+            unwrap_result = await crypto_client.secure_unwrap_key(
+                wrap_result.algorithm, wrap_result.encrypted_key, target_attestation_token
+            )
+            assert unwrap_result.key_id == wrapping_key.id
+            assert unwrap_result.algorithm == KeySecureWrapAlgorithm.rsa_oaep_256
+            assert unwrap_result.key
+        except HttpResponseError as ex:
+            # The service may transiently fail to verify a test attestation token in live runs.
+            if self.is_live and "attestation" in ex.message.lower():
+                pytest.skip("Target environment attestation statement could not be verified. Likely transient.")
+            raise
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)

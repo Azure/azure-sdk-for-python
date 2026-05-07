@@ -17,6 +17,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 from azure.keyvault.keys import (
     ApiVersion,
+    ExternalKey,
     JsonWebKey,
     KeyProperties,
     KeyReleasePolicy,
@@ -40,6 +41,9 @@ all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
 only_hsm_default = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
 only_hsm_7_4_plus = get_decorator(only_hsm=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
+only_hsm_2026_preview = get_decorator(
+    only_hsm=True, is_async=True, api_versions=[ApiVersion.V2026_01_01_PREVIEW]
+)
 only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 only_7_4_plus = get_decorator(is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 logging_enabled = get_decorator(is_async=True, logging_enable=True)
@@ -800,6 +804,27 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         )
         response = await client.send_request(request)
         assert response.json()["key"]["kid"] == key.id
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_2026_preview)
+    @AsyncKeysClientPreparer()
+    @recorded_by_proxy_async
+    async def test_create_external_key(self, client, **kwargs):
+        """Register an external HSM key and verify the external_key reference round-trips."""
+        key_name = self.get_resource_name("ext-key")
+        external_id = self.get_resource_name("extid")[:64]
+        external_key = ExternalKey(id=external_id)
+
+        created = await client.create_external_key(key_name, external_key=external_key)
+        assert created is not None
+        assert created.name == key_name
+        assert created.properties.external_key is not None
+        assert created.properties.external_key.id == external_id
+
+        # Verify the external_key reference is also returned by a subsequent get_key.
+        fetched = await client.get_key(key_name)
+        assert fetched.properties.external_key is not None
+        assert fetched.properties.external_key.id == external_id
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm", only_hsm_default)

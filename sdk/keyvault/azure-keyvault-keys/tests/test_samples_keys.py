@@ -6,7 +6,7 @@ import os
 import time
 
 import pytest
-from azure.keyvault.keys import KeyType
+from azure.keyvault.keys import ApiVersion, ExternalKey, KeyType
 from devtools_testutils import recorded_by_proxy
 
 from _shared.test_case import KeyVaultTestCase
@@ -15,6 +15,7 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
 only_hsm = get_decorator(only_hsm=True)
+only_hsm_2026_preview = get_decorator(only_hsm=True, api_versions=[ApiVersion.V2026_01_01_PREVIEW])
 
 
 def print(*args):
@@ -144,6 +145,25 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         print(key.name)
         print(key.key_type)
         # [END create_oct_key]
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_hsm_2026_preview)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_example_create_external_key(self, key_client, **kwargs):
+        key_name = self.get_resource_name("ext-key")
+        external_id = self.get_resource_name("extid")[:64]
+
+        # [START create_external_key]
+        from azure.keyvault.keys import ExternalKey
+
+        # the external_key.id refers to the key material managed by an external HSM
+        external_key = ExternalKey(id=external_id)
+        key = key_client.create_external_key(key_name, external_key=external_key)
+
+        print(key.id)
+        print(key.name)
+        print(key.properties.external_key.id)
+        # [END create_external_key]
 
     @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @KeysClientPreparer()
