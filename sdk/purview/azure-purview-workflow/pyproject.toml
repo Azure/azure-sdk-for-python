@@ -8,38 +8,39 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-purview-administration"
+name = "azure-purview-workflow"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Azure Purview Administration Client Library for Python"
+description = "Microsoft Azure Purview Workflow Service Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.7"
 keywords = [
     "azure",
     "azure sdk",
 ]
-version = "1.0.0b2"
+version = "1.0.0b3"
 dependencies = [
-    "azure-core<2.0.0,>=1.23.0",
-    "msrest>=0.6.21",
-    "six>=1.11.0",
+    "isodate<1.0.0,>=0.6.1",
+    "azure-core<2.0.0,>=1.28.0",
+    "typing-extensions>=4.3.0; python_version<'3.8.0'",
 ]
 dynamic = ["readme"]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
 [tool.setuptools.dynamic]
 readme = {file = [
@@ -61,7 +62,3 @@ exclude = [
     "swagger*",
     "tests*",
 ]
-
-[tool.azure-sdk-build]
-pyright = false
-ci_enabled = false
