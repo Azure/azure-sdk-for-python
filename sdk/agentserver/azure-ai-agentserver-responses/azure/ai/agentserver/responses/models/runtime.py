@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from .._response_context import ResponseContext
     from ..hosting._event_subject import _ResponseEventSubject
 
-EVENT_TYPE = ResponseStreamEventType
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
@@ -53,9 +52,9 @@ class StreamEventRecord:
         :rtype: bool
         """
         return self.event_type in {
-            EVENT_TYPE.RESPONSE_COMPLETED.value,
-            EVENT_TYPE.RESPONSE_FAILED.value,
-            EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+            ResponseStreamEventType.RESPONSE_COMPLETED.value,
+            ResponseStreamEventType.RESPONSE_FAILED.value,
+            ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
         }
 
     @classmethod
@@ -100,6 +99,9 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         response_context: ResponseContext | None = None,
         initial_model: str | None = None,
         initial_agent_reference: AgentReference | dict[str, Any] | None = None,
+        agent_session_id: str | None = None,
+        conversation_id: str | None = None,
+        chat_isolation_key: str | None = None,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -119,8 +121,13 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.response_context = response_context
         self.initial_model = initial_model
         self.initial_agent_reference = initial_agent_reference or {}
+        self.agent_session_id = agent_session_id
+        self.conversation_id = conversation_id
+        self.chat_isolation_key = chat_isolation_key
         self.response_created_signal: asyncio.Event = asyncio.Event()
         self.response_failed_before_events: bool = False
+        self.persistence_failed: bool = False
+        self.persistence_exception: Exception | None = None
 
     def transition_to(self, next_status: ResponseStatus) -> None:
         """Transition this execution to a valid lifecycle status.
@@ -234,7 +241,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = cast(ResponseStatus, resolved)
-        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
             item = normalized.get("item")
             if item is not None and self.response is not None:
                 item_dict = item.as_dict() if hasattr(item, "as_dict") else item
@@ -242,7 +249,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                     output = self.response.setdefault("output", [])
                     if isinstance(output, list):
                         output.append(deepcopy(item_dict))
-        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
+        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
             item = normalized.get("item")
             output_index = normalized.get("output_index")
             if item is not None and isinstance(output_index, int) and self.response is not None:
@@ -352,6 +359,7 @@ def build_failed_response(
     model: str | None,
     created_at: datetime | None = None,
     error_message: str = "An internal server error occurred.",
+    error_code: str = "server_error",
 ) -> ResponseObject:
     """Build a ResponseObject representing a failed terminal state.
 
@@ -365,6 +373,8 @@ def build_failed_response(
     :type created_at: datetime | None
     :param error_message: Human-readable error message.
     :type error_message: str
+    :param error_code: Error code string (e.g. ``"server_error"`` or ``"storage_error"``).
+    :type error_code: str
     :returns: A Response object with status ``"failed"`` and empty output.
     :rtype: ResponseObject
     """
@@ -376,7 +386,7 @@ def build_failed_response(
         "status": "failed",
         "model": model,
         "output": [],
-        "error": {"code": "server_error", "message": error_message},
+        "error": {"code": error_code, "message": error_message},
     }
     if created_at is not None:
         payload["created_at"] = created_at.isoformat()

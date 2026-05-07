@@ -115,6 +115,34 @@ def _make_streaming_echo_app():
     return app, request_ids
 
 
+def _make_echo_app_with_child_span():
+    """Create an AgentServerHost whose handler creates a child span inside request_span.
+
+    Returns (app, request_ids, child_span_ids).  The child span simulates a
+    framework creating its own span inside the invoke_agent span context.
+    ``child_span_ids`` captures the hex span-id of each child so the test can
+    query App Insights by that value.
+    """
+    request_ids: list[str] = []
+    child_span_ids: list[str] = []
+    child_tracer = trace.get_tracer("test.framework")
+
+    async def echo_handler(request: Request) -> Response:
+        req_id = str(uuid.uuid4())
+        request_ids.append(req_id)
+        with app.request_span(dict(request.headers), req_id, "invoke_agent"):
+            with child_tracer.start_as_current_span("framework_child") as child:
+                child_span_ids.append(format(child.context.span_id, "016x"))
+                body = await request.body()
+                resp = Response(content=body, media_type="application/octet-stream")
+                resp.headers["x-request-id"] = req_id
+                return resp
+
+    routes = [Route("/echo", echo_handler, methods=["POST"])]
+    app = AgentServerHost(routes=routes)
+    return app, request_ids, child_span_ids
+
+
 def _make_failing_echo_app():
     """Create an app whose handler raises inside request_span. Returns (app, request_ids)."""
     request_ids: list[str] = []
@@ -245,4 +273,61 @@ class TestAppInsightsIngestionE2E:
         assert len(rows) > 0, (
             f"Span with response_id={req_id} and gen_ai.system attribute "
             "not found in App Insights"
+        )
+
+    def test_span_parenting_in_appinsights(
+        self,
+        appinsights_connection_string,
+        appinsights_resource_id,
+        logs_query_client,
+    ):
+        """Verify a child span created inside request_span is parented correctly in App Insights.
+
+        The parent (invoke_agent, SpanKind.SERVER) lands in ``requests``.
+        The child (framework_child, SpanKind.INTERNAL) lands in ``dependencies``.
+        We capture the child's span-id locally, use it to find the child row in
+        ``dependencies``, then follow its ``operation_ParentId`` back to the
+        parent row in ``requests``.
+        """
+        app, request_ids, child_span_ids = _make_echo_app_with_child_span()
+        client = TestClient(app)
+        resp = client.post("/echo", content=b"parenting e2e")
+        assert resp.status_code == 200
+        req_id = request_ids[-1]
+        child_span_id = child_span_ids[-1]
+        _flush_provider()
+
+        # Step 1: Find the child span in the dependencies table using its span-id.
+        child_query = (
+            "dependencies "
+            f"| where id == '{child_span_id}' "
+            "| where name == 'framework_child' "
+            "| project id, name, operation_Id, operation_ParentId "
+            "| take 1"
+        )
+        child_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, child_query)
+        assert len(child_rows) > 0, (
+            f"Child framework_child span (id={child_span_id}) not found in "
+            f"dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s"
+        )
+
+        operation_id = child_rows[0][2]       # operation_Id column
+        child_parent_id = child_rows[0][3]    # operation_ParentId column
+
+        # Step 2: Find the parent span in the requests table using the child's operation_ParentId.
+        parent_query = (
+            "requests "
+            f"| where id == '{child_parent_id}' "
+            f"| where operation_Id == '{operation_id}' "
+            "| project id, name, operation_Id "
+            "| take 1"
+        )
+        parent_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, parent_query)
+        assert len(parent_rows) > 0, (
+            f"Parent span (id={child_parent_id}) referenced by child's "
+            f"operation_ParentId not found in requests table"
+        )
+
+        assert parent_rows[0][1] == "invoke_agent", (
+            f"Expected parent span name 'invoke_agent', got '{parent_rows[0][1]}'"
         )

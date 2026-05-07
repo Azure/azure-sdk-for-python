@@ -6,7 +6,7 @@ Fetches available model deployments from Azure AI Foundry and allows users to se
 import json
 import logging
 import re
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,7 @@ class FoundryDeployment:
     def __init__(
         self, name: str, model_name: str, model_version: str,
         model_format: str = "", status: str = "Succeeded", token_rate_limit: int = 0,
+        capabilities: Optional[Dict[str, Any]] = None,
     ):
         self.name = name
         self.model_name = model_name
@@ -24,11 +25,34 @@ class FoundryDeployment:
         self.model_format = model_format or "OpenAI"  # Default to OpenAI/Azure format
         self.status = status
         self.token_rate_limit = token_rate_limit  # Tokens per minute
+        self.capabilities = capabilities or {}
+
+    @property
+    def supports_responses(self) -> bool:
+        return self.capabilities.get("responses") in ("true", True)
+
+    @property
+    def supports_chat(self) -> bool:
+        return (
+            self.capabilities.get("chatCompletion") in ("true", True)
+            or self.capabilities.get("chat_completion") in ("true", True)
+        )
+
+    @property
+    def wire_api(self) -> str:
+        """Return the appropriate wire API based on model capabilities."""
+        if self.supports_responses:
+            return "responses"
+        # Fall back to cached wire_api if capabilities weren't available
+        cached = getattr(self, "_cached_wire_api", None)
+        if cached:
+            return cached
+        return "completions"
 
     def __repr__(self):
         return (
             f"{self.name} ({self.model_name} {self.model_version}"
-            f" - {self.model_format}, {self.token_rate_limit} TPM)"
+            f" - {self.model_format}, {self.token_rate_limit} TPM, wire_api={self.wire_api})"
         )
 
 
@@ -176,23 +200,20 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                         model_version = model.get("version", "")
                         model_format = model.get("format", "")
 
-                        # Filter: chat-capable models only - check capabilities field ONLY
+                        # Filter: chat-capable or responses-capable models
                         capabilities = properties.get("capabilities", {})
 
-                        # Check for chat completion capability
                         is_chat = (
                             capabilities.get("chatCompletion") in ("true", True)
                             or capabilities.get("chat_completion") in ("true", True)
                         )
+                        is_responses = capabilities.get("responses") in ("true", True)
 
-                        if not is_chat:
-                            logger.debug(f"Skipping non-chat model: {name} (capabilities: {capabilities})")
+                        if not is_chat and not is_responses:
+                            logger.debug(f"Skipping model without chat/responses: {name} (capabilities: {capabilities})")
                             continue
 
-                        # Filter: Only supported model formats (OpenAI, Meta, Anthropic)
-                        if model_format not in ["OpenAI", "Meta", "Anthropic"]:
-                            logger.debug(f"Skipping unsupported model format: {name} (format: {model_format})")
-                            continue
+                        # Note: no model_format filter — capability check above is sufficient
 
                         # Extract rate limits (tokens per minute)
                         rate_limits = properties.get("rateLimits", [])
@@ -202,14 +223,15 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                                 token_rate_limit = limit.get("count", 0)
                                 break
 
-                        # Include this chat-capable model
+                        # Include this model
                         deployment = FoundryDeployment(
                             name=name,
                             model_name=model_name,
                             model_version=model_version,
                             model_format=model_format,
                             status=properties.get("provisioningState", "Unknown"),
-                            token_rate_limit=token_rate_limit
+                            token_rate_limit=token_rate_limit,
+                            capabilities=capabilities,
                         )
                         deployments.append(deployment)
 
@@ -322,22 +344,20 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
 
                                 logger.info(f"Found deployment: {name} (model: {model_name}, format: {model_format})")
 
-                                # Filter: Only chat-capable models - check capabilities field ONLY
+                                # Filter: chat-capable or responses-capable models
                                 capabilities = item.get("capabilities", {})
 
                                 is_chat = (
                                     capabilities.get("chatCompletion") in ("true", True)
                                     or capabilities.get("chat_completion") in ("true", True)
                                 )
+                                is_responses = capabilities.get("responses") in ("true", True)
 
-                                if not is_chat:
-                                    logger.debug(f"Skipping non-chat model: {name} (capabilities: {capabilities})")
+                                if not is_chat and not is_responses:
+                                    logger.debug(f"Skipping model without chat/responses: {name} (capabilities: {capabilities})")
                                     continue
 
-                                # Filter: Only supported model formats (OpenAI, Meta, Anthropic)
-                                if model_format not in ["OpenAI", "Meta", "Anthropic"]:
-                                    logger.debug(f"Skipping unsupported model format: {name} (format: {model_format})")
-                                    continue
+                                # Note: no model_format filter — capability check above is sufficient
 
                                 # Extract rate limits (tokens per minute)
                                 rate_limits = item.get("rateLimits", [])
@@ -353,7 +373,8 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
                                     model_version="",
                                     model_format=model_format,
                                     status="Succeeded",
-                                    token_rate_limit=token_rate_limit
+                                    token_rate_limit=token_rate_limit,
+                                    capabilities=capabilities,
                                 )
                                 deployments.append(deployment)
 

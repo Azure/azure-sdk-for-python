@@ -10,11 +10,22 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    """Applies to inbound network traffic to the secured resources."""
+    OUTBOUND = "Outbound"
+    """Applies to outbound network traffic from the secured resources."""
+
+
 class ActionsRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Any action that is required beyond basic workflow (approve/ reject/ disconnect)."""
 
     NONE = "None"
+    """NONE."""
     RECREATE = "Recreate"
+    """RECREATE."""
 
 
 class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -38,22 +49,29 @@ class CompositionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     KEY = "Key"
+    """KEY."""
     KEY_LABEL = "Key_Label"
+    """KEY_LABEL."""
 
 
 class ConfigurationResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource type to check for name availability."""
 
     MICROSOFT_APP_CONFIGURATION_CONFIGURATION_STORES = "Microsoft.AppConfiguration/configurationStores"
+    """MICROSOFT_APP_CONFIGURATION_CONFIGURATION_STORES."""
 
 
 class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The private link service connection status."""
 
     PENDING = "Pending"
+    """PENDING."""
     APPROVED = "Approved"
+    """APPROVED."""
     REJECTED = "Rejected"
+    """REJECTED."""
     DISCONNECTED = "Disconnected"
+    """DISCONNECTED."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -73,7 +91,9 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the configuration store need to be recovered."""
 
     RECOVER = "Recover"
+    """RECOVER."""
     DEFAULT = "Default"
+    """DEFAULT."""
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -83,9 +103,52 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     NONE = "None"
+    """NONE."""
     SYSTEM_ASSIGNED = "SystemAssigned"
+    """SYSTEM_ASSIGNED."""
     USER_ASSIGNED = "UserAssigned"
+    """USER_ASSIGNED."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+    """SYSTEM_ASSIGNED_USER_ASSIGNED."""
+
+
+class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of issue."""
+
+    UNKNOWN = "Unknown"
+    """Unknown issue type."""
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    """An error occurred while applying the network security perimeter (NSP) configuration."""
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    """A network connectivity issue is happening on the resource which could be addressed either by
+    adding new resources to the network security perimeter (NSP) or by modifying access rules."""
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    """An managed identity hasn't been associated with the resource. The resource will still be able
+    to validate inbound traffic from the network security perimeter (NSP) or matching inbound
+    access rules, but it won't be able to perform outbound access as a member of the NSP."""
+
+
+class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Provisioning state of a network security perimeter configuration that is being created or
+    updated.
+    """
+
+    SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
+    CREATING = "Creating"
+    """CREATING."""
+    UPDATING = "Updating"
+    """UPDATING."""
+    DELETING = "Deleting"
+    """DELETING."""
+    ACCEPTED = "Accepted"
+    """ACCEPTED."""
+    FAILED = "Failed"
+    """FAILED."""
+    CANCELED = "Canceled"
+    """CANCELED."""
 
 
 class PrivateLinkDelegation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -103,36 +166,73 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the configuration store."""
 
     CREATING = "Creating"
+    """CREATING."""
     UPDATING = "Updating"
+    """UPDATING."""
     DELETING = "Deleting"
+    """DELETING."""
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     FAILED = "Failed"
+    """FAILED."""
     CANCELED = "Canceled"
+    """CANCELED."""
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Control permission for data plane traffic coming from public networks while private endpoint is
-    enabled.
-    """
+    """Control permission for data plane traffic coming from public networks."""
 
     ENABLED = "Enabled"
+    """Allow public network access to the data plane."""
     DISABLED = "Disabled"
+    """Disallow public network access to the data plane."""
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    """Let network security perimeter configuration control public network access to the data plane."""
 
 
 class ReplicaProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the replica."""
 
     CREATING = "Creating"
+    """CREATING."""
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     DELETING = "Deleting"
+    """DELETING."""
     FAILED = "Failed"
+    """FAILED."""
     CANCELED = "Canceled"
+    """CANCELED."""
+
+
+class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode of the resource association."""
+
+    ENFORCED = "Enforced"
+    """Enforced access mode - traffic to the resource that failed access checks is blocked."""
+    LEARNING = "Learning"
+    """Learning access mode - traffic to the resource is enabled for analysis but not blocked."""
+    AUDIT = "Audit"
+    """Audit access mode - traffic to the resource that fails access checks is logged but not blocked."""
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the issue."""
+
+    WARNING = "Warning"
+    """WARNING."""
+    ERROR = "Error"
+    """ERROR."""
 
 
 class SnapshotStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the snapshot."""
 
     PROVISIONING = "Provisioning"
+    """PROVISIONING."""
     READY = "Ready"
+    """READY."""
     ARCHIVED = "Archived"
+    """ARCHIVED."""
     FAILED = "Failed"
+    """FAILED."""

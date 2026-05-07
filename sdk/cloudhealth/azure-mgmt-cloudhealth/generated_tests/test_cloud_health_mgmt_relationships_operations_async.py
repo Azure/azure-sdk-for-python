@@ -33,46 +33,49 @@ class TestCloudHealthMgmtRelationshipsOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_relationships_create_or_update(self, resource_group):
-        response = await self.client.relationships.create_or_update(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            relationship_name="str",
-            resource={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "childEntityName": "str",
-                    "parentEntityName": "str",
-                    "deletionDate": "2020-02-20 00:00:00",
-                    "discoveredBy": "str",
-                    "displayName": "str",
-                    "labels": {"str": "str"},
-                    "provisioningState": "str",
+    async def test_relationships_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.relationships.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                relationship_name="str",
+                resource={
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "childEntityName": "str",
+                        "parentEntityName": "str",
+                        "discoveredBy": "str",
+                        "displayName": "str",
+                        "provisioningState": "str",
+                        "tags": {"str": "str"},
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
-        )
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_relationships_delete(self, resource_group):
-        response = await self.client.relationships.delete(
-            resource_group_name=resource_group.name,
-            health_model_name="str",
-            relationship_name="str",
-        )
+    async def test_relationships_begin_delete(self, resource_group):
+        response = await (
+            await self.client.relationships.begin_delete(
+                resource_group_name=resource_group.name,
+                health_model_name="str",
+                relationship_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

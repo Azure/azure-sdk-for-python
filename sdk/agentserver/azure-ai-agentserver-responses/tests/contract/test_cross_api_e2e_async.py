@@ -154,7 +154,7 @@ class _AsyncAsgiClient:
 def _build_client(handler: Any) -> _AsyncAsgiClient:
     """Create a fully isolated async ASGI client."""
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     return _AsyncAsgiClient(app)
 
 
@@ -721,22 +721,13 @@ class TestC4BgStreamStoredAsync:
         finally:
             await _ensure_task_done(post_task, handler)
 
-        # SSE replay after cancel → should have response.failed terminal event
+        # SSE replay after cancel: with eager eviction, the in-memory SSE subject
+        # is gone and cancelled responses don't persist stream events.
+        # The provider fallback returns 400 with the combined "stream=true or TTL"
+        # message (we cannot distinguish bg+non-stream from bg+stream-cancelled
+        # after eviction — see TODO in _endpoint_handler.py).
         replay_resp = await client.get(f"/responses/{response_id}?stream=true")
-        assert replay_resp.status_code == 200
-
-        replay_events = _parse_sse_events(replay_resp.body.decode())
-        assert len(replay_events) >= 1, "Replay should have at least 1 event"
-
-        # B26: terminal event for cancelled response is response.failed
-        last_event = replay_events[-1]
-        assert last_event["type"] == "response.failed", (
-            f"Expected response.failed terminal in replay, got: {last_event['type']}"
-        )
-
-        # The response inside should have status: cancelled
-        if "response" in last_event["data"]:
-            assert last_event["data"]["response"]["status"] == "cancelled"
+        assert replay_resp.status_code == 400
 
     async def test_e43_bg_stream_get_during_stream_item_lifecycle(self) -> None:
         """B5, B23 — GET mid-stream returns progressive item lifecycle.

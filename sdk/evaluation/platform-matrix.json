@@ -9,17 +9,17 @@
       "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" },
       "ubuntu-24.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" }
     },
-    "PythonVersion": [ "3.9", "3.11", "3.10" ],
+    "PythonVersion": [ "3.11", "3.10" ],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
   "include": [
     {
       "CoverageConfig": {
-        "ubuntu2404_39_coverage": {
+        "ubuntu2404_310_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "",
           "TestSamples": "false"
         }

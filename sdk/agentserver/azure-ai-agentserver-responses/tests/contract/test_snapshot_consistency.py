@@ -135,7 +135,7 @@ def _parse_sse_events(text: str) -> list[dict[str, Any]]:
 
 def _build_client(handler: Any) -> _AsyncAsgiClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     return _AsyncAsgiClient(app)
 
 
@@ -226,7 +226,7 @@ def test_sse_events_contain_snapshot_not_live_reference() -> None:
 
     handler = _make_multi_output_handler()
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     client = TestClient(app)
 
     with client.stream("POST", "/responses", json={"model": "test", "stream": True}) as resp:

@@ -26,13 +26,14 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - template: /eng/pipelines/templates/steps/use-venv.yml
-
   # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
   # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
   - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
     parameters:
       DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
+
+  - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
