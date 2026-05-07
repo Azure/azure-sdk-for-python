@@ -6,7 +6,7 @@
 Provides the invocation protocol over WebSocket long connections
 as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
 import inspect
 import json
