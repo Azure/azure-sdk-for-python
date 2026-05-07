@@ -1132,7 +1132,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = 'hello world'
+        data = b'hello world'
 
         # Act
         create_resp = blob.upload_blob(data)

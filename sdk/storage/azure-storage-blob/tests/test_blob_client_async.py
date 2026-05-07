@@ -484,7 +484,7 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
 
         # Arrange
         conn_string = (
-            f"AccountName={storage_account_name};AccountKey={storage_account_key};"
+            f"AccountName={storage_account_name};AccountKey={storage_account_key.secret};"
             f"DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;"
         )
 
