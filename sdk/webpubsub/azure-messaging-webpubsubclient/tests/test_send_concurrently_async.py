@@ -17,11 +17,9 @@ class TestWebpubsubClientSendConcurrentlyAsync(WebpubsubClientTestAsync):
     @recorded_by_proxy_async
     async def test_send_concurrently_async(self, webpubsubclient_endpoint):
         client = await self.create_client(endpoint=webpubsubclient_endpoint)
+        connected_event, _, _ = await self.setup_events(client)
         async with client:
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
             group_name = "test_send_concurrently_async"
             await client.join_group(group_name)
-            for _ in range(30):
-                if client.is_connected():
-                    break
-                await asyncio.sleep(1)
             await asyncio.gather(*[client.send_to_group(group_name, f"hello_{idx}", "text") for idx in range(100)])

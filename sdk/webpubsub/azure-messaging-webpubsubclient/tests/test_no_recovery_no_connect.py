@@ -34,14 +34,10 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
         name = "test_disable_recovery_and_autoconnect"
         with client:
             group_name = name
-            client.subscribe("group-message", on_group_message)
+            _, disconnected_event, _ = self.setup_events(client)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection
-            # wait for client to detect disconnection so send raises SendMessageError
-            for _ in range(30):
-                if not client.is_connected():
-                    break
-                time.sleep(1)
+            assert disconnected_event.wait(timeout=30), "Timed out waiting for disconnection"
             with pytest.raises(SendMessageError):
                 client.send_to_group(group_name, name, "text")
             time.sleep(3)  # wait to confirm message was NOT received
@@ -63,12 +59,10 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
 
         with client:
             group_name = "test_disable_recovery_and_autoconnect_send_concurrently"
+            _, disconnected_event, _ = self.setup_events(client)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection
-            for _ in range(30):
-                if not client.is_connected():
-                    break
-                time.sleep(1)
+            assert disconnected_event.wait(timeout=30), "Timed out waiting for disconnection"
             assert not client.is_connected()
 
             def send(idx):

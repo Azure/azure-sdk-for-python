@@ -26,7 +26,7 @@ class TestWebpubsubClientAutoConnectAsync(WebpubsubClientTestAsync):
             reconnect_retry_backoff_factor=0.1,
         )
         name = "test_auto_connect_async"
-        connected_event, message_event = await self.setup_events(client)
+        connected_event, _, message_event = await self.setup_events(client)
         async with client:
             await asyncio.wait_for(connected_event.wait(), timeout=30)
             conn_id0 = client._connection_id

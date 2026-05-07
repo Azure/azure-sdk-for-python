@@ -28,9 +28,15 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     async def test_call_back_deadlock_async(self, webpubsubclient_endpoint):
         client = await self.create_client(endpoint=webpubsubclient_endpoint)
         group_name = "test_call_back_deadlock_async"
+        callback_completed = asyncio.Event()
+        callback_count = 0
 
         async def on_group_message(msg: OnGroupDataMessageArgs):
+            nonlocal callback_count
             await client.send_to_group(group_name, msg.data, "text", no_echo=True)
+            callback_count += 1
+            if callback_count >= 3:
+                callback_completed.set()
 
         async with client:
             await client.join_group(group_name)
@@ -38,21 +44,18 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
             await client.send_to_group(group_name, "hello test_call_back_deadlock1", "text")
             await client.send_to_group(group_name, "hello test_call_back_deadlock2", "text")
             await client.send_to_group(group_name, "hello test_call_back_deadlock3", "text")
-            # sleep to make sure the callback has enough time to execute before close
-            await asyncio.sleep(1)
+            await asyncio.wait_for(callback_completed.wait(), timeout=30)
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_context_manager_async(self, webpubsubclient_endpoint):
         client = await self.create_client(endpoint=webpubsubclient_endpoint)
+        _, _, message_event = await self.setup_events(client)
         async with client:
             group_name = "test_context_manager_async"
             await client.join_group(group_name)
             await client.send_to_group(group_name, "test_context_manager", "text")
-            for _ in range(30):
-                if client._sequence_id.sequence_id > 0:
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(message_event.wait(), timeout=30)
             assert client._sequence_id.sequence_id > 0
 
     # test on_stop
@@ -60,6 +63,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
     @recorded_by_proxy_async
     async def test_on_stop_async(self, webpubsubclient_endpoint):
         client = await self.create_client(endpoint=webpubsubclient_endpoint)
+        connected_event, disconnected_event, _ = await self.setup_events(client)
         reopen_error = None
         reopen_complete = asyncio.Event()
 
@@ -76,10 +80,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
                 else:
                     raise RuntimeError("Failed to reopen client in stopped callback")
 
-                for _ in range(30):
-                    if client.is_connected():
-                        break
-                    await asyncio.sleep(1)
+                await asyncio.wait_for(connected_event.wait(), timeout=30)
                 assert client.is_connected()
             except Exception as e:
                 reopen_error = e
@@ -89,11 +90,9 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
         async with client:
             # open client again after close
             await client.subscribe("stopped", on_stop)
-            for _ in range(30):
-                if client.is_connected():
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(connected_event.wait(), timeout=30)
             assert client.is_connected()
+            connected_event.clear()
             await client.close()
             # wait for on_stop callback to finish reopening
             await asyncio.wait_for(reopen_complete.wait(), timeout=60)
@@ -101,12 +100,9 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
 
             # remove stopped event and close again
             await client.unsubscribe("stopped", on_stop)
+            disconnected_event.clear()
             await client.close()
-            # wait for disconnect to finalize
-            for _ in range(30):
-                if not client.is_connected():
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(disconnected_event.wait(), timeout=30)
             assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
@@ -145,7 +141,7 @@ class TestWebpubsubClientSmokeAsync(WebpubsubClientTestAsync):
                 endpoint=webpubsubclient_endpoint,
                 auto_rejoin_groups=enable_auto_rejoin,
             )
-            connected_event, message_event = await self.setup_events(client)
+            connected_event, _, message_event = await self.setup_events(client)
             async with client:
                 await client.join_group(test_group_name)
 

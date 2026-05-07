@@ -26,16 +26,14 @@ class TestLiveApiCoverage(WebpubsubTest):
         return None
 
     def _wait_for_server_cleanup(self, delay_seconds=2):
-        """
-        Wait for server-side cleanup after closing a connection.
-        
-        The server needs time to process the disconnection before accepting new connections.
-        This is a pragmatic wait since we don't have a direct signal for when cleanup completes.
-        
-        Args:
-            delay_seconds: Time to wait in seconds (default 2 seconds for server cleanup)
-        """
         time.sleep(delay_seconds)
+
+    def _wait_for_connection_removed(self, client, connection_id):
+        for _ in range(30):
+            if not client.connection_exists(connection_id=connection_id):
+                return
+            time.sleep(1)
+        pytest.fail(f"Timed out waiting for connection {connection_id} to be removed")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
@@ -182,10 +180,7 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_group_connections(group=group_1, reason="live-coverage")
-            for _ in range(30):
-                if not client.connection_exists(connection_id=conn):
-                    break
-                time.sleep(1)
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
 
             # close_user_connections
@@ -194,10 +189,7 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_user_connections(user_id=user_id, reason="live-coverage")
-            for _ in range(30):
-                if not client.connection_exists(connection_id=conn):
-                    break
-                time.sleep(1)
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
 
             # close_connection
@@ -206,10 +198,7 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_connection(connection_id=conn, reason="live-coverage")
-            for _ in range(30):
-                if not client.connection_exists(connection_id=conn):
-                    break
-                time.sleep(1)
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
 
             # close_all_connections
@@ -218,10 +207,7 @@ class TestLiveApiCoverage(WebpubsubTest):
             conn = self._find_connection_id(client, group_1, user_id)
             assert conn is not None
             client.close_all_connections(reason="live-coverage")
-            for _ in range(30):
-                if not client.connection_exists(connection_id=conn):
-                    break
-                time.sleep(1)
+            self._wait_for_connection_removed(client, conn)
             assert not client.connection_exists(connection_id=conn)
             ws = None
 

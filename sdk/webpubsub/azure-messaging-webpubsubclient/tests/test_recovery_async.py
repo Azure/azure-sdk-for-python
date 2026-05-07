@@ -19,7 +19,7 @@ class TestWebpubsubClientRecoveryAsync(WebpubsubClientTestAsync):
     async def test_recovery_async(self, webpubsubclient_endpoint):
         client = await self.create_client(endpoint=webpubsubclient_endpoint, message_retry_total=10)
         name = "test_recovery_async"
-        connected_event, message_event = await self.setup_events(client)
+        connected_event, _, message_event = await self.setup_events(client)
         async with client:
             await asyncio.wait_for(connected_event.wait(), timeout=30)
             conn_id0 = client._connection_id

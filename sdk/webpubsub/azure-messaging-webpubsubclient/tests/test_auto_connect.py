@@ -25,7 +25,7 @@ class TestWebpubsubClientAutoConnect(WebpubsubClientTest):
             reconnect_retry_backoff_factor=0.1,
         )
         name = "test_auto_connect"
-        connected_event, message_event = self.setup_events(client)
+        connected_event, _, message_event = self.setup_events(client)
         with client:
             assert connected_event.wait(timeout=30), "Timed out waiting for initial connection"
             conn_id0 = client._connection_id

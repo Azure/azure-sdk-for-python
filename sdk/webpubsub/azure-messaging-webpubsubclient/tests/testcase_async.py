@@ -36,20 +36,25 @@ class WebpubsubClientTestAsync(AzureRecordedTestCase):
 
     @staticmethod
     async def setup_events(client):
-        """Subscribe connected/group-message events and return (connected_event, message_event)."""
+        """Subscribe connected/disconnected/group-message events and return their wait handles."""
         connected_event = asyncio.Event()
+        disconnected_event = asyncio.Event()
         message_event = asyncio.Event()
 
         async def _on_connected(*args, **kwargs):
             connected_event.set()
+
+        async def _on_disconnected(*args, **kwargs):
+            disconnected_event.set()
 
         async def _on_group_message(msg):
             await on_group_message(msg)
             message_event.set()
 
         await client.subscribe("connected", _on_connected)
+        await client.subscribe("disconnected", _on_disconnected)
         await client.subscribe("group-message", _on_group_message)
-        return connected_event, message_event
+        return connected_event, disconnected_event, message_event
 
     @staticmethod
     async def retry_send_until_message(client, group_name, data, message_event, retries=30):

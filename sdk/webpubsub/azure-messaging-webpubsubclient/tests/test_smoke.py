@@ -29,9 +29,17 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     def test_call_back_deadlock(self, webpubsubclient_endpoint):
         client = self.create_client(endpoint=webpubsubclient_endpoint)
         group_name = "test_call_back_deadlock"
+        callback_completed = threading.Event()
+        callback_count = 0
+        callback_count_lock = threading.Lock()
 
         def on_group_message(msg: OnGroupDataMessageArgs):
+            nonlocal callback_count
             client.send_to_group(group_name, msg.data, "text", no_echo=True)
+            with callback_count_lock:
+                callback_count += 1
+                if callback_count >= 3:
+                    callback_completed.set()
 
         with client:
             client.join_group(group_name)
@@ -39,21 +47,18 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             client.send_to_group(group_name, "hello test_call_back_deadlock1", "text")
             client.send_to_group(group_name, "hello test_call_back_deadlock2", "text")
             client.send_to_group(group_name, "hello test_call_back_deadlock3", "text")
-            # sleep to make sure the callback has enough time to execute before close
-            time.sleep(1)
+            assert callback_completed.wait(timeout=30), "Timed out waiting for callbacks to finish"
 
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
     def test_context_manager(self, webpubsubclient_endpoint):
         client = self.create_client(endpoint=webpubsubclient_endpoint)
+        _, _, message_event = self.setup_events(client)
         with client:
             group_name = "test_context_manager"
             client.join_group(group_name)
             client.send_to_group(group_name, "test_context_manager", "text")
-            for _ in range(30):
-                if client._sequence_id.sequence_id > 0:
-                    break
-                time.sleep(1)
+            assert message_event.wait(timeout=30), "Timed out waiting for context manager message"
             assert client._sequence_id.sequence_id > 0
 
     # test on_stop
@@ -61,6 +66,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @recorded_by_proxy
     def test_on_stop(self, webpubsubclient_endpoint):
         client = self.create_client(endpoint=webpubsubclient_endpoint)
+        connected_event, disconnected_event, _ = self.setup_events(client)
         reopen_error = None
         reopen_complete = threading.Event()
 
@@ -77,10 +83,8 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 else:
                     raise RuntimeError("Failed to reopen client in stopped callback")
 
-                for _ in range(30):
-                    if client.is_connected():
-                        break
-                    time.sleep(1)
+                if not connected_event.wait(timeout=30):
+                    raise RuntimeError("Timed out waiting for client to reconnect in stopped callback")
                 assert client.is_connected()
             except Exception as e:
                 reopen_error = e
@@ -90,11 +94,9 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         with client:
             # open client again after close
             client.subscribe("stopped", on_stop)
-            for _ in range(30):
-                if client.is_connected():
-                    break
-                time.sleep(1)
+            assert connected_event.wait(timeout=30), "Timed out waiting for initial connection"
             assert client.is_connected()
+            connected_event.clear()
             client.close()
             # wait for on_stop callback to finish reopening
             if not reopen_complete.wait(timeout=60):
@@ -103,12 +105,9 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
 
             # remove stopped event and close again
             client.unsubscribe("stopped", on_stop)
+            disconnected_event.clear()
             client.close()
-            # wait for disconnect to finalize
-            for _ in range(30):
-                if not client.is_connected():
-                    break
-                time.sleep(1)
+            assert disconnected_event.wait(timeout=30), "Timed out waiting for client to disconnect"
             assert not client.is_connected()
 
     @WebpubsubClientPowerShellPreparer()
@@ -148,7 +147,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 auto_rejoin_groups=enable_auto_rejoin,
                 message_retry_total=10,
             )
-            connected_event, message_event = self.setup_events(client)
+            connected_event, _, message_event = self.setup_events(client)
             with client:
                 client.join_group(test_group_name)
 

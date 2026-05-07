@@ -17,7 +17,7 @@ class TestWebpubsubClientRecovery(WebpubsubClientTest):
     def test_recovery(self, webpubsubclient_endpoint):
         client = self.create_client(endpoint=webpubsubclient_endpoint, message_retry_total=10)
         name = "test_recovery"
-        connected_event, message_event = self.setup_events(client)
+        connected_event, _, message_event = self.setup_events(client)
         with client:
             assert connected_event.wait(timeout=30), "Timed out waiting for connection"
             conn_id0 = client._connection_id

@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, SafeThread
@@ -16,14 +15,11 @@ class TestWebpubsubClientSendConcurrently(WebpubsubClientTest):
     @recorded_by_proxy
     def test_send_concurrently(self, webpubsubclient_endpoint):
         client = self.create_client(endpoint=webpubsubclient_endpoint)
+        connected_event, _, _ = self.setup_events(client)
         with client:
+            assert connected_event.wait(timeout=30), "Timed out waiting for connection"
             group_name = "test_send_concurrently"
             client.join_group(group_name)
-            # wait for connection to stabilize before concurrent sends
-            for _ in range(30):
-                if client.is_connected():
-                    break
-                time.sleep(1)
 
             def send(idx):
                 client.send_to_group(group_name, f"hello_{idx}", "text")

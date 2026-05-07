@@ -29,14 +29,10 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
         name = "test_disable_recovery_and_autoconnect_async"
         async with client:
             group_name = name
-            await client.subscribe("group-message", on_group_message)
+            _, disconnected_event, _ = await self.setup_events(client)
             await client.join_group(group_name)
             await client._ws.session.close()  # close connection
-            # wait for client to detect disconnection so send raises SendMessageError
-            for _ in range(30):
-                if not client.is_connected():
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(disconnected_event.wait(), timeout=30)
             with pytest.raises(SendMessageError):
                 await client.send_to_group(group_name, name, "text")
             await asyncio.sleep(3)  # wait to confirm message was NOT received
@@ -58,13 +54,10 @@ class TestWebpubsubClientNoRecoveryNoReconnectAsync(WebpubsubClientTestAsync):
 
         async with client:
             group_name = "test_disable_recovery_and_autoconnect_send_concurrently_async"
+            _, disconnected_event, _ = await self.setup_events(client)
             await client.join_group(group_name)
             await client._ws.session.close()  # close connection
-            # wait for client to detect disconnection
-            for _ in range(30):
-                if not client.is_connected():
-                    break
-                await asyncio.sleep(1)
+            await asyncio.wait_for(disconnected_event.wait(), timeout=30)
             assert not client.is_connected()
 
             tasks = [client.send_to_group(group_name, "hello", "text") for _ in range(10)]

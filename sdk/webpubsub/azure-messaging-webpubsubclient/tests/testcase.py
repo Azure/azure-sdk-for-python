@@ -36,20 +36,25 @@ class WebpubsubClientTest(AzureRecordedTestCase):
 
     @staticmethod
     def setup_events(client):
-        """Subscribe connected/group-message events and return (connected_event, message_event)."""
+        """Subscribe connected/disconnected/group-message events and return their wait handles."""
         connected_event = threading.Event()
+        disconnected_event = threading.Event()
         message_event = threading.Event()
 
         def _on_connected(*args, **kwargs):
             connected_event.set()
+
+        def _on_disconnected(*args, **kwargs):
+            disconnected_event.set()
 
         def _on_group_message(msg):
             on_group_message(msg)
             message_event.set()
 
         client.subscribe("connected", _on_connected)
+        client.subscribe("disconnected", _on_disconnected)
         client.subscribe("group-message", _on_group_message)
-        return connected_event, message_event
+        return connected_event, disconnected_event, message_event
 
     @staticmethod
     def retry_send_until_message(client, group_name, data, message_event, retries=30):
