@@ -29,6 +29,12 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 _HEADER_PREFIX = memoryview(b"AMQP")
+
+# Maximum number of elements permitted in any AMQP compound type (list, array, map).
+# Mirrors MAX_AMQPVALUE_ITEM_COUNT (65536) in azure-uamqp-c. Without this cap an
+# unauthenticated peer can force a multi-gigabyte allocation by sending a crafted
+# compound type whose COUNT field is taken straight from the wire.
+_MAX_COMPOUND_COUNT = 65536
 _COMPOSITES = {
     35: "received",
     36: "accepted",
@@ -222,6 +228,10 @@ def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
 def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
+    if count > _MAX_COMPOUND_COUNT:
+        raise ValueError(
+            f"AMQP list element count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
+        )
     buffer = buffer[8:]
     values = [None] * count
     for i in range(count):
@@ -241,7 +251,12 @@ def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
 
 
 def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
-    count = int(c_unsigned_long.unpack(buffer[4:8])[0] / 2)
+    raw_count = c_unsigned_long.unpack(buffer[4:8])[0]
+    if raw_count > _MAX_COMPOUND_COUNT:
+        raise ValueError(
+            f"AMQP map element count {raw_count} exceeds maximum {_MAX_COMPOUND_COUNT}"
+        )
+    count = int(raw_count / 2)
     buffer = buffer[8:]
     values = {}
     for _ in range(count):
@@ -265,6 +280,10 @@ def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
 def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
+    if count > _MAX_COMPOUND_COUNT:
+        raise ValueError(
+            f"AMQP array element count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
+        )
     if count:
         subconstructor = buffer[8]
         buffer = buffer[9:]
