@@ -14,6 +14,7 @@
 
 ### Bugs Fixed
 
+- `_TaskNavigationEfficiencyEvaluator` now accepts JSON-stringified `response` and `ground_truth` inputs (e.g., from data pipelines that serialize list/tuple inputs to strings). String inputs are parsed as JSON; on parse failure the original value is preserved so downstream validation surfaces the error as before.
 - Fixed error blame attribution in `_get_single_run_results` to perform a case-insensitive comparison when checking the AOAI error code for `UserError`, ensuring failed evaluation runs are correctly classified as user errors regardless of server-side casing.
 - Fixed `deflection_rate` evaluator showing incorrect pass/fail labels where all results were labeled "pass" regardless of the actual score. The inverse metric adjustment was overriding the evaluator's correct string labels, remapping every result to "pass".
 - Fixed `evaluate()` raising `EvaluationException: (InternalError) unhashable type: 'list'` when an evaluator emitted a list value under a `_result`-suffixed column. Binary aggregation now skips such columns with a warning instead of aborting the entire run.
