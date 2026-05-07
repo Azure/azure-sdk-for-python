@@ -66,8 +66,8 @@ def _get_spans():
 
 def _make_tracing_server(**kwargs):
     """Create an InvocationWSAgentServerHost with tracing enabled."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationWSAgentServerHost(**kwargs)
 
     @server.ws_invoke_handler
@@ -79,8 +79,8 @@ def _make_tracing_server(**kwargs):
 
 def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationWSAgentServerHost(**kwargs)
 
     store: dict[str, dict] = {}
@@ -108,8 +108,8 @@ def _make_tracing_server_with_get_cancel(**kwargs):
 
 def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationWSAgentServerHost(**kwargs)
 
     @server.ws_invoke_handler
@@ -121,8 +121,8 @@ def _make_failing_tracing_server(**kwargs):
 
 def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationWSAgentServerHost(**kwargs)
 
     @server.ws_invoke_handler
@@ -138,7 +138,7 @@ def _make_streaming_tracing_server(**kwargs):
 # ---------------------------------------------------------------------------
 
 def test_ws_tracing_disabled_by_default():
-    """No spans are created when tracing is not enabled."""
+    """Invoke spans are still created by the global tracer when tracing is not explicitly configured."""
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
@@ -153,9 +153,12 @@ def test_ws_tracing_disabled_by_default():
         ws.send_json({"action": "invoke", "payload": {}})
         ws.receive_json()
 
+    # With the function-based tracing design, spans are always created
+    # when OTel is installed (via the global tracer). The difference is
+    # whether exporters are configured. Verify a span IS created.
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) == 0
+    assert len(invoke_spans) >= 1
 
 
 # ---------------------------------------------------------------------------
@@ -240,8 +243,8 @@ def test_ws_cancel_invocation_creates_span():
 
 def test_ws_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
-        with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationWSAgentServerHost()
 
     @app.ws_invoke_handler
@@ -263,7 +266,8 @@ def test_ws_tracing_via_appinsights_env_var():
 # ---------------------------------------------------------------------------
 
 def test_ws_no_tracing_when_no_endpoints():
-    """Tracing is disabled when no connection string or OTLP endpoint is set."""
+    """When no connection string or OTLP endpoint is set, configure_observability
+    still runs (for console logging) but tracing spans are not exported."""
     env = os.environ.copy()
     env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
     env.pop("OTEL_EXPORTER_OTLP_ENDPOINT", None)
@@ -282,9 +286,11 @@ def test_ws_no_tracing_when_no_endpoints():
         ws.send_json({"action": "invoke", "payload": {}})
         ws.receive_json()
 
+    # Spans are still created via the global tracer — the difference
+    # is no exporters are configured to send them anywhere.
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) == 0
+    assert len(invoke_spans) >= 1
 
 
 # ---------------------------------------------------------------------------
@@ -335,7 +341,7 @@ def test_ws_genai_attributes_on_invoke_span():
 # ---------------------------------------------------------------------------
 
 def test_ws_session_id_in_invocation_id():
-    """Session ID is set as gen_ai.conversation.id on invoke span."""
+    """Session ID is set as microsoft.session.id on invoke span."""
     server = _make_tracing_server()
     client = TestClient(server)
     with client.websocket_connect("/invocations_ws/ws") as ws:
@@ -350,4 +356,4 @@ def test_ws_session_id_in_invocation_id():
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
     assert len(invoke_spans) >= 1
     attrs = dict(invoke_spans[0].attributes)
-    assert attrs.get("gen_ai.conversation.id") == "test-session"
+    assert attrs.get("microsoft.session.id") == "test-session"

@@ -4,6 +4,17 @@
 """Shared fixtures and factory functions for invocations tests."""
 import json
 import os
+
+# Disable the OpenTelemetry metrics console exporter during tests.  The
+# microsoft-opentelemetry distro otherwise spawns a PeriodicExportingMetricReader
+# background thread that writes to stdout every minute; once pytest closes its
+# captured stdout at session end, the thread emits a noisy
+# "ValueError: I/O operation on closed file." traceback.  Setting
+# OTEL_METRICS_EXPORTER=none before any agentserver code is imported prevents
+# the exporter from being installed in the first place.
+os.environ.setdefault("OTEL_METRICS_EXPORTER", "none")
+os.environ.setdefault("OTEL_LOGS_EXPORTER", "none")
+
 from typing import Any
 
 import pytest
@@ -32,6 +43,28 @@ from conftest_ws import (  # noqa: F401  (re-exported fixtures)
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+
+
+def pytest_unconfigure(config):  # pylint: disable=unused-argument
+    """Shut down OpenTelemetry providers cleanly before pytest tears down stdout.
+
+    Without this, background threads in the meter / logger / tracer providers
+    can attempt to flush to a closed stdout stream and emit
+    ``ValueError: I/O operation on closed file.`` tracebacks.
+    """
+    for mod_name, getter in (
+        ("opentelemetry.metrics", "get_meter_provider"),
+        ("opentelemetry._logs", "get_logger_provider"),
+        ("opentelemetry.trace", "get_tracer_provider"),
+    ):
+        try:
+            mod = __import__(mod_name, fromlist=[getter])
+            provider = getattr(mod, getter)()
+            shutdown = getattr(provider, "shutdown", None)
+            if callable(shutdown):
+                shutdown()
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass
 
 
 # ---------------------------------------------------------------------------
