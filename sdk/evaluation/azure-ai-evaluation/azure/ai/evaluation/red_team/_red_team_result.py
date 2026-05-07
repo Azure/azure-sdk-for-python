@@ -400,12 +400,16 @@ class ResultCount(TypedDict):
                     Calculated from rows where the sample's error property is set, indicating failures
                     during the attack simulation or evaluation step.
     :type errored: int
+    :param skipped: Number of evaluation results that were skipped.
+                    Calculated from rows where the evaluator reported a skipped status.
+    :type skipped: int
     """
 
     total: int
     passed: int
     failed: int
     errored: int
+    skipped: int
 
 
 @experimental
@@ -424,12 +428,18 @@ class PerTestingCriteriaResult(TypedDict, total=False):
                    In the context of attack success rate (ASR), this represents successful attacks
                    for this specific testing criteria.
     :type failed: int
+    :param errored: Number of results that errored for this criteria.
+    :type errored: int
+    :param skipped: Number of results that were skipped for this criteria.
+    :type skipped: int
     """
 
     testing_criteria: str
     attack_strategy: Optional[str]
     passed: int
     failed: int
+    errored: int
+    skipped: int
 
 
 @experimental

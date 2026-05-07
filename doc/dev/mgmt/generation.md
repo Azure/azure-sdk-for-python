@@ -7,7 +7,7 @@ IMPORTANT NOTE: All the commands prefixed by `python` in this page assumes you h
 ### Prerequisites
 
 #### Setting Up Your Basic Environment
-- Python 3.9 or newer is required
+- Python 3.10 or newer is required
   - [Download for Windows](https://www.python.org/downloads/windows/)
   - For Linux:
     - Install Python 3 with `sudo apt install python3`

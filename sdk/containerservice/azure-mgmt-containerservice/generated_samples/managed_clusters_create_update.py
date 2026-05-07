@@ -77,7 +77,7 @@ def main():
                     "outboundType": "loadBalancer",
                 },
                 "servicePrincipalProfile": {"clientId": "clientid", "secret": "secret"},
-                "upgradeSettings": {"overrideSettings": {"forceUpgrade": False, "until": "2022-11-01T13:00:00Z"}},
+                "upgradeSettings": {"overrideSettings": {"forceUpgrade": True, "until": "2022-11-01T13:00:00Z"}},
                 "windowsProfile": {"adminPassword": "replacePassword1234$", "adminUsername": "azureuser"},
             },
             "sku": {"name": "Basic", "tier": "Free"},
@@ -87,6 +87,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/ManagedClustersCreate_Update.json
+# x-ms-original-file: 2026-02-02-preview/ManagedClustersCreate_Update.json
 if __name__ == "__main__":
     main()
