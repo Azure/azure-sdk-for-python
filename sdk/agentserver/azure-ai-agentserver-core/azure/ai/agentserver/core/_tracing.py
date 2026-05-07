@@ -97,6 +97,7 @@ def configure_observability(
     *,
     connection_string: Optional[str] = None,
     log_level: Optional[str] = None,
+    enable_sensitive_data: bool = False,
 ) -> None:
     """Default observability setup: console logging + tracing/OTel export.
 
@@ -113,6 +114,10 @@ def configure_observability(
     :paramtype connection_string: str or None
     :keyword log_level: Log level name (e.g. ``"INFO"``, ``"DEBUG"``).
     :paramtype log_level: str or None
+    :keyword enable_sensitive_data: Enable sensitive data recording
+        (prompts, tool arguments, results) for Agent Framework SDK
+        instrumentation. Defaults to False.
+    :paramtype enable_sensitive_data: bool
     """
     # Console logging on the root logger so user logs are also visible.
     resolved_level = _config.resolve_log_level(log_level)
@@ -137,10 +142,10 @@ def configure_observability(
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
 
     # Tracing and OTel export
-    _configure_tracing(connection_string=connection_string)
+    _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
 
 
-def _configure_tracing(connection_string: Optional[str] = None) -> None:
+def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive_data: bool = False) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
     Internal helper called by :func:`configure_observability`.
@@ -148,6 +153,9 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
     :param connection_string: Application Insights connection string.
         When provided, traces and logs are exported to Azure Monitor.
     :type connection_string: str or None
+    :param enable_sensitive_data: Enable sensitive data recording for
+        Agent Framework SDK instrumentation.
+    :type enable_sensitive_data: bool
     """
     resource = _create_resource()
     if resource is None:
@@ -178,6 +186,7 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
             span_processors=span_processors,
             log_record_processors=log_record_processors,
             connection_string=connection_string,
+            enable_sensitive_data=enable_sensitive_data,
         )
         logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
@@ -192,6 +201,7 @@ def _setup_distro_export(
     span_processors: list[Any],
     log_record_processors: list[Any],
     connection_string: Optional[str] = None,
+    enable_sensitive_data: bool = False,
 ) -> None:
     """Delegate to microsoft-opentelemetry distro for exporter configuration.
 
@@ -202,6 +212,8 @@ def _setup_distro_export(
     :keyword span_processors: Span processors to register.
     :keyword log_record_processors: Log record processors to register.
     :keyword connection_string: Application Insights connection string.
+    :keyword enable_sensitive_data: Enable sensitive data recording for
+        Agent Framework SDK instrumentation.
     """
     from microsoft.opentelemetry import use_microsoft_opentelemetry
 
@@ -209,6 +221,7 @@ def _setup_distro_export(
         "resource": resource,
         "span_processors": span_processors,
         "log_record_processors": log_record_processors,
+        "enable_sensitive_data": enable_sensitive_data,
     }
 
     # Azure Monitor export is off by default in the distro — enable it
