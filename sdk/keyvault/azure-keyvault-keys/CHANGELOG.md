@@ -4,6 +4,10 @@
 
 ### Features Added
 
+- Added the `ExternalKey` model and the new `KeyClient.create_external_key` method
+  for registering a Key Vault key whose material is held in an external HSM.
+- Added the `KeyProperties.external_key` read-only property.
+
 ### Breaking Changes
 
 ### Bugs Fixed
