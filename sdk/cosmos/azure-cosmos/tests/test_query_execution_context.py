@@ -49,7 +49,7 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        # Dual-client AAD pattern: key-auth for control-plane, AAD for data-plane.
+        # Key/data client setup: key-auth for control-plane, AAD for data-plane.
         cls.key_client, cls.key_db, cls.client, cls.created_db = (
             test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
         # container create/delete via key-auth key_db until control-plane AAD is available.

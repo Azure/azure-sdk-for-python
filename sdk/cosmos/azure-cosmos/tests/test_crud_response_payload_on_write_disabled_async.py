@@ -29,12 +29,13 @@ from azure.cosmos.partition_key import PartitionKey
 
 # Tests that exercise Cosmos endpoints unsupported under AAD/RBAC
 # (server-side scripts: sprocs/triggers/UDFs; users; permissions) are skipped
-# automatically when the data-plane lane is configured for AAD. The remaining
-# scenarios still exercise the SDK's `no_response_on_write=True` feature on
-# both auth paths via the dual-client (`client` / `key_client`) layout.
+# automatically when the data-plane lane is configured for AAD.
+# Stored procedure EXECUTE is currently also skipped under AAD in this class.
+# TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
 _skip_under_aad = pytest.mark.skipif(
     test_config.TestConfig.data_auth_mode == 'aad',
-    reason="Cosmos users/permissions/server-side scripts are not supported under AAD/RBAC.",
+    reason="server-side scripts CRUD / users / permissions are not authorized via AAD/RBAC "
+           "data plane today (403). See https://aka.ms/cosmos-native-rbac.",
 )
 
 class CosmosResponseHeaderEnvelope:
@@ -69,14 +70,6 @@ class TimeoutTransport(AsyncioRequestsTransport):
 class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
-    # Dual-client AAD migration (Batch 24):
-    #   `client` -> AAD data-plane client (created via TestConfig.create_data_client_async),
-    #              also carries `no_response_on_write=True` for behavioral parity with the
-    #              original test scope.
-    #   `key_client` -> key-auth client used for every control-plane operation
-    #              (database/container CRUD, throughput / offer ops, account metadata).
-    # Tests routed through both clients still exercise the SDK's no_response_on_write
-    # behavior on each path while gaining real AAD data-plane coverage.
     client: CosmosClient = None
     key_client: CosmosClient = None
     configs = test_config.TestConfig

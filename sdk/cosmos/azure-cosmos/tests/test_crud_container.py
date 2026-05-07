@@ -83,6 +83,11 @@ class TestCRUDContainerOperations(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        # Key/data client migration scaffolding:
+        # - `key_client` / `key_databaseForTest` (key-auth) handles control-plane-heavy tests.
+        # - `client` / `data_databaseForTest` (AAD-or-key, based on test config) is initialized
+        #   for incremental per-test data-plane migration.
+        # Current default keeps `databaseForTest = key_databaseForTest` for stability.
         cls.key_client, cls.key_databaseForTest, cls.client, cls.data_databaseForTest = (
             test_config.TestConfig.create_test_clients(cls.configs.TEST_DATABASE_ID))
         cls.databaseForTest = cls.key_databaseForTest

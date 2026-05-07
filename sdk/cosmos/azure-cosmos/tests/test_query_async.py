@@ -52,9 +52,8 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         # (create/delete containers) inside async tests. This works but is not ideal  -  a future
         # cleanup could use an async key-auth client instead once the project decides on async
         # key-auth client handling.
-        # NOTE: pass ``multiple_write_locations`` so circuit-breaker runs route writes the same
-        # way the sync ``test_query.py`` does. Dropping this kwarg during the AAD dual-client
-        # migration silently disabled multi-write-region routing for this file (M3 audit).
+        # NOTE: pass ``multiple_write_locations`` so circuit-breaker runs keep
+        # multi-write-region routing aligned with sync ``test_query.py``.
         cls.key_client = sync_cosmos_client.CosmosClient(
             cls.host, cls.masterKey, multiple_write_locations=cls.use_multiple_write_locations
         )

@@ -36,12 +36,10 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        # Dual-client pattern (partial migration — most tests in this file are
+        # Key/data client setup (partial migration — most tests in this file are
         # control-plane response-shape tests that fundamentally exercise
         # `client.create_database` / `create_container` / `replace_throughput`,
         # which cannot run under an AAD data-plane token).
-        # - `client` / `test_database` (key-auth) → 11 control-plane tests.
-        # - `data_client` / `data_test_database` (AAD) → only `test_point_operation_headers_async`.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_database = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.data_client = test_config.TestConfig.create_data_client_async()

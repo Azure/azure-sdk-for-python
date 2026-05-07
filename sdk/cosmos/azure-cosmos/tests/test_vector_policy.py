@@ -72,7 +72,7 @@ class TestVectorPolicy(unittest.TestCase):
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.key_client = cls.client  # alias  -  control-plane operations stay on key-auth (Batch 17 prep)
-        # AAD data client added for parity with the dual-client convention. Not exercised
+        # AAD data client added for parity with the key/data client setup. Not exercised
         # here because every runnable test in this file is control-plane (vector indexing/
         # embedding policy validation via create_container / replace_container / read).
         # When per-test data-plane operations are added (e.g., vector similarity queries

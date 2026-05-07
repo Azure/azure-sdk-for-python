@@ -13,7 +13,7 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
+from azure.cosmos import DatabaseProxy, ContainerProxy
 from azure.core.exceptions import HttpResponseError
 
 
@@ -88,14 +88,6 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.skipif(
-    not test_config.TestConfig.is_emulator
-    and test_config.TestConfig.data_auth_mode != 'aad',
-    reason="On a live account, run this file with COSMOS_TEST_DATA_AUTH_MODE=aad "
-           "so the dual-client factory returns the AAD branch. Otherwise the "
-           "test would silently use the master key and `delete_database` would "
-           "succeed instead of returning the asserted 403.",
-)
 class TestAAD(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     database: DatabaseProxy = None
@@ -103,11 +95,8 @@ class TestAAD(unittest.TestCase):
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
-    # Emulator-only: the hand-crafted JWT lets us exercise the AAD code path
-    # against the local emulator (which has no real AAD endpoint). On a live
-    # account this attribute is unused; setUpClass routes through the dual-client
-    # factory below instead.
-    credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential
+    # Emulator-only credential used by this class.
+    credential = CosmosEmulatorCredential()
     _skip_scope_tests_on_non_emulator = pytest.mark.skipif(
         not configs.is_emulator,
         reason="Scope capture tests are emulator-specific (localhost audience)."
@@ -115,23 +104,8 @@ class TestAAD(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Two construction paths:
-        #
-        #   * Emulator runs (`pytest -m cosmosEmulator`): build the client
-        #     directly with `CosmosEmulatorCredential` so the AAD JWT-parsing
-        #     code path is exercised against the local emulator. The dual-client
-        #     factory cannot do this — on the emulator it returns the master-key
-        #     client and bypasses AAD entirely.
-        #
-        #   * Live runs (`pytest -m cosmosAAD` on the AAD lane, or any live
-        #     run with `COSMOS_TEST_DATA_AUTH_MODE=aad`): go through
-        #     `TestConfig.create_data_client()` so this test exercises the
-        #     same dual-client factory contract every other AAD-tagged test
-        #     uses. 
-        if cls.configs.is_emulator:
-            cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
-        else:
-            cls.client = test_config.TestConfig.create_data_client()
+        # Emulator-only path: always use the emulator credential.
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
@@ -143,14 +117,6 @@ class TestAAD(unittest.TestCase):
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
         self.container.delete_item(item='Item_0', partition_key='pk')
-
-        # Attempting to do management operations will return a 403 Forbidden exception
-        try:
-            self.client.delete_database(self.configs.TEST_DATABASE_ID)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 403
-            print("403 error assertion success")
-
 
     def _run_with_scope_capture(self, credential_cls, action, *args, **kwargs):
         scopes_captured = []

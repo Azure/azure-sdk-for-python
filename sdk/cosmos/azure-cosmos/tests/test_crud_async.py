@@ -31,7 +31,7 @@ from azure.cosmos.partition_key import PartitionKey
 # users, and permissions are not in the AAD/RBAC data-plane action set today.
 # Empirically the service returns: "Request blocked by Auth ... cannot be
 # authorized by AAD token in data plane. Learn more: https://aka.ms/cosmos-native-rbac."
-# Sproc EXECUTE does work under AAD (see test_partitioned_collection_execute_stored_procedure).
+# Stored procedure EXECUTE is currently also skipped under AAD in this class.
 # TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
 _skip_under_aad = pytest.mark.skipif(
     test_config.TestConfig.data_auth_mode == 'aad',

@@ -37,12 +37,10 @@ class TestCosmosResponses(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        # Dual-client pattern (partial migration — most tests in this file are
+        # Key/data client setup (partial migration — most tests in this file are
         # control-plane response-shape tests that fundamentally exercise
         # `client.create_database` / `create_container` / `replace_throughput`,
         # which cannot run under an AAD data-plane token).
-        # - `client` / `test_database` (key-auth) → 11 control-plane tests.
-        # - `data_client` / `data_test_database` (AAD) → only `test_point_operation_headers`.
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.data_client = test_config.TestConfig.create_data_client()

@@ -33,21 +33,21 @@ class TestFullTextPolicy(unittest.TestCase):
     }
     language_abstracts = {
         "en-US": "This is a test in English.",
-        "fr-FR": "Ceci est une dÃ©monstration en franÃ§ais.",  # cspell:ignore Ceci dÃ©monstration franÃ§ais
+        "fr-FR": "Ceci est une démonstration en français.",  # cspell:ignore Ceci démonstration français
         "de-DE": "Dies ist ein Beispiel auf Deutsch.",  # cspell:ignore Dies Beispiel Deutsch
-        "it-IT": "Questo Ã¨ un esempio in italiano.",  # cspell:ignore Questo esempio italiano
-        "pt-BR": "Este Ã© um exemplo em portuguÃªs do Brasil.",  # cspell:ignore Este exemplo portuguÃªs Brasil
-        "pt-PT": "Este Ã© um exemplo em portuguÃªs de Portugal.",  # cspell:ignore Este exemplo portuguÃªs Portugal
-        "es-ES": "Esta es una demostraciÃ³n en espaÃ±ol.",  # cspell:ignore Esta demostraciÃ³n espaÃ±ol
+        "it-IT": "Questo è un esempio in italiano.",  # cspell:ignore Questo esempio italiano
+        "pt-BR": "Este é um exemplo em português do Brasil.",  # cspell:ignore Este exemplo português Brasil
+        "pt-PT": "Este é um exemplo em português de Portugal.",  # cspell:ignore Este exemplo português Portugal
+        "es-ES": "Esta es una demostración en español.",  # cspell:ignore Esta demostración español
     }
     search_terms = {
         "en-US": "English",
-        "fr-FR": "dÃ©monstration",  # cspell:ignore dÃ©monstration
+        "fr-FR": "démonstration",  # cspell:ignore démonstration
         "de-DE": "Beispiel",  # cspell:ignore Beispiel
         "it-IT": "esempio",  # cspell:ignore esempio
         "pt-BR": "exemplo",  # cspell:ignore exemplo
         "pt-PT": "exemplo",  # cspell:ignore exemplo
-        "es-ES": "demostraciÃ³n",  # cspell:ignore demostraciÃ³n
+        "es-ES": "demostración",  # cspell:ignore demostración
     }
 
     @classmethod
@@ -61,7 +61,7 @@ class TestFullTextPolicy(unittest.TestCase):
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.key_client = cls.client  # alias  -  control-plane operations stay on key-auth (Batch 16 prep)
-        # AAD data client added for parity with the dual-client convention. Not exercised
+        # AAD data client added for parity with the key/data client setup. Not exercised
         # here because every runnable test in this file is control-plane (full-text policy
         # validation via create_container / replace_container / read). The 4 data-plane
         # tests in this file are all @pytest.mark.skip until the multi-language test

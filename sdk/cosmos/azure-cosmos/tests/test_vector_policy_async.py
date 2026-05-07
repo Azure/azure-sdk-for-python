@@ -46,7 +46,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # authorize control-plane operations.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_db = self.client.get_database_client(self.test_db.id)
-        # Data-plane (AAD): added for parity with the dual-client convention. Not
+        # Data-plane (AAD): added for parity with the key/data client setup. Not
         # exercised here because every runnable test is control-plane (vector policy
         # validation). Route per-test data-plane ops through self.data_client when added.
         self.data_client = test_config.TestConfig.create_data_client_async()

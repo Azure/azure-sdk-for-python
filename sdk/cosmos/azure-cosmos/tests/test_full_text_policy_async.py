@@ -76,7 +76,7 @@ class TestFullTextPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # authorize control-plane operations.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_db = self.client.get_database_client(self.test_db.id)
-        # Data-plane (AAD): added for parity with the dual-client convention. Not
+        # Data-plane (AAD): added for parity with the key/data client setup. Not
         # exercised here because every runnable test in this file is control-plane.
         # When the @pytest.mark.skip'd multi-language tests are unblocked, route their
         # create_item / query_items calls through self.data_client.get_database_client(...).

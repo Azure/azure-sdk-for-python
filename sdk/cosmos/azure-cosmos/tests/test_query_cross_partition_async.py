@@ -58,8 +58,8 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
             PartitionKey(path="/pk"),
             offer_throughput=test_config.TestConfig.THROUGHPUT_FOR_5_PARTITIONS)
         self.created_container = self.created_db.get_container_client(created_container_ref.id)
-        # Master-key container for write operations in tests: avoids AAD session tokens from writes
-        # routing subsequent change feed reads to secondary replicas that may not have RBAC cached yet.
+        # Use key auth for test writes. This avoids flaky failures where a later change feed
+        # read can hit a replica that has not finished RBAC propagation for AAD yet.
         self.key_container = self.key_db.get_container_client(created_container_ref.id)
 
     async def asyncTearDown(self):

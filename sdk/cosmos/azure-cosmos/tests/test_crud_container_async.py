@@ -87,12 +87,11 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        # Dual-client AAD scaffolding (prep state, mirrors Batch 2 sync `test_crud_container.py`):
-        # - `key_client`/`key_databaseForTest` (key-auth) for control-plane operations.
-        # - `client`/`data_databaseForTest` (AAD)  -  staged for per-test data-plane migration.
-        # Tests currently keep `database_for_test = key_databaseForTest` for stability;
-        # this file is control-plane heavy (trigger/udf/sproc/indexing-policy), so per-test
-        # AAD migration is deferred until those control-plane ops can run under AAD.
+        # Key/data client migration scaffolding (async parity with `test_crud_container.py`):
+        # - `key_client` / `key_databaseForTest` (key-auth) handles control-plane-heavy tests.
+        # - `client` / `data_databaseForTest` (AAD-or-key, based on test config) is initialized
+        #   for incremental per-test data-plane migration.
+        # Current default keeps `database_for_test = key_databaseForTest` for stability.
         self.key_client, self.key_databaseForTest, self.client, self.data_databaseForTest = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
         self.database_for_test = self.key_databaseForTest

@@ -39,6 +39,7 @@ class TestQuery(unittest.TestCase):
         use_multiple_write_locations = False
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
+        # Keep multi-write-region routing enabled during circuit-breaker runs.
         cls.key_client = cosmos_client.CosmosClient(
             cls.host,
             cls.credential,

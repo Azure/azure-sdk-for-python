@@ -95,7 +95,7 @@ class TestConfig(object):
         """Return ``(key_client, key_db, data_client, data_db)`` for tests that need
         both a control-plane (key-auth) and a data-plane (AAD-or-key) client.
 
-        Removes the 4-line dual-client setUp boilerplate. Typical use::
+        Removes the 4-line key+data-client setUp boilerplate. Typical use::
 
             cls.key_client, cls.key_db, cls.client, cls.created_db = (
                 test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
