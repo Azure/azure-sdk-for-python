@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=attribute-defined-outside-init, expression-not-assigned, too-many-public-methods
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 from datetime import datetime, timedelta
 
@@ -1351,7 +1351,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
-            blob.get_blob_properties(if_modified_since=test_datetime).metadata
+            blob.get_blob_properties(if_modified_since=test_datetime)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1398,7 +1398,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
-            blob.get_blob_properties(if_unmodified_since=test_datetime).metadata
+            blob.get_blob_properties(if_unmodified_since=test_datetime)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1440,7 +1440,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
-            blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified).metadata
+            blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1480,7 +1480,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified).metadata
+            blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code

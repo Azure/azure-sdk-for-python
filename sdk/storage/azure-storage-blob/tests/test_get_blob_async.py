@@ -356,7 +356,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # parallel tests introduce random order of requests, can only run live
         callback_counter = {'value': 0}
 
-        def callback(_response):
+        def callback(_):
             callback_counter['value'] += 1
             if callback_counter['value'] > 3:
                 raise ValueError()

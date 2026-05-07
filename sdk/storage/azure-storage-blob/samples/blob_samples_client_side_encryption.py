@@ -117,7 +117,7 @@ class RSAKeyWrapper:
 class BlobEncryptionSamples:
     def __init__(self, bsc: BlobServiceClient):
         self.bsc = bsc
-        self.container_client = None
+        self.container_client = self.bsc.get_container_client("container")
 
     def run_all_samples(self):
         self.put_encrypted_blob()
