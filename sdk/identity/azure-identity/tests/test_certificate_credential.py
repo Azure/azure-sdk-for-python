@@ -10,7 +10,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, TokenCachePersistenceOptions
 from azure.identity._enums import RegionalAuthority
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.certificate import load_pkcs12_certificate
+from azure.identity._credentials.certificate import get_client_credential, load_pkcs12_certificate
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -48,6 +48,27 @@ ALL_CERTS = (
 )
 
 EC_CERT_PATH = os.path.join(os.path.dirname(__file__), "ec-certificate.pem")
+
+
+@pytest.mark.parametrize("cert_path, cert_password", ALL_CERTS)
+def test_get_client_credential_includes_sha256_thumbprint(cert_path, cert_password):
+    client_credential = get_client_credential(certificate_path=cert_path, password=cert_password)
+
+    assert "thumbprint_sha256" in client_credential
+
+    with open(cert_path, "rb") as f:
+        cert_bytes = f.read()
+
+    if b"-----BEGIN" in cert_bytes:
+        cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
+    else:
+        from cryptography.hazmat.primitives.serialization import pkcs12
+
+        pw = cert_password.encode("utf-8") if isinstance(cert_password, str) else cert_password
+        _, cert, _ = pkcs12.load_key_and_certificates(cert_bytes, pw, backend=default_backend())
+
+    expected_sha256 = cert.fingerprint(hashes.SHA256()).hex()
+    assert client_credential["thumbprint_sha256"] == expected_sha256
 
 
 def test_non_rsa_key():
@@ -278,7 +299,7 @@ def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False
     assert claims["iss"] == claims["sub"] == client_id
 
     deserialized_header = json.loads(header.decode("utf-8"))
-    assert deserialized_header["alg"] == "RS256"
+    assert deserialized_header["alg"] in ("PS256", "RS256")
     assert deserialized_header["typ"] == "JWT"
     if expect_x5c:
         # x5c should have all the certs in the file, in order, in PEM format minus headers and footers
@@ -292,9 +313,17 @@ def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False
         assert "".join(deserialized_header["x5c"]) == pem_chain_content, "JWT's x5c claim contains unexpected content"
     else:
         assert "x5c" not in deserialized_header
-    assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1())  # nosec
-
-    cert.public_key().verify(signature, signed_part.encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
+    if deserialized_header["alg"] == "RS256":
+        assert urlsafeb64_decode(deserialized_header["x5t"]) == cert.fingerprint(hashes.SHA1())  # nosec
+        cert.public_key().verify(signature, signed_part.encode("utf-8"), padding.PKCS1v15(), hashes.SHA256())
+    else:
+        assert urlsafeb64_decode(deserialized_header["x5t#S256"]) == cert.fingerprint(hashes.SHA256())
+        cert.public_key().verify(
+            signature,
+            signed_part.encode("utf-8"),
+            padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=hashes.SHA256.digest_size),
+            hashes.SHA256(),
+        )
 
 
 def validate_jwt_ps256(request, client_id, cert_bytes, cert_password, expect_x5c=False):
