@@ -1,5 +1,6 @@
-import pytest
 import json
+
+import pytest
 from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
     _TaskNavigationEfficiencyEvaluator,
     _TaskNavigationEfficiencyMatchingMode,
