@@ -20,7 +20,6 @@ omitted_paths:
   - sdk/ai/azure-ai-projects/tests/*
   - sdk/storage/azure-storage-extensions/*
 
-
 language: python
 root_check_enabled: True
 required_readme_sections:
