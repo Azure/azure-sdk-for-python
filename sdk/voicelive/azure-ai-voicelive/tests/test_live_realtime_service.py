@@ -1248,9 +1248,9 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         ("model", "sampling_rate"),
         [
-            pytest.param("gpt-realtime", 16000, id="gpt4o_realtime_16kHz_no_resample"),
-            pytest.param("gpt-realtime", 44100, id="gpt4o_realtime_44kHz_no_resample"),
-            pytest.param("gpt-realtime", 8000, id="gpt4o_realtime_8kHz_no_resample"),
+            pytest.param("gpt-realtime", 16000, id="gpt_realtime_16kHz_no_resample"),
+            pytest.param("gpt-realtime", 44100, id="gpt_realtime_44kHz_no_resample"),
+            pytest.param("gpt-realtime", 8000, id="gpt_realtime_8kHz_no_resample"),
             pytest.param("gpt-4o", 16000, id="gpt4o_16kHz_no_resample"),
             pytest.param("gpt-4o", 44100, id="gpt4o_44kHz_no_resample"),
             pytest.param("gpt-4.1", 8000, id="gpt4.1_8kHz_no_resample"),
