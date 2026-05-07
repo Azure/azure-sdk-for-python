@@ -14,9 +14,9 @@ import logging
 import os
 import re
 import uuid
-from collections.abc import AsyncGenerator, Awaitable, Callable  # pylint: disable=import-error
+from collections.abc import Callable  # pylint: disable=import-error
 from dataclasses import dataclass
-from typing import Any, Optional, Union
+from typing import Any, Optional
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response

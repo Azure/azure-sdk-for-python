@@ -2211,6 +2211,10 @@
     {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-invocations/**",
+      "words": ["Segoe", "Roboto", "unconfigure"]
     }
   ],
   "allowCompoundWords": true

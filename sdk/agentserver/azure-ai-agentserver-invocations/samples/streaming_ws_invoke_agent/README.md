@@ -89,7 +89,3 @@ To use a different port:
 ```bash
 python client.py --port 3000
 ```
-
-## Deploying to Microsoft Foundry
-
-To deploy your agent to Microsoft Foundry, follow the deployment guide at https://github.com/microsoft/hosted-agents-vnext-private-preview/blob/main/azd-quickstart.md
