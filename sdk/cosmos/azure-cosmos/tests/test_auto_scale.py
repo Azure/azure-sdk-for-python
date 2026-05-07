@@ -12,7 +12,6 @@ from azure.cosmos import CosmosClient, cosmos_client
 from azure.cosmos import ThroughputProperties, PartitionKey
 
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestAutoScale(unittest.TestCase):
     client: CosmosClient = None
     key_client: CosmosClient = None

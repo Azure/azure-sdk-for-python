@@ -13,7 +13,6 @@ from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 from azure.cosmos import _base
 
 
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.cosmosEmulator
 class TestRoutingMapEndToEnd(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.

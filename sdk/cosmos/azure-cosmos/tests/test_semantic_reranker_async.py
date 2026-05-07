@@ -3,21 +3,19 @@
 # cspell:ignore rerank reranker reranking
 import json
 import unittest
-import asyncio
 
-from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 import pytest
-from azure.identity.aio import DefaultAzureCredential
 
 import test_config
 
 
 @pytest.mark.semanticReranker
 # @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
-class TestSemanticRerankerAsync(unittest.TestCase):
+class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check async semantic reranker behavior."""
-    client: CosmosClient = None
+    client = None
+    key_client = None
     config = test_config.TestConfig
     host = config.host
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
@@ -35,96 +33,79 @@ class TestSemanticRerankerAsync(unittest.TestCase):
 
     async def asyncSetUp(self):
         """Async setup for each test."""
-        credential = DefaultAzureCredential()
-        self.client = CosmosClient(self.host, credential, connection_verify=False)
-        self.test_db = await self.client.create_database_if_not_exists(self.TEST_DATABASE_ID)
-        self.test_container = await self.test_db.create_container_if_not_exists(
-            self.TEST_CONTAINER_ID,
-            self.TEST_CONTAINER_PARTITION_KEY
+        self.key_client, self.key_db, self.client, self.created_db = test_config.TestConfig.create_test_clients_async(
+            self.TEST_DATABASE_ID,
+            connection_verify=False,
         )
+        await self.key_client.__aenter__()
+        await self.client.__aenter__()
+        await self.key_db.create_container_if_not_exists(self.TEST_CONTAINER_ID, self.TEST_CONTAINER_PARTITION_KEY)
+        self.test_container = self.created_db.get_container_client(self.TEST_CONTAINER_ID)
 
     async def asyncTearDown(self):
         """Async teardown for each test."""
         try:
-            await self.test_db.delete_container(self.TEST_CONTAINER_ID)
-            await self.client.delete_database(self.TEST_DATABASE_ID)
+            await self.key_db.delete_container(self.TEST_CONTAINER_ID)
+            await self.key_client.delete_database(self.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError:
             pass
         finally:
+            await self.key_client.close()
             await self.client.close()
 
-    def test_semantic_reranker_async(self):
+    async def test_semantic_reranker_async(self):
         """Test async semantic reranking functionality."""
-        async def run_test():
-            await self.asyncSetUp()
-            try:
-                documents = self._get_documents(document_type="string")
-                results = await self.test_container.semantic_rerank(
-                    reranking_context="What is the capital of France?",
-                    documents=documents,
-                    semantic_reranking_options={
-                        "return_documents": True,
-                        "top_k": 10,
-                        "batch_size": 32,
-                        "sort": True
-                    }
-                )
-                assert len(results["Scores"]) == len(documents)
-                assert results["Scores"][0]["document"] == "Paris is the capital of France."
+        documents = self._get_documents(document_type="string")
+        results = await self.test_container.semantic_rerank(
+            reranking_context="What is the capital of France?",
+            documents=documents,
+            semantic_reranking_options={
+                "return_documents": True,
+                "top_k": 10,
+                "batch_size": 32,
+                "sort": True
+            }
+        )
+        assert len(results["Scores"]) == len(documents)
+        assert results["Scores"][0]["document"] == "Paris is the capital of France."
 
-            finally:
-                await self.asyncTearDown()
-        asyncio.run(run_test())
+    async def test_semantic_reranker_async_json_documents(self):
+        documents = self._get_documents(document_type="json")
+        results = await self.test_container.semantic_rerank(
+            reranking_context="What is the capital of France?",
+            documents=[json.dumps(item) for item in documents],
+            semantic_reranking_options={
+                "return_documents": True,
+                "top_k": 10,
+                "batch_size": 32,
+                "sort": True,
+                "document_type": "json",
+                "target_paths": "text",
+            }
+        )
 
-    def test_semantic_reranker_async_json_documents(self):
-        async def run_test():
-            await self.asyncSetUp()
-            try:
-                documents = self._get_documents(document_type="json")
-                results = await self.test_container.semantic_rerank(
-                    reranking_context="What is the capital of France?",
-                    documents=[json.dumps(item) for item in documents],
-                    semantic_reranking_options={
-                        "return_documents": True,
-                        "top_k": 10,
-                        "batch_size": 32,
-                        "sort": True,
-                        "document_type": "json",
-                        "target_paths": "text",
-                    }
-                )
+        assert len(results["Scores"]) == len(documents)
+        returned_document = json.loads(results["Scores"][0]["document"])
+        assert returned_document["text"] == "Paris is the capital of France."
 
-                assert len(results["Scores"]) == len(documents)
-                returned_document = json.loads(results["Scores"][0]["document"])
-                assert returned_document["text"] == "Paris is the capital of France."
-            finally:
-                await self.asyncTearDown()
-        asyncio.run(run_test())
+    async def test_semantic_reranker_async_nested_json_documents(self):
+        documents = self._get_documents(document_type="nested_json")
+        results = await self.test_container.semantic_rerank(
+            reranking_context="What is the capital of France?",
+            documents=[json.dumps(item) for item in documents],
+            semantic_reranking_options={
+                "return_documents": True,
+                "top_k": 10,
+                "batch_size": 32,
+                "sort": True,
+                "document_type": "json",
+                "target_paths": "info.text",
+            }
+        )
 
-    def test_semantic_reranker_async_nested_json_documents(self):
-        async def run_test():
-            await self.asyncSetUp()
-            try:
-                documents = self._get_documents(document_type="nested_json")
-                results = await self.test_container.semantic_rerank(
-                    reranking_context="What is the capital of France?",
-                    documents=[json.dumps(item) for item in documents],
-                    semantic_reranking_options={
-                        "return_documents": True,
-                        "top_k": 10,
-                        "batch_size": 32,
-                        "sort": True,
-                        "document_type": "json",
-                        "target_paths": "info.text",
-                    }
-                )
-
-                assert len(results["Scores"]) == len(documents)
-                returned_document = json.loads(results["Scores"][0]["document"])
-                assert returned_document["info"]["text"] == "Paris is the capital of France."
-            finally:
-                await self.asyncTearDown()
-        asyncio.run(run_test())
+        assert len(results["Scores"]) == len(documents)
+        returned_document = json.loads(results["Scores"][0]["document"])
+        assert returned_document["info"]["text"] == "Paris is the capital of France."
 
     def _get_documents(self, document_type: str):
         if document_type == "string":

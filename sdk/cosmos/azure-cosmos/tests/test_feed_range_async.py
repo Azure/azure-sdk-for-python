@@ -12,7 +12,6 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.asyncio
 class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
     """Tests to verify methods for operations on feed ranges
@@ -33,17 +32,13 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        # Key-auth client is used for control-plane operations in this test class.
+        # Single key-auth client is sufficient for this emulator-focused test class.
         self.client = CosmosClient(self.host, self.masterKey)
         self.database_for_test = self.client.get_database_client(self.TEST_DATABASE_ID)
-        # AAD (or key) client for data-plane operations
-        self.data_client = test_config.TestConfig.create_data_client_async()
-        self.data_database_for_test = self.data_client.get_database_client(self.TEST_DATABASE_ID)
-        self.data_container_for_test = self.data_database_for_test.get_container_client(self.TEST_CONTAINER_ID)
+        self.container_for_test = self.database_for_test.get_container_client(self.TEST_CONTAINER_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
-        await self.data_client.close()
 
 
     async def test_partition_key_to_feed_range_async(self):
@@ -52,8 +47,7 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
             id='container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id")
         )
-        # Data-plane proxy for feed_range operations
-        created_container = self.data_database_for_test.get_container_client(created_container_ref.id)
+        created_container = self.database_for_test.get_container_client(created_container_ref.id)
         feed_range = await created_container.feed_range_from_partition_key("1")
         feed_range_epk = FeedRangeInternalEpk.from_json(feed_range)
         assert feed_range_epk.get_normalized_range() == Range("3C80B1B7310BB39F29CC4EA05BDD461E",
@@ -65,8 +59,8 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
                                                            "FF",
                                                         True,
                                                         False)).to_dict()
-        epk_child_feed_range = await self.data_container_for_test.feed_range_from_partition_key("1")
-        assert await self.data_container_for_test.is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
+        epk_child_feed_range = await self.container_for_test.feed_range_from_partition_key("1")
+        assert await self.container_for_test.is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
 if __name__ == '__main__':
     unittest.main()

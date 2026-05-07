@@ -12,7 +12,6 @@ from azure.cosmos import ThroughputProperties, PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey

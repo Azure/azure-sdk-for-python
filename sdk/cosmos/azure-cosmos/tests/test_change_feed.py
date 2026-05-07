@@ -45,7 +45,7 @@ def round_time():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:
@@ -208,7 +208,7 @@ class TestChangeFeed:
                     # Create the item in the container
                     container.upsert_item(item)
                 except exceptions.CosmosHttpResponseError as e:
-                    fail(e)
+                    fail(str(e))
 
         # Create first batch of random items
         create_random_items(created_collection, batchSize)

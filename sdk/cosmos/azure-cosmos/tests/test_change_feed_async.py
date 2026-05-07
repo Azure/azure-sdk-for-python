@@ -52,7 +52,7 @@ def round_time():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
+@pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestChangeFeedAsync:
@@ -239,7 +239,7 @@ class TestChangeFeedAsync:
                     await container.upsert_item(item)
                     created_ids.add(item['id'])
                 except exceptions.CosmosHttpResponseError as e:
-                    pytest.fail(e)
+                    pytest.fail(str(e))
             return created_ids
 
         try:

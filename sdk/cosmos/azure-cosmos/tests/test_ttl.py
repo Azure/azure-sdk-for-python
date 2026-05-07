@@ -6,7 +6,6 @@ import uuid
 
 import pytest
 
-import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos.http_constants import StatusCodes
@@ -14,7 +13,6 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 class TestTimeToLive(unittest.TestCase):
     """TTL Unit Tests.
     """
@@ -76,10 +74,12 @@ class TestTimeToLive(unittest.TestCase):
             None,
             ttl)
 
-        document_definition = {'id': 'doc1' + str(uuid.uuid4()),
-                               'name': 'sample document',
-                               'key': 'value',
-                               'ttl': 0}
+        document_definition = {
+            'id': 'doc1' + str(uuid.uuid4()),
+            'name': 'sample document',
+            'key': 'value',
+            'ttl': 0,
+        }  # type: dict[str, object]
 
         # 0 is an unsupported value for ttl.
         self.__AssertHTTPFailureWithStatus(

@@ -7,7 +7,6 @@ import unittest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import pytest
-from azure.identity import DefaultAzureCredential
 
 import test_config
 
@@ -17,6 +16,7 @@ import test_config
 class TestSemanticReranker(unittest.TestCase):
     """Test to check semantic reranker behavior."""
     client: cosmos_client.CosmosClient = None
+    key_client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
@@ -25,23 +25,23 @@ class TestSemanticReranker(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        if cls.host == '[YOUR_ENDPOINT_HERE]':
+        if cls.host == '[YOUR_ENDPOINT_HERE]' or cls.config.masterKey == '[YOUR_KEY_HERE]':
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
-                "'host' at the top of this class to run the "
+                "'host' and 'masterKey' at the top of this class to run the "
                 "tests.")
 
-        credential = DefaultAzureCredential()
-        cls.client = cosmos_client.CosmosClient(cls.host, credential=credential)
-        cls.test_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
-        cls.test_container = cls.test_db.create_container_if_not_exists(cls.TEST_CONTAINER_ID,
-                                                                        cls.TEST_CONTAINER_PARTITION_KEY)
+        cls.key_client, cls.key_db, cls.client, cls.created_db = test_config.TestConfig.create_test_clients(
+            cls.TEST_DATABASE_ID
+        )
+        cls.key_db.create_container_if_not_exists(cls.TEST_CONTAINER_ID, cls.TEST_CONTAINER_PARTITION_KEY)
+        cls.test_container = cls.created_db.get_container_client(cls.TEST_CONTAINER_ID)
 
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.test_db.delete_container(cls.TEST_CONTAINER_ID)
-            cls.client.delete_database(cls.TEST_DATABASE_ID)
+            cls.key_db.delete_container(cls.TEST_CONTAINER_ID)
+            cls.key_client.delete_database(cls.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError:
             pass
 

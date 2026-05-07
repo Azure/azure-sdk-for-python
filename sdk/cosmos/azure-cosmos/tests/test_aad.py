@@ -37,7 +37,7 @@ def get_test_item(num):
 
 class CosmosEmulatorCredential(object):
     def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+        # type: (*str, **object) -> AccessToken
         """Request an access token for the emulator. Based on Azure Core's Access Token Credential.
 
         This method is called automatically by Azure SDK clients.
@@ -88,7 +88,6 @@ class CosmosEmulatorCredential(object):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
 @pytest.mark.skipif(
     not test_config.TestConfig.is_emulator
     and test_config.TestConfig.data_auth_mode != 'aad',

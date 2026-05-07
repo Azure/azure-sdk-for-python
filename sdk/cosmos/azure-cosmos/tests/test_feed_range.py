@@ -20,16 +20,12 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    # Key-auth client is used for control-plane operations in this test class.
+    # Single key-auth client is sufficient for this emulator-focused test class.
     key_client = cosmos_client.CosmosClient(TestFeedRange.host, test_config.TestConfig.masterKey)
     key_db = key_client.get_database_client(TestFeedRange.TEST_DATABASE_ID)
-    # AAD (or key) client for data-plane operations
-    data_client = test_config.TestConfig.create_data_client()
-    created_db = data_client.get_database_client(TestFeedRange.TEST_DATABASE_ID)
     return {
         "key_db": key_db,
-        "created_db": created_db,
-        "created_collection": created_db.get_container_client(TestFeedRange.TEST_CONTAINER_ID)
+        "created_collection": key_db.get_container_client(TestFeedRange.TEST_CONTAINER_ID)
     }
 
 test_subset_ranges = [(Range("", "FF", True, False),
@@ -85,7 +81,6 @@ test_overlaps_ranges = [(Range("", "FF", True, False),
                        False)]
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD  # TEMP: disabled to validate AAD pipeline using only test_aad.py
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestFeedRange:
@@ -104,8 +99,7 @@ class TestFeedRange:
             id='container_' + str(uuid.uuid4()),
             partition_key=partition_key.PartitionKey(path="/id")
         )
-        # Data-plane proxy for feed_range operations
-        created_container = setup["created_db"].get_container_client(created_container_ref.id)
+        created_container = setup["key_db"].get_container_client(created_container_ref.id)
         feed_range = created_container.feed_range_from_partition_key("1")
         feed_range_epk = FeedRangeInternalEpk.from_json(feed_range)
         assert feed_range_epk.get_normalized_range() == Range("3C80B1B7310BB39F29CC4EA05BDD461E",
