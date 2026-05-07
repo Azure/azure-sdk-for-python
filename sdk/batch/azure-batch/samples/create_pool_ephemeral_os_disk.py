@@ -1,7 +1,12 @@
-"""Snippets extracted from articles/batch/create-pool-ephemeral-os-disk.md.
+# coding: utf-8
 
-Migrated from azure-batch 14.x to 15.1.0 (azure.batch.BatchClient).
-"""
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+# Snippets extracted from articles/batch/create-pool-ephemeral-os-disk.md.
 
 from azure.batch import models
 
