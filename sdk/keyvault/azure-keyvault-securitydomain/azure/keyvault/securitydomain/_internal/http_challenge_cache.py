@@ -63,6 +63,7 @@ def remove_challenge_for_url(url: str) -> None:
     with _lock:
         del _cache[key.lower()]
 
+
 def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
     """Caches the challenge for the specified URL.
 
