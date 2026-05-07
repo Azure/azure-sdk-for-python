@@ -740,6 +740,38 @@ class TestEvaluate:
         assert "bad_thing.boolean_with_nan" not in aggregation
         assert "bad_thing.boolean_with_none" not in aggregation
 
+    def test_binary_aggregation_skips_unhashable_result_columns(self, caplog):
+        """A `_result` column containing list values must not crash binary aggregation."""
+        data = {
+            # Valid binary pass/fail column - should be aggregated.
+            "outputs.good_eval.metric_result": ["pass", "pass", "fail", "pass"],
+            # Malformed column whose values are lists (unhashable) - should be skipped
+            # with a warning instead of raising TypeError: unhashable type: 'list'.
+            "outputs.bad_eval.metric_result": [["a"], ["b"], ["c"], ["d"]],
+        }
+        data_df = pd.DataFrame(data)
+
+        with caplog.at_level(logging.WARNING, logger="azure.ai.evaluation._evaluate._evaluate"):
+            aggregation = _aggregate_metrics(data_df, {})
+
+        assert "good_eval.binary_aggregate" in aggregation
+        assert aggregation["good_eval.binary_aggregate"] == 0.75
+        assert "bad_eval.binary_aggregate" not in aggregation
+
+        # The malformed column must be reported via a warning so silent drops are
+        # caught by this regression test.
+        unhashable_warnings = [
+            record
+            for record in caplog.records
+            if record.levelno == logging.WARNING
+            and "outputs.bad_eval.metric_result" in record.getMessage()
+            and "unhashable" in record.getMessage()
+        ]
+        assert unhashable_warnings, (
+            "Expected a warning mentioning 'outputs.bad_eval.metric_result' and 'unhashable', "
+            f"got: {[r.getMessage() for r in caplog.records]}"
+        )
+
     def test_aggregate_label_defect_metrics_with_nan_in_details(self):
         """Test that NaN/None values in details column are properly ignored during aggregation."""
         data = {
