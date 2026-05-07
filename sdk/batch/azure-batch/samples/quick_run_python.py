@@ -103,7 +103,8 @@ def view_task_output(batch_client: BatchClient, job_id: str, config, _read_strea
 
     for task in tasks:
 
-        node_id = batch_client.get_task(job_id=job_id, task_id=task.id).node_info.node_id
+        node_info = batch_client.get_task(job_id=job_id, task_id=task.id).node_info
+        node_id = node_info.node_id if node_info else None
         print(f"Task: {task.id}")
         print(f"Node: {node_id}")
 

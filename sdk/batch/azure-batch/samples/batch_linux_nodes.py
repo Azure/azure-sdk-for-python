@@ -80,9 +80,9 @@ def vm_config_from_supported_images(client: BatchClient):
     # Obtain the desired image reference
     image = None
     for img in images:
-        if (img.image_reference.publisher.lower() == "canonical" and
-                img.image_reference.offer.lower() == "0001-com-ubuntu-server-focal" and
-                img.image_reference.sku.lower() == "20_04-lts"):
+        if (img.image_reference.publisher and img.image_reference.publisher.lower() == "canonical" and
+                img.image_reference.offer and img.image_reference.offer.lower() == "0001-com-ubuntu-server-focal" and
+                img.image_reference.sku and img.image_reference.sku.lower() == "20_04-lts"):
             image = img
             break
 
