@@ -26,7 +26,6 @@ import azure.mgmt.network
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
 
-
 AZURE_LOCATION = "eastus"
 
 
