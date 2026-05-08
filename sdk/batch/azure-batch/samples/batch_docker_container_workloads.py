@@ -20,10 +20,7 @@ def make_pool_no_prefetch(pool_id: str):
         sku='2204',
         version='latest')
 
-    """
-    Specify container configuration. This is required even though there are no prefetched images.
-    """
-
+    # Specify container configuration. This is required even though there are no prefetched images.
     container_conf = models.BatchContainerConfiguration(type='dockerCompatible')
 
     new_pool = models.BatchPoolCreateOptions(
@@ -46,10 +43,7 @@ def make_pool_dockerhub_prefetch(pool_id: str):
         sku='2204',
         version='latest')
 
-    """
-    Specify container configuration, fetching the official Ubuntu container image from Docker Hub.
-    """
-
+    # Specify container configuration, fetching the official Ubuntu container image from Docker Hub.
     container_conf = models.BatchContainerConfiguration(
         type='dockerCompatible',
         container_image_names=['ubuntu'])

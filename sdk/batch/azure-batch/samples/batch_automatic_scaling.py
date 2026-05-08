@@ -17,7 +17,7 @@ def autoscale_create_and_enable(batch_client: BatchClient, pool_id: str) -> None
     # [START autoscale_pool_create_enable_python]
     # Create a pool; specify configuration
     new_pool = models.BatchPoolCreateOptions(
-        id="autoscale-enabled-pool",
+        id=pool_id,
         virtual_machine_configuration=models.VirtualMachineConfiguration(
             image_reference=models.BatchVmImageReference(
                 publisher="Canonical",

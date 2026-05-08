@@ -30,11 +30,11 @@ def make_named_user_pool(pool_id: str, image_ref_to_use, sku_to_use, vm_size: st
     users = [
         models.UserAccount(
             name='pool-admin',
-            password='A1bC2d',
+            password='<password>',
             elevation_level=models.ElevationLevel.ADMIN),
         models.UserAccount(
             name='pool-nonadmin',
-            password='A1bC2d',
+            password='<password>',
             elevation_level=models.ElevationLevel.NON_ADMIN),
     ]
     pool = models.BatchPoolCreateOptions(

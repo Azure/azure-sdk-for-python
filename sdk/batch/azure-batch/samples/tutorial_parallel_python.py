@@ -10,6 +10,7 @@
 
 import datetime
 import os
+import shlex
 import sys
 import time
 
@@ -19,11 +20,11 @@ from azure.storage.blob import BlobServiceClient
 
 
 # [START tutorial_parallel_config]
-_BATCH_ACCOUNT_NAME = 'yourbatchaccount'
-_BATCH_ACCOUNT_KEY = 'xxxxxxxxxxxxxxxxE+yXrRvJAqT9BlXwwo1CwF+SwAYOxxxxxxxxxxxxxxxx43pXi/gdiATkvbpLRl3x14pcEQ=='
-_BATCH_ACCOUNT_URL = 'https://yourbatchaccount.yourbatchregion.batch.azure.com'
-_STORAGE_ACCOUNT_NAME = 'mystorageaccount'
-_STORAGE_ACCOUNT_KEY = 'xxxxxxxxxxxxxxxxy4/xxxxxxxxxxxxxxxxfwpbIC5aAWA8wDu+AFXZB827Mt9lybZB1nUcQbQiUrkPtilK5BQ=='
+_BATCH_ACCOUNT_NAME = os.getenv('AZURE_BATCH_ACCOUNT_NAME', '<batch-account-name>')
+_BATCH_ACCOUNT_KEY = os.getenv('AZURE_BATCH_ACCOUNT_KEY', '<batch-account-key>')
+_BATCH_ACCOUNT_URL = os.getenv('AZURE_BATCH_ACCOUNT_URL', 'https://yourbatchaccount.yourbatchregion.batch.azure.com')
+_STORAGE_ACCOUNT_NAME = os.getenv('AZURE_STORAGE_ACCOUNT_NAME', '<storage-account-name>')
+_STORAGE_ACCOUNT_KEY = os.getenv('AZURE_STORAGE_ACCOUNT_KEY', '<storage-account-key>')
 # [END tutorial_parallel_config]
 
 
@@ -68,8 +69,8 @@ def upload_inputs(blob_service_client, input_container_name, output_container_na
     return input_files
 
 
-def create_pool(batch_client: BatchClient, pool_id: str, _POOL_VM_SIZE: str,
-                _DEDICATED_POOL_NODE_COUNT: int, _LOW_PRIORITY_POOL_NODE_COUNT: int):
+def create_pool(batch_client: BatchClient, pool_id: str, pool_vm_size: str,
+                dedicated_node_count: int, low_priority_node_count: int):
     # [START tutorial_parallel_create_pool]
     new_pool = models.BatchPoolCreateOptions(
         id=pool_id,
@@ -81,9 +82,9 @@ def create_pool(batch_client: BatchClient, pool_id: str, _POOL_VM_SIZE: str,
                 version="latest"
             ),
             node_agent_sku_id="batch.node.ubuntu 20.04"),
-        vm_size=_POOL_VM_SIZE,
-        target_dedicated_nodes=_DEDICATED_POOL_NODE_COUNT,
-        target_low_priority_nodes=_LOW_PRIORITY_POOL_NODE_COUNT,
+        vm_size=pool_vm_size,
+        target_dedicated_nodes=dedicated_node_count,
+        target_low_priority_nodes=low_priority_node_count,
         start_task=models.BatchStartTask(
             command_line="/bin/bash -c \"apt-get update && apt-get install -y ffmpeg\"",
             wait_for_success=True,
@@ -114,8 +115,8 @@ def add_tasks(batch_client: BatchClient, job_id: str, input_files, output_contai
     for idx, input_file in enumerate(input_files):
         input_file_path = input_file.file_path
         output_file_path = "".join((input_file_path).split('.')[:-1]) + '.mp3'
-        command = "/bin/bash -c \"ffmpeg -i {} {} \"".format(
-            input_file_path, output_file_path)
+        command = "/bin/bash -c \"ffmpeg -i {} {}\"".format(
+            shlex.quote(input_file_path), shlex.quote(output_file_path))
         tasks.append(models.BatchTaskCreateOptions(
             id='Task{}'.format(idx),
             command_line=command,
@@ -147,4 +148,5 @@ def wait_for_tasks(batch_client: BatchClient, job_id: str, timeout_expiration):
             return True
         else:
             time.sleep(1)
+    return False
     # [END tutorial_parallel_wait_tasks]

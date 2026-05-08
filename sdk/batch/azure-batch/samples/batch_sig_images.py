@@ -8,56 +8,62 @@
 
 # Snippets extracted from articles/batch/batch-sig-images.md.
 
-# [START sig_create_pool_python]
 from azure.batch import BatchClient, models
 from azure.identity import DefaultAzureCredential
 
-# Specify Batch account credentials
-account_endpoint = "https://{batch-account-name}.{region}.batch.azure.com"
 
-# Pool settings
-pool_id = "LinuxNodesSamplePoolPython"
-vm_size = "STANDARD_D2_V3"
-node_count = 1
+def create_sig_pool():
+    # [START sig_create_pool_python]
+    # Specify Batch account credentials
+    account_endpoint = "https://{batch-account-name}.{region}.batch.azure.com"
 
-# Initialize the Batch client with Microsoft Entra ID authentication
-client = BatchClient(endpoint=account_endpoint, credential=DefaultAzureCredential())
+    # Pool settings
+    pool_id = "LinuxNodesSamplePoolPython"
+    vm_size = "STANDARD_D2_V3"
+    node_count = 1
 
-# Configure the start task for the pool
-start_task = models.BatchStartTask(
-    command_line="printenv AZ_BATCH_NODE_STARTUP_DIR",
-    user_identity=models.UserIdentity(
-        auto_user=models.AutoUserSpecification(
-            elevation_level=models.ElevationLevel.ADMIN,
-            scope=models.AutoUserScope.POOL,
-        )
-    ),
-)
+    # Initialize the Batch client with Microsoft Entra ID authentication
+    client = BatchClient(endpoint=account_endpoint, credential=DefaultAzureCredential())
 
-# Create an image reference that points to an Azure Compute Gallery image.
-ir = models.BatchVmImageReference(
-    virtual_machine_image_id=(
-        "/subscriptions/{sub id}/resourceGroups/{resource group name}"
-        "/providers/Microsoft.Compute/galleries/{gallery name}"
-        "/images/{image definition name}/versions/{version id}"
+    # Configure the start task for the pool
+    start_task = models.BatchStartTask(
+        command_line="printenv AZ_BATCH_NODE_STARTUP_DIR",
+        user_identity=models.UserIdentity(
+            auto_user=models.AutoUserSpecification(
+                elevation_level=models.ElevationLevel.ADMIN,
+                scope=models.AutoUserScope.POOL,
+            )
+        ),
     )
-)
 
-# Create the VirtualMachineConfiguration
-vmc = models.VirtualMachineConfiguration(
-    image_reference=ir,
-    node_agent_sku_id="batch.node.ubuntu 22.04",
-)
+    # Create an image reference that points to an Azure Compute Gallery image.
+    ir = models.BatchVmImageReference(
+        virtual_machine_image_id=(
+            "/subscriptions/{sub id}/resourceGroups/{resource group name}"
+            "/providers/Microsoft.Compute/galleries/{gallery name}"
+            "/images/{image definition name}/versions/{version id}"
+        )
+    )
 
-# Create the unbound pool
-new_pool = models.BatchPoolCreateOptions(
-    id=pool_id,
-    vm_size=vm_size,
-    target_dedicated_nodes=node_count,
-    virtual_machine_configuration=vmc,
-    start_task=start_task,
-)
+    # Create the VirtualMachineConfiguration
+    vmc = models.VirtualMachineConfiguration(
+        image_reference=ir,
+        node_agent_sku_id="batch.node.ubuntu 22.04",
+    )
 
-# Create pool in the Batch service
-client.create_pool(pool=new_pool)
-# [END sig_create_pool_python]
+    # Create the unbound pool
+    new_pool = models.BatchPoolCreateOptions(
+        id=pool_id,
+        vm_size=vm_size,
+        target_dedicated_nodes=node_count,
+        virtual_machine_configuration=vmc,
+        start_task=start_task,
+    )
+
+    # Create pool in the Batch service
+    client.create_pool(pool=new_pool)
+    # [END sig_create_pool_python]
+
+
+if __name__ == "__main__":
+    create_sig_pool()

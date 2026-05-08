@@ -114,4 +114,5 @@ def view_task_output(batch_client: BatchClient, job_id: str, config, _read_strea
         file_text = _read_stream_as_string(
             stream,
             text_encoding)
+        print(file_text)
     # [END quickrun_python_view_output]
