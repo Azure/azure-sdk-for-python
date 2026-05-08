@@ -1,4 +1,4 @@
-# azure-ai-agentserver-githubcopilot — Getting Started
+# azure-ai-agentserver-ghcopilot — Getting Started
 
 Instructions for using, testing, and contributing to the GitHub Copilot SDK adapter package for Azure AI Agent Server.
 
@@ -55,7 +55,7 @@ This package is the **production home** for the adapter code that previously liv
 |---|---|---|
 | **Purpose** | Reference repo with example agents, deploy scripts, skills | The adapter library itself |
 | **Adapter code** | Vendored in `.foundry/runtime/vendor/` | First-party in `azure/ai/agentserver/githubcopilot/` |
-| **How agents use it** | Copies vendor code into container | `pip install azure-ai-agentserver-githubcopilot` |
+| **How agents use it** | Copies vendor code into container | `pip install azure-ai-agentserver-ghcopilot` |
 | **Where it ships** | Not shipped — internal reference | Ships via Azure SDK pipeline |
 
 Going forward, adapter code changes should be made here. The foundry-declarative-agent repo will eventually consume this package via `pip install` instead of vendoring.
@@ -197,7 +197,7 @@ my-agent/
 │   ├── my-skill/SKILL.md
 │   └── another/SKILL.md
 ├── Dockerfile
-├── requirements.txt       ← includes azure-ai-agentserver-githubcopilot
+├── requirements.txt       ← includes azure-ai-agentserver-ghcopilot
 └── .env
 ```
 

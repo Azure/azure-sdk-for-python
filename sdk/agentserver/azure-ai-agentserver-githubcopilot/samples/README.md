@@ -1,4 +1,4 @@
-# Samples for azure-ai-agentserver-githubcopilot
+# Samples for azure-ai-agentserver-ghcopilot
 
 ## Quick start
 
