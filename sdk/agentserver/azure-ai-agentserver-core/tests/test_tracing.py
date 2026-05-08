@@ -368,4 +368,66 @@ class TestAgentIdentityResolution:
             assert resolve_agent_version() == ""
 
 
+# ------------------------------------------------------------------ #
+# agent_type attribute scoping
+# ------------------------------------------------------------------ #
+
+
+class TestAgentTypeAttribute:
+    """microsoft.foundry.agent.type is only set on invoke_agent spans."""
+
+    @staticmethod
+    def _create_provider(proc):
+        collector = _CollectorExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(proc)
+        provider.add_span_processor(SimpleSpanProcessor(collector))
+        return provider, collector
+
+    def test_agent_type_set_on_invoke_agent_span(self) -> None:
+        """agent_type is written when gen_ai.operation.name == invoke_agent."""
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="a", agent_version="1", agent_id="a:1",
+            agent_type="hosted",
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("invoke_agent") as span:
+            span.set_attribute("gen_ai.operation.name", "invoke_agent")
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["microsoft.foundry.agent.type"] == "hosted"
+
+    def test_agent_type_not_set_on_other_spans(self) -> None:
+        """agent_type must NOT appear on spans without invoke_agent operation."""
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="a", agent_version="1", agent_id="a:1",
+            agent_type="hosted",
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("some_other_span") as span:
+            span.set_attribute("gen_ai.operation.name", "chat")
+
+        attrs = dict(collector.spans[0].attributes)
+        assert "microsoft.foundry.agent.type" not in attrs
+
+    def test_agent_type_none_skipped(self) -> None:
+        """When agent_type is None, attribute is never set even on invoke_agent."""
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="a", agent_version="1", agent_id="a:1",
+            agent_type=None,
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("invoke_agent") as span:
+            span.set_attribute("gen_ai.operation.name", "invoke_agent")
+
+        attrs = dict(collector.spans[0].attributes)
+        assert "microsoft.foundry.agent.type" not in attrs
+
+
 

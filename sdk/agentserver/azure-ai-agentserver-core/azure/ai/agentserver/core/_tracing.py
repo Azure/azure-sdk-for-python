@@ -55,6 +55,7 @@ _ATTR_GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
 _ATTR_GEN_AI_AGENT_ID = "gen_ai.agent.id"
 _ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "gen_ai.agent.blueprint.id"
 _ATTR_GEN_AI_AGENT_TENANT_ID = "microsoft.tenant.id"
+_ATTR_FOUNDRY_AGENT_TYPE = "microsoft.foundry.agent.type"
 _ATTR_GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 _ATTR_GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
 _ATTR_GEN_AI_RESPONSE_ID = "gen_ai.response.id"
@@ -176,6 +177,7 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_id=agent_id, project_id=project_id,
             agent_blueprint_id=agent_blueprint_id,
             agent_tenant_id=agent_tenant_id,
+            agent_type="hosted" if os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "") else None,
         ),
     ]
     log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
@@ -490,6 +492,7 @@ class _FoundryEnrichmentSpanProcessor:
         project_id: Optional[str] = None,
         agent_blueprint_id: Optional[str] = None,
         agent_tenant_id: Optional[str] = None,
+        agent_type: Optional[str] = None,
     ) -> None:
         self.agent_name = agent_name
         self.agent_version = agent_version
@@ -497,6 +500,7 @@ class _FoundryEnrichmentSpanProcessor:
         self.project_id = project_id
         self.agent_blueprint_id = agent_blueprint_id
         self.agent_tenant_id = agent_tenant_id
+        self.agent_type = agent_type
 
     def on_start(self, span: Any, parent_context: Any = None) -> None:
         if self.project_id:
@@ -536,6 +540,8 @@ class _FoundryEnrichmentSpanProcessor:
                 attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
             if self.agent_tenant_id:
                 attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
+            if self.agent_type and attrs.get(_ATTR_GEN_AI_OPERATION_NAME) == "invoke_agent":
+                attrs[_ATTR_FOUNDRY_AGENT_TYPE] = self.agent_type
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
