@@ -191,11 +191,11 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
     any user-provided exclude overrides which take precedence over environment settings.
 
     :param credential_config: Configuration mapping for all available credentials, containing
-        exclude parameter names, environment names, and default exclude settings
+        environment names and default exclude settings
     :type credential_config: dict
     :param exclude_flags: Dictionary of exclude flags for each credential (will be modified)
     :type exclude_flags: dict
-    :param user_excludes: User-provided exclude overrides from constructor kwargs
+    :param user_excludes: User-provided exclude overrides (None means not specified)
     :type user_excludes: dict
 
     :return: Dictionary of final exclude flags for each credential
