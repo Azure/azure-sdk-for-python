@@ -195,42 +195,7 @@
 
 ### Other Changes
 
-  - Deleted model `ApplicationGatewayAvailableSslPredefinedPolicies` which actually was not used by SDK users
-  - Deleted model `ApplicationGatewayWafDynamicManifestResultList` which actually was not used by SDK users
-  - Deleted model `AutoApprovedPrivateLinkServicesResult` which actually was not used by SDK users
-  - Deleted model `AvailableDelegationsResult` which actually was not used by SDK users
-  - Deleted model `AvailablePrivateEndpointTypesResult` which actually was not used by SDK users
-  - Deleted model `AvailableServiceAliasesResult` which actually was not used by SDK users
-  - Deleted model `ConnectionSharedKeyResultList` which actually was not used by SDK users
-  - Deleted model `ExpressRouteCrossConnectionPeeringList` which actually was not used by SDK users
-  - Deleted model `GetServiceGatewayAddressLocationsResult` which actually was not used by SDK users
-  - Deleted model `GetServiceGatewayServicesResult` which actually was not used by SDK users
-  - Deleted model `IpamPoolList` which actually was not used by SDK users
-  - Deleted model `ListHubRouteTablesResult` which actually was not used by SDK users
-  - Deleted model `ListHubVirtualNetworkConnectionsResult` which actually was not used by SDK users
-  - Deleted model `ListP2SVpnGatewaysResult` which actually was not used by SDK users
-  - Deleted model `ListRouteMapsResult` which actually was not used by SDK users
-  - Deleted model `ListRoutingIntentResult` which actually was not used by SDK users
-  - Deleted model `ListVirtualHubBgpConnectionResults` which actually was not used by SDK users
-  - Deleted model `ListVirtualHubIpConfigurationResults` which actually was not used by SDK users
-  - Deleted model `ListVirtualHubRouteTableV2SResult` which actually was not used by SDK users
-  - Deleted model `ListVirtualHubsResult` which actually was not used by SDK users
-  - Deleted model `ListVirtualNetworkGatewayNatRulesResult` which actually was not used by SDK users
-  - Deleted model `ListVirtualWANsResult` which actually was not used by SDK users
-  - Deleted model `ListVpnConnectionsResult` which actually was not used by SDK users
-  - Deleted model `ListVpnGatewayNatRulesResult` which actually was not used by SDK users
-  - Deleted model `ListVpnGatewaysResult` which actually was not used by SDK users
-  - Deleted model `ListVpnServerConfigurationPolicyGroupsResult` which actually was not used by SDK users
-  - Deleted model `ListVpnServerConfigurationsResult` which actually was not used by SDK users
-  - Deleted model `ListVpnSiteLinkConnectionsResult` which actually was not used by SDK users
-  - Deleted model `ListVpnSiteLinksResult` which actually was not used by SDK users
-  - Deleted model `ListVpnSitesResult` which actually was not used by SDK users
-  - Deleted model `NetworkVirtualApplianceConnectionList` which actually was not used by SDK users
-  - Deleted model `PoolAssociationList` which actually was not used by SDK users
-  - Deleted model `StaticCidrList` which actually was not used by SDK users
-  - Deleted model `VirtualNetworkDdosProtectionStatusResult` which actually was not used by SDK users
-  - Deleted model `VirtualNetworkGatewayListConnectionsResult` which actually was not used by SDK users
-  - Deleted model `VirtualNetworkListUsageResult` which actually was not used by SDK users
+  - Deleted model `ApplicationGatewayAvailableSslPredefinedPolicies`/`ApplicationGatewayWafDynamicManifestResultList`/`AutoApprovedPrivateLinkServicesResult`/`AvailableDelegationsResult`/`AvailablePrivateEndpointTypesResult`/`AvailableServiceAliasesResult`/`ConnectionSharedKeyResultList`/`ExpressRouteCrossConnectionPeeringList`/`GetServiceGatewayAddressLocationsResult`/`GetServiceGatewayServicesResult`/`IpamPoolList`/`ListHubRouteTablesResult`/`ListHubVirtualNetworkConnectionsResult`/`ListP2SVpnGatewaysResult`/`ListRouteMapsResult`/`ListRoutingIntentResult`/`ListVirtualHubBgpConnectionResults`/`ListVirtualHubIpConfigurationResults`/`ListVirtualHubRouteTableV2SResult`/`ListVirtualHubsResult`/`ListVirtualNetworkGatewayNatRulesResult`/`ListVirtualWANsResult`/`ListVpnConnectionsResult`/`ListVpnGatewayNatRulesResult`/`ListVpnGatewaysResult`/`ListVpnServerConfigurationPolicyGroupsResult`/`ListVpnServerConfigurationsResult`/`ListVpnSiteLinkConnectionsResult`/`ListVpnSiteLinksResult`/`ListVpnSitesResult`/`NetworkVirtualApplianceConnectionList`/`PoolAssociationList`/`StaticCidrList`/`VirtualNetworkDdosProtectionStatusResult`/`VirtualNetworkGatewayListConnectionsResult`/`VirtualNetworkListUsageResult` which actually was not used by SDK users
 
 ## 30.2.0 (2026-02-11)
 
