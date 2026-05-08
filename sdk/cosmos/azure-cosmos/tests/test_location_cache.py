@@ -409,6 +409,28 @@ class TestLocationCache:
         # Assert the correct behavior.
         assert resolved_endpoint == location2_endpoint
 
+    def test_resolve_endpoint_without_preferred_locations_supports_normalized_exclusions(self):
+        # This specifically exercises _resolve_endpoint_without_preferred_locations by
+        # setting use_preferred_locations=False.
+        lc = refresh_location_cache(
+            preferred_locations=[],
+            use_multiple_write_locations=True,
+        )
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.use_preferred_locations = False
+        write_request.excluded_locations = ["east-us-2"]
+
+        assert lc.resolve_service_endpoint(write_request) == canonical_location2_endpoint
+
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.use_preferred_locations = False
+        read_request.excluded_locations = ["west_us_3"]
+
+        assert lc.resolve_service_endpoint(read_request) == canonical_location1_endpoint
+
     def test_regional_fallback_when_primary_is_excluded(self):
         # This test simulates a scenario where the primary preferred region is excluded
         # by the user, and the secondary is excluded by the circuit breaker.
