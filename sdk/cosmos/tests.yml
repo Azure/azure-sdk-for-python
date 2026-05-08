@@ -5,7 +5,7 @@ extends:
     parameters:
       CloudConfig:
         Public:
-          ServiceConnection: azure-sdk-tests-cosmos
+          ServiceConnection: azure-sdk-tests-cosmos-tme
       MatrixConfigs:
         - Name: Cosmos_live_test
           Path: sdk/cosmos/live-platform-matrix.json
