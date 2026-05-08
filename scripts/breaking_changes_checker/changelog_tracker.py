@@ -142,7 +142,8 @@ class ChangelogTracker(BreakingChangesTracker):
                                     self.module_name, class_name, property_name
                                 )
                             if self.class_name.endswith("Client"):
-                                if property_components["attr_type"] is not None and property_components["attr_type"].lower().endswith("operations"):
+                                attr_type = property_components["attr_type"] if isinstance(property_components, dict) else property_components
+                                if attr_type is not None and attr_type.lower().endswith("operations"):
                                     fa = (
                                         self.ADDED_OPERATION_GROUP_MSG,
                                         ChangeType.ADDED_OPERATION_GROUP,

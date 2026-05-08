@@ -547,7 +547,8 @@ class BreakingChangesTracker:
         for property in deleted_props:
             bc = None
             if self._class_name.endswith("Client"):
-                property_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][property]["attr_type"]
+                property_data = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][property]
+                property_type = property_data["attr_type"] if isinstance(property_data, dict) else property_data
                 # property_type is not always a string, such as client_side_validation which is a bool, so we need to check for strings
                 if property_type is not None and isinstance(property_type, str) and property_type.lower().endswith("operations"):
                         bc = (
