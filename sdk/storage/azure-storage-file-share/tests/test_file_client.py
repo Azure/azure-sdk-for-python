@@ -502,7 +502,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         assert service.account_name == None
         assert service.share_name == "foo"
         assert service.directory_path == "bar/baz"
-        assert service.file_path, ["bar", "baz", "file"]
+        assert service.file_path == ["bar", "baz", "file"]
         assert service.file_name == "file"
         assert service.snapshot == "snap"
         assert service.credential == None

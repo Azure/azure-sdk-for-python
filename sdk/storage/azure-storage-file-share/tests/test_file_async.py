@@ -3802,7 +3802,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         # Assert
         props = await new_file.get_file_properties()
         assert props is not None
-        assert str(file_attributes), props.file_attributes.replace(' ', '')
+        assert str(file_attributes).replace(' ', '') == props.file_attributes.replace(' ', ''), props.file_attributes
         assert file_creation_time == props.creation_time
         assert file_last_write_time == props.last_write_time
         assert file_change_time == props.change_time

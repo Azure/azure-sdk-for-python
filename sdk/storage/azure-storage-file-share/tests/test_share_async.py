@@ -61,12 +61,13 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             except:
                 pass
 
-    async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):  # pylint: disable=unused-argument
+    async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
         async for l in self.fsc.list_shares(include_snapshots=True):
-            try:
-                await self.fsc.delete_share(l.name, delete_snapshots=True)
-            except:
-                pass
+            if l.name.startswith(prefix):
+                try:
+                    await self.fsc.delete_share(l.name, delete_snapshots=True)
+                except:
+                    pass
 
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):

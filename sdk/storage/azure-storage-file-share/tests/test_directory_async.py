@@ -1383,7 +1383,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         props = await new_directory.get_directory_properties()
         assert props is not None
         assert props.is_directory
-        assert str(file_attributes), props.file_attributes.replace(' ', '')
+        assert str(file_attributes) == props.file_attributes.replace(' ', '')
         assert file_creation_time == props.creation_time
         assert file_last_write_time == props.last_write_time
         assert file_change_time == props.change_time
