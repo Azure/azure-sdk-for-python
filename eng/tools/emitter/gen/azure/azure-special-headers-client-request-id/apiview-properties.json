@@ -3,5 +3,6 @@
     "CrossLanguageDefinitionId": {
         "azure.specialheaders.xmsclientrequestid.XmsClientRequestIdClient.get": "Azure.SpecialHeaders.XmsClientRequestId.get",
         "azure.specialheaders.xmsclientrequestid.aio.XmsClientRequestIdClient.get": "Azure.SpecialHeaders.XmsClientRequestId.get"
-    }
+    },
+    "CrossLanguageVersion": "b7ecade47541"
 }
