@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.p2s_vpn_gateways.begin_update_tags(
+    response = client.p2_svpn_gateways.begin_update_tags(
         resource_group_name="rg1",
         gateway_name="p2sVpnGateway1",
         p2_s_vpn_gateway_parameters={"tags": {"tag1": "value1", "tag2": "value2"}},

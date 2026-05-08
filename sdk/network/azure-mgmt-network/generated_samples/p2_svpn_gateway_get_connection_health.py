@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.p2s_vpn_gateways.begin_get_p2_s_vpn_connection_health(
+    response = client.p2_svpn_gateways.begin_get_p2_s_vpn_connection_health(
         resource_group_name="rg1",
         gateway_name="p2sVpnGateway1",
     ).result()

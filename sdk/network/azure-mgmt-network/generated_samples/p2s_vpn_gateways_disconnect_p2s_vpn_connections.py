@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.p2s_vpn_gateways.begin_disconnect_p2_s_vpn_connections(
+    client.p2_svpn_gateways.begin_disconnect_p2_s_vpn_connections(
         resource_group_name="p2s-vpn-gateway-test",
         p2_s_vpn_gateway_name="p2svpngateway",
         request={"vpnConnectionIds": ["vpnconnId1", "vpnconnId2"]},

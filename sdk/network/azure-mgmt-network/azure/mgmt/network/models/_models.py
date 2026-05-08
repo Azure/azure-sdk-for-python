@@ -13766,10 +13766,10 @@ class DdosProtectionPlan(TrackedResourceWithOptionalLocation):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar properties: Properties of the DDoS protection plan.
-    :vartype properties: ~azure.mgmt.network.models.DdosProtectionPlanPropertiesFormat
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar properties: Properties of the DDoS protection plan.
+    :vartype properties: ~azure.mgmt.network.models.DdosProtectionPlanPropertiesFormat
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     """
@@ -13788,8 +13788,8 @@ class DdosProtectionPlan(TrackedResourceWithOptionalLocation):
         self,
         *,
         location: Optional[str] = None,
-        properties: Optional["_models.DdosProtectionPlanPropertiesFormat"] = None,
         tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.DdosProtectionPlanPropertiesFormat"] = None,
     ) -> None: ...
 
     @overload

@@ -113,7 +113,6 @@ from .operations import (
     NetworkWatchersOperations,
     Operations,
     P2SVpnGatewaysOperations,
-    P2sVpnGatewaysOperations,
     PacketCapturesOperations,
     PeerExpressRouteCircuitConnectionsOperations,
     PrivateDnsZoneGroupsOperations,
@@ -576,8 +575,6 @@ class NetworkManagementClient(
     :vartype vpn_link_connections: azure.mgmt.network.aio.operations.VpnLinkConnectionsOperations
     :ivar nat_rules: NatRulesOperations operations
     :vartype nat_rules: azure.mgmt.network.aio.operations.NatRulesOperations
-    :ivar p2s_vpn_gateways: P2sVpnGatewaysOperations operations
-    :vartype p2s_vpn_gateways: azure.mgmt.network.aio.operations.P2sVpnGatewaysOperations
     :ivar express_route_connections: ExpressRouteConnectionsOperations operations
     :vartype express_route_connections:
      azure.mgmt.network.aio.operations.ExpressRouteConnectionsOperations
@@ -1053,7 +1050,6 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.nat_rules = NatRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.p2s_vpn_gateways = P2sVpnGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.express_route_connections = ExpressRouteConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.p2s_vpn_gateways.list()
+    response = client.p2_svpn_gateways.list()
     for item in response:
         print(item)
 

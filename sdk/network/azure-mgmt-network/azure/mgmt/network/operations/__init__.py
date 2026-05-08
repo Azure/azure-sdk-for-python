@@ -151,7 +151,6 @@ from ._operations import VirtualHubRouteTableV2SOperations  # type: ignore
 from ._operations import VpnConnectionsOperations  # type: ignore
 from ._operations import VpnLinkConnectionsOperations  # type: ignore
 from ._operations import NatRulesOperations  # type: ignore
-from ._operations import P2sVpnGatewaysOperations  # type: ignore
 from ._operations import ExpressRouteConnectionsOperations  # type: ignore
 from ._operations import VirtualHubBgpConnectionOperations  # type: ignore
 from ._operations import VirtualHubBgpConnectionsOperations  # type: ignore
@@ -317,7 +316,6 @@ __all__ = [
     "VpnConnectionsOperations",
     "VpnLinkConnectionsOperations",
     "NatRulesOperations",
-    "P2sVpnGatewaysOperations",
     "ExpressRouteConnectionsOperations",
     "VirtualHubBgpConnectionOperations",
     "VirtualHubBgpConnectionsOperations",

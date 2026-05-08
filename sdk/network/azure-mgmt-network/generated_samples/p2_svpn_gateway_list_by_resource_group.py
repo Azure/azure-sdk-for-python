@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.p2s_vpn_gateways.list_by_resource_group(
+    response = client.p2_svpn_gateways.list_by_resource_group(
         resource_group_name="rg1",
     )
     for item in response:

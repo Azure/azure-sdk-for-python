@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.p2s_vpn_gateways.begin_get_p2_s_vpn_connection_health_detailed(
+    response = client.p2_svpn_gateways.begin_get_p2_s_vpn_connection_health_detailed(
         resource_group_name="p2s-vpn-gateway-test",
         gateway_name="p2svpngateway",
         request={

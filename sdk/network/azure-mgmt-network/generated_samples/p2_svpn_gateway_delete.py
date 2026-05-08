@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.p2s_vpn_gateways.begin_delete(
+    client.p2_svpn_gateways.begin_delete(
         resource_group_name="rg1",
         gateway_name="p2sVpnGateway1",
     ).result()
