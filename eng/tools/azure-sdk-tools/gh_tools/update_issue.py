@@ -84,13 +84,15 @@ def main(targeted_packages):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="""
+    parser = argparse.ArgumentParser(
+        description="""
     This script is the single point for all checks invoked by CI within this repo. It works in two phases.
         1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
         2. Invoke one or multiple checks for each package identified as in scope.
 
     In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
-    """)
+    """
+    )
 
     parser.add_argument(
         "glob_string",
