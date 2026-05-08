@@ -55,11 +55,11 @@
 /sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson @bobogogo1990
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/    @albertofori @avanigupta @jimmyca15 @mrm9084 @rossgrambo @xiangyan99
+/sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084 @xiangyan99
 
 # AzureSdkOwners: @mrm9084
 # ServiceLabel: %App Configuration
-# ServiceOwners: @albertofori @avanigupta @mrm9084
+# ServiceOwners: @avanigupta @mrm9084
 
 # ServiceLabel: %Attestation
 # PRLabel: %Attestation
