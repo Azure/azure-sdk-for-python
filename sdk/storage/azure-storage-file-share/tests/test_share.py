@@ -76,10 +76,6 @@ class TestStorageShare(StorageRecordedTestCase):
             pass
         return share_client
 
-    def _create_share_if_not_exists(self, prefix=TEST_SHARE_PREFIX, **kwargs):
-        share_client = self._get_share_reference(prefix)
-        return share_client.create_share_if_not_exists(**kwargs)  # pylint: disable=no-member
-
     def _delete_shares(self, prefix=TEST_SHARE_PREFIX):  # pylint: disable=unused-argument
         for l in self.fsc.list_shares(include_snapshots=True):
             try:
