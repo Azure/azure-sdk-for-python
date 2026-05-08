@@ -10,9 +10,10 @@ import json
 import logging
 from github import Github, Auth
 from ci_tools.functions import discover_targeted_packages
+from ci_tools.variables import discover_repo_root
 
 logging.getLogger().setLevel(logging.INFO)
-root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "..", "..", ".."))
+root_dir = discover_repo_root()
 
 
 def get_build_info(service_directory: str, package_name: str) -> str:
