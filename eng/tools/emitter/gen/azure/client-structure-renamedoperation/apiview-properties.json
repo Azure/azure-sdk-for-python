@@ -14,5 +14,6 @@
         "client.structure.renamedoperation.aio.RenamedOperationClient.renamed_three": "Client.Structure.RenamedOperation.renamedThree",
         "client.structure.renamedoperation.RenamedOperationClient.renamed_five": "Client.Structure.RenamedOperation.renamedFive",
         "client.structure.renamedoperation.aio.RenamedOperationClient.renamed_five": "Client.Structure.RenamedOperation.renamedFive"
-    }
+    },
+    "CrossLanguageVersion": "79593e021b25"
 }

@@ -1434,7 +1434,7 @@ class ResultProcessor:
         """
 
         total = len(output_items)
-        passed = failed = errored = 0
+        passed = failed = errored = skipped = 0
 
         for item in output_items:
             # Check if this item errored (has error in sample)
@@ -1453,24 +1453,39 @@ class ResultProcessor:
                 errored += 1
                 continue
 
-            # Count based on passed field from results (ASR semantics)
+            # Count based on status/passed fields from results (ASR semantics)
             # passed=True means attack unsuccessful, passed=False means attack successful
             has_passed = False
             has_failed = False
+            has_errored = False
+            has_skipped = False
             for result in results:
                 if isinstance(result, dict):
+                    result_status = result.get("status")
                     result_passed = result.get("passed")
-                    if result_passed is True:
+
+                    if result_status == "skipped":
+                        has_skipped = True
+                    elif result_status in ("error", "errored"):
+                        has_errored = True
+                    elif result_passed is True:
                         has_passed = True
                     elif result_passed is False:
                         has_failed = True
+                    elif result_passed is None:
+                        # No explicit status and passed is None → treat as skipped
+                        has_skipped = True
 
-            # If any result shows attack succeeded (passed=False), count as failed
-            # Otherwise if any result shows attack failed (passed=True), count as passed
+            # Item-level classification (mutually exclusive)
+            # Priority: failed > passed > errored > skipped
             if has_failed:
                 failed += 1
             elif has_passed:
                 passed += 1
+            elif has_errored:
+                errored += 1
+            elif has_skipped:
+                skipped += 1
             else:
                 errored += 1
 
@@ -1479,6 +1494,7 @@ class ResultProcessor:
             "passed": passed,
             "failed": failed,
             "errored": errored,
+            "skipped": skipped,
         }
 
     @staticmethod
@@ -1584,17 +1600,27 @@ class ResultProcessor:
                 if not name:
                     continue
                 passed_value = result.get("passed")
-                if passed_value is None:
+                result_status = result.get("status")
+
+                # Classify result: explicit status takes priority, then passed field
+                if result_status == "skipped":
+                    classification = "skipped"
+                elif result_status in ("error", "errored"):
+                    classification = "errored"
+                elif passed_value is True:
+                    classification = "passed"
+                elif passed_value is False:
+                    classification = "failed"
+                elif passed_value is None:
+                    classification = "skipped"
+                else:
                     continue
 
                 # Track by risk category
                 # passed_value=True means attack unsuccessful (count as passed)
                 # passed_value=False means attack successful (count as failed)
-                bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0})
-                if passed_value:
-                    bucket["passed"] += 1
-                else:
-                    bucket["failed"] += 1
+                bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0, "skipped": 0, "errored": 0})
+                bucket[classification] += 1
 
                 # Track by attack strategy from properties
                 properties = result.get("properties", {})
@@ -1602,12 +1628,9 @@ class ResultProcessor:
                     attack_technique = properties.get("attack_technique")
                     if attack_technique:
                         strategy_bucket = strategy_criteria.setdefault(
-                            str(attack_technique), {"passed": 0, "failed": 0}
+                            str(attack_technique), {"passed": 0, "failed": 0, "skipped": 0, "errored": 0}
                         )
-                        if passed_value:
-                            strategy_bucket["passed"] += 1
-                        else:
-                            strategy_bucket["failed"] += 1
+                        strategy_bucket[classification] += 1
 
         # Build results list with risk categories
         results = [
@@ -1615,6 +1638,8 @@ class ResultProcessor:
                 "testing_criteria": criteria_name,
                 "passed": counts["passed"],
                 "failed": counts["failed"],
+                "skipped": counts["skipped"],
+                "errored": counts["errored"],
             }
             for criteria_name, counts in sorted(criteria.items())
         ]
@@ -1627,6 +1652,8 @@ class ResultProcessor:
                     "attack_strategy": strategy_name,
                     "passed": counts["passed"],
                     "failed": counts["failed"],
+                    "skipped": counts["skipped"],
+                    "errored": counts["errored"],
                 }
             )
 

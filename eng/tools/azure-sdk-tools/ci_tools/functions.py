@@ -78,6 +78,7 @@ TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-ai-projects": "pypy",
     "azure-ai-agents": "pypy",
     "azure-identity-broker": "pypy",
+    "azure-storage-extensions": "pypy",
 }
 
 omit_regression = (

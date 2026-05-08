@@ -17,13 +17,18 @@ from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
 import xml.etree.ElementTree as ET
 from collections.abc import MutableMapping
-from typing_extensions import Self
 import isodate
 from corehttp.exceptions import DeserializationError
 from corehttp.utils import CaseInsensitiveEnumMeta
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.serialization import _Null
+
 from corehttp.rest import HttpResponse
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -589,11 +594,7 @@ class Model(_MyMutableMapping):
         class_name = self.__class__.__name__
         if len(args) > 1:
             raise TypeError(f"{class_name}.__init__() takes 2 positional arguments but {len(args) + 1} were given")
-        dict_to_pass = {
-            rest_field._rest_name: rest_field._default
-            for rest_field in self._attr_to_rest_field.values()
-            if rest_field._default is not _UNSET
-        }
+        dict_to_pass: dict[str, typing.Any] = {}
         if args:
             if isinstance(args[0], ET.Element):
                 dict_to_pass.update(self._init_from_xml(args[0]))
@@ -1123,7 +1124,10 @@ class _RestField:
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
         # Use _data.get() directly to avoid triggering __getitem__ which clears the cache
-        item = obj._data.get(self._rest_name)
+        item = obj._data.get(self._rest_name, _UNSET)
+        if item is _UNSET:
+            # Field not set by user; return the client default if one exists, otherwise None
+            return self._default if self._default is not _UNSET else None
         if item is None:
             return item
         if self._is_model:

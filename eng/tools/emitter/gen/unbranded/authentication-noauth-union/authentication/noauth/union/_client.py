@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING
-from typing_extensions import Self
 
 from corehttp.rest import HttpRequest, HttpResponse
 from corehttp.runtime import PipelineClient, policies
@@ -10,6 +10,11 @@ from corehttp.runtime import PipelineClient, policies
 from ._configuration import UnionClientConfiguration
 from ._operations import _UnionClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from corehttp.credentials import TokenCredential

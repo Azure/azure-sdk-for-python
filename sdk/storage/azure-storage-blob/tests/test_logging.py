@@ -3,11 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import sys
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import (
     BlobClient,
     BlobSasPermissions,
@@ -19,9 +26,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse
@@ -30,6 +34,7 @@ else:
     from urllib2 import quote
 
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
+
 
 class TestStorageLogging(StorageRecordedTestCase):
     def _setup(self, bsc):
@@ -43,7 +48,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             source_blob.upload_blob(self.source_blob_data, overwrite=True)
 
@@ -60,7 +65,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         )
         sas_source = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
-        
+
     @BlobPreparer()
     @recorded_by_proxy
     def test_logging_request_and_response_body(self, **kwargs):
@@ -68,7 +73,8 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, logging_enable=True)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, logging_enable=True)
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
         request_body = 'testloggingbody'
@@ -200,9 +206,9 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
-        
+
         request_body = 'testoverridelogging'
         blob_name = self.get_resource_name("testoverride")
         blob_client = container.get_blob_client(blob_name)
@@ -255,9 +261,9 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
-        
+
         request_body_1 = 'isolationtest1'
         request_body_2 = 'isolationtest2'
         blob_name_1 = self.get_resource_name("testblob1")
@@ -339,9 +345,9 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
-        
+
         request_body = 'testretrylogging'
         blob_name = self.get_resource_name("testretry")
         blob_client = container.get_blob_client(blob_name)
@@ -349,12 +355,13 @@ class TestStorageLogging(StorageRecordedTestCase):
 
         # Test 1: logging_body=False should prevent logging on both original and retry attempts
         call_count = 0
+
         def response_hook_fail_once(response):
             nonlocal call_count
             call_count += 1
             if call_count == 1:
                 response.http_response.status_code = 408  # Request Timeout - triggers retry
-        
+
         with LogCaptured(self) as log_captured:
             call_count = 0
             blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)

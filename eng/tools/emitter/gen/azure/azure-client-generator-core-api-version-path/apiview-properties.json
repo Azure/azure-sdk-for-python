@@ -3,5 +3,6 @@
     "CrossLanguageDefinitionId": {
         "client.alternateapiversion.service.path.PathClient.path_api_version": "Client.AlternateApiVersion.Service.Path.pathApiVersion",
         "client.alternateapiversion.service.path.aio.PathClient.path_api_version": "Client.AlternateApiVersion.Service.Path.pathApiVersion"
-    }
+    },
+    "CrossLanguageVersion": "fcdc2c1a2c90"
 }
