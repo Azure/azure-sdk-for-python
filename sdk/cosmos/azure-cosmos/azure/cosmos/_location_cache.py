@@ -36,6 +36,13 @@ from ._request_object import RequestObject
 
 logger = logging.getLogger("azure.cosmos.LocationCache")
 
+
+def _normalize_region_name(region_name: str) -> str:
+    if region_name is None:
+        return ""
+    normalized = "".join(str(region_name).strip().lower().split())
+    return normalized.replace("-", "").replace("_", "")
+
 class EndpointOperationType(object):
     NoneType = "None"
     ReadType = "Read"
@@ -120,11 +127,16 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
     :return: A filtered and reordered list of regional routing contexts.
     :rtype: list[RegionalRoutingContext]
     """
+    normalized_excluded_locations = {_normalize_region_name(location) for location in exclude_location_list}
+    normalized_circuit_breaker_locations = {_normalize_region_name(location) for location in circuit_breaker_exclude_list}
+
     # filter endpoints by excluded locations
     applicable_regional_routing_contexts = []
     user_excluded_regional_routing_contexts = []
     for regional_routing_context in regional_routing_contexts:
-        if location_name_by_endpoint.get(regional_routing_context.get_primary()) not in exclude_location_list:
+        location_name = location_name_by_endpoint.get(regional_routing_context.get_primary())
+        normalized_location_name = _normalize_region_name(location_name)
+        if normalized_location_name not in normalized_excluded_locations:
             applicable_regional_routing_contexts.append(regional_routing_context)
         else:
             user_excluded_regional_routing_contexts.append(regional_routing_context)
@@ -133,7 +145,9 @@ def _get_applicable_regional_routing_contexts(regional_routing_contexts: list[Re
     final_applicable_contexts = []
     circuit_breaker_excluded_contexts = []
     for regional_routing_context in applicable_regional_routing_contexts:
-        if location_name_by_endpoint.get(regional_routing_context.get_primary()) in circuit_breaker_exclude_list:
+        location_name = location_name_by_endpoint.get(regional_routing_context.get_primary())
+        normalized_location_name = _normalize_region_name(location_name)
+        if normalized_location_name in normalized_circuit_breaker_locations:
             circuit_breaker_excluded_contexts.append(regional_routing_context)
         else:
             final_applicable_contexts.append(regional_routing_context)
@@ -172,6 +186,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         self.account_write_locations: list[str] = []
         self.account_read_locations: list[str] = []
         self.connection_policy: ConnectionPolicy = connection_policy
+        self._config_mismatch_warning_dedupe: set[tuple[str, tuple[str, ...], tuple[str, ...]]] = set()
 
     def get_write_regional_routing_contexts(self):
         return self.write_regional_routing_contexts
@@ -227,6 +242,34 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 excluded_locations = []
 
         return excluded_locations
+
+    def _emit_config_mismatch_warning_once(self, configured_locations: list[str], available_locations: list[str], setting_name: str):
+        if not configured_locations:
+            return
+
+        available_by_normalized = {_normalize_region_name(location): location for location in available_locations}
+        unmatched_locations = [
+            location
+            for location in configured_locations
+            if _normalize_region_name(location) not in available_by_normalized
+        ]
+
+        if unmatched_locations:
+            dedupe_key = (
+                setting_name,
+                tuple(sorted(_normalize_region_name(location) for location in unmatched_locations)),
+                tuple(sorted(available_by_normalized.keys())),
+            )
+            if dedupe_key in self._config_mismatch_warning_dedupe:
+                return
+            self._config_mismatch_warning_dedupe.add(dedupe_key)
+
+            logger.warning(
+                "Ignoring %s entries that did not match account regions: %s. Available regions: %s",
+                setting_name,
+                unmatched_locations,
+                available_locations,
+            )
 
     def _get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> list[RegionalRoutingContext]:
         # Get configured excluded locations
@@ -298,14 +341,20 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         excluded_locations = self._get_configured_excluded_locations(request)
         circuit_breaker_excluded_locations = request.excluded_locations_circuit_breaker or []
 
+        normalized_excluded_locations = {_normalize_region_name(location) for location in excluded_locations}
+        normalized_circuit_breaker_locations = {
+            _normalize_region_name(location) for location in circuit_breaker_excluded_locations
+        }
+
         applicable_contexts = []
         circuit_breaker_contexts = []
         for loc_name in ordered_locations:
             if loc_name in all_contexts_by_loc:
                 context = all_contexts_by_loc[loc_name]
-                if loc_name in excluded_locations:
+                normalized_location_name = _normalize_region_name(loc_name)
+                if normalized_location_name in normalized_excluded_locations:
                     continue  # Skip user-excluded locations
-                if loc_name in circuit_breaker_excluded_locations:
+                if normalized_location_name in normalized_circuit_breaker_locations:
                     circuit_breaker_contexts.append(context)
                 else:
                     applicable_contexts.append(context)
@@ -365,6 +414,15 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
         most_preferred_location = self.effective_preferred_locations[0] if self.effective_preferred_locations else None
+        normalized_most_preferred_location = _normalize_region_name(most_preferred_location) if most_preferred_location else None
+        read_locations_by_normalized = {
+            _normalize_region_name(name): endpoint
+            for name, endpoint in self.account_read_regional_routing_contexts_by_location.items()
+        }
+        write_locations_by_normalized = {
+            _normalize_region_name(name): endpoint
+            for name, endpoint in self.account_write_regional_routing_contexts_by_location.items()
+        }
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
         if self.connection_policy.EnableEndpointDiscovery:
@@ -372,12 +430,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             should_refresh = (self.connection_policy.UseMultipleWriteLocations
                               and not self.enable_multiple_writable_locations)
 
-            if (most_preferred_location and most_preferred_location in
-                    self.account_read_regional_routing_contexts_by_location):
-                if (self.account_read_regional_routing_contexts_by_location
-                        and most_preferred_location in self.account_read_regional_routing_contexts_by_location):
-                    most_preferred_read_endpoint = (
-                        self.account_read_regional_routing_contexts_by_location)[most_preferred_location]
+            if (normalized_most_preferred_location and normalized_most_preferred_location in
+                    read_locations_by_normalized):
+                if (read_locations_by_normalized
+                        and normalized_most_preferred_location in read_locations_by_normalized):
+                    most_preferred_read_endpoint = read_locations_by_normalized[normalized_most_preferred_location]
                     if (most_preferred_read_endpoint and
                             most_preferred_read_endpoint != self.read_regional_routing_contexts[0]):
                         # For reads, we can always refresh in background as we can alternate to
@@ -394,10 +451,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     # we have an alternate write endpoint
                     return True
                 return should_refresh
-            if (most_preferred_location and
-                    most_preferred_location in self.account_write_regional_routing_contexts_by_location):
-                most_preferred_write_regional_endpoint = (
-                    self.account_write_regional_routing_contexts_by_location)[most_preferred_location]
+            if (normalized_most_preferred_location and
+                    normalized_most_preferred_location in write_locations_by_normalized):
+                most_preferred_write_regional_endpoint = write_locations_by_normalized[normalized_most_preferred_location]
                 if most_preferred_write_regional_endpoint:
                     should_refresh |= most_preferred_write_regional_endpoint != self.write_regional_routing_contexts[0]
                     return should_refresh
@@ -487,6 +543,22 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             self.write_regional_routing_contexts[0]
         )
 
+        # Config-time visibility for misconfigured region names. Dedupe ensures periodic
+        # refreshes do not re-emit identical warnings; new mismatches still surface because
+        # the dedupe key includes the available account regions snapshot.
+        if self.connection_policy.PreferredLocations:
+            self._emit_config_mismatch_warning_once(
+                self.connection_policy.PreferredLocations,
+                self.account_read_locations or self.account_write_locations,
+                "preferred_locations",
+            )
+        if self.connection_policy.ExcludedLocations:
+            self._emit_config_mismatch_warning_once(
+                list(self.connection_policy.ExcludedLocations),
+                self.account_read_locations or self.account_write_locations,
+                "excluded_locations",
+            )
+
     def get_preferred_regional_routing_contexts(
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
     ):
@@ -500,12 +572,18 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             ):
                 unavailable_endpoints = []
                 if self.effective_preferred_locations:
+                    endpoints_by_normalized_location = {
+                        _normalize_region_name(location): endpoint
+                        for location, endpoint in endpoints_by_location.items()
+                    }
+
                     # When client can not use multiple write locations, preferred locations
                     # list should only be used determining read endpoints order. If client
                     # can use multiple write locations, preferred locations list should be
                     # used for determining both read and write endpoints order.
                     for location in self.effective_preferred_locations:
-                        regional_endpoint = endpoints_by_location.get(location)
+                        normalized_location = _normalize_region_name(location)
+                        regional_endpoint = endpoints_by_normalized_location.get(normalized_location)
                         if regional_endpoint:
                             if self.is_endpoint_unavailable(regional_endpoint.get_primary(),
                                                             expected_available_operation):
@@ -582,7 +660,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 global_database_account_name = hostname_parts[0]
 
                 # Prepare the locational_database_account_name as contoso-eastus for location_name 'east us'
-                locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
+                normalized_location_name = _normalize_region_name(location_name)
+                locational_database_account_name = global_database_account_name + "-" + normalized_location_name
                 locational_database_account_name = locational_database_account_name.lower()
 
                 # Replace 'contoso' with 'contoso-eastus' and return locational_endpoint
