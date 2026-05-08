@@ -99,5 +99,6 @@
         "encode.duration.aio.operations.HeaderOperations.float64_milliseconds": "Encode.Duration.Header.float64Milliseconds",
         "encode.duration.operations.HeaderOperations.int32_milliseconds_array": "Encode.Duration.Header.int32MillisecondsArray",
         "encode.duration.aio.operations.HeaderOperations.int32_milliseconds_array": "Encode.Duration.Header.int32MillisecondsArray"
-    }
+    },
+    "CrossLanguageVersion": "59d442353391"
 }

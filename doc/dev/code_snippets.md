@@ -29,7 +29,7 @@ https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samp
 
 Instead of copying the code snippet into README which is hard to maintain and validate, we add reference to the sample snippet in README. We use the annotation `\<!-- SNIPPET:file_name.snippet_name-->` to refer the code snippet in README file.
 
-If you have a file in `samples\text_example_async.py` with a snippet named `asyncio`, you can reference it in your README like:
+If you have a file in `samples/test_example_async.py` with a snippet named `asyncio`, you can reference it in your README like:
 
 ````markdown
 <!-- SNIPPET:test_example_async.asyncio -->
@@ -40,7 +40,7 @@ If you have a file in `samples\text_example_async.py` with a snippet named `asyn
 
 > Make sure you include a Python code fence within the snippet reference!
 
-## Run update_snippet tool 
+## Run update_snippet tool
 
 The update_snippet tool is included in the [azpysdk CLI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md), which is installed with `azure-sdk-tools`.
 

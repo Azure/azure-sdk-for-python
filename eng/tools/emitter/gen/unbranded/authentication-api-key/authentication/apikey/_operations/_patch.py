@@ -5,8 +5,27 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from typing import List
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+from ._operations import _ApiKeyClientOperationsMixin as Generated
+
+
+class _ApiKeyClientOperationsMixin(Generated):
+
+    def patch_added_operation(self) -> bool:
+        """This is a placeholder for the operation that was added in the patch.
+
+        This method is a no-op and does not perform any action.
+
+        :return: Always returns True.
+        :rtype: bool
+        """
+        return True
+
+
+__all__: List[str] = [
+    "_ApiKeyClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
