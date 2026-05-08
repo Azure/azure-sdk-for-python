@@ -45,6 +45,32 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    """Connection has been provisioned."""
+    CREATING = "Creating"
+    """Connection is being created."""
+    DELETING = "Deleting"
+    """Connection is being deleted."""
+    FAILED = "Failed"
+    """Connection provisioning has failed."""
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    """Connection waiting for approval or rejection."""
+    APPROVED = "Approved"
+    """Connection approved."""
+    REJECTED = "Rejected"
+    """Connection Rejected."""
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the current operation."""
 
@@ -55,41 +81,50 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     PROVISIONING = "Provisioning"
-    """The resource is being provisioned"""
+    """The resource is being provisioned."""
     UPDATING = "Updating"
-    """The resource is updating"""
+    """The resource is updating."""
     DELETING = "Deleting"
-    """The resource is being deleted"""
+    """The resource is being deleted."""
     ACCEPTED = "Accepted"
-    """The resource create request has been accepted"""
+    """The resource create request has been accepted."""
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the public network access."""
+
+    ENABLED = "Enabled"
+    """The public network access is enabled."""
+    DISABLED = "Disabled"
+    """The public network access is disabled."""
 
 
 class PurgeableOrchestrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Purgeable orchestration state to be used in retention policies."""
 
     COMPLETED = "Completed"
-    """The orchestration is completed"""
+    """The orchestration is completed."""
     FAILED = "Failed"
-    """The orchestration is failed"""
+    """The orchestration is failed."""
     TERMINATED = "Terminated"
-    """The orchestration is terminated"""
+    """The orchestration is terminated."""
     CANCELED = "Canceled"
-    """The orchestration is canceled"""
+    """The orchestration is canceled."""
 
 
 class RedundancyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the resource redundancy."""
 
     NONE = "None"
-    """The resource is not redundant"""
+    """The resource is not redundant."""
     ZONE = "Zone"
-    """The resource is zone redundant"""
+    """The resource is zone redundant."""
 
 
 class SchedulerSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the Stock Keeping Unit (SKU) of a Durable Task Scheduler."""
 
     DEDICATED = "Dedicated"
-    """Dedicated SKU"""
+    """Dedicated SKU."""
     CONSUMPTION = "Consumption"
-    """Consumption SKU"""
+    """Consumption SKU."""

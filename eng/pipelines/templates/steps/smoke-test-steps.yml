@@ -7,12 +7,19 @@ parameters:
   - name: ArtifactName
     type: string
     default: "not-specified"
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
 
 steps:
   - task: UsePythonVersion@0
     displayName: "Use Python $(PythonVersion)"
     inputs:
       versionSpec: $(PythonVersion)
+
+  - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
 
   - script: |
       python -m pip install pip==20.0.2

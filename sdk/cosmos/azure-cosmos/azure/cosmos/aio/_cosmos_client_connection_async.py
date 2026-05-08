@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import logging
 import os
 from urllib.parse import urlparse
 import uuid
@@ -33,6 +34,7 @@ from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core import AsyncPipelineClient
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
@@ -55,6 +57,7 @@ from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
+from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
@@ -79,6 +82,8 @@ from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper_async import ReadItemsHelperAsync
 from .._user_agent_policy import CosmosUserAgentPolicy
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class CredentialDict(TypedDict, total=False):
@@ -244,6 +249,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         ]
         # after passing in the user_agent into the user agent policy the user_agent is no longer needed
         kwargs.pop("user_agent", None)
+        kwargs.pop("user_agent_overwrite", None)
 
         transport = kwargs.pop("transport", None)
         self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
@@ -253,8 +259,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
 
         self._inference_service: Optional[_InferenceService] = None
-        if self.aad_credentials:
-            self._inference_service = _InferenceService(self)
 
         self._setup_kwargs: dict[str, Any] = kwargs
         self.session: Optional[_session.Session] = None
@@ -289,7 +293,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.__container_properties_cache[container_link] = {}
 
     def _get_inference_service(self) -> Optional[_InferenceService]:
-        """Get async inference service instance"""
+        """Get async inference service instance, lazily initializing on first access."""
+        if self._inference_service is None and self.aad_credentials:
+            try:
+                self._inference_service = _InferenceService(self)
+            except ValueError as e:
+                raise exceptions.CosmosHttpResponseError(
+                    message=f"Failed to initialize inference service: {e}",
+                    response=None,
+                    status_code=http_constants.StatusCodes.BAD_REQUEST
+                ) from e
         return self._inference_service
 
     @property
@@ -716,7 +729,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         sproc: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> CosmosDict:
         """Creates a stored procedure in a collection.
 
@@ -1381,9 +1394,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Replaces a collection and return it.
 
         :param str collection_link:
-            The link to the collection entity.
+            The link to the collection.
         :param dict collection:
-            The collection to be used.
+            The Azure Cosmos collection to create.
         :param dict options:
             The request options for the request.
         :return:
@@ -1667,7 +1680,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
 
         # update session for request mutates data on server side
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
@@ -2393,7 +2406,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             await kwargs["containerProperties"](options)
             new_options = dict(options)
-            new_options["containerRID"] = self.__container_properties_cache[database_or_container_link]["_rid"]
+            new_options[Constants.ContainerRID] = self.__container_properties_cache[database_or_container_link]["_rid"]
             return (
                 await self.__QueryFeed(
                     path,
@@ -2492,7 +2505,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             if collection_link in self.__container_properties_cache:
                 new_options = dict(options)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+                new_options[Constants.ContainerRID] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
             return (
                 await self.__QueryFeed(
@@ -2647,7 +2660,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         query: Optional[Union[str, dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Queries permissions for a user.
 
@@ -3023,6 +3036,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # we need to set operation_state in kwargs as that's where it is looked at while sending the request
             kwargs.setdefault("timeout", timeout)
 
+        internal_headers_capture = kwargs.pop("_internal_response_headers_capture", None)
+
         if query:
             __GetBodiesFromQueryResult = result_fn
         else:
@@ -3070,6 +3085,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
+            if internal_headers_capture is not None:
+                internal_headers_capture.clear()
+                internal_headers_capture.update(last_response_headers)
             self._UpdateSessionIfRequired(headers, result, last_response_headers)
             if response_headers_list is not None:
                 response_headers_list.append(last_response_headers.copy())
@@ -3120,7 +3138,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if feed_range_epk is not None:
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feed_range_epk],
-                                                                                          options)
+                                                                                          dict(options))
             results: dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
             # lapping physical partition. The EPK sub range will be one of four:
@@ -3138,6 +3156,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feed_range_epk.min),
                                                     range_max=min(single_range.max, feed_range_epk.max),
                                                     isMinInclusive=True, isMaxInclusive=False)
+
+                # set the session token for this specific partition to avoid sending compound token for all partitions
+                await base.set_session_token_header_async(self, req_headers, path, request_params, options,
+                                              over_lapping_range["id"])
                 if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                     # The Epk Sub Range spans exactly one physical partition
                     # In this case we can route to the physical pk range id
@@ -3158,6 +3180,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     **kwargs
                 )
                 self.last_response_headers = last_response_headers
+                if internal_headers_capture is not None:
+                    internal_headers_capture.clear()
+                    internal_headers_capture.update(last_response_headers)
                 self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
 
                 # Introducing a temporary complex function into a critical path to handle aggregated queries,
@@ -3177,10 +3202,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
             if results:
+                if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+                    index_metrics_raw = self.last_response_headers[http_constants.HttpHeaders.IndexUtilization]
+                    self.last_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
+                        _utils.get_index_metrics_info(index_metrics_raw))
+                if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+                    query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+                    self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
+                        get_query_advice_info(query_advice_raw))
                 return __GetBodiesFromQueryResult(results)
 
         result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
         self.last_response_headers = last_response_headers
+        if internal_headers_capture is not None:
+            internal_headers_capture.clear()
+            internal_headers_capture.update(last_response_headers)
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
         # TODO: this part might become an issue since HTTP/2 can return read-only headers
@@ -3188,6 +3224,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
             self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+            query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+            self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
         if response_headers_list is not None:
             response_headers_list.append(last_response_headers.copy())
         if response_hook:
@@ -3406,9 +3445,64 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return partitionKey
 
-    def refresh_routing_map_provider(self) -> None:
-        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
-        self._routing_map_provider = SmartRoutingMapProvider(self)
+    async def refresh_routing_map_provider(
+            self,
+            collection_link: Optional[str] = None,
+            previous_routing_map: Optional[Any] = None,
+            feed_options: Optional[dict[str, Any]] = None) -> None:
+        """Refreshes routing map provider.
+
+        If collection_link is provided, refreshes only that collection.
+        When previous_routing_map is provided this is incremental; otherwise this is a collection-scoped repopulation.
+        Without collection_link, it creates a new provider instance for a full refresh.
+
+        :param str collection_link: The collection link.
+        :param object previous_routing_map: The routing map that is considered stale.
+        :param dict feed_options: The feed options for the request.
+        """
+        if collection_link:
+            try:
+                # Force a refresh for a specific collection.
+                await self._routing_map_provider.get_routing_map(
+                    collection_link,
+                    feed_options=feed_options if feed_options is not None else {},
+                    force_refresh=True,
+                    previous_routing_map=previous_routing_map
+                )
+                return
+            except (ServiceRequestError, ServiceResponseError):
+                # Transport failures during targeted refresh should degrade to full refresh.
+                _LOGGER.warning(
+                    "Targeted routing-map refresh failed for collection '%s' due to transport error. "
+                    "Falling back to full refresh.",
+                    collection_link,
+                )
+            except exceptions.CosmosHttpResponseError as e:
+                status_code = e.status_code
+                is_transient = (
+                    status_code in (http_constants.StatusCodes.REQUEST_TIMEOUT,
+                                    http_constants.StatusCodes.TOO_MANY_REQUESTS,
+                                    http_constants.StatusCodes.GONE)
+                    or (
+                        status_code is not None
+                        and status_code >= http_constants.StatusCodes.INTERNAL_SERVER_ERROR
+                    )
+                )
+                if not is_transient:
+                    raise
+                _LOGGER.warning(
+                    "Targeted routing-map refresh failed for collection '%s' with transient status code %s. "
+                    "Falling back to full refresh.",
+                    collection_link,
+                    status_code,
+                )
+        else:
+            # Full refresh - clear the shared routing map cache for this endpoint.
+            self._routing_map_provider.clear_cache()
+            return
+
+        # Fallback to full refresh when targeted refresh fails transiently.
+        self._routing_map_provider.clear_cache()
 
     async def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.

@@ -1,0 +1,21 @@
+{
+    "CrossLanguagePackageId": "Microsoft.Commerce",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.commerce.models.ErrorObjectResponse": "Microsoft.Commerce.ErrorObjectResponse",
+        "azure.mgmt.commerce.models.ErrorResponse": "Microsoft.Commerce.ErrorResponse",
+        "azure.mgmt.commerce.models.MeterInfo": "Microsoft.Commerce.MeterInfo",
+        "azure.mgmt.commerce.models.OfferTermInfo": "Microsoft.Commerce.OfferTermInfo",
+        "azure.mgmt.commerce.models.MonetaryCommitment": "Microsoft.Commerce.MonetaryCommitment",
+        "azure.mgmt.commerce.models.MonetaryCredit": "Microsoft.Commerce.MonetaryCredit",
+        "azure.mgmt.commerce.models.RecurringCharge": "Microsoft.Commerce.RecurringCharge",
+        "azure.mgmt.commerce.models.ResourceRateCardInfo": "Microsoft.Commerce.ResourceRateCardInfo",
+        "azure.mgmt.commerce.models.UsageAggregation": "Microsoft.Commerce.UsageAggregation",
+        "azure.mgmt.commerce.models.UsageSample": "Microsoft.Commerce.UsageSample",
+        "azure.mgmt.commerce.models.AggregationGranularity": "Microsoft.Commerce.AggregationGranularity",
+        "azure.mgmt.commerce.models.OfferTermInfoName": "Microsoft.Commerce.OfferTermInfoName",
+        "azure.mgmt.commerce.operations.UsageAggregatesOperations.list": "Microsoft.Commerce.UsageAggregatesOperationGroup.list",
+        "azure.mgmt.commerce.aio.operations.UsageAggregatesOperations.list": "Microsoft.Commerce.UsageAggregatesOperationGroup.list",
+        "azure.mgmt.commerce.operations.RateCardOperations.get": "Microsoft.Commerce.RateCardOperationGroup.get",
+        "azure.mgmt.commerce.aio.operations.RateCardOperations.get": "Microsoft.Commerce.RateCardOperationGroup.get"
+    }
+}

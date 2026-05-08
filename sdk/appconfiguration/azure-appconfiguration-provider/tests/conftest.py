@@ -7,10 +7,43 @@ from devtools_testutils import (
     remove_batch_sanitizers,
     add_remove_header_sanitizer,
     add_uri_string_sanitizer,
+    is_live,
 )
 import pytest
+from azure.appconfiguration import AzureAppConfigurationClient
+from azure.identity import DefaultAzureCredential
+from testcase import setup_configs, cleanup_test_resources
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+
+# Module-level storage for snapshot names created during session setup
+snapshot_names = {}
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_app_config_keys():
+    """Pre-populate App Configuration with test keys and snapshots once per session (live mode only)."""
+    if not is_live():
+        yield
+        return
+
+    endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+    if not endpoint:
+        yield
+        return
+
+    credential = DefaultAzureCredential()
+    client = AzureAppConfigurationClient(endpoint, credential)
+    keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE")
+    keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE2")
+    snap_name, ff_snap_name = setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
+
+    snapshot_names["snapshot"] = snap_name
+    snapshot_names["ff_snapshot"] = ff_snap_name
+
+    yield
+
+    cleanup_test_resources(client, snapshot_names=[snap_name, ff_snap_name])
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -24,6 +57,7 @@ def add_sanitizers(test_proxy):
         regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
     )
     add_uri_string_sanitizer()
+    # Register the longer URL2 sanitizer FIRST to prevent URL1's sanitizer from partially matching within URL2
     add_general_string_sanitizer(
         value="https://sanitized.vault.azure.net/secrets/fake-secret/",
         target=os.environ.get(
@@ -41,3 +75,14 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3430: $..id
     #  - AZSDK3447: $.key
     remove_batch_sanitizers(["AZSDK3430", "AZSDK3447"])
+
+
+@pytest.fixture(autouse=True)
+def no_startup_backoff(request, monkeypatch):
+    """Skip startup backoff delays in all tests except those testing backoff directly."""
+    if request.fspath.basename == "test_startup_retry.py":  # cspell:ignore fspath
+        return
+    monkeypatch.setattr(
+        "azure.appconfiguration.provider._azureappconfigurationprovider.get_startup_backoff",
+        lambda *args, **kwargs: (0, False),
+    )

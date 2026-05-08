@@ -66,10 +66,11 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     .. note::
 
-        The output field "details" has been renamed to "tool_call_accuracy_details" for clarity.
+        The output field "details" has been renamed to "tool_call_accuracy_properties" for clarity.
 
-        To align with our support of a diverse set of models, an output key without the `gpt_` prefix has been added.
-        To maintain backwards compatibility, the old key with the `gpt_` prefix is still be present in the output;
+        To align with our support of a diverse set of models,
+        an output key with "_score" suffix instead of the `gpt_` prefix has been added.
+        To maintain backwards compatibility, the old key with the `gpt_` prefix is still present in the output;
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
 
     """
@@ -86,7 +87,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
-    _LLM_SCORE_KEY = "tool_calls_success_level"
+    _LLM_SCORE_KEY = "score"
 
     _validator: ValidatorInterface
 
@@ -178,25 +179,32 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 tool_calls = parsed_tool_calls
 
         if not tool_calls:
-            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
+            # If no tool calls provided and response is string, use response string as tool calls as is
+            if response and isinstance(response, str):
+                tool_calls = response
+            else:
+                return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
 
-        if not isinstance(tool_calls, list):
+        if not isinstance(tool_calls, list) and not isinstance(tool_calls, str):
             tool_calls = [tool_calls]
-        if not isinstance(tool_definitions, list):
+        if not isinstance(tool_definitions, list) and not isinstance(tool_definitions, str):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
-        try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
-            )
-        except EvaluationException as e:
-            # Check if this is because no tool definitions were provided at all
-            if len(tool_definitions) == 0:
-                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
-            else:
-                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+        if isinstance(tool_calls, str) or isinstance(tool_definitions, str):
+            needed_tool_definitions = tool_definitions
+        else:
+            try:
+                needed_tool_definitions = self._extract_needed_tool_definitions(
+                    tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+                )
+            except EvaluationException as e:
+                # Check if this is because no tool definitions were provided at all
+                if len(tool_definitions) == 0:
+                    return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+                else:
+                    return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
 
-        if len(needed_tool_definitions) == 0:
+        if not needed_tool_definitions:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
         return {
@@ -223,10 +231,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self.threshold,
-                has_details=True,
             )
 
         # Preprocess messages if they are lists
@@ -249,6 +256,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self.threshold)
+
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
                 score,
@@ -264,23 +277,32 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
 
             # Format the output
-            reason = llm_output.get("chain_of_thought", "")
+            reason = llm_output.get("reason", "")
             score = float(score)
             score_result = "pass" if score >= self.threshold else "fail"
+            llm_properties = llm_output.get("properties", {}) or {}
+            llm_properties.update(
+                {
+                    "prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                    "completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                    "total_tokens": prompty_output_dict.get("total_token_count", 0),
+                    "finish_reason": prompty_output_dict.get("finish_reason", ""),
+                    "model": prompty_output_dict.get("model_id", ""),
+                    "sample_input": prompty_output_dict.get("sample_input", ""),
+                    "sample_output": prompty_output_dict.get("sample_output", ""),
+                }
+            )
             response_dict = {
                 self._result_key: score,
+                # The "gpt_" prefixed key is maintained for backwards compatibility but is deprecated.
                 f"gpt_{self._result_key}": score,
+                f"{self._result_key}_score": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_passed": score_result == "pass",
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_details": llm_output.get("details", {}),
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
 
@@ -307,7 +329,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"), self.threshold, has_details=True)
+            return self._return_not_applicable_result(eval_input.get("error_message"), self.threshold)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

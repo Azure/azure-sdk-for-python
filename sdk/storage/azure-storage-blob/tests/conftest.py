@@ -16,6 +16,7 @@ from devtools_testutils import (
     test_proxy
 )
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
@@ -31,3 +32,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=r'"EncryptionLibrary": "Python .*?"', value='"EncryptionLibrary": "Python x.x.x"')
 
     add_uri_regex_sanitizer(regex=r"\.preprod\.", value=".")
+    add_uri_regex_sanitizer(
+        regex=r"(?<=[?&]sktid=)[^&#]+",
+        value="00000000-0000-0000-0000-000000000000",
+    )

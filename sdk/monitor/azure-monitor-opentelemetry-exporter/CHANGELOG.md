@@ -1,14 +1,57 @@
 # Release History
 
-## 1.0.0b49 (Unreleased)
+## 1.0.0b52 (Unreleased)
 
 ### Features Added
-
-- Add Browser SDK loader SDK Stats feature bit ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+- Add logger name to custom dimensions for Message, Exception and Event telemetry
+  ([#46096](https://github.com/Azure/azure-sdk-for-python/pull/46096))
+- Add support for populating SDK version from distro and Microsoft OpenTelemetry distro environment variables
+  ([#46613](https://github.com/Azure/azure-sdk-for-python/pull/46613))
 
 ### Breaking Changes
+- Dropped support for Python 3.9. This package now supports Python 3.10+. [Follows upstream otel dropping support](https://github.com/open-telemetry/opentelemetry-python/pull/5076)
+  ([#46694](https://github.com/Azure/azure-sdk-for-python/pull/46694))
 
 ### Bugs Fixed
+- Fix `success` field on HTTP request telemetry resolving to an integer instead of a boolean when no status code is present
+  ([#46311](https://github.com/Azure/azure-sdk-for-python/pull/46311))
+
+### Other Changes
+
+## 1.0.0b51 (2026-04-07)
+
+### Bugs Fixed
+- Added credential authentication support for customer sdkstats
+  ([#46143](https://github.com/Azure/azure-sdk-for-python/pull/46143))
+
+## 1.0.0b50 (2026-04-03)
+
+### Bugs Fixed
+- Fix duplicate authentication policy in live metrics exporter causing Unauthorized errors
+  for authenticated Application Insights resources
+  ([#46024](https://github.com/Azure/azure-sdk-for-python/pull/46024))
+- Suppress internal sdkstats HTTP pipeline logs from appearing in user's logs
+  ([#45966](https://github.com/Azure/azure-sdk-for-python/pull/45966))
+- Kubernetes pod name takes precedence when populating `cloud_RoleInstance`
+  ([#45884](https://github.com/Azure/azure-sdk-for-python/pull/45884))
+
+### Other Changes
+- Revert custom properties limit to 8kb
+  ([#46066](https://github.com/Azure/azure-sdk-for-python/pull/46066))
+
+## 1.0.0b49 (2026-03-19)
+
+### Features Added
+- Added a 256kb custom properties truncation limit on specific GenAI attributes
+  ([#45749](https://github.com/Azure/azure-sdk-for-python/pull/45749))
+- Add Browser SDK loader SDK Stats feature bit
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
+
+### Bugs Fixed
+- Exempt specific GenAI attributes values from custom properties truncation
+  ([#45596](https://github.com/Azure/azure-sdk-for-python/pull/45596))
+- Fix attributes override in Rate Limited Sampler
+  ([#45592](https://github.com/Azure/azure-sdk-for-python/pull/45592))
 - Add environment variable to disable/enable custom properties truncation
   ([#45479](https://github.com/Azure/azure-sdk-for-python/pull/45479))
 - Fix io counters import issue in performance counters
@@ -19,6 +62,13 @@
   ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes -
+[core](https://github.com/open-telemetry/opentelemetry-python/pull/4919) and [contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/pull/4210)
+  ([#45516](https://github.com/Azure/azure-sdk-for-python/pull/45516))
+- Generate exporter with TypeSpec
+  ([#44442](https://github.com/Azure/azure-sdk-for-python/pull/44442))
+- Generate LiveMetrics from TypeSpec
+  ([#44696](https://github.com/Azure/azure-sdk-for-python/pull/44696))
 
 ## 1.0.0b48 (2026-02-05)
 
