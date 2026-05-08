@@ -1,5 +1,10 @@
 ## Release History
 
+### 4.14.7 (Unreleased)
+
+#### Bugs Fixed
+* Fixed bug where region names in `preferred_locations` and `excluded_locations` (client-level and per-request) were matched case-sensitively and required exact spacing. See [PR 46792](https://github.com/Azure/azure-sdk-for-python/pull/46792)
+
 ### 4.14.6 (2026-02-02)
 
 #### Bugs Fixed
