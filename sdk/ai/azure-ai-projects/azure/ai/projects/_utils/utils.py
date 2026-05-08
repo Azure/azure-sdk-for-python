@@ -23,28 +23,43 @@ FileType = Union[
 ]
 
 
-def serialize_multipart_data_entry(data_entry: Any) -> Any:
+def serialize_multipart_data_entry(data_entry: Any) -> tuple[Any, Optional[str]]:
+    """Return a tuple of (serialized value, content type) for a multipart data entry.
+
+    Structured values (lists, tuples, dicts, models) are serialized to a JSON string and
+    paired with ``application/json`` so the resulting multipart part has the correct
+    ``Content-Type`` header. Other values are returned unchanged with ``None`` content type.
+    """
     if isinstance(data_entry, (list, tuple, dict, Model)):
-        return json.dumps(data_entry, cls=SdkJSONEncoder, exclude_readonly=True)
-    return data_entry
+        return json.dumps(data_entry, cls=SdkJSONEncoder, exclude_readonly=True), "application/json"
+    return data_entry, None
 
 
 def prepare_multipart_form_data(
     body: Mapping[str, Any], multipart_fields: list[str], data_fields: list[str]
 ) -> list[FileType]:
     files: list[FileType] = []
+
+    # Emit data fields (e.g. JSON ``metadata`` parts) before file fields. Some servers expect
+    # the JSON metadata part to appear before the binary file part in the multipart body, even
+    # though the multipart spec does not guarantee ordering. Emit them first to be safe.
+    for data_field in data_fields:
+        data_entry = body.get(data_field)
+        if data_entry:
+            serialized, content_type = serialize_multipart_data_entry(data_entry)
+            if content_type is not None:
+                # Send the part with an explicit Content-Type (e.g. application/json) so
+                # servers that distinguish JSON multipart parts from text/plain form fields
+                # can parse the value correctly.
+                files.append((data_field, (None, str(serialized), content_type)))  # type: ignore[arg-type]
+            else:
+                files.append((data_field, str(serialized)))
+
     for multipart_field in multipart_fields:
         multipart_entry = body.get(multipart_field)
         if isinstance(multipart_entry, list):
             files.extend([(multipart_field, e) for e in multipart_entry])
         elif multipart_entry:
             files.append((multipart_field, multipart_entry))
-
-    # if files is empty, sdk core library can't handle multipart/form-data correctly, so
-    # we put data fields into files with filename as None to avoid that scenario.
-    for data_field in data_fields:
-        data_entry = body.get(data_field)
-        if data_entry:
-            files.append((data_field, str(serialize_multipart_data_entry(data_entry))))
 
     return files
