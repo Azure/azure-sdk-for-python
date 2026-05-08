@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.profiles.update_v2(
+    response = client.profiles.update(
         resource_group_name="azuresdkfornetautoresttrafficmanager2583",
         profile_name="azuresdkfornetautoresttrafficmanager6192",
         parameters={"properties": {"recordType": "CNAME"}},

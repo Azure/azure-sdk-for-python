@@ -68,8 +68,8 @@ class TestTrafficManagerManagementEndpointsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_endpoints_update_v2(self, resource_group):
-        response = await self.client.endpoints.update_v2(
+    async def test_endpoints_update(self, resource_group):
+        response = await self.client.endpoints.update(
             resource_group_name=resource_group.name,
             profile_name="str",
             endpoint_type="str",

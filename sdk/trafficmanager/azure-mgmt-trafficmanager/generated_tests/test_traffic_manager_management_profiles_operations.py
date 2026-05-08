@@ -92,8 +92,8 @@ class TestTrafficManagerManagementProfilesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_profiles_update_v2(self, resource_group):
-        response = self.client.profiles.update_v2(
+    def test_profiles_update(self, resource_group):
+        response = self.client.profiles.update(
             resource_group_name=resource_group.name,
             profile_name="str",
             parameters={

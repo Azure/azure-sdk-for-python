@@ -93,8 +93,8 @@ class TestTrafficManagerManagementProfilesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_profiles_update_v2(self, resource_group):
-        response = await self.client.profiles.update_v2(
+    async def test_profiles_update(self, resource_group):
+        response = await self.client.profiles.update(
             resource_group_name=resource_group.name,
             profile_name="str",
             parameters={

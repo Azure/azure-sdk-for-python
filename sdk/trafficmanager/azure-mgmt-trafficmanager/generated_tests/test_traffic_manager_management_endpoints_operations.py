@@ -67,8 +67,8 @@ class TestTrafficManagerManagementEndpointsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_endpoints_update_v2(self, resource_group):
-        response = self.client.endpoints.update_v2(
+    def test_endpoints_update(self, resource_group):
+        response = self.client.endpoints.update(
             resource_group_name=resource_group.name,
             profile_name="str",
             endpoint_type="str",

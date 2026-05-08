@@ -34,12 +34,11 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._validation import api_version_validation
 from ...operations._operations import (
     build_endpoints_create_or_update_request,
     build_endpoints_delete_request,
     build_endpoints_get_request,
-    build_endpoints_update_v2_request,
+    build_endpoints_update_request,
     build_geographic_hierarchies_get_default_request,
     build_heat_map_get_request,
     build_profiles_check_traffic_manager_name_availability_v2_request,
@@ -49,7 +48,7 @@ from ...operations._operations import (
     build_profiles_get_request,
     build_profiles_list_by_resource_group_request,
     build_profiles_list_by_subscription_request,
-    build_profiles_update_v2_request,
+    build_profiles_update_request,
     build_traffic_manager_user_metrics_keys_create_or_update_request,
     build_traffic_manager_user_metrics_keys_delete_request,
     build_traffic_manager_user_metrics_keys_get_request,
@@ -368,13 +367,13 @@ class EndpointsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_type: Union[str, _models.EndpointType],
         endpoint_name: str,
-        parameters: _models.EndpointUpdate,
+        parameters: _models.Endpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -393,7 +392,7 @@ class EndpointsOperations:
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to the Update operation.
          Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.EndpointUpdate
+        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -403,7 +402,7 @@ class EndpointsOperations:
         """
 
     @overload
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
@@ -438,7 +437,7 @@ class EndpointsOperations:
         """
 
     @overload
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
@@ -473,29 +472,13 @@ class EndpointsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2024-04-01-preview",
-        params_added_on={
-            "2024-04-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "profile_name",
-                "endpoint_type",
-                "endpoint_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2024-04-01-preview"],
-    )
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
         endpoint_type: Union[str, _models.EndpointType],
         endpoint_name: str,
-        parameters: Union[_models.EndpointUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.Endpoint, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Endpoint:
         """Update a Traffic Manager endpoint.
@@ -511,8 +494,8 @@ class EndpointsOperations:
         :param endpoint_name: The name of the Traffic Manager endpoint. Required.
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to the Update operation. Is
-         one of the following types: EndpointUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.EndpointUpdate or JSON or IO[bytes]
+         one of the following types: Endpoint, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint or JSON or IO[bytes]
         :return: Endpoint. The Endpoint is compatible with MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.Endpoint
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -538,7 +521,7 @@ class EndpointsOperations:
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_endpoints_update_v2_request(
+        _request = build_endpoints_update_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             endpoint_type=endpoint_type,
@@ -937,11 +920,11 @@ class ProfilesOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: _models.ProfileUpdate,
+        parameters: _models.Profile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -955,7 +938,7 @@ class ProfilesOperations:
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to the Update operation.
          Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.ProfileUpdate
+        :type parameters: ~azure.mgmt.trafficmanager.models.Profile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -965,7 +948,7 @@ class ProfilesOperations:
         """
 
     @overload
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
@@ -993,7 +976,7 @@ class ProfilesOperations:
         """
 
     @overload
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
@@ -1021,25 +1004,11 @@ class ProfilesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2024-04-01-preview",
-        params_added_on={
-            "2024-04-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "profile_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2024-04-01-preview"],
-    )
-    async def update_v2(
+    async def update(
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: Union[_models.ProfileUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.Profile, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.Profile:
         """Update a Traffic Manager profile.
@@ -1050,8 +1019,8 @@ class ProfilesOperations:
         :param profile_name: The name of the Traffic Manager profile. Required.
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to the Update operation. Is
-         one of the following types: ProfileUpdate, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.ProfileUpdate or JSON or IO[bytes]
+         one of the following types: Profile, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.trafficmanager.models.Profile or JSON or IO[bytes]
         :return: Profile. The Profile is compatible with MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.Profile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1077,7 +1046,7 @@ class ProfilesOperations:
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_profiles_update_v2_request(
+        _request = build_profiles_update_request(
             resource_group_name=resource_group_name,
             profile_name=profile_name,
             subscription_id=self._config.subscription_id,

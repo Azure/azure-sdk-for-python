@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.endpoints.update_v2(
+    response = client.endpoints.update(
         resource_group_name="azuresdkfornetautoresttrafficmanager1421",
         profile_name="azsmnet6386",
         endpoint_type="ExternalEndpoints",

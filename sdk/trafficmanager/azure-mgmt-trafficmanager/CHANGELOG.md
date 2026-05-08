@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (2026-04-14)
+## 2.0.0b1 (2026-05-08)
 
 ### Features Added
 
@@ -10,16 +10,11 @@
   - Model `TrafficManagerGeographicHierarchy` added property `properties`
   - Model `UserMetricsModel` added property `properties`
   - Added model `CloudError`
-  - Added model `EndpointUpdate`
   - Added model `GeographicHierarchyProperties`
   - Added model `HeatMapProperties`
   - Added enum `HeatMapType`
-  - Added model `ProfilePropertiesUpdate`
-  - Added model `ProfileUpdate`
   - Added enum `RecordType`
   - Added model `UserMetricsProperties`
-  - Model `EndpointsOperations` added method `update_v2`
-  - Model `ProfilesOperations` added method `update_v2`
 
 ### Breaking Changes
 
@@ -29,11 +24,9 @@
   - Model `HeatMapModel` deleted or renamed its instance variable `traffic_flows`
   - Model `TrafficManagerGeographicHierarchy` deleted or renamed its instance variable `geographic_hierarchy`
   - Model `UserMetricsModel` deleted or renamed its instance variable `key`
-  - Deleted or renamed method `EndpointsOperations.update`
   - Method `HeatMapOperations.get` changed its parameter `top_left` from `positional_or_keyword` to `keyword_only`
   - Method `HeatMapOperations.get` changed its parameter `bot_right` from `positional_or_keyword` to `keyword_only`
   - Method `HeatMapOperations.get` inserted a `positional_or_keyword` parameter `heat_map_type`
-  - Deleted or renamed method `ProfilesOperations.update`
 
 ## 1.1.0 (2023-06-16)
 
