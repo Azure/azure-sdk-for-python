@@ -40,11 +40,33 @@ list_samples() {
     echo ""
 }
 
-# Check for --list flag
-if [ "$1" == "--list" ] || [ "$1" == "-l" ]; then
-    list_samples
-    exit 0
-fi
+show_help() {
+    cat <<EOF
+Usage: $(basename "$0") <sample_name> [options]
+
+Run a Python SDK sample for Azure AI Content Understanding.
+
+Arguments:
+  <sample_name>   Sample name (e.g. sample_analyze_url), with or without .py
+                  extension. Append "_async" to run the async variant.
+
+Options:
+  --list, -l      List all available samples and exit.
+  --help, -h      Show this help message.
+
+Examples:
+  $(basename "$0") sample_analyze_url
+  $(basename "$0") sample_analyze_invoice.py
+  $(basename "$0") sample_analyze_url_async
+  $(basename "$0") --list
+EOF
+}
+
+# Check for --help / --list flags
+case "$1" in
+    --help|-h) show_help; exit 0 ;;
+    --list|-l) list_samples; exit 0 ;;
+esac
 
 # Check if sample name is provided
 if [ -z "$1" ]; then
