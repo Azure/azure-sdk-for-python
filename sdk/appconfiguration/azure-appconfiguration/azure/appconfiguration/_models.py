@@ -602,6 +602,7 @@ class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instan
         self._accept_datetime = kwargs.get("accept_datetime")
         self._select = kwargs.get("select")
         self._tags = kwargs.get("tags")
+        self._snapshot = kwargs.get("snapshot")
         self._etags: List[str] = kwargs.get("etags", [])
         self._current_etag = 0
         self._match_condition = kwargs.get("match_condition")
@@ -669,6 +670,7 @@ class ConfigurationSettingPropertiesPaged(
             accept_datetime=self._accept_datetime,
             select=self._select,
             tags=self._tags,
+            snapshot=self._snapshot,
             etag=etag,
             match_condition=self._match_condition,
             continuation_token=continuation_token,
@@ -729,6 +731,7 @@ class ConfigurationSettingPropertiesPagedAsync(
             accept_datetime=self._accept_datetime,
             select=self._select,
             tags=self._tags,
+            snapshot=self._snapshot,
             etag=etag,
             match_condition=self._match_condition,
             continuation_token=continuation_token,

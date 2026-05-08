@@ -164,7 +164,7 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> ItemPaged[ConfigurationSetting]:
+    ) -> ConfigurationSettingPaged:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label, tags and accept_datetime. For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value?pivots=v23-11#supported-filters.
@@ -183,7 +183,7 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :rtype: ~azure.appconfiguration.ConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
 
@@ -213,7 +213,7 @@ class AzureAppConfigurationClient:
         snapshot_name: str,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> ItemPaged[ConfigurationSetting]:
+    ) -> ConfigurationSettingPaged:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         fields to present in return.
 
@@ -222,12 +222,12 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :rtype: ~azure.appconfiguration.ConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
     @distributed_trace
-    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> ItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> ConfigurationSettingPaged:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -237,12 +237,13 @@ class AzureAppConfigurationClient:
         snapshot_name = kwargs.pop("snapshot_name", None)
 
         if snapshot_name is not None:
-            return self._impl.get_key_values(  # type: ignore[return-value]
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+            return ConfigurationSettingPaged(
+                command,
                 snapshot=snapshot_name,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                **kwargs,
+                page_iterator_class=ConfigurationSettingPropertiesPaged,
             )
         tags = kwargs.pop("tags_filter", None)
         key_filter, kwargs = get_key_filter(*args, **kwargs)

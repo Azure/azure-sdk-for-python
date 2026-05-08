@@ -172,7 +172,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :param str continuation_token: An opaque continuation token.
-        :return: A dict containing the result key-values and pagination info.
+        :return: A dict containing ``items`` (list of key-values) and ``@nextLink`` (pagination URL or None).
         :rtype: dict
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -288,7 +288,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :param str continuation_token: An opaque continuation token.
-        :return: result response with headers
+        :return: A dict containing ``items`` (empty list) and ``@nextLink`` (pagination URL or None).
         :rtype: dict
         :raises ~azure.core.exceptions.HttpResponseError:
         """
