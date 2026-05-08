@@ -18,24 +18,18 @@
   - Added model `TrackedResourceWithSettableIdOptionalLocation`
   - Added model `TrackedResourceWithSettableName`
   - Added model `WritableResource`
-  - Operation group `IpamPoolsOperations` added parameter `etag` in method `begin_create`
-  - Operation group `IpamPoolsOperations` added parameter `match_condition` in method `begin_create`
-  - Operation group `IpamPoolsOperations` added parameter `etag` in method `begin_delete`
-  - Operation group `IpamPoolsOperations` added parameter `match_condition` in method `begin_delete`
-  - Operation group `IpamPoolsOperations` added parameter `etag` in method `update`
-  - Operation group `IpamPoolsOperations` added parameter `match_condition` in method `update`
-  - Operation group `NetworkGroupsOperations` added parameter `etag` in method `create_or_update`
-  - Operation group `NetworkGroupsOperations` added parameter `match_condition` in method `create_or_update`
-  - Operation group `VerifierWorkspacesOperations` added parameter `etag` in method `begin_delete`
-  - Operation group `VerifierWorkspacesOperations` added parameter `match_condition` in method `begin_delete`
-  - Operation group `VerifierWorkspacesOperations` added parameter `etag` in method `create`
-  - Operation group `VerifierWorkspacesOperations` added parameter `match_condition` in method `create`
-  - Operation group `VerifierWorkspacesOperations` added parameter `etag` in method `update`
-  - Operation group `VerifierWorkspacesOperations` added parameter `match_condition` in method `update`
 
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Method `IpamPoolsOperations.begin_create` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `IpamPoolsOperations.begin_delete` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `IpamPoolsOperations.update` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `NetworkGroupsOperations.create_or_update` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `VerifierWorkspacesOperations.begin_delete` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `VerifierWorkspacesOperations.create` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `VerifierWorkspacesOperations.update` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
   - Model `ConnectionMonitorEndpointFilter` renamed its instance variable `items` to `items_property`
   - Model `ExceptionEntry` renamed its instance variable `values` to `values_property`
   - Model `FilterItems` renamed its instance variable `values` to `values_property`
