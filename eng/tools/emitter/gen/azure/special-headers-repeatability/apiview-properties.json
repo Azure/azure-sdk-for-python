@@ -1,0 +1,8 @@
+{
+    "CrossLanguagePackageId": "SpecialHeaders.Repeatability",
+    "CrossLanguageDefinitionId": {
+        "specialheaders.repeatability.RepeatabilityClient.immediate_success": "SpecialHeaders.Repeatability.immediateSuccess",
+        "specialheaders.repeatability.aio.RepeatabilityClient.immediate_success": "SpecialHeaders.Repeatability.immediateSuccess"
+    },
+    "CrossLanguageVersion": "1870ef8a7807"
+}

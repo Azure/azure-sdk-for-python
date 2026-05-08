@@ -30,7 +30,7 @@ from typing import Optional, cast, Union, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from ...rest import HttpResponse, AsyncHttpResponse, HttpRequest
-from ...utils._utils import _FixedOffset, case_insensitive_dict
+from ...utils._utils import case_insensitive_dict
 
 if TYPE_CHECKING:
     from ...runtime.pipeline import PipelineResponse
@@ -49,7 +49,7 @@ def _parse_http_date(text: str) -> datetime.datetime:
     if not parsed_date:
         raise ValueError("Invalid HTTP date")
     tz_offset = cast(int, parsed_date[9])  # Look at the code, tz_offset is always an int, at worst 0
-    return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(tz_offset / 60))
+    return datetime.datetime(*parsed_date[:6], tzinfo=datetime.timezone(datetime.timedelta(seconds=tz_offset)))
 
 
 def parse_retry_after(retry_after: str) -> float:

@@ -180,6 +180,7 @@ class RAIServiceScorer(TrueFalseScorer):
             "query": "query",
             "response": response_text,
             "context": context,
+            "scenario": "redteam",
         }
 
         # Get metric and annotation task for risk category

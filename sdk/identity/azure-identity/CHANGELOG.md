@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Fixed `AzureDeveloperCliCredential` to correctly parse error messages from Azure Developer CLI v1.23.7 and later, which previously caused raw JSON to surface in `ClientAuthenticationError` instead of the underlying error text.
+
 ### Other Changes
 
 - Added `RequestIdPolicy` to the default pipeline policies to ensure a unique `x-ms-client-request-id` header is sent with each request. ([#46070](https://github.com/Azure/azure-sdk-for-python/pull/46070))

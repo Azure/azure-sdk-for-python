@@ -68,6 +68,11 @@ def get_venv_python(venv_path: str) -> str:
     return os.path.join(venv_path, bin_dir, python_exe)
 
 
+def _is_auth_error(output: str) -> bool:
+    """Return True if the output text indicates a 401 Unauthorized error from a package feed."""
+    return "401" in output or "Unauthorized" in output
+
+
 def install_into_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
     """Install the requirements into an existing venv (venv_path) without activating it.
 
@@ -84,7 +89,19 @@ def install_into_venv(venv_path_or_executable: str, requirements: List[str], wor
         cmd += ["--python", py]
 
     # todo: clean this up so that we're using run_logged from #42862
-    subprocess.check_call(cmd, cwd=working_directory)
+    result = subprocess.run(cmd, cwd=working_directory, capture_output=True, text=True)
+    if result.stdout:
+        print(result.stdout, end="")
+    if result.stderr:
+        print(result.stderr, end="", file=sys.stderr)
+    if result.returncode != 0:
+        if _is_auth_error(result.stderr) or _is_auth_error(result.stdout):
+            raise RuntimeError(
+                "Received a 401 Unauthorized error while installing packages. "
+                "This may indicate missing authentication for the package feed. "
+                "See https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#authentication-for-upstream-pull-through"
+            )
+        raise subprocess.CalledProcessError(result.returncode, cmd)
 
 
 def uninstall_from_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:

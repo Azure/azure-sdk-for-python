@@ -78,6 +78,7 @@ httpx
 pandas
 nltk
 azure-monitor-opentelemetry
+microsoft-opentelemetry
 python-dotenv
 pyrit
 prompty
