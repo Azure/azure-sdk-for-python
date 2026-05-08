@@ -6,27 +6,29 @@
 
 * New Agent tool `FabricIQPreviewTool`.
 * New Agent tool `ToolboxSearchPreviewTool`.
-* New string properties `description` and `name` added to all Agent tools.
+* New optional string properties `description` and `name` added to Agent tools which did not have them before.
 * New `.beta.datasets` sub-client with data generation job operations: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
-* New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New evaluator generation job operations on `.beta.evaluators`: `create_generation_job`, `get_generation_job`, `list_generation_jobs`, `cancel_generation_job`, `delete_generation_job`.
 * New methods on `.beta.agents` sub-client for code-based hosted agents: `update_agent_from_code()`, `create_agent_version_from_code()`, `download_agent_version_code()`, `download_agent_code()`.
+* New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 
 ### Breaking Changes
 
-Breaking changes in beta operations:
-* Renamed model `AgentEndpoint` to `AgentEndpointConfig`.
-* Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
-* Required keyword argument `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
+Breaking changes in beta methods:
+* Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
-* Renamed model `DeleteSkillResponse` to `DeleteSkillResult`.
-* Renamed model `PendingUploadResponse` to `PendingUploadResult`.
-* Renamed model `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
-* Renamed model `SessionFileWriteResponse` to `SessionFileWriteResult`.
-* Renamed model `SkillObject` to `SkillDetails`.
-* Removed model `FabricIQPreviewToolParameters`.
-* Removed model `WorkIQPreviewToolParameters`.
-* Renamed argument `body` to `content` in `.beta.skills.create_from_package()` method.
+* Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
+
+Breaking changes in beta classes:
+* Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
+* Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
+* Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
+* Renamed class `PendingUploadResponse` to `PendingUploadResult`.
+* Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
+* Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
+* Renamed class `SkillObject` to `SkillDetails`.
+* Removed class `FabricIQPreviewToolParameters`.
+* Removed class `WorkIQPreviewToolParameters`.
 
 ### Bugs Fixed
 

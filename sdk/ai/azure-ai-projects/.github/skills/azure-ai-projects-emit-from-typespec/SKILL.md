@@ -105,7 +105,7 @@ This script applies azure-ai-projects-specific corrections to the emitted code (
 
 ---
 
-## Step 6: Fix patched code
+## Step 6: Fix patched code related to preview feature headers
 
 The emitted code may have introduced another beta sub-client (a new property on class `BetaOperations`). It may have also added another enum value to the existing internal class `_FoundryFeaturesOptInKeys`. This means that the client library needs to set a new HTTP request header when making REST API calls to the service, to opt-in to the new service features which are still in preview. If that's the case, do the following:
 
@@ -119,13 +119,22 @@ If a new enum value was added to `_AgentDefinitionOptInKeys`, please print a not
 
 ---
 
-## Step 7: Install package from sources
+## Step 7: Update samples and tests
+
+If there were any breaking changes in existing APIs, like class or method renames:
+* update the patched code accordingly in the client library to reflect those changes. Changes should be made to Python source file names that start with "_patch", under the `azure\ai\projects` folder.
+* update the samples accordingly to reflect those changes. Changes should be made under `sdk/ai/azure-ai-projects/samples` folder.
+* update the tests accordingly to reflect those changes. Changes should be made under `sdk/ai/azure-ai-projects/tests` folder.
+
+---
+
+## Step 8: Install package from sources
 
 In the folder `sdk\ai\azure-ai-projects`, run `pip install -e .` to install the package from sources. If there are any errors, stop and report the error to the user. Do not continue.
 
 ---
 
-## Step 8: Update CHANGELOG.md
+## Step 9: Update CHANGELOG.md
 
 Use the **`azsdk-common-generate-sdk-locally`** skill's changelog capability (`azsdk_package_update_changelog_content`) to update `CHANGELOG.md` in the `sdk/ai/azure-ai-projects` folder with a summary of changes from the TypeSpec emit. Some guidelines to follow:
 * Start by examining the public SDK API surface of the latest released version of the azure-ai-projects package. The source code for this version can be found in the Main branch of the `azure-sdk-for-python` repository, in the folder `sdk\ai\azure-ai-projects`. 
@@ -133,12 +142,6 @@ Use the **`azsdk-common-generate-sdk-locally`** skill's changelog capability (`a
 * Look at the existing change log from the latest version (if exists) and edit or add to it to capture all the changes you see. If a change log does not exist for the current version at the top of `CHANGELOG.md`, create a new one.
 * If a new method was added, there is no need to add the list of all new classes that define the inputs and output of the method. It's enough to mention that the new method was added.
 * Show the user the proposed changelog entry and ask for confirmation or edits before saving.
-
----
-
-## Step 9: Update samples and tests
-
-If there were any breaking changes in existing APIs, like class or method renames, update the samples and tests accordingly to reflect those changes. Changes should be made in the "samples" and "tests" folders under `sdk/ai/azure-ai-projects`.
 
 ---
 
@@ -167,7 +170,9 @@ gh pr create --draft --base <BASE_BRANCH> --head <topic-branch> --assignee @me -
 - **Title:** Use a descriptive title such as `[azure-ai-projects] Emit SDK from TypeSpec (<short description>)`.
 - **Body:** Include which TypeSpec source was used and a summary of the changelog entry.
 
-Show the user the PR URL when done.
+You must show the user the resulting PR URL on screen when done, before you continue to the next step.
+
+Open a new tab in the default browser and navigate to the PR URL.
 
 ---
 
