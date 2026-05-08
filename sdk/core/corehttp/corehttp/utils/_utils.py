@@ -11,6 +11,7 @@ from typing import (
     Iterator,
     Mapping,
     MutableMapping,
+    MutableSet,
     Optional,
     Tuple,
     Union,
@@ -132,6 +133,45 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
+
+class CaseInsensitiveSet(MutableSet[str]):
+    """A set that stores values in their original form but performs
+    case-insensitive lookups via a pre-computed lowercase cache.
+
+    :param data: Initial values for the set.
+    :type data: Iterable[str]
+    """
+
+    def __init__(self, data: Optional[Iterable[str]] = None) -> None:
+        self._lower_to_original: Dict[str, str] = {}
+        if data:
+            for item in data:
+                self.add(item)
+
+    def __contains__(self, item: object) -> bool:
+        if not isinstance(item, str):
+            return False
+        return item.lower() in self._lower_to_original
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._lower_to_original.values())
+
+    def __len__(self) -> int:
+        return len(self._lower_to_original)
+
+    def add(self, value: str) -> None:
+        lower = value.lower()
+        if lower not in self._lower_to_original:
+            self._lower_to_original[lower] = value
+
+    def discard(self, value: str) -> None:
+        self._lower_to_original.pop(value.lower(), None)
+
+    def update(self, *others: Iterable[str]) -> None:
+        for other in others:
+            for item in other:
+                self.add(item)
 
 
 def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
