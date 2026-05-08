@@ -19,6 +19,14 @@ Breaking changes in beta operations:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
 * Required keyword argument `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
+* Renamed model `DeleteSkillResponse` to `DeleteSkillResult`.
+* Renamed model `PendingUploadResponse` to `PendingUploadResult`.
+* Renamed model `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
+* Renamed model `SessionFileWriteResponse` to `SessionFileWriteResult`.
+* Renamed model `SkillObject` to `SkillDetails`.
+* Removed model `FabricIQPreviewToolParameters`.
+* Removed model `WorkIQPreviewToolParameters`.
+* Renamed argument `body` to `content` in `.beta.skills.create_from_package()` method.
 
 ### Bugs Fixed
 

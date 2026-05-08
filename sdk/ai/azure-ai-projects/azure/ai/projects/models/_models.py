@@ -4759,7 +4759,7 @@ class DeleteMemoryStoreResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteSkillResponse(_Model):
+class DeleteSkillResult(_Model):
     """A deleted skill Object.
 
     :ivar name: The unique name of the skill. Required.
@@ -6019,43 +6019,10 @@ class FabricDataAgentToolParameters(_Model):
 
 
 class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
-    """FabricIQPreviewTool.
+    """A FabricIQ server-side tool.
 
     :ivar type: The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.FABRIC_IQ_PREVIEW
-    :ivar fabric_iq_preview: The FabricIQ tool parameters. Required.
-    :vartype fabric_iq_preview: ~azure.ai.projects.models.FabricIQPreviewToolParameters
-    """
-
-    type: Literal[ToolType.FABRIC_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW."""
-    fabric_iq_preview: "_models.FabricIQPreviewToolParameters" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The FabricIQ tool parameters. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        fabric_iq_preview: "_models.FabricIQPreviewToolParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.FABRIC_IQ_PREVIEW  # type: ignore
-
-
-class FabricIQPreviewToolParameters(_Model):
-    """FabricIQPreviewToolParameters.
-
     :ivar project_connection_id: The ID of the FabricIQ project connection. Required.
     :vartype project_connection_id: str
     :ivar server_label: (Optional) The label of the FabricIQ MCP server to connect to.
@@ -6066,8 +6033,14 @@ class FabricIQPreviewToolParameters(_Model):
     :ivar require_approval: (Optional) Whether the agent requires approval before executing
      actions. Default is always. Is either a MCPToolRequireApproval type or a str type.
     :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
     """
 
+    type: Literal[ToolType.FABRIC_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'fabric_iq_preview'. Required. FABRIC_IQ_PREVIEW."""
     project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the FabricIQ project connection. Required."""
     server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6080,6 +6053,10 @@ class FabricIQPreviewToolParameters(_Model):
     )
     """(Optional) Whether the agent requires approval before executing actions. Default is always. Is
      either a MCPToolRequireApproval type or a str type."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined name for this tool or configuration."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user-defined description for this tool or configuration."""
 
     @overload
     def __init__(
@@ -6089,6 +6066,8 @@ class FabricIQPreviewToolParameters(_Model):
         server_label: Optional[str] = None,
         server_url: Optional[str] = None,
         require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -6100,6 +6079,7 @@ class FabricIQPreviewToolParameters(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type = ToolType.FABRIC_IQ_PREVIEW  # type: ignore
 
 
 class FieldMapping(_Model):
@@ -9143,7 +9123,7 @@ class PendingUploadRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PendingUploadResponse(_Model):
+class PendingUploadResult(_Model):
     """Represents the response for a pending upload request.
 
     :ivar blob_reference: Container-level read, write, list SAS. Required.
@@ -10144,7 +10124,7 @@ class SessionDirectoryEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionDirectoryListResponse(_Model):
+class SessionDirectoryListResult(_Model):
     """Response from listing a directory in a session sandbox.
 
     :ivar path: The path that was listed, relative to the session home directory. Required.
@@ -10179,7 +10159,7 @@ class SessionDirectoryListResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SessionFileWriteResponse(_Model):
+class SessionFileWriteResult(_Model):
     """Response from uploading a file to a session sandbox.
 
     :ivar path: The path where the file was written, relative to the session home directory.
@@ -10398,7 +10378,7 @@ class SimpleQnADataGenerationJobOptions(DataGenerationJobOptions, discriminator=
         self.type = DataGenerationJobType.SIMPLE_QNA  # type: ignore
 
 
-class SkillObject(_Model):
+class SkillDetails(_Model):
     """A skill object.
 
     :ivar skill_id: The unique identifier of the skill. Required.
@@ -12247,30 +12227,28 @@ class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
 
     :ivar type: The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.WORK_IQ_PREVIEW
+    :ivar project_connection_id: The ID of the WorkIQ project connection. Required.
+    :vartype project_connection_id: str
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
-    :ivar work_iq_preview: The WorkIQ tool parameters. Required.
-    :vartype work_iq_preview: ~azure.ai.projects.models.WorkIQPreviewToolParameters
     """
 
     type: Literal[ToolType.WORK_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW."""
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the WorkIQ project connection. Required."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined description for this tool or configuration."""
-    work_iq_preview: "_models.WorkIQPreviewToolParameters" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The WorkIQ tool parameters. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        work_iq_preview: "_models.WorkIQPreviewToolParameters",
+        project_connection_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
     ) -> None: ...
@@ -12285,31 +12263,3 @@ class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.WORK_IQ_PREVIEW  # type: ignore
-
-
-class WorkIQPreviewToolParameters(_Model):
-    """The WorkIQ tool parameters.
-
-    :ivar project_connection_id: The ID of the WorkIQ project connection. Required.
-    :vartype project_connection_id: str
-    """
-
-    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the WorkIQ project connection. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_connection_id: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
