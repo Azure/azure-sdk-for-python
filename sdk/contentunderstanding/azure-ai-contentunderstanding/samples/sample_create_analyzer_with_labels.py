@@ -252,9 +252,9 @@ def main() -> None:
         if training_data_prefix:
             labeled_source.prefix = training_data_prefix
         knowledge_sources.append(labeled_source)
-        print(
-            f"Using labeled training data from: {training_data_sas_url[:50]}..."
-        )
+        print("Using labeled training data from configured storage.")
+        if training_data_prefix:
+            print(f"Training data prefix: {training_data_prefix}")
     else:
         print(
             "DEMO MODE: no training data configured. The analyzer will be created without labeled data."
