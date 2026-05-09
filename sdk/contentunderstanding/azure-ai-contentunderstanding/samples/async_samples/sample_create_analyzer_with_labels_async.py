@@ -332,13 +332,14 @@ async def main() -> None:
             # If training data was provided, test the analyzer with a sample document.
             if training_data_sas_url:
                 print("\nTesting analyzer with sample document...")
-                test_doc_url = (
-                    "https://github.com/Azure-Samples/cognitive-services-REST-api-samples/"
-                    "raw/master/curl/form-recognizer/sample-invoice.pdf"
+                sample_document_path = (
+                    Path(__file__).resolve().parent.parent / "sample_files" / "sample_invoice.pdf"
                 )
+                with open(sample_document_path, "rb") as sample_document:
+                    sample_document_bytes = sample_document.read()
                 analyze_poller = await client.begin_analyze(
                     analyzer_id=analyzer_id,
-                    inputs=[AnalysisInput(url=test_doc_url)],
+                    inputs=[AnalysisInput(data=sample_document_bytes)],
                 )
                 analyze_result: AnalysisResult = await analyze_poller.result()
                 print("Analysis completed!")
