@@ -4,12 +4,17 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 from typing import NamedTuple
 from unittest.mock import MagicMock
 
+import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.exceptions import HttpResponseError
 from azure.storage.filedatalake import (
     AnalyticsLogging,
     CorsRule,
@@ -19,13 +24,10 @@ from azure.storage.filedatalake import (
     FileSystemClient,
     Metrics,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
 from azure.storage.filedatalake._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
 TEST_FILE_SYSTEM_PREFIX = 'filesystem'

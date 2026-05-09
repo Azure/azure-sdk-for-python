@@ -4,31 +4,32 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 import sys
 from typing import NamedTuple
 
-from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+import pytest
 
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
+from azure.core.credentials import AzureNamedKeyCredential
+from azure.core.exceptions import HttpResponseError
 from azure.storage.filedatalake import (
     AnalyticsLogging,
     CorsRule,
     Metrics,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
 from azure.storage.filedatalake._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.filedatalake.aio import (
     DataLakeDirectoryClient,
     DataLakeFileClient,
     DataLakeServiceClient,
-    FileSystemClient
+    FileSystemClient,
 )
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import DataLakePreparer
 
 if sys.version_info >= (3, 8):
     from unittest.mock import AsyncMock

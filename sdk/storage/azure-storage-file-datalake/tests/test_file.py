@@ -11,6 +11,12 @@ from math import ceil
 from urllib.parse import quote, urlencode
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+from test_helpers import MockStorageTransport, ProgressTracker
+
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
@@ -18,7 +24,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
-    ResourceNotFoundError
+    ResourceNotFoundError,
 )
 from azure.storage.filedatalake import (
     AccountSasPermissions,
@@ -33,19 +39,14 @@ from azure.storage.filedatalake import (
     generate_account_sas,
     generate_file_sas,
     generate_file_system_sas,
-    ResourceTypes
+    ResourceTypes,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
-from test_helpers import MockStorageTransport, ProgressTracker
 
 # ------------------------------------------------------------------------------
-
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
-
+TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 # ------------------------------------------------------------------------------
 
 
@@ -54,7 +55,6 @@ class TestFile(StorageRecordedTestCase):
         url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
-
         self.file_system_name = self.get_resource_name('filesystem')
 
         if not self.is_playback():
@@ -64,14 +64,11 @@ class TestFile(StorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                self.dsc.delete_file_system(self.file_system_name)
-            except:
-                pass
-
     # --Helpers-----------------------------------------------------------------
+    def _get_file_system_reference(self, prefix=TEST_FILE_SYSTEM_PREFIX):
+        file_system_name = self.get_resource_name(prefix)
+        return file_system_name
+
     def _get_directory_reference(self, prefix=TEST_DIRECTORY_PREFIX):
         directory_name = self.get_resource_name(prefix)
         return directory_name
@@ -1672,7 +1669,7 @@ class TestFile(StorageRecordedTestCase):
             file_client.file_system_name + '/',
             '/' + file_client.path_name,
             credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            audience='https://badaudience.blob.core.windows.net/'
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
