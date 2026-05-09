@@ -104,6 +104,7 @@ from azure.ai.contentunderstanding.models import (
     ContentFieldType,
     DocumentContent,
     GenerationMethod,
+    KnowledgeSource,
     LabeledDataKnowledgeSource,
     StringField,
 )
@@ -243,7 +244,7 @@ def main() -> None:
 
     # Step 3: Create knowledge source from labeled data (if available)
     training_data_prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
-    knowledge_sources = []
+    knowledge_sources: list[KnowledgeSource] = []
     if training_data_sas_url:
         labeled_source = LabeledDataKnowledgeSource(
             container_url=training_data_sas_url,
@@ -344,11 +345,11 @@ def main() -> None:
                     )
                     if doc_content.fields:
                         merchant_field = doc_content.fields.get("MerchantName")
-                        if isinstance(merchant_field, StringField) and merchant_field.value:
-                            print(f"  MerchantName: {merchant_field.value}")
+                        if isinstance(merchant_field, StringField) and merchant_field.value_string:
+                            print(f"  MerchantName: {merchant_field.value_string}")
                         total_field = doc_content.fields.get("TotalPrice")
-                        if isinstance(total_field, StringField) and total_field.value:
-                            print(f"  TotalPrice: {total_field.value}")
+                        if isinstance(total_field, StringField) and total_field.value_string:
+                            print(f"  TotalPrice: {total_field.value_string}")
 
         # Display API pattern information
         print("\nCreateAnalyzerWithLabels API Pattern:")
