@@ -259,8 +259,9 @@ async def main() -> None:
             if training_data_prefix:
                 labeled_source.prefix = training_data_prefix
             knowledge_sources.append(labeled_source)
+            redacted_training_data_url = training_data_sas_url.split("?", 1)[0]
             print(
-                f"Using labeled training data from: {training_data_sas_url[:50]}..."
+                f"Using labeled training data from configured container: {redacted_training_data_url}"
             )
         else:
             print(
