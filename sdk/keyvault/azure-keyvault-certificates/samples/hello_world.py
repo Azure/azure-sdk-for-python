@@ -56,6 +56,8 @@ cert_policy = CertificatePolicy(
     issuer_name=WellKnownIssuerNames.self,
     subject="CN=*.microsoft.com",
     san_dns_names=["sdk.azure-int.net"],
+    san_ip_addresses=["10.0.0.1", "2001:db8::1"],
+    san_uris=["https://mydomain.com"],
     exportable=True,
     key_type="RSA",
     key_size=2048,
