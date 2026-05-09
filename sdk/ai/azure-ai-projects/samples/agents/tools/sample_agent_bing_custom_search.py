@@ -58,7 +58,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = BingCustomSearchPreviewTool(
         bing_custom_search_preview=BingCustomSearchToolParameters(
             search_configurations=[
@@ -69,7 +68,6 @@ with (
             ]
         )
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

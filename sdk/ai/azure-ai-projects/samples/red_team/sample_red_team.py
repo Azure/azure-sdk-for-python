@@ -49,7 +49,6 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
-    # [START red_team_sample]
     print("Creating a Red Team scan for direct model testing")
 
     # Create target configuration for testing an Azure OpenAI model
@@ -81,4 +80,3 @@ with (
     print("Listing all Red Team scans")
     for scan in project_client.beta.red_teams.list():
         print(f"Found scan: {scan.name}, Status: {scan.status}")
-        # [END red_team_sample]

@@ -44,7 +44,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START finetuning_oss_model_supervised_job_sample]
     print("Uploading training file...")
     with open(training_file_path, "rb") as f:
         train_file = openai_client.files.create(file=f, purpose="fine-tune")
@@ -75,4 +74,3 @@ with (
         # Learn more - https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/explore/global-infrastructure/data-residency/
     )
     print(fine_tuning_job)
-    # [END finetuning_oss_model_supervised_job_sample]

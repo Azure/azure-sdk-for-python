@@ -63,7 +63,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     tool = BingGroundingTool(
         bing_grounding=BingGroundingSearchToolParameters(
             search_configurations=[
@@ -71,7 +70,6 @@ with (
             ]
         )
     )
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
