@@ -129,8 +129,55 @@ else
     print_info "Using active virtual environment: $VIRTUAL_ENV"
 fi
 
-# Check for .env file
-if [ ! -f ".env" ] && [ ! -f "$RUN_DIR/.env" ]; then
+# Load environment variables from a .env file (safe parser).
+# Only accepts `[export ]NAME=VALUE` lines where NAME is a valid shell
+# identifier; strips a single matching pair of surrounding double or single
+# quotes from the value. Lines that don't match are skipped silently. We avoid
+# `eval`/`source` so a malicious or malformed .env file cannot execute
+# arbitrary shell code in this script's process.
+load_env_file() {
+    local envfile="$1"
+    [ -f "$envfile" ] || return 0
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Strip leading whitespace and skip empties / comments
+        line="${line#"${line%%[![:space:]]*}"}"
+        [ -z "$line" ] && continue
+        case "$line" in \#*) continue ;; esac
+        # Optional leading `export `
+        case "$line" in export\ *) line="${line#export }" ;; esac
+        # Must contain `=` and start with a valid identifier
+        case "$line" in
+            [a-zA-Z_]*=*) ;;
+            *) continue ;;
+        esac
+        local name="${line%%=*}"
+        local value="${line#*=}"
+        # Validate identifier (letters, digits, underscore only)
+        case "$name" in *[!a-zA-Z0-9_]*) continue ;; esac
+        # Strip a matching pair of surrounding quotes
+        if [[ "$value" == \"*\" ]]; then
+            value="${value%\"}"
+            value="${value#\"}"
+        elif [[ "$value" == \'*\' ]]; then
+            value="${value%\'}"
+            value="${value#\'}"
+        fi
+        export "$name=$value"
+    done < "$envfile"
+}
+
+# Check for .env file and load it so later checks (e.g. DEMO MODE) and the
+# sample subprocess both see the configured variables.
+ENV_FILE=""
+if [ -f ".env" ]; then
+    ENV_FILE=".env"
+elif [ -f "$RUN_DIR/.env" ]; then
+    ENV_FILE="$RUN_DIR/.env"
+fi
+if [ -n "$ENV_FILE" ]; then
+    print_info "Loading environment from $ENV_FILE"
+    load_env_file "$ENV_FILE"
+else
     print_warning "⚠ No .env file found. Some samples may fail without environment variables."
     echo "  Run: cp env.sample .env && edit .env"
 fi
@@ -150,7 +197,7 @@ if [[ "$SAMPLE_NAME" == sample_create_analyzer_with_labels* ]]; then
       echo "    Option A: CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL=<container SAS URL>"
       echo "    Option B: CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT=<account>"
       echo "              CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER=<container>"
-      echo "  then re-run: set -a && source .env && set +a"
+      echo "  then re-run this script (it will reload .env automatically)."
       echo ""
     fi
   fi
