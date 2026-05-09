@@ -4,6 +4,20 @@
 
 ### Features Added
 
+- `invocations_ws` (WebSocket) protocol support on `InvocationAgentServerHost`.
+  Register a handler with the new `@app.ws_handler` decorator to host a
+  full-duplex WebSocket endpoint at `/invocations_ws` on the same host that
+  serves `POST /invocations`. The SDK calls `await websocket.accept()` before
+  invoking the handler, runs WebSocket Ping/Pong keep-alive in the background
+  (default 30 s; configurable via the new `ws_ping_interval` constructor
+  argument), closes the connection cleanly on handler return, and maps
+  uncaught exceptions to RFC 6455 close code `1011`. Each connection emits a
+  structured close-event log line carrying `ws.session_id`, `ws.close_code`,
+  and `ws.duration_ms`, and the same fields are recorded as OpenTelemetry
+  span attributes. `/readiness`, OTEL export, graceful shutdown, and the
+  `x-platform-server` identity header continue to be inherited from
+  `azure-ai-agentserver-core`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
