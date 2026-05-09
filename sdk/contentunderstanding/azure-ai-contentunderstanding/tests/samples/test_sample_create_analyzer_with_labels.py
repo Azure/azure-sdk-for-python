@@ -248,20 +248,28 @@ class TestSampleCreateAnalyzerWithLabels(ContentUnderstandingClientTestBase):
                     StringField,
                 )
 
-                test_doc_url = (
-                    "https://github.com/Azure-Samples/cognitive-services-REST-api-samples/"
-                    "raw/master/curl/form-recognizer/sample-invoice.pdf"
+                test_data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "test_data"))
+                pdf_files = sorted(
+                    file_name for file_name in os.listdir(test_data_dir) if file_name.lower().endswith(".pdf")
                 )
+                assert pdf_files, f"No PDF test files found in {test_data_dir}"
+                test_doc_path = os.path.join(test_data_dir, pdf_files[0])
+                with open(test_doc_path, "rb") as test_doc_file:
+                    test_doc_data = test_doc_file.read()
+
                 analyze_poller = client.begin_analyze(
                     analyzer_id=analyzer_id,
-                    inputs=[AnalysisInput(url=test_doc_url)],
+                    inputs=[AnalysisInput(data=test_doc_data)],
                 )
                 analyze_result: AnalysisResult = analyze_poller.result()
                 assert analyze_result is not None, "Analyze result should not be None"
                 assert (
                     analyze_result.contents and len(analyze_result.contents) > 0
                 ), "Analyze result should contain at least one content"
-                print(f"[PASS] Analyze completed with {len(analyze_result.contents)} content(s)")
+                print(
+                    f"[PASS] Analyze completed with {len(analyze_result.contents)} content(s) "
+                    f"using local test file '{os.path.basename(test_doc_path)}'"
+                )
 
                 content_obj = analyze_result.contents[0]
                 assert isinstance(
