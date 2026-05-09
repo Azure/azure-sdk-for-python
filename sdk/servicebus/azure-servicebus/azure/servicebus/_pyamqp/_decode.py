@@ -31,9 +31,21 @@ _LOGGER = logging.getLogger(__name__)
 _HEADER_PREFIX = memoryview(b"AMQP")
 
 # Maximum number of elements permitted in any AMQP compound type (list, array, map).
-# Mirrors MAX_AMQPVALUE_ITEM_COUNT (65536) in azure-uamqp-c. Without this cap an
-# unauthenticated peer can force a multi-gigabyte allocation by sending a crafted
-# compound type whose COUNT field is taken straight from the wire.
+#
+# The AMQP 1.0 wire format encodes compound element counts as either a 1-byte
+# field (the *_small variants, naturally bounded at 255) or a 4-byte field
+# (the *_large variants, wire-level maximum 0xFFFFFFFF). The large variants
+# allocate a Python list/dict sized directly from this count, so without an
+# upper bound a small frame can demand a multi-gigabyte allocation. This cap
+# is applied at every large-variant decode site to keep allocation sizes
+# proportional to the bytes actually delivered.
+#
+# The value mirrors MAX_AMQPVALUE_ITEM_COUNT (65536) in the C reference
+# implementation, azure-uamqp-c, and the equivalent MAX_COMPOUND_COUNT bound
+# applied across list/array/map decode sites in the Java AMQP codec. Real
+# AMQP traffic does not approach this many elements in a single compound
+# value, so the bound functions as a hard ceiling rather than a practical
+# constraint on legitimate workloads.
 _MAX_COMPOUND_COUNT = 65536
 _COMPOSITES = {
     35: "received",
@@ -228,6 +240,8 @@ def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
 def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
+    # Validate the wire-supplied count before allocating `[None] * count`,
+    # which would otherwise scale linearly with an untrusted 32-bit value.
     if count > _MAX_COMPOUND_COUNT:
         raise ValueError(
             f"AMQP list element count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
@@ -251,6 +265,10 @@ def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
 
 
 def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
+    # Validate the raw on-wire count *before* halving it (the AMQP encoding
+    # stores total entries; pairs = entries / 2). Checking pre-halve catches
+    # hostile odd values and keeps the comparison aligned with the bound used
+    # by _decode_list_large / _decode_array_large.
     raw_count = c_unsigned_long.unpack(buffer[4:8])[0]
     if raw_count > _MAX_COMPOUND_COUNT:
         raise ValueError(
@@ -280,6 +298,9 @@ def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
 def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     count = c_unsigned_long.unpack(buffer[4:8])[0]
+    # Validate the wire-supplied count before allocating `[None] * count`.
+    # An Array32 frame's COUNT is read directly from the network and would
+    # otherwise drive a Python list allocation of arbitrary size.
     if count > _MAX_COMPOUND_COUNT:
         raise ValueError(
             f"AMQP array element count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
