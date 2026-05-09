@@ -263,7 +263,6 @@ CONTENTUNDERSTANDING_TARGET_REGION="swedencentral"
 > 1. "Do you want to **train with labeled data** (recommended), or **create the analyzer without training data** (demo mode)?"
 >    - If **demo mode**: confirm explicitly — "I will run `sample_create_analyzer_with_labels` *without* training data. The output will say `Knowledge sources: 0`, the `Testing analyzer with sample document...` step will be skipped, and you will see a `DEMO MODE` banner. The labeled-data API path will **not** be exercised. OK to proceed?" Only continue after the user says yes; leave both Option A and Option B env vars empty/unset.
 >    - If **with training data**: continue with one of the next two questions.
->    - If **with training data**: continue with one of the next two questions.
 > 2. "Will you use **Option A (pre-generated SAS URL)** or **Option B (auto-upload via `DefaultAzureCredential`)**?"
 >    - **Option A**: ask for the SAS URL and (optionally) prefix; walk through the manual-upload steps above if not yet done.
 >    - **Option B**: ask for the storage account name and container name; remind them about the **Storage Blob Data Contributor** role and `az login`.
