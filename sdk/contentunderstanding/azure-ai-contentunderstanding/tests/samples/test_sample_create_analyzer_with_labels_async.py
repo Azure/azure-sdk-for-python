@@ -242,6 +242,43 @@ class TestSampleCreateAnalyzerWithLabelsAsync(ContentUnderstandingClientTestBase
                 if result.knowledge_sources:
                     print(f"[PASS] Knowledge sources: {len(result.knowledge_sources)}")
 
+            # Test analyzer with a sample document if training data was provided
+            if container_sas_url:
+                from azure.ai.contentunderstanding.models import (
+                    AnalysisInput,
+                    AnalysisResult,
+                    DocumentContent,
+                    StringField,
+                )
+
+                test_doc_url = (
+                    "https://github.com/Azure-Samples/cognitive-services-REST-api-samples/"
+                    "raw/master/curl/form-recognizer/sample-invoice.pdf"
+                )
+                analyze_poller = await client.begin_analyze(
+                    analyzer_id=analyzer_id,
+                    inputs=[AnalysisInput(url=test_doc_url)],
+                )
+                analyze_result: AnalysisResult = await analyze_poller.result()
+                assert analyze_result is not None, "Analyze result should not be None"
+                assert (
+                    analyze_result.contents and len(analyze_result.contents) > 0
+                ), "Analyze result should contain at least one content"
+                print(f"[PASS] Analyze completed with {len(analyze_result.contents)} content(s)")
+
+                content_obj = analyze_result.contents[0]
+                assert isinstance(
+                    content_obj, DocumentContent
+                ), "First content should be DocumentContent"
+                if content_obj.fields:
+                    print(f"[PASS] Extracted fields: {len(content_obj.fields)}")
+                    merchant_field = content_obj.fields.get("MerchantName")
+                    if isinstance(merchant_field, StringField) and merchant_field.value:
+                        print(f"[PASS] MerchantName: {merchant_field.value}")
+                    total_field = content_obj.fields.get("TotalPrice")
+                    if isinstance(total_field, StringField) and total_field.value:
+                        print(f"[PASS] TotalPrice: {total_field.value}")
+
         except Exception as e:
             error_msg = str(e)
             print(f"\n[ERROR] Analyzer creation failed: {error_msg}")

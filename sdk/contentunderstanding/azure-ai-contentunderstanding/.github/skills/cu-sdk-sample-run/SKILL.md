@@ -251,6 +251,34 @@ CONTENTUNDERSTANDING_TARGET_REGION="swedencentral"
 > 3. "Please provide the following for your **target** resource:" -- Target endpoint URL, Target ARM Resource ID, Target region.
 > 4. Confirm: "Cross-resource copy works with both `DefaultAzureCredential` and API keys. Both resources must have the **Cognitive Services User** role assigned if using `DefaultAzureCredential`. Is this configured?"
 
+> **[REQUIRED GATE] sample_create_analyzer_with_labels training data (sample_create_analyzer_with_labels only):**
+> `sample_create_analyzer_with_labels` silently falls back to "create analyzer without labeled data"
+> when no training-data source is configured. That fall-back path completes end-to-end and prints
+> `✓ Sample completed: sample_create_analyzer_with_labels` even though the labeled-data API surface
+> is **not** actually exercised, AND the analyze-test step (`begin_analyze` against a sample invoice)
+> is also skipped. Before invoking `python sample_create_analyzer_with_labels.py` (or
+> `run_sample.sh sample_create_analyzer_with_labels`), the agent **must** ask the user the questions
+> below and act on the answer:
+>
+> 1. "Do you want to **train with labeled data** (recommended), or **create the analyzer without training data** (demo mode)?"
+>    - If **demo mode**: confirm explicitly — "I will run `sample_create_analyzer_with_labels` *without* training data. The output will say `Knowledge sources: 0`, the `Testing analyzer with sample document...` step will be skipped, and you will see a `DEMO MODE` banner. The labeled-data API path will **not** be exercised. OK to proceed?" Only continue after the user says yes; leave both Option A and Option B env vars empty/unset.
+>    - If **with training data**: continue with one of the next two questions.
+>    - If **with training data**: continue with one of the next two questions.
+> 2. "Will you use **Option A (pre-generated SAS URL)** or **Option B (auto-upload via `DefaultAzureCredential`)**?"
+>    - **Option A**: ask for the SAS URL and (optionally) prefix; walk through the manual-upload steps above if not yet done.
+>    - **Option B**: ask for the storage account name and container name; remind them about the **Storage Blob Data Contributor** role and `az login`.
+> 3. "Did you upload the files at the **container root** or inside a **subfolder**?"
+>    - If root: leave `CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX` unset.
+>    - If subfolder: ask for the prefix path (e.g., `training_samples/`).
+> 4. Confirm: "For Option A, the SAS token must have at least **List** and **Read** permissions and must **not be expired**. For Option B, the signed-in identity must have **Storage Blob Data Contributor** on the storage account."
+>
+> **Belt-and-suspenders**: `run_sample.sh` itself emits a loud `DEMO MODE` banner before the
+> `python` step when neither `CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL` (Option A) nor both
+> `CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT` + `CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER`
+> (Option B) are set, so the fall-back is unmissable in the captured run output. Treat that
+> banner as a signal that validation is **incomplete** unless the user explicitly opted into
+> demo mode in step 1.
+
 ### Step 5: Run the Sample
 
 **Run manually (recommended):**

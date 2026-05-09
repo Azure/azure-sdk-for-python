@@ -5,6 +5,9 @@
 ### Features Added
 - Added `to_llm_input` helper function that converts `AnalysisResult` objects into LLM-friendly text with YAML front matter and markdown content. Supports documents, audio/video, and classification hierarchies.
 
+### Other Changes
+- Aligned `sample_create_analyzer_with_labels` (sync + async) with the .NET and Java equivalents: added an analyze step (calls `begin_analyze` on the newly created analyzer to extract `MerchantName` / `TotalPrice` from a sample invoice when training data is configured), a `DEMO MODE` banner when no training data is configured, a field-schema verification banner, and `try` / `finally` cleanup so the analyzer is deleted even if creation fails.
+
 ## 1.1.0 (2026-04-20)
 
 ### Features Added

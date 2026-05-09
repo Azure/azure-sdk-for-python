@@ -1,4 +1,5 @@
 #!/bin/bash
+# cspell:ignore esac
 # Run a specific sample for Azure AI Content Understanding SDK
 # Usage: ./run_sample.sh <sample_name>
 # Example: ./run_sample.sh sample_analyze_url
@@ -132,6 +133,27 @@ fi
 if [ ! -f ".env" ] && [ ! -f "$RUN_DIR/.env" ]; then
     print_warning "⚠ No .env file found. Some samples may fail without environment variables."
     echo "  Run: cp env.sample .env && edit .env"
+fi
+
+# sample_create_analyzer_with_labels demo-mode banner: warn if the user is about
+# to run the labeled-data sample without configuring either Option A (SAS URL)
+# or Option B (storage account + container) — the sample will still run but skip
+# the labeled-data code path AND the analyze-test step.
+if [[ "$SAMPLE_NAME" == sample_create_analyzer_with_labels* ]]; then
+  if [[ -z "${CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL:-}" ]]; then
+    if [[ -z "${CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT:-}" \
+          || -z "${CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER:-}" ]]; then
+      print_warning "⚠ DEMO MODE: no training data configured for $SAMPLE_NAME."
+      echo "  The analyzer will be created without labeled data ('Knowledge sources: 0')."
+      echo "  To exercise the labeled-data API path AND test the analyzer with a sample"
+      echo "  document, configure ONE of:"
+      echo "    Option A: CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL=<container SAS URL>"
+      echo "    Option B: CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT=<account>"
+      echo "              CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER=<container>"
+      echo "  then re-run: set -a && source .env && set +a"
+      echo ""
+    fi
+  fi
 fi
 
 # Run the sample
