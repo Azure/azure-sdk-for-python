@@ -136,8 +136,8 @@ fi
 # `eval`/`source` so a malicious or malformed .env file cannot execute
 # arbitrary shell code in this script's process.
 load_env_file() {
-    local envfile="$1"
-    [ -f "$envfile" ] || return 0
+    local env_file="$1"
+    [ -f "$env_file" ] || return 0
     while IFS= read -r line || [ -n "$line" ]; do
         # Strip leading whitespace and skip empties / comments
         line="${line#"${line%%[![:space:]]*}"}"
@@ -163,7 +163,7 @@ load_env_file() {
             value="${value#\'}"
         fi
         export "$name=$value"
-    done < "$envfile"
+    done < "$env_file"
 }
 
 # Check for .env file and load it so later checks (e.g. DEMO MODE) and the
