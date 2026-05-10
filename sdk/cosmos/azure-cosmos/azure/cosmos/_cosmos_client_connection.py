@@ -169,10 +169,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
-        self._emit_structured_continuation_pk = os.environ.get(
-            Constants.EMIT_STRUCTURED_CONTINUATION_PK_CONFIG,
-            "",
-        ).strip().lower() in ("1", "true", "yes", "on")
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_executor: Optional[ThreadPoolExecutor] = availability_strategy_executor
@@ -3262,9 +3258,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if timeout is not None:
             kwargs.setdefault("timeout", timeout)
 
+        # The capture dict can arrive via two upstream paths:
+        #   1. The query execution context puts it into ``options`` (the
+        #      common case for query pagination — see
+        #      ``_QueryExecutionContextBase._fetch_items_helper_no_retries``).
+        #   2. ``routing_map_provider.get_routing_map`` puts it into
+        #      ``kwargs`` for PK-range fetches.
+        # Honour both so checkpoint-on-failure works on every path.
         internal_headers_capture: Optional[Dict[str, Any]] = kwargs.pop(
             "_internal_response_headers_capture", None
         )
+        if internal_headers_capture is None and isinstance(options, dict):
+            internal_headers_capture = options.pop(
+                "_internal_response_headers_capture", None
+            )
 
         def _capture_internal_headers(headers: Mapping[str, Any]) -> None:
             # Local helper so flow analysis can narrow Optional[Dict] once
@@ -3408,7 +3415,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             page_size_hint = _normalize_max_item_count(options.get("maxItemCount"))
             query_hash = _hash_query_spec(query)
             feedrange_hash = _hash_feed_range(feed_range_epk)
-            should_emit_structured_full_pk = self._emit_structured_continuation_pk
             inbound_serialized_continuation = options.get("continuation")
             inbound_token_payload = _decode_token(inbound_serialized_continuation)
             legacy_bridge_in_use = False
@@ -3483,7 +3489,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             query,
                             feed_range_epk,
                             is_full_pk_structured_scope,
-                            should_emit_structured_full_pk,
                             query_hash,
                             feedrange_hash,
                         )
@@ -3667,7 +3672,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     query,
                     feed_range_epk,
                     is_full_pk_structured_scope,
-                    should_emit_structured_full_pk,
                     query_hash,
                     feedrange_hash,
                 )

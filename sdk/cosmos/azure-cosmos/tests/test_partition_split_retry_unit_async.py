@@ -829,3 +829,94 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             feed_options,
         )
         gone_policy.pop_refresh_context.assert_called_once()
+
+
+    @pytest.mark.asyncio
+    async def test_querfeed_populates_capture_dict_from_options_async(self):
+        """Async `__QueryFeed` must read the capture dict from `options`
+        and populate it from the underlying response headers, with no
+        test-side injection. Catches the `options`-vs-`kwargs`
+        extraction regression on the async path.
+        """
+        from unittest.mock import patch as _patch
+
+        # Build a CosmosClientConnection without running __init__; we
+        # only need the attributes that the no-query (read-feed) branch
+        # of async __QueryFeed touches.
+        conn = object.__new__(CosmosClientConnection)
+        conn.default_headers = {}
+        conn.last_response_headers = {}
+        conn.availability_strategy = None
+        conn.availability_strategy_max_concurrency = None
+        conn._global_endpoint_manager = MockGlobalEndpointManager()
+        conn._routing_map_provider = MagicMock(_collection_routing_map_by_item={})
+        conn.session = None
+        conn.connection_policy = MagicMock()
+        conn._UpdateSessionIfRequired = MagicMock()
+
+        capture_dict = {}
+        options = {
+            "_internal_response_headers_capture": capture_dict,
+        }
+
+        canned_headers = {HttpHeaders.Continuation: "checkpoint-from-real-querfeed-async"}
+
+        request_obj_mock = MagicMock(
+            set_excluded_location_from_options=MagicMock(),
+            set_availability_strategy=MagicMock(),
+            headers={},
+            operation_type="ReadFeed",
+        )
+
+        # Patch the heavy collaborators inside async __QueryFeed's
+        # no-query branch so we can drive it without a real pipeline.
+        with _patch(
+                 "azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders",
+                 return_value={},
+             ), \
+             _patch(
+                 "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                 new=AsyncMock(),
+             ), \
+             _patch(
+                 "azure.cosmos.aio._cosmos_client_connection_async._request_object.RequestObject",
+                 return_value=request_obj_mock,
+             ), \
+             _patch.object(
+                 CosmosClientConnection,
+                 "_CosmosClientConnection__Get",
+                 new=AsyncMock(return_value=(
+                     {"Documents": [{"id": "1"}], "_count": 1},
+                     canned_headers,
+                 )),
+             ) as mock_get:
+
+            # Invoke the name-mangled private async method directly.
+            result = await conn._CosmosClientConnection__QueryFeed(
+                "/dbs/db/colls/c/docs",
+                "docs",
+                "rid1",
+                lambda r: r["Documents"],
+                lambda _c, b: b,
+                None,                # query=None -> read-feed branch -> __Get
+                options,
+                None,                # partition_key_range_id
+            )
+
+            assert mock_get.await_count >= 1, "expected __Get to be awaited on the no-query path"
+
+
+        assert capture_dict.get(HttpHeaders.Continuation) == "checkpoint-from-real-querfeed-async", (
+            f"capture dict was not populated by async __QueryFeed; got {capture_dict!r}. "
+            "This indicates async __QueryFeed is not reading "
+            "'_internal_response_headers_capture' from options."
+        )
+
+        # the marker key must have been removed from options so it
+        # never leaks downstream into header construction or RequestObject.
+        assert "_internal_response_headers_capture" not in options, (
+            "async __QueryFeed should pop the capture marker out of options"
+        )
+
+        # Sanity check: async no-query branch returns just the body list.
+        assert result == [{"id": "1"}]
