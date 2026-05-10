@@ -58,12 +58,11 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         return file_system_name
 
     async def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
+        file_system_name = self._get_file_system_reference(prefix=file_system_prefix)
         try:
-            return await self.dsc.create_file_create_file_system(
-                self._get_file_system_reference(prefix=file_system_prefix)
-            )
+            return await self.dsc.create_file_system(file_system_name)
         except ResourceExistsError:
-            pass
+            return self.dsc.get_file_system_client(file_system_name)
 
     async def _to_list(self, async_iterator):
         result = []
@@ -411,7 +410,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        file_system = await self._system()
+        file_system = await self._create_file_system()
 
         # Act
         deleted = await file_system.delete_file_system()
@@ -1175,7 +1174,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         paths = []
         async for path in sas_directory_client.get_paths():
             paths.append(path)
-        assert paths == []
+        assert not paths
 
     @DataLakePreparer()
     @recorded_by_proxy_async

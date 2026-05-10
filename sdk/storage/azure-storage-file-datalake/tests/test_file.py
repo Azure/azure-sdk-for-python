@@ -653,7 +653,12 @@ class TestFile(StorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
 
-        file_client.upload_data(data, content_settings=content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
+        file_client.upload_data(
+            data,
+            content_settings=content_settings,
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified
+        )
 
         downloaded_data = file_client.download_file().readall()
         properties = file_client.get_file_properties()
@@ -681,7 +686,14 @@ class TestFile(StorageRecordedTestCase):
         # to override the existing file
         data = self.get_random_bytes(100)
 
-        file_client.upload_data(data, overwrite=True, permissions='0777', umask="0000", etag=etag, match_condition=MatchConditions.IfNotModified)
+        file_client.upload_data(
+            data,
+            overwrite=True,
+            permissions='0777',
+            umask="0000",
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified
+        )
 
         downloaded_data = file_client.download_file().readall()
         prop = file_client.get_access_control()
@@ -765,7 +777,11 @@ class TestFile(StorageRecordedTestCase):
 
         # Get user delegation key
         token_credential = self.get_credential(DataLakeServiceClient)
-        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential, logging_enable=True)
+        service_client = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            credential=token_credential,
+            logging_enable=True
+        )
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -804,7 +820,10 @@ class TestFile(StorageRecordedTestCase):
 
         # Get user delegation key
         token_credential = self.get_credential(DataLakeServiceClient)
-        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
+        service_client = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            credential=token_credential
+        )
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -850,7 +869,10 @@ class TestFile(StorageRecordedTestCase):
 
         # Get user delegation key
         token_credential = self.get_credential(DataLakeServiceClient)
-        service_client = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=token_credential)
+        service_client = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            credential=token_credential
+        )
         user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
                                                                      datetime.utcnow() + timedelta(hours=1))
 
@@ -962,7 +984,12 @@ class TestFile(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         with pytest.raises(ValueError):
-            DataLakeFileClient(self.dsc.url + "?sig=foo", self.file_system_name, "foo", credential=AzureSasCredential("?foo=bar"))
+            DataLakeFileClient(
+                self.dsc.url + "?sig=foo",
+                self.file_system_name,
+                "foo",
+                credential=AzureSasCredential("?foo=bar")
+            )
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
@@ -1033,7 +1060,7 @@ class TestFile(StorageRecordedTestCase):
 
         # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        
+
         file_name = self._get_file_reference()
         token_credential = self.get_credential(DataLakeServiceClient)
 
@@ -1766,7 +1793,8 @@ class TestFile(StorageRecordedTestCase):
         # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         file_client = self._create_file_and_return_client()
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         decompressed_data = b"hello from gzip"
         content_settings = ContentSettings(content_encoding='gzip')
 
@@ -1803,7 +1831,8 @@ class TestFile(StorageRecordedTestCase):
         )
         file_client.create_file()
 
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+                           b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00')
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert

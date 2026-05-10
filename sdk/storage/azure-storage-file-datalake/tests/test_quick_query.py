@@ -7,19 +7,21 @@ import base64
 import os
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
+
 from azure.storage.filedatalake import (
     ArrowDialect,
     ArrowType,
     DelimitedJsonDialect,
     DelimitedTextDialect,
-    QuickQueryDialect
+    QuickQueryDialect,
 )
-
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
-# ------------------------------------------------------------------------------
 from azure.storage.filedatalake import DataLakeServiceClient
+# ------------------------------------------------------------------------------
+
 
 CSV_DATA = (
     b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,'
@@ -132,15 +134,6 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             except:
                 pass
 
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                self.dsc.delete_file_system(self.filesystem_name)
-            except:
-                pass
-
-        return super(TestStorageQuickQuery, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self):
@@ -172,7 +165,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'\n')
+        assert data == CSV_DATA.replace(b'\r\n', b'\n')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -226,7 +219,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -252,7 +245,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'\n').decode('utf-8')
+        assert data == CSV_DATA.replace(b'\r\n', b'\n').decode('utf-8')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -268,13 +261,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         file_client.upload_data(CSV_DATA, overwrite=True)
 
         reader = file_client.query_file("SELECT * from BlobStorage", encoding='utf-8')
-        data = ''
-        for record in reader.records():
-            data += record
+        data = "".join(record for record in reader.records())
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'').decode('utf-8')
+        assert data == CSV_DATA.replace(b'\r\n', b'').decode('utf-8')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -291,7 +282,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         input_format = DelimitedTextDialect(has_header=True)
         output_format = DelimitedTextDialect(has_header=False)
-        reader = file_client.query_file("SELECT * from BlobStorage", file_format=input_format, output_format=output_format)
+        reader = file_client.query_file(
+            "SELECT * from BlobStorage",
+            file_format=input_format,
+            output_format=output_format
+        )
         read_records = reader.records()
 
         # Assert first line does not include header
@@ -303,7 +298,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')[44:]
+        assert data == CSV_DATA.replace(b'\r\n', b'')[44:]
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -331,7 +326,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -355,7 +350,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
                 progress += len(record) + 2
         assert len(reader) == len(CSV_DATA)
         assert len(reader) == reader._blob_query_reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
         assert progress == len(reader)
 
     @DataLakePreparer()
@@ -457,7 +452,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
@@ -484,7 +479,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         query_result = resp.readall()
 
         assert len(errors) == 1
-        assert len(resp) == 43
+        assert len(resp) == 414
         assert query_result == b''
 
     @DataLakePreparer()
@@ -504,7 +499,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
@@ -531,9 +526,9 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         data = []
         for record in resp.records():
             data.append(record)
-        
+
         assert len(errors) == 1
-        assert len(resp) == 43
+        assert len(resp) == 414
         assert data == [b'']
 
     @DataLakePreparer()
@@ -553,17 +548,15 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
         file_client.upload_data(data, overwrite=True)
 
-        errors = []
-
         def on_error(error):
-            raise Exception(error.description)
+            raise ValueError(error.description)
 
         input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
@@ -577,8 +570,8 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             on_error=on_error,
             file_format=input_format,
             output_format=output_format)
-        with pytest.raises(Exception):
-            query_result = resp.readall()
+        with pytest.raises(ValueError):
+            resp.readall()
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -597,17 +590,15 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
         file_client = self.dsc.get_file_client(self.filesystem_name, file_name)
         file_client.upload_data(data, overwrite=True)
 
-        errors = []
-
         def on_error(error):
-            raise Exception(error.description)
+            raise ValueError(error.description)
 
         input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
@@ -620,9 +611,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             "SELECT * from BlobStorage",
             on_error=on_error,
             file_format=input_format,
-            output_format=output_format)
+            output_format=output_format
+        )
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             for record in resp.records():
                 print(record)
 
@@ -673,7 +665,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         file_name = self._get_file_reference()
@@ -915,7 +907,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(errors) == 0
         assert len(resp) == len(data)
-        assert listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}' == b'']
+        assert listdata, [b'{"name":"owner"}', b'{}', b'{"name":"owner"}', b'']
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -978,10 +970,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             on_error=on_error,
             output_format=output_format)
         query_result = base64.b64encode(resp.readall())
-        # expected_result = b'/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAUAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHEAAAABwAAAAEAAAAAAAAAAMAAABhYmMACAAMAAQACAAIAAAABAAAAAIAAAD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMEABAAAAAAAAoADAAAAAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAD/////AAAAAP////+IAAAAFAAAAAAAAAAMABYABgAFAAgADAAMAAAAAAMEABgAAAAQAAAAAAAAAAAACgAYAAwABAAIAAoAAAA8AAAAEAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAAA='
+        # expected_result = b'/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAUAAAAEAAUAAgABgAHAAwAAAAQABAAAAAAAAEHEAAAABwAAAAEAAAAAAAAAAMAAABhYmMACAAMAAQACAAIAAAABAAAAAIAAAD/////cAAAABAAAAAAAAoADgAGAAUACAAKAAAAAAMEABAAAAAAAAoADAAAAAQACAAKAAAAMAAAAAQAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAD/////AAAAAP////+IAAAAFAAAAAAAAAAMABYABgAFAAgADAAMAAAAAAMEABgAAAAQAAAAAAAAAAAACgAYAAwABAAIAAoAAAA8AAAAEAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAAAAAAAAJABAAAAAAAAAAAAAAAAAAA='  # pylint: disable=line-too-long
 
         assert len(errors) == 0
-        # Skip this assert for now, requires further investigation: https://github.com/Azure/azure-sdk-for-python/issues/24690
+        # Skip this assert for now, requires investigation: https://github.com/Azure/azure-sdk-for-python/issues/24690
         # assert query_result == expected_result
 
     @DataLakePreparer()

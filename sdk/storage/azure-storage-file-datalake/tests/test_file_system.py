@@ -62,10 +62,11 @@ class TestFileSystem(StorageRecordedTestCase):
         return file_system_name
 
     def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
+        file_system_name = self._get_file_system_reference(prefix=file_system_prefix)
         try:
-            return self.dsc.create_file_system(self._get_file_system_reference(prefix=file_system_prefix))
+            return self.dsc.create_file_system(file_system_name)
         except ResourceExistsError:
-            pass
+            return self.dsc.get_file_system_client(file_system_name)
 
     def _is_almost_equal(self, first, second, delta):
         if first == second:
