@@ -8,7 +8,7 @@ Sync unit tests for partition split (410) retry logic.
 import gc
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -34,6 +34,12 @@ class MockGlobalEndpointManager:
     """Mock global endpoint manager for testing."""
     def is_circuit_breaker_applicable(self, request):
         return False
+
+
+class MockRoutingMapProvider:
+    """Mock routing map provider with a collection routing map cache."""
+    def __init__(self):
+        self._collection_routing_map_by_item = {}
 
 
 class MockClient:
@@ -133,11 +139,16 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         self.assertEqual(response_headers, expected_headers)
         self.assertEqual(kwargs_capture, expected_headers)
 
-    def test_queryfeed_internal_capture_options_wins_over_kwargs(self):
-        """When both are present, options-based capture dict should win over kwargs fallback."""
+    def test_queryfeed_internal_capture_both_present_populates_one(self):
+        """When both options- and kwargs-based capture dicts are present
+        (a configuration that does not occur in production — the two
+        upstream paths are mutually exclusive by design), QueryFeed must
+        populate exactly one of the two capture dicts with the response
+        headers. Precedence is intentionally unspecified.
+        """
         client = self._create_minimal_connection()
-        options_capture = {"stale-options": "value"}
-        kwargs_capture = {"stale-kwargs": "value"}
+        options_capture: dict = {}
+        kwargs_capture: dict = {}
         expected_headers = {HttpHeaders.Continuation: "checkpoint-token-both", "x-ms-request-charge": "1.0"}
 
         with patch('azure.cosmos._cosmos_client_connection.base.GetHeaders', return_value={}):
@@ -157,8 +168,11 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
 
         self.assertEqual(docs, [{"id": "doc3"}])
         self.assertEqual(response_headers, expected_headers)
-        self.assertEqual(options_capture, expected_headers)
-        self.assertEqual(kwargs_capture, {"stale-kwargs": "value"})
+        populated = [d for d in (options_capture, kwargs_capture) if d == expected_headers]
+        self.assertEqual(
+            len(populated), 1,
+            f"expected exactly one capture dict populated; got options={options_capture!r}, kwargs={kwargs_capture!r}",
+        )
 
     def test_execution_context_state_reset_on_partition_split(self):
         """
@@ -624,6 +638,97 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             f"PK range query should have 1 execute call, got {pk_execute_calls}"
         assert pk_refresh_calls == 0, \
             f"PK range query should have 0 refresh calls, got {pk_refresh_calls}"
+
+    def test_querfeed_populates_capture_dict_from_options(self):
+        """`__QueryFeed` must read the capture dict from `options` and
+        populate it from the underlying response headers.
+
+        This is the producer-side counterpart to the checkpoint tests
+        above: it does not inject into the capture dict, it asserts that
+        `__QueryFeed` itself does the population. Catches the
+        `options`-vs-`kwargs` extraction regression.
+        """
+        from unittest.mock import patch as _patch
+
+        # Build a CosmosClientConnection without running __init__; we
+        # only need the attributes that the no-query (read-feed) branch
+        # of __QueryFeed touches.
+        conn = object.__new__(CosmosClientConnection)
+        conn.default_headers = {}
+        conn.last_response_headers = {}
+        conn.availability_strategy = None
+        conn.availability_strategy_executor = None
+        conn._global_endpoint_manager = MockGlobalEndpointManager()
+        conn._routing_map_provider = MockRoutingMapProvider()
+        conn.session = None
+        conn.connection_policy = MagicMock()
+
+        capture_dict = {}
+        options = {
+            "_internal_response_headers_capture": capture_dict,
+        }
+
+        canned_headers = {HttpHeaders.Continuation: "checkpoint-from-real-querfeed"}
+
+        request_obj_mock = MagicMock(
+            set_excluded_location_from_options=MagicMock(),
+            set_availability_strategy=MagicMock(),
+            headers={},
+        )
+
+        # Patch the heavy collaborators inside __QueryFeed's no-query
+        # branch so we can drive it without a real pipeline.
+        with _patch(
+                 "azure.cosmos._cosmos_client_connection.base.GetHeaders",
+                 return_value={},
+             ), \
+             _patch(
+                 "azure.cosmos._cosmos_client_connection.base.set_session_token_header"
+             ), \
+             _patch(
+                 "azure.cosmos._cosmos_client_connection.RequestObject",
+                 return_value=request_obj_mock,
+             ) as request_obj_ctor, \
+             _patch.object(
+                 CosmosClientConnection,
+                 "_CosmosClientConnection__Get",
+                 return_value=(
+                     {"Documents": [{"id": "1"}], "_count": 1},
+                     canned_headers,
+                 ),
+             ) as mock_get:
+
+            _ = request_obj_ctor  # silence unused-warning
+
+            # Invoke the name-mangled private method directly.
+            result, headers = conn._CosmosClientConnection__QueryFeed(
+                "/dbs/db/colls/c/docs",
+                "docs",
+                "rid1",
+                lambda r: r["Documents"],
+                lambda _c, b: b,
+                None,                # query=None -> read-feed branch -> __Get
+                options,
+                None,                # partition_key_range_id
+            )
+
+            assert mock_get.called, "expected __Get to be invoked on the no-query path"
+
+        assert capture_dict.get(HttpHeaders.Continuation) == "checkpoint-from-real-querfeed", (
+            f"capture dict was not populated by __QueryFeed; got {capture_dict!r}. "
+            "This indicates __QueryFeed is not reading "
+            "'_internal_response_headers_capture' from options."
+        )
+
+        # the marker key must have been removed from options so it
+        # never leaks downstream into header construction or RequestObject.
+        assert "_internal_response_headers_capture" not in options, (
+            "__QueryFeed should pop the capture marker out of options"
+        )
+
+        # Sanity check on the result tuple shape.
+        assert result == [{"id": "1"}]
+        assert headers is canned_headers
 
 
 if __name__ == "__main__":

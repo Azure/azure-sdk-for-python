@@ -611,14 +611,14 @@ def _write_query_outbound_continuation(
     query: Any,
     feed_range_epk: routing_range.Range,
     is_full_pk_structured_scope: bool,
-    should_emit_structured_full_pk: bool,
     query_hash: str,
     feedrange_hash: str,
 ) -> None:
     """Write outbound continuation for feed-range pagination.
 
-    Full-PK queries keep legacy continuation emission unless structured
-    emission is explicitly enabled by the client-level env-var contract.
+    Full-PK queries always emit the legacy single-string continuation
+    so persisted bookmarks remain readable by older SDK versions.
+    Feed-range and prefix queries always emit the structured envelope.
 
     :param last_response_headers: Response headers to mutate.
     :type last_response_headers: MutableMapping[str, Any]
@@ -632,8 +632,6 @@ def _write_query_outbound_continuation(
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param is_full_pk_structured_scope: Whether request scope is full-PK on structured path.
     :type is_full_pk_structured_scope: bool
-    :param should_emit_structured_full_pk: Whether structured emission is enabled for full-PK.
-    :type should_emit_structured_full_pk: bool
     :param query_hash: Precomputed query hash for outbound token identity.
     :type query_hash: str
     :param feedrange_hash: Precomputed feed range hash for outbound token identity.
@@ -641,7 +639,7 @@ def _write_query_outbound_continuation(
     :returns: None. Mutates ``last_response_headers`` in place.
     :rtype: None
     """
-    if is_full_pk_structured_scope and not should_emit_structured_full_pk:
+    if is_full_pk_structured_scope:
         legacy_outbound = pagination_state.head_bc
         if legacy_outbound is None:
             last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)

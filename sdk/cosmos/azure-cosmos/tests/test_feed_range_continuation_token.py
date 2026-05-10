@@ -1015,15 +1015,13 @@ class TestAggregateMergeConsistency:
     def test_value_avg_merge_raises_as_unsupported(self):
         query = "SELECT VALUE AVG(c.value) FROM c"
 
-        with pytest.raises(_base._UnsupportedValueAvgMergeError) as excinfo:
+        with pytest.raises(ValueError) as excinfo:
             _base._merge_query_results({"Documents": [7.0]}, {"Documents": [3.0]}, query)
 
         assert "VALUE AVG aggregate merge" in str(excinfo.value)
 
     def test_raise_query_merge_value_error_rewrites_value_avg_message(self):
-        original = _base._UnsupportedValueAvgMergeError(
-            "VALUE AVG aggregate merge across partitions is not supported client-side."
-        )
+        original = ValueError("VALUE AVG aggregate merge across partitions is not supported client-side.")
 
         with pytest.raises(ValueError) as excinfo:
             _base._raise_query_merge_value_error(original)

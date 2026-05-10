@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -207,7 +207,7 @@ def _merge_query_results(
         elif aggregate_fn == "MAX":
             results_docs[0] = max(results_docs[0], partial_docs[0]) # type: ignore[index]
         elif aggregate_fn == "AVG":
-            raise _UnsupportedValueAvgMergeError(
+            raise ValueError(
                 "VALUE AVG aggregate merge across partitions is not supported client-side."
             )
         else:
@@ -236,7 +236,8 @@ def _raise_query_merge_value_error(merge_error: ValueError) -> None:
     :type merge_error: ValueError
     :raises ValueError: Always re-raises, potentially with a clearer message.
     """
-    if isinstance(merge_error, _UnsupportedValueAvgMergeError):
+    merge_message = str(merge_error)
+    if "VALUE AVG aggregate merge across partitions is not supported client-side." in merge_message:
         raise ValueError(
             "Unsupported query shape for range-scoped pagination: "
             "SELECT VALUE AVG(...) cannot be merged client-side when the query "
@@ -244,13 +245,6 @@ def _raise_query_merge_value_error(merge_error: ValueError) -> None:
         ) from merge_error
     raise merge_error
 
-
-class _UnsupportedValueAvgMergeError(ValueError):
-    """Internal marker for unsupported client-side SELECT VALUE AVG(...) merge.
-
-    This type is only used for SDK control flow (type-based handling), then
-    translated to a clearer public ValueError for callers.
-    """
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches

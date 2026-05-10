@@ -159,8 +159,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
-        emit_structured_env = os.environ.get(Constants.EMIT_STRUCTURED_CONTINUATION_PK_CONFIG, "")
-        self._emit_structured_continuation_pk = emit_structured_env.strip().lower() in ("1", "true", "yes", "on")
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[AsyncTokenCredential] = None
@@ -2972,6 +2970,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_range_id: Optional[str] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
         is_query_plan: bool = False,
+        response_headers_list: Optional[list[CaseInsensitiveDict]] = None,
         **kwargs: Any
     ) -> list[dict[str, Any]]:
         """Query for more than one Azure Cosmos resources.
@@ -3012,13 +3011,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # we need to set operation_state in kwargs as that's where it is looked at while sending the request
             kwargs.setdefault("timeout", timeout)
 
-        # Execution context injects this via request options; keep kwargs fallback
-        # for compatibility with call paths that still thread internal values there.
-        internal_headers_capture: Optional[Dict[str, Any]] = None
-        if options:
-            internal_headers_capture = options.get("_internal_response_headers_capture")
-        if internal_headers_capture is None:
-            internal_headers_capture = kwargs.pop("_internal_response_headers_capture", None)
+        # The capture dict can arrive via two upstream paths:
+        #   1. The query execution context puts it into ``options`` (the
+        #      common case for query pagination — see the async
+        #      ``_QueryExecutionContextBase._fetch_items_helper_no_retries``).
+        #   2. ``routing_map_provider.get_routing_map`` puts it into
+        #      ``kwargs`` for PK-range fetches.
+        # Honour both so checkpoint-on-failure works on every path.
+        internal_headers_capture: Optional[Dict[str, Any]] = kwargs.pop(
+            "_internal_response_headers_capture", None
+        )
+        if internal_headers_capture is None and isinstance(options, dict):
+            internal_headers_capture = options.pop(
+                "_internal_response_headers_capture", None
+            )
 
         def _capture_internal_headers(headers: Mapping[str, Any]) -> None:
             # `internal_headers_capture` is Optional[Dict]; checking it
@@ -3078,6 +3084,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if internal_headers_capture is not None:
                 _capture_internal_headers(get_response_headers)
             self._UpdateSessionIfRequired(headers, result, get_response_headers)
+            if response_headers_list is not None:
+                response_headers_list.append(get_response_headers.copy())
             if response_hook:
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
@@ -3144,7 +3152,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             page_size_hint = _normalize_max_item_count(options.get("maxItemCount"))
             query_hash = _hash_query_spec(query)
             feedrange_hash = _hash_feed_range(feed_range_epk)
-            should_emit_structured_full_pk = self._emit_structured_continuation_pk
             inbound_serialized_continuation = options.get("continuation")
             inbound_token_payload = _decode_token(inbound_serialized_continuation)
             legacy_bridge_in_use = False
@@ -3215,7 +3222,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             query,
                             feed_range_epk,
                             is_full_pk_structured_scope,
-                            should_emit_structured_full_pk,
                             query_hash,
                             feedrange_hash,
                         )
@@ -3224,7 +3230,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             "Failed to write continuation while handling query POST failure: %s",
                             continuation_write_error,
                         )
-                    _capture_internal_headers(feedrange_response_headers)
                     raise error
 
                 # NOTE: Keep this feed_range pagination loop in sync with
@@ -3324,6 +3329,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             self._UpdateSessionIfRequired(
                                 req_headers, backend_query_result, backend_response_headers
                             )
+                            if response_headers_list is not None:
+                                response_headers_list.append(backend_response_headers.copy())
                             if response_hook:
                                 response_hook(backend_response_headers, backend_query_result)
                             return __GetBodiesFromQueryResult(backend_query_result)
@@ -3352,14 +3359,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         partial_docs = backend_query_result.get("Documents") if backend_query_result else None
                         if isinstance(results_docs, list) and isinstance(partial_docs, list):
                             results_docs.extend(partial_docs)
-                        elif not results and backend_query_result:
-                            # Preserve already-accumulated rows: only seed from
-                            # fallback payload when no prior merged result exists.
+                        elif backend_query_result:
                             results = backend_query_result
 
                     previous_feedrange = pagination_state.head_range
                     previous_backend_continuation = pagination_state.head_bc
                     page_items_returned = _count_page_items_from_partial_result(backend_query_result, query)
+                    if response_headers_list is not None:
+                        response_headers_list.append(backend_response_headers.copy())
                     if response_hook:
                         response_hook(backend_response_headers, backend_query_result)
                     pagination_state.apply_post_result(
@@ -3406,7 +3413,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     query,
                     feed_range_epk,
                     is_full_pk_structured_scope,
-                    should_emit_structured_full_pk,
                     query_hash,
                     feedrange_hash,
                 )
@@ -3433,6 +3439,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
             self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if response_headers_list is not None:
+            response_headers_list.append(post_response_headers.copy())
         if response_hook:
             response_hook(self.last_response_headers, result)
 

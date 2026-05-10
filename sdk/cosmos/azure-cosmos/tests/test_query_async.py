@@ -4,9 +4,7 @@ import asyncio
 import os
 import unittest
 import uuid
-from contextlib import asynccontextmanager
 from asyncio import gather
-from unittest.mock import patch
 
 import pytest
 
@@ -56,17 +54,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
-    @asynccontextmanager
-    async def _new_client_with_structured_full_pk_env(self, value: str):
-        with patch.dict(os.environ, {"AZURE_COSMOS_EMIT_STRUCTURED_CONTINUATION_PK": value}, clear=False):
-            async with CosmosClient(
-                self.host,
-                self.masterKey,
-                multiple_write_locations=self.use_multiple_write_locations,
-            ) as client:
-                database = client.get_database_client(self.TEST_DATABASE_ID)
-                created_collection = database.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-                yield client, created_collection
 
     async def test_first_and_last_slashes_trimmed_for_query_string_async(self):
         created_collection = await self.created_db.create_container(
@@ -504,46 +491,6 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert token is not None
         assert _decode_token(token) is None
 
-    async def test_full_pk_continuation_emits_structured_with_env_var_async(self):
-        """Enabling the environment variable returns structured continuation tokens."""
-        async with self._new_client_with_structured_full_pk_env("1") as (_, created_collection):
-            await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-            await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-            query_iterable = created_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            pager = query_iterable.by_page()
-            await pager.__anext__()
-            token = pager.continuation_token
-
-        assert token is not None
-        assert _decode_token(token) is not None
-
-    async def test_full_pk_continuation_emits_structured_with_env_var_and_new_client_async(self):
-        """The environment variable is read when the client is created."""
-        with patch.dict(os.environ, {"AZURE_COSMOS_EMIT_STRUCTURED_CONTINUATION_PK": "true"}, clear=False):
-            async with CosmosClient(
-                self.host,
-                self.masterKey,
-            ) as client:
-                database = client.get_database_client(self.TEST_DATABASE_ID)
-                created_collection = database.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-                await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-                await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-
-                query_iterable = created_collection.query_items(
-                    query='SELECT * from c',
-                    partition_key='pk',
-                    max_item_count=1,
-                )
-                pager = query_iterable.by_page()
-                await pager.__anext__()
-                token = pager.continuation_token
-
-                assert token is not None
-                assert _decode_token(token) is not None
 
     async def test_full_pk_legacy_replay_resumes_same_page_async(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -567,305 +514,132 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         replay_second_page = [item async for item in await replay_pager.__anext__()][0]
         assert second_page['id'] == replay_second_page['id']
 
-    async def test_full_pk_structured_replay_resumes_same_page_async(self):
-        async with self._new_client_with_structured_full_pk_env("yes") as (_, created_collection):
-            await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-            await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-            query_iterable = created_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            pager = query_iterable.by_page()
-            await pager.__anext__()
-            token = pager.continuation_token
-            second_page = [item async for item in await pager.__anext__()][0]
-            replay_pager = query_iterable.by_page(token)
-            replay_second_page = [item async for item in await replay_pager.__anext__()][0]
-            assert token is not None
-            assert _decode_token(token) is not None
-            assert second_page['id'] == replay_second_page['id']
-
-    async def test_full_pk_structured_replay_rejects_query_mismatch_async(self):
-        async with self._new_client_with_structured_full_pk_env("on") as (_, created_collection):
-            await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-            await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-            source_iterable = created_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            source_pager = source_iterable.by_page()
-            await source_pager.__anext__()
-            token = source_pager.continuation_token
-            assert _decode_token(token) is not None
-
-            mismatched_query_iterable = created_collection.query_items(
-                query='SELECT VALUE c.id from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            with pytest.raises(ValueError, match='query hash mismatch'):
-                await mismatched_query_iterable.by_page(token).__anext__()
-
-    async def test_full_pk_structured_replay_rejects_partition_key_mismatch_async(self):
-        async with self._new_client_with_structured_full_pk_env("1") as (_, created_collection):
-            await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-            await created_collection.upsert_item(body={'pk': 'pk2', 'id': str(uuid.uuid4())})
-            source_iterable = created_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            source_pager = source_iterable.by_page()
-            await source_pager.__anext__()
-            token = source_pager.continuation_token
-            assert _decode_token(token) is not None
-
-            mismatched_pk_iterable = created_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk2',
-                max_item_count=1,
-            )
-            with pytest.raises(ValueError, match='feed_range hash mismatch'):
-                await mismatched_pk_iterable.by_page(token).__anext__()
-
-    async def test_mixed_version_structured_token_replayed_by_legacy_mode_async(self):
-        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-        await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-        await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-
-        async with self._new_client_with_structured_full_pk_env("true") as (_, structured_collection):
-            new_mode_iterable = structured_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            new_mode_pager = new_mode_iterable.by_page()
-            await new_mode_pager.__anext__()
-            structured_token = new_mode_pager.continuation_token
-            assert _decode_token(structured_token) is not None
-
-        legacy_mode_iterable = created_collection.query_items(
-            query='SELECT * from c',
-            partition_key='pk',
-            max_item_count=1,
-        )
-        legacy_mode_pager = legacy_mode_iterable.by_page(structured_token)
-        await legacy_mode_pager.__anext__()
-        resumed_continuation = legacy_mode_pager.continuation_token
-        assert resumed_continuation is not None
-        assert _decode_token(resumed_continuation) is None
-
-    async def test_mixed_version_legacy_token_replayed_by_structured_mode_async(self):
-        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
-        await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-        await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-        await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
-
-        legacy_mode_iterable = created_collection.query_items(
-            query='SELECT * from c',
-            partition_key='pk',
-            max_item_count=1,
-        )
-        legacy_mode_pager = legacy_mode_iterable.by_page()
-        await legacy_mode_pager.__anext__()
-        legacy_token = legacy_mode_pager.continuation_token
-        assert _decode_token(legacy_token) is None
-
-        async with self._new_client_with_structured_full_pk_env("1") as (_, structured_collection):
-            new_mode_iterable = structured_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            new_mode_pager = new_mode_iterable.by_page(legacy_token)
-            await new_mode_pager.__anext__()
-            resumed_continuation = new_mode_pager.continuation_token
-            assert resumed_continuation is not None
-            assert _decode_token(resumed_continuation) is not None
-
-    async def test_full_pk_split_during_page_resets_retry_state_async(self):
-        pk_value = 'pk-' + str(uuid.uuid4())
-        inserted_ids = [str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())]
-
-        async with self._new_client_with_structured_full_pk_env("yes") as (_, created_collection):
-            for doc_id in inserted_ids:
-                await created_collection.upsert_item(body={'pk': pk_value, 'id': doc_id})
-            query_iterable = created_collection.query_items(
-                query='SELECT * from c ORDER BY c.id',
-                partition_key=pk_value,
-                max_item_count=1,
-            )
-            pager = query_iterable.by_page()
-            await pager.__anext__()
-            continuation_token = pager.continuation_token
-            await pager.__anext__()
-
-            client_conn = created_collection.client_connection
-            original_post = client_conn._CosmosClientConnection__Post
-            injected_split = False
-
-            async def _split_once_post(*args, **kwargs):
-                nonlocal injected_split
-                req_headers = args[3]
-                if (
-                    not injected_split
-                    and req_headers.get(http_constants.HttpHeaders.Continuation)
-                ):
-                    injected_split = True
-                    raise exceptions.CosmosHttpResponseError(
-                        status_code=http_constants.StatusCodes.GONE,
-                        sub_status=http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE,
-                        message='simulated split during full-pk page fetch async',
-                    )
-                return await original_post(*args, **kwargs)
-
-            client_conn._CosmosClientConnection__Post = _split_once_post
-            try:
-                replay_pager = query_iterable.by_page(continuation_token)
-                replay_second_page = [item async for item in await replay_pager.__anext__()][0]
-                assert injected_split
-                assert replay_second_page['id'] in inserted_ids
-                assert _decode_token(replay_pager.continuation_token) is not None
-            finally:
-                client_conn._CosmosClientConnection__Post = original_post
 
     async def test_full_pk_legacy_bridge_does_not_fallback_on_runtime_error_async(self):
+        """A non-HTTP error during the wrapped legacy-bridge POST must
+        propagate as-is on the async path. The 400-only fallback must
+        NOT swallow runtime exceptions or retry the page on them.
+        """
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
 
-        legacy_mode_iterable = created_collection.query_items(
+        legacy_iterable = created_collection.query_items(
             query='SELECT * from c',
             partition_key='pk',
             max_item_count=1,
         )
-        legacy_mode_pager = legacy_mode_iterable.by_page()
-        await legacy_mode_pager.__anext__()
-        legacy_token = legacy_mode_pager.continuation_token
+        legacy_pager = legacy_iterable.by_page()
+        await legacy_pager.__anext__()
+        legacy_token = legacy_pager.continuation_token
         assert _decode_token(legacy_token) is None
 
-        async with self._new_client_with_structured_full_pk_env("on") as (_, structured_collection):
-            new_mode_iterable = structured_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            client_conn = structured_collection.client_connection
-            original_post = client_conn._CosmosClientConnection__Post
-            post_call_count = 0
+        client_conn = created_collection.client_connection
+        original_post = client_conn._CosmosClientConnection__Post
 
-            async def _failing_post(*args, **kwargs):
-                nonlocal post_call_count
-                post_call_count += 1
-                if post_call_count == 1:
-                    raise RuntimeError("bridge-runtime-error-async")
-                return await original_post(*args, **kwargs)
+        async def _failing_post(*args, **kwargs):
+            raise RuntimeError("bridge-runtime-error-async")
 
-            client_conn._CosmosClientConnection__Post = _failing_post
-            try:
-                with pytest.raises(RuntimeError, match='bridge-runtime-error-async'):
-                    await new_mode_iterable.by_page(legacy_token).__anext__()
-            finally:
-                client_conn._CosmosClientConnection__Post = original_post
+        client_conn._CosmosClientConnection__Post = _failing_post
+        try:
+            with pytest.raises(RuntimeError, match='bridge-runtime-error-async'):
+                await legacy_iterable.by_page(legacy_token).__anext__()
+        finally:
+            client_conn._CosmosClientConnection__Post = original_post
 
     async def test_full_pk_legacy_bridge_does_not_fallback_on_unrelated_service_error_async(self):
+        """Only 400 BadRequest triggers the wrapped-path fallback. Other
+        statuses (e.g. 429) must propagate without an old-shape retry
+        being issued, on the async path.
+        """
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
 
-        legacy_mode_iterable = created_collection.query_items(
+        legacy_iterable = created_collection.query_items(
             query='SELECT * from c',
             partition_key='pk',
             max_item_count=1,
         )
-        legacy_mode_pager = legacy_mode_iterable.by_page()
-        await legacy_mode_pager.__anext__()
-        legacy_token = legacy_mode_pager.continuation_token
+        legacy_pager = legacy_iterable.by_page()
+        await legacy_pager.__anext__()
+        legacy_token = legacy_pager.continuation_token
         assert _decode_token(legacy_token) is None
 
-        async with self._new_client_with_structured_full_pk_env("true") as (_, structured_collection):
-            new_mode_iterable = structured_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
+        client_conn = created_collection.client_connection
+        original_post = client_conn._CosmosClientConnection__Post
+        saw_legacy_fallback_headers = False
+
+        async def _failing_post(*args, **kwargs):
+            nonlocal saw_legacy_fallback_headers
+            req_headers = args[3]
+            if (
+                http_constants.HttpHeaders.PartitionKey in req_headers
+                and req_headers.get(http_constants.HttpHeaders.Continuation) == legacy_token
+                and http_constants.HttpHeaders.PartitionKeyRangeID not in req_headers
+            ):
+                saw_legacy_fallback_headers = True
+            raise exceptions.CosmosHttpResponseError(
+                status_code=http_constants.StatusCodes.TOO_MANY_REQUESTS,
+                message="throttled",
             )
-            client_conn = structured_collection.client_connection
-            original_post = client_conn._CosmosClientConnection__Post
-            saw_legacy_fallback_headers = False
 
-            async def _failing_post(*args, **kwargs):
-                nonlocal saw_legacy_fallback_headers
-                req_headers = args[3]
-                if (
-                    http_constants.HttpHeaders.PartitionKey in req_headers
-                    and req_headers.get(http_constants.HttpHeaders.Continuation) == legacy_token
-                    and http_constants.HttpHeaders.PartitionKeyRangeID not in req_headers
-                ):
-                    saw_legacy_fallback_headers = True
-                raise exceptions.CosmosHttpResponseError(
-                    status_code=http_constants.StatusCodes.TOO_MANY_REQUESTS,
-                    message="throttled",
-                )
-
-            client_conn._CosmosClientConnection__Post = _failing_post
-            try:
-                with pytest.raises(exceptions.CosmosHttpResponseError):
-                    await new_mode_iterable.by_page(legacy_token).__anext__()
-                assert not saw_legacy_fallback_headers
-            finally:
-                client_conn._CosmosClientConnection__Post = original_post
+        client_conn._CosmosClientConnection__Post = _failing_post
+        try:
+            with pytest.raises(exceptions.CosmosHttpResponseError):
+                await legacy_iterable.by_page(legacy_token).__anext__()
+            assert not saw_legacy_fallback_headers
+        finally:
+            client_conn._CosmosClientConnection__Post = original_post
 
     async def test_full_pk_legacy_bridge_fallback_failure_stamps_checkpoint_async(self):
+        """When the wrapped POST returns 400 and the one-shot legacy
+        fallback POST also fails, the original error is surfaced AND a
+        resumable checkpoint continuation must be stamped on
+        ``last_response_headers`` (async path).
+        """
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
         await created_collection.upsert_item(body={'pk': 'pk', 'id': str(uuid.uuid4())})
 
-        legacy_mode_iterable = created_collection.query_items(
+        legacy_iterable = created_collection.query_items(
             query='SELECT * from c',
             partition_key='pk',
             max_item_count=1,
         )
-        legacy_mode_pager = legacy_mode_iterable.by_page()
-        await legacy_mode_pager.__anext__()
-        legacy_token = legacy_mode_pager.continuation_token
+        legacy_pager = legacy_iterable.by_page()
+        await legacy_pager.__anext__()
+        legacy_token = legacy_pager.continuation_token
         assert _decode_token(legacy_token) is None
 
-        async with self._new_client_with_structured_full_pk_env("1") as (_, structured_collection):
-            new_mode_iterable = structured_collection.query_items(
-                query='SELECT * from c',
-                partition_key='pk',
-                max_item_count=1,
-            )
-            client_conn = structured_collection.client_connection
-            original_post = client_conn._CosmosClientConnection__Post
-            post_call_count = 0
+        client_conn = created_collection.client_connection
+        original_post = client_conn._CosmosClientConnection__Post
+        post_call_count = 0
 
-            async def _failing_post(*args, **kwargs):
-                nonlocal post_call_count
-                post_call_count += 1
-                if post_call_count == 1:
-                    raise exceptions.CosmosHttpResponseError(
-                        status_code=http_constants.StatusCodes.BAD_REQUEST,
-                        message="legacy bridge compatibility failure",
-                    )
-                raise RuntimeError("fallback-post-failed-async")
+        async def _failing_post(*args, **kwargs):
+            nonlocal post_call_count
+            post_call_count += 1
+            if post_call_count == 1:
+                raise exceptions.CosmosHttpResponseError(
+                    status_code=http_constants.StatusCodes.BAD_REQUEST,
+                    message="legacy bridge compatibility failure",
+                )
+            raise RuntimeError("fallback-post-failed-async")
 
-            client_conn._CosmosClientConnection__Post = _failing_post
-            try:
-                with pytest.raises(RuntimeError, match='fallback-post-failed-async'):
-                    await new_mode_iterable.by_page(legacy_token).__anext__()
-                assert post_call_count == 2
-                continuation = client_conn.last_response_headers.get(http_constants.HttpHeaders.Continuation)
-                assert continuation is not None
-                assert _decode_token(continuation) is not None
-            finally:
-                client_conn._CosmosClientConnection__Post = original_post
+        client_conn._CosmosClientConnection__Post = _failing_post
+        try:
+            with pytest.raises(RuntimeError, match='fallback-post-failed-async'):
+                await legacy_iterable.by_page(legacy_token).__anext__()
+            assert post_call_count == 2
+            continuation = client_conn.last_response_headers.get(http_constants.HttpHeaders.Continuation)
+            assert continuation is not None
+            assert _decode_token(continuation) is None
+        finally:
+            client_conn._CosmosClientConnection__Post = original_post
+
 
     async def test_cross_partition_query_with_none_partition_key_async(self):
         created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
