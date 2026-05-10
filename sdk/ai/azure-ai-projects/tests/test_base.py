@@ -71,6 +71,7 @@ servicePreparer = functools.partial(
     memory_store_chat_model_deployment_name="sanitized-model-deployment-name",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
     foundry_agent_container_image="sanitizedregistry.azurecr.io/sanitized/sessions-agent:latest",
+    foundry_hosted_agent_name="sanitized-hosted-agent-name",
 )
 
 fineTuningServicePreparer = functools.partial(

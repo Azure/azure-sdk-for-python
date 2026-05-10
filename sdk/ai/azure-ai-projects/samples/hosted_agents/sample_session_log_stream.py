@@ -6,31 +6,34 @@
 
 """
 DESCRIPTION:
-        This sample demonstrates how to stream hosted agent session logs
-        using `project_client.beta.agents.get_session_log_stream` with the
-        synchronous AIProjectClient.
+    This sample demonstrates how to stream hosted agent session logs
+    using `project_client.beta.agents.get_session_log_stream` with the
+    synchronous AIProjectClient.
 
-        Sessions only work with Hosted Agents.
+    Sessions only work with Hosted Agents.
 
-        Session and log stream operations are currently preview features.
-        In the Python SDK, you access these operations via
-        `project_client.beta.agents`.
+    Session and log stream operations are currently preview features.
+    In the Python SDK, you access these operations via
+    `project_client.beta.agents`.
 
 USAGE:
-        python sample_session_log_stream.py
+    python sample_session_log_stream.py
 
-        Before running the sample:
+    Before running the sample:
 
-        pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.1.0" python-dotenv
 
-        Set these environment variables with your own values:
-        1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-           page of your Microsoft Foundry portal.
-        2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+    Set these environment variables with your own values:
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+       page of your Microsoft Foundry portal.
+    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
 
-        You can build and push an example image from
-        `samples/hosted_agents/assets/responses-echo-agent` and use that image value
-        for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+    If you don't have a Hosted Agent, run `sample_hosted_agent_create.py` first
+    to create one as a prerequisite.
+
+    NOTE: This sample assumes the Foundry project and Azure AI account are in the
+    same resource group.
+
 """
 
 import os
@@ -46,13 +49,13 @@ from azure.ai.projects.models import (
     FixedRatioVersionSelectionRule,
     VersionSelector,
 )
-from hosted_agents_util import create_agent_and_session
+from azure.ai.projects.models import VersionRefIndicator
+from hosted_agents_util import get_latest_active_agent_version
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
-agent_name = "MySessionHostedAgent"
+agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 
 
 def _iter_sse_frames(stream, max_log_events: int):
@@ -91,25 +94,33 @@ with (
         credential=credential,
         allow_preview=True,
     ) as project_client,
-    create_agent_and_session(project_client, agent_name, image) as (agent, session),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
-    endpoint_config = AgentEndpoint(
-        version_selector=VersionSelector(
-            version_selection_rules=[
-                FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
-            ]
-        ),
-        protocols=[AgentEndpointProtocol.RESPONSES],
-    )
-
-    project_client.beta.agents.patch_agent_details(
+    agent = get_latest_active_agent_version(project_client, agent_name)
+    session = project_client.beta.agents.create_session(
         agent_name=agent_name,
-        agent_endpoint=endpoint_config,
+        isolation_key="sample-isolation-key",
+        version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
-    print(f"Agent endpoint configured for agent: {agent_name}")
-    input_text = "Say hello in one short sentence."
+    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+    try:
+        endpoint_config = AgentEndpoint(
+            version_selector=VersionSelector(
+                version_selection_rules=[
+                    FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
+                ]
+            ),
+            protocols=[AgentEndpointProtocol.RESPONSES],
+        )
 
-    with project_client.get_openai_client(agent_name=agent_name) as openai_client:
+        project_client.beta.agents.patch_agent_details(
+            agent_name=agent_name,
+            agent_endpoint=endpoint_config,
+        )
+
+        print(f"Agent endpoint configured for agent: {agent_name}")
+        input_text = "Say hello in one short sentence."
+
         response = openai_client.responses.create(
             input=input_text,
             extra_body={
@@ -118,12 +129,19 @@ with (
         )
         print(f"Response output: {response.output_text}")
 
-    print("Streaming session logs...")
-    raw_stream = project_client.beta.agents.get_session_log_stream(
-        agent_name=agent_name,
-        agent_version=agent.version,
-        session_id=session.agent_session_id,
-    )
-    for frame in _iter_sse_frames(raw_stream, max_log_events=30):
-        print(f"SSE event: {frame.get('event')}")
-        print(f"SSE data: {frame.get('data')}\n")
+        print("Streaming session logs...")
+        raw_stream = project_client.beta.agents.get_session_log_stream(
+            agent_name=agent_name,
+            agent_version=agent.version,
+            session_id=session.agent_session_id,
+        )
+        for frame in _iter_sse_frames(raw_stream, max_log_events=30):
+            print(f"SSE event: {frame.get('event')}")
+            print(f"SSE data: {frame.get('data')}\n")
+    finally:
+        project_client.beta.agents.delete_session(
+            agent_name=agent_name,
+            session_id=session.agent_session_id,
+            isolation_key="sample-isolation-key",
+        )
+        print(f"Session deleted (id: {session.agent_session_id})")

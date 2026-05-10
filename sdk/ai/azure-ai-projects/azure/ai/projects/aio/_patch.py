@@ -16,8 +16,13 @@ from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
-from .._patch import _AuthSecretsFilter
-from ..models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from .._patch import (
+    _AuthSecretsFilter,
+    _build_openai_user_agent,
+    _resolve_openai_base_url,
+    _resolve_openai_default_headers,
+    _resolve_openai_query_params,
+)
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
@@ -101,6 +106,35 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
+    def _get_openai_api_key(self, kwargs: dict):
+        """Resolve the API key for the AsyncOpenAI client.
+
+        :param kwargs: Caller keyword arguments; ``api_key`` is popped when present.
+        :type kwargs: dict
+        :return: The API key string or a bearer-token-provider callable.
+        :rtype: str or Callable
+        """
+        if "api_key" in kwargs:
+            return kwargs.pop("api_key")
+        return get_bearer_token_provider(
+            self._config.credential,  # pylint: disable=protected-access
+            "https://ai.azure.com/.default",
+        )
+
+    def _get_openai_http_client(self, kwargs: dict):
+        """Resolve the HTTP transport client for the AsyncOpenAI client.
+
+        :param kwargs: Caller keyword arguments; ``http_client`` is popped when present.
+        :type kwargs: dict
+        :return: An httpx.AsyncClient instance configured with logging transport, or ``None``.
+        :rtype: httpx.AsyncClient or None
+        """
+        if "http_client" in kwargs:
+            return kwargs.pop("http_client")
+        if self._console_logging_enabled:
+            return httpx.AsyncClient(transport=_OpenAILoggingTransport())
+        return None
+
     @distributed_trace
     def get_openai_client(self, *, agent_name: Optional[str] = None, **kwargs: Any) -> AsyncOpenAI:
         """Get an authenticated AsyncOpenAI client from the `openai` package.
@@ -131,51 +165,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         kwargs = kwargs.copy() if kwargs else {}
 
-        # Allow caller to override base_url
-        if "base_url" in kwargs:
-            base_url = kwargs.pop("base_url")
-        elif agent_name is not None:
-            if self._config.allow_preview:
-                base_url = (
-                    self._config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
-                )  # pylint: disable=protected-access
-            else:
-                raise ValueError(
-                    "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
-                    "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
-                    "\nsubject to change. They should not be used in production environments."
-                )
-        else:
-            base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
-
-        default_query = dict[str, str](kwargs.pop("default_query", None) or {})
-        if agent_name is not None and "api-version" not in default_query:
-            default_query["api-version"] = self._config.api_version  # pylint: disable=protected-access
+        base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
+        default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
             base_url,
         )
 
-        # Allow caller to override api_key, otherwise use token provider
-        if "api_key" in kwargs:
-            api_key = kwargs.pop("api_key")
-        else:
-            api_key = get_bearer_token_provider(
-                self._config.credential,  # pylint: disable=protected-access
-                "https://ai.azure.com/.default",
-            )
-
-        if "http_client" in kwargs:
-            http_client = kwargs.pop("http_client")
-        elif self._console_logging_enabled:
-            http_client = httpx.AsyncClient(transport=_OpenAILoggingTransport())
-        else:
-            http_client = None
-
-        default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
-        if agent_name is not None and not _has_header_case_insensitive(default_headers, _FOUNDRY_FEATURES_HEADER_NAME):
-            default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _BETA_OPERATION_FEATURE_HEADERS["agents"]
+        api_key = self._get_openai_api_key(kwargs)
+        http_client = self._get_openai_http_client(kwargs)
+        default_headers = _resolve_openai_default_headers(agent_name, kwargs)
 
         openai_custom_user_agent = default_headers.get("User-Agent", None)
 
@@ -195,11 +195,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         if openai_custom_user_agent:
             final_user_agent = openai_custom_user_agent
         else:
-            final_user_agent = (
-                "-".join(ua for ua in [self._custom_user_agent, "AIProjectClient"] if ua)
-                + " "
-                + openai_default_user_agent
-            )
+            final_user_agent = _build_openai_user_agent(self._custom_user_agent, openai_default_user_agent)
 
         default_headers["User-Agent"] = final_user_agent
 

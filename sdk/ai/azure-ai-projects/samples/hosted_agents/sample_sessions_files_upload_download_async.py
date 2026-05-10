@@ -6,8 +6,8 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to perform session file upload, list, download,
-    and delete operations using the asynchronous AIProjectClient.
+    This sample demonstrates how to perform CRUD operations on agent Sessions
+    using the asynchronous AIProjectClient.
 
     Sessions only work with Hosted Agents.
 
@@ -24,11 +24,10 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
 
-    You can build and push an example image from
-    `samples/hosted_agents/assets/responses-echo-agent` and use that image value
-    for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+    If you don't have a Hosted Agent, run `sample_hosted_agent_create.py` first
+    to create one as a prerequisite.
 """
 
 import asyncio
@@ -39,23 +38,24 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
-from hosted_agents_util import create_agent_and_session_async
+from azure.ai.projects.models import VersionRefIndicator
+from hosted_agents_util import get_latest_active_agent_version_async
 
 load_dotenv()
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
 
-# Construct the paths to the data folder and data file used in this sample
-script_dir = os.path.dirname(os.path.abspath(__file__))
-data_folder = os.path.join(script_dir, "assets")
-data_file1 = os.path.join(data_folder, "data_file1.txt")
-data_file2 = os.path.join(data_folder, "data_file2.txt")
-remote_file_path1 = "/remote/data_file1.txt"
-remote_file_path2 = "/remote/data_file2.txt"
+async def main():
+    endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+    agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 
+    # Construct the paths to the data folder and data file used in this sample
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    data_folder = os.path.join(script_dir, "assets")
+    data_file1 = os.path.join(data_folder, "data_file1.txt")
+    data_file2 = os.path.join(data_folder, "data_file2.txt")
+    remote_file_path1 = "/remote/data_file1.txt"
+    remote_file_path2 = "/remote/data_file2.txt"
 
-async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(
@@ -64,12 +64,18 @@ async def main() -> None:
             allow_preview=True,
         ) as project_client,
     ):
-        agent_name = "MySessionHostedAgent"
-
-        async with create_agent_and_session_async(project_client, agent_name, image) as (_, session_id):
+        agent = await get_latest_active_agent_version_async(project_client, agent_name)
+        session = await project_client.beta.agents.create_session(
+            agent_name=agent_name,
+            isolation_key="sample-isolation-key",
+            version_indicator=VersionRefIndicator(agent_version=agent.version),
+        )
+        print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+        try:
+            # Upload and list session files
             await project_client.beta.agents.upload_session_file(
                 agent_name=agent_name,
-                session_id=session_id,
+                session_id=session.agent_session_id,
                 content_or_file_path=data_file1,
                 path=remote_file_path1,
             )
@@ -77,7 +83,7 @@ async def main() -> None:
             print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
             await project_client.beta.agents.upload_session_file(
                 agent_name=agent_name,
-                session_id=session_id,
+                session_id=session.agent_session_id,
                 content_or_file_path=data_file2,
                 path=remote_file_path2,
             )
@@ -85,35 +91,43 @@ async def main() -> None:
             print("Listing session files for the session at path '.'...")
             files = await project_client.beta.agents.get_session_files(
                 agent_name=agent_name,
-                agent_session_id=session_id,
+                agent_session_id=session.agent_session_id,
                 path="/remote",
             )
             for entry in files.entries:
                 print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
 
             print(f"Downloading and printing content from '{remote_file_path1}'")
-            download_stream = await project_client.beta.agents.download_session_file(
+            content_bytes = b""
+            async for chunk in await project_client.beta.agents.download_session_file(
                 agent_name=agent_name,
-                agent_session_id=session_id,
+                agent_session_id=session.agent_session_id,
                 path=remote_file_path1,
-            )
-            content_bytes = b"".join([chunk async for chunk in download_stream])
+            ):
+                content_bytes += chunk
             file_content = content_bytes.decode("utf-8", errors="replace")
             print(f"Session file content ({remote_file_path1}):\n{file_content}")
 
             print(f"Deleting session file at path: {remote_file_path1}...")
             await project_client.beta.agents.delete_session_file(
                 agent_name=agent_name,
-                agent_session_id=session_id,
+                agent_session_id=session.agent_session_id,
                 path=remote_file_path1,
             )
 
             print(f"Deleting session file at path: {remote_file_path2}...")
             await project_client.beta.agents.delete_session_file(
                 agent_name=agent_name,
-                agent_session_id=session_id,
+                agent_session_id=session.agent_session_id,
                 path=remote_file_path2,
             )
+        finally:
+            await project_client.beta.agents.delete_session(
+                agent_name=agent_name,
+                session_id=session.agent_session_id,
+                isolation_key="sample-isolation-key",
+            )
+            print(f"Session deleted (id: {session.agent_session_id})")
 
 
 if __name__ == "__main__":

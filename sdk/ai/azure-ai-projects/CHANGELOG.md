@@ -1,5 +1,19 @@
 # Release History
 
+## 2.2.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Sample updates
+
+* Added Hosted Agent creation sample `sample_hosted_agent_create.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+* The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
+* Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
+
 ## 2.1.0 (2026-04-20)
 
 ### Features Added
