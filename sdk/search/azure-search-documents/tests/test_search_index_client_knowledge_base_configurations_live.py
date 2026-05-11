@@ -19,9 +19,7 @@ REPLACEMENT_KNOWLEDGE_BASE_CONFIGURATION_DESCRIPTION = "Knowledge base configura
 
 class TestKnowledgeBaseConfiguration(AzureRecordedTestCase):
     @live_test()
-    def test_create_or_update_knowledge_base_round_trips_references_description_and_etag(
-        self, endpoint: str
-    ) -> None:
+    def test_create_or_update_knowledge_base_round_trips_references_description_and_etag(self, endpoint: str) -> None:
         with knowledge_base_resources(
             self,
             endpoint,

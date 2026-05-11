@@ -101,7 +101,10 @@ class TestSearchIndexerClientDataSourceConnectionAsync(AzureRecordedTestCase):
 
         async with client:
             try:
-                for data_source_connection_name in [first_data_source_connection_name, second_data_source_connection_name]:
+                for data_source_connection_name in [
+                    first_data_source_connection_name,
+                    second_data_source_connection_name,
+                ]:
                     await client.create_data_source_connection(
                         _build_data_source_connection(
                             data_source_connection_name,

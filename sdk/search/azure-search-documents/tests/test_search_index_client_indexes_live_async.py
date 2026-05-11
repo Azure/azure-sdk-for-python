@@ -189,7 +189,9 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
             index = await client.create_index(_build_hotel_index(index_name))
             original_e_tag = index.e_tag
 
-            await client.create_or_update_index(_build_hotel_index(index_name, description=REPLACEMENT_INDEX_DESCRIPTION))
+            await client.create_or_update_index(
+                _build_hotel_index(index_name, description=REPLACEMENT_INDEX_DESCRIPTION)
+            )
 
             index.e_tag = original_e_tag
             with pytest.raises(HttpResponseError):

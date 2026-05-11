@@ -67,9 +67,7 @@ async def poll_until(
         if attempt < attempts - 1:
             await asyncio.sleep(interval)
     last_snapshot = snapshots[-1] if snapshots else None
-    raise AssertionError(
-        f"Polling timed out after {attempts} attempts; last snapshot: {last_snapshot!r}"
-    )
+    raise AssertionError(f"Polling timed out after {attempts} attempts; last snapshot: {last_snapshot!r}")
 
 
 # ---------------------------------------------------------------------------
@@ -123,9 +121,7 @@ def live_test() -> Callable:
     """Compose the standard async live-test decorator stack."""
 
     def wrap(fn: Callable) -> Callable:
-        return SearchEnvVarPreparer()(
-            search_decorator()(recorded_by_proxy_async(fn))
-        )
+        return SearchEnvVarPreparer()(search_decorator()(recorded_by_proxy_async(fn)))
 
     return wrap
 
@@ -165,9 +161,7 @@ async def hotel_index(
     index_client = make_index_client(endpoint)
     search_client = make_search_client(endpoint, index_name)
     index_documents = (
-        documents
-        if documents is not None
-        else build_hotel_documents(document_count or HOTEL_DOCUMENT_COUNT)
+        documents if documents is not None else build_hotel_documents(document_count or HOTEL_DOCUMENT_COUNT)
     )
     try:
         await index_client.create_index(build_hotel_index(index_name))

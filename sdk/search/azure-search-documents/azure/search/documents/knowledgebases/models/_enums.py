@@ -17,10 +17,24 @@ class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Search index retrieval activity."""
     AZURE_BLOB = "azureBlob"
     """Azure Blob retrieval activity."""
+    INDEXED_SHARE_POINT = "indexedSharePoint"
+    """Indexed SharePoint retrieval activity."""
     INDEXED_ONELAKE = "indexedOneLake"
     """Indexed OneLake retrieval activity."""
     WEB = "web"
     """Web retrieval activity."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint retrieval activity."""
+    WORK_IQ = "workIQ"
+    """WorkIQ retrieval activity."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent retrieval activity."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology retrieval activity."""
+    MODEL_QUERY_PLANNING = "modelQueryPlanning"
+    """LLM query planning activity."""
+    MODEL_ANSWER_SYNTHESIS = "modelAnswerSynthesis"
+    """LLM answer synthesis activity."""
     MODEL_WEB_SUMMARIZATION = "modelWebSummarization"
     """LLM web summarization activity."""
     AGENTIC_REASONING = "agenticReasoning"
@@ -43,10 +57,20 @@ class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Search index document reference."""
     AZURE_BLOB = "azureBlob"
     """Azure Blob document reference."""
+    INDEXED_SHARE_POINT = "indexedSharePoint"
+    """Indexed SharePoint document reference."""
     INDEXED_ONELAKE = "indexedOneLake"
     """Indexed OneLake document reference."""
     WEB = "web"
     """Web document reference."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint document reference."""
+    WORK_IQ = "workIQ"
+    """Work IQ document reference."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent document reference."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology document reference."""
 
 
 class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -56,8 +80,21 @@ class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """A natural language semantic query intent."""
 
 
+class KnowledgeRetrievalOutputMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The output configuration for this retrieval."""
+
+    EXTRACTIVE_DATA = "extractiveData"
+    """Return data from the knowledge sources directly without generative alteration."""
+    ANSWER_SYNTHESIS = "answerSynthesis"
+    """Synthesize an answer for the response payload."""
+
+
 class KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The amount of effort to use during retrieval."""
 
     MINIMAL = "minimal"
     """Does not perform any source selections, query planning, or iterative search."""
+    LOW = "low"
+    """Use low reasoning during retrieval."""
+    MEDIUM = "medium"
+    """Use a moderate amount of reasoning during retrieval."""
