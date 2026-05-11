@@ -66,11 +66,20 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
         # feed to fetch partition key ranges, while _ReadPartitionKeyRanges uses the standard read feed.
         # Verify that all fields from expected partition_key_ranges exist in actual results
         # and have the same values, allowing additional change feed metadata fields
+        # PKRange namedtuple retains id, minInclusive, maxExclusive, parents.
+        # Verify these core fields match the service response. ``parents`` is
+        # stored as a tuple of strings on PKRange and may be absent on the raw
+        # service dict for never-split ranges; normalise both sides.
+        pk_range_fields = ('id', 'minInclusive', 'maxExclusive')
         for actual, expected in zip(overlapping_partition_key_ranges, partition_key_ranges):
-            for key, expected_value in expected.items():
+            for key in pk_range_fields:
                 self.assertIn(key, actual, f"Expected key '{key}' not found in actual range")
-                self.assertEqual(actual[key], expected_value,
-                                 f"Value mismatch for key '{key}': expected {expected_value}, got {actual[key]}")
+                self.assertEqual(actual[key], expected[key],
+                                 f"Value mismatch for key '{key}': expected {expected[key]}, got {actual[key]}")
+            actual_parents = tuple(actual.get('parents') or ())
+            expected_parents = tuple(expected.get('parents') or ())
+            self.assertEqual(actual_parents, expected_parents,
+                             f"parents mismatch: expected {expected_parents}, got {actual_parents}")
 
     def test_change_feed_etag_stored_after_initial_load(self):
         """Verifies that when the SDK fetches partition key ranges for the first time

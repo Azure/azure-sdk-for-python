@@ -32,6 +32,7 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
 
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
+            self.url_connection = "https://mock-async-test.documents.azure.com:443/"
 
         def _ReadPartitionKeyRanges(self, _collection_link: str,
                                     _feed_options: Optional[Mapping[str, Any]] = None, **kwargs):
@@ -44,6 +45,11 @@ class TestRoutingMapProviderAsync(unittest.IsolatedAsyncioTestCase):
                     yield r
 
             return _gen()
+
+    def tearDown(self):
+        from azure.cosmos._routing.aio.routing_map_provider import _shared_routing_map_cache, _shared_cache_lock
+        with _shared_cache_lock:
+            _shared_routing_map_cache.clear()
 
     def setUp(self):
         self.partition_key_ranges = [

@@ -3,8 +3,17 @@
 ## 1.0.0b52 (Unreleased)
 
 ### Features Added
+- Add logger name to custom dimensions for Message, Exception and Event telemetry
+  ([#46096](https://github.com/Azure/azure-sdk-for-python/pull/46096))
+- Add support for populating SDK version from distro and Microsoft OpenTelemetry distro environment variables
+  ([#46613](https://github.com/Azure/azure-sdk-for-python/pull/46613))
+- Add GenAI main-agent attribution processors to propagate `microsoft.gen_ai.main_agent.*` attributes
+  across spans and log records in multi-agent systems per [spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/genai_main_agent_attribution.md)
+  ([#46700](https://github.com/Azure/azure-sdk-for-python/pull/46700))
 
 ### Breaking Changes
+- Dropped support for Python 3.9. This package now supports Python 3.10+. [Follows upstream otel dropping support](https://github.com/open-telemetry/opentelemetry-python/pull/5076)
+  ([#46694](https://github.com/Azure/azure-sdk-for-python/pull/46694))
 
 ### Bugs Fixed
 - Fix `success` field on HTTP request telemetry resolving to an integer instead of a boolean when no status code is present
