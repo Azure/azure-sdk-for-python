@@ -3,6 +3,8 @@
 ## 1.0.0b52 (Unreleased)
 
 ### Features Added
+- Add ownership checks for storage directories
+  ([#46725](https://github.com/Azure/azure-sdk-for-python/pull/46725))
 - Add logger name to custom dimensions for Message, Exception and Event telemetry
   ([#46096](https://github.com/Azure/azure-sdk-for-python/pull/46096))
 - Add support for populating SDK version from distro and Microsoft OpenTelemetry distro environment variables
