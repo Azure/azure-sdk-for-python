@@ -76,8 +76,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_call_accuracy.prompty"
-    _KEY_PREFIX = "tool_call_accuracy"
-    _RESULT_KEY = f"{_KEY_PREFIX}_score"
+    _RESULT_KEY = "tool_call_accuracy"
 
     _MAX_TOOL_CALL_ACCURACY_SCORE = 5
     _MIN_TOOL_CALL_ACCURACY_SCORE = 1
@@ -111,7 +110,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
-            key_prefix=self._KEY_PREFIX,
             credential=credential,
             threshold=threshold,
             **kwargs,
@@ -295,16 +293,16 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 }
             )
             response_dict = {
-                self._key_prefix: score,
+                self._result_key: score,
                 # The "gpt_" prefixed key is maintained for backwards compatibility but is deprecated.
-                f"gpt_{self._key_prefix}": score,
-                f"{self._key_prefix}_score": score,
-                f"{self._key_prefix}_result": score_result,
-                f"{self._key_prefix}_passed": score_result == "pass",
-                f"{self._key_prefix}_reason": reason,
-                f"{self._key_prefix}_status": "completed",
-                f"{self._key_prefix}_threshold": self._threshold,
-                f"{self._key_prefix}_properties": llm_properties,
+                f"gpt_{self._result_key}": score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
 

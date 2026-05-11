@@ -65,8 +65,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_selection.prompty"
-    _KEY_PREFIX = "tool_selection"
-    _RESULT_KEY = f"{_KEY_PREFIX}_score"
+    _RESULT_KEY = "tool_selection"
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
@@ -91,7 +90,6 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
-            key_prefix=self._KEY_PREFIX,
             threshold=threshold,
             credential=credential,
             **kwargs,
@@ -259,14 +257,14 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             response_dict = {
-                self._key_prefix: score,
                 self._result_key: score,
-                f"{self._key_prefix}_passed": score_result == "pass",
-                f"{self._key_prefix}_result": score_result,
-                f"{self._key_prefix}_reason": reason,
-                f"{self._key_prefix}_status": "completed",
-                f"{self._key_prefix}_threshold": self._threshold,
-                f"{self._key_prefix}_properties": llm_properties,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
 

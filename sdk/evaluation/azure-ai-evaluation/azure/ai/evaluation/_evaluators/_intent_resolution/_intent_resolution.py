@@ -51,8 +51,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "intent_resolution.prompty"
-    _KEY_PREFIX = "intent_resolution"
-    _RESULT_KEY = f"{_KEY_PREFIX}_score"
+    _RESULT_KEY = "intent_resolution"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _MIN_INTENT_RESOLUTION_SCORE = 1
@@ -77,7 +76,6 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
-            key_prefix=self._KEY_PREFIX,
             threshold=threshold,
             credential=credential,
             _higher_is_better=True,
@@ -219,14 +217,14 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             response_dict = {
-                self._key_prefix: score,
                 self._result_key: score,
-                f"{self._key_prefix}_passed": score_result == "pass",
-                f"{self._key_prefix}_result": score_result,
-                f"{self._key_prefix}_reason": reason,
-                f"{self._key_prefix}_status": "completed",
-                f"{self._key_prefix}_threshold": self._threshold,
-                f"{self._key_prefix}_properties": llm_properties,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
         # If llm_output is not a dictionary, raise exception

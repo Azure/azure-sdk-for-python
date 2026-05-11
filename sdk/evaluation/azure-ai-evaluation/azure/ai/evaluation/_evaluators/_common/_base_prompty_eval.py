@@ -127,7 +127,6 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         self,
         *,
         result_key: str,
-        key_prefix: str,
         prompty_file: str,
         model_config: dict,
         eval_last_turn: bool = False,
@@ -137,7 +136,6 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         **kwargs,
     ) -> None:
         self._result_key = result_key
-        self._key_prefix = key_prefix
         self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
         self._prompty_file = prompty_file
         self._threshold = threshold
@@ -247,7 +245,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 llm_properties = parsed_output.get("properties", {}) or {}
             else:
                 # Fallback: try to parse legacy XML format or extract digit
-                if isinstance(llm_output, str) and self._key_prefix in PROMPT_BASED_REASON_EVALUATORS:
+                if isinstance(llm_output, str) and self._result_key in PROMPT_BASED_REASON_EVALUATORS:
                     score, reason = parse_quality_evaluator_reason_score(llm_output)
                 elif isinstance(llm_output, str):
                     match = re.search(r"\d", llm_output)
@@ -260,14 +258,14 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             return {
-                self._key_prefix: score,
                 self._result_key: score,
-                f"{self._key_prefix}_passed": score_result == "pass",
-                f"{self._key_prefix}_result": score_result,
-                f"{self._key_prefix}_reason": reason,
-                f"{self._key_prefix}_status": "completed",
-                f"{self._key_prefix}_threshold": self._threshold,
-                f"{self._key_prefix}_properties": llm_properties,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
 
         raise EvaluationException(
