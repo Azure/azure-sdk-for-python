@@ -2,15 +2,9 @@
 
 ## 5.15.2 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed a bug where `WebSocketTransportAsync.close()` could leak an `aiohttp.ClientSession` when the underlying websocket close raised. Also fixed session leaks on reconnect and on non-`ClientConnectorError` failures in `connect()`.
-
-### Other Changes
 
 ## 5.15.1 (2025-11-11)
 
