@@ -679,6 +679,8 @@ class GitHubCopilotAdapter(CopilotAdapter):
 
         # Track MCP bridges for cleanup
         self._toolbox_bridges: list = []
+        self._toolboxes_connected = False
+        self._toolbox_lock = asyncio.Lock()
 
         # AGENTS.md persona injection — load the project's AGENTS.md and use it
         # as the system message so the agent fully embodies its persona
@@ -834,8 +836,25 @@ class GitHubCopilotAdapter(CopilotAdapter):
             except Exception:
                 logger.warning("Failed to connect toolbox %r at %s", name, url, exc_info=True)
 
+    async def _ensure_toolboxes(self):
+        """Lazily connect to toolbox MCP servers on first request.
+
+        Deferred from ``initialize()`` to the first request so that user
+        context (auth tokens injected by the platform) is available when
+        the MCP ``initialize`` and ``tools/list`` calls are made.  An
+        ``asyncio.Lock`` prevents concurrent initialization from parallel
+        requests.
+        """
+        if self._toolboxes_connected:
+            return
+        async with self._toolbox_lock:
+            if self._toolboxes_connected:
+                return
+            await self.connect_toolboxes()
+            self._toolboxes_connected = True
+
     async def initialize(self):
-        """Discover deployments, configure the model, and connect toolboxes.
+        """Discover deployments and configure the model.
 
         Call after construction and before ``run()``.  Discovery always runs
         to validate the configured model against available deployments and to
@@ -844,11 +863,10 @@ class GitHubCopilotAdapter(CopilotAdapter):
         model is matched against discovered deployments; if not found, the
         best available model is auto-selected.
 
-        Also connects to any discovered MCP toolbox servers and registers
-        their tools as regular SDK custom tools.
+        Toolbox MCP connections are deferred to the first request
+        (via ``_ensure_toolboxes``) so that platform-injected user context
+        is available.
         """
-        # Connect toolbox MCP servers (independent of model discovery)
-        await self.connect_toolboxes()
 
         resource_url = self._session_config.get("_foundry_resource_url")
         if not resource_url:
@@ -1047,7 +1065,10 @@ class GitHubCopilotAdapter(CopilotAdapter):
             return None
 
     async def _get_or_create_session(self, conversation_id=None):
-        """Override to add conversation history bootstrap on cold start."""
+        """Override to add lazy toolbox init and conversation history bootstrap."""
+        # Lazy-connect toolboxes on first request (deferred from initialize)
+        await self._ensure_toolboxes()
+
         if conversation_id and conversation_id not in self._sessions:
             history = await self._load_conversation_history(conversation_id)
             if history:

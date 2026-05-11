@@ -3,14 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 
-from azure.storage.blob import BlobProperties, BlobServiceClient
-from azure.storage.blob._deserialize import deserialize_ors_policies
+import pytest
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.storage.blob import BlobProperties, BlobServiceClient
+from azure.storage.blob._deserialize import deserialize_ors_policies
 
 
 class TestStorageObjectReplication(StorageRecordedTestCase):

@@ -34,13 +34,14 @@ To run the samples for this package, please follow the setup instructions in [St
 ### Sample 01: Analyze Binary
 
 #### `sample_analyze_binary.py` / `sample_analyze_binary_async.py`
-Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. Demonstrates how to read local files and extract markdown content.
+Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. Demonstrates how to read local files, extract markdown content, and convert results to LLM-friendly text with `to_llm_input()`.
 
 **Key concepts:**
 - Using `begin_analyze_binary` with binary input
 - Reading local PDF files
 - Extracting markdown content
 - Accessing document properties (pages, dimensions)
+- Converting results to LLM-ready text with `to_llm_input()`
 
 ### Sample 02: Analyze URL
 
@@ -56,7 +57,7 @@ Analyzes a PDF document from local binary data using `prebuilt-documentSearch`. 
 ### Sample 03: Analyze Invoice
 
 #### `sample_analyze_invoice.py` / `sample_analyze_invoice_async.py`
-Extracts structured fields from invoices using `prebuilt-invoice` analyzer. Shows how to work with structured field extraction from domain-specific prebuilt analyzers.
+Extracts structured fields from invoices using `prebuilt-invoice` analyzer. Shows how to work with structured field extraction from domain-specific prebuilt analyzers and convert field results to LLM-friendly text with `to_llm_input()`.
 
 **Key concepts:**
 - Using specialized prebuilt analyzers (prebuilt-invoice)
@@ -64,6 +65,7 @@ Extracts structured fields from invoices using `prebuilt-invoice` analyzer. Show
 - Working with field confidence scores and source locations
 - Accessing object fields and array fields
 - Accessing usage details (billing metrics, token consumption per model)
+- Converting field extraction results to LLM-ready text with `to_llm_input()`
 - Financial document processing (invoices, receipts, credit cards, bank statements, checks)
 
 ### Sample 04: Create Analyzer
@@ -89,6 +91,7 @@ Creates a classifier analyzer to categorize documents and demonstrates automatic
 - Enabling segmentation for multi-document files
 - Processing classification results
 - Content organization and data routing
+- Converting classification results to LLM-friendly text with `to_llm_input()`
 
 ### Sample 06: Get Analyzer
 
@@ -219,6 +222,19 @@ Creates a custom analyzer with labeled training data from Azure Blob Storage. La
 - Defining field schemas with extract and generate methods
 - Using labeled data for improved field extraction accuracy
 - Content Understanding Studio alternative for labeling workflow
+
+## Advanced Samples
+
+### Convert Result to LLM Input
+
+#### `sample_to_llm_input.py` / `sample_to_llm_input_async.py`
+Advanced usage of the `to_llm_input` helper for multi-modal content and output customization. For basic `to_llm_input` usage, see Samples 01, 03, and 05. For classification results, see Sample 05.
+
+**Key concepts:**
+- Output options: fields-only, markdown-only, custom metadata
+- Multi-page PDF with `content_range` — page markers use original page numbers
+- Multi-segment video — each segment rendered with time range
+- Audio with `content_range` — analyzing a specific time window
 
 ## Common Patterns
 
