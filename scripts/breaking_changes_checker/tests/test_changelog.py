@@ -24,13 +24,9 @@ from breaking_changes_checker.detect_breaking_changes import test_compare_report
 
 
 def test_changelog_flag():
-    with open(
-        os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "stable.json"), "r"
-    ) as fd:
+    with open(os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "stable.json"), "r") as fd:
         stable = json.load(fd)
-    with open(
-        os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "current.json"), "r"
-    ) as fd:
+    with open(os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "current.json"), "r") as fd:
         current = json.load(fd)
 
     bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
@@ -39,8 +35,7 @@ def test_changelog_flag():
     assert len(bc.features_added) > 0
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLIENT_METHOD_MSG
-    assert args == ["azure.ai.contentsafety", "BlocklistClient", "new_blocklist_client_method"]
-
+    assert args == ['azure.ai.contentsafety', 'BlocklistClient', 'new_blocklist_client_method']
 
 def test_new_class_property_added():
     # Testing reporting on class level property added
@@ -53,8 +48,8 @@ def test_new_class_property_added():
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                        "new_class_att": "str",
-                    },
+                        "new_class_att": "str"
+                    }
                 },
             }
         }
@@ -69,7 +64,7 @@ def test_new_class_property_added():
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                    },
+                    }
                 },
             }
         }
@@ -81,7 +76,7 @@ def test_new_class_property_added():
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
-    assert args == ["azure.ai.contentsafety", "AnalyzeTextResult", "new_class_att"]
+    assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
 
 
 def test_async_cleanup_check():
@@ -94,8 +89,8 @@ def test_async_cleanup_check():
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                        "new_class_att": "str",
-                    },
+                        "new_class_att": "str"
+                    }
                 },
             }
         },
@@ -107,11 +102,11 @@ def test_async_cleanup_check():
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                        "new_class_att": "str",
-                    },
+                        "new_class_att": "str"
+                    }
                 },
             }
-        },
+        }
     }
 
     current = {
@@ -123,8 +118,8 @@ def test_async_cleanup_check():
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                        "new_property": "str",
-                    },
+                        "new_property": "str"
+                    }
                 },
             }
         },
@@ -136,11 +131,11 @@ def test_async_cleanup_check():
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                        "new_property": "str",
-                    },
+                        "new_property": "str"
+                    }
                 },
             }
-        },
+        }
     }
 
     bc = ChangelogTracker(stable, current, "azure-mgmt-contentsafety")
@@ -166,18 +161,27 @@ def test_new_class_property_added_init():
                     "methods": {
                         "__init__": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
-                                "new_class_att": {"default": None, "param_type": "keyword_only"},
-                                "kwargs": {"default": None, "param_type": "var_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
+                                "new_class_att": {
+                                    "default": None,
+                                    "param_type": "keyword_only"
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword"
+                                }
                             },
-                            "is_async": False,
+                            "is_async": False
                         },
                     },
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                        "new_class_att": "str",
-                    },
+                        "new_class_att": "str"
+                    }
                 },
             }
         }
@@ -191,17 +195,26 @@ def test_new_class_property_added_init():
                     "methods": {
                         "__init__": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
-                                "new_class_att": {"default": None, "param_type": "keyword_only"},
-                                "kwargs": {"default": None, "param_type": "var_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
+                                "new_class_att": {
+                                    "default": None,
+                                    "param_type": "keyword_only"
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword"
+                                }
                             },
-                            "is_async": False,
+                            "is_async": False
                         },
                     },
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                    },
+                    }
                 },
             }
         }
@@ -213,7 +226,7 @@ def test_new_class_property_added_init():
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
-    assert args == ["azure.ai.contentsafety", "AnalyzeTextResult", "new_class_att"]
+    assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
 
 
 def test_new_class_property_added_init_only():
@@ -225,17 +238,26 @@ def test_new_class_property_added_init_only():
                     "methods": {
                         "__init__": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
-                                "new_class_att": {"default": None, "param_type": "keyword_only"},
-                                "kwargs": {"default": None, "param_type": "var_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
+                                "new_class_att": {
+                                    "default": None,
+                                    "param_type": "keyword_only"
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword"
+                                }
                             },
-                            "is_async": False,
+                            "is_async": False
                         },
                     },
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                    },
+                    }
                 },
             }
         }
@@ -248,16 +270,22 @@ def test_new_class_property_added_init_only():
                     "methods": {
                         "__init__": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
-                                "kwargs": {"default": None, "param_type": "var_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword"
+                                }
                             },
-                            "is_async": False,
+                            "is_async": False
                         },
                     },
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                    },
+                    }
                 },
             }
         }
@@ -269,7 +297,7 @@ def test_new_class_property_added_init_only():
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
-    assert args == ["azure.ai.contentsafety", "AnalyzeTextResult", "new_class_att", "__init__"]
+    assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att', '__init__']
 
 
 def test_new_class_method_parameter_added():
@@ -281,22 +309,34 @@ def test_new_class_method_parameter_added():
                     "methods": {
                         "__init__": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
-                                "kwargs": {"default": None, "param_type": "var_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword"
+                                }
                             },
-                            "is_async": False,
+                            "is_async": False
                         },
                         "foo": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
-                                "bar": {"default": None, "param_type": "var_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
+                                "bar": {
+                                    "default": None,
+                                    "param_type": "var_keyword"
+                                }
                             }
-                        },
+                        }
                     },
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                    },
+                    }
                 },
             }
         }
@@ -309,22 +349,31 @@ def test_new_class_method_parameter_added():
                     "methods": {
                         "__init__": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
-                                "kwargs": {"default": None, "param_type": "var_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword"
+                                }
                             },
-                            "is_async": False,
+                            "is_async": False
                         },
                         "foo": {
                             "parameters": {
-                                "self": {"default": None, "param_type": "positional_or_keyword"},
+                                "self": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                },
                             },
-                            "is_async": False,
-                        },
+                            "is_async": False
+                        }
                     },
                     "properties": {
                         "blocklists_match": "Optional",
                         "categories_analysis": "List[_models.TextCategoriesAnalysis]",
-                    },
+                    }
                 },
             }
         }
@@ -336,7 +385,7 @@ def test_new_class_method_parameter_added():
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
-    assert args == ["azure.ai.contentsafety", "AnalyzeTextResult", "bar", "foo"]
+    assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'bar', 'foo']
 
 
 @pytest.mark.skip(reason="We need to regenerate the code reports for these tests and update the expected results")
@@ -355,7 +404,17 @@ def test_pass_custom_reports_changelog(capsys):
 def test_added_operation_group():
     stable = {
         "azure.contoso": {
-            "class_nodes": {"ContosoClient": {"type": None, "methods": {}, "properties": {"bar": {"attr_type": "str"}}}}
+            "class_nodes": {
+                "ContosoClient": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -366,10 +425,16 @@ def test_added_operation_group():
                     "type": None,
                     "methods": {},
                     "properties": {
-                        "bar": {"attr_type": "str"},
-                        "foo": {"attr_type": "DeviceGroupsOperations"},
-                        "zip": {"attr_type": "bool"},
-                    },
+                        "bar": {
+                            "attr_type": "str"
+                        },
+                        "foo": {
+                            "attr_type": "DeviceGroupsOperations"
+                        },
+                        "zip": {
+                            "attr_type": "bool"
+                        }
+                    }
                 }
             }
         }
@@ -381,7 +446,7 @@ def test_added_operation_group():
     assert len(bc.features_added) == 2
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_MSG
-    assert args == ["azure.contoso", "ContosoClient", "foo"]
+    assert args == ['azure.contoso', 'ContosoClient', 'foo']
     msg, _, *args = bc.features_added[1]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
 
@@ -389,7 +454,17 @@ def test_added_operation_group():
 def test_ignore_changes():
     stable = {
         "azure.contoso": {
-            "class_nodes": {"ContosoClient": {"type": None, "methods": {}, "properties": {"bar": {"attr_type": "str"}}}}
+            "class_nodes": {
+                "ContosoClient": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -400,16 +475,24 @@ def test_ignore_changes():
                     "type": None,
                     "methods": {},
                     "properties": {
-                        "bar": {"attr_type": "str"},
-                        "foo": {"attr_type": "DeviceGroupsOperations"},
-                        "zip": {"attr_type": "bool"},
-                    },
+                        "bar": {
+                            "attr_type": "str"
+                        },
+                        "foo": {
+                            "attr_type": "DeviceGroupsOperations"
+                        },
+                        "zip": {
+                            "attr_type": "bool"
+                        }
+                    }
                 }
             }
         }
     }
 
-    IGNORE = {"azure-contoso": [("AddedOperationGroup", "*", "ContosoClient", "foo")]}
+    IGNORE = {
+        "azure-contoso": [("AddedOperationGroup", "*", "ContosoClient", "foo")]
+    }
     bc = ChangelogTracker(stable, current, "azure-contoso", ignore=IGNORE)
     bc.run_checks()
     bc.report_changes()
@@ -433,13 +516,7 @@ def test_async_features_added_cleanup():
 
     assert len(ct.features_added) == 2
     assert ct.features_added[0] == ("Message", "AddedClient", "azure.contoso", "FooClient", "foo")
-    assert ct.features_added[1] == (
-        "Message",
-        "AddedClassMethod",
-        "azure.contoso",
-        "FooClient",
-        "from_connection_string",
-    )
+    assert ct.features_added[1] == ("Message", "AddedClassMethod", "azure.contoso", "FooClient", "from_connection_string")
 
 
 def test_new_enum_added():
@@ -452,7 +529,7 @@ def test_new_enum_added():
                     "properties": {
                         "a": "a",
                         "b": "b",
-                    },
+                    }
                 },
                 "ManagerEnum": {
                     "type": "Enum",
@@ -460,7 +537,7 @@ def test_new_enum_added():
                     "properties": {
                         "foo": "foo",
                         "bar": "bar",
-                    },
+                    }
                 },
             }
         }
@@ -474,7 +551,7 @@ def test_new_enum_added():
                     "methods": {},
                     "properties": {
                         "foo": "foo",
-                    },
+                    }
                 },
             }
         }
@@ -486,10 +563,10 @@ def test_new_enum_added():
     assert len(bc.features_added) == 2
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_ENUM_MEMBER_MSG
-    assert args == ["azure.contoso.widgetmanager", "ManagerEnum", "bar"]
+    assert args == ['azure.contoso.widgetmanager', 'ManagerEnum', 'bar']
     msg, _, *args = bc.features_added[1]
     assert msg == ChangelogTracker.ADDED_ENUM_MSG
-    assert args == ["azure.contoso.widgetmanager", "WidgetEnum"]
+    assert args == ['azure.contoso.widgetmanager', 'WidgetEnum']
 
 
 def test_added_overload():
@@ -500,7 +577,12 @@ def test_added_overload():
                     "properties": {},
                     "methods": {
                         "one": {
-                            "parameters": {"testing": {"default": None, "param_type": "positional_or_keyword"}},
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
                             "is_async": True,
                             "overloads": [
                                 {
@@ -508,39 +590,48 @@ def test_added_overload():
                                         "testing": {
                                             "type": "Test",
                                             "default": None,
-                                            "param_type": "positional_or_keyword",
+                                            "param_type": "positional_or_keyword"
                                         }
                                     },
                                     "is_async": True,
-                                    "return_type": "TestResult",
+                                    "return_type": "TestResult"
                                 },
                                 {
                                     "parameters": {
                                         "testing": {
                                             "type": "JSON",
                                             "default": None,
-                                            "param_type": "positional_or_keyword",
+                                            "param_type": "positional_or_keyword"
                                         }
                                     },
                                     "is_async": True,
-                                    "return_type": None,
-                                },
-                            ],
+                                    "return_type": None
+                                }
+                            ]
                         },
                         "two": {
-                            "parameters": {"testing2": {"default": None, "param_type": "positional_or_keyword"}},
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
                             "is_async": True,
                             "overloads": [
                                 {
                                     "parameters": {
-                                        "foo": {"type": "JSON", "default": None, "param_type": "positional_or_keyword"}
+                                        "foo": {
+                                            "type": "JSON",
+                                            "default": None,
+                                            "param_type": "positional_or_keyword"
+                                        }
                                     },
                                     "is_async": True,
-                                    "return_type": None,
+                                    "return_type": None
                                 }
-                            ],
+                            ]
                         },
-                    },
+                    }
                 }
             }
         }
@@ -553,7 +644,12 @@ def test_added_overload():
                     "properties": {},
                     "methods": {
                         "one": {
-                            "parameters": {"testing": {"default": None, "param_type": "positional_or_keyword"}},
+                            "parameters": {
+                                "testing": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
                             "is_async": True,
                             "overloads": [
                                 {
@@ -561,20 +657,25 @@ def test_added_overload():
                                         "testing": {
                                             "type": "JSON",
                                             "default": None,
-                                            "param_type": "positional_or_keyword",
+                                            "param_type": "positional_or_keyword"
                                         }
                                     },
                                     "is_async": True,
-                                    "return_type": None,
+                                    "return_type": None
                                 }
-                            ],
+                            ]
                         },
                         "two": {
-                            "parameters": {"testing2": {"default": None, "param_type": "positional_or_keyword"}},
+                            "parameters": {
+                                "testing2": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword"
+                                }
+                            },
                             "is_async": True,
-                            "overloads": [],
+                            "overloads": []
                         },
-                    },
+                    }
                 }
             }
         }
@@ -586,21 +687,17 @@ def test_added_overload():
     assert len(bc.features_added) == 2
     msg, _, *args = bc.features_added[0]
     assert msg == AddedMethodOverloadChecker.message["default"]
-    assert args == ["azure.contoso", "class_name", "one", "def one(testing: Test) -> TestResult"]
+    assert args == ['azure.contoso', 'class_name', 'one', 'def one(testing: Test) -> TestResult']
     msg, _, *args = bc.features_added[1]
     assert msg == AddedMethodOverloadChecker.message["default"]
-    assert args == ["azure.contoso", "class_name", "two", "def two(foo: JSON)"]
+    assert args == ['azure.contoso', 'class_name', 'two', 'def two(foo: JSON)']
 
 
 def test_compare_reports_with_absolute_paths(capsys):
     """Verify test_compare_reports accepts absolute paths for source/target reports."""
     tests_dir = os.path.dirname(__file__)
-    source_report = os.path.abspath(
-        os.path.join(tests_dir, "examples", "code-reports", "content-safety", "stable.json")
-    )
-    target_report = os.path.abspath(
-        os.path.join(tests_dir, "examples", "code-reports", "content-safety", "current.json")
-    )
+    source_report = os.path.abspath(os.path.join(tests_dir, "examples", "code-reports", "content-safety", "stable.json"))
+    target_report = os.path.abspath(os.path.join(tests_dir, "examples", "code-reports", "content-safety", "current.json"))
     pkg_dir = tests_dir  # pkg_dir must exist and is still used (e.g., for package_name and cleanup); its value is independent of using absolute report paths
 
     # Should not raise; changelog=True means no SystemExit(1) even if breaking changes exist
@@ -842,3 +939,4 @@ def test_added_keyword_only_param_to_model_method_still_reported_as_class():
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
     assert args == ["azure.contoso", "ContosoModel", "extra", "do_something"]
+
