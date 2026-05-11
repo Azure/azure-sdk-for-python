@@ -286,7 +286,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
 
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -334,7 +334,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
-                return self._not_applicable_result(ex.message, self.threshold)
+                return self._return_not_applicable_result(ex.message, self.threshold)
             else:
                 raise ex
 

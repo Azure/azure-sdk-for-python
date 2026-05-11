@@ -187,7 +187,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -222,7 +222,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             llm_status = llm_output.get("status", "completed")
             if llm_status == "skipped":
                 reason = llm_output.get("reason", "")
-                return self._not_applicable_result(reason, self._threshold)
+                return self._return_not_applicable_result(reason, self._threshold)
 
             score = llm_output.get("score", None)
             if score not in [0, 1]:
@@ -278,7 +278,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
             error_message = eval_input.get("error_message", "Unknown error")
-            return self._not_applicable_result(error_message, self._threshold)
+            return self._return_not_applicable_result(error_message, self._threshold)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

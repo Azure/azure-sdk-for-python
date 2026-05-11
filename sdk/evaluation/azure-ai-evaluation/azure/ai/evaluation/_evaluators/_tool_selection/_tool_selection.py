@@ -199,7 +199,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -234,7 +234,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             llm_status = llm_output.get("status", "completed")
             if llm_status == "skipped":
                 reason = llm_output.get("reason", "")
-                return self._not_applicable_result(reason, self._threshold)
+                return self._return_not_applicable_result(reason, self._threshold)
 
             score = llm_output.get("score", None)
             if score not in [0, 1]:
@@ -290,7 +290,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
-            return self._not_applicable_result(eval_input.get("error_message"), self._threshold)
+            return self._return_not_applicable_result(eval_input.get("error_message"), self._threshold)
 
         result = await self._do_eval(eval_input)
 

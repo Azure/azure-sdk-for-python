@@ -176,7 +176,7 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -200,7 +200,7 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             llm_status = llm_output.get("status", "completed")
             if llm_status == "skipped":
                 reason = llm_output.get("reason", "")
-                return self._not_applicable_result(reason, self._threshold)
+                return self._return_not_applicable_result(reason, self._threshold)
 
             score = float(llm_output.get("score", 0))
             success_result = "pass" if score >= 1.0 else "fail"
