@@ -1,5 +1,17 @@
 # Release History
 
+## 5.15.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed a bug where `Connection._disconnect()` early-returned when state was already `END`, so the underlying transport was never closed if `Connection.close()` entered its exception handler (e.g. network error, timeout, or already-closed peer during the AMQP close handshake). With `TransportType.AmqpOverWebsocket`, the leaked transport's `aiohttp.ClientSession` produced an `Unclosed client session` warning per affected partition.
+
+### Other Changes
+
 ## 5.15.1 (2025-11-11)
 
 ### Bugs Fixed
