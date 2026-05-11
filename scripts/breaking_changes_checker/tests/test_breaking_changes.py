@@ -746,6 +746,178 @@ def test_parameter_annotation_type_missing_vs_explicit_none():
     assert changes == expected_msg
 
 
+def test_changed_lro_return_type_issue_46489():
+    """Regression test for https://github.com/Azure/azure-sdk-for-python/issues/46489.
+
+    The tool must detect that an LRO method's response type changed from
+    `LROPoller[Fleet]` to `LROPoller[None]` as a breaking change.
+    """
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "FleetsOperations": {
+                    "methods": {
+                        "begin_create_or_update": {
+                            "parameters": {
+                                "resource_group_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "fleet_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "resource": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword",
+                                },
+                            },
+                            "is_async": False,
+                            "return_type": "LROPoller[Fleet]",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "FleetsOperations": {
+                    "methods": {
+                        "begin_create_or_update": {
+                            "parameters": {
+                                "resource_group_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "fleet_name": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "resource": {
+                                    "default": None,
+                                    "param_type": "positional_or_keyword",
+                                },
+                                "kwargs": {
+                                    "default": None,
+                                    "param_type": "var_keyword",
+                                },
+                            },
+                            "is_async": False,
+                            "return_type": "LROPoller[None]",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    EXPECTED = [
+        "(ChangedFunctionReturnType): Method `FleetsOperations.begin_create_or_update` "
+        "changed return type from `LROPoller[Fleet]` to `LROPoller[None]`",
+    ]
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_changed_module_function_return_type():
+    """A module-level function return type change should also be flagged."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "build_url": {
+                    "parameters": {
+                        "base": {"default": None, "param_type": "positional_or_keyword"},
+                    },
+                    "is_async": False,
+                    "return_type": "str",
+                }
+            },
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "build_url": {
+                    "parameters": {
+                        "base": {"default": None, "param_type": "positional_or_keyword"},
+                    },
+                    "is_async": False,
+                    "return_type": "bytes",
+                }
+            },
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedFunctionReturnType): Function `build_url` changed return type from `str` to `bytes`",
+    ]
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_return_type_missing_in_stable_is_not_breaking():
+    """Legacy stable reports without `return_type` must not produce false positives."""
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Foo": {
+                    "methods": {
+                        "bar": {
+                            "parameters": {},
+                            "is_async": False,
+                            # no return_type captured by older versions of the tool
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "Foo": {
+                    "methods": {
+                        "bar": {
+                            "parameters": {},
+                            "is_async": False,
+                            "return_type": "str",
+                        }
+                    }
+                }
+            },
+            "function_nodes": {},
+        }
+    }
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    assert bc.breaking_changes == []
+
+
 def test_report_mode_without_setup_py():
     """Verify detect_breaking_changes.py works with --source-report and --target-report
     when --target points to a directory without setup.py or pyproject.toml.

@@ -241,7 +241,7 @@ def get_properties(cls: Type) -> Dict:
 
 def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     function = inspect.signature(f)
-    func_obj = {"parameters": {}, "is_async": is_async}
+    func_obj = {"parameters": {}, "is_async": is_async, "return_type": None}
 
     for par in function.parameters.values():
         default_value = get_parameter_default(par)
@@ -261,6 +261,38 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
 
         param[par.name]["param_type"] = param_type
         func_obj["parameters"].update(param)
+
+    # Capture the return type annotation by inspecting the source AST. We use
+    # the AST rather than `inspect.signature(f).return_annotation` because the
+    # latter resolves to live type objects whose `str()` representation differs
+    # from the source-level annotation (e.g. fully qualified module paths,
+    # generic alias quirks). Using AST keeps the captured value consistent with
+    # how parameter types are recorded for overloads via `get_parameter_type`.
+    try:
+        source_path = inspect.getsourcefile(f)
+        if source_path:
+            module_ast = _get_parsed_module(source_path)
+            target_name = getattr(f, "__name__", None)
+            if target_name:
+                for node in ast.walk(module_ast):
+                    if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        continue
+                    if node.name != target_name:
+                        continue
+                    # Skip @overload-decorated stubs - those are handled
+                    # separately by `get_overload_data`.
+                    is_overload = any(
+                        (hasattr(dec, "id") and dec.id == "overload")
+                        for dec in node.decorator_list
+                    )
+                    if is_overload:
+                        continue
+                    if node.returns is not None:
+                        func_obj["return_type"] = get_parameter_type(node.returns)
+                    break
+    except (TypeError, OSError, SyntaxError):
+        # Built-ins, C-implemented functions, or unreadable source files.
+        pass
 
     return func_obj
 
@@ -392,10 +424,13 @@ def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
         # method_overloads.update({func.name: {"parameters": {}, "is_async": False, "return_type": None}})
         for decorator in func.decorator_list:
             if hasattr(decorator, "id") and decorator.id == "overload":
+                overload_return_type = None
+                if func.returns is not None:
+                    overload_return_type = get_parameter_type(func.returns)
                 overload_report = {
                     "parameters": create_parameters(func.args),
                     "is_async": is_async,
-                    "return_type": None,
+                    "return_type": overload_return_type,
                 }
                 cls_methods[func.name]["overloads"].append(overload_report)
 
