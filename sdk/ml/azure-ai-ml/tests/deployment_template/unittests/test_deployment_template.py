@@ -16,6 +16,7 @@ class TestDeploymentTemplate:
 
         assert template.name == "test-template"
         assert template.version == "1.0"
+        assert template.display_name is None
         assert template.description is None
         assert template.tags is None or template.tags == {}
         assert template.properties is None or template.properties == {}
@@ -25,6 +26,7 @@ class TestDeploymentTemplate:
         template = DeploymentTemplate(
             name="test-template",
             version="1.0",
+            display_name="My Test Template",
             description="Test deployment template",
             tags={"env": "test"},
             properties={"key": "value"},
@@ -38,6 +40,7 @@ class TestDeploymentTemplate:
 
         assert template.name == "test-template"
         assert template.version == "1.0"
+        assert template.display_name == "My Test Template"
         assert template.description == "Test deployment template"
         assert template.tags == {"env": "test"}
         assert template.properties == {"key": "value"}
@@ -240,6 +243,51 @@ class TestDeploymentTemplate:
                 version="1.0",
                 allowed_instance_types="Standard_DS2_v2,Standard_DS3_v2",
             )
+
+    def test_deployment_template_display_name(self):
+        """Test display_name field initialization, serialization, and deserialization."""
+        # Test initialization
+        template = DeploymentTemplate(
+            name="test-template",
+            version="1.0",
+            display_name="vLLM DT on 1x H100",
+            description="Generic vLLM deployment template",
+        )
+        assert template.display_name == "vLLM DT on 1x H100"
+
+        # Test dump() includes display_name
+        dumped = template.dump()
+        assert dumped["display_name"] == "vLLM DT on 1x H100"
+
+        # Test _to_rest_object() converts to camelCase
+        rest_obj = template._to_rest_object()
+        assert rest_obj["displayName"] == "vLLM DT on 1x H100"
+
+        # Test _to_dict() converts to camelCase
+        dict_obj = template._to_dict()
+        assert dict_obj["displayName"] == "vLLM DT on 1x H100"
+
+        # Test _from_rest_object() reads camelCase
+        mock_rest = Mock(spec=[])
+        mock_rest.properties = {"displayName": "From REST", "name": "test", "version": "1"}
+        mock_rest.name = "test"
+        mock_rest.id = None
+        restored = DeploymentTemplate._from_rest_object(mock_rest)
+        assert restored.display_name == "From REST"
+
+    def test_deployment_template_display_name_none(self):
+        """Test display_name is excluded from serialization when None."""
+        template = DeploymentTemplate(name="test-template", version="1.0")
+        assert template.display_name is None
+
+        dumped = template.dump()
+        assert "display_name" not in dumped
+
+        rest_obj = template._to_rest_object()
+        assert "displayName" not in rest_obj
+
+        dict_obj = template._to_dict()
+        assert "displayName" not in dict_obj
 
     def test_deployment_template_from_rest_object_none(self):
         """Test _from_rest_object with None input."""
