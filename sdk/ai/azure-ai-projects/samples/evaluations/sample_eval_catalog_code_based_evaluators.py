@@ -63,7 +63,7 @@ with (
                 "init_parameters": {
                     "required": ["deployment_name", "pass_threshold"],
                     "type": "object",
-                    "properties": {"deployment_name": {"type": "string"}, "pass_threshold": {"type": "string"}},
+                    "properties": {"deployment_name": {"type": "string"}, "pass_threshold": {"type": "number"}},
                 },
                 "metrics": {
                     "result": {
@@ -116,6 +116,7 @@ with (
             type="azure_ai_evaluator",
             name="my_custom_evaluator_code",
             evaluator_name="my_custom_evaluator_code",
+            data_mapping={"item": "{{item}}"},
             initialization_parameters={
                 "deployment_name": f"{model_deployment_name}",
                 "pass_threshold": 0.5,
