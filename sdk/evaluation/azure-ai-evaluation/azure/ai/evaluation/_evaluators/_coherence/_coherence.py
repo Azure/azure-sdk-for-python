@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Union, List, Optional
+from typing import Any, Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
@@ -143,7 +143,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        messages: List[dict],
+        messages: List[Dict[str, Any]],
     ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
         """Evaluate coherence for message-list input."""
 

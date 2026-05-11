@@ -4,7 +4,7 @@
 import os
 import math
 import logging
-from typing import Dict, Union, List, Optional
+from typing import Any, Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
@@ -136,7 +136,7 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __call__(
         self,
         *,
-        messages: List[dict],
+        messages: List[Dict[str, Any]],
         tool_definitions: Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate task completion for message-list input."""
