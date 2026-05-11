@@ -200,6 +200,47 @@ def _make_failing_agent(**kwargs: Any) -> InvocationAgentServerHost:
 
 
 # ---------------------------------------------------------------------------
+# WebSocket factory functions and helpers
+# ---------------------------------------------------------------------------
+
+
+def _make_echo_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose ws handler echoes text frames."""
+    from starlette.websockets import WebSocket
+
+    app = InvocationAgentServerHost(**kwargs)
+
+    @app.ws_handler
+    async def echo(websocket: WebSocket) -> None:
+        async for message in websocket.iter_text():
+            await websocket.send_text(message)
+
+    return app
+
+
+def _make_failing_ws_app(**kwargs: Any) -> InvocationAgentServerHost:
+    """Create an InvocationAgentServerHost whose ws handler raises after one frame."""
+    from starlette.websockets import WebSocket
+
+    app = InvocationAgentServerHost(**kwargs)
+
+    @app.ws_handler
+    async def boom(websocket: WebSocket) -> None:
+        await websocket.receive_text()
+        raise ValueError("boom")
+
+    return app
+
+
+def _records_with_ws_extras(records):
+    """Filter log records that carry the close-event ``ws.*`` extras."""
+    return [
+        r for r in records
+        if hasattr(r, "ws.session_id") and hasattr(r, "ws.close_code")
+    ]
+
+
+# ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
