@@ -34,7 +34,6 @@ from azure.ai.evaluation._exceptions import (
 from azure.ai.evaluation._common.utils import remove_optional_singletons
 from azure.ai.evaluation._constants import (
     _AggregationType,
-    EVALUATION_PASS_FAIL_MAPPING,
 )
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
@@ -622,14 +621,14 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             # if it wasn't computed in _do_eval
             try:
                 keys = list(result.keys())
-                contains_passed_key = any(key.endswith("_passed") for key in keys)
+                contains_result_key = any(key.endswith("_result") for key in keys)
                 contains_threshold_key = any(key.endswith("_threshold") for key in keys)
-                if not contains_passed_key or not contains_threshold_key:
+                if not contains_result_key or not contains_threshold_key:
                     for key in keys:
                         if key.endswith("_score"):
                             score_value = result[key]
                             base_key = key[:-6]  # Remove "_score" suffix
-                            passed_key = f"{base_key}_passed"
+                            result_key = f"{base_key}_result"
                             threshold_key = f"{base_key}_threshold"
                             threshold_value = (
                                 self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
@@ -642,33 +641,22 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                                     category=ErrorCategory.INVALID_VALUE,
                                 )
 
-                            result[threshold_key] = threshold_value
-                            if self._higher_is_better:
-                                result[passed_key] = float(score_value) >= threshold_value
-                            else:
-                                result[passed_key] = float(score_value) <= threshold_value
+                            if not contains_threshold_key:
+                                result[threshold_key] = threshold_value
+
+                            if not contains_result_key:
+                                if self._higher_is_better:
+                                    if float(score_value) >= threshold_value:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                                    else:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                                else:
+                                    if float(score_value) <= threshold_value:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                                    else:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
                 logger.warning(f"Error calculating binary result: {e}")
-            # Backward-compatibility shim: emit legacy "{prefix}_result" (pass/fail string)
-            # alongside new "{prefix}_passed" (bool), and legacy "{prefix}" alongside
-            # new "{prefix}_score". TODO: remove once downstream consumers are migrated.
-            try:
-                for key in list(result.keys()):
-                    if key.endswith("_passed"):
-                        base_key = key[: -len("_passed")]
-                        legacy_result_key = f"{base_key}_result"
-                        if legacy_result_key not in result:
-                            passed_value = result[key]
-                            if isinstance(passed_value, bool):
-                                result[legacy_result_key] = EVALUATION_PASS_FAIL_MAPPING[passed_value]
-                            else:
-                                result[legacy_result_key] = passed_value
-                    elif key.endswith("_score"):
-                        base_key = key[: -len("_score")]
-                        if base_key and base_key not in result:
-                            result[base_key] = result[key]
-            except Exception as e:
-                logger.warning(f"Error adding backward-compatibility keys: {e}")
             per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 

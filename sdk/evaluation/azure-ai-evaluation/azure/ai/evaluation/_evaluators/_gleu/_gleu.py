@@ -6,6 +6,7 @@ from nltk.translate.gleu_score import sentence_gleu
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._common.utils import nltk_tokenize
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 
@@ -86,8 +87,10 @@ class GleuScoreEvaluator(EvaluatorBase):
             if score <= self._threshold:
                 binary_result = True
         return {
+            "gleu": score,
             "gleu_score": score,
             "gleu_passed": binary_result,
+            "gleu_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
             "gleu_reason": None,
             "gleu_status": "completed",
             "gleu_threshold": self._threshold,

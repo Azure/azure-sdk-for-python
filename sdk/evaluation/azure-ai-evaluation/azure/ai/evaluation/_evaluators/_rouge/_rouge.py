@@ -7,6 +7,7 @@ from typing import Dict, Union
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 import math
 
@@ -196,8 +197,10 @@ class RougeScoreEvaluator(EvaluatorBase):
         )
         is_passed = binary_results["rouge_f1_score_passed"]
         return {
+            "rouge": rouge_f1_score,
             "rouge_score": rouge_f1_score,
             "rouge_passed": is_passed,
+            "rouge_result": EVALUATION_PASS_FAIL_MAPPING[is_passed],
             "rouge_reason": None,
             "rouge_status": "completed",
             "rouge_threshold": self._threshold["f1_score"],

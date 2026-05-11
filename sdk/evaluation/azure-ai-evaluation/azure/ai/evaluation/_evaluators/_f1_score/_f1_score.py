@@ -6,6 +6,7 @@ from collections import Counter
 from typing import List, Dict
 from typing_extensions import overload, override
 
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 
 
@@ -146,8 +147,10 @@ class F1ScoreEvaluator(EvaluatorBase):
             if f1_result <= self._threshold:
                 binary_result = True
         return {
+            "f1_score": f1_result,
             "f1_score_score": f1_result,
             "f1_score_passed": binary_result,
+            "f1_score_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
             "f1_score_reason": None,
             "f1_score_status": "completed",
             "f1_score_threshold": self._threshold,

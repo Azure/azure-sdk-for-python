@@ -227,8 +227,10 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             reason = llm_output.get("reason", "")
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
             return {
+                self._key_prefix: score,
                 self._result_key: score,
                 f"{self._key_prefix}_passed": success_result == "pass",
+                f"{self._key_prefix}_result": success_result,
                 f"{self._key_prefix}_reason": reason,
                 f"{self._key_prefix}_status": "completed",
                 f"{self._key_prefix}_threshold": self._threshold,
