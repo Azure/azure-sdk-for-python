@@ -17,7 +17,7 @@ USAGE: python datalake_samples_query.py
 import os
 import sys
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import DataLakeServiceClient, DelimitedJsonDialect, DelimitedTextDialect
 
 CSV_DATA = b'Service,Package,Version,RepoPath,MissingDocs\r\nApp Configuration,' \
@@ -66,7 +66,7 @@ def main():
     filesystem_client = datalake_service_client.get_file_system_client(filesystem_name)
     try:
         filesystem_client.create_file_system()
-    except HttpResponseError:
+    except ResourceExistsError:
         pass
     # [START query]
     errors = []

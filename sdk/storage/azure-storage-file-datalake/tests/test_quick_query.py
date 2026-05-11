@@ -12,6 +12,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.filedatalake import (
     ArrowDialect,
     ArrowType,
@@ -131,7 +132,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         if not self.is_playback():
             try:
                 self.dsc.create_file_system(self.filesystem_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -479,7 +480,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         query_result = resp.readall()
 
         assert len(errors) == 1
-        assert len(resp) == 414
+        assert len(resp) == len(data)
         assert query_result == b''
 
     @DataLakePreparer()
@@ -523,13 +524,13 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             on_error=on_error,
             file_format=input_format,
             output_format=output_format)
-        data = []
+        records = []
         for record in resp.records():
-            data.append(record)
+            records.append(record)
 
         assert len(errors) == 1
-        assert len(resp) == 414
-        assert data == [b'']
+        assert len(resp) == len(data)
+        assert records == [b'']
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -907,7 +908,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(errors) == 0
         assert len(resp) == len(data)
-        assert listdata, [b'{"name":"owner"}', b'{}', b'{"name":"owner"}', b'']
+        assert listdata == [b'{"name":"owner"}', b'{}', b'{"name":"owner"}', b'']
 
     @DataLakePreparer()
     @recorded_by_proxy

@@ -698,9 +698,9 @@ class TestDirectory(StorageRecordedTestCase):
         self.dsc.get_directory_client(self.file_system_name, directory_name + '/subdir2').create_directory(
             owner=test_guid, permissions='0777')
         self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir1/file1').create_file(
-            owner=test_guid,permissions='0777')
+            owner=test_guid, permissions='0777')
         self.dsc.get_file_client(self.file_system_name, directory_name + '/subdir2/file2').create_file(
-            owner=test_guid,permissions='0777')
+            owner=test_guid, permissions='0777')
         directory_client.get_file_client('file3').create_file()
 
         # User delegation SAS with provided owner permissions

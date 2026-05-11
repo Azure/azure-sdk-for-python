@@ -23,7 +23,7 @@ class _ServiceTest(PerfStressTest):
             _ServiceTest.async_service_client = AsyncDataLakeServiceClient.from_connection_string(
                 conn_str=connection_string)
         self.service_client = _ServiceTest.service_client
-        self.async_service_client =_ServiceTest.async_service_client
+        self.async_service_client = _ServiceTest.async_service_client
 
     async def close(self):
         await self.async_service_client.close()
