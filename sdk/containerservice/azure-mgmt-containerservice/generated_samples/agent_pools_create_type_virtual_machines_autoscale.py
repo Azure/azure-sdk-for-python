@@ -43,7 +43,7 @@ def main():
                 "tags": {"name1": "val1"},
                 "type": "VirtualMachines",
                 "virtualMachinesProfile": {
-                    "scale": {"autoscale": {"maxCount": 5, "minCount": 1, "size": "Standard_D2_v2"}}
+                    "scale": {"autoscale": [{"maxCount": 5, "minCount": 1, "size": "Standard_D2_v2"}]}
                 },
             }
         },
@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-02-preview/AgentPoolsCreate_TypeVirtualMachines_Autoscale.json
+# x-ms-original-file: 2026-02-02-preview/AgentPoolsCreate_TypeVirtualMachines_Autoscale.json
 if __name__ == "__main__":
     main()

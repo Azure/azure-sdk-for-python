@@ -23,30 +23,39 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Service host. Required.
+    :param endpoint: The endpoint URL of the search service. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview" and None. Default value is "2025-11-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+    :param knowledge_base_name: The name of the knowledge base. Required.
+    :type knowledge_base_name: str
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01".
+     Default value is "2026-04-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        knowledge_base_name: str,
+        **kwargs: Any,
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-11-01-preview")
+        api_version: str = kwargs.pop("api_version", "2026-04-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if knowledge_base_name is None:
+            raise ValueError("Parameter 'knowledge_base_name' must not be None.")
 
         self.endpoint = endpoint
         self.credential = credential
+        self.knowledge_base_name = knowledge_base_name
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://search.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "search-documents/{}".format(VERSION))

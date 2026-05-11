@@ -112,7 +112,7 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-02-preview". Default value is "2026-01-02-preview". Note that overriding this default
+     "2026-02-02-preview". Default value is "2026-02-02-preview". Note that overriding this default
      value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no

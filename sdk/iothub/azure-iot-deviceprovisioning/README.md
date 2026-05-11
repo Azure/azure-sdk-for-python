@@ -1,6 +1,6 @@
 # Azure IoT Device Provisioning client library for Python
 
-The IoT Hub Device Provisioning Service (DPS) is a helper service for IoT Hub that enables zero-touch, just-in-time provisioning to the right IoT hub without requiring human intervention, allowing customers to provision millions of devices in a secure and scalable manner. 
+The IoT Hub Device Provisioning Service (DPS) is a helper service for IoT Hub that enables zero-touch, just-in-time provisioning to the right IoT hub without requiring human intervention, allowing customers to provision millions of devices in a secure and scalable manner.
 
 This service SDK provides data plane operations for backend apps. You can use this service SDK to create and manage individual enrollments and enrollment groups, and to query and manage device registration records.
 
@@ -9,7 +9,7 @@ Learn how to provision devices to your IoT hub(s) with our [quickstarts, tutoria
 ## Getting started
 
 ### Prerequisites
-* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
 [Azure IoT Hub Device Provisioning Service](https://learn.microsoft.com/azure/iot-dps/about-iot-dps) to use this package.
 
@@ -96,7 +96,7 @@ credential = AzureSasCredential(signature=sas_token)
 client = DeviceProvisioningClient(endpoint=dps_endpoint, credential=credential)
 ```
 
-### Async Clients 
+### Async Clients
 This library includes a complete async API supported on Python 3.5+. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
@@ -213,7 +213,7 @@ client.enrollment_groups.create_or_update(
 ```
 
 ### Create an x509 CA certificate enrollment group
-Create an enrollment group with an x509 CA certificate attestation. 
+Create an enrollment group with an x509 CA certificate attestation.
 This will ensure a registered device's certificate chain has been signed by the target CA cert at the control plane layer.
 ```python
 from azure.iot.deviceprovisioning import DeviceProvisioningClient
@@ -299,7 +299,7 @@ except HttpResponseError as error:
 
 - `HTTP 401` errors indicate problems authenticating. Check the exception message or logs for more information.
 
-- `HTTP 403` errors indicate that the provided user credentials are not authorized to perform a specific operation on this Device Provisioning Service resource. 
+- `HTTP 403` errors indicate that the provided user credentials are not authorized to perform a specific operation on this Device Provisioning Service resource.
 This can also occur if you have incorrectly generated a SAS credential. Verify your credentials and ensure access to your DPS resource.
 
 - `HTTP 409` errors indicate a resource conflict. This can occur if:

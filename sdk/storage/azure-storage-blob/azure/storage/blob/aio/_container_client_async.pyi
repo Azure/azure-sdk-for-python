@@ -152,8 +152,6 @@ class ContainerClient(  # type: ignore[misc]
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
@@ -165,8 +163,6 @@ class ContainerClient(  # type: ignore[misc]
         *,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> BlobLeaseClient: ...

@@ -1,13 +1,14 @@
 [project]
 name = "azure-ai-agentserver-core"
 dynamic = ["version", "readme"]
-description = "Agents server adapter for Azure AI"
+description = "Foundation utilities and host framework for Azure AI Hosted Agents"
 requires-python = ">=3.10"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 license = "MIT"
 classifiers = [
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -15,25 +16,24 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
-keywords = ["azure", "azure sdk"]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "core"]
 
 dependencies = [
-    "azure-monitor-opentelemetry>=1.5.0",
-    "azure-ai-projects",
-    "azure-ai-agents>=1.2.0b5",
-    "azure-core>=1.35.0",
-    "azure-identity",
-    "openai>=1.80.0",
-    "opentelemetry-api>=1.35",
-    "opentelemetry-exporter-otlp-proto-http",
     "starlette>=0.45.0",
-    "uvicorn>=0.31.0",
+    "hypercorn>=0.17.0",
+    "opentelemetry-api>=1.40.0",
+    "opentelemetry-sdk>=1.40.0",
+    "microsoft-opentelemetry>=0.1.0b1",
 ]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -42,6 +42,7 @@ exclude = [
     "doc*",
     "azure",
     "azure.ai",
+    "azure.ai.agentserver",
 ]
 
 [tool.setuptools.dynamic]
@@ -49,23 +50,15 @@ version = { attr = "azure.ai.agentserver.core._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
-
-[tool.ruff]
-line-length = 120
-target-version = "py311"
-lint.select = ["E", "F", "B", "I"]   # E=pycodestyle errors, F=Pyflakes, B=bugbear, I=import sort
-lint.ignore = []
-fix = false
-exclude = [
-    "**/azure/ai/agentserver/core/models/",
-]
-
-[tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.core"]
-combine-as-imports = true
+"azure.ai.agentserver.core" = ["py.typed"]
 
 [tool.azure-sdk-build]
-breaking = false   # incompatible python version
-pyright = false
+breaking = false
+mypy = true
+pyright = true
 verifytypes = false
+latestdependency = false
+pylint = true
+type_check_samples = false
+
+[tool.uv.sources]

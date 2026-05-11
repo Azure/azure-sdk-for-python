@@ -137,7 +137,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             error_target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR
         )
 
-        super().__init__()
+        super().__init__(threshold=1.0)
 
     @override
     async def _real_call(self, **kwargs):
@@ -263,6 +263,15 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
+        # If response or ground_truth is a string, try to parse it as JSON
+        for key in ("response", "ground_truth"):
+            value = eval_input.get(key)
+            if isinstance(value, str):
+                try:
+                    eval_input[key] = json.loads(value)
+                except (ValueError, TypeError):
+                    pass
+
         response = eval_input["response"]
         ground_truth = eval_input["ground_truth"]
 
@@ -340,9 +349,13 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             )
 
             return {
-                "task_navigation_efficiency_label": match_result,
+                "task_navigation_efficiency_score": float(match_result),
                 "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
-                "task_navigation_efficiency_details": additional_properties_metrics,
+                "task_navigation_efficiency_passed": match_result,
+                "task_navigation_efficiency_reason": None,
+                "task_navigation_efficiency_status": "completed",
+                "task_navigation_efficiency_threshold": float(self._threshold),
+                "task_navigation_efficiency_properties": additional_properties_metrics,
             }
         else:
             raise EvaluationException(

@@ -3,33 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
 import tempfile
-import uuid
 from datetime import datetime, timedelta
 
 import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
-from azure.mgmt.storage import StorageManagementClient
-from azure.storage.blob import (
-    BlobClient,
-    BlobImmutabilityPolicyMode,
-    BlobProperties,
-    BlobSasPermissions,
-    BlobServiceClient,
-    BlobType,
-    ImmutabilityPolicy,
-    PremiumPageBlobTier,
-    SequenceNumberAction,
-    generate_blob_sas
-)
-from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import NonSeekableStream, ProgressTracker
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
+from azure.mgmt.storage import StorageManagementClient
+from azure.storage.blob import (
+    BlobClient, BlobImmutabilityPolicyMode, BlobProperties, BlobSasPermissions, BlobServiceClient, BlobType,
+    generate_blob_sas, ImmutabilityPolicy, PremiumPageBlobTier, SequenceNumberAction,
+)
+from azure.storage.blob._shared.policies import StorageContentValidation
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -49,11 +43,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             try:
                 bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, bsc) -> BlobClient:
@@ -119,7 +113,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -131,6 +126,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         assert resp.get('last_modified') is not None
         assert blob.get_blob_properties()
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_create_blob_with_immutability_policy(self, **kwargs):
@@ -139,7 +135,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
 
         container_name = self.get_resource_name('vlwcontainer')
@@ -149,7 +146,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(storage_resource_group_name,
+                                               versioned_storage_account_name, container_name, blob_container=property)
 
         blob_name = self.get_resource_name("vlwblob")
         blob = bsc.get_blob_client(container_name, blob_name)
@@ -173,7 +171,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             blob.delete_immutability_policy()
             blob.set_legal_hold(False)
             blob.delete_blob()
-            mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            mgmt_client.blob_containers.delete(storage_resource_group_name,
+                                               versioned_storage_account_name, container_name)
 
         return variables
 
@@ -183,7 +182,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                credential=versioned_storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -202,13 +202,14 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
-        resp = blob.create_page_blob(512, metadata=metadata)
+        blob.create_page_blob(512, metadata=metadata)
 
         # Assert
         md = blob.get_blob_properties()
@@ -220,7 +221,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
         lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -239,21 +241,25 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = self._create_blob(bsc, tags=tags)
         with pytest.raises(ResourceModifiedError):
-            blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', if_tags_match_condition="\"tag1\"='first tag'")
-        lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444',
+                               if_tags_match_condition="\"tag1\"='first tag'")
+        lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444',
+                                   if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
         # Act
         data = self.get_random_bytes(512)
         with pytest.raises(ResourceModifiedError):
             blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1\"='first tag'")
-        blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+        blob.upload_page(data, offset=0, length=512, lease=lease,
+                         if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
 
-        page_ranges, cleared = blob.get_page_ranges()
+        page_ranges, _ = blob.get_page_ranges()
 
         # Assert
         content = blob.download_blob(lease=lease)
@@ -266,7 +272,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -286,14 +293,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
         # Act
         resp = blob.create_page_blob(EIGHT_TB)
         props = blob.get_blob_properties()
-        page_ranges, cleared = blob.get_page_ranges()
+        page_ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert resp.get('etag') is not None
@@ -308,7 +316,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
 
@@ -322,7 +331,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         blob.create_page_blob(EIGHT_TB)
@@ -333,7 +343,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         length = 512
         resp = blob.upload_page(data, offset=start_offset, length=length)
         props = blob.get_blob_properties()
-        page_ranges, cleared = blob.get_page_ranges()
+        page_ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert resp.get('etag') is not None
@@ -351,13 +361,14 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
         data = self.get_random_bytes(512)
-        resp = blob.upload_page(data, offset=0, length=512, validate_content=True)
+        blob.upload_page(data, offset=0, length=512, validate_content=True)
 
         # Assert
 
@@ -367,7 +378,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
@@ -386,7 +398,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -406,7 +419,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -425,7 +439,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -444,7 +459,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -463,7 +479,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -482,7 +499,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -499,12 +517,13 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
-        data = u'abcdefghijklmnop' * 32
+        data = 'abcdefghijklmnop' * 32
         resp = blob.upload_page(data, offset=0, length=512)
 
         # Assert
@@ -517,7 +536,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -567,7 +587,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Act: make update page from url calls
         source_with_special_chars_resp = destination_blob_client.upload_pages_from_url(
-            source_blob_client_with_special_chars.url + "?" + sas_token_for_blob_with_special_chars, offset=0, length=4 * 1024, source_offset=0)
+            source_blob_client_with_special_chars.url + "?" + sas_token_for_blob_with_special_chars,
+            offset=0,
+            length=4 * 1024,
+            source_offset=0
+        )
         assert source_with_special_chars_resp.get('etag') is not None
         assert source_with_special_chars_resp.get('last_modified') is not None
 
@@ -584,9 +608,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
-        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token)
+        token = "Bearer {}".format(self.get_credential(BlobServiceClient).get_token(
+            "https://storage.azure.com/.default").token)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
         destination_blob_client = self._create_blob(bsc, length=SOURCE_BLOB_SIZE)
@@ -608,7 +634,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -656,7 +683,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -706,7 +734,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -755,7 +784,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -805,7 +835,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -855,7 +886,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -904,7 +936,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -954,7 +987,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -999,7 +1033,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -1049,7 +1084,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -1097,7 +1133,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -1145,7 +1182,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         start_sequence = 10
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
@@ -1354,12 +1392,13 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
-        ranges, cleared = blob.get_page_ranges()
+        ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert ranges is not None
@@ -1372,15 +1411,16 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
-        resp1 = blob.upload_page(data, offset=0, length=512)
-        resp2 = blob.upload_page(data, offset=1024, length=512)
+        blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=1024, length=512)
 
         # Act
-        ranges, cleared = blob.get_page_ranges()
+        ranges, _ = blob.get_page_ranges()
 
         # Assert
         assert ranges is not None
@@ -1397,7 +1437,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(1536)
@@ -1508,11 +1549,12 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=2048)
         data = self.get_random_bytes(512)
-        resp1 = blob.upload_page(data, offset=0, length=512)
+        blob.upload_page(data, offset=0, length=512)
 
         # Act
         with pytest.raises(ValueError):
@@ -1524,7 +1566,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc, length=1024)
 
@@ -1545,14 +1588,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._create_blob(bsc)
 
         # Act
         resp = blob.set_sequence_number(SequenceNumberAction.Update, 6)
 
-        #Assert
+        # Assert
         assert resp.get('etag') is not None
         assert resp.get('last_modified') is not None
         assert resp.get('blob_sequence_number') is not None
@@ -1566,7 +1610,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = b'1234' * 128
@@ -1602,23 +1647,26 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data1 = b'1234' * 128
         data2 = b'1234' * 256
 
         # Act
-        create_resp = blob.upload_blob(
+        blob.upload_blob(
             data1,
             overwrite=True,
             blob_type=BlobType.PageBlob,
-            metadata={'blobdata': 'data1'})
+            metadata={'blobdata': 'data1'}
+        )
         update_resp = blob.upload_blob(
             data2,
             overwrite=True,
             blob_type=BlobType.PageBlob,
-            metadata={'blobdata': 'data2'})
+            metadata={'blobdata': 'data2'}
+        )
 
         props = blob.get_blob_properties()
 
@@ -1636,7 +1684,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1656,7 +1705,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(0)
@@ -1676,13 +1726,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1705,7 +1757,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1723,7 +1776,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1745,7 +1799,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1768,13 +1823,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1796,7 +1853,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1820,7 +1878,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         # data is almost all empty (0s) except two ranges
         blob = self._get_blob_reference(bsc)
@@ -1839,7 +1898,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         # Assert
         # the uploader should have skipped the empty ranges
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size], bsc)
-        page_ranges, cleared = list(blob.get_page_ranges())
+        page_ranges, _ = blob.get_page_ranges()
         assert len(page_ranges) == 2
         assert page_ranges[0]['start'] == 0
         assert page_ranges[0]['end'] == 4095
@@ -1854,7 +1913,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1876,13 +1936,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1905,7 +1967,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1926,13 +1989,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1955,7 +2020,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(512)
@@ -1971,7 +2037,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         blob = self._get_blob_reference(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1987,14 +2054,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
 
         try:
             source_blob = self._create_blob(bsc, length=2048)
             data = self.get_random_bytes(512)
-            resp1 = source_blob.upload_page(data, offset=0, length=512)
-            resp2 = source_blob.upload_page(data, offset=1024, length=512)
+            source_blob.upload_page(data, offset=0, length=512)
+            source_blob.upload_page(data, offset=1024, length=512)
             source_snapshot_blob = source_blob.create_snapshot()
 
             snapshot_blob = BlobClient.from_blob_url(
@@ -2033,7 +2101,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         premium_storage_account_name = kwargs.pop("premium_storage_account_name")
         premium_storage_account_key = kwargs.pop("premium_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"),
+                                credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         url = self.account_url(premium_storage_account_name, "blob")
         pbs = BlobServiceClient(url, credential=premium_storage_account_key.secret)
@@ -2073,7 +2142,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             with tempfile.TemporaryFile() as temp_file:
                 temp_file.write(byte_data)
                 temp_file.seek(0)
-                pblob3.upload_blob(temp_file, blob_type=BlobType.PageBlob, premium_page_blob_tier=PremiumPageBlobTier.P10, overwrite=True)
+                pblob3.upload_blob(temp_file, blob_type=BlobType.PageBlob,
+                                   premium_page_blob_tier=PremiumPageBlobTier.P10, overwrite=True)
 
             props3 = pblob3.get_blob_properties()
             assert props3.blob_tier == PremiumPageBlobTier.P10
@@ -2088,7 +2158,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         premium_storage_account_name = kwargs.pop("premium_storage_account_name")
         premium_storage_account_key = kwargs.pop("premium_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"), credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(premium_storage_account_name, "blob"),
+                                credential=premium_storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         url = self.account_url(premium_storage_account_name, "blob")
         pbs = BlobServiceClient(url, credential=premium_storage_account_key.secret)
@@ -2178,12 +2249,15 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             assert copy_ref.blob_tier == PremiumPageBlobTier.P30
 
             source_blob2 = pbs.get_blob_client(
-               container_name,
-               self.get_resource_name(TEST_BLOB_PREFIX))
+                container_name,
+                self.get_resource_name(TEST_BLOB_PREFIX))
 
             source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
-                self.account_url(premium_storage_account_name, "blob"), source_blob2.container_name, source_blob2.blob_name)
+                self.account_url(premium_storage_account_name, "blob"),
+                source_blob2.container_name,
+                source_blob2.blob_name
+            )
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
             copy2 = copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
@@ -2214,7 +2288,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         self.config.max_single_get_size = 4*1024
         self.config.max_chunk_get_size = 1024
@@ -2224,7 +2299,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob_client = self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
 
         # Act
-        page_ranges, cleared = blob_client.get_page_ranges()
+        page_ranges, _ = blob_client.get_page_ranges()
         start = page_ranges[0]['start']
         end = page_ranges[0]['end']
 
@@ -2238,12 +2313,12 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         for byte in content[:start-1]:
             try:
                 assert byte == '\x00'
-            except:
+            except AssertionError:
                 assert byte == 0
         for byte in content[end+1:]:
             try:
                 assert byte == '\x00'
-            except:
+            except AssertionError:
                 assert byte == 0
 
     @pytest.mark.live_test_only
@@ -2253,7 +2328,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, max_page_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, max_page_size=4 * 1024)
         self._setup(bsc)
         self.config.max_single_get_size = 4 * 1024
         self.config.max_chunk_get_size = 1024
@@ -2263,11 +2339,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob_client = self._create_sparse_page_blob(bsc, size=sparse_page_blob_size, data=data)
 
         # Act
-        page_ranges, cleared = blob_client.get_page_ranges()
-        start = page_ranges[0]['start']
-        end = page_ranges[0]['end']
+        page_ranges, _ = blob_client.get_page_ranges()
+        start = page_ranges[0]['start']  # pylint: disable=unused-variable
+        end = page_ranges[0]['end']  # pylint: disable=unused-variable
 
-        content = blob_client.download_blob(max_concurrency=3).readall()
+        blob_client.download_blob(max_concurrency=3).readall()
 
     @BlobPreparer()
     @recorded_by_proxy

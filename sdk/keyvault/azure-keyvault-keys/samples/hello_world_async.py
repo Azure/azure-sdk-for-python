@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -34,6 +35,7 @@ from azure.keyvault.keys.aio import KeyClient
 #
 # 5. Delete a key (delete_key)
 # ----------------------------------------------------------------------------------------------------------
+
 
 async def run_sample():
     # Instantiate a key client that will be used to call the service.

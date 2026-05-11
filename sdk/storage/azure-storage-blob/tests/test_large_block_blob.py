@@ -3,18 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import platform
 import tempfile
-import uuid
 from io import BytesIO
-from os import path, remove, urandom
+from os import urandom
 
 import pytest
-from azure.storage.blob import BlobServiceClient, ContentSettings
 
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobServiceClient, ContentSettings
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largeblob'
@@ -36,14 +39,15 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
             credential=key.secret,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
-            min_large_block_upload_threshold=1 * 1024 * 1024)
+            min_large_block_upload_threshold=1 * 1024 * 1024
+        )
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -219,6 +223,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -293,6 +298,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
