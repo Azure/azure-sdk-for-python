@@ -6,5 +6,6 @@
         "serialization.encodedname.json.aio.operations.PropertyOperations.send": "Serialization.EncodedName.Json.Property.send",
         "serialization.encodedname.json.operations.PropertyOperations.get": "Serialization.EncodedName.Json.Property.get",
         "serialization.encodedname.json.aio.operations.PropertyOperations.get": "Serialization.EncodedName.Json.Property.get"
-    }
+    },
+    "CrossLanguageVersion": "cfe78d2eae1a"
 }

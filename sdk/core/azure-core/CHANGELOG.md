@@ -1,14 +1,10 @@
 # Release History
 
-## 1.40.1 (Unreleased)
+## 1.41.0 (2026-05-07)
 
 ### Features Added
 
 - `AZURE_LOG_LEVEL` now accepts `VERBOSE` (case-insensitive) as an alias for `DEBUG`. #46668
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

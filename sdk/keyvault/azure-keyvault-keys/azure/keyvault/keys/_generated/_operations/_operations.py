@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -38,7 +38,7 @@ from .._validation import api_version_validation
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -49,7 +49,7 @@ def build_key_vault_create_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +75,7 @@ def build_key_vault_rotate_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_key_vault_import_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_key_vault_delete_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -151,7 +151,7 @@ def build_key_vault_update_key_request(key_name: str, key_version: str, **kwargs
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -178,7 +178,7 @@ def build_key_vault_get_key_request(key_name: str, key_version: str, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +205,7 @@ def build_key_vault_get_key_versions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +231,7 @@ def build_key_vault_get_keys_request(*, maxresults: Optional[int] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -252,7 +252,7 @@ def build_key_vault_backup_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -277,7 +277,7 @@ def build_key_vault_restore_key_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -299,7 +299,7 @@ def build_key_vault_encrypt_request(key_name: str, key_version: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -327,7 +327,7 @@ def build_key_vault_decrypt_request(key_name: str, key_version: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +355,7 @@ def build_key_vault_sign_request(key_name: str, key_version: str, **kwargs: Any)
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -383,7 +383,7 @@ def build_key_vault_verify_request(key_name: str, key_version: str, **kwargs: An
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -411,7 +411,7 @@ def build_key_vault_wrap_key_request(key_name: str, key_version: str, **kwargs: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -439,7 +439,7 @@ def build_key_vault_unwrap_key_request(key_name: str, key_version: str, **kwargs
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +467,7 @@ def build_key_vault_release_request(key_name: str, key_version: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -494,7 +494,7 @@ def build_key_vault_get_deleted_keys_request(*, maxresults: Optional[int] = None
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -515,7 +515,7 @@ def build_key_vault_get_deleted_key_request(key_name: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -538,12 +538,9 @@ def build_key_vault_get_deleted_key_request(key_name: str, **kwargs: Any) -> Htt
 def build_key_vault_purge_deleted_key_request(  # pylint: disable=name-too-long
     key_name: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
-    accept = _headers.pop("Accept", "application/json")
-
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     # Construct URL
     _url = "/deletedkeys/{key-name}"
     path_format_arguments = {
@@ -555,10 +552,7 @@ def build_key_vault_purge_deleted_key_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_key_vault_recover_deleted_key_request(  # pylint: disable=name-too-long
@@ -567,7 +561,7 @@ def build_key_vault_recover_deleted_key_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -593,7 +587,7 @@ def build_key_vault_get_key_rotation_policy_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -620,7 +614,7 @@ def build_key_vault_update_key_rotation_policy_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -647,7 +641,7 @@ def build_key_vault_get_random_bytes_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -670,7 +664,7 @@ def build_key_vault_get_key_attestation_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -691,7 +685,7 @@ def build_key_vault_get_key_attestation_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
+class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -834,6 +828,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -848,11 +843,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 
@@ -902,6 +900,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -916,11 +915,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 
@@ -1068,6 +1070,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1082,11 +1085,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 
@@ -1136,6 +1142,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1150,11 +1157,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeletedKeyBundle, response.json())
 
@@ -1320,6 +1330,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1334,11 +1345,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 
@@ -1391,6 +1405,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1405,11 +1420,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 
@@ -1421,7 +1439,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_key_versions(
         self, key_name: str, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.KeyItem"]:
+    ) -> ItemPaged["_models.KeyItem"]:
         """Retrieves a list of individual key versions with the same key name.
 
         The full key identifier, attributes, and tags are provided in the response. This operation
@@ -1439,7 +1457,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.KeyItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.KeyItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1490,7 +1508,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.KeyItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.KeyItem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1506,7 +1527,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(
+                    _models.KeyVaultError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1514,7 +1538,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_keys(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> Iterable["_models.KeyItem"]:
+    def get_keys(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> ItemPaged["_models.KeyItem"]:
         """List keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -1532,7 +1556,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.KeyItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.KeyItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1582,7 +1606,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.KeyItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.KeyItem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1598,7 +1625,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(
+                    _models.KeyVaultError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1653,6 +1683,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1667,11 +1698,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BackupKeyResult, response.json())
 
@@ -1821,6 +1855,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1835,11 +1870,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 
@@ -2021,6 +2059,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2035,11 +2074,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyOperationResult, response.json())
 
@@ -2229,6 +2271,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2243,11 +2286,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyOperationResult, response.json())
 
@@ -2408,6 +2454,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2422,11 +2469,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyOperationResult, response.json())
 
@@ -2596,6 +2646,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2610,11 +2661,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyVerifyResult, response.json())
 
@@ -2788,6 +2842,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2802,11 +2857,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyOperationResult, response.json())
 
@@ -2972,6 +3030,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2986,11 +3045,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyOperationResult, response.json())
 
@@ -3152,6 +3214,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3166,11 +3229,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyReleaseResult, response.json())
 
@@ -3182,7 +3248,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_deleted_keys(
         self, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.DeletedKeyItem"]:
+    ) -> ItemPaged["_models.DeletedKeyItem"]:
         """Lists the deleted keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key structures that contain the
@@ -3201,7 +3267,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DeletedKeyItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeletedKeyItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3251,7 +3317,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeletedKeyItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DeletedKeyItem],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3267,7 +3336,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(
+                    _models.KeyVaultError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3314,6 +3386,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3328,11 +3401,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeletedKeyBundle, response.json())
 
@@ -3390,7 +3466,10 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -3437,6 +3516,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3451,11 +3531,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 
@@ -3503,6 +3586,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3517,11 +3601,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyRotationPolicy, response.json())
 
@@ -3653,6 +3740,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3667,11 +3755,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyRotationPolicy, response.json())
 
@@ -3785,6 +3876,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3799,11 +3891,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RandomBytes, response.json())
 
@@ -3814,8 +3909,9 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "key_name", "key_version", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["key_name", "key_version", "accept", "api_version"]},
+        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01"],
     )
     def get_key_attestation(self, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:
         """Gets the public part of a stored key along with its attestation blob.
@@ -3860,6 +3956,7 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3874,11 +3971,14 @@ class KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.KeyBundle, response.json())
 

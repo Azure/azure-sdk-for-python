@@ -7,5 +7,6 @@
         "typetest.model.recursive.aio.RecursiveClient.put": "Type.Model.Inheritance.Recursive.put",
         "typetest.model.recursive.RecursiveClient.get": "Type.Model.Inheritance.Recursive.get",
         "typetest.model.recursive.aio.RecursiveClient.get": "Type.Model.Inheritance.Recursive.get"
-    }
+    },
+    "CrossLanguageVersion": "68dd4f8a1a9e"
 }

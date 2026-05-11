@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient, policies
@@ -10,6 +10,11 @@ from corehttp.runtime import AsyncPipelineClient, policies
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import RemovedClientConfiguration
 from ._operations import _RemovedClientOperationsMixin
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class RemovedClient(_RemovedClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
