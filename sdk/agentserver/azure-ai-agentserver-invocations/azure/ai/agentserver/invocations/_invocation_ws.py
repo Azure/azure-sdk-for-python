@@ -28,7 +28,11 @@ from typing import Any, Optional
 
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
-from azure.ai.agentserver.core import end_span, record_error  # pylint: disable=no-name-in-module
+from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
+    AgentServerHost,
+    end_span,
+    record_error,
+)
 
 from ._constants import InvocationsWSConstants
 
@@ -55,20 +59,18 @@ def _safe_set_attrs(span: Any, attrs: dict[str, Any]) -> None:
         logger.debug("Failed to set WS span attributes: %s", list(attrs.keys()), exc_info=True)
 
 
-class _WSHandlerMixin:
-    """Mixin that adds the ``@app.ws_handler`` decorator and ``/invocations_ws`` route.
+class _WSHandlerMixin(AgentServerHost):
+    """Trait class that adds the ``@app.ws_handler`` decorator and ``/invocations_ws`` route.
 
-    Designed to be mixed into :class:`InvocationAgentServerHost` so the same
-    host object exposes both ``POST /invocations`` (HTTP) and
+    Inherits from :class:`~azure.ai.agentserver.core.AgentServerHost` so that
+    cooperative ``super().__init__`` calls and host attribute access
+    (``self.config``, ``self.request_span``) are resolved statically as well
+    as at runtime.  Designed to be mixed into :class:`InvocationAgentServerHost`
+    so the same host object exposes both ``POST /invocations`` (HTTP) and
     ``/invocations_ws`` (WebSocket) on the same Starlette application.
 
-    Subclasses must:
-
-    1. Inherit from :class:`~azure.ai.agentserver.core.AgentServerHost`
-       (transitively) so ``self.config`` and ``self.request_span`` are
-       available.
-    2. Append the route returned by :meth:`_build_ws_route` to their
-       ``routes`` list before calling ``super().__init__``.
+    Subclasses must append the route returned by :meth:`_build_ws_route` to
+    their ``routes`` list before calling ``super().__init__``.
     """
 
     # Slots populated by __init__.
@@ -199,7 +201,7 @@ class _WSHandlerMixin:
         # the client sent is honoured for parenting child spans inside the
         # user handler.  ``end_on_exit=False`` so we can attach the close
         # code / duration before ending.
-        span_ctx = self.request_span(  # type: ignore[attr-defined]
+        span_ctx = self.request_span(
             websocket.headers,
             session_id,
             "websocket_session",
