@@ -191,7 +191,6 @@ class _QueryExecutionContextBase(object):
 
                     # Refresh routing map to get new partition key ranges
                     self._client.refresh_routing_map_provider()
-                    # Reset execution context state to allow retry from the beginning
 
                     # Reset execution context state for retry. If __QueryFeed already
                     # stamped a checkpoint continuation on failure, resume from it.

@@ -3350,12 +3350,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # ``None`` means start from the beginning of the requested
             # feed range.
             page_size_hint = _normalize_max_item_count(options.get("maxItemCount"))
-            # Identity hashes are only needed when an inbound v=1 token must be
-            # validated, or when the outbound continuation will be a v=1 envelope.
-            # Compute lazily so the single-partition legacy outbound path pays no
-            # hashing cost. The token writers handle ``None`` by computing on demand.
-            query_hash: Optional[str] = None
-            feedrange_hash: Optional[str] = None
             # Single shared copy of options for routing-map lookups in this call.
             # ``get_overlapping_ranges`` does not mutate options; copying once
             # avoids per-iteration ``dict(options)`` allocations.
@@ -3366,13 +3360,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # Cache for the input scope's single-partition classification.
             # We compute it at most once per __QueryFeed call so inbound
             # bridge-detection, mid-page checkpoint, and end-of-page outbound
-            # writer all agree even if the PKRANGE cache refreshes mid-call.
+            # writer all agree even if the PK range cache refreshes mid-call.
             cached_is_single_partition: Optional[bool] = None
 
             def _is_input_scope_single_partition() -> bool:
                 """Return True when the caller input range currently maps to one physical partition.
 
                 Result is cached for the duration of this __QueryFeed call.
+
+                :returns: True if the input scope maps to a single physical partition.
+                :rtype: bool
                 """
                 nonlocal cached_is_single_partition
                 if cached_is_single_partition is None:
@@ -3416,8 +3413,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     resource_id_str,
                     query,
                     feed_range_epk,
-                    expected_query_hash=query_hash,
-                    expected_feedrange_hash=feedrange_hash,
                 )
                 pagination_state = _FeedRangePaginationState.from_inbound(
                     inbound_token_payload, page_size_hint
@@ -3469,8 +3464,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             feed_range_epk,
                             is_full_pk_structured_scope,
                             (not is_full_pk_structured_scope) and _is_input_scope_single_partition(),
-                            query_hash,
-                            feedrange_hash,
                         )
                     except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
                         _LOGGER.warning(
@@ -3624,8 +3617,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     feed_range_epk,
                     is_full_pk_structured_scope,
                     (not is_full_pk_structured_scope) and _is_input_scope_single_partition(),
-                    query_hash,
-                    feedrange_hash,
                 )
                 # End feed_range pagination block.
                 self.last_response_headers = feedrange_response_headers

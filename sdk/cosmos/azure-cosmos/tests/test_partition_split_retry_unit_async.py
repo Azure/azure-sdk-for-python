@@ -638,7 +638,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
         assert pk_refresh_calls == 0, \
             f"PK range query should have 0 refresh calls, got {pk_refresh_calls}"
 
-    async def test_querfeed_populates_capture_dict_from_options_async(self):
+    async def test_queryfeed_populates_capture_dict_from_options_async(self):
         """Async `__QueryFeed` must read the capture dict from `options`
         and populate it from the underlying response headers, with no
         test-side injection. Catches the `options`-vs-`kwargs`
@@ -665,7 +665,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
             "_internal_response_headers_capture": capture_dict,
         }
 
-        canned_headers = {HttpHeaders.Continuation: "checkpoint-from-real-querfeed-async"}
+        canned_headers = {HttpHeaders.Continuation: "checkpoint-from-real-queryfeed-async"}
 
         request_obj_mock = MagicMock(
             set_excluded_location_from_options=MagicMock(),
@@ -711,7 +711,7 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
             assert mock_get.await_count >= 1, "expected __Get to be awaited on the no-query path"
 
-        assert capture_dict.get(HttpHeaders.Continuation) == "checkpoint-from-real-querfeed-async", (
+        assert capture_dict.get(HttpHeaders.Continuation) == "checkpoint-from-real-queryfeed-async", (
             f"capture dict was not populated by async __QueryFeed; got {capture_dict!r}. "
             "This indicates async __QueryFeed is not reading "
             "'_internal_response_headers_capture' from options."

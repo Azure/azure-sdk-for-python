@@ -228,28 +228,6 @@ class TestTokenRoundTrip:
         assert "cf" not in decoded
         assert "rf" not in decoded
 
-    def test_build_outbound_token_uses_precomputed_hashes_without_rehash(self, monkeypatch):
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_query_spec",
-            lambda _query: (_ for _ in ()).throw(AssertionError("query hash should not be recomputed")),
-        )
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_feed_range",
-            lambda _feed_range: (_ for _ in ()).throw(AssertionError("feed_range hash should not be recomputed")),
-        )
-
-        wire = _build_outbound_token(
-            resource_id=_RID,
-            query=_QUERY,
-            feed_range_epk=_FEED_RANGE,
-            entries=[(_HEAD_FEEDRANGE, _BACKEND_CONT)],
-            query_hash="precomputed-query-hash",
-            feedrange_hash="precomputed-feedrange-hash",
-        )
-        decoded = _decode_token(wire)
-        assert decoded is not None
-        assert decoded[_FIELD_QUERY_HASH] == "precomputed-query-hash"
-        assert decoded[_FIELD_FEEDRANGE_HASH] == "precomputed-feedrange-hash"
 
     def test_per_entry_backend_continuations_coexist(self):
         # The shape that motivated the flat ``c`` list: a future
@@ -553,28 +531,6 @@ class TestIdentityFingerprintMismatch:
             )
         assert "feed_range" in str(excinfo.value).lower()
 
-    def test_validate_token_identity_uses_precomputed_hashes_without_rehash(self, monkeypatch):
-        payload = _make_valid_token_payload()
-        inbound = _decode_token(_encode_token(payload))
-        assert inbound is not None
-
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_query_spec",
-            lambda _query: (_ for _ in ()).throw(AssertionError("query hash should not be recomputed")),
-        )
-        monkeypatch.setattr(
-            "azure.cosmos._routing.feed_range_continuation._hash_feed_range",
-            lambda _feed_range: (_ for _ in ()).throw(AssertionError("feed_range hash should not be recomputed")),
-        )
-
-        _validate_token_identity(
-            inbound,
-            resource_id=_RID,
-            query=_QUERY,
-            feed_range_epk=_FEED_RANGE,
-            expected_query_hash=inbound[_FIELD_QUERY_HASH],
-            expected_feedrange_hash=inbound[_FIELD_FEEDRANGE_HASH],
-        )
 
 
 # ---------------------------------------------------------------------- #
@@ -1547,8 +1503,6 @@ class TestWriteQueryOutboundContinuation:
             _FEED_RANGE,
             is_full_pk_structured_scope=True,
             emit_legacy_for_single_partition=False,
-            query_hash=_hash_query_spec(_QUERY),
-            feedrange_hash=_hash_feed_range(_FEED_RANGE),
         )
 
         assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
@@ -1569,8 +1523,6 @@ class TestWriteQueryOutboundContinuation:
             _FEED_RANGE,
             is_full_pk_structured_scope=False,
             emit_legacy_for_single_partition=True,
-            query_hash=_hash_query_spec(_QUERY),
-            feedrange_hash=_hash_feed_range(_FEED_RANGE),
         )
 
         assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
@@ -1590,8 +1542,6 @@ class TestWriteQueryOutboundContinuation:
             _FEED_RANGE,
             is_full_pk_structured_scope=False,
             emit_legacy_for_single_partition=False,
-            query_hash=_hash_query_spec(_QUERY),
-            feedrange_hash=_hash_feed_range(_FEED_RANGE),
         )
 
         decoded = _decode_token(headers[http_constants.HttpHeaders.Continuation])

@@ -265,8 +265,6 @@ def _validate_token_identity(
     resource_id: str,
     query: Any,
     feed_range_epk: routing_range.Range,
-    expected_query_hash: Optional[str] = None,
-    expected_feedrange_hash: Optional[str] = None,
 ) -> None:
     """Confirm the inbound token was created for the same collection,
     query, and feed_range the current call is using. If any of the
@@ -282,13 +280,9 @@ def _validate_token_identity(
     :type query: str or dict
     :param feed_range_epk: Current feed range scope.
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
-    :param expected_query_hash: Precomputed query hash to validate against inbound token.
-    :type expected_query_hash: Optional[str]
-    :param expected_feedrange_hash: Precomputed feed_range hash to validate against inbound token.
-    :type expected_feedrange_hash: Optional[str]
     """
-    expected_qh = expected_query_hash or _hash_query_spec(query)
-    expected_frh = expected_feedrange_hash or _hash_feed_range(feed_range_epk)
+    expected_qh = _hash_query_spec(query)
+    expected_frh = _hash_feed_range(feed_range_epk)
     if inbound[_FIELD_COLLECTION_RID] != resource_id:
         raise ValueError(
             "Continuation token was created for a different collection "
@@ -320,6 +314,18 @@ def _should_bridge_legacy_continuation(
 
     * full-PK structured scope (always single partition), or
     * non-full-PK scope that currently maps to one physical partition.
+
+    :param inbound_serialized_continuation: The raw inbound continuation token, if any.
+    :type inbound_serialized_continuation: str or None
+    :param inbound_token_payload: The decoded structured (``v=1``) token payload, or
+        ``None`` if the inbound token is legacy/opaque.
+    :type inbound_token_payload: dict or None
+    :param bool is_full_pk_structured_scope: True if the request scope is a full
+        partition key (always single partition).
+    :param bool is_single_partition_scope: True if the request scope currently maps
+        to a single physical partition.
+    :returns: True if the legacy continuation should be bridged into pagination state.
+    :rtype: bool
     """
     return bool(
         inbound_serialized_continuation
@@ -590,8 +596,6 @@ class _FeedRangePaginationState:
         resource_id: str,
         query: Any,
         feed_range_epk: routing_range.Range,
-        query_hash: Optional[str] = None,
-        feedrange_hash: Optional[str] = None,
     ) -> None:
         """Set or clear the outbound continuation header from the queue.
 
@@ -608,10 +612,6 @@ class _FeedRangePaginationState:
         :type query: str or dict
         :param feed_range_epk: Original request feed range.
         :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
-        :param query_hash: Optional precomputed query hash to embed in the outbound token.
-        :type query_hash: Optional[str]
-        :param feedrange_hash: Optional precomputed feed_range hash to embed in the outbound token.
-        :type feedrange_hash: Optional[str]
         """
         if not self.queue:
             last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
@@ -621,8 +621,6 @@ class _FeedRangePaginationState:
             query,
             feed_range_epk,
             self.queue,
-            query_hash=query_hash,
-            feedrange_hash=feedrange_hash,
         )
 
 
@@ -634,8 +632,6 @@ def _write_query_outbound_continuation(
     feed_range_epk: routing_range.Range,
     is_full_pk_structured_scope: bool,
     emit_legacy_for_single_partition: bool,
-    query_hash: Optional[str],
-    feedrange_hash: Optional[str],
 ) -> None:
     """Write outbound continuation for feed-range pagination.
 
@@ -660,12 +656,6 @@ def _write_query_outbound_continuation(
     :param emit_legacy_for_single_partition: Whether non-full-PK scope currently maps to a
         single physical partition and can safely emit legacy continuation.
     :type emit_legacy_for_single_partition: bool
-    :param query_hash: Precomputed query hash for outbound token identity, or ``None`` to
-        compute lazily inside the structured-token writer when needed.
-    :type query_hash: Optional[str]
-    :param feedrange_hash: Precomputed feed range hash for outbound token identity, or
-        ``None`` to compute lazily inside the structured-token writer when needed.
-    :type feedrange_hash: Optional[str]
     :returns: None. Mutates ``last_response_headers`` in place.
     :rtype: None
     """
@@ -681,8 +671,6 @@ def _write_query_outbound_continuation(
         resource_id,
         query,
         feed_range_epk,
-        query_hash=query_hash,
-        feedrange_hash=feedrange_hash,
     )
 
 
@@ -692,8 +680,6 @@ def _build_outbound_token(
     query: Any,
     feed_range_epk: routing_range.Range,
     entries: Iterable[Tuple[routing_range.Range, Optional[str]]],
-    query_hash: Optional[str] = None,
-    feedrange_hash: Optional[str] = None,
 ) -> str:
     """Build and base64-encode the outbound continuation token from a
     queue of ``(range, backend_continuation)`` entries.
@@ -708,18 +694,14 @@ def _build_outbound_token(
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param entries: Ordered ``(range, bc)`` pairs to serialize.
     :type entries: Iterable[tuple[~azure.cosmos._routing.routing_range.Range, Optional[str]]]
-    :param query_hash: Optional precomputed query hash to persist in the token envelope.
-    :type query_hash: Optional[str]
-    :param feedrange_hash: Optional precomputed feed_range hash to persist in the token envelope.
-    :type feedrange_hash: Optional[str]
     :returns: Encoded continuation token.
     :rtype: str
     """
     payload = {
         _FIELD_VERSION: _TOKEN_VERSION,
         _FIELD_COLLECTION_RID: resource_id,
-        _FIELD_QUERY_HASH: query_hash or _hash_query_spec(query),
-        _FIELD_FEEDRANGE_HASH: feedrange_hash or _hash_feed_range(feed_range_epk),
+        _FIELD_QUERY_HASH: _hash_query_spec(query),
+        _FIELD_FEEDRANGE_HASH: _hash_feed_range(feed_range_epk),
         _FIELD_CONTINUATIONS: [
             {"min": r.min, "max": r.max, _FIELD_BACKEND_CONTINUATION: bc}
             for r, bc in entries

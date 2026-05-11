@@ -640,7 +640,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         assert pk_refresh_calls == 0, \
             f"PK range query should have 0 refresh calls, got {pk_refresh_calls}"
 
-    def test_querfeed_populates_capture_dict_from_options(self):
+    def test_queryfeed_populates_capture_dict_from_options(self):
         """`__QueryFeed` must read the capture dict from `options` and
         populate it from the underlying response headers.
 
@@ -669,7 +669,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             "_internal_response_headers_capture": capture_dict,
         }
 
-        canned_headers = {HttpHeaders.Continuation: "checkpoint-from-real-querfeed"}
+        canned_headers = {HttpHeaders.Continuation: "checkpoint-from-real-queryfeed"}
 
         request_obj_mock = MagicMock(
             set_excluded_location_from_options=MagicMock(),
@@ -715,7 +715,7 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
 
             assert mock_get.called, "expected __Get to be invoked on the no-query path"
 
-        assert capture_dict.get(HttpHeaders.Continuation) == "checkpoint-from-real-querfeed", (
+        assert capture_dict.get(HttpHeaders.Continuation) == "checkpoint-from-real-queryfeed", (
             f"capture dict was not populated by __QueryFeed; got {capture_dict!r}. "
             "This indicates __QueryFeed is not reading "
             "'_internal_response_headers_capture' from options."
