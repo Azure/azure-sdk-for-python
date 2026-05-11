@@ -7,9 +7,13 @@ import pytest
 
 from azure.ai.evaluation._evaluators._coherence import CoherenceEvaluator
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import (
+    MessagesOrQueryResponseInputValidator,
+    MessagesOrQueryResponseToolDefinitionsValidator,
+)
 from azure.ai.evaluation._evaluators._task_adherence import TaskAdherenceEvaluator
 from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorTarget, EvaluationException
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -56,3 +60,16 @@ class TestEvaluatorEvaluationLevelInputs:
         with pytest.raises(EvaluationException) as exc:
             TaskAdherenceEvaluator(model_config=mock_model_config, evaluation_level="invalid")
         assert "Invalid evaluation_level" in str(exc.value)
+
+    def test_messages_validator_accepts_messages_input(self):
+        validator = MessagesOrQueryResponseInputValidator(error_target=ErrorTarget.COHERENCE_EVALUATOR)
+        eval_input = {"messages": [{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi"}]}
+        assert validator.validate_eval_input(eval_input)
+
+    def test_messages_tool_definitions_validator_accepts_messages_input(self):
+        validator = MessagesOrQueryResponseToolDefinitionsValidator(error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR)
+        eval_input = {
+            "messages": [{"role": "user", "content": "Book a flight"}, {"role": "assistant", "content": "Booked"}],
+            "tool_definitions": [{"name": "book_flight", "parameters": {"type": "object", "properties": {}}}],
+        }
+        assert validator.validate_eval_input(eval_input)

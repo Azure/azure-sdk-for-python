@@ -110,6 +110,7 @@ def _merge_query_response_messages(
 
 
 def _wrap_string_messages(query: str, response: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Convert plain query/response strings to evaluator message dictionaries."""
     return (
         [{"role": MessageRole.USER, "content": [{"type": "text", "text": query}]}],
         [{"role": MessageRole.ASSISTANT, "content": [{"type": "text", "text": response}]}],
@@ -126,7 +127,10 @@ def _split_messages_at_latest_user(
             break
     if latest_user_index < 0:
         raise EvaluationException(
-            message="Unable to infer turn-level query/response from 'messages' because no user message was found.",
+            message=(
+                "Unable to infer turn-level query/response from 'messages' because no message with role='user' was found. "
+                "At least one user message is required."
+            ),
             blame=ErrorBlame.USER_ERROR,
             category=ErrorCategory.INVALID_VALUE,
             target=error_target,
