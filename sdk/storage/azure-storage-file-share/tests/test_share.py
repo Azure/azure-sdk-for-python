@@ -76,12 +76,13 @@ class TestStorageShare(StorageRecordedTestCase):
             pass
         return share_client
 
-    def _delete_shares(self, prefix=TEST_SHARE_PREFIX):  # pylint: disable=unused-argument
+    def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
         for l in self.fsc.list_shares(include_snapshots=True):
-            try:
-                self.fsc.delete_share(l.name, delete_snapshots=True)
-            except:
-                pass
+            if l.name.startswith(prefix):
+                try:
+                    self.fsc.delete_share(l.name, delete_snapshots=True)
+                except:
+                    pass
 
     # --Test cases for shares -----------------------------------------
     def test_create_share_client(self):
