@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
+from dataclasses import dataclass
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -58,6 +59,26 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     ),
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
+
+
+@dataclass
+class DatasetsFolderUploadProgress:
+    """Progress information for folder upload operations.
+
+    :ivar total_files: Total number of files to upload.
+    :vartype total_files: int
+    :ivar completed_files: Number of files that have completed uploading.
+    :vartype completed_files: int
+    :ivar current_file: The name of the most recently completed file.
+    :vartype current_file: str
+    :ivar failed_files: Number of files that failed to upload.
+    :vartype failed_files: int
+    """
+
+    total_files: int
+    completed_files: int
+    current_file: str
+    failed_files: int = 0
 
 
 def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
@@ -378,13 +399,14 @@ __all__: List[str] = [
     "AzureAIModelTargetParam",
     "AzureAIResponsesEvalRunDataSource",
     "CustomCredential",
+    "DatasetsFolderUploadProgress",
     "EvalCsvFileIdSource",
     "EvalCsvRunDataSource",
-    "TestingCriterionAzureAIEvaluator",
     "ModelSamplingConfigParam",
     "RedTeamEvalRunDataSource",
     "ResponseRetrievalItemGenerationParams",
     "TargetCompletionEvalRunDataSource",
+    "TestingCriterionAzureAIEvaluator",
     "ToolDescriptionParam",
     "TracesPreviewEvalRunDataSource",
     "UpdateMemoriesLROPoller",
