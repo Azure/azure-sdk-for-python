@@ -1,12 +1,14 @@
 # Release History
 
-## 8.0.0b2 (2026-05-10)
+## 8.0.0b2 (2026-05-11)
 
 ### Features Added
 
   - Model `AadExternalSecuritySolution` added property `system_data`
+  - Model `AdvancedThreatProtectionSetting` added property `properties`
   - Model `AdvancedThreatProtectionSetting` added property `system_data`
   - Model `Alert` added property `system_data`
+  - Model `AlertSyncSettings` added property `properties`
   - Model `AlertSyncSettings` added property `system_data`
   - Model `AlertsSuppressionRule` added property `system_data`
   - Model `AllowedConnectionsResource` added property `system_data`
@@ -20,9 +22,12 @@
   - Enum `AuthenticationType` added member `ACCESS_TOKEN`
   - Model `AutoProvisioningSetting` added property `system_data`
   - Model `Automation` added property `system_data`
+  - Model `AutomationUpdateModel` added property `properties`
+  - Model `AzureServersSetting` added property `properties`
   - Model `CefExternalSecuritySolution` added property `system_data`
   - Model `Compliance` added property `system_data`
   - Model `ComplianceResult` added property `system_data`
+  - Model `DataExportSettings` added property `properties`
   - Model `DataExportSettings` added property `system_data`
   - Model `DefenderForStorageSetting` added property `system_data`
   - Model `DeviceSecurityGroup` added property `system_data`
@@ -37,6 +42,7 @@
   - Model `IoTSecurityAggregatedAlert` added property `system_data`
   - Model `IoTSecurityAggregatedRecommendation` added property `system_data`
   - Model `IoTSecuritySolutionAnalyticsModel` added property `system_data`
+  - Model `IoTSecuritySolutionModel` added property `properties`
   - Model `JitNetworkAccessPolicy` added property `system_data`
   - Model `MalwareScanningProperties` added property `automated_response`
   - Model `MdeOnboardingData` added property `system_data`
@@ -62,10 +68,14 @@
   - Model `ScanResult` added property `system_data`
   - Model `ScanSummary` added property `files`
   - Model `SecureScoreControlDefinitionItem` added property `system_data`
+  - Model `SecureScoreControlDetails` added property `properties`
   - Model `SecureScoreControlDetails` added property `system_data`
   - Model `SecureScoreItem` added property `system_data`
+  - Model `SecurityAssessment` added property `properties`
   - Model `SecurityAssessment` added property `system_data`
+  - Model `SecurityAssessmentMetadataResponse` added property `properties`
   - Model `SecurityAssessmentMetadataResponse` added property `system_data`
+  - Model `SecurityAssessmentResponse` added property `properties`
   - Model `SecurityAssessmentResponse` added property `system_data`
   - Model `SecurityContact` added property `system_data`
   - Model `SecurityOperator` added property `system_data`
@@ -92,7 +102,10 @@
   - Enum `State` added member `ON`
   - Model `TopologyResource` added property `system_data`
   - Model `TrackedResource` added property `system_data`
+  - Model `UpdateIotSecuritySolutionData` added property `properties`
   - Model `WorkspaceSetting` added property `system_data`
+  - Added model `AdvancedThreatProtectionProperties`
+  - Added model `AlertSyncSettingProperties`
   - Added enum `ArmActionType`
   - Added model `AssignedComponentItem`
   - Added model `Assignment`
@@ -101,8 +114,10 @@
   - Added enum `AutomatedResponseType`
   - Added model `CloudError`
   - Added model `CommonResourceDetails`
+  - Added model `DataExportSettingProperties`
   - Added model `ExtensionResource`
   - Added model `FilesScanSummary`
+  - Added model `IoTSecuritySolutionProperties`
   - Added model `IssueCreationRequest`
   - Added model `PrivateLinkGroupResource`
   - Added model `PrivateLinkProperties`
@@ -112,8 +127,10 @@
   - Added model `ScanPropertiesV2`
   - Added model `ScanV2`
   - Added model `ScoreDetails`
+  - Added model `SecureScoreControlScoreDetails`
   - Added model `SecurityAssessmentPropertiesBaseRiskPathsItemEdgeItem`
   - Added model `SecurityAssessmentPropertiesBaseRiskPathsItemNodesItem`
+  - Added model `ServerVulnerabilityAssessmentsAzureSettingProperties`
   - Added model `SqlVulnerabilityAssessmentScanOperationResult`
   - Added model `SqlVulnerabilityAssessmentScanOperationResultProperties`
   - Added model `SqlVulnerabilityAssessmentSettings`
@@ -123,64 +140,145 @@
   - Added model `StandardComponentProperties`
   - Added model `StandardProperties`
   - Added enum `StandardSupportedClouds`
-  - Operation group `DefenderForStorageOperations` added method `list`
-  - Operation group `SqlVulnerabilityAssessmentScansOperations` added method `begin_initiate_scan`
-  - Operation group `SqlVulnerabilityAssessmentScansOperations` added method `get_scan_operation_result`
-  - Added operation group `AssignmentsOperations`
-  - Added operation group `GitHubIssuesOperations`
-  - Added operation group `OperationResultsOperations`
-  - Added operation group `OperationStatusesOperations`
-  - Added operation group `SqlVulnerabilityAssessmentSettingsOperations`
-  - Added operation group `StandardsOperations`
+  - Added model `UpdateIoTSecuritySolutionProperties`
+  - Model `DefenderForStorageOperations` added method `list`
+  - Model `SqlVulnerabilityAssessmentBaselineRulesOperations` added parameter `database_name` in method `add`
+  - Model `SqlVulnerabilityAssessmentBaselineRulesOperations` added parameter `database_name` in method `create_or_update`
+  - Model `SqlVulnerabilityAssessmentBaselineRulesOperations` added parameter `database_name` in method `delete`
+  - Model `SqlVulnerabilityAssessmentBaselineRulesOperations` added parameter `database_name` in method `get`
+  - Model `SqlVulnerabilityAssessmentBaselineRulesOperations` added parameter `database_name` in method `list`
+  - Model `SqlVulnerabilityAssessmentScanResultsOperations` added parameter `database_name` in method `get`
+  - Model `SqlVulnerabilityAssessmentScanResultsOperations` added parameter `database_name` in method `list`
+  - Model `SqlVulnerabilityAssessmentScansOperations` added parameter `database_name` in method `get`
+  - Model `SqlVulnerabilityAssessmentScansOperations` added parameter `database_name` in method `list`
+  - Model `SqlVulnerabilityAssessmentScansOperations` added method `begin_initiate_scan`
+  - Model `SqlVulnerabilityAssessmentScansOperations` added method `get_scan_operation_result`
+  - Added model `AssignmentsOperations`
+  - Added model `GitHubIssuesOperations`
+  - Added model `OperationResultsOperations`
+  - Added model `OperationStatusesOperations`
+  - Added model `SqlVulnerabilityAssessmentSettingsOperations`
+  - Added model `StandardsOperations`
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Client `SecurityCenter` was renamed to `SecurityManagementClient`
-  - Model `AdvancedThreatProtectionSetting` moved instance variable `is_enabled` under property `properties` whose type is `AdvancedThreatProtectionProperties`
-  - Model `AlertSyncSettings` moved instance variable `enabled` under property `properties` whose type is `AlertSyncSettingProperties`
-  - Model `AutomationUpdateModel` moved instance variable `description`, `is_enabled`, `scopes`, `sources` and `actions` under property `properties` whose type is `AutomationProperties`
-  - Model `AzureServersSetting` moved instance variable `selected_provider` under property `properties` whose type is `ServerVulnerabilityAssessmentsAzureSettingProperties`
-  - Model `DataExportSettings` moved instance variable `enabled` under property `properties` whose type is `DataExportSettingProperties`
-  - Model `IoTSecuritySolutionModel` moved instance variable `workspace`, `display_name`, `status`, `export`, `disabled_data_sources`, `iot_hubs`, `user_defined_resources`, `auto_discovered_resources`, `recommendations_configuration`, `unmasked_ip_logging_status` and `additional_workspaces` under property `properties` whose type is `IoTSecuritySolutionProperties`
-  - Model `SecureScoreControlDetails` moved instance variable `display_name`, `healthy_resource_count`, `unhealthy_resource_count`, `not_applicable_resource_count`, `weight`, `definition`, `max`, `current` and `percentage` under property `properties` whose type is `SecureScoreControlScoreDetails`
-  - Model `SecurityAssessment` moved instance variable `risk`, `resource_details`, `display_name`, `additional_data`, `links`, `metadata`, `partners_data` and `status` under property `properties` whose type is `SecurityAssessmentProperties`
-  - Model `SecurityAssessmentMetadataResponse` moved instance variable `display_name`, `policy_definition_id`, `description`, `remediation_description`, `categories`, `severity`, `user_impact`, `implementation_effort`, `threats`, `preview`, `assessment_type`, `partner_data`, `publish_dates`, `planned_deprecation_date`, `tactics` and `techniques` under property `properties` whose type is `SecurityAssessmentMetadataPropertiesResponse`
-  - Model `SecurityAssessmentResponse` moved instance variable `risk`, `resource_details`, `display_name`, `additional_data`, `links`, `metadata`, `partners_data` and `status` under property `properties` whose type is `SecurityAssessmentPropertiesResponse`
-  - Model `UpdateIotSecuritySolutionData` moved instance variable `user_defined_resources` and `recommendations_configuration` under property `properties` whose type is `UpdateIoTSecuritySolutionProperties`
-  - Model `TrackedResource` deleted or renamed its instance variable `etag`
-  - Model `TrackedResource` deleted or renamed its instance variable `kind`
+  - Deleted or renamed model `SecurityCenter`
+  - Method `SecurityOperatorsOperations.list` changed from `asynchronous` to `synchronous`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.list` changed from `asynchronous` to `synchronous`
+  - Method `SqlVulnerabilityAssessmentScanResultsOperations.list` changed from `asynchronous` to `synchronous`
+  - Method `SqlVulnerabilityAssessmentScansOperations.list` changed from `asynchronous` to `synchronous`
+  - Model `AdvancedThreatProtectionSetting` deleted or renamed its instance variable `is_enabled`
+  - Model `AlertSyncSettings` deleted or renamed its instance variable `enabled`
   - Deleted or renamed enum value `AuthenticationType.AWS_ASSUME_ROLE`
   - Deleted or renamed enum value `AuthenticationType.AWS_CREDS`
   - Deleted or renamed enum value `AuthenticationType.GCP_CREDENTIALS`
+  - Model `AutomationUpdateModel` deleted or renamed its instance variable `description`
+  - Model `AutomationUpdateModel` deleted or renamed its instance variable `is_enabled`
+  - Model `AutomationUpdateModel` deleted or renamed its instance variable `scopes`
+  - Model `AutomationUpdateModel` deleted or renamed its instance variable `sources`
+  - Model `AutomationUpdateModel` deleted or renamed its instance variable `actions`
+  - Model `AzureServersSetting` deleted or renamed its instance variable `selected_provider`
+  - Model `DataExportSettings` deleted or renamed its instance variable `enabled`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `workspace`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `display_name`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `status`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `export`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `disabled_data_sources`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `iot_hubs`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `user_defined_resources`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `auto_discovered_resources`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `recommendations_configuration`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `unmasked_ip_logging_status`
+  - Model `IoTSecuritySolutionModel` deleted or renamed its instance variable `additional_workspaces`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `display_name`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `healthy_resource_count`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `unhealthy_resource_count`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `not_applicable_resource_count`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `weight`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `definition`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `max`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `current`
+  - Model `SecureScoreControlDetails` deleted or renamed its instance variable `percentage`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `risk`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `resource_details`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `display_name`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `additional_data`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `links`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `metadata`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `partners_data`
+  - Model `SecurityAssessment` deleted or renamed its instance variable `status`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `display_name`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `policy_definition_id`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `description`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `remediation_description`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `categories`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `severity`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `user_impact`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `implementation_effort`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `threats`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `preview`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `assessment_type`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `partner_data`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `publish_dates`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `planned_deprecation_date`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `tactics`
+  - Model `SecurityAssessmentMetadataResponse` deleted or renamed its instance variable `techniques`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `risk`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `resource_details`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `display_name`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `additional_data`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `links`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `metadata`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `partners_data`
+  - Model `SecurityAssessmentResponse` deleted or renamed its instance variable `status`
+  - Model `TrackedResource` deleted or renamed its instance variable `etag`
+  - Model `TrackedResource` deleted or renamed its instance variable `kind`
+  - Model `UpdateIotSecuritySolutionData` deleted or renamed its instance variable `user_defined_resources`
+  - Model `UpdateIotSecuritySolutionData` deleted or renamed its instance variable `recommendations_configuration`
   - Deleted or renamed model `AadConnectivityState`
   - Deleted or renamed model `ActiveConnectionsNotInAllowedRange`
+  - Deleted or renamed model `AlertList`
+  - Deleted or renamed model `AlertsSuppressionRulesList`
+  - Deleted or renamed model `AllowedConnectionsList`
   - Deleted or renamed model `AmqpC2DMessagesNotInAllowedRange`
   - Deleted or renamed model `AmqpC2DRejectedMessagesNotInAllowedRange`
   - Deleted or renamed model `AmqpD2CMessagesNotInAllowedRange`
+  - Deleted or renamed model `ApiCollectionList`
   - Deleted or renamed model `ApplicationCondition`
   - Deleted or renamed model `ApplicationConditionOperator`
+  - Deleted or renamed model `ApplicationsList`
+  - Deleted or renamed model `AscLocationList`
   - Deleted or renamed model `AuthenticationDetailsProperties`
   - Deleted or renamed model `AuthenticationProvisioningState`
+  - Deleted or renamed model `AutoProvisioningSettingList`
+  - Deleted or renamed model `AutomationList`
   - Deleted or renamed model `AwAssumeRoleAuthenticationDetailsProperties`
   - Deleted or renamed model `AwsCredsAuthenticationDetailsProperties`
   - Deleted or renamed model `AzureDevOpsOrganizationConfiguration`
   - Deleted or renamed model `AzureDevOpsProjectConfiguration`
+  - Deleted or renamed model `AzureDevOpsProjectListResponse`
+  - Deleted or renamed model `AzureDevOpsRepositoryListResponse`
   - Deleted or renamed model `AzureTrackedResourceLocation`
   - Deleted or renamed model `BaseResourceConfiguration`
   - Deleted or renamed model `Code`
+  - Deleted or renamed model `ComplianceList`
+  - Deleted or renamed model `ComplianceResultList`
   - Deleted or renamed model `Components1Uu4J47SchemasSecurityassessmentpropertiesbasePropertiesRiskPropertiesPathsItemsPropertiesEdgesItems`
   - Deleted or renamed model `Condition`
   - Deleted or renamed model `ConnectionFromIpNotAllowed`
   - Deleted or renamed model `ConnectionToIpNotAllowed`
   - Deleted or renamed model `ConnectorSetting`
+  - Deleted or renamed model `ConnectorSettingList`
   - Deleted or renamed model `CustomAssessmentAutomation`
   - Deleted or renamed model `CustomAssessmentAutomationRequest`
   - Deleted or renamed model `CustomEntityStoreAssignment`
   - Deleted or renamed model `CustomEntityStoreAssignmentRequest`
+  - Deleted or renamed model `CustomRecommendationsList`
   - Deleted or renamed model `DesiredOnboardingState`
+  - Deleted or renamed model `DevOpsConfigurationListResponse`
+  - Deleted or renamed model `DeviceSecurityGroupList`
   - Deleted or renamed model `DirectMethodInvokesNotInAllowedRange`
+  - Deleted or renamed model `DiscoveredSecuritySolutionList`
   - Deleted or renamed model `ETag`
   - Deleted or renamed model `EdgeIdentifiers`
   - Deleted or renamed model `EndOfSupportStatus`
@@ -189,17 +287,28 @@
   - Deleted or renamed model `ErrorResponseAutoGenerated`
   - Deleted or renamed model `ErrorResponseAutoGenerated2`
   - Deleted or renamed model `ExternalSecuritySolutionKind`
+  - Deleted or renamed model `ExternalSecuritySolutionList`
   - Deleted or renamed model `FailedLocalLoginsNotInAllowedRange`
   - Deleted or renamed model `FileUploadsNotInAllowedRange`
   - Deleted or renamed model `GcpCredentialsDetailsProperties`
   - Deleted or renamed model `GitHubOwnerConfiguration`
+  - Deleted or renamed model `GitHubRepositoryListResponse`
   - Deleted or renamed model `GitLabGroupConfiguration`
+  - Deleted or renamed model `GitLabProjectListResponse`
+  - Deleted or renamed model `GovernanceAssignmentsList`
   - Deleted or renamed model `GovernanceRuleConditionOperator`
+  - Deleted or renamed model `GovernanceRuleList`
+  - Deleted or renamed model `HealthReportsList`
   - Deleted or renamed model `HttpC2DMessagesNotInAllowedRange`
   - Deleted or renamed model `HttpC2DRejectedMessagesNotInAllowedRange`
   - Deleted or renamed model `HttpD2CMessagesNotInAllowedRange`
   - Deleted or renamed model `HybridComputeProvisioningState`
   - Deleted or renamed model `HybridComputeSettingsProperties`
+  - Deleted or renamed model `InformationProtectionPolicyList`
+  - Deleted or renamed model `IoTSecurityAggregatedAlertList`
+  - Deleted or renamed model `IoTSecurityAggregatedRecommendationList`
+  - Deleted or renamed model `IoTSecuritySolutionsList`
+  - Deleted or renamed model `JitNetworkAccessPoliciesList`
   - Deleted or renamed model `Kind`
   - Deleted or renamed model `LocalUserNotAllowed`
   - Deleted or renamed model `Location`
@@ -212,58 +321,108 @@
   - Deleted or renamed model `PermissionProperty`
   - Deleted or renamed model `PrivateLinkParameters`
   - Deleted or renamed model `PrivateLinkResourceAutoGenerated`
+  - Deleted or renamed model `PrivateLinksList`
   - Deleted or renamed model `ProcessNotAllowed`
   - Deleted or renamed model `ProxyServerProperties`
   - Deleted or renamed model `QueuePurgesNotInAllowedRange`
+  - Deleted or renamed model `RegulatoryComplianceAssessmentList`
+  - Deleted or renamed model `RegulatoryComplianceControlList`
+  - Deleted or renamed model `RegulatoryComplianceStandardList`
   - Deleted or renamed model `ResourceAutoGenerated`
   - Deleted or renamed model `ResourceAutoGenerated2`
   - Deleted or renamed model `ResourceAutoGenerated3`
   - Deleted or renamed model `ResourceDetailsAutoGenerated`
   - Deleted or renamed model `Scan`
   - Deleted or renamed model `ScanProperties`
+  - Deleted or renamed model `ScanResults`
+  - Deleted or renamed model `Scans`
+  - Deleted or renamed model `SecureScoreControlDefinitionList`
+  - Deleted or renamed model `SecureScoreControlList`
   - Deleted or renamed model `SecureScoreControlScore`
+  - Deleted or renamed model `SecureScoresList`
+  - Deleted or renamed model `SecurityAssessmentList`
   - Deleted or renamed model `SecurityAssessmentMetadata`
+  - Deleted or renamed model `SecurityAssessmentMetadataResponseList`
   - Deleted or renamed model `SecurityAssessmentPropertiesBaseRiskPathsPropertiesItemsItem`
+  - Deleted or renamed model `SecurityConnectorsList`
+  - Deleted or renamed model `SecurityContactList`
+  - Deleted or renamed model `SecurityOperatorList`
+  - Deleted or renamed model `SecuritySolutionList`
+  - Deleted or renamed model `SecurityStandardList`
+  - Deleted or renamed model `SecuritySubAssessmentList`
+  - Deleted or renamed model `SecurityTaskList`
+  - Deleted or renamed model `ServerVulnerabilityAssessmentsSettingsList`
   - Deleted or renamed model `ServicePrincipalProperties`
   - Deleted or renamed model `SettingNameAutoGenerated`
+  - Deleted or renamed model `SettingsList`
   - Deleted or renamed model `Software`
+  - Deleted or renamed model `SoftwaresList`
+  - Deleted or renamed model `StandardAssignmentsList`
   - Deleted or renamed model `SupportedCloudEnum`
+  - Deleted or renamed model `TopologyList`
   - Deleted or renamed model `TrackedResourceAutoGenerated`
   - Deleted or renamed model `TwinUpdatesNotInAllowedRange`
   - Deleted or renamed model `UnauthorizedOperationsNotInAllowedRange`
+  - Deleted or renamed model `WorkspaceSettingList`
   - Method `AlertsSuppressionRulesOperations.list` changed its parameter `alert_type` from `positional_or_keyword` to `keyword_only`
   - Method `AssessmentsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateEndpointConnectionsOperations.begin_delete` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateEndpointConnectionsOperations.get` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateEndpointConnectionsOperations.list` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateLinkResourcesOperations.get` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateLinkResourcesOperations.list` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateLinksOperations.begin_create` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateLinksOperations.begin_delete` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateLinksOperations.get` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateLinksOperations.head` renamed its parameter `private_link_parameters` to `private_link_name`
-  - Method `PrivateLinksOperations.update` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.begin_delete` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.begin_delete` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.get` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.get` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.list` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.list` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateLinkResourcesOperations.get` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateLinkResourcesOperations.get` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateLinkResourcesOperations.list` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateLinkResourcesOperations.list` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateLinksOperations.begin_create` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateLinksOperations.begin_create` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateLinksOperations.begin_delete` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateLinksOperations.begin_delete` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateLinksOperations.get` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateLinksOperations.get` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateLinksOperations.head` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateLinksOperations.head` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
+  - Method `PrivateLinksOperations.update` inserted a `positional_or_keyword` parameter `private_link_name`
+  - Method `PrivateLinksOperations.update` deleted or renamed its parameter `private_link_parameters` of kind `positional_or_keyword`
   - Method `SecureScoreControlsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `SecureScoreControlsOperations.list_by_secure_score` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.add` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.create_or_update` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.delete` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.get` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.list` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentScanResultsOperations.get` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentScanResultsOperations.list` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentScansOperations.get` renamed its parameter `workspace_id` to `database_name`
-  - Method `SqlVulnerabilityAssessmentScansOperations.list` renamed its parameter `workspace_id` to `database_name`
-  - Deleted or renamed operation group `ConnectorsOperations`
-  - Deleted or renamed operation group `CustomAssessmentAutomationsOperations`
-  - Deleted or renamed operation group `CustomEntityStoreAssignmentsOperations`
-  - Deleted or renamed operation group `SoftwareInventoriesOperations`
-
-### Other Changes
-
-  - Deleted model `AlertList`/`AlertsSuppressionRulesList`/`AllowedConnectionsList`/`ApiCollectionList`/`ApplicationsList`/`AscLocationList`/`AutoProvisioningSettingList`/`AutomationList`/`AzureDevOpsProjectListResponse`/`AzureDevOpsRepositoryListResponse`/`ComplianceList`/`ComplianceResultList`/`ConnectorSettingList`/`CustomRecommendationsList`/`DevOpsConfigurationListResponse`/`DeviceSecurityGroupList`/`DiscoveredSecuritySolutionList`/`ExternalSecuritySolutionList`/`GitHubRepositoryListResponse`/`GitLabProjectListResponse`/`GovernanceAssignmentsList`/`GovernanceRuleList`/`HealthReportsList`/`InformationProtectionPolicyList`/`IoTSecurityAggregatedAlertList`/`IoTSecurityAggregatedRecommendationList`/`IoTSecuritySolutionsList`/`JitNetworkAccessPoliciesList`/`PrivateLinksList`/`RegulatoryComplianceAssessmentList`/`RegulatoryComplianceControlList`/`RegulatoryComplianceStandardList`/`ScanResults`/`Scans`/`SecureScoreControlDefinitionList`/`SecureScoreControlList`/`SecureScoresList`/`SecurityAssessmentList`/`SecurityAssessmentMetadataResponseList`/`SecurityConnectorsList`/`SecurityContactList`/`SecurityOperatorList`/`SecuritySolutionList`/`SecurityStandardList`/`SecuritySubAssessmentList`/`SecurityTaskList`/`ServerVulnerabilityAssessmentsSettingsList`/`SettingsList`/`SoftwaresList`/`StandardAssignmentsList`/`TopologyList`/`WorkspaceSettingList` which actually were not used by SDK users
-
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.add` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.create_or_update` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.delete` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.get` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.list` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentScanResultsOperations.get` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentScanResultsOperations.list` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentScansOperations.get` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Method `SqlVulnerabilityAssessmentScansOperations.list` deleted or renamed its parameter `workspace_id` of kind `positional_or_keyword`
+  - Deleted or renamed model `ConnectorsOperations`
+  - Deleted or renamed model `CustomAssessmentAutomationsOperations`
+  - Deleted or renamed model `CustomEntityStoreAssignmentsOperations`
+  - Deleted or renamed model `SoftwareInventoriesOperations`
+  - Method `SqlVulnerabilityAssessmentScanResultsOperations.get` re-ordered its parameters from `['self', 'scan_id', 'scan_result_id', 'workspace_id', 'resource_id', 'kwargs']` to `['self', 'scan_id', 'scan_result_id', 'resource_id', 'database_name', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentScanResultsOperations.list` re-ordered its parameters from `['self', 'scan_id', 'workspace_id', 'resource_id', 'kwargs']` to `['self', 'scan_id', 'resource_id', 'database_name', 'kwargs']`
+  - Method `PrivateLinksOperations.head` re-ordered its parameters from `['self', 'resource_group_name', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'kwargs']`
+  - Method `PrivateLinksOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'private_link_parameters', 'private_link', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'private_link', 'kwargs']`
+  - Method `PrivateLinksOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'kwargs']`
+  - Method `PrivateLinksOperations.get` re-ordered its parameters from `['self', 'resource_group_name', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'kwargs']`
+  - Method `PrivateLinksOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'private_link_parameters', 'private_link', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'private_link', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.add` re-ordered its parameters from `['self', 'workspace_id', 'resource_id', 'body', 'kwargs']` to `['self', 'resource_id', 'body', 'database_name', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.delete` re-ordered its parameters from `['self', 'rule_id', 'workspace_id', 'resource_id', 'kwargs']` to `['self', 'resource_id', 'rule_id', 'database_name', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.get` re-ordered its parameters from `['self', 'rule_id', 'workspace_id', 'resource_id', 'kwargs']` to `['self', 'resource_id', 'rule_id', 'database_name', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.list` re-ordered its parameters from `['self', 'workspace_id', 'resource_id', 'kwargs']` to `['self', 'resource_id', 'database_name', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.create_or_update` re-ordered its parameters from `['self', 'rule_id', 'workspace_id', 'resource_id', 'body', 'kwargs']` to `['self', 'resource_id', 'rule_id', 'body', 'database_name', 'kwargs']`
+  - Method `PrivateEndpointConnectionsOperations.list` re-ordered its parameters from `['self', 'resource_group_name', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'kwargs']`
+  - Method `PrivateEndpointConnectionsOperations.begin_delete` re-ordered its parameters from `['self', 'resource_group_name', 'private_endpoint_connection_name', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'private_endpoint_connection_name', 'kwargs']`
+  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'private_endpoint_connection_name', 'private_link_parameters', 'private_endpoint_connection', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'private_endpoint_connection_name', 'private_endpoint_connection', 'kwargs']`
+  - Method `PrivateEndpointConnectionsOperations.get` re-ordered its parameters from `['self', 'resource_group_name', 'private_endpoint_connection_name', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'private_endpoint_connection_name', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentScansOperations.get` re-ordered its parameters from `['self', 'scan_id', 'workspace_id', 'resource_id', 'kwargs']` to `['self', 'scan_id', 'resource_id', 'database_name', 'kwargs']`
+  - Method `SqlVulnerabilityAssessmentScansOperations.list` re-ordered its parameters from `['self', 'workspace_id', 'resource_id', 'kwargs']` to `['self', 'resource_id', 'database_name', 'kwargs']`
+  - Method `PrivateLinkResourcesOperations.get` re-ordered its parameters from `['self', 'resource_group_name', 'group_id', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'group_id', 'kwargs']`
+  - Method `PrivateLinkResourcesOperations.list` re-ordered its parameters from `['self', 'resource_group_name', 'private_link_parameters', 'kwargs']` to `['self', 'resource_group_name', 'private_link_name', 'kwargs']`
 
 ## 8.0.0b1 (2025-08-25)
 
