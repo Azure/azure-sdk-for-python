@@ -35,6 +35,22 @@ class TestEvaluatorEvaluationLevelInputs:
         assert result == {"coherence": 4.0}
         real_call_mock.assert_awaited_once_with(conversation={"messages": messages})
 
+    def test_coherence_messages_forced_conversation(self, mock_model_config):
+        evaluator = CoherenceEvaluator(model_config=mock_model_config, evaluation_level="conversation")
+        evaluator._validator.validate_eval_input = MagicMock(return_value=True)
+
+        messages = [
+            {"role": "user", "content": "What is 2+2?"},
+            {"role": "assistant", "content": "4"},
+        ]
+
+        with patch.object(PromptyEvaluatorBase, "_real_call", new_callable=AsyncMock) as real_call_mock:
+            real_call_mock.return_value = {"coherence": 4.0}
+            result = evaluator(messages=messages)
+
+        assert result == {"coherence": 4.0}
+        real_call_mock.assert_awaited_once_with(conversation={"messages": messages})
+
     def test_task_completion_turn_level_splits_messages(self, mock_model_config):
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config, evaluation_level="turn")
         evaluator._validator.validate_eval_input = MagicMock(return_value=True)
@@ -60,6 +76,27 @@ class TestEvaluatorEvaluationLevelInputs:
         with pytest.raises(EvaluationException) as exc:
             TaskAdherenceEvaluator(model_config=mock_model_config, evaluation_level="invalid")
         assert "Invalid evaluation_level" in str(exc.value)
+
+    def test_task_adherence_turn_level_splits_messages(self, mock_model_config):
+        evaluator = TaskAdherenceEvaluator(model_config=mock_model_config, evaluation_level="turn")
+        evaluator._validator.validate_eval_input = MagicMock(return_value=True)
+
+        messages = [
+            {"role": "user", "content": "Find my order status."},
+            {"role": "assistant", "content": "Your order arrives tomorrow."},
+        ]
+        tool_definitions = [{"name": "get_order", "parameters": {"type": "object", "properties": {}}}]
+
+        with patch.object(PromptyEvaluatorBase, "_real_call", new_callable=AsyncMock) as real_call_mock:
+            real_call_mock.return_value = {"task_adherence": 1}
+            result = evaluator(messages=messages, tool_definitions=tool_definitions)
+
+        assert result == {"task_adherence": 1}
+        real_call_mock.assert_awaited_once_with(
+            query=[messages[0]],
+            response=[messages[1]],
+            tool_definitions=tool_definitions,
+        )
 
     def test_messages_validator_accepts_messages_input(self):
         validator = MessagesOrQueryResponseInputValidator(error_target=ErrorTarget.COHERENCE_EVALUATOR)
