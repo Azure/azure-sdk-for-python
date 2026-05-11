@@ -975,7 +975,9 @@ class TestLocalFileStorage(unittest.TestCase):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
                             with mock.patch(
-                                f"{STORAGE_MODULE}.os.fchmod", create=True, side_effect=mock_fchmod  # cspell:disable-line
+                                f"{STORAGE_MODULE}.os.fchmod",  # cspell:disable-line
+                                create=True,
+                                side_effect=mock_fchmod,  # cspell:disable-line
                             ):
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
@@ -1057,7 +1059,9 @@ class TestLocalFileStorage(unittest.TestCase):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
                             with mock.patch(
-                                f"{STORAGE_MODULE}.os.fchmod", create=True, side_effect=mock_fchmod  # cspell:disable-line
+                                f"{STORAGE_MODULE}.os.fchmod",  # cspell:disable-line
+                                create=True,
+                                side_effect=mock_fchmod,  # cspell:disable-line
                             ):
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
