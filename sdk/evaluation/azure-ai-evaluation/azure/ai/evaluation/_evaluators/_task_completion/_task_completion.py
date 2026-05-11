@@ -68,6 +68,7 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "task_completion.prompty"
     _RESULT_KEY = "task_completion"
+    # messages is optional and mutually exclusive with query/response for a single invocation.
     _OPTIONAL_PARAMS = ["messages", "tool_definitions"]
 
     _validator: ValidatorInterface

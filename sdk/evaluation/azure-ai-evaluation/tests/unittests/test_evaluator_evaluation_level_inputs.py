@@ -51,7 +51,7 @@ class TestEvaluatorEvaluationLevelInputs:
         assert result == {"coherence": 4.0}
         real_call_mock.assert_awaited_once_with(conversation={"messages": messages})
 
-    def test_task_completion_turn_level_splits_messages(self, mock_model_config):
+    def test_internal_task_completion_turn_level_splits_messages(self, mock_model_config):
         evaluator = _TaskCompletionEvaluator(model_config=mock_model_config, evaluation_level="turn")
         evaluator._validator.validate_eval_input = MagicMock(return_value=True)
 

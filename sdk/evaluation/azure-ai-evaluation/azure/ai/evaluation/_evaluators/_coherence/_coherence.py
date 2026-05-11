@@ -76,6 +76,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
+    # Enables evaluate() column mapping for direct message-list input.
     _OPTIONAL_PARAMS = ["messages"]
 
     _validator: ValidatorInterface
