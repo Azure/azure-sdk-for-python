@@ -2755,7 +2755,7 @@ def _update_metric_value(
     elif metric_key.endswith("_result") or metric_key == "result" or metric_key.endswith("_label"):
         metric_dict["label"] = metric_value
         result_name = "label"
-        if criteria_type == "azure_ai_evaluator":
+        if criteria_type == "azure_ai_evaluator" and "passed" not in metric_dict:
             if metric_value is None:
                 passed = False
             else:
