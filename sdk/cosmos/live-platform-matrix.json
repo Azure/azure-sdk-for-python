@@ -120,7 +120,7 @@
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosAAD and not cosmosEmulator",
+          "TestMarkArgument": "cosmosAAD",
           "COSMOS_TEST_DATA_AUTH_MODE": "aad"
         }
       }
