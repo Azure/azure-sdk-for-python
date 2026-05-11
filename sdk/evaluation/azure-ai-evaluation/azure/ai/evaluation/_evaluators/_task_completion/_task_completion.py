@@ -10,7 +10,15 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common._evaluation_level import (
+    EvaluationLevel,
+    normalize_inputs_by_evaluation_level,
+    resolve_evaluation_level,
+)
+from azure.ai.evaluation._evaluators._common._validators import (
+    MessagesOrQueryResponseToolDefinitionsValidator,
+    ValidatorInterface,
+)
 from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
@@ -60,20 +68,24 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "task_completion.prompty"
     _RESULT_KEY = "task_completion"
-    _OPTIONAL_PARAMS = ["tool_definitions"]
+    _OPTIONAL_PARAMS = ["messages", "tool_definitions"]
 
     _validator: ValidatorInterface
+    _evaluation_level: Optional[EvaluationLevel]
 
     id = "azureai://built-in/evaluators/task_completion"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, credential=None, **kwargs):
+    def __init__(self, model_config, *, credential=None, evaluation_level=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        self._evaluation_level = resolve_evaluation_level(evaluation_level, ErrorTarget.TASK_COMPLETION_EVALUATOR)
 
         # Initialize input validator
-        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR)
+        self._validator = MessagesOrQueryResponseToolDefinitionsValidator(
+            error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR
+        )
 
         super().__init__(
             model_config=model_config,
@@ -120,6 +132,15 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict[str, Union[str, float]]
         """
 
+    @overload
+    def __call__(
+        self,
+        *,
+        messages: List[dict],
+        tool_definitions: Optional[Union[dict, List[dict]]] = None,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate task completion for message-list input."""
+
     @override
     def __call__(  # pylint: disable=docstring-missing-param
         self,
@@ -142,6 +163,10 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        kwargs = normalize_inputs_by_evaluation_level(
+            kwargs, self._evaluation_level, ErrorTarget.TASK_COMPLETION_EVALUATOR
+        )
+
         # Validate input before processing
         self._validator.validate_eval_input(kwargs)
 

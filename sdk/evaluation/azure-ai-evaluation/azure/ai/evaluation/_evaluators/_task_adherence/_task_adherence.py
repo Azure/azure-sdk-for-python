@@ -10,7 +10,15 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common._evaluation_level import (
+    EvaluationLevel,
+    normalize_inputs_by_evaluation_level,
+    resolve_evaluation_level,
+)
+from azure.ai.evaluation._evaluators._common._validators import (
+    MessagesOrQueryResponseToolDefinitionsValidator,
+    ValidatorInterface,
+)
 from ..._common.utils import (
     reformat_conversation_history,
     reformat_agent_response,
@@ -64,23 +72,29 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "task_adherence.prompty"
     _RESULT_KEY = "task_adherence"
-    _OPTIONAL_PARAMS = ["tool_definitions"]
+    _OPTIONAL_PARAMS = ["messages", "tool_definitions"]
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 0
 
     _validator: ValidatorInterface
+    _evaluation_level: Optional[EvaluationLevel]
 
     id = "azureai://built-in/evaluators/task_adherence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, **kwargs):
+    def __init__(
+        self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, evaluation_level=None, **kwargs
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold  # to be removed in favor of _threshold
+        self._evaluation_level = resolve_evaluation_level(evaluation_level, ErrorTarget.TASK_ADHERENCE_EVALUATOR)
 
         # Initialize input validator
-        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_ADHERENCE_EVALUATOR)
+        self._validator = MessagesOrQueryResponseToolDefinitionsValidator(
+            error_target=ErrorTarget.TASK_ADHERENCE_EVALUATOR
+        )
 
         super().__init__(
             model_config=model_config,
@@ -118,6 +132,15 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict[str, Union[str, float, bool]]
         """
 
+    @overload
+    def __call__(
+        self,
+        *,
+        messages: List[dict],
+        tool_definitions: Optional[Union[dict, List[dict]]] = None,
+    ) -> Dict[str, Union[str, float]]:
+        """Evaluate task adherence for message-list input."""
+
     @override
     def __call__(  # pylint: disable=docstring-missing-param
         self,
@@ -140,6 +163,10 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        kwargs = normalize_inputs_by_evaluation_level(
+            kwargs, self._evaluation_level, ErrorTarget.TASK_ADHERENCE_EVALUATOR
+        )
+
         # Validate input before processing
         self._validator.validate_eval_input(kwargs)
 

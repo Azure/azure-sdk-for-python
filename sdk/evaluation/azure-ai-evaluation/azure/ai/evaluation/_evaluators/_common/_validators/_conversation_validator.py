@@ -338,7 +338,7 @@ class ConversationValidator(ValidatorInterface):
                     target=self.error_target,
                 )
 
-        if role in [MessageRole.USER, MessageRole.SYSTEM]:
+        if role in [MessageRole.USER, MessageRole.SYSTEM, MessageRole.DEVELOPER]:
             error = self._validate_user_or_system_message(message, role)
             if error:
                 return error

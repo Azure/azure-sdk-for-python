@@ -2,12 +2,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Optional
 
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._evaluators._common._evaluation_level import (
+    EvaluationLevel,
+    normalize_inputs_by_evaluation_level,
+    resolve_evaluation_level,
+)
+from azure.ai.evaluation._evaluators._common._validators import (
+    MessagesOrQueryResponseInputValidator,
+    ValidatorInterface,
+)
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
 
@@ -68,21 +76,25 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
+    _OPTIONAL_PARAMS = ["messages"]
 
     _validator: ValidatorInterface
+    _evaluation_level: Optional[EvaluationLevel]
 
     id = "azureai://built-in/evaluators/coherence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
+    def __init__(self, model_config, *, threshold=3, credential=None, evaluation_level=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
         self._higher_is_better = True
 
+        self._evaluation_level = resolve_evaluation_level(evaluation_level, ErrorTarget.COHERENCE_EVALUATOR)
+
         # Initialize input validator
-        self._validator = ConversationValidator(error_target=ErrorTarget.COHERENCE_EVALUATOR)
+        self._validator = MessagesOrQueryResponseInputValidator(error_target=ErrorTarget.COHERENCE_EVALUATOR)
 
         super().__init__(
             model_config=model_config,
@@ -127,6 +139,14 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict[str, Union[float, Dict[str, List[float]]]]
         """
 
+    @overload
+    def __call__(
+        self,
+        *,
+        messages: List[dict],
+    ) -> Dict[str, Union[float, Dict[str, List[Union[str, float]]]]]:
+        """Evaluate coherence for message-list input."""
+
     @override
     def __call__(  # pylint: disable=docstring-missing-param
         self,
@@ -159,6 +179,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        kwargs = normalize_inputs_by_evaluation_level(kwargs, self._evaluation_level, ErrorTarget.COHERENCE_EVALUATOR)
+
         # Validate input before processing
         self._validator.validate_eval_input(kwargs)
 
