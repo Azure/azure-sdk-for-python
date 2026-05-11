@@ -9,5 +9,6 @@
         "specs.azure.core.traits.aio.TraitsClient.smoke_test": "_Specs_.Azure.Core.Traits.smokeTest",
         "specs.azure.core.traits.TraitsClient.repeatable_action": "_Specs_.Azure.Core.Traits.repeatableAction",
         "specs.azure.core.traits.aio.TraitsClient.repeatable_action": "_Specs_.Azure.Core.Traits.repeatableAction"
-    }
+    },
+    "CrossLanguageVersion": "138dcc8cad22"
 }

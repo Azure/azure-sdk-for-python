@@ -58,5 +58,6 @@
         "typetest.array.aio.operations.NullableModelValueOperations.get": "Type.Array.NullableModelValue.get",
         "typetest.array.operations.NullableModelValueOperations.put": "Type.Array.NullableModelValue.put",
         "typetest.array.aio.operations.NullableModelValueOperations.put": "Type.Array.NullableModelValue.put"
-    }
+    },
+    "CrossLanguageVersion": "ef6645466356"
 }

@@ -1,14 +1,10 @@
 # Release History
 
-## 1.8.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.8.1 (2026-05-07)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed an issue where authorization failures caused crashes. Now an `HttpResponseError` is returned when the required data plane role is missing.
 
 ## 1.8.0 (2026-01-26)
 
