@@ -32,7 +32,7 @@ from .._generated.models import (
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPagedAsync,
-    ConfigurationSettingPagedAsync,
+    AsyncConfigurationSettingPaged,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
@@ -169,7 +169,7 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> ConfigurationSettingPagedAsync:
+    ) -> AsyncConfigurationSettingPaged:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label, tags and accept_datetime. For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value?pivots=v23-11#supported-filters.
@@ -188,7 +188,7 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.appconfiguration.ConfigurationSettingPagedAsync
+        :rtype: ~azure.appconfiguration.AsyncConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
 
@@ -218,7 +218,7 @@ class AzureAppConfigurationClient:
         snapshot_name: str,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> ConfigurationSettingPagedAsync:
+    ) -> AsyncConfigurationSettingPaged:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
 
@@ -227,12 +227,12 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.appconfiguration.ConfigurationSettingPagedAsync
+        :rtype: ~azure.appconfiguration.AsyncConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
     @distributed_trace
-    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> ConfigurationSettingPagedAsync:
+    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> AsyncConfigurationSettingPaged:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -244,7 +244,7 @@ class AzureAppConfigurationClient:
 
         if snapshot_name is not None:
             command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
-            return ConfigurationSettingPagedAsync(
+            return AsyncConfigurationSettingPaged(
                 command,
                 snapshot=snapshot_name,
                 accept_datetime=accept_datetime,
@@ -255,7 +255,7 @@ class AzureAppConfigurationClient:
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
         command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
-        return ConfigurationSettingPagedAsync(
+        return AsyncConfigurationSettingPaged(
             command,
             key=key_filter,
             label=label_filter,
@@ -275,7 +275,7 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> ConfigurationSettingPagedAsync:
+    ) -> AsyncConfigurationSettingPaged:
         """Check configuration settings using a HEAD request, returning only headers without the
         response body. This is useful for efficiently checking if settings have changed by comparing ETags.
 
@@ -295,7 +295,7 @@ class AzureAppConfigurationClient:
         :return: An async pager intended for :meth:`by_page` iteration to inspect page headers (for example, ``etag``)
             and detect changed pages. This operation issues HEAD requests and does not return full
             :class:`~azure.appconfiguration.ConfigurationSetting` bodies when iterated item by item.
-        :rtype: ~azure.appconfiguration.ConfigurationSettingPagedAsync
+        :rtype: ~azure.appconfiguration.AsyncConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
 
@@ -313,7 +313,7 @@ class AzureAppConfigurationClient:
         if fields:
             fields = ["locked" if x == "read_only" else x for x in fields]
         command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
-        return ConfigurationSettingPagedAsync(
+        return AsyncConfigurationSettingPaged(
             command,
             key=key_filter,
             label=label_filter,

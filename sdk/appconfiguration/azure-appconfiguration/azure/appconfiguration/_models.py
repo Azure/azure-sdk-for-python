@@ -814,7 +814,7 @@ class ConfigurationSettingPaged(ItemPaged):
         return self._page_iterator_class(continuation_token=continuation_token, *self._args, **self._kwargs)
 
 
-class ConfigurationSettingPagedAsync(AsyncItemPaged):
+class AsyncConfigurationSettingPaged(AsyncItemPaged):
     """
     An async iterable of ConfigurationSettings that supports etag-based change detection.
 
@@ -825,7 +825,7 @@ class ConfigurationSettingPagedAsync(AsyncItemPaged):
 
     Example usage:
 
-        async for setting in ConfigurationSettingPagedAsync(...):
+        async for setting in AsyncConfigurationSettingPaged(...):
             # Process each setting asynchronously
             print(setting)
 
