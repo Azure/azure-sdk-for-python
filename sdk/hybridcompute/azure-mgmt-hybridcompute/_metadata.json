@@ -1,11 +1,10 @@
 {
-  "commit": "e411473e135e0f0f3c763565ee401be34ccd9f99",
+  "apiVersion": "2025-09-16-preview",
+  "apiVersions": {
+    "Microsoft.HybridCompute": "2025-09-16-preview"
+  },
+  "commit": "8bbd1f0a3f4fdce2a2950f4329aa4d8609cd874e",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.35.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/hybridcompute/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.35.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/hybridcompute/resource-manager/readme.md"
+  "typespec_src": "specification/hybridcompute/resource-manager/Microsoft.HybridCompute/HybridCompute",
+  "emitterVersion": "0.61.3"
 }
