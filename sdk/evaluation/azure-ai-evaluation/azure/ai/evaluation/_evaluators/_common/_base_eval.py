@@ -34,6 +34,7 @@ from azure.ai.evaluation._exceptions import (
 from azure.ai.evaluation._common.utils import remove_optional_singletons
 from azure.ai.evaluation._constants import (
     _AggregationType,
+    EVALUATION_PASS_FAIL_MAPPING,
 )
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
