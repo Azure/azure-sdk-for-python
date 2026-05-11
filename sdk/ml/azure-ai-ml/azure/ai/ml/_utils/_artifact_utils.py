@@ -171,12 +171,12 @@ class ArtifactCache:
         if not organization:
             organization, _ = self.get_organization_project_by_git()
 
-        organization_pattern = r"https:\/\/(.*)\.visualstudio\.com"
+        organization_pattern = r"https:\/\/([^/]+)\.visualstudio\.com"
         result = re.findall(pattern=organization_pattern, string=organization)
         if result:
             organization_name = result[0]
         else:
-            organization_pattern = r"https:\/\/dev\.azure\.com\/(.*)"
+            organization_pattern = r"https:\/\/dev\.azure\.com\/([^/]+)"
             result = re.findall(pattern=organization_pattern, string=organization)
             if not result:
                 raise RuntimeError("Cannot find artifact organization.")
