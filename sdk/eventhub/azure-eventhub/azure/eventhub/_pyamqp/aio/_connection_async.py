@@ -183,6 +183,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._error: Optional[AMQPConnectionError] = None
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
+        self._transport_closed: bool = False
 
     async def __aenter__(self) -> "Connection":
         await self.open()
@@ -240,11 +241,28 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             ) from exc
 
     async def _disconnect(self) -> None:
-        """Disconnect the transport and set state to END."""
-        if self.state == ConnectionState.END:
+        """Disconnect the transport and set state to END.
+
+        ``transport.close()`` is gated on ``self._transport_closed`` so that it
+        runs exactly once regardless of which code path drives the shutdown.
+        Without this, ``Connection.close()`` could enter its exception handler,
+        set the state to ``END`` without closing the transport, and the
+        subsequent ``_disconnect()`` call from the ``finally`` block would
+        early-return on the state check — leaking the underlying transport
+        (most notably the aiohttp ``ClientSession`` used by the websocket
+        transport).
+        """
+        if self._transport_closed:
             return
-        await self._set_state(ConnectionState.END)
-        await self._transport.close()
+        self._transport_closed = True
+        if self.state != ConnectionState.END:
+            await self._set_state(ConnectionState.END)
+        try:
+            await self._transport.close()
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug(
+                "Error closing transport: %r", e, extra=self._network_trace_params
+            )
 
     def _can_read(self) -> bool:
         """Whether the connection is in a state where it is legal to read for incoming frames.
