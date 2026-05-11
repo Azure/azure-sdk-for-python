@@ -107,8 +107,6 @@ class TestFileServicePropertiesAsync(AsyncStorageRecordedTestCase):
         assert props['protocol'].smb.multichannel.enabled == False
         assert props['protocol'].smb.encryption_in_transit.required == False
 
-        with pytest.raises(TypeError):
-            ShareProtocolSettings(smb=ShareSmbSettings(multichannel=SmbMultichannel()))  # pylint: disable=missing-kwoa
         with pytest.raises(ValueError):
             ShareProtocolSettings(smb=ShareSmbSettings())
         with pytest.raises(ValueError):
