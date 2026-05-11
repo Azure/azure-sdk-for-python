@@ -784,6 +784,9 @@ class ConfigurationSettingPaged(ItemPaged[ConfigurationSetting]):
     it only returns pages that have changed since the provided ETags were collected.
 
     Example:
+
+    .. code-block:: python
+
         # Get initial page ETags
         items = client.list_configuration_settings(key_filter="sample_*")
         match_conditions = [page.etag for page in items.by_page()]
@@ -791,8 +794,8 @@ class ConfigurationSettingPaged(ItemPaged[ConfigurationSetting]):
         # Later, check for changes - only changed pages are returned
         items = client.list_configuration_settings(key_filter="sample_*")
         for page in items.by_page(match_conditions=match_conditions):
-             # Process only changed pages
-             pass
+            # Process only changed pages
+            pass
     """
 
     def by_page(self, continuation_token: Optional[str] = None, *, match_conditions: Optional[List[str]] = None) -> Any:
@@ -823,7 +826,9 @@ class AsyncConfigurationSettingPaged(AsyncItemPaged[ConfigurationSetting]):
     the `by_page` method, you can efficiently detect and retrieve only those pages that have changed
     since your last retrieval.
 
-    Example usage:
+    Example:
+
+    .. code-block:: python
 
         async for setting in AsyncConfigurationSettingPaged(...):
             # Process each setting asynchronously
