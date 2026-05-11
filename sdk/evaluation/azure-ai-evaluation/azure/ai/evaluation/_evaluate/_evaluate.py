@@ -26,6 +26,7 @@ from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
+    EVALUATION_PASS_FAIL_MAPPING,
     EvaluationMetrics,
     DefaultOpenEncoding,
     Prefixes,
@@ -250,7 +251,7 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     """
     Aggregate binary output results (pass/fail) from evaluation dataframe.
 
-    For each evaluator, calculates the proportion of passed results.
+    For each evaluator, calculates the proportion of "pass" results.
 
     :param df: The dataframe of evaluation results.
     :type df: ~pandas.DataFrame
@@ -259,12 +260,12 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     """
     results = {}
 
-    # Find all columns that end with "_passed"
-    passed_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_passed")]
+    # Find all columns that end with "_result"
+    result_columns = [col for col in df.columns if col.startswith("outputs.") and col.endswith("_result")]
 
-    for col in passed_columns:
+    for col in result_columns:
         # Extract the evaluator name from the column name
-        # (outputs.<evaluator>.<metric>_passed)
+        # (outputs.<evaluator>.<metric>_result)
         parts = col.split(".")
         evaluator_name = None
         if len(parts) >= 3:
@@ -291,7 +292,7 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
 
             # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
             total_rows = len(df)
-            pass_count = df[col].sum()
+            pass_count = value_counts.get(EVALUATION_PASS_FAIL_MAPPING[True], 0)
             proportion = pass_count / total_rows if total_rows > 0 else 0.0
 
             # Set the result with the evaluator name as the key
@@ -383,10 +384,10 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     token_count_cols = _get_token_count_columns_to_exclude(df)
     handled_columns.extend(token_count_cols)
 
-    # Exclude threshold and passed columns from aggregation
+    # Exclude threshold and result columns from aggregation
     # These are per-row metadata, not metrics to be averaged
-    threshold_and_passed_cols = [col for col in df.columns if col.endswith("_threshold") or col.endswith("_passed")]
-    handled_columns.extend(threshold_and_passed_cols)
+    threshold_and_result_cols = [col for col in df.columns if col.endswith("_threshold") or col.endswith("_result")]
+    handled_columns.extend(threshold_and_result_cols)
 
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
