@@ -31,7 +31,7 @@ import sys
 from dotenv import load_dotenv
 
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
-from devtools_testutils import add_header_regex_sanitizer, add_body_key_sanitizer
+from devtools_testutils import add_header_regex_sanitizer, add_body_key_sanitizer, add_uri_regex_sanitizer
 
 load_dotenv()
 
@@ -49,3 +49,6 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    # The existing recordings use api-version=2023-11-01-preview; normalize incoming
+    # requests to match until recordings are updated to 2026-03-01-preview.
+    add_uri_regex_sanitizer(regex="api-version=2026-03-01-preview", value="api-version=2023-11-01-preview")
