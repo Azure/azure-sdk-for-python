@@ -73,7 +73,7 @@ def check_diff(folder):
     ]
     result = run_check_call(command, sdk_dir, always_exit=False)
 
-    # Next we need to move the autorest and _tox_logs directories and then replace them
+    # Next we need to move the autorest directories and then replace them
 
     dir_changed = folder.split("/")[:-2]
     command = [
