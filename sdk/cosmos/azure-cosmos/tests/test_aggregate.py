@@ -14,6 +14,9 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 
+print("[AAD DEBUG] imported test_aggregate.py", flush=True)
+
+
 class _config:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -35,9 +38,11 @@ class TestAggregateQuery(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        print("[AAD DEBUG] TestAggregateQuery.setUpClass start", flush=True)
         cls._all_tests = []
         cls._setup()
         cls._generate_test_configs()
+        print("[AAD DEBUG] TestAggregateQuery.setUpClass end", flush=True)
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -48,6 +53,7 @@ class TestAggregateQuery(unittest.TestCase):
 
     @classmethod
     def _setup(cls):
+        print("[AAD DEBUG] TestAggregateQuery._setup start", flush=True)
         if not _config.master_key or not _config.host:
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
@@ -84,6 +90,7 @@ class TestAggregateQuery(unittest.TestCase):
                       * (_config.docs_with_numeric_id + 1) / 2.0
 
         cls._insert_doc(cls.created_collection, document_definitions)
+        print("[AAD DEBUG] TestAggregateQuery._setup end", flush=True)
 
     @classmethod
     def _generate_test_configs(cls):
@@ -132,6 +139,7 @@ class TestAggregateQuery(unittest.TestCase):
                 Exception()])
 
     def test_run_all(self):
+        print("[AAD DEBUG] TestAggregateQuery.test_run_all start", flush=True)
         for test_name, query, expected_result in self._all_tests:
             test_name = "test_%s" % test_name
             try:

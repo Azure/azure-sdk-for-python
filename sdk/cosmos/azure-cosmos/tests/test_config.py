@@ -36,6 +36,15 @@ except:
 SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes
 SLEEP_TIME = 30  # sleep for 30 seconds
 
+
+def _aad_debug(message):
+    print("[AAD DEBUG] {}".format(message), flush=True)
+
+
+_aad_debug("imported test_config.py")
+_aad_debug("ACCOUNT_HOST={}".format(os.getenv('ACCOUNT_HOST', '<unset>')))
+_aad_debug("COSMOS_TEST_DATA_AUTH_MODE={}".format(os.getenv('COSMOS_TEST_DATA_AUTH_MODE', '<unset>')))
+
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
@@ -64,8 +73,11 @@ class TestConfig(object):
         files that need client-construction options (e.g. ``no_response_on_write=True``)
         can opt in without bypassing the AAD/key selector.
         """
+        _aad_debug("create_data_client called mode={} kwargs={}".format(cls.data_auth_mode, sorted(kwargs.keys())))
         if cls.data_auth_mode == 'aad':
+            _aad_debug("create_data_client using AAD credential")
             return CosmosClient(cls.host, cls.credential, **kwargs)
+        _aad_debug("create_data_client using master key")
         return CosmosClient(cls.host, cls.masterKey, **kwargs)
 
     @classmethod
@@ -91,8 +103,11 @@ class TestConfig(object):
         """
         from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
+        _aad_debug("create_data_client_async called mode={} kwargs={}".format(cls.data_auth_mode, sorted(kwargs.keys())))
         if cls.data_auth_mode == 'aad':
+            _aad_debug("create_data_client_async using AAD credential")
             return AsyncCosmosClient(cls.host, cls.credential_async, **kwargs)
+        _aad_debug("create_data_client_async using master key")
         return AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
 
     @classmethod
@@ -110,10 +125,12 @@ class TestConfig(object):
         construction options (e.g. custom ``transport`` for fault injection), construct
         the clients manually instead of using this factory.
         """
+        _aad_debug("create_test_clients start database_id={} mode={}".format(database_id, cls.data_auth_mode))
         key_client = CosmosClient(cls.host, cls.masterKey, **kwargs)
         key_db = key_client.get_database_client(database_id)
         data_client = cls.create_data_client(**kwargs)
         data_db = data_client.get_database_client(database_id)
+        _aad_debug("create_test_clients end database_id={}".format(database_id))
         return key_client, key_db, data_client, data_db
 
     @classmethod
