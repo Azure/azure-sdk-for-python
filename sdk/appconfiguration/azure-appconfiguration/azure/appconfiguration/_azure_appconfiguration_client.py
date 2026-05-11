@@ -267,7 +267,6 @@ class AzureAppConfigurationClient:
         label_filter: Optional[str] = None,
         tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
-        fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
     ) -> ConfigurationSettingPaged:
         """Check configuration settings using a HEAD request, returning only headers without the
@@ -283,8 +282,6 @@ class AzureAppConfigurationClient:
         :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
-        :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
-            Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: A pager intended for :meth:`by_page` iteration to inspect page headers (for example, ``etag``)
             and detect changed pages. This operation issues HEAD requests and does not return full
@@ -303,15 +300,12 @@ class AzureAppConfigurationClient:
         """
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
-        if fields:
-            fields = ["locked" if x == "read_only" else x for x in fields]
         command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
         return ConfigurationSettingPaged(
             command,
             key=key_filter,
             label=label_filter,
             accept_datetime=accept_datetime,
-            select=fields,
             tags=tags_filter,
             page_iterator_class=ConfigurationSettingPropertiesPaged,
         )
