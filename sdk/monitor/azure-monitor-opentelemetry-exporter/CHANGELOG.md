@@ -21,6 +21,7 @@
 
 ### Other Changes
 - Skip the transient storage tests
+  ([#46827](https://github.com/Azure/azure-sdk-for-python/pull/46827))
 
 ## 1.0.0b51 (2026-04-07)
 
