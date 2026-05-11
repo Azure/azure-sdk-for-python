@@ -554,15 +554,8 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                 _LOGGER.debug(
                     "Error closing websocket: %r", e, extra=self.network_trace_params
                 )
-            try:
-                if self.session is not None:
-                    await self.session.close()
-            except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.debug(
-                    "Error closing aiohttp session: %r", e, extra=self.network_trace_params
-                )
             self.sock = None
-            self.session = None
+            await self._close_session_safely()
         self.connected = False
 
     async def _write(self, s):
