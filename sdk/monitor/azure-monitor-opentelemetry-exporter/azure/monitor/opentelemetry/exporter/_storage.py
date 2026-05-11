@@ -264,8 +264,8 @@ class LocalFileStorage:
             # Unix
             else:
                 open_flags = (
-                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
-                )  # pylint: disable=no-member  # cspell:disable-line
+                    os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW  # cspell:disable-line
+                )  # pylint: disable=no-member
                 dir_fd = os.open(self._path, open_flags)
                 try:
                     dir_stat = os.fstat(dir_fd)
