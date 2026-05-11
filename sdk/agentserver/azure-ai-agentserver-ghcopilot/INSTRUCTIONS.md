@@ -24,7 +24,7 @@ That's it — skill discovery, session management, auth, and RAPI event mapping 
 ## Package Structure
 
 ```
-azure-ai-agentserver-githubcopilot/
+azure-ai-agentserver-ghcopilot/
 ├── azure/ai/agentserver/githubcopilot/
 │   ├── __init__.py                    ← Public API: GitHubCopilotAdapter, CopilotAdapter, ToolAcl
 │   ├── _copilot_adapter.py            ← Core + convenience adapter classes
@@ -93,7 +93,7 @@ Going forward, adapter code changes should be made here. The foundry-declarative
 Install the package and its dependencies locally for validation and testing:
 
 ```bash
-cd sdk/agentserver/azure-ai-agentserver-githubcopilot
+cd sdk/agentserver/azure-ai-agentserver-ghcopilot
 pip install --pre -e ".[dev]" 2>/dev/null || pip install --pre azure-ai-agentserver-core github-copilot-sdk==0.2.0 azure-identity PyYAML python-dotenv
 ```
 

@@ -14,16 +14,16 @@ RUN pip install --no-cache-dir --no-input --pre \
     "azure-ai-agentserver-responses>=1.0.0a1"
 
 # Copy the package source for local install (not on PyPI yet)
-COPY _package/ /tmp/azure-ai-agentserver-githubcopilot/
+COPY _package/ /tmp/azure-ai-agentserver-ghcopilot/
 
 # Copy the test agent
 COPY . /app/
 
 # Install the package from local source + agent deps (PyPI only — no dev feed).
 RUN pip install --no-cache-dir --pre \
-    /tmp/azure-ai-agentserver-githubcopilot/ \
+    /tmp/azure-ai-agentserver-ghcopilot/ \
     -r requirements.txt && \
-    rm -rf /tmp/azure-ai-agentserver-githubcopilot/
+    rm -rf /tmp/azure-ai-agentserver-ghcopilot/
 
 EXPOSE 8088
 
