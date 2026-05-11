@@ -599,6 +599,153 @@ def test_removed_overload():
     assert changes == expected_msg
 
 
+def test_parameter_annotation_type_changed():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "EffectiveNetworkSecurityGroup": {
+                    "type": "Model",
+                    "methods": {
+                        "__init__": {
+                            "parameters": {
+                                "tag_map": {
+                                    "type": "Optional[str]",
+                                    "default": None,
+                                    "param_type": "keyword_only"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    }
+                }
+            },
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "value": {
+                            "type": "str",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "EffectiveNetworkSecurityGroup": {
+                    "type": "Model",
+                    "methods": {
+                        "__init__": {
+                            "parameters": {
+                                "tag_map": {
+                                    "type": "Optional[Dict[str, List[str]]]",
+                                    "default": None,
+                                    "param_type": "keyword_only"
+                                }
+                            },
+                            "is_async": False
+                        }
+                    }
+                }
+            },
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "value": {
+                            "type": "int",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedParameterType): Method `EffectiveNetworkSecurityGroup.__init__` changed type of its parameter `tag_map` from `Optional[str]` to `Optional[Dict[str, List[str]]]`",
+        "(ChangedParameterType): Function `my_func` changed type of its parameter `value` from `str` to `int`",
+    ]
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
+def test_parameter_annotation_type_missing_vs_explicit_none():
+    # `a` goes from no annotation (stored as Python None) to `str`.
+    # `b` goes from an explicit `None` annotation (stored as the string "None") to `int`.
+    # The reported messages must distinguish between these two cases.
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "a": {
+                            "type": None,
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        },
+                        "b": {
+                            "type": "None",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {},
+            "function_nodes": {
+                "my_func": {
+                    "parameters": {
+                        "a": {
+                            "type": "str",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        },
+                        "b": {
+                            "type": "int",
+                            "default": None,
+                            "param_type": "positional_or_keyword"
+                        }
+                    },
+                    "is_async": False
+                }
+            }
+        }
+    }
+
+    EXPECTED = [
+        "(ChangedParameterType): Function `my_func` changed type of its parameter `a` from `<no annotation>` to `str`",
+        "(ChangedParameterType): Function `my_func` changed type of its parameter `b` from `None` to `int`",
+    ]
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes(EXPECTED)
+    assert len(bc.breaking_changes) == len(EXPECTED)
+    assert changes == expected_msg
+
+
 def test_report_mode_without_setup_py():
     """Verify detect_breaking_changes.py works with --source-report and --target-report
     when --target points to a directory without setup.py or pyproject.toml.

@@ -26,6 +26,7 @@ class BreakingChangeType(str, Enum):
     CHANGED_PARAMETER_DEFAULT_VALUE = "ChangedParameterDefaultValue"
     CHANGED_PARAMETER_ORDERING = "ChangedParameterOrdering"
     CHANGED_PARAMETER_KIND = "ChangedParameterKind"
+    CHANGED_PARAMETER_TYPE = "ChangedParameterType"
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
@@ -73,6 +74,10 @@ class BreakingChangesTracker:
         "Method `{}.{}` changed its parameter `{}` from `{}` to `{}`"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
         "Function `{}` changed its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_MSG = \
+        "Method `{}.{}` changed type of its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG = \
+        "Function `{}` changed type of its parameter `{}` from `{}` to `{}`"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
         "Method `{}.{}` changed from `{}` to `{}`"
     CHANGED_FUNCTION_KIND_MSG = \
@@ -289,8 +294,14 @@ class BreakingChangesTracker:
                         diff[diff_type], stable_default
                     )
                 elif diff_type == "param_type":
+                    # Check if the parameter kind (positional vs keyword) has changed
                     self.check_parameter_type_changed(
                         diff["param_type"], stable_parameters_node
+                    )
+                elif diff_type == "type":
+                    # Check if the parameter type annotation has changed
+                    self.check_parameter_annotation_type_changed(
+                        diff["type"], stable_parameters_node
                     )
 
     def check_kwargs_removed(self, param_type: str, param_name: str) -> None:
@@ -374,6 +385,30 @@ class BreakingChangesTracker:
                     self.CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
                     self._module_name, self._function_name, self._parameter_name,
                     stable_parameters_node[self._parameter_name]["param_type"], diff
+                )
+            )
+
+    def check_parameter_annotation_type_changed(self, diff: Any, stable_parameters_node: Dict) -> None:
+        stable_type = stable_parameters_node[self._parameter_name].get("type")
+        # `create_parameters` stores a missing annotation as Python None, while an
+        # explicit `None` annotation is stored as the string "None". Normalize the
+        # missing-annotation case to a distinct display so the message is unambiguous.
+        display_stable = "<no annotation>" if stable_type is None else stable_type
+        display_current = "<no annotation>" if diff is None else diff
+        if self._class_name:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._class_name, self._function_name, self._parameter_name,
+                    display_stable, display_current
+                )
+            )
+        else:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._function_name, self._parameter_name,
+                    display_stable, display_current
                 )
             )
 
