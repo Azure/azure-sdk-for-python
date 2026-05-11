@@ -8,8 +8,9 @@
 import functools
 import warnings
 from datetime import datetime
+from types import SimpleNamespace
 from typing import (
-    Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
+    Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import unquote, urlparse
@@ -33,11 +34,13 @@ from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
+    ArrowBlobPropertiesPaged,
+    ArrowBlobPrefixPaged,
     BlobNamesPaged,
     BlobPrefix,
     BlobPropertiesPaged,
     FilteredBlobPaged,
-    IgnoreListBlobsDeserializer
+    IgnoreListBlobsDeserializer,
 )
 from ._models import (
     BlobProperties,
@@ -51,8 +54,10 @@ from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
     return_headers_and_deserialized,
+    return_context_and_deserialized,
     return_response_headers
 )
+from ._shared.uploads import IterStreamer
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -794,9 +799,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `ItemPaged.by_page()`.
+        :keyword bool use_arrow:
+            Specifies the ability to return and parse the response in Apache Arrow format.
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
             Only one entity level is supported.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if use_arrow is set to True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -824,15 +834,31 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
+        use_arrow = kwargs.pop('use_arrow', None)
+        if use_arrow:
+            try:
+                import pyarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ImportError(
+                    "The 'pyarrow' package is required to use Apache Arrow deserialization. "
+                    "Install it with: pip install pyarrow"
+                ) from e
+
         command = functools.partial(
-            self._client.container.list_blob_flat_segment,
+            self._client.container.list_blob_flat_segment_apache_arrow
+            if use_arrow else self._client.container.list_blob_flat_segment,
             include=include,
             timeout=timeout,
             **kwargs
         )
         return ItemPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, container=self.container_name,
-           page_iterator_class=BlobPropertiesPaged)
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            container=self.container_name,
+            page_iterator_class=ArrowBlobPropertiesPaged if use_arrow else BlobPropertiesPaged,
+            **({"deserializer": self._client.container._deserialize} if use_arrow else {})  # pylint: disable=protected-access
+        )
 
     @distributed_trace
     def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
@@ -911,8 +937,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
+        :keyword bool use_arrow:
+            Specifies the ability to return and parse the response in Apache Arrow format.
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if use_arrow is set to True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -931,18 +962,45 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
+        use_arrow = kwargs.pop('use_arrow', False)
+        if use_arrow:
+            try:
+                import pyarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ImportError(
+                    "The 'pyarrow' package is required to use Apache Arrow deserialization. "
+                    "Install it with: pip install pyarrow"
+                ) from e
+            command = functools.partial(
+                self._client.container.list_blob_hierarchy_segment_apache_arrow,
+                delimiter=delimiter,
+                include=include,
+                timeout=timeout,
+                **kwargs
+            )
+            return ItemPaged(
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                container=self.container_name,
+                delimiter=delimiter,
+                deserializer=self._client.container._deserialize,  # pylint: disable=protected-access
+                page_iterator_class=ArrowBlobPrefixPaged
+            )
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,
             include=include,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return BlobPrefix(
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
             container=self.container_name,
-            delimiter=delimiter)
+            delimiter=delimiter
+        )
 
     @distributed_trace
     def find_blobs_by_tags(
