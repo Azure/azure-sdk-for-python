@@ -119,9 +119,11 @@ def _wrap_string_messages(query: str, response: str) -> Tuple[List[Dict[str, Any
 def _split_messages_at_latest_user(
     messages: List[Dict[str, Any]], error_target: ErrorTarget
 ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
-    latest_user_index = max(
-        (i for i, message in enumerate(messages) if message.get("role") == MessageRole.USER), default=-1
-    )
+    latest_user_index = -1
+    for index in range(len(messages) - 1, -1, -1):
+        if messages[index].get("role") == MessageRole.USER:
+            latest_user_index = index
+            break
     if latest_user_index < 0:
         raise EvaluationException(
             message="Unable to infer turn-level query/response from 'messages' because no user message was found.",

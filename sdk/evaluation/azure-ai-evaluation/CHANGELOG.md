@@ -9,7 +9,7 @@
 - Added `status` field (`"completed"`, `"error"`, `"skipped"`) on evaluation result items to indicate evaluator execution outcome.
 - Added `skipped` and `errored` counts to `result_counts` and `per_testing_criteria_results` in AOAI evaluation summaries.
 - Added `skipped` to `ResultCount` and `skipped`/`errored` to `PerTestingCriteriaResult` typed contracts.
-- Added Azure/azureml-assets parity support for evaluator `evaluation_level` (`"conversation"` / `"turn"`) and `messages` input auto-detection on `CoherenceEvaluator`, `_TaskCompletionEvaluator`, and `TaskAdherenceEvaluator` without changing existing defaults.
+- Added Azure/azureml-assets parity support for evaluator `evaluation_level` (`"conversation"` / `"turn"`) and `messages` input auto-detection on Coherence and task evaluators without changing existing defaults.
 - Added shared validator support from Azure/azureml-assets parity work for `messages`-or-`query`/`response` inputs and developer-role messages in conversation validation.
 
 ### Breaking Changes
