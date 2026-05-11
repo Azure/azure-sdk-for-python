@@ -112,8 +112,8 @@ def _merge_query_response_messages(
 def _wrap_string_messages(query: str, response: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     """Convert plain query/response strings to evaluator message dictionaries."""
     return (
-        [{"role": MessageRole.USER, "content": [{"type": "text", "text": query}]}],
-        [{"role": MessageRole.ASSISTANT, "content": [{"type": "text", "text": response}]}],
+        [{"role": MessageRole.USER, "content": query}],
+        [{"role": MessageRole.ASSISTANT, "content": response}],
     )
 
 

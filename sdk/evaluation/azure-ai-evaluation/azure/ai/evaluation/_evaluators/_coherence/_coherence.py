@@ -76,6 +76,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
+    # messages is the only evaluator-specific optional mapping beyond query/response/conversation.
     _OPTIONAL_PARAMS = ["messages"]
 
     _validator: ValidatorInterface
