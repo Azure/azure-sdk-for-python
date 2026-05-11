@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b52 (Unreleased)
+## 1.0.0b52 (2026-05-12)
 
 ### Features Added
 - Add ownership checks for storage directories
