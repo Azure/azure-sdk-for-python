@@ -1042,7 +1042,7 @@ class TestLocalFileStorage(unittest.TestCase):
 
         with mock.patch(f"{STORAGE_MODULE}.os.name", "posix"):
 
-            def mock_fchmod(fd, mode):
+            def mock_fchmod(fd, mode):  # cspell:disable-line 
                 raise PermissionError(test_error_message)
 
             mock_stat_result = mock.MagicMock()
@@ -1052,7 +1052,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch(f"{STORAGE_MODULE}.os.open", return_value=99):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
-                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True, side_effect=mock_fchmod):
+                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True, side_effect=mock_fchmod):  # cspell:disable-line
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
                                         stor = LocalFileStorage(storage_abs_path)
@@ -1084,12 +1084,12 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch(f"{STORAGE_MODULE}.os.open", return_value=99):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=4242):
-                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:  # cspell:disable-line
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
                                         stor = LocalFileStorage(storage_abs_path)
                                         self.assertTrue(stor._enabled)
-                                        mock_fchmod.assert_called_with(99, 0o700)
+                                        mock_fchmod.assert_called_with(99, 0o700)  # cspell:disable-line
                                         stor.close()
 
         set_local_storage_setup_state_exception("")
@@ -1111,12 +1111,12 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch(f"{STORAGE_MODULE}.os.open", return_value=99):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=4242):
-                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:  # cspell:disable-line
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
                                         stor = LocalFileStorage(storage_abs_path)
                                         self.assertTrue(stor._enabled)
-                                        mock_fchmod.assert_called_with(99, 0o700)
+                                        mock_fchmod.assert_called_with(99, 0o700)  # cspell:disable-line
                                         stor.close()
 
         set_local_storage_setup_state_exception("")
@@ -1139,12 +1139,12 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch(f"{STORAGE_MODULE}.os.open", return_value=99):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=4242):
-                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:  # cspell:disable-line
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
                                         stor = LocalFileStorage(storage_abs_path)
                                         self.assertFalse(stor._enabled)
-                                        mock_fchmod.assert_not_called()
+                                        mock_fchmod.assert_not_called()  # cspell:disable-line
                                         exception_state = get_local_storage_setup_state_exception()
                                         self.assertIn("owned by uid 9999", exception_state)
                                         stor.close()
@@ -1175,15 +1175,15 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch(f"{STORAGE_MODULE}.os.open", return_value=99):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):  # legitimate user
-                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:
+                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True) as mock_fchmod:  # cspell:disable-line
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
                                         stor = LocalFileStorage(storage_abs_path)
 
                                         # Storage MUST be disabled — attacker owns the dir
                                         self.assertFalse(stor._enabled)
-                                        # fchmod must NOT be called — we refuse to use the directory
-                                        mock_fchmod.assert_not_called()
+                                        # fchmod must NOT be called — we refuse to use the directory  # cspell:disable-line
+                                        mock_fchmod.assert_not_called()  # cspell:disable-line
                                         # No data can be written
                                         result = stor.put([{"telemetry": "sensitive_data"}])
                                         self.assertNotEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
@@ -1245,7 +1245,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 with mock.patch(f"{STORAGE_MODULE}.os.open", return_value=99):
                     with mock.patch(f"{STORAGE_MODULE}.os.fstat", return_value=mock_stat_result):
                         with mock.patch(f"{STORAGE_MODULE}.os.getuid", create=True, return_value=1000):
-                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True):
+                            with mock.patch(f"{STORAGE_MODULE}.os.fchmod", create=True):  # cspell:disable-line
                                 with mock.patch(f"{STORAGE_MODULE}.os.close"):
                                     with mock.patch(f"{STORAGE_MODULE}.os.path.abspath", side_effect=lambda path: path):
                                         stor = LocalFileStorage(storage_abs_path)
