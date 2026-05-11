@@ -1,8 +1,7 @@
-"""Utilities for resolving dependency sets for tox-style checks.
+"""Utilities for resolving dependency sets for checks.
 
 This module contains the logic previously hosted in ``eng/tox/install_depend_packages.py``
-so that both the legacy tox entry point and the azpysdk checks can share a
-single implementation.
+so that the azpysdk checks can share a single implementation.
 """
 
 import logging

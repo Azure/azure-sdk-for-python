@@ -13,9 +13,10 @@ tracing exporters, and span operations:
 
   - Console ``StreamHandler`` on the **root** logger (so both SDK and
     user ``logging.info()`` calls are visible).
-  - Suppression of noisy Azure SDK / OTel exporter loggers.
-  - Azure Monitor trace + log export (when connection string available).
-  - OTLP trace + log export (when ``OTEL_EXPORTER_OTLP_ENDPOINT`` set).
+  - Suppression of noisy Azure Core HTTP logging policy output.
+  - Trace and log export via ``microsoft-opentelemetry`` distro (auto-detects
+    Azure Monitor from ``APPLICATIONINSIGHTS_CONNECTION_STRING`` and OTLP
+    from ``OTEL_EXPORTER_OTLP_ENDPOINT``).
 
   Users may pass a custom callable (or ``None``) via the
   ``configure_observability`` constructor parameter to override or
@@ -29,7 +30,7 @@ tracing exporters, and span operations:
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
 
 OpenTelemetry is a required dependency — these functions always create
-real spans.  Azure Monitor export is optional (lazy-imported).
+real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
 import logging
 import os
@@ -130,16 +131,15 @@ def configure_observability(
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
-    # Suppress noisy Azure SDK and OTel exporter logs
+    # Suppress the noisy Azure Core HTTP logging policy logger.
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
-    logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
 
     # Tracing and OTel export
     _configure_tracing(connection_string=connection_string)
 
 
 def _configure_tracing(connection_string: Optional[str] = None) -> None:
-    """Configure OpenTelemetry exporters for Azure Monitor and OTLP.
+    """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
     Internal helper called by :func:`configure_observability`.
 
@@ -148,20 +148,76 @@ def _configure_tracing(connection_string: Optional[str] = None) -> None:
     :type connection_string: str or None
     """
     resource = _create_resource()
-    provider = _ensure_trace_provider(resource)
+    if resource is None:
+        logger.warning("Failed to create OTel resource — tracing will not be configured.")
+        return
 
-    if provider is not None:
-        _register_enrichment_processor(provider)
+    # Build custom processors
+    agent_name = _config.resolve_agent_name() or None
+    agent_version = _config.resolve_agent_version() or None
+    project_id = _config.resolve_project_id() or None
 
+    if agent_name and agent_version:
+        agent_id = f"{agent_name}:{agent_version}"
+    elif agent_name:
+        agent_id = agent_name
+    else:
+        agent_id = None
+
+    span_processors = [
+        _FoundryEnrichmentSpanProcessor(
+            agent_name=agent_name, agent_version=agent_version,
+            agent_id=agent_id, project_id=project_id,
+        ),
+    ]
+    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
+
+    try:
+        _setup_distro_export(
+            resource=resource,
+            span_processors=span_processors,
+            log_record_processors=log_record_processors,
+            connection_string=connection_string,
+        )
+        logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
+    except ImportError:
+        logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
+        # Still set up TracerProvider with enrichment processor so spans are created
+        _ensure_trace_provider(resource, span_processors)
+
+
+def _setup_distro_export(
+    *,
+    resource: Any,
+    span_processors: list[Any],
+    log_record_processors: list[Any],
+    connection_string: Optional[str] = None,
+) -> None:
+    """Delegate to microsoft-opentelemetry distro for exporter configuration.
+
+    Separated into its own function so tests can easily mock it without
+    intercepting lazy imports.
+
+    :keyword resource: OTel resource describing this service.
+    :keyword span_processors: Span processors to register.
+    :keyword log_record_processors: Log record processors to register.
+    :keyword connection_string: Application Insights connection string.
+    """
+    from microsoft.opentelemetry import use_microsoft_opentelemetry
+
+    kwargs: dict[str, Any] = {
+        "resource": resource,
+        "span_processors": span_processors,
+        "log_record_processors": log_record_processors,
+    }
+
+    # Azure Monitor export is off by default in the distro — enable it
+    # when a connection string is available.
     if connection_string:
-        if resource is not None:
-            _setup_trace_export(provider, connection_string)
-            _setup_log_export(resource, connection_string)
+        kwargs["enable_azure_monitor"] = True
+        kwargs["azure_monitor_connection_string"] = connection_string
 
-    otlp_endpoint = _config.resolve_otlp_endpoint()
-    if otlp_endpoint and resource is not None:
-        _setup_otlp_trace_export(provider, otlp_endpoint)
-        _setup_otlp_log_export(resource, otlp_endpoint)
+    use_microsoft_opentelemetry(**kwargs)
 
 
 # ======================================================================
@@ -508,7 +564,16 @@ def _create_resource() -> Any:
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
 
-def _ensure_trace_provider(resource: Any) -> Any:
+def _ensure_trace_provider(resource: Any, span_processors: Optional[list[Any]] = None) -> Any:
+    """Get or create a TracerProvider, optionally adding span processors.
+
+    Used as a fallback when the microsoft-opentelemetry distro is not installed.
+
+    :param resource: OTel resource describing this service.
+    :type resource: ~typing.Any
+    :param span_processors: Optional span processors to register.
+    :type span_processors: list[~typing.Any] or None
+    """
     if resource is None:
         return None
     try:
@@ -517,129 +582,15 @@ def _ensure_trace_provider(resource: Any) -> Any:
         return None
     current = trace.get_tracer_provider()
     if hasattr(current, "add_span_processor"):
-        return current
-    provider = SdkTracerProvider(resource=resource)
-    trace.set_tracer_provider(provider)
+        provider = current
+    else:
+        provider = SdkTracerProvider(resource=resource)
+        trace.set_tracer_provider(provider)
+    if span_processors and not getattr(provider, "_agentserver_processors_added", False):
+        for proc in span_processors:
+            provider.add_span_processor(proc)
+        provider._agentserver_processors_added = True  # type: ignore[attr-defined]  # pylint: disable=protected-access
     return provider
-
-
-_enrichment_configured = False
-_az_trace_configured = False
-_az_log_configured = False
-_otlp_trace_configured = False
-_otlp_log_configured = False
-
-
-def _register_enrichment_processor(provider: Any) -> None:
-    global _enrichment_configured  # pylint: disable=global-statement
-    if _enrichment_configured:
-        return
-    agent_name = _config.resolve_agent_name() or None
-    agent_version = _config.resolve_agent_version() or None
-    project_id = _config.resolve_project_id() or None
-
-    if agent_name and agent_version:
-        agent_id = f"{agent_name}:{agent_version}"
-    elif agent_name:
-        agent_id = agent_name
-    else:
-        agent_id = None
-
-    provider.add_span_processor(_FoundryEnrichmentSpanProcessor(
-        agent_name=agent_name, agent_version=agent_version,
-        agent_id=agent_id, project_id=project_id,
-    ))
-    _enrichment_configured = True
-
-
-def _setup_trace_export(provider: Any, connection_string: str) -> None:
-    global _az_trace_configured  # pylint: disable=global-statement
-    if _az_trace_configured or provider is None:
-        return
-    try:
-        from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
-        from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter  # type: ignore[import-untyped]
-    except ImportError:
-        logger.warning("Trace export requires azure-monitor-opentelemetry-exporter.")
-        return
-    provider.add_span_processor(BatchSpanProcessor(
-        AzureMonitorTraceExporter(connection_string=connection_string)))
-    _az_trace_configured = True
-    logger.info("Application Insights trace exporter configured.")
-
-
-def _setup_log_export(resource: Any, connection_string: str) -> None:
-    global _az_log_configured  # pylint: disable=global-statement
-    if _az_log_configured:
-        return
-    try:
-        from opentelemetry._logs import set_logger_provider
-        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-
-        from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter  # type: ignore[import-untyped]
-    except ImportError:
-        logger.warning("Log export requires azure-monitor-opentelemetry-exporter.")
-        return
-    log_provider = LoggerProvider(resource=resource)
-    set_logger_provider(log_provider)
-    log_provider.add_log_record_processor(BatchLogRecordProcessor(
-        AzureMonitorLogExporter(connection_string=connection_string)))
-    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
-    logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
-    _az_log_configured = True
-    logger.info("Application Insights log exporter configured.")
-
-
-def _setup_otlp_trace_export(provider: Any, endpoint: str) -> None:
-    global _otlp_trace_configured  # pylint: disable=global-statement
-    if _otlp_trace_configured or provider is None:
-        return
-    try:
-        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-        from opentelemetry.sdk.trace.export import BatchSpanProcessor
-    except ImportError:
-        logger.warning("OTLP trace export requires opentelemetry-exporter-otlp-proto-grpc.")
-        return
-    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=endpoint)))
-    _otlp_trace_configured = True
-    logger.info("OTLP trace exporter configured (endpoint=%s).", endpoint)
-
-
-def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
-    global _otlp_log_configured  # pylint: disable=global-statement
-    if _otlp_log_configured:
-        return
-    try:
-        from opentelemetry._logs import get_logger_provider
-        from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
-        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-    except ImportError:
-        logger.warning("OTLP log export requires opentelemetry-exporter-otlp-proto-grpc.")
-        return
-    current = get_logger_provider()
-    if hasattr(current, "add_log_record_processor"):
-        log_provider = current
-    else:
-        from opentelemetry._logs import set_logger_provider
-        log_provider = LoggerProvider(resource=resource)
-        set_logger_provider(log_provider)
-    log_provider.add_log_record_processor(  # type: ignore[union-attr]
-        BatchLogRecordProcessor(OTLPLogExporter(endpoint=endpoint))
-    )
-    log_provider.add_log_record_processor(  # type: ignore[union-attr]
-        _BaggageLogRecordProcessor()  # type: ignore[arg-type]
-    )
-    # Note: LoggingHandler is NOT added here to avoid duplicating the
-    # handler already installed by _setup_log_export. The OTel LoggerProvider
-    # receives log records via the handler added there (or from direct OTel
-    # log API usage).  If OTLP is the only exporter, add a handler:
-    if not _az_log_configured:
-        logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
-    _otlp_log_configured = True
-    logger.info("OTLP log exporter configured (endpoint=%s).", endpoint)
 
 
 def _extract_w3c_carrier(headers: Mapping[str, str]) -> dict[str, str]:

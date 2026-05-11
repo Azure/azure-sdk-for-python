@@ -130,9 +130,9 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
+        assert f"{key}_score" in result and f"{key}_result" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 3.0  # Mixed good/bad gets score 3
-        assert result[f"{key}_passed"] is True
+        assert result[f"{key}_passed"] == True
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
