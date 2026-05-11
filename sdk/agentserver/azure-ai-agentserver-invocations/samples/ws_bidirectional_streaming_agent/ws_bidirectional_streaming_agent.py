@@ -4,18 +4,26 @@ Unlike the request/reply echo in :mod:`samples.ws_invoke_agent`, this sample
 exercises the *full-duplex* nature of WebSocket: the server and the client
 send and receive on the same socket **concurrently and independently**.
 
-The handler runs three groups of coroutines in parallel:
+The handler runs two groups of coroutines in parallel:
 
 1. ``_reader``       — consumes inbound JSON frames (prompts and control
                        messages) and dispatches them.  Multiple prompts
                        may arrive while previous ones are still streaming.
-2. ``_heartbeat``    — server-initiated push: emits a ``heartbeat`` event
-                       every few seconds without any client input.  Proves
-                       the outbound direction is not gated on inbound traffic.
-3. ``_stream_tokens`` — one task per prompt; streams generated tokens back
+2. ``_stream_tokens`` — one task per prompt; streams generated tokens back
                        to the client at its own pace.  Multiple generations
-                       can run in parallel; ``cancel`` control messages
-                       interrupt them mid-flight.
+                       can run in parallel and run *independently* of any
+                       inbound traffic — the defining property of full-
+                       duplex.  ``cancel`` control messages interrupt them
+                       mid-flight.
+
+.. note::
+
+   Connection keep-alive is **not** an application concern: the SDK
+   configures Hypercorn to send WebSocket protocol-level Ping frames
+   (opcode 0x9) every ``ws_ping_interval`` seconds (default 30 s).  That
+   is enough to survive Azure APIM / Azure Load Balancer's ~4-minute idle
+   timeout without your handler having to push any application-level
+   heartbeat messages of its own.
 
 Wire protocol (JSON over text frames)
 -------------------------------------
@@ -28,8 +36,7 @@ Inbound (client -> server)::
 
 Outbound (server -> client)::
 
-    {"type": "ready"}                          # sent on connect
-    {"type": "heartbeat", "ts": 1715200000}    # periodic, server-initiated
+    {"type": "ready"}                            # sent on connect
     {"type": "token", "id": "p1", "token": "..."}
     {"type": "done",   "id": "p1"}
     {"type": "cancelled", "id": "p1"}
@@ -39,8 +46,8 @@ Run it::
 
     python ws_bidirectional_streaming_agent.py
 
-Drive it with the ``websockets`` CLI; the server keeps streaming heartbeats
-and tokens while you type the next prompt::
+Drive it with the ``websockets`` CLI; the server keeps streaming tokens
+for each prompt while you type the next one::
 
     python -m websockets ws://localhost:8088/invocations_ws
     > {"type": "prompt", "id": "p1", "text": "Tell me a story"}
@@ -54,7 +61,6 @@ import asyncio
 import contextlib
 import json
 import logging
-import time
 from collections.abc import AsyncGenerator
 
 from starlette.requests import Request
@@ -76,7 +82,6 @@ _SIMULATED_TOKENS = [
     " and", " a", " client", " spoke", " at", " the", " same", " time", ".",
 ]
 
-_HEARTBEAT_INTERVAL_S = 2.0
 _TOKEN_DELAY_S = 0.2
 
 
@@ -139,22 +144,6 @@ async def _stream_tokens(
         raise
 
 
-async def _heartbeat(websocket: WebSocket) -> None:
-    """Push a ``heartbeat`` event every ``_HEARTBEAT_INTERVAL_S`` seconds.
-
-    Demonstrates server-initiated traffic that does **not** wait for any
-    inbound message — the defining property of full-duplex.
-
-    :param websocket: The accepted WebSocket.
-    :type websocket: ~starlette.websockets.WebSocket
-    """
-    while True:
-        await asyncio.sleep(_HEARTBEAT_INTERVAL_S)
-        await websocket.send_json(
-            {"type": "heartbeat", "ts": int(time.time())},
-        )
-
-
 async def _reader(
     websocket: WebSocket,
     in_flight: "dict[str, asyncio.Task[None]]",
@@ -162,8 +151,8 @@ async def _reader(
     """Consume inbound frames and dispatch prompt / cancel / bye control messages.
 
     Returns (instead of raising) on a ``bye`` message or a clean client
-    disconnect.  Returning lets the caller cancel the heartbeat task and
-    end the connection.
+    disconnect.  Returning lets the caller cancel any in-flight generation
+    tasks and end the connection.
 
     :param websocket: The accepted WebSocket.
     :type websocket: ~starlette.websockets.WebSocket
@@ -236,18 +225,17 @@ async def _cancel_and_wait(tasks: "list[asyncio.Task[None]]") -> None:
 
 @app.ws_handler  # /invocations_ws
 async def handle_ws(websocket: WebSocket) -> None:
-    """Run reader, heartbeat, and per-prompt generation tasks concurrently.
+    """Run the reader and per-prompt generation tasks concurrently.
 
     The SDK has already accepted the connection by the time this function
-    runs.  When this coroutine returns the SDK closes the socket with
-    code ``1000``; if it raises, the SDK maps the exception to ``1011``.
+    runs, and it is sending WS protocol-level Ping frames on its own
+    schedule (see ``ws_ping_interval``).  When this coroutine returns the
+    SDK closes the socket with code ``1000``; if it raises, the SDK maps
+    the exception to ``1011``.
     """
     await websocket.send_json({"type": "ready"})
 
     in_flight: "dict[str, asyncio.Task[None]]" = {}
-    heartbeat_task = asyncio.create_task(
-        _heartbeat(websocket), name="heartbeat",
-    )
 
     try:
         await _reader(websocket, in_flight)
@@ -255,9 +243,7 @@ async def handle_ws(websocket: WebSocket) -> None:
         # Client went away mid-read — fall through to cleanup.
         logger.info("client disconnected during streaming")
     finally:
-        await _cancel_and_wait(
-            [heartbeat_task, *in_flight.values()],
-        )
+        await _cancel_and_wait(list(in_flight.values()))
 
 
 if __name__ == "__main__":
