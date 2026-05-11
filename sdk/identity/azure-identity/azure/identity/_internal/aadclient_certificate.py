@@ -25,7 +25,7 @@ class AadClientCertificate:
         self._private_key = private_key
 
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
-        fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
+        fingerprint = cert.fingerprint(hashes.SHA1())  # nosec # CodeQL [SM02167] only used as a thumbprint/identifier
         sha256_fingerprint = cert.fingerprint(hashes.SHA256())
         self._thumbprint = base64.urlsafe_b64encode(fingerprint).decode("utf-8")
         self._sha256_thumbprint = base64.urlsafe_b64encode(sha256_fingerprint).decode("utf-8")
