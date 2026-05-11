@@ -775,7 +775,7 @@ class ConfigurationSettingPropertiesPagedAsync(
         return self._current_page
 
 
-class ConfigurationSettingPaged(ItemPaged):
+class ConfigurationSettingPaged(ItemPaged[ConfigurationSetting]):
     """
     An iterable of ConfigurationSettings that supports etag-based change detection.
 
@@ -814,7 +814,7 @@ class ConfigurationSettingPaged(ItemPaged):
         return self._page_iterator_class(continuation_token=continuation_token, *self._args, **self._kwargs)
 
 
-class AsyncConfigurationSettingPaged(AsyncItemPaged):
+class AsyncConfigurationSettingPaged(AsyncItemPaged[ConfigurationSetting]):
     """
     An async iterable of ConfigurationSettings that supports etag-based change detection.
 
