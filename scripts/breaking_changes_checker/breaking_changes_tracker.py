@@ -28,7 +28,6 @@ class BreakingChangeType(str, Enum):
     CHANGED_PARAMETER_KIND = "ChangedParameterKind"
     CHANGED_PARAMETER_TYPE = "ChangedParameterType"
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
-    CHANGED_FUNCTION_RETURN_TYPE = "ChangedFunctionReturnType"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
     REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
@@ -83,10 +82,6 @@ class BreakingChangesTracker:
         "Method `{}.{}` changed from `{}` to `{}`"
     CHANGED_FUNCTION_KIND_MSG = \
         "Changed function `{}` from `{}` to `{}`"
-    CHANGED_CLASS_FUNCTION_RETURN_TYPE_MSG = \
-        "Method `{}.{}` changed return type from `{}` to `{}`"
-    CHANGED_FUNCTION_RETURN_TYPE_MSG = \
-        "Function `{}` changed return type from `{}` to `{}`"
     REMOVED_OR_RENAMED_MODULE_MSG = \
         "Deleted or renamed module `{}`"
     REMOVED_CLASS_FUNCTION_KWARGS_MSG = \
@@ -262,7 +257,6 @@ class BreakingChangesTracker:
                     continue  # method was deleted, abort other checks
 
                 self.check_function_type_changed(method_components)
-                self.check_function_return_type_changed(method_components)
 
                 stable_parameters_node = stable_methods_node[self._function_name]["parameters"]
                 current_parameters_node = current_methods_node[self._function_name]["parameters"]
@@ -286,7 +280,6 @@ class BreakingChangesTracker:
                 continue  # function was deleted, abort other checks
 
             self.check_function_type_changed(function_components)
-            self.check_function_return_type_changed(function_components)
 
             stable_parameters_node = stable_function_nodes[self._function_name]["parameters"]
             current_parameters_node = self.current[self._module_name]["function_nodes"][self._function_name]["parameters"]
@@ -406,58 +399,6 @@ class BreakingChangesTracker:
                         self._module_name, self._function_name, original, change
                     )
                 )
-
-    def check_function_return_type_changed(self, function_components: Dict) -> None:
-        """Detect a change to a function/method return type annotation.
-
-        Skips the change when the stable snapshot has no recorded return type
-        (older reports generated before return-type capture was added, or a
-        function that simply had no annotation in the previous version). This
-        avoids false positives during the rollout of return-type detection,
-        while still catching the regressions described in
-        https://github.com/Azure/azure-sdk-for-python/issues/46489
-        (e.g. `LROPoller[Fleet]` -> `LROPoller[None]`).
-        """
-        if "return_type" not in function_components:
-            return
-        current_value = function_components["return_type"]
-        if self._class_name:
-            stable_fn = (
-                self.stable.get(self._module_name, {})
-                .get("class_nodes", {})
-                .get(self._class_name, {})
-                .get("methods", {})
-                .get(self._function_name, {})
-            )
-        else:
-            stable_fn = (
-                self.stable.get(self._module_name, {})
-                .get("function_nodes", {})
-                .get(self._function_name, {})
-            )
-        if not isinstance(stable_fn, dict):
-            return
-        stable_value = stable_fn.get("return_type")
-        if stable_value is None or stable_value == current_value:
-            return
-        if self._class_name:
-            self.breaking_changes.append(
-                (
-                    self.CHANGED_CLASS_FUNCTION_RETURN_TYPE_MSG,
-                    BreakingChangeType.CHANGED_FUNCTION_RETURN_TYPE,
-                    self._module_name, self._class_name, self._function_name,
-                    stable_value, current_value,
-                )
-            )
-        else:
-            self.breaking_changes.append(
-                (
-                    self.CHANGED_FUNCTION_RETURN_TYPE_MSG,
-                    BreakingChangeType.CHANGED_FUNCTION_RETURN_TYPE,
-                    self._module_name, self._function_name,
-                    stable_value, current_value,
-                )
-            )
 
     def check_parameter_type_changed(self, diff: Dict, stable_parameters_node: Dict) -> None:
         if self._class_name:

@@ -24,6 +24,7 @@ for path in (SCRIPTS_DIR, PACKAGE_DIR):
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker, BreakingChangeType
 from breaking_changes_checker.detect_breaking_changes import main
 from breaking_changes_checker.checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
+from breaking_changes_checker.checkers.changed_function_return_type_checker import ChangedFunctionReturnTypeChecker
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
@@ -820,13 +821,17 @@ def test_changed_lro_return_type_issue_46489():
         }
     }
 
-    bc = BreakingChangesTracker(stable, current, "azure-contoso")
-    bc.run_checks()
-
     EXPECTED = [
         "(ChangedFunctionReturnType): Method `FleetsOperations.begin_create_or_update` "
         "changed return type from `LROPoller[Fleet]` to `LROPoller[None]`",
     ]
+
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
+    bc.run_checks()
+
     changes = normalize_breaking_changes_report(bc.report_changes())
     expected_msg = format_breaking_changes(EXPECTED)
     assert len(bc.breaking_changes) == len(EXPECTED)
@@ -868,7 +873,10 @@ def test_changed_module_function_return_type():
         "(ChangedFunctionReturnType): Function `build_url` changed return type from `str` to `bytes`",
     ]
 
-    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
     bc.run_checks()
 
     changes = normalize_breaking_changes_report(bc.report_changes())
@@ -912,7 +920,10 @@ def test_return_type_missing_in_stable_is_not_breaking():
         }
     }
 
-    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc = BreakingChangesTracker(
+        stable, current, "azure-contoso",
+        checkers=[ChangedFunctionReturnTypeChecker()],
+    )
     bc.run_checks()
 
     assert bc.breaking_changes == []
