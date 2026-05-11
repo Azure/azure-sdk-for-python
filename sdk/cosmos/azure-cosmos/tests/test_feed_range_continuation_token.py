@@ -54,7 +54,9 @@ from azure.cosmos._routing.feed_range_continuation import (
     _hash_query_spec,
     _stable_hash_128,
     _normalize_max_item_count,
+    _should_bridge_legacy_continuation,
     _increment_explode_iterations_or_raise,
+    _write_query_outbound_continuation,
     _update_no_progress_page_count,
     _validate_token_identity,
     _FIELD_BACKEND_CONTINUATION,
@@ -1524,4 +1526,107 @@ class TestCheckpointRoundTripOnException:
         state.write_outbound_continuation(headers, _RID, _QUERY, _FEED_RANGE)
 
         assert http_constants.HttpHeaders.Continuation not in headers
+
+
+class TestWriteQueryOutboundContinuation:
+    """Outbound continuation format selection should match request scope policy."""
+
+    def test_full_pk_scope_always_emits_legacy(self):
+        state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
+            _HEAD_FEEDRANGE,
+            _BACKEND_CONT,
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        _write_query_outbound_continuation(
+            headers,
+            state,
+            _RID,
+            _QUERY,
+            _FEED_RANGE,
+            is_full_pk_structured_scope=True,
+            emit_legacy_for_single_partition=False,
+            query_hash=_hash_query_spec(_QUERY),
+            feedrange_hash=_hash_feed_range(_FEED_RANGE),
+        )
+
+        assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
+
+    def test_non_full_pk_single_partition_scope_emits_legacy(self):
+        state = _FeedRangePaginationState.from_single_feedrange_with_continuation(
+            _HEAD_FEEDRANGE,
+            _BACKEND_CONT,
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        _write_query_outbound_continuation(
+            headers,
+            state,
+            _RID,
+            _QUERY,
+            _FEED_RANGE,
+            is_full_pk_structured_scope=False,
+            emit_legacy_for_single_partition=True,
+            query_hash=_hash_query_spec(_QUERY),
+            feedrange_hash=_hash_feed_range(_FEED_RANGE),
+        )
+
+        assert headers[http_constants.HttpHeaders.Continuation] == _BACKEND_CONT
+
+    def test_non_full_pk_multi_partition_scope_emits_structured(self):
+        state = _FeedRangePaginationState(
+            [(_HEAD_FEEDRANGE, _BACKEND_CONT), (_REMAINING_FEEDRANGE, None)],
+            page_size_hint=5,
+        )
+        headers: dict = {}
+
+        _write_query_outbound_continuation(
+            headers,
+            state,
+            _RID,
+            _QUERY,
+            _FEED_RANGE,
+            is_full_pk_structured_scope=False,
+            emit_legacy_for_single_partition=False,
+            query_hash=_hash_query_spec(_QUERY),
+            feedrange_hash=_hash_feed_range(_FEED_RANGE),
+        )
+
+        decoded = _decode_token(headers[http_constants.HttpHeaders.Continuation])
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
+
+
+class TestLegacyBridgeDecision:
+    """Legacy inbound continuation is bridged only when scope is safely single-partition."""
+
+    @pytest.mark.parametrize(
+        "inbound_serialized_continuation,inbound_token_payload,is_full_pk_structured_scope,"
+        "is_single_partition_scope,expected",
+        [
+            (None, None, False, True, False),
+            ("", None, False, True, False),
+            ("legacy", {"v": 1}, False, True, False),
+            ("legacy", None, True, False, True),
+            ("legacy", None, False, True, True),
+            ("legacy", None, False, False, False),
+        ],
+    )
+    def test_should_bridge_legacy_continuation_policy(
+        self,
+        inbound_serialized_continuation,
+        inbound_token_payload,
+        is_full_pk_structured_scope,
+        is_single_partition_scope,
+        expected,
+    ):
+        assert _should_bridge_legacy_continuation(
+            inbound_serialized_continuation,
+            inbound_token_payload,
+            is_full_pk_structured_scope,
+            is_single_partition_scope,
+        ) is expected
+
 

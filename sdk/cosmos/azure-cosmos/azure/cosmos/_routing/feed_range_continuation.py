@@ -306,6 +306,28 @@ def _validate_token_identity(
         )
 
 
+def _should_bridge_legacy_continuation(
+    inbound_serialized_continuation: Optional[str],
+    inbound_token_payload: Optional[dict],
+    is_full_pk_structured_scope: bool,
+    is_single_partition_scope: bool,
+) -> bool:
+    """Whether to bridge an inbound legacy continuation into pagination state.
+
+    We bridge only when the inbound continuation exists, did not decode as
+    structured ``v=1`` (legacy/opaque token), and the current request scope can
+    be represented safely by a single legacy continuation slot:
+
+    * full-PK structured scope (always single partition), or
+    * non-full-PK scope that currently maps to one physical partition.
+    """
+    return bool(
+        inbound_serialized_continuation
+        and inbound_token_payload is None
+        and (is_full_pk_structured_scope or is_single_partition_scope)
+    )
+
+
 def _extract_resume_queue(
     inbound: dict,
 ) -> List[Tuple[routing_range.Range, Optional[str]]]:
@@ -611,14 +633,17 @@ def _write_query_outbound_continuation(
     query: Any,
     feed_range_epk: routing_range.Range,
     is_full_pk_structured_scope: bool,
-    query_hash: str,
-    feedrange_hash: str,
+    emit_legacy_for_single_partition: bool,
+    query_hash: Optional[str],
+    feedrange_hash: Optional[str],
 ) -> None:
     """Write outbound continuation for feed-range pagination.
 
     Full-PK queries always emit the legacy single-string continuation
     so persisted bookmarks remain readable by older SDK versions.
-    Feed-range and prefix queries always emit the structured envelope.
+    Feed-range/prefix queries emit legacy continuation when the caller's
+    input scope currently maps to a single physical partition; otherwise
+    they emit the structured envelope.
 
     :param last_response_headers: Response headers to mutate.
     :type last_response_headers: MutableMapping[str, Any]
@@ -632,14 +657,19 @@ def _write_query_outbound_continuation(
     :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param is_full_pk_structured_scope: Whether request scope is full-PK on structured path.
     :type is_full_pk_structured_scope: bool
-    :param query_hash: Precomputed query hash for outbound token identity.
-    :type query_hash: str
-    :param feedrange_hash: Precomputed feed range hash for outbound token identity.
-    :type feedrange_hash: str
+    :param emit_legacy_for_single_partition: Whether non-full-PK scope currently maps to a
+        single physical partition and can safely emit legacy continuation.
+    :type emit_legacy_for_single_partition: bool
+    :param query_hash: Precomputed query hash for outbound token identity, or ``None`` to
+        compute lazily inside the structured-token writer when needed.
+    :type query_hash: Optional[str]
+    :param feedrange_hash: Precomputed feed range hash for outbound token identity, or
+        ``None`` to compute lazily inside the structured-token writer when needed.
+    :type feedrange_hash: Optional[str]
     :returns: None. Mutates ``last_response_headers`` in place.
     :rtype: None
     """
-    if is_full_pk_structured_scope:
+    if is_full_pk_structured_scope or emit_legacy_for_single_partition:
         legacy_outbound = pagination_state.head_bc
         if legacy_outbound is None:
             last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)
@@ -655,19 +685,6 @@ def _write_query_outbound_continuation(
         feedrange_hash=feedrange_hash,
     )
 
-
-def _should_attempt_legacy_bridge_fallback(error: Any) -> bool:
-    """Return whether a compatibility fallback should be attempted.
-
-    Compatibility fallback is restricted to legacy-token bridge failures
-    that surface as ``400 BadRequest``.
-
-    :param error: Exception raised by backend request execution.
-    :type error: Any
-    :returns: ``True`` when the error is a ``400 BadRequest`` compatibility failure.
-    :rtype: bool
-    """
-    return getattr(error, "status_code", None) == http_constants.StatusCodes.BAD_REQUEST
 
 
 def _build_outbound_token(

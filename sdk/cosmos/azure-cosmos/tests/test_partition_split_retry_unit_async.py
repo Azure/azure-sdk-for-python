@@ -17,6 +17,7 @@ from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnect
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._routing.feed_range_continuation import _FIELD_VERSION, _TOKEN_VERSION, _decode_token
 
 # tracemalloc is not available in PyPy, so we import conditionally
 try:
@@ -724,6 +725,112 @@ class TestPartitionSplitRetryUnitAsync(unittest.IsolatedAsyncioTestCase):
 
         # Sanity check: async no-query branch returns just the body list.
         assert result == [{"id": "1"}]
+
+    async def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy_async(self):
+        """Async: legacy inbound continuation is honored when feed_range maps to one partition."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        single_overlap = [{"id": "0", "minInclusive": "00", "maxExclusive": "FF"}]
+
+        async def overlap_side_effect(_rid, ranges, _opts):
+            _ = ranges
+            return single_overlap
+
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(side_effect=overlap_side_effect)
+
+        seen_request_continuations = []
+
+        async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            return {"Documents": [{"id": "doc-1"}]}, {HttpHeaders.Continuation: "legacy-next-token"}
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        with patch("azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders", return_value={}):
+            with patch(
+                "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                side_effect=_noop_set_session,
+            ):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, headers = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options={"continuation": "legacy-inbound-token"},
+                        feed_range={
+                            "Range": {
+                                "min": "00",
+                                "max": "FF",
+                                "isMinInclusive": True,
+                                "isMaxInclusive": False,
+                            }
+                        },
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_request_continuations == ["legacy-inbound-token"]
+        assert headers.get(HttpHeaders.Continuation) == "legacy-next-token"
+
+    async def test_queryfeed_feed_range_legacy_inbound_multi_partition_restarts_and_emits_v1_async(self):
+        """Async: legacy inbound continuation is ignored when scope is multi-partition; outbound becomes v=1."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        child_left = {"id": "0", "minInclusive": "00", "maxExclusive": "7F"}
+        child_right = {"id": "1", "minInclusive": "7F", "maxExclusive": "FF"}
+
+        async def overlap_side_effect(_rid, ranges, _opts):
+            requested = ranges[0]
+            if requested.min == "00" and requested.max == "FF":
+                return [child_left, child_right]
+            if requested.min == "00" and requested.max == "7F":
+                return [child_left]
+            if requested.min == "7F" and requested.max == "FF":
+                return [child_right]
+            return []
+
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(side_effect=overlap_side_effect)
+
+        seen_request_continuations = []
+
+        async def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            return {"Documents": [{"id": "doc-1"}]}, {HttpHeaders.Continuation: "child-legacy-token"}
+
+        async def _noop_set_session(*args, **kwargs):
+            return None
+
+        with patch("azure.cosmos.aio._cosmos_client_connection_async.base.GetHeaders", return_value={}):
+            with patch(
+                "azure.cosmos.aio._cosmos_client_connection_async.base.set_session_token_header_async",
+                side_effect=_noop_set_session,
+            ):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, headers = await client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options={"continuation": "legacy-inbound-token"},
+                        feed_range={
+                            "Range": {
+                                "min": "00",
+                                "max": "FF",
+                                "isMinInclusive": True,
+                                "isMaxInclusive": False,
+                            }
+                        },
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_request_continuations == [None]
+        outbound = headers.get(HttpHeaders.Continuation)
+        decoded = _decode_token(outbound)
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@ import pytest
 from azure.cosmos import exceptions
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
+from azure.cosmos._routing.feed_range_continuation import _FIELD_VERSION, _TOKEN_VERSION, _decode_token
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 
 
@@ -729,6 +730,147 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
         # Sanity check on the result tuple shape.
         assert result == [{"id": "1"}]
         assert headers is canned_headers
+
+    def test_queryfeed_feed_range_legacy_inbound_single_partition_honors_and_emits_legacy(self):
+        """Legacy inbound continuation is honored when feed_range currently maps to one partition."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        single_overlap = [{"id": "0", "minInclusive": "00", "maxExclusive": "FF"}]
+
+        def overlap_side_effect(_rid, ranges, _opts):
+            _ = ranges
+            return single_overlap
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        seen_request_continuations = []
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            return {"Documents": [{"id": "doc-1"}]}, {HttpHeaders.Continuation: "legacy-next-token"}
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options={"continuation": "legacy-inbound-token"},
+                        feed_range={
+                            "Range": {
+                                "min": "00",
+                                "max": "FF",
+                                "isMinInclusive": True,
+                                "isMaxInclusive": False,
+                            }
+                        },
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_request_continuations == ["legacy-inbound-token"]
+        assert headers.get(HttpHeaders.Continuation) == "legacy-next-token"
+
+    def test_queryfeed_feed_range_legacy_inbound_multi_partition_restarts_and_emits_v1(self):
+        """Legacy inbound continuation is ignored when scope is multi-partition; outbound becomes v=1."""
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        child_left = {"id": "0", "minInclusive": "00", "maxExclusive": "7F"}
+        child_right = {"id": "1", "minInclusive": "7F", "maxExclusive": "FF"}
+
+        def overlap_side_effect(_rid, ranges, _opts):
+            requested = ranges[0]
+            if requested.min == "00" and requested.max == "FF":
+                return [child_left, child_right]
+            if requested.min == "00" and requested.max == "7F":
+                return [child_left]
+            if requested.min == "7F" and requested.max == "FF":
+                return [child_right]
+            return []
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        seen_request_continuations = []
+
+        def post_side_effect(_path, _request_params, _query, req_headers, **_kwargs):
+            seen_request_continuations.append(req_headers.get(HttpHeaders.Continuation))
+            return {"Documents": [{"id": "doc-1"}]}, {HttpHeaders.Continuation: "child-legacy-token"}
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post", side_effect=post_side_effect):
+                    docs, headers = client.QueryFeed(
+                        path="/dbs/db/colls/c1/docs",
+                        collection_id="rid-c1",
+                        query="SELECT * FROM c",
+                        options={"continuation": "legacy-inbound-token"},
+                        feed_range={
+                            "Range": {
+                                "min": "00",
+                                "max": "FF",
+                                "isMinInclusive": True,
+                                "isMaxInclusive": False,
+                            }
+                        },
+                    )
+
+        assert docs == [{"id": "doc-1"}]
+        assert seen_request_continuations == [None]
+        outbound = headers.get(HttpHeaders.Continuation)
+        decoded = _decode_token(outbound)
+        assert decoded is not None
+        assert decoded[_FIELD_VERSION] == _TOKEN_VERSION
+
+    def test_queryfeed_feed_range_routing_lookup_failure_stamps_checkpoint(self):
+        """A failure inside the mid-page routing-map lookup must stamp a resumable
+        checkpoint into ``last_response_headers[Continuation]`` before re-raising,
+        not just failures from the backend POST.
+        """
+        client = self._create_minimal_connection()
+        client._query_compatibility_mode = client._QueryCompatibilityMode.Default
+        client._routing_map_provider = MagicMock()
+
+        single_overlap = [{"id": "0", "minInclusive": "00", "maxExclusive": "FF"}]
+        routing_call_count = {"n": 0}
+
+        def overlap_side_effect(_rid, _ranges, _opts):
+            routing_call_count["n"] += 1
+            # First call (legacy bridge classification) succeeds; the mid-page
+            # iteration call fails so we exercise the widened try block.
+            if routing_call_count["n"] >= 2:
+                raise RuntimeError("routing-map-down")
+            return single_overlap
+
+        client._routing_map_provider.get_overlapping_ranges.side_effect = overlap_side_effect
+
+        with patch("azure.cosmos._cosmos_client_connection.base.GetHeaders", return_value={}):
+            with patch("azure.cosmos._cosmos_client_connection.base.set_session_token_header", return_value=None):
+                with patch.object(client, "_CosmosClientConnection__Post") as post_mock:
+                    with pytest.raises(RuntimeError, match="routing-map-down"):
+                        client.QueryFeed(
+                            path="/dbs/db/colls/c1/docs",
+                            collection_id="rid-c1",
+                            query="SELECT * FROM c",
+                            options={"continuation": "legacy-inbound-token"},
+                            feed_range={
+                                "Range": {
+                                    "min": "00",
+                                    "max": "FF",
+                                    "isMinInclusive": True,
+                                    "isMaxInclusive": False,
+                                }
+                            },
+                        )
+                    post_mock.assert_not_called()
+
+        # Checkpoint must be present so the caller can resume on retry.
+        # Single-partition scope => legacy-format checkpoint (the original inbound token).
+        continuation = client.last_response_headers.get(HttpHeaders.Continuation)
+        assert continuation == "legacy-inbound-token"
 
 
 if __name__ == "__main__":
