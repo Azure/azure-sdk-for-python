@@ -929,6 +929,45 @@ def test_return_type_missing_in_stable_is_not_breaking():
     assert bc.breaking_changes == []
 
 
+def test_create_function_report_scopes_return_type_to_owner_class():
+    """End-to-end check that `create_function_report` captures the right return
+    annotation when multiple functions/methods in the same module share a name.
+
+    Regression for the original implementation, which used `ast.walk` and
+    matched the first same-named `FunctionDef` in the module regardless of
+    class scope. With proper scoping:
+
+      - `FooOperations.list` -> ``str``
+      - `BarOperations.list` -> ``bytes``
+      - module-level `list`  -> ``int``
+      - `FooOperations.fetch` (impl, after two `@typing.overload` stubs)
+        -> ``typing.Union[int, str]``
+    """
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "examples", "return_type_capture"))
+    try:
+        # Import lazily so we always get a fresh handle on the fixture module.
+        import importlib
+        sample = importlib.import_module("sample")
+        importlib.reload(sample)
+
+        from breaking_changes_checker.detect_breaking_changes import (
+            create_class_report, create_function_report,
+        )
+
+        foo_report = create_class_report(sample.FooOperations)
+        bar_report = create_class_report(sample.BarOperations)
+        free_report = create_function_report(sample.list)
+
+        assert foo_report["methods"]["list"]["return_type"] == "str"
+        assert bar_report["methods"]["list"]["return_type"] == "bytes"
+        assert free_report["return_type"] == "int"
+        # `fetch` has two `@typing.overload` stubs and one real implementation;
+        # the captured return_type must come from the implementation, not a stub.
+        assert foo_report["methods"]["fetch"]["return_type"] == "typing.Union[int, str]"
+    finally:
+        sys.path.remove(os.path.join(os.path.dirname(__file__), "examples", "return_type_capture"))
+
+
 def test_report_mode_without_setup_py():
     """Verify detect_breaking_changes.py works with --source-report and --target-report
     when --target points to a directory without setup.py or pyproject.toml.
