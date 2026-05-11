@@ -68,7 +68,7 @@ class ChangelogTracker(BreakingChangesTracker):
             stable_class_nodes = self.stable[self.module_name]["class_nodes"]
             if not isinstance(class_name, jsondiff.Symbol):
                 if self.class_name not in stable_class_nodes:
-                    if self.class_name.endswith("Client"):
+                    if self.is_client(self.module_name, self.class_name):
                         # This is a new client
                         fa = (
                             self.ADDED_CLIENT_MSG,
@@ -99,7 +99,7 @@ class ChangelogTracker(BreakingChangesTracker):
                         self.function_name = method_name
                         if not isinstance(self.function_name, jsondiff.Symbol):
                             if self.function_name not in stable_methods_node:
-                                if self.class_name.endswith("Client"):
+                                if self.is_client(self.module_name, self.class_name):
                                     # This is a new client method
                                     fa = (
                                         self.ADDED_CLIENT_METHOD_MSG,
@@ -141,7 +141,7 @@ class ChangelogTracker(BreakingChangesTracker):
                                     ChangeType.ADDED_CLASS_PROPERTY,
                                     self.module_name, class_name, property_name
                                 )
-                            if self.class_name.endswith("Client"):
+                            if self.is_client(self.module_name, self.class_name):
                                 if property_components["attr_type"] is not None and property_components["attr_type"].lower().endswith("operations"):
                                     fa = (
                                         self.ADDED_OPERATION_GROUP_MSG,

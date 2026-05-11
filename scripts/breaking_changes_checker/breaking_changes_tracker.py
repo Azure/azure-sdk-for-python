@@ -119,6 +119,36 @@ class BreakingChangesTracker:
         self.check_parameter_ordering()  # not part of diff
         self.run_post_processing()
 
+    def is_client(self, module_name: Any, class_name: Any) -> bool:
+        """Determine whether a class should be treated as a client.
+
+        For non management-plane SDKs (module namespace does not start with
+        ``azure.mgmt.``) any class whose name ends with ``Client`` is treated
+        as a client.
+
+        For management-plane SDKs the class name must end with ``Client`` AND
+        its ``__init__`` must accept a parameter named ``credential``. This
+        avoids misclassifying helper classes such as ``ARMPollingClient`` or
+        similar that happen to end with ``Client``.
+        """
+        if isinstance(class_name, jsondiff.Symbol) or not isinstance(class_name, str):
+            return False
+        if not class_name.endswith("Client"):
+            return False
+        if not isinstance(module_name, str) or not module_name.startswith("azure.mgmt."):
+            return True
+        # Management-plane SDK: also require a "credential" parameter in __init__.
+        # The class definition may live in either the stable or current snapshot
+        # depending on whether the class is being added, removed, or modified.
+        for source in (self.current, self.stable):
+            class_info = source.get(module_name, {}).get("class_nodes", {}).get(class_name)
+            if not class_info:
+                continue
+            init_method = class_info.get("methods", {}).get("__init__", {})
+            if isinstance(init_method, dict) and "credential" in init_method.get("parameters", {}):
+                return True
+        return False
+
     def run_post_processing(self) -> None:
         # Remove duplicate reporting of changes that apply to both sync and async package components
         self.run_async_cleanup(self.breaking_changes)
@@ -581,7 +611,7 @@ class BreakingChangesTracker:
 
         for property in deleted_props:
             bc = None
-            if self._class_name.endswith("Client"):
+            if self.is_client(self._module_name, self._class_name):
                 property_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][property]["attr_type"]
                 # property_type is not always a string, such as client_side_validation which is a bool, so we need to check for strings
                 if property_type is not None and isinstance(property_type, str) and property_type.lower().endswith("operations"):
@@ -622,7 +652,7 @@ class BreakingChangesTracker:
                 deleted_classes = self.stable[self._module_name]["class_nodes"]
 
             for name in deleted_classes:
-                if name.endswith("Client"):
+                if self.is_client(self._module_name, name):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT,
@@ -649,7 +679,7 @@ class BreakingChangesTracker:
                 methods_deleted = stable_methods_node
 
             for method in methods_deleted:
-                if self._class_name.endswith("Client"):
+                if self.is_client(self._module_name, self._class_name):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_METHOD_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT_METHOD,
