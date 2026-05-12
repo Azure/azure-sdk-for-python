@@ -22,6 +22,7 @@ from typing import Awaitable, Callable
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

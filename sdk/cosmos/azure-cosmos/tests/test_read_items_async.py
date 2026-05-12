@@ -20,6 +20,7 @@ from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPo
 from azure.cosmos.aio._gone_retry_policy_async import PartitionKeyRangeGoneRetryPolicyAsync
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
     """Test cases for the read_items API."""
 

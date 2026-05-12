@@ -132,24 +132,6 @@
           "TestMarkArgument": "cosmosAADSplit",
           "COSMOS_TEST_DATA_AUTH_MODE": "aad"
         },
-        "Ubuntu2404_312_aad_multiregion": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.12",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosAADMultiRegion",
-          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
-        },
-        "Ubuntu2404_313_aad_circuit_breaker": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosAADCircuitBreaker",
-          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
-        },
         "Ubuntu2404_312_aad_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
@@ -158,7 +140,47 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosAADQuery",
           "COSMOS_TEST_DATA_AUTH_MODE": "aad"
-        },
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
+        "Ubuntu2404_313_aad_circuit_breaker": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADCircuitBreaker",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiMaster": {
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
+        "Ubuntu2404_312_aad_multiregion": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADMultiRegion",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiMaster_MultiRegion": {
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
         "Ubuntu2404_313_aad_per_partition_automatic_failover": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
@@ -167,6 +189,11 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosAADPerPartitionAutomaticFailover",
           "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiRegion": {
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true;}"
         }
       }
     },

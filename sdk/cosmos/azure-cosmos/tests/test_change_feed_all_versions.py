@@ -79,6 +79,7 @@ def _is_all_versions_and_deletes_not_enabled(error: Exception) -> bool:
     )
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeAllVersionsFeed:

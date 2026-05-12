@@ -5,6 +5,7 @@ import json
 import unittest
 
 import azure.cosmos.exceptions as exceptions
+from azure.cosmos.partition_key import PartitionKey
 import pytest
 
 import test_config
@@ -39,7 +40,10 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
         )
         await self.key_client.__aenter__()
         await self.client.__aenter__()
-        await self.key_db.create_container_if_not_exists(self.TEST_CONTAINER_ID, self.TEST_CONTAINER_PARTITION_KEY)
+        await self.key_db.create_container_if_not_exists(
+            id=self.TEST_CONTAINER_ID,
+            partition_key=PartitionKey(path='/' + self.TEST_CONTAINER_PARTITION_KEY, kind='Hash')
+        )
         self.test_container = self.created_db.get_container_client(self.TEST_CONTAINER_ID)
 
     async def asyncTearDown(self):
@@ -56,9 +60,9 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
         """Test async semantic reranking functionality."""
         documents = self._get_documents(document_type="string")
         results = await self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=documents,
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,
@@ -71,9 +75,9 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
     async def test_semantic_reranker_async_json_documents(self):
         documents = self._get_documents(document_type="json")
         results = await self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=[json.dumps(item) for item in documents],
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,
@@ -90,9 +94,9 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
     async def test_semantic_reranker_async_nested_json_documents(self):
         documents = self._get_documents(document_type="nested_json")
         results = await self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=[json.dumps(item) for item in documents],
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,

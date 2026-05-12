@@ -42,6 +42,7 @@ class ClientIDVerificationError(Exception):
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
     key_client: CosmosClient = None
     client: CosmosClient = None

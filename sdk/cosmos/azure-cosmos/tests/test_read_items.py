@@ -16,6 +16,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestReadItems(unittest.TestCase):
     """Test cases for the read_items API."""
 

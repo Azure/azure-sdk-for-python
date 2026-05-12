@@ -34,6 +34,14 @@ class MockHandler(logging.Handler):
     def emit(self, record):
         self.messages.append(record.msg)
 
+
+def _select_primary_and_failover_region(write_locations, read_locations):
+    region_1 = write_locations[0]
+    unique_locations = write_locations + [loc for loc in read_locations if loc not in write_locations]
+    region_2 = next((loc for loc in unique_locations if loc != region_1), None)
+    return region_1, region_2
+
+
 @pytest_asyncio.fixture()
 async def setup():
     # Set up logging
@@ -51,13 +59,19 @@ async def setup():
     database_account = await test_client._get_database_account()
     write_locations = [loc["name"] for loc in database_account._WritableLocations]
     read_locations = [loc["name"] for loc in database_account._ReadableLocations]
+    region_1, region_2 = _select_primary_and_failover_region(write_locations, read_locations)
+
+    if region_2 is None:
+        await test_client.close()
+        logger.removeHandler(TestAsyncAvailabilityStrategy.MOCK_HANDLER)
+        raise RuntimeError("Availability strategy tests require at least two distinct account regions.")
 
     # Use first writable location as primary region and second as failover
     account_location_with_client = {
         "write_locations": write_locations,
         "read_locations": read_locations,
-        "region_1": write_locations[0],
-        "region_2": write_locations[1] if len(write_locations) > 1 else read_locations[0],
+        "region_1": region_1,
+        "region_2": region_2,
         "client_without_fault": test_client
     }
 

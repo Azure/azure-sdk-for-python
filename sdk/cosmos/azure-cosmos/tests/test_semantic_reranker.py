@@ -6,6 +6,7 @@ import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
+from azure.cosmos.partition_key import PartitionKey
 import pytest
 
 import test_config
@@ -34,7 +35,10 @@ class TestSemanticReranker(unittest.TestCase):
         cls.key_client, cls.key_db, cls.client, cls.created_db = test_config.TestConfig.create_test_clients(
             cls.TEST_DATABASE_ID
         )
-        cls.key_db.create_container_if_not_exists(cls.TEST_CONTAINER_ID, cls.TEST_CONTAINER_PARTITION_KEY)
+        cls.key_db.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_ID,
+            partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash')
+        )
         cls.test_container = cls.created_db.get_container_client(cls.TEST_CONTAINER_ID)
 
     @classmethod
@@ -47,9 +51,9 @@ class TestSemanticReranker(unittest.TestCase):
     def test_semantic_reranker(self):
         documents = self._get_documents(document_type="string")
         results = self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=documents,
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,
@@ -63,9 +67,9 @@ class TestSemanticReranker(unittest.TestCase):
     def test_semantic_reranker_json_documents(self):
         documents = self._get_documents(document_type="json")
         results = self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=[json.dumps(item) for item in documents],
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,
@@ -82,9 +86,9 @@ class TestSemanticReranker(unittest.TestCase):
     def test_semantic_reranker_nested_json_documents(self):
         documents = self._get_documents(document_type="nested_json")
         results = self.test_container.semantic_rerank(
-            reranking_context="What is the capital of France?",
+            context="What is the capital of France?",
             documents=[json.dumps(item) for item in documents],
-            semantic_reranking_options={
+            options={
                 "return_documents": True,
                 "top_k": 10,
                 "batch_size": 32,
