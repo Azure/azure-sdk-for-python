@@ -128,7 +128,7 @@ from azure.appconfiguration.provider import load, SettingSelector
 
 # Step 2: Loading configuration settings from the snapshot
 snapshot_selects = [SettingSelector(snapshot_name=snapshot_name)]
-config = load(endpoint=endpoint, credential=credential, selects=snapshot_selects)
+config = load(endpoint=endpoint, credential=credential, selects=snapshot_selects, **kwargs)
 ```
 
 <!-- END SNIPPET -->
@@ -143,7 +143,7 @@ mixed_selects = [
     SettingSelector(snapshot_name=snapshot_name),  # Load all settings from snapshot
     SettingSelector(key_filter="override.*", label_filter="prod"),  # Also load specific override settings
 ]
-config_mixed = load(endpoint=endpoint, credential=credential, selects=mixed_selects)
+config_mixed = load(endpoint=endpoint, credential=credential, selects=mixed_selects, **kwargs)
 ```
 
 <!-- END SNIPPET -->
@@ -164,6 +164,7 @@ config = load(
     connection_string=connection_string,
     refresh_on=[WatchKey("Sentinel")],
     refresh_interval=60,
+    **kwargs,
 )
 ```
 
@@ -264,7 +265,7 @@ config = load(endpoint=endpoint, credential=credential, secret_resolver=secret_r
 
 ### Secret Refresh Interval
 
-When using Key Vault references, the provider can periodically refresh resolved secrets. By default, secrets are refreshed every 60 seconds. You can customize this with the `secret_refresh_interval` parameter (minimum 1 second).
+When using Key Vault references, the provider can periodically refresh resolved secrets. If you set the `secret_refresh_interval` parameter, secrets are refreshed at that interval (minimum 1 second).
 
 <!-- SNIPPET:key_vault_reference_sample.key_vault_reference_secret_refresh_interval -->
 
@@ -364,7 +365,6 @@ connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 config = load(
     connection_string=connection_string,
     refresh_on=[WatchKey("message")],
-    refresh_on_feature_flags=True,
     refresh_interval=60,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
