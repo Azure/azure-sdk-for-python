@@ -206,6 +206,8 @@ where `Input` is your typed input type.
 | `ctx.task_id` | `str` | The task's unique identifier |
 | `ctx.session_id` | `str` | Session scope identifier |
 | `ctx.metadata` | `TaskMetadata` | Mutable progress metadata (persisted automatically) |
+| `ctx.agent_name` | `str` | Agent name from platform configuration |
+| `ctx.lease_generation` | `int` | Lease generation counter (increments on recovery) |
 | `ctx.cancel` | `asyncio.Event` | Set when cancellation is requested |
 | `ctx.shutdown` | `asyncio.Event` | Set when the container is shutting down |
 | `ctx.run_attempt` | `int` | Framework retry attempt counter (0-indexed) |
@@ -325,8 +327,10 @@ async def chat_session(ctx: TaskContext[dict]) -> dict:
     return await ctx.suspend(output={"reply": reply})
 ```
 
-Each call to `.start(task_id=session_id, input={"message": "..."})` resumes the
-same task with the new message. The framework handles the resume automatically.
+Each call to `.run(task_id=session_id, input={"message": "..."})` or
+`.start(task_id=session_id, input={"message": "..."})` resumes the
+same task with the new message. The framework handles the transition
+from `suspended` to `in_progress` automatically.
 
 ---
 
@@ -388,9 +392,10 @@ not depend on it as the persistence layer for your API responses.
 > **Everything that must survive a crash must happen inside the durable task function.**
 
 The durable task function is the crash-recovery boundary. If the process dies,
-the framework re-enters your function on the next `.run()` / `.start()` call.
-Any work done *outside* the function (e.g., in an HTTP handler, in an
-`asyncio.create_task` callback) is lost.
+the framework automatically re-invokes your function on container restart.
+Additionally, a subsequent `.run()` / `.start()` call with the same `task_id`
+will detect the stale task and recover it. Any work done *outside* the function
+(e.g., in an HTTP handler, in an `asyncio.create_task` callback) is lost.
 
 ---
 
@@ -507,7 +512,7 @@ The `@durable_task` decorator accepts these options (defined in `DurableTaskOpti
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `name` | `str` | Function name | Task type name. Used for routing and identification. |
+| `name` | `str` | Function `__qualname__` | Task type name. Used for routing and identification. |
 | `retry` | `RetryPolicy \| None` | `None` | Retry policy on failure. See [RetryPolicy](#retrypolicy). |
 | `ephemeral` | `bool` | `True` | Auto-delete task record on completion. |
 | `source` | `dict[str, Any] \| None` | `None` | Immutable provenance metadata (e.g., model version). |
@@ -649,7 +654,10 @@ async def my_task(ctx: TaskContext[Input]) -> Output:
     return full_result
 ```
 
-Cooperative cancel raises `TaskCancelled` on `result()`.
+Cooperative cancel sets `ctx.cancel`. If the function checks this event and
+**returns normally**, the task completes as a success — not as cancelled. The
+function decides its own outcome. `TaskCancelled` is only raised when the
+function does not handle the cancel and the asyncio task is cancelled.
 
 ### Execution Timeout
 
@@ -693,9 +701,9 @@ except TaskTerminated:
 
 ### Cancel vs Terminate Summary
 
-| Method | `ctx.cancel` set? | Hard cancel? | Exception | Recoverable? |
-|--------|-------------------|--------------|-----------|--------------|
-| `run.cancel()` | ✅ | ❌ | `TaskCancelled` | Yes (stays in_progress) |
+| Method | `ctx.cancel` set? | Hard cancel? | Outcome | Recoverable? |
+|--------|-------------------|--------------|---------|--------------|
+| `run.cancel()` | ✅ | ❌ | Success if function returns normally; `TaskCancelled` if unhandled | Yes (stays in_progress until function exits) |
 | `run.terminate()` | ✅ | ✅ | `TaskTerminated` | No (goes to failed) |
 | Timeout expired | ✅ then ✅ | After grace | `TaskTerminated` | No (goes to failed) |
 
