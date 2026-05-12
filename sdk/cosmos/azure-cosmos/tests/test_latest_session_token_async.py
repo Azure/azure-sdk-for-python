@@ -90,7 +90,10 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
 
         feed_ranges_and_session_tokens.append((target_feed_range, session_token))
 
-        await test_config.TestConfig.trigger_split_async(container, 11000)
+        # trigger_split_async() calls replace_throughput() which is a control-plane operation
+        # and must run through the key-auth client (AAD Data Contributor cannot replace offers).
+        key_container_for_split = self.key_database.get_container_client(container.id)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, 11000)
 
         # testing with storing session tokens by feed range that maps to logical pk post split
         target_session_token, _ = await self.create_items_logical_pk_async(container, target_feed_range, session_token,

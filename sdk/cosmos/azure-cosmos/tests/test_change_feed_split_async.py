@@ -66,7 +66,9 @@ class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
         assert len(iter_list) == 1
         continuation = created_collection.client_connection.last_response_headers['etag']
 
-        await test_config.TestConfig.trigger_split_async(created_collection, 11000)
+        # split trigger uses replace_throughput(), so route through key-auth container client.
+        key_container_for_split = self.key_database.get_container_client(created_collection_ref.id)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, 11000)
 
         print("creating few more documents")
         new_documents = [{'pk': 'pk2', 'id': 'doc2'}, {'pk': 'pk3', 'id': 'doc3'}, {'pk': 'pk4', 'id': 'doc4'}]

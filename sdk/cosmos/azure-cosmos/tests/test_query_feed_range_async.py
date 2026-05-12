@@ -43,6 +43,7 @@ PK_VALUES = ('pk1', 'pk2', 'pk3')
 
 # Module-level reference set by the function-scoped fixture.
 _data_db = None
+_key_db = None
 
 async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_value_set: Set[str]) -> None:
     if len(items) == 0:
@@ -53,13 +54,14 @@ async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_valu
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def setup_and_teardown_async():
-    global _data_db
+    global _data_db, _key_db
     print("Setup: This runs before any tests")
     document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4()), 'value': 100} for pk in PK_VALUES]
 
     # Key-auth client for control-plane (container creation)
     key_client = CosmosClient(HOST, KEY)
     key_db = key_client.get_database_client(DATABASE_ID)
+    _key_db = key_db
 
     # AAD data client for data-plane operations
     data_client = test_config.TestConfig.create_data_client_async()
@@ -78,12 +80,17 @@ async def setup_and_teardown_async():
     # Code to run after tests
     print("Teardown: This runs after all tests")
     _data_db = None
+    _key_db = None
     await data_client.close()
     await key_client.close()
 
 
 async def get_container(container_id: str):
     return _data_db.get_container_client(container_id)
+
+
+async def get_key_container(container_id: str):
+    return _key_db.get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADSplit
@@ -180,8 +187,9 @@ class TestQueryFeedRangeAsync:
         feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
 
         # Trigger two consecutive splits
-        await test_config.TestConfig.trigger_split_async(container, 11000)
-        await test_config.TestConfig.trigger_split_async(container, 24000)
+        key_container_for_split = await get_key_container(container_id)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, 11000)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, 24000)
 
         # Query using the original feed ranges, the SDK should handle the splits
         for feed_range in feed_ranges:
@@ -245,7 +253,8 @@ class TestQueryFeedRangeAsync:
         print(f"Found {len(expected_pk_values)} unique partition keys before split")
 
         # Trigger and wait for split progression using shared helper.
-        await test_config.TestConfig.trigger_split_async(container, target_throughput)
+        key_container_for_split = await get_key_container(container_id)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, target_throughput)
 
         # Test 1: Basic query with stale feed ranges (SDK should handle split)
         actual_pk_values = set()
@@ -306,7 +315,7 @@ class TestQueryFeedRangeAsync:
         actual_pk_values = set()
 
         feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
-        await test_config.TestConfig.trigger_split_async(container, 11000)
+        await test_config.TestConfig.trigger_split_async(await get_key_container(container_id), 11000)
         for feed_range in feed_ranges:
             items = [item async for item in
                      (container.query_items(
@@ -327,7 +336,7 @@ class TestQueryFeedRangeAsync:
         actual_pk_values = set()
 
         feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
-        await test_config.TestConfig.trigger_split_async(container, 11000)
+        await test_config.TestConfig.trigger_split_async(await get_key_container(container_id), 11000)
 
         for feed_range in feed_ranges:
             items = [item async for item in
@@ -359,7 +368,7 @@ class TestQueryFeedRangeAsync:
         print(f"Total count BEFORE split: {initial_total_count}")
 
         # Trigger split
-        await test_config.TestConfig.trigger_split_async(container, 11000)
+        await test_config.TestConfig.trigger_split_async(await get_key_container(container_id), 11000)
 
         # Query with aggregate after split using original feed ranges
         post_split_total_count = 0
@@ -400,7 +409,7 @@ class TestQueryFeedRangeAsync:
             initial_total_sum += current_sum
 
         # Trigger split
-        await test_config.TestConfig.trigger_split_async(container, 11000)
+        await test_config.TestConfig.trigger_split_async(await get_key_container(container_id), 11000)
 
         # Query with aggregate after split using original feed ranges
         post_split_total_sum = 0

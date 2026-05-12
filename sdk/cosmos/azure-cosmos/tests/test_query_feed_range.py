@@ -79,6 +79,10 @@ def setup(setup_and_teardown):
 def get_container(setup, container_id: str):
     return setup["data_db"].get_container_client(container_id)
 
+
+def get_key_container(setup, container_id: str):
+    return setup["key_db"].get_container_client(container_id)
+
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADSplit
 class TestQueryFeedRange:
@@ -202,8 +206,9 @@ class TestQueryFeedRange:
         print(f"Found {len(expected_pk_values)} unique partition keys before split")
 
         # Trigger split
-        # test_config.TestConfig.trigger_split(container, target_throughput)
-        container.replace_throughput(target_throughput)
+        # replace_throughput is control-plane and must use key-auth container.
+        key_container_for_split = get_key_container(setup, container_id)
+        key_container_for_split.replace_throughput(target_throughput)
         # wait for the split to begin
         time.sleep(20)
 
@@ -266,7 +271,7 @@ class TestQueryFeedRange:
         actual_pk_values = set()
 
         feed_ranges = list(container.read_feed_ranges())
-        test_config.TestConfig.trigger_split(container, 11000)
+        test_config.TestConfig.trigger_split(get_key_container(setup, container_id), 11000)
         for feed_range in feed_ranges:
             items = list(container.query_items(
                 query=query,
@@ -285,7 +290,7 @@ class TestQueryFeedRange:
         actual_pk_values = set()
 
         feed_ranges = list(container.read_feed_ranges())
-        test_config.TestConfig.trigger_split(container, 11000)
+        test_config.TestConfig.trigger_split(get_key_container(setup, container_id), 11000)
 
         for feed_range in feed_ranges:
             items = list(container.query_items(
@@ -311,7 +316,7 @@ class TestQueryFeedRange:
             initial_total_count += count
 
         # Trigger split
-        test_config.TestConfig.trigger_split(container, 11000)
+        test_config.TestConfig.trigger_split(get_key_container(setup, container_id), 11000)
 
         # Query with aggregate after split using original feed ranges
         post_split_total_count = 0
@@ -343,7 +348,7 @@ class TestQueryFeedRange:
             initial_total_sum += current_sum
 
         # Trigger split
-        test_config.TestConfig.trigger_split(container, 11000)
+        test_config.TestConfig.trigger_split(get_key_container(setup, container_id), 11000)
 
         # Query with aggregate after split using original feed ranges
         post_split_total_sum = 0

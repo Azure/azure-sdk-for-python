@@ -277,6 +277,11 @@ class TestChangeFeedAsync:
         finally:
             await setup["key_db"].delete_container(created_collection_ref.id)
 
+    # TODO: migrate to AAD once service-side RBAC activation window (403/5302) fix ships.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
+    )
     async def test_query_change_feed_with_multi_partition_async(self, setup):
         created_collection_ref = await setup["key_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"),
@@ -294,6 +299,8 @@ class TestChangeFeedAsync:
         for document in new_documents:
             await created_collection.create_item(body=document)
 
+        # Regression note: under AAD, service-side RBAC propagation right after container create
+        # can intermittently reject readChangeFeed with 403/5302, so this runs in non-AAD mode only.
         query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
         it = query_iterable.__aiter__()
         actual_ids = []
