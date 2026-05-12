@@ -26,11 +26,12 @@
 from __future__ import annotations
 import datetime
 import email.utils
-from typing import Optional, cast, Union, TYPE_CHECKING
+import urllib.parse
+from typing import AbstractSet, Optional, cast, Union, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from ...rest import HttpResponse, AsyncHttpResponse, HttpRequest
-from ...utils._utils import case_insensitive_dict
+from ...utils._utils import case_insensitive_dict, CaseInsensitiveSet
 
 if TYPE_CHECKING:
     from ...runtime.pipeline import PipelineResponse
@@ -92,3 +93,36 @@ def get_domain(url: str) -> str:
     :return: The domain of the url.
     """
     return str(urlparse(url).netloc).lower()
+
+
+def sanitize_url(url: str, allowed_query_params: AbstractSet[str], redacted_placeholder: str = "REDACTED") -> str:
+    """Redact query parameter values not in the allowlist.
+
+    :param str url: The URL to sanitize.
+    :param set[str] allowed_query_params: Set of query parameter names whose values should not be redacted.
+        If a :class:`~corehttp.utils._utils.CaseInsensitiveSet` is provided, lookups are case-insensitive
+        without per-call normalization.
+    :param str redacted_placeholder: The placeholder to use for redacted values.
+    :return: The sanitized URL with redacted query parameter values.
+    :rtype: str
+    """
+    parsed_url = urllib.parse.urlparse(url)
+    if not parsed_url.query:
+        return url
+
+    if not isinstance(allowed_query_params, CaseInsensitiveSet):
+        allowed_query_params = CaseInsensitiveSet(allowed_query_params)
+
+    parts = []
+    for param in parsed_url.query.split("&"):
+        eq_idx = param.find("=")
+        if eq_idx == -1:
+            # No value to redact, keep as-is.
+            parts.append(param)
+        else:
+            key = param[:eq_idx]
+            parts.append(param if key in allowed_query_params else f"{key}={redacted_placeholder}")
+
+    sanitized_query = "&".join(parts)
+    sanitized_url = parsed_url._replace(query=sanitized_query)
+    return urllib.parse.urlunparse(sanitized_url)
