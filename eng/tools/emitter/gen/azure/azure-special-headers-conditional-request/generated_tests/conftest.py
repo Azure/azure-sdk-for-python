@@ -21,14 +21,22 @@ load_dotenv()
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    recursive_subscription_id = os.environ.get("RECURSIVE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    recursive_tenant_id = os.environ.get("RECURSIVE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    recursive_client_id = os.environ.get("RECURSIVE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    recursive_client_secret = os.environ.get("RECURSIVE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=recursive_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=recursive_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=recursive_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=recursive_client_secret, value="00000000-0000-0000-0000-000000000000")
+    conditionalrequest_subscription_id = os.environ.get(
+        "CONDITIONALREQUEST_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    conditionalrequest_tenant_id = os.environ.get(
+        "CONDITIONALREQUEST_TENANT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    conditionalrequest_client_id = os.environ.get(
+        "CONDITIONALREQUEST_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    conditionalrequest_client_secret = os.environ.get(
+        "CONDITIONALREQUEST_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=conditionalrequest_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=conditionalrequest_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=conditionalrequest_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=conditionalrequest_client_secret, value="00000000-0000-0000-0000-000000000000")
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
