@@ -9,7 +9,7 @@ from typing import List
 import pytest
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache, CosmosClient, _global_endpoint_manager, \
-    _cosmos_client_connection
+    _cosmos_client_connection, exceptions
 
 from azure.cosmos._location_cache import RegionalRoutingContext
 
@@ -215,6 +215,54 @@ class TestHealthCheck:
                 "Should not call _GetDatabaseAccount when valid account is provided"
 
         finally:
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+    def test_get_database_account_fallback_normalizes_preferred_location(self, setup):
+        # Regression guard: when the global endpoint is unavailable, bootstrap fallback
+        # must derive locational endpoints from user-configured preferred locations.
+        # Non-canonical entries (for example " east-us-2 ") should normalize correctly,
+        # and fallback order should remain deterministic.
+        self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
+        seen_endpoints = []
+        gem = None
+        original_preferred_locations = None
+        try:
+            gem = setup[COLLECTION].client_connection._global_endpoint_manager
+            original_preferred_locations = list(gem.PreferredLocations) if gem.PreferredLocations else []
+            preferred_locations = ["badspelling-region", " east-us-2 "]
+            expected_bad_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(
+                gem.DefaultEndpoint, preferred_locations[0]
+            )
+            expected_locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(
+                gem.DefaultEndpoint, preferred_locations[1]
+            )
+
+            def fallback_mock(self_gem, endpoint, **kwargs):
+                seen_endpoints.append(endpoint)
+                if endpoint in (self_gem.DefaultEndpoint, expected_bad_endpoint):
+                    raise exceptions.CosmosHttpResponseError(status_code=503, message="simulated endpoint failure")
+
+                db_acc = DatabaseAccount()
+                db_acc.DatabasesLink = "/dbs/"
+                db_acc.MediaLink = "/media/"
+                # Post-bootstrap routing is intentionally out of scope here; this test
+                # validates fallback URL construction and retry order only.
+                db_acc._ReadableLocations = []
+                db_acc._WritableLocations = []
+                db_acc._EnableMultipleWritableLocations = False
+                db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
+                return db_acc
+
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = fallback_mock
+            gem.PreferredLocations = preferred_locations
+
+            db_account = gem._GetDatabaseAccount()
+
+            assert db_account is not None
+            assert seen_endpoints == [gem.DefaultEndpoint, expected_bad_endpoint, expected_locational_endpoint]
+        finally:
+            if gem is not None and original_preferred_locations is not None:
+                gem.PreferredLocations = original_preferred_locations
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
 
 

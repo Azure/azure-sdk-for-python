@@ -12,7 +12,7 @@ from azure.cosmos._service_request_retry_policy import ServiceRequestRetryPolicy
 
 from azure.cosmos.documents import DatabaseAccount, _OperationType
 from azure.cosmos.http_constants import ResourceType
-from azure.cosmos._location_cache import LocationCache
+from azure.cosmos._location_cache import LocationCache, _normalize_region_name
 from azure.cosmos._request_object import RequestObject
 
 default_endpoint = "https://default.documents.azure.com"
@@ -604,6 +604,45 @@ class TestLocationCache:
         assert lc.resolve_service_endpoint(read_request) == canonical_location2_endpoint
         assert lc.resolve_service_endpoint(write_request) == canonical_location1_endpoint
 
+    def test_availability_style_routing_supports_normalized_excluded_regions(self):
+        # use_preferred_locations=False path should still honor normalized region names from
+        # both client-level excluded locations and request-level excluded locations.
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.ExcludedLocations = ["east-us-2"]
+
+        lc = refresh_location_cache([canonical_location1_name, canonical_location2_name], True, connection_policy)
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Client-level excluded locations (connection policy)
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.use_preferred_locations = False
+        assert lc.resolve_service_endpoint(write_request) == canonical_location2_endpoint
+
+        # Request-level excluded locations override connection policy and should also normalize.
+        read_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_request.use_preferred_locations = False
+        read_request.excluded_locations = ["east_us_2"]
+        assert lc.resolve_service_endpoint(read_request) == canonical_location2_endpoint
+
+    def test_availability_style_routing_supports_normalized_circuit_breaker_regions(self):
+        # Circuit-breaker excluded region names should normalize in availability-style routing.
+        lc = refresh_location_cache([canonical_location1_name, canonical_location2_name], True)
+        db_acc = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        lc.perform_on_database_account_read(db_acc)
+
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.use_preferred_locations = False
+        write_request.excluded_locations_circuit_breaker = ["east-us-2"]
+
+        # Healthy region should be chosen before circuit-breaker excluded region.
+        assert lc.resolve_service_endpoint(write_request) == canonical_location2_endpoint
+
+        # If healthy options are filtered out by user exclusions, circuit-breaker regions
+        # are used as last resort.
+        write_request.excluded_locations = ["west_us_3"]
+        assert lc.resolve_service_endpoint(write_request) == canonical_location1_endpoint
+
     def test_should_refresh_endpoints_handles_normalized_preferred_region(self):
         # should_refresh_endpoints must match canonical region keys even when the
         # customer's preferred location uses non-canonical spelling.
@@ -623,6 +662,34 @@ class TestLocationCache:
 
         for region_input in ("East US 2", "east us 2", "eastus2", "east-us-2", "east_us_2", " EastUs2 "):
             assert LocationCache.GetLocationalEndpoint(default_endpoint_url, region_input) == expected_endpoint
+
+    def test_normalize_keeps_structurally_distinct_regions_distinct(self):
+        # Intentionally tests the private helper because it guards a design invariant of this PR,
+        # not public behavior: the normalization rule must collapse spelling variants of the SAME
+        # region together (forgiveness) WITHOUT collapsing genuinely different regions into the
+        # same key (silent mis-routing). If a future refactor of _normalize_region_name strips
+        # digits or other distinguishing characters, this test fails immediately rather than
+        # letting traffic land on the wrong region in production.
+
+        # Forgiveness half: spelling variants of one region must collapse together.
+        variants = ["East US 2", "east us 2", "eastus2", "east-us-2", "east_us_2", " EastUs2 "]
+        normalized_variants = {_normalize_region_name(v) for v in variants}
+        assert normalized_variants == {"eastus2"}
+
+        # Non-collision half: structurally similar but distinct regions must stay distinct.
+        # Trailing-digit pairs (the case explicitly called out in the design doc).
+        assert _normalize_region_name("East US") != _normalize_region_name("East US 2")
+        assert _normalize_region_name("West US") != _normalize_region_name("West US 2")
+        assert _normalize_region_name("West US 2") != _normalize_region_name("West US 3")
+        # Word-order: same tokens, different region.
+        assert _normalize_region_name("US East") != _normalize_region_name("East US")
+        # Suffix tokens (e.g., EUAP/Stage variants).
+        assert _normalize_region_name("Central US") != _normalize_region_name("Central US EUAP")
+
+        # Pin canonical outputs so any change to the rule is loudly visible.
+        assert _normalize_region_name("East US 2") == "eastus2"
+        assert _normalize_region_name("East US") == "eastus"
+        assert _normalize_region_name(None) == ""
 
     def test_unmatched_excluded_locations_warning_is_deduped(self, caplog):
         connection_policy = documents.ConnectionPolicy()
@@ -656,6 +723,49 @@ class TestLocationCache:
             if "Ignoring preferred_locations entries" in record.getMessage()
         ]
         assert len(unmatched_logs) == 1
+
+    def test_topology_change_retriggers_mismatch_warning(self, caplog):
+        # Guards the dedupe-key design: the suppression key intentionally includes the set of
+        # available regions, so that if the account topology changes (e.g. a new region appears)
+        # and the user's misconfigured entry STILL doesn't match, the warning re-fires. Without
+        # this test, a future "simplification" of the dedupe key to just the unmatched entries
+        # would silently swallow the second warning and every existing dedup test would still pass.
+        lc = refresh_location_cache(["unknown-region"], True)
+        db_acc_initial = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        db_acc_expanded = create_database_account_with_canonical_regions(enable_multiple_writable_locations=True)
+        # Mutate topology for the second refresh: account gains a region. The user's entry
+        # ("unknown-region") still doesn't match, so the warning should re-fire.
+        new_region_name = "Central US"
+        new_region_endpoint = "https://centralus.documents.azure.com"
+        db_acc_expanded._ReadableLocations.append(
+            {"name": new_region_name, "databaseAccountEndpoint": new_region_endpoint}
+        )
+        db_acc_expanded._WritableLocations.append(
+            {"name": new_region_name, "databaseAccountEndpoint": new_region_endpoint}
+        )
+
+        with caplog.at_level("WARNING", logger="azure.cosmos.LocationCache"):
+            lc.perform_on_database_account_read(db_acc_initial)
+            # Repeat on the same topology: must NOT re-emit (suppression still works).
+            lc.perform_on_database_account_read(db_acc_initial)
+            # Topology changed: MUST re-emit, since available-regions set is part of the dedupe key.
+            lc.perform_on_database_account_read(db_acc_expanded)
+            # And repeating on the new topology must again be suppressed.
+            lc.perform_on_database_account_read(db_acc_expanded)
+
+        unmatched_logs = [
+            record for record in caplog.records
+            if "Ignoring preferred_locations entries" in record.getMessage()
+        ]
+        assert len(unmatched_logs) == 2, (
+            f"Expected exactly 2 warnings (one per distinct topology), got {len(unmatched_logs)}. "
+            "If this is 1, the dedupe key has been narrowed to ignore topology changes."
+        )
+        # Pin the *reason* the second warning fired: the new region must appear in its available list.
+        # This stops a future regression where the warning re-fires for the wrong reason
+        # (e.g. dedupe removed entirely) from passing the count-only check.
+        assert new_region_name not in unmatched_logs[0].getMessage()
+        assert new_region_name in unmatched_logs[1].getMessage()
 
 if __name__ == "__main__":
     unittest.main()
