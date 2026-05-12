@@ -188,11 +188,13 @@ class AgentServerHost(Starlette):
 
         # Observability (logging + tracing) --------------------------------
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        _sensitive_data = os.environ.get("FOUNDRY_ENABLE_SENSITIVE_DATA", "true").lower() not in ("false", "0")
         if configure_observability is not None:
             try:
                 configure_observability(
                     connection_string=_conn_str,
                     log_level=log_level,
+                    enable_sensitive_data=_sensitive_data,
                 )
             except ValueError:
                 raise  # invalid log_level etc. — user should fix their config
