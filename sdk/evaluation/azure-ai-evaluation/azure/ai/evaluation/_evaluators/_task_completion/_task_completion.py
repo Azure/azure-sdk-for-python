@@ -60,6 +60,7 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "task_completion.prompty"
     _RESULT_KEY = "task_completion"
+    _KEY_PREFIX = _RESULT_KEY
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _validator: ValidatorInterface

@@ -133,7 +133,7 @@ class TestToolInputAccuracyEvaluator:
         """Test that the evaluator initializes correctly."""
         evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
         assert evaluator is not None
-        assert evaluator._RESULT_KEY == "tool_input_accuracy_score"
+        assert evaluator._RESULT_KEY == "tool_input_accuracy"
 
     def test_evaluate_all_correct_parameters(self, mock_model_config):
         """Test evaluation when all parameters are correct."""
