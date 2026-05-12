@@ -23,6 +23,9 @@ from ._evaluators._protected_material import ProtectedMaterialEvaluator
 from ._evaluators._qa import QAEvaluator
 from ._evaluators._response_completeness import ResponseCompletenessEvaluator
 from ._evaluators._task_adherence import TaskAdherenceEvaluator
+from ._evaluators._task_completion import _TaskCompletionEvaluator
+from ._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
+from ._evaluators._tool_selection import _ToolSelectionEvaluator
 from ._evaluators._relevance import RelevanceEvaluator
 from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
@@ -133,6 +136,9 @@ __all__ = [
     "CodeVulnerabilityEvaluator",
     "UngroundedAttributesEvaluator",
     "ToolCallAccuracyEvaluator",
+    "_TaskCompletionEvaluator",
+    "_ToolInputAccuracyEvaluator",
+    "_ToolSelectionEvaluator",
     "_ToolOutputUtilizationEvaluator",
     "_ToolCallSuccessEvaluator",
     "AzureOpenAIGrader",
