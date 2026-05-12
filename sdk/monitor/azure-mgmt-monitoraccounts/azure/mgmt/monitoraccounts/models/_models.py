@@ -43,7 +43,9 @@ class AzureMonitorWorkspace(_Model):
 
     account_id: Optional[str] = rest_field(name="accountId", visibility=["read"])
     """The immutable Id of the Azure Monitor Workspace. This property is read-only."""
-    metrics: Optional["_models.AzureMonitorWorkspaceMetrics"] = rest_field(visibility=["read"])
+    metrics: Optional["_models.AzureMonitorWorkspaceMetrics"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Properties related to the metrics container in the Azure Monitor Workspace."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -68,6 +70,7 @@ class AzureMonitorWorkspace(_Model):
     def __init__(
         self,
         *,
+        metrics: Optional["_models.AzureMonitorWorkspaceMetrics"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
     ) -> None: ...
 
@@ -269,6 +272,48 @@ class AzureMonitorWorkspaceResource(TrackedResource):
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AzureMonitorWorkspace"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureMonitorWorkspaceResourceUpdate(_Model):
+    """The type used for updating an Azure Monitor Workspace.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.monitoraccounts.models.ManagedServiceIdentity
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.monitoraccounts.models.AzureMonitorWorkspace
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    properties: Optional["_models.AzureMonitorWorkspace"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        properties: Optional["_models.AzureMonitorWorkspace"] = None,
     ) -> None: ...
 
     @overload
@@ -726,6 +771,67 @@ class IssueProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class IssuePropertiesUpdate(_Model):
+    """The issue properties for update.
+
+    :ivar title: The issue title.
+    :vartype title: str
+    :ivar status: The issue status. Known values are: "New", "InProgress", "Mitigated", "Closed",
+     and "Canceled".
+    :vartype status: str or ~azure.mgmt.monitoraccounts.models.Status
+    :ivar severity: The issue severity.
+    :vartype severity: str
+    :ivar impact_time: The issue impact time (in UTC).
+    :vartype impact_time: ~datetime.datetime
+    :ivar background: The issue background information.
+    :vartype background: ~azure.mgmt.monitoraccounts.models.Background
+    :ivar notifications: The issue notification settings.
+    :vartype notifications: ~azure.mgmt.monitoraccounts.models.Notifications
+    """
+
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The issue title."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The issue status. Known values are: \"New\", \"InProgress\", \"Mitigated\", \"Closed\", and
+     \"Canceled\"."""
+    severity: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The issue severity."""
+    impact_time: Optional[datetime.datetime] = rest_field(
+        name="impactTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The issue impact time (in UTC)."""
+    background: Optional["_models.Background"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The issue background information."""
+    notifications: Optional["_models.Notifications"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The issue notification settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: Optional[str] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
+        severity: Optional[str] = None,
+        impact_time: Optional[datetime.datetime] = None,
+        background: Optional["_models.Background"] = None,
+        notifications: Optional["_models.Notifications"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ProxyResource(Resource):
     """Proxy Resource.
 
@@ -771,6 +877,36 @@ class IssueResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.IssueProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IssueResourceUpdate(_Model):
+    """The Issue resource update.
+
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.monitoraccounts.models.IssuePropertiesUpdate
+    """
+
+    properties: Optional["_models.IssuePropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.IssuePropertiesUpdate"] = None,
     ) -> None: ...
 
     @overload

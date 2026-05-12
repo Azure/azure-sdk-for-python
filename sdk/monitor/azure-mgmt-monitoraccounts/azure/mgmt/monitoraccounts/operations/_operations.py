@@ -1155,7 +1155,7 @@ class AzureMonitorWorkspacesOperations:
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
-        properties: _models.AzureMonitorWorkspaceResource,
+        properties: _models.AzureMonitorWorkspaceResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1169,7 +1169,7 @@ class AzureMonitorWorkspacesOperations:
          insensitive. Required.
         :type azure_monitor_workspace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.monitoraccounts.models.AzureMonitorWorkspaceResource
+        :type properties: ~azure.mgmt.monitoraccounts.models.AzureMonitorWorkspaceResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1242,7 +1242,7 @@ class AzureMonitorWorkspacesOperations:
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
-        properties: Union[_models.AzureMonitorWorkspaceResource, JSON, IO[bytes]],
+        properties: Union[_models.AzureMonitorWorkspaceResourceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.AzureMonitorWorkspaceResource:
         """Updates part of an Azure Monitor Workspace.
@@ -1254,9 +1254,9 @@ class AzureMonitorWorkspacesOperations:
          insensitive. Required.
         :type azure_monitor_workspace_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         AzureMonitorWorkspaceResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.monitoraccounts.models.AzureMonitorWorkspaceResource or JSON or
-         IO[bytes]
+         AzureMonitorWorkspaceResourceUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.monitoraccounts.models.AzureMonitorWorkspaceResourceUpdate or
+         JSON or IO[bytes]
         :return: AzureMonitorWorkspaceResource. The AzureMonitorWorkspaceResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitoraccounts.models.AzureMonitorWorkspaceResource
@@ -1867,7 +1867,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        properties: _models.IssueResource,
+        properties: _models.IssueResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1883,7 +1883,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.monitoraccounts.models.IssueResource
+        :type properties: ~azure.mgmt.monitoraccounts.models.IssueResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1960,7 +1960,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        properties: Union[_models.IssueResource, JSON, IO[bytes]],
+        properties: Union[_models.IssueResourceUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.IssueResource:
         """Update an issue.
@@ -1974,8 +1974,8 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         IssueResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.monitoraccounts.models.IssueResource or JSON or IO[bytes]
+         IssueResourceUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.monitoraccounts.models.IssueResourceUpdate or JSON or IO[bytes]
         :return: IssueResource. The IssueResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitoraccounts.models.IssueResource
         :raises ~azure.core.exceptions.HttpResponseError:

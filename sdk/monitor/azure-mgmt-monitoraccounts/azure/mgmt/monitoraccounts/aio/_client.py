@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 class MonitorClient:
-    """Monitor Management Client.
+    """MonitorClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.monitoraccounts.aio.operations.Operations

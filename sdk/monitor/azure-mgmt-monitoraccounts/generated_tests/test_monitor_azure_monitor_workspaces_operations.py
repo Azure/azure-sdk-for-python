@@ -109,15 +109,12 @@ class TestMonitorAzureMonitorWorkspacesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             azure_monitor_workspace_name="str",
             properties={
-                "location": "str",
-                "id": "str",
                 "identity": {
                     "type": "str",
                     "principalId": "str",
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "name": "str",
                 "properties": {
                     "accountId": "str",
                     "defaultIngestionSettings": {
@@ -159,16 +156,7 @@ class TestMonitorAzureMonitorWorkspacesOperations(AzureMgmtRecordedTestCase):
                     "provisioningState": "str",
                     "publicNetworkAccess": "str",
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         )
 

@@ -66,32 +66,18 @@ class TestMonitorIssueOperations(AzureMgmtRecordedTestCase):
             azure_monitor_workspace_name="str",
             issue_name="str",
             properties={
-                "id": "str",
-                "name": "str",
                 "properties": {
-                    "impactTime": "2020-02-20 00:00:00",
-                    "investigations": [{"createdAt": "2020-02-20 00:00:00", "id": "str"}],
-                    "investigationsCount": 0,
-                    "severity": "str",
-                    "status": "str",
-                    "title": "str",
                     "background": {"details": [{"name": "str", "value": "str"}], "text": "str", "type": "str"},
+                    "impactTime": "2020-02-20 00:00:00",
                     "notifications": {
                         "actionGroupIds": ["str"],
                         "excludeDefaultActionGroups": bool,
                         "updateTypes": ["issue_notification_type"],
                     },
-                    "provisioningState": "str",
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
+                    "severity": "str",
+                    "status": "str",
+                    "title": "str",
+                }
             },
         )
 
