@@ -7,21 +7,24 @@
 Centralises all toolbox-related logic:
 
 - Discovering MCP server configs from ``mcp.json``
+- Classifying servers as Foundry toolboxes vs standard MCP servers
 - Connecting to toolbox MCP endpoints via HTTP (JSON-RPC)
 - Discovering available tools via ``tools/list``
 - Creating Copilot SDK ``Tool`` wrappers that proxy calls to the MCP endpoint
 - Handling auth token refresh
 
-Instead of passing ``mcp_servers`` to the Copilot SDK (which has issues
-with dotted tool names), we own the entire MCP interaction and register
-tools as regular Copilot SDK custom tools.
+Foundry toolbox servers are handled via the ``McpBridge`` HTTP JSON-RPC
+client (which manages auth, dotted tool-name sanitisation, etc.).
+Standard MCP servers (e.g. ``https://learn.microsoft.com/api/mcp``) are
+passed through to the Copilot SDK's native ``mcp_servers`` support.
 """
 import asyncio
 import json
 import logging
 import pathlib
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+from urllib.parse import urlparse
 
 import httpx
 from copilot.tools import Tool, ToolResult
@@ -29,13 +32,92 @@ from copilot.tools import Tool, ToolResult
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
 # Canary — proves which version of _toolbox.py is deployed.
-_TOOLBOX_BUILD_TAG = "toolbox-v4-persistent-client"
+_TOOLBOX_BUILD_TAG = "toolbox-v5-server-classification"
 logger.info("Toolbox module loaded: %s", _TOOLBOX_BUILD_TAG)
 
 _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
 _FOUNDRY_TOOLBOX_SERVER_KEY = "foundry-toolbox"
 _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
 
+
+# ---------------------------------------------------------------------------
+# Server classification — Foundry toolbox vs standard MCP
+# ---------------------------------------------------------------------------
+
+def is_foundry_toolbox(name: str, server_cfg: Dict[str, Any]) -> bool:
+    """Determine whether an MCP server config represents a Foundry toolbox.
+
+    A server is classified as a Foundry toolbox when any of the following
+    are true:
+
+    - Its name is the well-known ``"foundry-toolbox"`` key (auto-injected
+      by the adapter when a ``toolbox_endpoint`` is supplied).
+    - Its URL path contains a ``/toolboxes/`` segment (the Foundry
+      toolbox MCP URL pattern).
+
+    Everything else is treated as a standard MCP server and passed
+    through to the Copilot SDK's native ``mcp_servers`` support.
+
+    :param name: Server key from the ``mcp.json`` / config dict.
+    :param server_cfg: The server configuration dict.
+    :returns: ``True`` if the server should be handled by ``McpBridge``.
+    """
+    if name == _FOUNDRY_TOOLBOX_SERVER_KEY:
+        return True
+
+    url = server_cfg.get("url", "")
+    if not url:
+        return False
+
+    try:
+        parsed = urlparse(url)
+        # Check for /toolboxes/ in the path (case-insensitive)
+        path_lower = (parsed.path or "").lower()
+        if "/toolboxes/" in path_lower:
+            return True
+    except Exception:
+        pass
+
+    return False
+
+
+def split_mcp_servers(
+    servers: Dict[str, Any],
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Split MCP servers into toolbox and passthrough groups.
+
+    :param servers: Combined dict of all discovered MCP servers.
+    :returns: ``(toolbox_servers, passthrough_servers)`` — two dicts
+        partitioned by :func:`is_foundry_toolbox`.
+    """
+    toolbox: Dict[str, Any] = {}
+    passthrough: Dict[str, Any] = {}
+    for name, cfg in servers.items():
+        if not isinstance(cfg, dict):
+            passthrough[name] = cfg
+            continue
+        if is_foundry_toolbox(name, cfg):
+            toolbox[name] = cfg
+        else:
+            passthrough[name] = cfg
+    return toolbox, passthrough
+
+
+def _sanitize_server_for_sdk(server_cfg: Dict[str, Any]) -> Dict[str, Any]:
+    """Return a copy of *server_cfg* with internal adapter keys removed.
+
+    Keys prefixed with ``_`` (e.g. ``_auto_auth``, ``_is_toolbox``) are
+    stripped so they don't leak into the Copilot SDK's native config.
+    """
+    cleaned = {}
+    for k, v in server_cfg.items():
+        if k.startswith("_"):
+            continue
+        if k == "headers" and isinstance(v, dict):
+            cleaned[k] = {hk: hv for hk, hv in v.items() if not hk.startswith("_")}
+        else:
+            cleaned[k] = v
+    return cleaned
 
 
 # ---------------------------------------------------------------------------
@@ -56,10 +138,9 @@ def discover_mcp_servers(
        ``"foundry-toolbox"`` entry, one is added automatically with the
        required ``Foundry-Features`` header and ``_auto_auth`` marker.
 
-    For servers without an explicit ``Authorization`` header, the adapter
-    will inject a fresh token automatically before each session.  The
-    ``_auto_auth`` flag on the ``headers`` dict opts the server in to this
-    behaviour.
+    Servers identified as Foundry toolboxes (via :func:`is_foundry_toolbox`)
+    receive auto-auth and feature-header injection.  Standard MCP servers
+    are left untouched so they can be passed through to the Copilot SDK.
 
     :param project_root: Agent project root directory (contains ``mcp.json``).
     :param toolbox_endpoint: Optional Foundry toolbox MCP endpoint URL.
@@ -90,16 +171,20 @@ def discover_mcp_servers(
         }
         logger.info("Added toolbox MCP server: %s", toolbox_endpoint)
 
-    # Auto-inject headers for toolbox endpoints
-    for server in servers.values():
+    # Only inject auth/feature headers on Foundry toolbox servers.
+    # Standard MCP servers are preserved as-is for Copilot SDK passthrough.
+    for name, server in list(servers.items()):
         if not isinstance(server, dict):
             continue
+        if not is_foundry_toolbox(name, server):
+            continue
+
         headers = server.setdefault("headers", {})
         if "Authorization" not in headers:
             headers["_auto_auth"] = True
         url = server.get("url", "").strip()
         server["url"] = url
-        if "/toolboxes/" in url and "Foundry-Features" not in headers:
+        if "Foundry-Features" not in headers:
             headers["Foundry-Features"] = _FOUNDRY_TOOLBOX_FEATURE_HEADER
 
     return servers

@@ -44,12 +44,12 @@ from azure.ai.agentserver.responses.models import (
 )
 
 from ._tool_acl import ToolAcl
-from ._toolbox import connect_toolbox, discover_mcp_servers
+from ._toolbox import connect_toolbox, discover_mcp_servers, is_foundry_toolbox, _sanitize_server_for_sdk
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
 # Version canary — proves which code is deployed. Change this string with every deploy-affecting commit.
-_BUILD_TAG = "replat-v3-conversation-id-from-rawbody"
+_BUILD_TAG = "replat-v4-mcp-server-classification"
 logger.info(f"Adapter loaded: {_BUILD_TAG}")
 
 
@@ -97,6 +97,47 @@ async def _extract_input_with_attachments(context: ResponseContext) -> str:
     return text
 
 _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
+
+
+# ---------------------------------------------------------------------------
+# MCP server SDK config helper
+# ---------------------------------------------------------------------------
+
+def _prepare_mcp_servers_for_sdk(sdk_config: dict) -> dict:
+    """Remove Foundry toolbox entries from ``mcp_servers`` and sanitize the rest.
+
+    Toolbox servers are handled by ``McpBridge`` — their tools are already
+    registered as regular custom tools, so they must not appear in the
+    Copilot SDK's ``mcp_servers``.  Standard MCP servers are preserved and
+    cleaned of internal adapter keys (``_auto_auth``, etc.) so the SDK
+    receives a valid config.
+
+    If no passthrough servers remain, ``mcp_servers`` is removed entirely
+    to avoid passing an empty dict to the SDK.
+
+    :param sdk_config: The SDK config dict (mutated in-place and returned).
+    :returns: The same *sdk_config* dict for convenience.
+    """
+    mcp_servers = sdk_config.get("mcp_servers")
+    if not mcp_servers:
+        sdk_config.pop("mcp_servers", None)
+        return sdk_config
+
+    passthrough: dict = {}
+    for name, cfg in mcp_servers.items():
+        if not isinstance(cfg, dict):
+            passthrough[name] = cfg
+            continue
+        if is_foundry_toolbox(name, cfg):
+            continue
+        passthrough[name] = _sanitize_server_for_sdk(cfg)
+
+    if passthrough:
+        sdk_config["mcp_servers"] = passthrough
+    else:
+        sdk_config.pop("mcp_servers", None)
+
+    return sdk_config
 
 
 # ---------------------------------------------------------------------------
@@ -323,9 +364,10 @@ class CopilotAdapter:
         # automatically — no need to pass them as separate kwargs.
         sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
 
-        # MCP servers are no longer passed to the SDK — toolbox tools are
-        # registered as regular custom tools via the McpBridge approach.
-        sdk_config.pop("mcp_servers", None)
+        # Split MCP servers: Foundry toolbox servers are handled by McpBridge
+        # (their tools are already registered as regular custom tools).
+        # Standard MCP servers are passed through to the Copilot SDK natively.
+        sdk_config = _prepare_mcp_servers_for_sdk(sdk_config)
 
         session = await client.create_session(
             **sdk_config,
@@ -794,12 +836,11 @@ class GitHubCopilotAdapter(CopilotAdapter):
         return cls(project_root=str(root), **kwargs)
 
     async def connect_toolboxes(self):
-        """Connect to toolbox MCP servers and register their tools.
+        """Connect to Foundry toolbox MCP servers and register their tools.
 
-        Iterates over servers discovered at ``__init__`` time, connects to each
-        via :func:`connect_toolbox`, and appends the resulting SDK ``Tool``
-        objects to the session config.  Each :class:`McpBridge` is stored on
-        ``self._toolbox_bridges`` for lifecycle management.
+        Only servers classified as Foundry toolboxes (via
+        :func:`is_foundry_toolbox`) are connected here.  Standard MCP
+        servers are passed through to the Copilot SDK natively.
         """
         mcp_servers = self._session_config.get("mcp_servers")
         if not mcp_servers:
@@ -807,6 +848,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
 
         for name, server_cfg in list(mcp_servers.items()):
             if not isinstance(server_cfg, dict):
+                continue
+            if not is_foundry_toolbox(name, server_cfg):
+                logger.info("Skipping non-toolbox MCP server %r (passthrough to SDK)", name)
                 continue
             url = server_cfg.get("url")
             if not url:
@@ -1075,7 +1119,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
                 sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
-                sdk_config.pop("mcp_servers", None)
+                sdk_config = _prepare_mcp_servers_for_sdk(sdk_config)
                 session = await client.create_session(
                     **sdk_config,
                     on_permission_request=self._make_permission_handler(),
