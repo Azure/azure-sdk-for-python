@@ -1,0 +1,262 @@
+2026-05-12 14:14:12,813 - ERROR - GroundednessEvaluator requires  source_text. Source text: None
+2026-05-12 14:14:12,813 - ERROR - GroundednessEvaluator requires  source_text. Source text: None
+2026-05-12 14:14:12,813 - ERROR - GroundednessEvaluator requires  source_text. Source text: None
+2026-05-12 14:14:12,813 - ERROR - GroundednessEvaluator requires  source_text. Source text: None
+2026-05-12 14:14:12,813 - ERROR - GroundednessEvaluator requires  source_text. Source text: None
+2026-05-12 14:14:12,813 - ERROR - GroundednessEvaluator requires  source_text. Source text: None
+2026-05-12 14:14:12,813 - ERROR - GroundednessEvaluator requires  source_text. Source text: None
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,816 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported for content safety evaluation with more than 1 turn.
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,819 - ERROR - Model configuration is required for evaluators: [<_SafetyEvaluator.COHERENCE: 'coherence'>]
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,822 - ERROR - Adversarial scenario AdversarialScenario.ADVERSARIAL_SUMMARIZATION is not supported without content safety evaluation.
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,830 - INFO - Running Simulator with inputs: adversarial_scenario=None, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,838 - INFO - Running DirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,844 - INFO - Running IndirectAttackSimulator with inputs: adversarial_scenario=AdversarialScenarioJailbreak.ADVERSARIAL_INDIRECT_JAILBREAK, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,850 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,857 - ERROR - No outputs generated by the simulator
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,863 - INFO - Running AdversarialSimulator with inputs: adversarial_scenario=AdversarialScenario.ADVERSARIAL_QA, max_conversation_turns=1, max_simulation_results=3, conversation_turns=[], source_text=None
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,871 - INFO - User inputs: evaluators[], evaluation_name=None, num_turns=1, num_rows=5, scenario=None,conversation_turns=[], tasks=[], source_text=None, data_path=None, jailbreak_data_path=None, output_path=None, randomization_seed=None, concurrent_async_tasks=5
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,872 - INFO - Using scenario: AdversarialScenario.ADVERSARIAL_QA
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,878 - INFO - No data_path provided. Running simulator.
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,879 - INFO - Running evaluation for data with inputs data_path=MockSimulator_Data.jsonl, evaluators={'content_safety': <azure.ai.evaluation._evaluators._content_safety._content_safety.ContentSafetyEvaluator object at 0x7f4eb9e08940>}, azure_ai_project={'subscription_id': 'mock-sub', 'resource_group_name': 'mock-rg', 'project_name': 'mock-proj'}, output_path=None
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,896 - ERROR - Code vulnerability evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
+2026-05-12 14:14:12,900 - ERROR - Ungrounded attributes evaluation only supports single-turn conversations.
