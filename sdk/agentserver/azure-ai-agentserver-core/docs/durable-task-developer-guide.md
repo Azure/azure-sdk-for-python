@@ -44,7 +44,7 @@ last-saved metadata, so it can pick up where it left off.
 **Your contract:**
 
 - Write a normal `async` function that takes a `TaskContext`
-- Use `ctx.metadata` to checkpoint progress you'd want after a crash
+- Use `ctx.metadata` to record lightweight progress (e.g. current phase, step count)
 - Check `ctx.entry_mode` if you need to distinguish fresh runs from recoveries
 - Return a result, or `await ctx.suspend()` for multi-turn patterns
 
@@ -57,12 +57,25 @@ last-saved metadata, so it can pick up where it left off.
 - Streaming incremental output to observers
 - Suspend/resume for multi-turn conversational agents
 
-You do **not** need to manage task state, leases, concurrency, or retry
-scheduling. The framework handles all of that.
+### What durable tasks are NOT
 
-**What the framework does NOT manage**: application-level persistence. If you need to
-store invocation results, conversation history, or any data your API serves to callers,
-that is your responsibility. See [Persistence](#persistence).
+- **Not a checkpoint/replay engine.** This is not Temporal or Durable Functions.
+  Your function is re-executed from the top on recovery, not replayed from a
+  deterministic log. If your function calls an LLM twice, it will call it again
+  on recovery.
+- **Not a result store.** Task output and metadata exist only while the task is
+  alive. Once the task is deleted, they are gone. If you need results to outlive
+  the task, persist them in your own store (database, blob storage, etc.).
+- **Not a stream log.** Streamed chunks are relayed to live observers in real
+  time but are not recorded. If a consumer connects after streaming ends,
+  the chunks are gone.
+- **Not application-level persistence.** The framework manages *task lifecycle*
+  state (status, input, metadata, lease). Your application data — conversation
+  history, invocation results, user-facing state — is your responsibility.
+  See [Persistence](#persistence).
+- **Not unbounded storage.** `ctx.metadata` is for small progress signals
+  (current phase, retry count, step index), not for accumulating large data.
+  The task payload has a 1 MB cap. Write large or growing data to your own store.
 
 ---
 
