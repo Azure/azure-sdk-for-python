@@ -143,7 +143,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         return dataset_version  # type: ignore
 
     @distributed_trace
-    def upload_folder(
+    def upload_folder(  # pylint: disable=too-many-locals
         self,
         *,
         name: str,
@@ -201,7 +201,15 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         failed_count = 0
 
         def upload_single_file(file_info: Tuple[str, str], total_files: int) -> str:
-            """Upload a single file and update progress."""
+            """Upload a single file and update progress.
+
+            :param file_info: A tuple containing the local file path and the blob name.
+            :type file_info: Tuple[str, str]
+            :param total_files: The total number of files to upload.
+            :type total_files: int
+            :return: The blob name of the uploaded file.
+            :rtype: str
+            """
             nonlocal completed_count, failed_count
             file_path, blob_name = file_info
 
