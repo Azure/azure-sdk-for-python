@@ -6,6 +6,7 @@
 import os
 import uuid
 from azure.identity import DefaultAzureCredential
+from sample_utilities import get_client_modifications
 from azure.appconfiguration.provider import load, SettingSelector
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
@@ -69,13 +70,15 @@ created_snapshot = client.begin_create_snapshot(
 ).result()
 print(f"Created snapshot: {created_snapshot.name} with status: {created_snapshot.status}")
 
+kwargs = get_client_modifications()
+
 
 # [START load_snapshot]
 from azure.appconfiguration.provider import load, SettingSelector
 
 # Step 2: Loading configuration settings from the snapshot
 snapshot_selects = [SettingSelector(snapshot_name=snapshot_name)]
-config = load(endpoint=endpoint, credential=credential, selects=snapshot_selects)
+config = load(endpoint=endpoint, credential=credential, selects=snapshot_selects, **kwargs)
 # [END load_snapshot]
 
 print("Configuration settings from snapshot:")
@@ -88,7 +91,7 @@ mixed_selects = [
     SettingSelector(snapshot_name=snapshot_name),  # Load all settings from snapshot
     SettingSelector(key_filter="override.*", label_filter="prod"),  # Also load specific override settings
 ]
-config_mixed = load(endpoint=endpoint, credential=credential, selects=mixed_selects)
+config_mixed = load(endpoint=endpoint, credential=credential, selects=mixed_selects, **kwargs)
 # [END load_snapshot_mixed]
 
 print("\nMixed configuration (snapshot + filtered settings):")
@@ -103,6 +106,7 @@ config_with_flags = load(
     credential=credential,
     selects=feature_flag_selects,
     feature_flag_enabled=True,
+    **kwargs,
 )
 # [END load_snapshot_feature_flags]
 

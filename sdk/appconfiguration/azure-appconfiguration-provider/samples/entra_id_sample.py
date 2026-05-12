@@ -21,7 +21,7 @@ endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 credential = DefaultAzureCredential()
 
 # Connecting to Azure App Configuration using Entra ID
-config = load(endpoint=endpoint, credential=credential)
+config = load(endpoint=endpoint, credential=credential, **kwargs)
 # [END create_provider_entra_id]
 
 print(config["message"])

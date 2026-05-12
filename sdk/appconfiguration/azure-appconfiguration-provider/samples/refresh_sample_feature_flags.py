@@ -43,6 +43,7 @@ config = load(
     refresh_interval=60,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
+    **kwargs,
 )
 # [END refresh_feature_flags]
 

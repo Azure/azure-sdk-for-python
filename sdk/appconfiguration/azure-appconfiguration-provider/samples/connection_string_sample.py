@@ -17,7 +17,7 @@ from azure.appconfiguration.provider import load
 connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 # Connecting to Azure App Configuration using connection string
-config = load(connection_string=connection_string)
+config = load(connection_string=connection_string, **kwargs)
 # [END create_provider_connection_string]
 
 print(config["message"])

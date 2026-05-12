@@ -41,6 +41,7 @@ config = load(
     connection_string=connection_string,
     refresh_on=[WatchKey("Sentinel")],
     refresh_interval=60,
+    **kwargs,
 )
 # [END refresh_provider]
 

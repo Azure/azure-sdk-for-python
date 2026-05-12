@@ -29,7 +29,7 @@ from azure.appconfiguration.provider import load
 connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
 # Connecting to Azure App Configuration using connection string
-config = load(connection_string=connection_string)
+config = load(connection_string=connection_string, **kwargs)
 ```
 
 <!-- END SNIPPET -->
@@ -47,7 +47,7 @@ endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 credential = DefaultAzureCredential()
 
 # Connecting to Azure App Configuration using Entra ID
-config = load(endpoint=endpoint, credential=credential)
+config = load(endpoint=endpoint, credential=credential, **kwargs)
 ```
 
 <!-- END SNIPPET -->
@@ -365,9 +365,11 @@ connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 config = load(
     connection_string=connection_string,
     refresh_on=[WatchKey("message")],
+    refresh_on_feature_flags=True,
     refresh_interval=60,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
+    **kwargs,
 )
 ```
 
