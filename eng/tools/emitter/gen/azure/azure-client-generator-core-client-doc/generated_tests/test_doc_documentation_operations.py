@@ -7,27 +7,18 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
-from testpreparer import RecursiveClientTestBase, RecursivePreparer
+from testpreparer import ClientDocClientTestBase, DocPreparer
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestRecursive(RecursiveClientTestBase):
-    @RecursivePreparer()
+class TestDocDocumentationOperations(ClientDocClientTestBase):
+    @DocPreparer()
     @recorded_by_proxy
-    def test_put(self, recursive_endpoint):
-        client = self.create_client(endpoint=recursive_endpoint)
-        response = client.put(
-            input={"level": 0, "extension": [...]},
+    def test_documentation_harvest(self, doc_endpoint):
+        client = self.create_client(endpoint=doc_endpoint)
+        response = client.documentation.harvest(
+            body={"name": "str", "species": "str"},
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RecursivePreparer()
-    @recorded_by_proxy
-    def test_get(self, recursive_endpoint):
-        client = self.create_client(endpoint=recursive_endpoint)
-        response = client.get()
 
         # please add some check logic here by yourself
         # ...
