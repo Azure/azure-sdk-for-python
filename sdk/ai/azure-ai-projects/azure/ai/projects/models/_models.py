@@ -5233,6 +5233,39 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
         self.type = CredentialType.ENTRA_ID  # type: ignore
 
 
+class ErrorAdditionalInfo(_Model):
+    """The resource management error additional info.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The additional info type."""
+    info: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The additional info."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        info: Optional[Any] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EvalResult(_Model):
     """Result of the evaluation.
 
@@ -7457,6 +7490,41 @@ class InlineSkillSourceParam(_Model):
         self.media_type: Literal["application/zip"] = "application/zip"
 
 
+class InnerErrorResponse(_Model):
+    """A nested structure of errors.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar inner_error: A nested structure of errors.
+    :vartype inner_error: ~azure.ai.projects.models.InnerErrorResponse
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The error code."""
+    inner_error: Optional["_models.InnerErrorResponse"] = rest_field(
+        name="innerError", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A nested structure of errors."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        inner_error: Optional["_models.InnerErrorResponse"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Input(_Model):
     """Job input definition.
 
@@ -7819,6 +7887,63 @@ class Job(_Model):
         self,
         *,
         properties: "_models.JobProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobErrorResponse(_Model):
+    """The error response returned for a job's service instance.
+
+    :ivar error: The root error.
+    :vartype error: ~azure.ai.projects.models.RootError
+    :ivar correlation: Dictionary containing correlation details for the error.
+    :vartype correlation: dict[str, str]
+    :ivar environment: The hosting environment.
+    :vartype environment: str
+    :ivar location: Location.
+    :vartype location: str
+    :ivar time: The time in UTC when the error occurred.
+    :vartype time: ~datetime.datetime
+    :ivar component_name: Component name where the error originated or was encountered.
+    :vartype component_name: str
+    """
+
+    error: Optional["_models.RootError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The root error."""
+    correlation: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dictionary containing correlation details for the error."""
+    environment: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hosting environment."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Location."""
+    time: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time in UTC when the error occurred."""
+    component_name: Optional[str] = rest_field(
+        name="componentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Component name where the error originated or was encountered."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.RootError"] = None,
+        correlation: Optional[dict[str, str]] = None,
+        environment: Optional[str] = None,
+        location: Optional[str] = None,
+        time: Optional[datetime.datetime] = None,
+        component_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -10506,6 +10631,103 @@ class ResponseUsageOutputTokensDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RootError(_Model):
+    """The root error.
+
+    :ivar code: The service-defined error code. Supported error codes: ServiceError, UserError,
+     ValidationError, AzureStorageError, TransientError, RequestThrottled.
+    :vartype code: str
+    :ivar severity: The severity of the error.
+    :vartype severity: int
+    :ivar message: A human-readable representation of the error.
+    :vartype message: str
+    :ivar message_format: An unformatted version of the message with no variable substitution.
+    :vartype message_format: str
+    :ivar message_parameters: Value substitutions corresponding to the contents of MessageFormat.
+    :vartype message_parameters: dict[str, str]
+    :ivar reference_code: This code can optionally be set by the system generating the error. It
+     should be used to classify the problem and identify the module and code area where the failure
+     occurred.
+    :vartype reference_code: str
+    :ivar details_uri: A URI which points to more details about the context of the error.
+    :vartype details_uri: str
+    :ivar target: The target of the error (e.g., the name of the property in error).
+    :vartype target: str
+    :ivar details: The related errors that occurred during the request.
+    :vartype details: list[~azure.ai.projects.models.RootError]
+    :ivar inner_error: A nested structure of errors.
+    :vartype inner_error: ~azure.ai.projects.models.InnerErrorResponse
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.ai.projects.models.ErrorAdditionalInfo]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-defined error code. Supported error codes: ServiceError, UserError,
+     ValidationError, AzureStorageError, TransientError, RequestThrottled."""
+    severity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The severity of the error."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable representation of the error."""
+    message_format: Optional[str] = rest_field(
+        name="messageFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An unformatted version of the message with no variable substitution."""
+    message_parameters: Optional[dict[str, str]] = rest_field(
+        name="messageParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Value substitutions corresponding to the contents of MessageFormat."""
+    reference_code: Optional[str] = rest_field(
+        name="referenceCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This code can optionally be set by the system generating the error. It should be used to
+     classify the problem and identify the module and code area where the failure occurred."""
+    details_uri: Optional[str] = rest_field(
+        name="detailsUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A URI which points to more details about the context of the error."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target of the error (e.g., the name of the property in error)."""
+    details: Optional[list["_models.RootError"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The related errors that occurred during the request."""
+    inner_error: Optional["_models.InnerErrorResponse"] = rest_field(
+        name="innerError", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A nested structure of errors."""
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The error additional info."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        severity: Optional[int] = None,
+        message: Optional[str] = None,
+        message_format: Optional[str] = None,
+        message_parameters: Optional[dict[str, str]] = None,
+        reference_code: Optional[str] = None,
+        details_uri: Optional[str] = None,
+        target: Optional[str] = None,
+        details: Optional[list["_models.RootError"]] = None,
+        inner_error: Optional["_models.InnerErrorResponse"] = None,
+        additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubrics"):
     """Rubric-based evaluator definition — stores rubric criteria produced by the generate API. Used
     for both quality and safety evaluators.
@@ -10609,6 +10831,36 @@ class RubricCriterion(_Model):
         description: str,
         weight: int,
         always_applicable: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RunServiceInstances(_Model):
+    """Map of service instances running on a job's node, keyed by service name.
+
+    :ivar instances: Service instances running on the node, keyed by service name.
+    :vartype instances: dict[str, ~azure.ai.projects.models.ServiceInstance]
+    """
+
+    instances: Optional[dict[str, "_models.ServiceInstance"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Service instances running on the node, keyed by service name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instances: Optional[dict[str, "_models.ServiceInstance"]] = None,
     ) -> None: ...
 
     @overload
@@ -10769,6 +11021,60 @@ class ScheduleRun(_Model):
         *,
         schedule_id: str,
         trigger_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ServiceInstance(_Model):
+    """Runtime information about a single interactive service associated with a job's node.
+
+    :ivar type: The service type (for example: SSH, JupyterLab, VSCode, TensorBoard, Custom).
+    :vartype type: str
+    :ivar port: The port the service is listening on.
+    :vartype port: int
+    :ivar status: The current status of the service.
+    :vartype status: str
+    :ivar error: Error details if the service failed to start.
+    :vartype error: ~azure.ai.projects.models.JobErrorResponse
+    :ivar endpoint: Endpoint URL used to connect to the service. May contain a '<nodeIndex>'
+     placeholder.
+    :vartype endpoint: str
+    :ivar properties: Additional service-specific properties.
+    :vartype properties: dict[str, str]
+    """
+
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service type (for example: SSH, JupyterLab, VSCode, TensorBoard, Custom)."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The port the service is listening on."""
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current status of the service."""
+    error: Optional["_models.JobErrorResponse"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error details if the service failed to start."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint URL used to connect to the service. May contain a '<nodeIndex>' placeholder."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional service-specific properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        port: Optional[int] = None,
+        status: Optional[str] = None,
+        error: Optional["_models.JobErrorResponse"] = None,
+        endpoint: Optional[str] = None,
+        properties: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload

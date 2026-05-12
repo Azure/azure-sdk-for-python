@@ -88,6 +88,7 @@ from ...operations._operations import (
     build_beta_jobs_create_or_update_request,
     build_beta_jobs_get_request,
     build_beta_jobs_list_request,
+    build_beta_jobs_show_services_request,
     build_beta_memory_stores_create_request,
     build_beta_memory_stores_delete_request,
     build_beta_memory_stores_delete_scope_request,
@@ -10285,6 +10286,75 @@ class BetaJobsOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Job, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def show_services(self, name: str, run_id: str, node_id: int, **kwargs: Any) -> _models.RunServiceInstances:
+        """Get the runtime service instances associated with a job's node. Returns a map of service name
+        to ServiceInstance describing interactive services (e.g. SSH, JupyterLab, VSCode, TensorBoard)
+        currently running on the specified node.
+
+        :param name: The name of the Job. Required.
+        :type name: str
+        :param run_id: The run identifier. For Jobs this currently matches the job name. Required.
+        :type run_id: str
+        :param node_id: Zero-based index of the compute node to query. Required.
+        :type node_id: int
+        :return: RunServiceInstances. The RunServiceInstances is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RunServiceInstances
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RunServiceInstances] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_show_services_request(
+            name=name,
+            run_id=run_id,
+            node_id=node_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RunServiceInstances, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

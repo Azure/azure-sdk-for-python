@@ -39,6 +39,7 @@ from ._patch_jobs import (
     CommandJobLimits,
     CommandJob,
     Diagnostic,
+    ServiceInstance,
     ValidationResult,
     load_job,
 )
@@ -394,6 +395,7 @@ __all__: List[str] = [
     "ModelSamplingConfigParam",
     "RedTeamEvalRunDataSource",
     "ResponseRetrievalItemGenerationParams",
+    "ServiceInstance",
     "TargetCompletionEvalRunDataSource",
     "ToolDescriptionParam",
     "TracesPreviewEvalRunDataSource",

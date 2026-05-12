@@ -11,7 +11,7 @@ import os
 from fnmatch import fnmatch
 from os import PathLike
 from pathlib import Path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -39,7 +39,7 @@ from ..models._models import BlobReference
 from ..models._models import Job as _RestJob
 from ..models._models import Input as _Input
 from ..models._models import Output as _Output
-from ..models._patch_jobs import CommandJob, ValidationResult
+from ..models._patch_jobs import CommandJob, ServiceInstance, ValidationResult
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ..models._enums import _FoundryFeaturesOptInKeys
 
@@ -402,6 +402,35 @@ class JobsOperations(_GeneratedJobsOps):
         """
         self._inject_preview_header(kwargs)
         return super().begin_cancel(name=name, **kwargs)
+
+    @distributed_trace
+    def show_services(  # type: ignore[override]
+        self, name: str, node_index: int = 0, **kwargs: Any
+    ) -> Optional[Dict[str, ServiceInstance]]:
+        """Get the runtime service instances associated with a job's compute node.
+
+        Returns the interactive services (e.g. SSH, JupyterLab, VSCode, TensorBoard)
+        currently running on the specified node. The ``<nodeIndex>`` placeholder
+        in each service ``endpoint`` is substituted with the requested ``node_index``.
+
+        :param name: The name of the job. Required.
+        :type name: str
+        :param node_index: Zero-based index of the compute node. Defaults to 0.
+        :type node_index: int
+        :return: A dict of service name to
+            :class:`~azure.ai.projects.models.ServiceInstance`, or ``None`` if no
+            services are running on the node.
+        :rtype: Optional[dict[str, ~azure.ai.projects.models.ServiceInstance]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        self._inject_preview_header(kwargs)
+        result = super().show_services(name=name, run_id=name, node_id=node_index, **kwargs)
+        if not result or not result.instances:
+            return None
+        return {
+            k: ServiceInstance._from_rest_object(v, node_index)
+            for k, v in result.instances.items()
+        }
 
     def _resolve_output_to_blob_ref(self, output_name: str, output: _Output) -> BlobReference:
         """Resolve a job ``Output`` to a :class:`~azure.ai.projects.models.BlobReference`.

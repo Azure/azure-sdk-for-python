@@ -2737,6 +2737,32 @@ def build_beta_jobs_get_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_beta_jobs_show_services_request(name: str, run_id: str, node_id: int, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/jobs/{name}/history/runs/{runId}/serviceinstances/{nodeId}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+        "nodeId": _SERIALIZER.url("node_id", node_id, "int"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_beta_jobs_create_or_update_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -12828,7 +12854,7 @@ class BetaJobsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = "2026-01-15-preview"
+                _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
@@ -12926,6 +12952,75 @@ class BetaJobsOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Job, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def show_services(self, name: str, run_id: str, node_id: int, **kwargs: Any) -> _models.RunServiceInstances:
+        """Get the runtime service instances associated with a job's node. Returns a map of service name
+        to ServiceInstance describing interactive services (e.g. SSH, JupyterLab, VSCode, TensorBoard)
+        currently running on the specified node.
+
+        :param name: The name of the Job. Required.
+        :type name: str
+        :param run_id: The run identifier. For Jobs this currently matches the job name. Required.
+        :type run_id: str
+        :param node_id: Zero-based index of the compute node to query. Required.
+        :type node_id: int
+        :return: RunServiceInstances. The RunServiceInstances is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RunServiceInstances
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RunServiceInstances] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_show_services_request(
+            name=name,
+            run_id=run_id,
+            node_id=node_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RunServiceInstances, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

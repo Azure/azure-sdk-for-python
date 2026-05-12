@@ -20,6 +20,7 @@ from ._models import (
     MpiDistribution,
     PyTorchDistribution,
     QueueSettings,
+    ServiceInstance as _RestServiceInstance,
     SystemData,
     TensorFlowDistribution,
 )
@@ -110,6 +111,68 @@ class CommandJobLimits(_RestCommandJobLimits):
         if isinstance(val, datetime.timedelta):
             return int(val.total_seconds())
         return int(val)
+
+
+class ServiceInstance:
+    """A service running on a job's compute node.
+
+    :ivar type: The service type (for example ``JupyterLab``, ``SSH``, ``VSCode``,
+        ``TensorBoard``, ``Custom``).
+    :vartype type: str or None
+    :ivar port: The port the service is listening on.
+    :vartype port: int or None
+    :ivar status: The current status of the service.
+    :vartype status: str or None
+    :ivar error: The flattened error message if the service failed to start.
+    :vartype error: str or None
+    :ivar endpoint: The service endpoint URL with the ``<nodeIndex>`` placeholder
+        substituted with the requested node index.
+    :vartype endpoint: str or None
+    :ivar properties: Additional service-specific properties.
+    :vartype properties: dict[str, str] or None
+    """
+
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        port: Optional[int] = None,
+        status: Optional[str] = None,
+        error: Optional[str] = None,
+        endpoint: Optional[str] = None,
+        properties: Optional[Dict[str, str]] = None,
+    ) -> None:
+        self.type = type
+        self.port = port
+        self.status = status
+        self.error = error
+        self.endpoint = endpoint
+        self.properties = properties
+
+    @classmethod
+    def _from_rest_object(cls, obj: Union[_RestServiceInstance, Any], node_index: int) -> "ServiceInstance":
+        """Construct a flat :class:`ServiceInstance` from the generated REST model.
+
+        Flattens the nested ``JobErrorResponse`` graph down to a single error
+        message string and substitutes the ``<nodeIndex>`` placeholder in the
+        endpoint, matching the public surface of azure-ai-ml's ``ServiceInstance``.
+
+        :param obj: The deserialized REST ``ServiceInstance`` from the service.
+        :type obj: ~azure.ai.projects.models.ServiceInstance
+        :param node_index: The zero-based node index used to substitute the
+            ``<nodeIndex>`` placeholder in ``endpoint``.
+        :type node_index: int
+        :returns: A flat :class:`ServiceInstance`.
+        :rtype: ~azure.ai.projects.models.ServiceInstance
+        """
+        return cls(
+            type=obj.type,
+            port=obj.port,
+            status=obj.status,
+            error=(obj.error.error.message if obj.error and obj.error.error else None),
+            endpoint=(obj.endpoint.replace("<nodeIndex>", str(node_index)) if obj.endpoint else obj.endpoint),
+            properties=obj.properties,
+        )
 
 
 def _load_command_job(data: dict, base_dir: Optional[Path] = None) -> CommandJob:
