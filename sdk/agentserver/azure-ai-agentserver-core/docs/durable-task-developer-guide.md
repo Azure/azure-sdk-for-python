@@ -105,9 +105,8 @@ If the container crashes mid-execution, the framework automatically recovers the
 task on restart — before any HTTP handlers go live. Your function is re-invoked
 with `ctx.entry_mode = "recovered"` and the same input. No caller action is needed.
 
-If a caller happens to call `.run()` again with the same `task_id` while a task
-is already in progress, the framework detects it and joins the existing execution
-rather than creating a duplicate.
+If a caller calls `.run()` with a `task_id` that is already in progress,
+the framework raises `TaskConflictError` — it does not create a duplicate.
 
 ---
 
