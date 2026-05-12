@@ -66,7 +66,13 @@ def _mask_uri(uri: str) -> str:
 
 
 def _accepts_enable_sensitive_data(configure_observability: Callable[..., None]) -> bool:
-    """Return whether *configure_observability* accepts the new sensitive-data kwarg."""
+    """Return whether *configure_observability* accepts the new sensitive-data kwarg.
+
+    :param configure_observability: The observability setup callable to inspect.
+    :type configure_observability: Callable[..., None]
+    :return: Whether the callable accepts ``enable_sensitive_data``.
+    :rtype: bool
+    """
     try:
         parameters = inspect.signature(configure_observability).parameters
     except (TypeError, ValueError):
