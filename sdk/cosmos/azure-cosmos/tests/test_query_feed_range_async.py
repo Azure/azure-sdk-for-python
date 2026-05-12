@@ -1,5 +1,6 @@
 ﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+# cspell:ignore JOBID
 import pytest
 import pytest_asyncio
 import test_config
@@ -85,7 +86,7 @@ async def get_container(container_id: str):
     return _data_db.get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADSplit
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestQueryFeedRangeAsync:

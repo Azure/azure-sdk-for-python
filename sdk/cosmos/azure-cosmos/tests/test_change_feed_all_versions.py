@@ -80,7 +80,7 @@ def _is_all_versions_and_deletes_not_enabled(error: Exception) -> bool:
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 @pytest.mark.usefixtures("setup")
 class TestChangeAllVersionsFeed:
     """Test to verify All Versions And Delete change feed behavior"""

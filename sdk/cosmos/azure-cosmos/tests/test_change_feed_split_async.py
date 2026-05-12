@@ -13,7 +13,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
 @pytest.mark.cosmosSplit
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADSplit
 class TestPartitionSplitChangeFeedAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey

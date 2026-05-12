@@ -185,7 +185,7 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
             pass
 
 @pytest.mark.cosmosCircuitBreaker
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 class TestPerPartitionCircuitBreakerMM:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey

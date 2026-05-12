@@ -62,7 +62,7 @@ class TimeoutTransport(RequestsTransport):
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 class TestCRUDOperations(unittest.TestCase):
     """Python CRUD Tests.
     """

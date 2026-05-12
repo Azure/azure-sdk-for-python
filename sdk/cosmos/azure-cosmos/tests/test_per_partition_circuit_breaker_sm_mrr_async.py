@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_sm_mrr import validate_unhealthy_partiti
 COLLECTION = "created_collection"
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 @pytest.mark.asyncio
 class TestPerPartitionCircuitBreakerSmMrrAsync:
     host = test_config.TestConfig.host

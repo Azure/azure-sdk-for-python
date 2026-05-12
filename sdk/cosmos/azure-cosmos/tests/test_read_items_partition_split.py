@@ -10,7 +10,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 
 
 @pytest.mark.cosmosSplit
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADSplit
 class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
     """Tests the behavior of read_items in scenarios involving partition splits (sync)."""
 

@@ -21,7 +21,7 @@ def get_subpartition_item(item_id):
 
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     """Python Transactional Batch Tests.
     """

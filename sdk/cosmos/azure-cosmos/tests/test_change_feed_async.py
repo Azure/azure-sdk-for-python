@@ -52,7 +52,7 @@ def round_time():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestChangeFeedAsync:

@@ -114,13 +114,58 @@
     },
     {
       "AADTestConfig": {
-        "Ubuntu2404_312_aad": {
+        "Ubuntu2404_312_aad_long": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.12",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosAAD",
+          "TestMarkArgument": "cosmosAADLong",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        },
+        "Ubuntu2404_313_aad_split": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADSplit",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        },
+        "Ubuntu2404_312_aad_multiregion": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADMultiRegion",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        },
+        "Ubuntu2404_313_aad_circuit_breaker": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADCircuitBreaker",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        },
+        "Ubuntu2404_312_aad_query": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADQuery",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        },
+        "Ubuntu2404_313_aad_ppaf": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADPerPartitionAutomaticFailover",
           "COSMOS_TEST_DATA_AUTH_MODE": "aad"
         }
       }

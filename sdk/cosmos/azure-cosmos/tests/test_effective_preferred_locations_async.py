@@ -53,7 +53,7 @@ def preferred_locations():
     ]
 
 @pytest.mark.asyncio
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADMultiRegion
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocationsAsync:
     host = test_config.TestConfig.host

@@ -68,7 +68,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     """Python CRUD Tests.
     """

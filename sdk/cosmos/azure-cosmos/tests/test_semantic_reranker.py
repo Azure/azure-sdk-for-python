@@ -12,7 +12,7 @@ import test_config
 
 
 @pytest.mark.semanticReranker
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestSemanticReranker(unittest.TestCase):
     """Test to check semantic reranker behavior."""
     client: cosmos_client.CosmosClient = None

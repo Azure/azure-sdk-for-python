@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey
 
 
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADSplit
 @pytest.mark.cosmosSplit
 class TestPartitionSplitChangeFeed(unittest.TestCase):
     database: DatabaseProxy = None

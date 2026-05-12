@@ -75,7 +75,7 @@ async def setup_and_teardown_async():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestExcludedLocationsAsync:

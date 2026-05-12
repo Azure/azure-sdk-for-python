@@ -18,7 +18,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADQuery
 class TestCrossPartitionQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

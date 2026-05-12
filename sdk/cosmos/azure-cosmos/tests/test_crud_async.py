@@ -66,7 +66,7 @@ class TimeoutTransport(AioHttpTransport):
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """

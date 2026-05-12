@@ -179,7 +179,7 @@ def _perform_operations_on_pk(created_container, pk_field, pk_value):
 
 
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestPartitionKey:

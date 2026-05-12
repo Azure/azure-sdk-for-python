@@ -14,7 +14,7 @@ from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestMultiOrderBy(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """

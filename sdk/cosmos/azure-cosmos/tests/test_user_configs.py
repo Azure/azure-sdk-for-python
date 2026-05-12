@@ -26,7 +26,7 @@ def get_test_item():
 
 
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestUserConfigs(unittest.TestCase):
     key_client = None
     data_client = None

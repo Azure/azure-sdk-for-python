@@ -14,7 +14,7 @@ from azure.cosmos.documents import _OperationType, ConnectionPolicy
 
 
 @pytest.mark.cosmosMultiRegion
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADMultiRegion
 class TestServiceRequestRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     """Test cases for the read_items API."""
 

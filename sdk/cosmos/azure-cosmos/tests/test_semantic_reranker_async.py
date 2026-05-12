@@ -11,7 +11,7 @@ import test_config
 
 
 @pytest.mark.semanticReranker
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check async semantic reranker behavior."""
     client = None

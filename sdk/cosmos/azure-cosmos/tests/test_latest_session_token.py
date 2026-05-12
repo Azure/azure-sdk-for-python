@@ -33,7 +33,7 @@ def create_item(hpk):
 
 
 @pytest.mark.cosmosSplit
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADSplit
 class TestLatestSessionToken(unittest.TestCase):
     """Test for session token helpers"""
 

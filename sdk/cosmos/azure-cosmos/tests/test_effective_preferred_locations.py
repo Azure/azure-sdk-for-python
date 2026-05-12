@@ -71,7 +71,7 @@ def error():
     return errors
 
 @pytest.mark.unittest
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADMultiRegion
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocations:
     host = test_config.TestConfig.host

@@ -18,7 +18,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosLong
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
         """

@@ -104,7 +104,7 @@ async def cleanup_method(initialized_objects: list[dict[str, Any]]):
         await method_client.close()
 
 @pytest.mark.cosmosCircuitBreaker
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 @pytest.mark.asyncio
 class TestPerPartitionCircuitBreakerMMAsync:
     host = test_config.TestConfig.host

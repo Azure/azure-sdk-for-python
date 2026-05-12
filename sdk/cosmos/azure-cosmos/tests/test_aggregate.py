@@ -166,7 +166,7 @@ class TestAggregateQuery(unittest.TestCase):
     # Three queries: cross-partition COUNT (fan-out), cross-partition SUM
     # with ORDER BY (fan-out + paginated reduce -> token-refresh window),
     # single-partition AVG (pinned-PK path).
-    @pytest.mark.cosmosAAD
+    @pytest.mark.cosmosAADLong
     @pytest.mark.skipif(
         test_config.TestConfig.data_auth_mode != "aad",
         reason="AAD-only smoke subset; full coverage runs under cosmosQuery (key auth).",

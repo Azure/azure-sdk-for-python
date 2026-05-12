@@ -34,7 +34,7 @@ def create_item(hpk):
 
 
 @pytest.mark.cosmosSplit
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADSplit
 class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
     """Test for session token helpers"""
 

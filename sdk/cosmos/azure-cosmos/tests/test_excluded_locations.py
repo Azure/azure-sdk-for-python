@@ -225,7 +225,7 @@ def setup_and_teardown():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADCircuitBreaker
 class TestExcludedLocations:
     @pytest.mark.parametrize('test_data', read_item_test_data())
     def test_read_item(self, test_data):

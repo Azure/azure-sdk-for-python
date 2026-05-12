@@ -145,7 +145,7 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_async")
 @pytest.mark.cosmosEmulator
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestPartitionKeyAsync:
     """Tests to verify if non-partitioned collections are properly accessed on migration with version 2018-12-31.
     """

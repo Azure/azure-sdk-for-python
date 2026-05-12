@@ -16,7 +16,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestCrossPartitionTopOrderBy(unittest.TestCase):
     """Orderby Tests.
     """

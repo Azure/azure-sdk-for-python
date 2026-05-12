@@ -8,7 +8,7 @@ import pytest
 import test_config
 
 
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 @pytest.mark.cosmosEmulator
 class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host

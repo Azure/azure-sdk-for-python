@@ -13,7 +13,7 @@ from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.exceptions as exceptions
 
 @pytest.mark.cosmosQuery
-# @pytest.mark.cosmosAAD
+@pytest.mark.cosmosAADLong
 class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
