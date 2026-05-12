@@ -32,6 +32,7 @@ _ENV_PORT = "PORT"
 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING = "APPLICATIONINSIGHTS_CONNECTION_STRING"
 _ENV_OTEL_EXPORTER_OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
 _ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
+_ENV_FOUNDRY_ENABLE_SENSITIVE_DATA = "FOUNDRY_ENABLE_SENSITIVE_DATA"
 
 _DEFAULT_PORT = 8088
 _DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
@@ -322,3 +323,29 @@ def resolve_otlp_endpoint() -> Optional[str]:
     """
     value = os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, "")
     return value if value else None
+
+
+def resolve_enable_sensitive_data() -> bool:
+    """Resolve whether sensitive data recording is enabled.
+
+    Sensitive data recording is disabled by default. Set
+    ``FOUNDRY_ENABLE_SENSITIVE_DATA`` to ``true`` or ``1`` to enable it,
+    and to ``false`` or ``0`` to explicitly disable it.
+
+    :return: Whether sensitive data recording is enabled.
+    :rtype: bool
+    :raises ValueError: If ``FOUNDRY_ENABLE_SENSITIVE_DATA`` has an invalid value.
+    """
+    raw = os.environ.get(_ENV_FOUNDRY_ENABLE_SENSITIVE_DATA)
+    if raw is None:
+        return False
+
+    normalized = raw.strip().lower()
+    if normalized in ("true", "1"):
+        return True
+    if normalized in ("false", "0", ""):
+        return False
+    raise ValueError(
+        "Invalid value for FOUNDRY_ENABLE_SENSITIVE_DATA: "
+        f"{raw!r} (expected 'true', 'false', '1', or '0')"
+    )
