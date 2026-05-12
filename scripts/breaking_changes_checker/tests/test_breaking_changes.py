@@ -929,6 +929,66 @@ def test_return_type_missing_in_stable_is_not_breaking():
     assert bc.breaking_changes == []
 
 
+def test_return_type_paged_iterable_equivalence_is_not_breaking():
+    """`Iterable[X]` <-> `ItemPaged[X]` and the async equivalents are
+    semantically identical for callers and must not be reported as breaking.
+    Module-qualified spellings are normalized too.
+    """
+    def _make(stable_rt, current_rt, is_async=False):
+        stable = {
+            "azure.contoso": {
+                "class_nodes": {
+                    "PeeringLocationsOperations": {
+                        "methods": {
+                            "list": {
+                                "parameters": {},
+                                "is_async": is_async,
+                                "return_type": stable_rt,
+                            }
+                        }
+                    }
+                },
+                "function_nodes": {},
+            }
+        }
+        current = {
+            "azure.contoso": {
+                "class_nodes": {
+                    "PeeringLocationsOperations": {
+                        "methods": {
+                            "list": {
+                                "parameters": {},
+                                "is_async": is_async,
+                                "return_type": current_rt,
+                            }
+                        }
+                    }
+                },
+                "function_nodes": {},
+            }
+        }
+        return stable, current
+
+    cases = [
+        ("AsyncIterable[_models.PeeringLocation]", "AsyncItemPaged[_models.PeeringLocation]"),
+        ("Iterable[_models.PeeringLocation]", "ItemPaged[_models.PeeringLocation]"),
+        ("ItemPaged[_models.PeeringLocation]", "Iterable[_models.PeeringLocation]"),
+        # Module-qualified spellings should normalize too.
+        ("typing.AsyncIterable[X]", "azure.core.async_paging.AsyncItemPaged[X]"),
+    ]
+    for stable_rt, current_rt in cases:
+        stable, current = _make(stable_rt, current_rt, is_async="Async" in stable_rt)
+        bc = BreakingChangesTracker(
+            stable, current, "azure-contoso",
+            checkers=[ChangedFunctionReturnTypeChecker()],
+        )
+        bc.run_checks()
+        assert bc.breaking_changes == [], (
+            f"Unexpected breaking change reported for {stable_rt!r} -> {current_rt!r}: "
+            f"{bc.breaking_changes}"
+        )
+
+
 def test_create_function_report_scopes_return_type_to_owner_class():
     """End-to-end check that `create_function_report` captures the right return
     annotation when multiple functions/methods in the same module share a name.

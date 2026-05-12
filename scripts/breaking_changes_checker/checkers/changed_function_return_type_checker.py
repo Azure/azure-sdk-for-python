@@ -5,11 +5,47 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import os
+import re
 import sys
 
 sys.path.append(os.path.abspath("../../scripts/breaking_changes_checker"))
 from _models import CheckerType
 import jsondiff
+
+
+# Pairs of return-type names that are semantically equivalent in the Azure SDK
+# and should not be flagged as a breaking change. The concrete paged types
+# (`ItemPaged` / `AsyncItemPaged`) implement the corresponding abstract
+# iterable protocols (`Iterable` / `AsyncIterable`), so a switch between them
+# is a no-op for callers.
+_EQUIVALENT_RETURN_TYPES = (
+    ("ItemPaged", "Iterable"),
+    ("AsyncItemPaged", "AsyncIterable"),
+)
+
+
+def _normalize_return_type(value):
+    """Normalize known-equivalent return type spellings so the comparison
+    treats e.g. ``AsyncIterable[X]`` and ``AsyncItemPaged[X]`` as identical.
+    Module-qualified names (e.g. ``azure.core.paging.ItemPaged``) are also
+    matched. Returns ``value`` unchanged if it is not a string.
+    """
+    if not isinstance(value, str):
+        return value
+    normalized = value
+    for concrete, abstract in _EQUIVALENT_RETURN_TYPES:
+        # Collapse both the concrete and abstract spellings (with any
+        # module-path prefix, e.g. ``azure.core.paging.ItemPaged`` or
+        # ``typing.Iterable``) down to the bare abstract name. This way
+        # ``typing.AsyncIterable[X]`` and
+        # ``azure.core.async_paging.AsyncItemPaged[X]`` both normalize to
+        # ``AsyncIterable[X]``.
+        normalized = re.sub(
+            rf"(?:\w+\.)*(?:{concrete}|{abstract})\b",
+            abstract,
+            normalized,
+        )
+    return normalized
 
 
 class ChangedFunctionReturnTypeChecker:
@@ -69,6 +105,10 @@ class ChangedFunctionReturnTypeChecker:
             stable_value = stable_fn.get("return_type")
             current_value = current_fn.get("return_type")
             if stable_value is None or stable_value == current_value:
+                continue
+            # Treat known-equivalent paged return types as unchanged
+            # (e.g. `AsyncIterable[X]` <-> `AsyncItemPaged[X]`).
+            if _normalize_return_type(stable_value) == _normalize_return_type(current_value):
                 continue
             if class_name:
                 bc_list.append(
