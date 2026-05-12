@@ -1453,6 +1453,45 @@ class ApproximateLocation(_Model):
         self.type: Literal["approximate"] = "approximate"
 
 
+class ArtifactProfile(_Model):
+    """Artifact profile of the model.
+
+    :ivar category: The category of the artifact profile. Required. Known values are: "DataOnly",
+     "RuntimeDependent", and "Unknown".
+    :vartype category: str or ~azure.ai.projects.models.FoundryModelArtifactProfileCategory
+    :ivar signals: Signals detected in the model artifact.
+    :vartype signals: list[str or ~azure.ai.projects.models.FoundryModelArtifactProfileSignal]
+    """
+
+    category: Union[str, "_models.FoundryModelArtifactProfileCategory"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The category of the artifact profile. Required. Known values are: \"DataOnly\",
+     \"RuntimeDependent\", and \"Unknown\"."""
+    signals: Optional[list[Union[str, "_models.FoundryModelArtifactProfileSignal"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Signals detected in the model artifact."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.FoundryModelArtifactProfileCategory"],
+        signals: Optional[list[Union[str, "_models.FoundryModelArtifactProfileSignal"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AutoCodeInterpreterToolParam(_Model):
     """Automatic Code Interpreter Tool Parameters.
 
@@ -6798,6 +6837,42 @@ class FolderDatasetVersion(DatasetVersion, discriminator="uri_folder"):
         self.type = DatasetType.URI_FOLDER  # type: ignore
 
 
+class FoundryModelWarning(_Model):
+    """A warning associated with a model.
+
+    :ivar code: The warning code. Known values are: "RuntimeDependentArtifact" and
+     "UnclassifiedArtifact".
+    :vartype code: str or ~azure.ai.projects.models.FoundryModelWarningCode
+    :ivar message: The warning message.
+    :vartype message: str
+    """
+
+    code: Optional[Union[str, "_models.FoundryModelWarningCode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The warning code. Known values are: \"RuntimeDependentArtifact\" and \"UnclassifiedArtifact\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The warning message."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[Union[str, "_models.FoundryModelWarningCode"]] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FunctionShellToolParam(Tool, discriminator="shell"):
     """Shell tool.
 
@@ -8155,6 +8230,54 @@ class LocalSkillParam(_Model):
         super().__init__(*args, **kwargs)
 
 
+class LoraConfig(_Model):
+    """Adapter-specific metadata for LoRA models. Drives serving engine configuration at deployment
+    time.
+
+    :ivar rank: LoRA rank (r). Positive integer. Common values: 8, 16, 32, 64.
+    :vartype rank: int
+    :ivar alpha: LoRA scaling factor (α). Positive integer; typically 2× the rank.
+    :vartype alpha: int
+    :ivar target_modules: Model layers modified by the adapter (e.g., q_proj, v_proj).
+     Auto-detected from adapter_config.json if omitted.
+    :vartype target_modules: list[str]
+    :ivar dropout: Dropout rate used during training. Informational — not used at serving time.
+    :vartype dropout: float
+    """
+
+    rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LoRA rank (r). Positive integer. Common values: 8, 16, 32, 64."""
+    alpha: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LoRA scaling factor (α). Positive integer; typically 2× the rank."""
+    target_modules: Optional[list[str]] = rest_field(
+        name="targetModules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Model layers modified by the adapter (e.g., q_proj, v_proj). Auto-detected from
+     adapter_config.json if omitted."""
+    dropout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Dropout rate used during training. Informational — not used at serving time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rank: Optional[int] = None,
+        alpha: Optional[int] = None,
+        target_modules: Optional[list[str]] = None,
+        dropout: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedAgentIdentityBlueprintReference(AgentBlueprintReference, discriminator="ManagedAgentIdentityBlueprint"):
     """ManagedAgentIdentityBlueprintReference.
 
@@ -9072,6 +9195,34 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
         self.type = ToolType.FABRIC_DATAAGENT_PREVIEW  # type: ignore
 
 
+class ModelCredentialRequest(_Model):
+    """Request to fetch credentials for a model asset.
+
+    :ivar blob_uri: Blob URI of the model asset to fetch credentials for. Required.
+    :vartype blob_uri: str
+    """
+
+    blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
+    """Blob URI of the model asset to fetch credentials for. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_uri: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ModelDeployment(Deployment, discriminator="ModelDeployment"):
     """Model Deployment Definition.
 
@@ -9204,6 +9355,131 @@ class ModelSamplingParams(_Model):
         top_p: Optional[float] = None,
         seed: Optional[int] = None,
         max_completion_tokens: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ModelSourceData(_Model):
+    """Source information for the model.
+
+    :ivar source_type: The source type of the model. Known values are: "LocalUpload" and
+     "TrainingJob".
+    :vartype source_type: str or ~azure.ai.projects.models.FoundryModelSourceType
+    :ivar job_id: The job ID that produced this model.
+    :vartype job_id: str
+    """
+
+    source_type: Optional[Union[str, "_models.FoundryModelSourceType"]] = rest_field(
+        name="sourceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source type of the model. Known values are: \"LocalUpload\" and \"TrainingJob\"."""
+    job_id: Optional[str] = rest_field(name="jobId", visibility=["read", "create", "update", "delete", "query"])
+    """The job ID that produced this model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_type: Optional[Union[str, "_models.FoundryModelSourceType"]] = None,
+        job_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ModelVersion(_Model):
+    """Model Version Definition.
+
+    :ivar system_data: System related metadata.
+    :vartype system_data: ~azure.ai.projects.models.SystemDataV3
+    :ivar blob_uri: URI of the model artifact in blob storage. Required.
+    :vartype blob_uri: str
+    :ivar weight_type: The weight type of the model. Known values are: "FullWeight", "LoRA", and
+     "DraftModel".
+    :vartype weight_type: str or ~azure.ai.projects.models.FoundryModelWeightType
+    :ivar base_model: Base model asset ID.
+    :vartype base_model: str
+    :ivar source: The source of the model.
+    :vartype source: ~azure.ai.projects.models.ModelSourceData
+    :ivar lora_config: Adapter-specific configuration. Required when weight_type is lora; ignored
+     otherwise. May be auto-populated from adapter_config.json when present in the uploaded files —
+     user-provided values take precedence over auto-detected values.
+    :vartype lora_config: ~azure.ai.projects.models.LoraConfig
+    :ivar artifact_profile: The artifact profile of the model.
+    :vartype artifact_profile: ~azure.ai.projects.models.ArtifactProfile
+    :ivar warnings: Service-computed advisory warnings derived from the artifact profile.
+    :vartype warnings: list[~azure.ai.projects.models.FoundryModelWarning]
+    :ivar id: Asset ID, a unique identifier for the asset.
+    :vartype id: str
+    :ivar name: The name of the resource. Required.
+    :vartype name: str
+    :ivar version: The version of the resource. Required.
+    :vartype version: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    """
+
+    system_data: Optional["_models.SystemDataV3"] = rest_field(name="systemData", visibility=["read"])
+    """System related metadata."""
+    blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
+    """URI of the model artifact in blob storage. Required."""
+    weight_type: Optional[Union[str, "_models.FoundryModelWeightType"]] = rest_field(
+        name="weightType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The weight type of the model. Known values are: \"FullWeight\", \"LoRA\", and \"DraftModel\"."""
+    base_model: Optional[str] = rest_field(name="baseModel", visibility=["read", "create"])
+    """Base model asset ID."""
+    source: Optional["_models.ModelSourceData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source of the model."""
+    lora_config: Optional["_models.LoraConfig"] = rest_field(name="loraConfig", visibility=["read", "create"])
+    """Adapter-specific configuration. Required when weight_type is lora; ignored otherwise. May be
+     auto-populated from adapter_config.json when present in the uploaded files — user-provided
+     values take precedence over auto-detected values."""
+    artifact_profile: Optional["_models.ArtifactProfile"] = rest_field(name="artifactProfile", visibility=["read"])
+    """The artifact profile of the model."""
+    warnings: Optional[list["_models.FoundryModelWarning"]] = rest_field(visibility=["read"])
+    """Service-computed advisory warnings derived from the artifact profile."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Asset ID, a unique identifier for the asset."""
+    name: str = rest_field(visibility=["read"])
+    """The name of the resource. Required."""
+    version: str = rest_field(visibility=["read"])
+    """The version of the resource. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update"])
+    """The asset description text."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update"])
+    """Tag dictionary. Tags can be added, removed, and updated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_uri: str,
+        weight_type: Optional[Union[str, "_models.FoundryModelWeightType"]] = None,
+        base_model: Optional[str] = None,
+        source: Optional["_models.ModelSourceData"] = None,
+        lora_config: Optional["_models.LoraConfig"] = None,
+        description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -9849,9 +10125,9 @@ class PendingUploadRequest(_Model):
     :ivar connection_name: Azure Storage Account connection name to use for generating temporary
      SAS token.
     :vartype connection_name: str
-    :ivar pending_upload_type: BlobReference is the only supported type. Required. Blob Reference
-     is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.models.BLOB_REFERENCE
+    :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
+     Temporary blob reference.
+    :vartype pending_upload_type: str or ~azure.ai.projects.models.TEMPORARY_BLOB_REFERENCE
     """
 
     pending_upload_id: Optional[str] = rest_field(
@@ -9862,16 +10138,16 @@ class PendingUploadRequest(_Model):
         name="connectionName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Azure Storage Account connection name to use for generating temporary SAS token."""
-    pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE] = rest_field(
+    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """BlobReference is the only supported type. Required. Blob Reference is the only supported type."""
+    """TemporaryBlobReference is the only supported type. Required. Temporary blob reference."""
 
     @overload
     def __init__(
         self,
         *,
-        pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE],
+        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
         pending_upload_id: Optional[str] = None,
         connection_name: Optional[str] = None,
     ) -> None: ...
@@ -9897,9 +10173,9 @@ class PendingUploadResult(_Model):
     :ivar version: Version of asset to be created if user did not specify version when initially
      creating upload.
     :vartype version: str
-    :ivar pending_upload_type: BlobReference is the only supported type. Required. Blob Reference
-     is the only supported type.
-    :vartype pending_upload_type: str or ~azure.ai.projects.models.BLOB_REFERENCE
+    :ivar pending_upload_type: TemporaryBlobReference is the only supported type. Required.
+     Temporary blob reference.
+    :vartype pending_upload_type: str or ~azure.ai.projects.models.TEMPORARY_BLOB_REFERENCE
     """
 
     blob_reference: "_models.BlobReference" = rest_field(
@@ -9912,10 +10188,10 @@ class PendingUploadResult(_Model):
     """ID for this upload request. Required."""
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Version of asset to be created if user did not specify version when initially creating upload."""
-    pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE] = rest_field(
+    pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE] = rest_field(
         name="pendingUploadType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """BlobReference is the only supported type. Required. Blob Reference is the only supported type."""
+    """TemporaryBlobReference is the only supported type. Required. Temporary blob reference."""
 
     @overload
     def __init__(
@@ -9923,7 +10199,7 @@ class PendingUploadResult(_Model):
         *,
         blob_reference: "_models.BlobReference",
         pending_upload_id: str,
-        pending_upload_type: Literal[PendingUploadType.BLOB_REFERENCE],
+        pending_upload_type: Literal[PendingUploadType.TEMPORARY_BLOB_REFERENCE],
         version: Optional[str] = None,
     ) -> None: ...
 
@@ -11699,6 +11975,55 @@ class SystemData(_Model):
     """The timestamp of resource last modification (UTC)."""
 
 
+class SystemDataV3(_Model):
+    """System metadata for a resource.
+
+    :ivar created_at: Timestamp of resource creation.
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: Identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: Type of identity that created the resource.
+    :vartype created_by_type: str
+    :ivar last_modified_at: Timestamp of last resource modification.
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Timestamp of resource creation."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
+    """Identity that created the resource."""
+    created_by_type: Optional[str] = rest_field(
+        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of identity that created the resource."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Timestamp of last resource modification."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_at: Optional[datetime.datetime] = None,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[str] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TaxonomyCategory(_Model):
     """Taxonomy category definition.
 
@@ -12839,6 +13164,39 @@ class TracesEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimin
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = EvaluatorGenerationJobSourceType.TRACES  # type: ignore
+
+
+class UpdateModelVersionRequest(_Model):
+    """Request body for updating a model version. Only description and tags can be modified.
+
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset description text."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tag dictionary. Tags can be added, removed, and updated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class UpdateToolboxRequest(_Model):

@@ -427,10 +427,7 @@ class JobsOperations(_GeneratedJobsOps):
         result = super().show_services(name=name, run_id=name, node_id=node_index, **kwargs)
         if not result or not result.instances:
             return None
-        return {
-            k: ServiceInstance._from_rest_object(v, node_index)
-            for k, v in result.instances.items()
-        }
+        return {k: ServiceInstance._from_rest_object(v, node_index) for k, v in result.instances.items()}
 
     def _resolve_output_to_blob_ref(self, output_name: str, output: _Output) -> BlobReference:
         """Resolve a job ``Output`` to a :class:`~azure.ai.projects.models.BlobReference`.

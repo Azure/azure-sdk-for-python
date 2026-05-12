@@ -1927,6 +1927,204 @@ def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_beta_models_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/models/{name}/versions"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_models_list_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/models"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_models_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/models/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_models_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/models/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_beta_models_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/models/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_models_create_async_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/models/{name}/versions/{version}/createAsync"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_models_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/models/{name}/versions/{version}/startPendingUpload"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_models_get_credentials_request(  # pylint: disable=name-too-long
+    name: str, version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/models/{name}/versions/{version}/credentials"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_beta_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2697,7 +2895,7 @@ def build_beta_jobs_list_request(
     _url = "/jobs"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if job_type is not None:
         _params["jobType"] = _SERIALIZER.query("job_type", job_type, "str")
     if tag is not None:
@@ -2729,7 +2927,7 @@ def build_beta_jobs_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2755,7 +2953,7 @@ def build_beta_jobs_show_services_request(name: str, run_id: str, node_id: int, 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2780,7 +2978,7 @@ def build_beta_jobs_create_or_update_request(name: str, **kwargs: Any) -> HttpRe
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
@@ -2803,7 +3001,7 @@ def build_beta_jobs_begin_delete_request(name: str, **kwargs: Any) -> HttpReques
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
@@ -2821,7 +3019,7 @@ def build_beta_jobs_begin_cancel_request(name: str, **kwargs: Any) -> HttpReques
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", "2026-01-15-preview", "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
@@ -2850,6 +3048,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.insights = BetaInsightsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.red_teams = BetaRedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = BetaToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -10000,6 +10199,902 @@ class BetaMemoryStoresOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MemoryStoreDeleteScopeResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaModelsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`models` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_models.ModelVersion"]:
+        """List all versions of the given ModelVersion.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :return: An iterator like instance of ModelVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ModelVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ModelVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_beta_models_list_versions_request(
+                    name=name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers=_headers,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ModelVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list(self, **kwargs: Any) -> ItemPaged["_models.ModelVersion"]:
+        """List the latest version of each ModelVersion.
+
+        :return: An iterator like instance of ModelVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ModelVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ModelVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_beta_models_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers=_headers,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ModelVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get(self, name: str, version: str, **kwargs: Any) -> _models.ModelVersion:
+        """Get the specific version of the ModelVersion. The service returns 404 Not Found error if the
+        ModelVersion does not exist.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the ModelVersion to retrieve. Required.
+        :type version: str
+        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ModelVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ModelVersion] = kwargs.pop("cls", None)
+
+        _request = build_beta_models_get_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ModelVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete(self, name: str, version: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete the specific version of the ModelVersion. The service returns 204 No Content if the
+        ModelVersion was deleted successfully or if the ModelVersion does not exist.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the ModelVersion to delete. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_models_delete_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def update(
+        self,
+        name: str,
+        version: str,
+        body: _models.UpdateModelVersionRequest,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.ModelVersion:
+        """Update an existing ModelVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
+         Required.
+        :type version: str
+        :param body: The UpdateModelVersionRequest to create or update. Required.
+        :type body: ~azure.ai.projects.models.UpdateModelVersionRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ModelVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, name: str, version: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.ModelVersion:
+        """Update an existing ModelVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
+         Required.
+        :type version: str
+        :param body: The UpdateModelVersionRequest to create or update. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ModelVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self,
+        name: str,
+        version: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> _models.ModelVersion:
+        """Update an existing ModelVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
+         Required.
+        :type version: str
+        :param body: The UpdateModelVersionRequest to create or update. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ModelVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self, name: str, version: str, body: Union[_models.UpdateModelVersionRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.ModelVersion:
+        """Update an existing ModelVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the UpdateModelVersionRequest to create or update.
+         Required.
+        :type version: str
+        :param body: The UpdateModelVersionRequest to create or update. Is one of the following types:
+         UpdateModelVersionRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.UpdateModelVersionRequest or JSON or IO[bytes]
+        :return: ModelVersion. The ModelVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ModelVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ModelVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_models_update_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ModelVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_async(
+        self,
+        name: str,
+        version: str,
+        body: _models.ModelVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a Location header for polling.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Model version to create. Required.
+        :type body: ~azure.ai.projects.models.ModelVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_async(
+        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a Location header for polling.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Model version to create. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_async(
+        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a Location header for polling.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Model version to create. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_async(  # pylint: disable=inconsistent-return-statements
+        self, name: str, version: str, body: Union[_models.ModelVersion, JSON, IO[bytes]], **kwargs: Any
+    ) -> None:
+        """Creates a model version asynchronously with blob content validation. Returns 202 Accepted with
+        a Location header for polling.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Model version to create. Is one of the following types: ModelVersion, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.ModelVersion or JSON or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_models_create_async_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @overload
+    def pending_upload(
+        self,
+        name: str,
+        version: str,
+        body: _models.PendingUploadRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PendingUploadResult:
+        """Start or retrieve a pending upload for a model version.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.PendingUploadRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def pending_upload(
+        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PendingUploadResult:
+        """Start or retrieve a pending upload for a model version.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def pending_upload(
+        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PendingUploadResult:
+        """Start or retrieve a pending upload for a model version.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def pending_upload(
+        self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.PendingUploadResult:
+        """Start or retrieve a pending upload for a model version.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Is one of the following types: PendingUploadRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.PendingUploadRequest or JSON or IO[bytes]
+        :return: PendingUploadResult. The PendingUploadResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PendingUploadResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_models_pending_upload_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PendingUploadResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def get_credentials(
+        self,
+        name: str,
+        version: str,
+        body: _models.ModelCredentialRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get credentials for a model version asset.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.ModelCredentialRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_credentials(
+        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get credentials for a model version asset.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_credentials(
+        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get credentials for a model version asset.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def get_credentials(
+        self, name: str, version: str, body: Union[_models.ModelCredentialRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get credentials for a model version asset.
+
+        :param name: Name of the model. Required.
+        :type name: str
+        :param version: Version of the model. Required.
+        :type version: str
+        :param body: Is one of the following types: ModelCredentialRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.ModelCredentialRequest or JSON or IO[bytes]
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DatasetCredential] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_models_get_credentials_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DatasetCredential, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
