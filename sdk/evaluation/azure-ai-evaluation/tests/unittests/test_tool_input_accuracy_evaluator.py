@@ -176,7 +176,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result
         assert f"{key}_passed" in result
@@ -223,7 +223,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
@@ -268,7 +268,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
@@ -313,7 +313,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
@@ -358,7 +358,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
@@ -404,7 +404,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
@@ -433,7 +433,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] is None
         assert result[f"{key}_passed"] is None
@@ -498,7 +498,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result[f"{key}_score"] is None
         assert result[f"{key}_passed"] is None
         assert (
@@ -631,7 +631,7 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
+        key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result
         assert f"{key}_passed" in result

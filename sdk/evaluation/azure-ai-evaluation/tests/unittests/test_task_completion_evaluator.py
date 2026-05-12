@@ -67,7 +67,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
@@ -88,7 +88,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 0
@@ -107,7 +107,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 0
@@ -146,7 +146,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
@@ -170,7 +170,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
@@ -206,7 +206,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 1
         assert result[f"{prefix}_passed"] is True
 
@@ -230,7 +230,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 0
         assert result[f"{prefix}_passed"] is False
 
@@ -269,7 +269,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 0
         assert result[f"{prefix}_passed"] is False
 
@@ -315,7 +315,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
@@ -342,7 +342,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert result[key] == 1
         assert result[f"{prefix}_passed"] is True
 
@@ -366,7 +366,7 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert f"{prefix}_properties" in result
         assert isinstance(result[f"{prefix}_properties"], dict)
 
@@ -390,6 +390,6 @@ class TestTaskCompletionEvaluator:
         result = evaluator(query=query, response=response)
 
         key = _TaskCompletionEvaluator._RESULT_KEY
-        prefix = _TaskCompletionEvaluator._KEY_PREFIX
+        prefix = _TaskCompletionEvaluator._RESULT_KEY
         assert f"{prefix}_reason" in result
         assert result[f"{prefix}_reason"] == ""

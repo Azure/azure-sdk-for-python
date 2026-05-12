@@ -66,7 +66,6 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "tool_selection.prompty"
     _RESULT_KEY = "tool_selection"
-    _KEY_PREFIX = _RESULT_KEY
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."

@@ -128,7 +128,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result and f"{key}_result" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 3.0  # Mixed good/bad gets score 3
@@ -190,7 +190,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 1.0  # All bad gets score 1
@@ -252,7 +252,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 5.0  # All good gets score 5
@@ -335,7 +335,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] is None
         assert result[f"{key}_passed"] is None
@@ -378,7 +378,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 5.0  # All good gets score 5
@@ -443,7 +443,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
@@ -475,7 +475,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
@@ -505,7 +505,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
@@ -535,7 +535,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
@@ -565,7 +565,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
@@ -597,7 +597,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
@@ -627,7 +627,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
@@ -728,7 +728,7 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._KEY_PREFIX
+        key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 5.0
         assert result[f"{key}_passed"] is True
