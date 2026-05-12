@@ -61,17 +61,6 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.invocations" = ["py.typed"]
 
-[tool.ruff]
-line-length = 120
-target-version = "py310"
-lint.select = ["E", "F", "B", "I"]
-lint.ignore = []
-fix = false
-
-[tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.invocations"]
-combine-as-imports = true
-
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"
 breaking = false

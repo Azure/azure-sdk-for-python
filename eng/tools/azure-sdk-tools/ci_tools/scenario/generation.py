@@ -195,7 +195,7 @@ def create_package_and_install(
 
 def replace_dev_reqs(file: str, pkg_root: str, wheel_dir: Optional[str]) -> None:
     """Takes a target requirements file, replaces all local relative install locations with wheels assembled from whatever that target path was.
-    This is an extremely important step that runs on every dev_requirements.txt file before invoking any tox runs.
+    This is an extremely important step that runs on every dev_requirements.txt file before invoking any checks.
 
     This is due to the fact that pip isn't multi-process-safe with the activity of installing a local relative requirement. .pyc files are updated
     and removed in place, possibly causing a hang in the install process. When in_ci() is true, this function is run against every single requirement file.

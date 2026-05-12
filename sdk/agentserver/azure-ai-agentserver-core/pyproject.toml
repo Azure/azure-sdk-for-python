@@ -52,17 +52,6 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 [tool.setuptools.package-data]
 "azure.ai.agentserver.core" = ["py.typed"]
 
-[tool.ruff]
-line-length = 120
-target-version = "py310"
-lint.select = ["E", "F", "B", "I"]
-lint.ignore = []
-fix = false
-
-[tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.core"]
-combine-as-imports = true
-
 [tool.azure-sdk-build]
 breaking = false
 mypy = true

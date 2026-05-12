@@ -33,5 +33,6 @@
         "typetest.scalar.aio.operations.Decimal128VerifyOperations.prepare_verify": "Type.Scalar.Decimal128Verify.prepareVerify",
         "typetest.scalar.operations.Decimal128VerifyOperations.verify": "Type.Scalar.Decimal128Verify.verify",
         "typetest.scalar.aio.operations.Decimal128VerifyOperations.verify": "Type.Scalar.Decimal128Verify.verify"
-    }
+    },
+    "CrossLanguageVersion": "babb41b1e3b2"
 }

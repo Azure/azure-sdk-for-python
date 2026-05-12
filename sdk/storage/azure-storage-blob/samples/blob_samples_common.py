@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_common.py
@@ -20,8 +19,7 @@ USAGE:
 import os
 import sys
 
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import ResourceExistsError
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
@@ -31,7 +29,7 @@ class CommonBlobSamples(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING_SOFT")
 
-    #--Begin Blob Samples-----------------------------------------------------------------
+    # --Begin Blob Samples-----------------------------------------------------------------
 
     def blob_snapshots(self):
         if self.connection_string is None:
@@ -239,6 +237,7 @@ class CommonBlobSamples(object):
 
         finally:
             blob_service_client.delete_container("copyblobcontainer")
+
 
 if __name__ == '__main__':
     sample = CommonBlobSamples()
