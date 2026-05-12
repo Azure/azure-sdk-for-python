@@ -32,9 +32,26 @@
 
 ## Overview
 
-The durable task subsystem handles lifecycle management — creating, resuming, and
-recovering tasks based on their current state. You write the task function. The
-framework manages the state machine.
+Azure AI Hosted Agent containers can be killed at any time — OOM kills, node
+preemptions, rolling deployments, or unexpected crashes. Without durability,
+any in-flight work is lost and the agent starts from scratch.
+
+`@durable_task` makes your agent functions **crash-resilient**:
+
+1. **Before your function runs**, the framework persists the task's input and
+   metadata to a durable store and acquires a lease.
+2. **While your function runs**, the framework renews the lease in the background
+   and auto-flushes metadata changes so progress is never lost.
+3. **If the container dies**, the lease expires (or is immediately reclaimed on
+   restart via stable session identity). On the next container boot — before any
+   HTTP handlers go live — the framework detects the orphaned task and
+   **re-invokes your function** with `entry_mode="recovered"`, restoring the
+   original input and last-flushed metadata.
+4. **When your function completes or suspends**, the framework transitions the
+   task to terminal state in the store.
+
+The net effect: you write a normal `async` function, and the framework guarantees
+it runs to completion even across container restarts.
 
 You do **not** need to think about:
 
