@@ -1,0 +1,14 @@
+{
+    "CrossLanguagePackageId": "Azure.SpecialHeaders.ConditionalRequest",
+    "CrossLanguageDefinitionId": {
+        "azure.specialheaders.conditionalrequest.ConditionalRequestClient.post_if_match": "Azure.SpecialHeaders.ConditionalRequest.postIfMatch",
+        "azure.specialheaders.conditionalrequest.aio.ConditionalRequestClient.post_if_match": "Azure.SpecialHeaders.ConditionalRequest.postIfMatch",
+        "azure.specialheaders.conditionalrequest.ConditionalRequestClient.post_if_none_match": "Azure.SpecialHeaders.ConditionalRequest.postIfNoneMatch",
+        "azure.specialheaders.conditionalrequest.aio.ConditionalRequestClient.post_if_none_match": "Azure.SpecialHeaders.ConditionalRequest.postIfNoneMatch",
+        "azure.specialheaders.conditionalrequest.ConditionalRequestClient.post_custom_if_match": "Azure.SpecialHeaders.ConditionalRequest.postCustomIfMatch",
+        "azure.specialheaders.conditionalrequest.aio.ConditionalRequestClient.post_custom_if_match": "Azure.SpecialHeaders.ConditionalRequest.postCustomIfMatch",
+        "azure.specialheaders.conditionalrequest.ConditionalRequestClient.post_custom_if_none_match": "Azure.SpecialHeaders.ConditionalRequest.postCustomIfNoneMatch",
+        "azure.specialheaders.conditionalrequest.aio.ConditionalRequestClient.post_custom_if_none_match": "Azure.SpecialHeaders.ConditionalRequest.postCustomIfNoneMatch"
+    },
+    "CrossLanguageVersion": "e5b31c8f9a7f"
+}
