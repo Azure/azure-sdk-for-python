@@ -307,9 +307,16 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     #     ClassDef's direct body.
     #   - For module-level functions, search only the module's top-level body.
     try:
-        source_path = inspect.getsourcefile(f)
-        target_name = getattr(f, "__name__", None)
-        qualname = getattr(f, "__qualname__", target_name) or ""
+        lookup_target = f
+        try:
+            lookup_target = inspect.unwrap(f)
+        except (AttributeError, ValueError, TypeError):
+            # Fall back to the original callable when unwrap is not possible.
+            lookup_target = f
+
+        source_path = inspect.getsourcefile(lookup_target)
+        target_name = getattr(lookup_target, "__name__", None)
+        qualname = getattr(lookup_target, "__qualname__", target_name) or ""
         if source_path and target_name:
             module_ast = _get_parsed_module(source_path)
             target_node = None
