@@ -244,14 +244,14 @@ class DatasetsOperations(DatasetsOperationsGenerated):
                 raise ValueError("The provided folder is empty.")
 
             total_files = len(files_to_upload)
-            logger.debug(
-                "[upload_folder] Starting parallel upload of %d files with max_workers=%s.",
-                total_files,
-                max_workers if max_workers is not None else "default",
-            )
 
             # Upload files in parallel using ThreadPoolExecutor
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                logger.debug(
+                    "[upload_folder] Starting parallel upload of %d files with max_workers=%s.",
+                    total_files,
+                    executor._max_workers,  # pylint: disable=protected-access
+                )
                 futures = {executor.submit(upload_single_file, f, total_files): f for f in files_to_upload}
                 for future in as_completed(futures):
                     future.result()  # Raises exception if upload failed
