@@ -174,88 +174,96 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                     f"  Subscription: {subscription_id}, RG: {resource_group}, Location: {location}"
                 )
 
-                # Now fetch deployments for this resource
+                # Now fetch deployments for this resource, following nextLink for pagination
                 deployments_url = f"{base_url}{resource_id}/deployments?api-version={api_version}"
 
-                async with session.get(deployments_url, headers=headers) as deploy_response:
-                    if deploy_response.status != 200:
-                        error = await deploy_response.text()
-                        logger.warning(f"Failed to get deployments: {deploy_response.status} - {error[:200]}")
-                        return []
+                deployments = []
+                items = []
+                next_url = deployments_url
+                page = 0
 
-                    deploy_data = await deploy_response.json()
+                while next_url:
+                    page += 1
+                    async with session.get(next_url, headers=headers) as deploy_response:
+                        if deploy_response.status != 200:
+                            error = await deploy_response.text()
+                            logger.warning(f"Failed to get deployments: {deploy_response.status} - {error[:200]}")
+                            return []
 
-                    # Parse deployments
-                    deployments = []
-                    items = deploy_data.get("value", [])
+                        deploy_data = await deploy_response.json()
+                        page_items = deploy_data.get("value", [])
+                        items.extend(page_items)
+                        next_url = deploy_data.get("nextLink")
+                        if next_url:
+                            logger.info(f"Following nextLink (page {page}, {len(page_items)} items this page)")
 
-                    logger.info(f"Found {len(items)} deployment(s)")
+                logger.info(f"Found {len(items)} total deployment(s) across {page} page(s)")
 
-                    for item in items:
-                        name = item.get("name", "unknown")
-                        properties = item.get("properties", {})
-                        model = properties.get("model", {})
+                for item in items:
+                    name = item.get("name", "unknown")
+                    properties = item.get("properties", {})
+                    model = properties.get("model", {})
 
-                        model_name = model.get("name", "unknown")
-                        model_version = model.get("version", "")
-                        model_format = model.get("format", "")
+                    model_name = model.get("name", "unknown")
+                    model_version = model.get("version", "")
+                    model_format = model.get("format", "")
 
-                        # Filter: chat-capable or responses-capable models
-                        capabilities = properties.get("capabilities", {})
+                    # Filter: chat-capable or responses-capable models
+                    capabilities = properties.get("capabilities", {})
 
-                        is_chat = (
-                            capabilities.get("chatCompletion") in ("true", True)
-                            or capabilities.get("chat_completion") in ("true", True)
-                        )
-                        is_responses = capabilities.get("responses") in ("true", True)
+                    is_chat = (
+                        capabilities.get("chatCompletion") in ("true", True)
+                        or capabilities.get("chat_completion") in ("true", True)
+                    )
+                    is_responses = capabilities.get("responses") in ("true", True)
 
-                        if not is_chat and not is_responses:
-                            logger.debug(f"Skipping model without chat/responses: {name} (capabilities: {capabilities})")
-                            continue
+                    if not is_chat and not is_responses:
+                        logger.debug(f"Skipping model without chat/responses: {name} (capabilities: {capabilities})")
+                        continue
 
-                        # Note: no model_format filter — capability check above is sufficient
+                    # Note: no model_format filter — capability check above is sufficient
 
-                        # Extract rate limits (tokens per minute)
-                        rate_limits = properties.get("rateLimits", [])
-                        token_rate_limit = 0
-                        for limit in rate_limits:
-                            if limit.get("key") == "token":
-                                token_rate_limit = limit.get("count", 0)
-                                break
+                    # Extract rate limits (tokens per minute)
+                    rate_limits = properties.get("rateLimits", [])
+                    token_rate_limit = 0
+                    for limit in rate_limits:
+                        if limit.get("key") == "token":
+                            token_rate_limit = limit.get("count", 0)
+                            break
 
-                        # Include this model
-                        deployment = FoundryDeployment(
-                            name=name,
-                            model_name=model_name,
-                            model_version=model_version,
-                            model_format=model_format,
-                            status=properties.get("provisioningState", "Unknown"),
-                            token_rate_limit=token_rate_limit,
-                            capabilities=capabilities,
-                        )
-                        deployments.append(deployment)
+                    # Include this model
+                    deployment = FoundryDeployment(
+                        name=name,
+                        model_name=model_name,
+                        model_version=model_version,
+                        model_format=model_format,
+                        status=properties.get("provisioningState", "Unknown"),
+                        token_rate_limit=token_rate_limit,
+                        capabilities=capabilities,
+                    )
+                    deployments.append(deployment)
 
-                    if deployments:
-                        # Sort by rate limits (highest first), then by format preference
-                        format_priority = {"OpenAI": 3, "Anthropic": 2, "Meta": 1}
+                if deployments:
+                    # Sort by rate limits (highest first), then by format preference
+                    format_priority = {"OpenAI": 3, "Anthropic": 2, "Meta": 1}
 
-                        deployments.sort(
-                            key=lambda d: (
-                                d.token_rate_limit,  # Primary: highest rate limit
-                                format_priority.get(d.model_format, 0),  # Secondary: format preference
-                                d.name  # Tertiary: alphabetical
-                            ),
-                            reverse=True
-                        )
+                    deployments.sort(
+                        key=lambda d: (
+                            d.token_rate_limit,  # Primary: highest rate limit
+                            format_priority.get(d.model_format, 0),  # Secondary: format preference
+                            d.name  # Tertiary: alphabetical
+                        ),
+                        reverse=True
+                    )
 
-                        logger.info(f"Discovered {len(deployments)} chat deployment(s) via Management API")
-                        logger.info(
-                            f"Selected model: {deployments[0].name} ({deployments[0].token_rate_limit} TPM)"
-                        )
-                        return deployments
-                    else:
-                        logger.warning("No chat-capable deployments found")
-                        return []
+                    logger.info(f"Discovered {len(deployments)} chat deployment(s) via Management API")
+                    logger.info(
+                        f"Selected model: {deployments[0].name} ({deployments[0].token_rate_limit} TPM)"
+                    )
+                    return deployments
+                else:
+                    logger.warning("No chat-capable deployments found")
+                    return []
 
     except Exception as e:
         logger.error(f"Management API discovery failed: {e}", exc_info=True)
