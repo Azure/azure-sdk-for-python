@@ -975,6 +975,10 @@ def test_return_type_paged_iterable_equivalence_is_not_breaking():
         ("ItemPaged[_models.PeeringLocation]", "Iterable[_models.PeeringLocation]"),
         # Module-qualified spellings should normalize too.
         ("typing.AsyncIterable[X]", "azure.core.async_paging.AsyncItemPaged[X]"),
+        # `typing` aliases vs PEP 585 builtin generics are equivalent.
+        ("Dict[str, Any]", "dict[str, Any]"),
+        ("List[str]", "list[str]"),
+        ("typing.Tuple[int, str]", "tuple[int, str]"),
     ]
     for stable_rt, current_rt in cases:
         stable, current = _make(stable_rt, current_rt, is_async="Async" in stable_rt)

@@ -17,10 +17,17 @@ import jsondiff
 # and should not be flagged as a breaking change. The concrete paged types
 # (`ItemPaged` / `AsyncItemPaged`) implement the corresponding abstract
 # iterable protocols (`Iterable` / `AsyncIterable`), so a switch between them
-# is a no-op for callers.
+# is a no-op for callers. The `typing` generic aliases (`Dict`, `List`, ...)
+# are equivalent to the PEP 585 builtin generics (`dict`, `list`, ...).
 _EQUIVALENT_RETURN_TYPES = (
     ("ItemPaged", "Iterable"),
     ("AsyncItemPaged", "AsyncIterable"),
+    ("Dict", "dict"),
+    ("List", "list"),
+    ("Tuple", "tuple"),
+    ("Set", "set"),
+    ("FrozenSet", "frozenset"),
+    ("Type", "type"),
 )
 
 
