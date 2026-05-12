@@ -968,6 +968,33 @@ def test_create_function_report_scopes_return_type_to_owner_class():
         sys.path.remove(os.path.join(os.path.dirname(__file__), "examples", "return_type_capture"))
 
 
+def test_get_parameter_type_handles_pep604_union_is_json_serializable():
+    """Regression: PEP 604 unions (``T | None``) parse as ``ast.BinOp`` and
+    previously fell through to ``return annotation``, leaving a raw AST node in
+    the report. ``json.dump`` on the public API report would then raise
+    ``TypeError``. Ensure the captured ``return_type`` is a JSON-serializable
+    string for both standalone and nested PEP 604 unions.
+    """
+    import ast as _ast
+    from breaking_changes_checker.detect_breaking_changes import get_parameter_type
+
+    # Standalone PEP 604 union as a return annotation.
+    fn = _ast.parse("def f() -> int | None: ...").body[0]
+    result = get_parameter_type(fn.returns)
+    assert result == "Union[int, None]"
+    json.dumps({"return_type": result})  # must not raise
+
+    # Nested in a generic, e.g. LROPoller[int | None].
+    fn2 = _ast.parse("def f() -> LROPoller[int | None]: ...").body[0]
+    result2 = get_parameter_type(fn2.returns)
+    assert result2 == "LROPoller[Union[int, None]]"
+    json.dumps({"return_type": result2})
+
+    # Three-way union flattens left-to-right.
+    fn3 = _ast.parse("def f() -> int | str | None: ...").body[0]
+    assert get_parameter_type(fn3.returns) == "Union[int, str, None]"
+
+
 def test_report_mode_without_setup_py():
     """Verify detect_breaking_changes.py works with --source-report and --target-report
     when --target points to a directory without setup.py or pyproject.toml.

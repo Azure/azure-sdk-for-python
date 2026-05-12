@@ -356,6 +356,8 @@ def get_parameter_default_ast(default):
 
 
 def get_parameter_type(annotation) -> str:
+    if annotation is None:
+        return None
     if isinstance(annotation, ast.Name):
         return annotation.id
     if isinstance(annotation, ast.Attribute):
@@ -371,7 +373,26 @@ def get_parameter_type(annotation) -> str:
         return f"{get_parameter_type(annotation.value)}[{get_parameter_type(annotation.slice)}]"
     if isinstance(annotation, ast.Tuple):
         return ", ".join([get_parameter_type(el) for el in annotation.elts])
-    return annotation
+    # PEP 604 union syntax (e.g. ``int | None``) parses as ``ast.BinOp`` with
+    # ``ast.BitOr``. Represent it as a ``Union[...]`` string so the captured
+    # value remains JSON-serializable.
+    if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
+        parts = []
+        def _flatten(node):
+            if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+                _flatten(node.left)
+                _flatten(node.right)
+            else:
+                parts.append(get_parameter_type(node))
+        _flatten(annotation)
+        return f"Union[{', '.join(str(p) for p in parts)}]"
+    # Fall back to a source-level string representation so we never return a
+    # raw AST node (which would not be JSON-serializable when the report is
+    # written via ``json.dump``).
+    try:
+        return ast.unparse(annotation)
+    except Exception:  # pylint: disable=broad-except
+        return str(annotation)
 
 
 def create_parameters(args: ast.arg) -> Dict:
