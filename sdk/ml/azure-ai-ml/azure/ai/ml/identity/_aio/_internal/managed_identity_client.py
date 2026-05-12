@@ -27,8 +27,10 @@ class AsyncManagedIdentityClient(AsyncContextManager, ManagedIdentityClientBase)
     async def request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         # pylint:disable=invalid-overridden-method
         resource = _scopes_to_resource(*scopes)
-        # pylint: disable=no-member
-        request = self._request_factory(resource, self._identity_config)  # type: ignore
+        request = self._request_factory(resource)
+        kwargs.pop("claims", None)
+        kwargs.pop("tenant_id", None)
+        kwargs.pop("enable_cae", None)
         request_time = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=[request.method], **kwargs)
         token = self._process_response(response=response, request_time=request_time, resource=resource)
