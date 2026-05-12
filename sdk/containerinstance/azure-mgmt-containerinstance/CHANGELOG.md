@@ -1,5 +1,87 @@
 # Release History
 
+## 10.2.0b2 (2026-03-26)
+
+### Features Added
+
+  - Client `ContainerInstanceManagementClient` added method `send_request`
+  - Model `ContainerGroup` added property `properties`
+  - Model `ContainerGroup` added property `system_data`
+  - Model `InitContainerDefinition` added property `properties`
+  - Model `ListResultContainerGroup` added property `properties`
+  - Model `NGroupPatch` added property `properties`
+  - Added model `ArmResource`
+  - Added model `CloudError`
+  - Added model `InitContainerPropertiesDefinition`
+  - Added model `ProxyResource`
+
+### Breaking Changes
+
+  - Model `ContainerGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `ContainerGroup` deleted or renamed its instance variable `secret_references`
+  - Model `ContainerGroup` deleted or renamed its instance variable `containers`
+  - Model `ContainerGroup` deleted or renamed its instance variable `image_registry_credentials`
+  - Model `ContainerGroup` deleted or renamed its instance variable `restart_policy`
+  - Model `ContainerGroup` deleted or renamed its instance variable `ip_address`
+  - Model `ContainerGroup` deleted or renamed its instance variable `os_type`
+  - Model `ContainerGroup` deleted or renamed its instance variable `volumes`
+  - Model `ContainerGroup` deleted or renamed its instance variable `instance_view`
+  - Model `ContainerGroup` deleted or renamed its instance variable `diagnostics`
+  - Model `ContainerGroup` deleted or renamed its instance variable `subnet_ids`
+  - Model `ContainerGroup` deleted or renamed its instance variable `dns_config`
+  - Model `ContainerGroup` deleted or renamed its instance variable `sku`
+  - Model `ContainerGroup` deleted or renamed its instance variable `encryption_properties`
+  - Model `ContainerGroup` deleted or renamed its instance variable `init_containers`
+  - Model `ContainerGroup` deleted or renamed its instance variable `extensions`
+  - Model `ContainerGroup` deleted or renamed its instance variable `confidential_compute_properties`
+  - Model `ContainerGroup` deleted or renamed its instance variable `priority`
+  - Model `ContainerGroup` deleted or renamed its instance variable `identity_acls`
+  - Model `ContainerGroup` deleted or renamed its instance variable `container_group_profile`
+  - Model `ContainerGroup` deleted or renamed its instance variable `standby_pool_profile`
+  - Model `ContainerGroup` deleted or renamed its instance variable `is_created_from_standby_pool`
+  - Model `ContainerGroupProperties` deleted or renamed its instance variable `identity`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `image`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `command`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `environment_variables`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `instance_view`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `volume_mounts`
+  - Model `InitContainerDefinition` deleted or renamed its instance variable `security_context`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `provisioning_state`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `secret_references`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `containers`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `image_registry_credentials`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `restart_policy`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `ip_address`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `os_type`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `volumes`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `diagnostics`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `subnet_ids`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `dns_config`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `sku`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `encryption_properties`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `init_containers`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `extensions`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `confidential_compute_properties`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `priority`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `identity_acls`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `container_group_profile`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `standby_pool_profile`
+  - Model `ListResultContainerGroup` deleted or renamed its instance variable `is_created_from_standby_pool`
+  - Model `ListResultContainerGroupProperties` deleted or renamed its instance variable `identity`
+  - Model `NGroupPatch` deleted or renamed its instance variable `elastic_profile`
+  - Model `NGroupPatch` deleted or renamed its instance variable `placement_profile`
+  - Model `NGroupPatch` deleted or renamed its instance variable `container_group_profiles`
+  - Model `NGroupPatch` deleted or renamed its instance variable `provisioning_state`
+  - Model `NGroupPatch` deleted or renamed its instance variable `update_profile`
+  - Deleted or renamed model `NGroupSkus`
+  - Deleted or renamed model `NGroupsSkusList`
+  - Method `ContainersOperations.list_logs` changed its parameter `tail` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainersOperations.list_logs` changed its parameter `timestamps` from `positional_or_keyword` to `keyword_only`
+
+## 10.2.0 (2026-03-25)
+
+skip changelog generation
+
 ## 10.2.0b1 (2024-10-21)
 
 ### Features Added
