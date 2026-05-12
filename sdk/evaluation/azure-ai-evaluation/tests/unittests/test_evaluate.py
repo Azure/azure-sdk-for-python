@@ -41,6 +41,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _process_rows,
     _aggregate_label_defect_metrics,
     _update_metric_value,
+    _extract_metric_values,
     _build_internal_log_attributes,
     _extract_testing_criteria_metadata,
     _process_criteria_metrics,
@@ -3175,3 +3176,180 @@ class TestGetMetricFromCriteria:
 
     def test_fallback_to_criteria_name(self):
         assert _get_metric_from_criteria("my_criteria", "unknown_key", ["f1_score"]) == "my_criteria"
+
+
+@pytest.mark.unittest
+class TestUpdateMetricValuePreservesExplicitPassed:
+    """Tests that _update_metric_value preserves an explicit ``passed`` value when
+    processing ``_result`` / ``result`` / ``_label`` keys.
+
+    The fix gates the ``passed`` derivation for ``azure_ai_evaluator`` criteria
+    behind ``"passed" not in metric_dict`` so a previously set explicit value
+    (e.g. from an earlier ``metric_key == "passed"`` iteration) is not overwritten.
+    """
+
+    @staticmethod
+    def _call(metric_dict, metric_key, metric_value, criteria_type="azure_ai_evaluator"):
+        return _update_metric_value(
+            criteria_type=criteria_type,
+            metric_dict=metric_dict,
+            metric_key=metric_key,
+            metric="test_metric",
+            metric_value=metric_value,
+            logger=logging.getLogger("test"),
+        )
+
+    # --- guard preserves explicit value ---
+    @pytest.mark.parametrize("label_key", ["test_metric_result", "result", "test_metric_label"])
+    def test_explicit_passed_true_preserved_when_label_says_fail(self, label_key):
+        """Explicit passed=True must NOT be overwritten by a 'Fail' label."""
+        metric_dict = {"passed": True}
+        result_name, _, _, derived_passed = self._call(metric_dict, label_key, "Fail")
+        assert metric_dict["passed"] is True
+        assert metric_dict["label"] == "Fail"
+        assert result_name == "label"
+        assert derived_passed is None  # guard fired; no derived value returned
+
+    @pytest.mark.parametrize("label_key", ["test_metric_result", "result", "test_metric_label"])
+    def test_explicit_passed_false_preserved_when_label_says_pass(self, label_key):
+        """Explicit passed=False must NOT be overwritten by a 'Pass' label."""
+        metric_dict = {"passed": False}
+        _, _, _, derived_passed = self._call(metric_dict, label_key, "Pass")
+        assert metric_dict["passed"] is False
+        assert metric_dict["label"] == "Pass"
+        assert derived_passed is None
+
+    def test_explicit_passed_none_preserved_when_label_present(self):
+        """Even an explicit passed=None must be preserved (key already in dict)."""
+        metric_dict = {"passed": None}
+        _, _, _, derived_passed = self._call(metric_dict, "test_metric_result", "Pass")
+        assert metric_dict["passed"] is None
+        assert metric_dict["label"] == "Pass"
+        assert derived_passed is None
+
+    # --- derivation still happens when no explicit passed ---
+    @pytest.mark.parametrize(
+        "label_value,expected_passed",
+        [
+            ("Pass", True),
+            ("pass", True),
+            ("True", True),
+            ("true", True),
+            ("Fail", False),
+            ("fail", False),
+            ("False", False),
+            (None, False),
+        ],
+    )
+    def test_passed_derived_when_not_present(self, label_value, expected_passed):
+        """Without an existing passed key, original derivation logic still applies."""
+        metric_dict = {}
+        _, _, _, derived_passed = self._call(metric_dict, "test_metric_result", label_value)
+        assert metric_dict["passed"] is expected_passed
+        assert derived_passed is expected_passed
+
+    # --- non azure_ai_evaluator criteria never derive passed ---
+    def test_non_azure_ai_evaluator_does_not_derive_passed(self):
+        """Other criteria types must not derive passed from label, regardless of guard."""
+        metric_dict = {}
+        _, _, _, derived_passed = self._call(metric_dict, "test_metric_result", "Pass", criteria_type="python_grader")
+        assert "passed" not in metric_dict
+        assert derived_passed is None
+
+    def test_non_azure_ai_evaluator_preserves_explicit_passed(self):
+        """Other criteria types must also preserve explicit passed (no derivation path runs)."""
+        metric_dict = {"passed": True}
+        _, _, _, derived_passed = self._call(metric_dict, "test_metric_result", "Fail", criteria_type="python_grader")
+        assert metric_dict["passed"] is True
+        assert metric_dict["label"] == "Fail"
+        assert derived_passed is None
+
+    # --- explicit passed wins regardless of iteration order via _extract_metric_values ---
+    def test_extract_metric_values_passed_before_result(self):
+        """When 'passed' key precedes '_result', explicit value wins (already worked, regression check)."""
+        metrics = {
+            "passed": True,
+            "test_metric_result": "Fail",
+        }
+        result = _extract_metric_values(
+            criteria_name="test_metric",
+            criteria_type="azure_ai_evaluator",
+            metrics=metrics,
+            expected_metrics=["test_metric"],
+            logger=logging.getLogger("test"),
+        )
+        assert result["test_metric"]["passed"] is True
+        assert result["test_metric"]["label"] == "Fail"
+
+    def test_extract_metric_values_result_before_passed(self):
+        """When '_result' precedes 'passed', explicit value still wins (unchanged branch)."""
+        metrics = {
+            "test_metric_result": "Fail",
+            "passed": True,
+        }
+        result = _extract_metric_values(
+            criteria_name="test_metric",
+            criteria_type="azure_ai_evaluator",
+            metrics=metrics,
+            expected_metrics=["test_metric"],
+            logger=logging.getLogger("test"),
+        )
+        assert result["test_metric"]["passed"] is True
+        assert result["test_metric"]["label"] == "Fail"
+
+    # --- end-to-end through _process_criteria_metrics (one level up) ---
+    def test_process_criteria_metrics_preserves_explicit_passed(self):
+        """End-to-end: explicit passed must survive through the full result-object pipeline."""
+        metrics = {
+            "passed": True,
+            "test_metric_result": "Fail",
+            "test_metric_score": 0.2,
+            "test_metric_reason": "Did not meet bar",
+        }
+        testing_criteria_metadata = {
+            "test_metric": {
+                "metrics": ["test_metric"],
+                "type": "azure_ai_evaluator",
+                "is_inverse": False,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            criteria_name="test_metric",
+            metrics=metrics,
+            testing_criteria_metadata=testing_criteria_metadata,
+            logger=logging.getLogger("test"),
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert len(results) == 1
+        # Explicit passed=True wins despite label="Fail" and low score
+        assert results[0]["passed"] is True
+        assert results[0]["label"] == "Fail"
+        assert results[0]["score"] == 0.2
+
+    def test_process_criteria_metrics_derives_passed_when_absent(self):
+        """End-to-end regression: when no explicit passed is provided, derivation still happens."""
+        metrics = {
+            "test_metric_result": "Pass",
+            "test_metric_score": 0.9,
+        }
+        testing_criteria_metadata = {
+            "test_metric": {
+                "metrics": ["test_metric"],
+                "type": "azure_ai_evaluator",
+                "is_inverse": False,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            criteria_name="test_metric",
+            metrics=metrics,
+            testing_criteria_metadata=testing_criteria_metadata,
+            logger=logging.getLogger("test"),
+            eval_id=None,
+            eval_run_id=None,
+        )
+        assert len(results) == 1
+        assert results[0]["passed"] is True
+        assert results[0]["label"] == "Pass"
+
+
