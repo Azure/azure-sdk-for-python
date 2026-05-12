@@ -83,6 +83,11 @@ from ...operations._operations import (
     build_beta_insights_generate_request,
     build_beta_insights_get_request,
     build_beta_insights_list_request,
+    build_beta_jobs_begin_cancel_request,
+    build_beta_jobs_begin_delete_request,
+    build_beta_jobs_create_or_update_request,
+    build_beta_jobs_get_request,
+    build_beta_jobs_list_request,
     build_beta_memory_stores_create_request,
     build_beta_memory_stores_delete_request,
     build_beta_memory_stores_delete_scope_request,
@@ -175,6 +180,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.toolboxes = BetaToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.skills = BetaSkillsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = BetaJobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 class AgentsOperations:
@@ -10094,3 +10100,433 @@ class BetaDatasetsOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+
+class BetaJobsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`jobs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        job_type: Optional[Union[str, _models.JobType]] = None,
+        tag: Optional[str] = None,
+        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
+        properties: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.Job"]:
+        """List Jobs.
+
+        :keyword job_type: Filter by job type (e.g. 'Command'). "Command" Default value is None.
+        :paramtype job_type: str or ~azure.ai.projects.models.JobType
+        :keyword tag: Filter jobs by tag in the format 'key=value' (e.g., 'framework=pytorch'). Default
+         value is None.
+        :paramtype tag: str
+        :keyword list_view_type: Specifies which view type to apply when listing jobs. Known values
+         are: "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
+        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
+        :keyword properties: Comma-separated user property names and optionally values. Example:
+         prop1,prop2=value2. Default value is None.
+        :paramtype properties: str
+        :return: An iterator like instance of Job
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Job]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Job]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_beta_jobs_list_request(
+                    job_type=job_type,
+                    tag=tag,
+                    list_view_type=list_view_type,
+                    properties=properties,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers=_headers,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Job],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get(self, name: str, **kwargs: Any) -> _models.Job:
+        """Get a Job by name.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_get_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Job, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self, name: str, job: _models.Job, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Required.
+        :type job: ~azure.ai.projects.models.Job
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, name: str, job: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Required.
+        :type job: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, name: str, job: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Required.
+        :type job: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update(self, name: str, job: Union[_models.Job, JSON, IO[bytes]], **kwargs: Any) -> _models.Job:
+        """Create and execute a Job. For update case, the Tags in the definition passed in will replace
+        Tags in the existing job.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :param job: The job to create or update. Is one of the following types: Job, JSON, IO[bytes]
+         Required.
+        :type job: ~azure.ai.projects.models.Job or JSON or IO[bytes]
+        :return: Job. The Job is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Job
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Job] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(job, (IOBase, bytes)):
+            _content = job
+        else:
+            _content = json.dumps(job, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_jobs_create_or_update_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Job, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(self, name: str, **kwargs: Any) -> None:
+        """Delete a Job by name. Returns 202 Accepted with a Location header to poll for completion, or
+        204 if the job does not exist.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_begin_delete_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def begin_cancel(self, name: str, **kwargs: Any) -> None:
+        """Cancel a Job by name. Returns 200 if cancelled immediately, or 202 Accepted with a Location
+        header to poll for completion.
+
+        :param name: The name of the Job. This is case-sensitive. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_jobs_begin_cancel_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore

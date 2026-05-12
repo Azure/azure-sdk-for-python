@@ -35,6 +35,13 @@ from ._patch_evaluation_typeddicts import (
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
+from ._patch_jobs import (
+    CommandJobLimits,
+    CommandJob,
+    Diagnostic,
+    ValidationResult,
+    load_job,
+)
 
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
@@ -377,7 +384,10 @@ __all__: List[str] = [
     "AzureAIDataSourceConfig",
     "AzureAIModelTargetParam",
     "AzureAIResponsesEvalRunDataSource",
+    "CommandJobLimits",
     "CustomCredential",
+    "CommandJob",
+    "Diagnostic",
     "EvalCsvFileIdSource",
     "EvalCsvRunDataSource",
     "TestingCriterionAzureAIEvaluator",
@@ -388,6 +398,8 @@ __all__: List[str] = [
     "ToolDescriptionParam",
     "TracesPreviewEvalRunDataSource",
     "UpdateMemoriesLROPoller",
+    "ValidationResult",
+    "load_job",
 ]  # Add all objects you want publicly available to users at this package level
 
 

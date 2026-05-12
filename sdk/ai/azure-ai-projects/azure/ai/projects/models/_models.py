@@ -1003,14 +1003,14 @@ class AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator="agent"):
     :ivar type: Input type of the evaluation taxonomy. Required. Agent.
     :vartype type: str or ~azure.ai.projects.models.AGENT
     :ivar target: Target configuration for the agent. Required.
-    :vartype target: ~azure.ai.projects.models.Target
+    :vartype target: ~azure.ai.projects.models.EvaluationTarget
     :ivar risk_categories: List of risk categories to evaluate against. Required.
     :vartype risk_categories: list[str or ~azure.ai.projects.models.RiskCategory]
     """
 
     type: Literal[EvaluationTaxonomyInputType.AGENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Input type of the evaluation taxonomy. Required. Agent."""
-    target: "_models.Target" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    target: "_models.EvaluationTarget" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Target configuration for the agent. Required."""
     risk_categories: list[Union[str, "_models.RiskCategory"]] = rest_field(
         name="riskCategories", visibility=["read", "create", "update", "delete", "query"]
@@ -1021,7 +1021,7 @@ class AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator="agent"):
     def __init__(
         self,
         *,
-        target: "_models.Target",
+        target: "_models.EvaluationTarget",
         risk_categories: list[Union[str, "_models.RiskCategory"]],
     ) -> None: ...
 
@@ -1201,6 +1201,67 @@ class AISearchIndexResource(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class NodeCollection(_Model):
+    """Nodes that user would like to start the service on.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AllNodes
+
+    :ivar nodes_value_type: Type of the Nodes value. Required. Default value is None.
+    :vartype nodes_value_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    nodes_value_type: str = rest_discriminator(
+        name="nodesValueType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of the Nodes value. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        nodes_value_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AllNodes(NodeCollection, discriminator="All"):
+    """All nodes means the service will be running on all of the nodes of the job.
+
+    :ivar nodes_value_type: Type of the Nodes value. Required. Default value is "All".
+    :vartype nodes_value_type: str
+    """
+
+    nodes_value_type: Literal["All"] = rest_discriminator(name="nodesValueType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the Nodes value. Required. Default value is \"All\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.nodes_value_type = "All"  # type: ignore
 
 
 class ApiError(_Model):
@@ -1438,7 +1499,7 @@ class AutoCodeInterpreterToolParam(_Model):
         self.type: Literal["auto"] = "auto"
 
 
-class Target(_Model):
+class EvaluationTarget(_Model):
     """Base class for targets with discriminator support.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1470,7 +1531,7 @@ class Target(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureAIAgentTarget(Target, discriminator="azure_ai_agent"):
+class AzureAIAgentTarget(EvaluationTarget, discriminator="azure_ai_agent"):
     """Represents a target specifying an Azure AI agent.
 
     :ivar type: The type of target, always ``azure_ai_agent``. Required. Default value is
@@ -1517,7 +1578,7 @@ class AzureAIAgentTarget(Target, discriminator="azure_ai_agent"):
         self.type = "azure_ai_agent"  # type: ignore
 
 
-class AzureAIModelTarget(Target, discriminator="azure_ai_model"):
+class AzureAIModelTarget(EvaluationTarget, discriminator="azure_ai_model"):
     """Represents a target specifying an Azure AI model for operations requiring model selection.
 
     :ivar type: The type of target, always ``azure_ai_model``. Required. Default value is
@@ -1942,7 +2003,7 @@ class AzureFunctionTool(Tool, discriminator="azure_function"):
         self.type = ToolType.AZURE_FUNCTION  # type: ignore
 
 
-class TargetConfig(_Model):
+class RedTeamTargetConfig(_Model):
     """Abstract class for target configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1974,7 +2035,7 @@ class TargetConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIModel"):
+class AzureOpenAIModelConfiguration(RedTeamTargetConfig, discriminator="AzureOpenAIModel"):
     """Azure OpenAI model configuration. The API version would be selected by the service for querying
     the model.
 
@@ -3026,6 +3087,225 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.CODE_INTERPRETER  # type: ignore
+
+
+class JobProperties(_Model):
+    """Base properties of a Job.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CommandJob
+
+    :ivar job_type: Job type. Required. Default value is None.
+    :vartype job_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    job_type: str = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])
+    """Job type. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CommandJob(JobProperties, discriminator="Command"):
+    """Properties of a Command Job.
+
+    :ivar job_type: Job type. Required. Default value is "Command".
+    :vartype job_type: str
+    :ivar command: The command to execute on startup of the job. Required.
+    :vartype command: str
+    :ivar environment_image_reference: ACR path of environment. Required.
+    :vartype environment_image_reference: str
+    :ivar display_name: Display name of job.
+    :vartype display_name: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar code: Code asset reference.
+    :vartype code: str
+    :ivar compute: Compute resource ID. Required.
+    :vartype compute: str
+    :ivar inputs: Mapping of input data bindings used in the job.
+    :vartype inputs: dict[str, ~azure.ai.projects.models.Input]
+    :ivar outputs: Mapping of output data bindings used in the job.
+    :vartype outputs: dict[str, ~azure.ai.projects.models.Output]
+    :ivar environment_variables: Environment variables included in the job.
+    :vartype environment_variables: dict[str, str]
+    :ivar resources: Compute Resource configuration for the job.
+    :vartype resources: ~azure.ai.projects.models.JobResourceConfiguration
+    :ivar distribution: Distribution configuration of the job. If set, this should be one of Mpi,
+     Tensorflow, PyTorch, or null.
+    :vartype distribution: ~azure.ai.projects.models.DistributionConfiguration
+    :ivar limits: Command Job limit.
+    :vartype limits: ~azure.ai.projects.models.CommandJobLimits
+    :ivar services: List of job services.
+    :vartype services: dict[str, ~azure.ai.projects.models.JobService]
+    :ivar queue_settings: Queue settings for the job.
+    :vartype queue_settings: ~azure.ai.projects.models.QueueSettings
+    :ivar user_assigned_identity_id: user-assigned managed identity.
+    :vartype user_assigned_identity_id: str
+    :ivar gpu_count: Number of GPUs to allocate for the job.
+    :vartype gpu_count: int
+    :ivar is_archived: Is the asset archived?.
+    :vartype is_archived: bool
+    :ivar status: Status of the job.
+    :vartype status: str
+    """
+
+    job_type: Literal["Command"] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job type. Required. Default value is \"Command\"."""
+    command: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The command to execute on startup of the job. Required."""
+    environment_image_reference: str = rest_field(
+        name="environmentImageReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ACR path of environment. Required."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of job."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset description text."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tag dictionary. Tags can be added, removed, and updated."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset property dictionary."""
+    code: Optional[str] = rest_field(name="codeId", visibility=["read", "create", "update", "delete", "query"])
+    """Code asset reference."""
+    compute: str = rest_field(name="computeId", visibility=["read", "create", "update", "delete", "query"])
+    """Compute resource ID. Required."""
+    inputs: Optional[dict[str, "_models.Input"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Mapping of input data bindings used in the job."""
+    outputs: Optional[dict[str, "_models.Output"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Mapping of output data bindings used in the job."""
+    environment_variables: Optional[dict[str, str]] = rest_field(
+        name="environmentVariables", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Environment variables included in the job."""
+    resources: Optional["_models.JobResourceConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Compute Resource configuration for the job."""
+    distribution: Optional["_models.DistributionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Distribution configuration of the job. If set, this should be one of Mpi, Tensorflow, PyTorch,
+     or null."""
+    limits: Optional["_models.CommandJobLimits"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Command Job limit."""
+    services: Optional[dict[str, "_models.JobService"]] = rest_field(visibility=["read"])
+    """List of job services."""
+    queue_settings: Optional["_models.QueueSettings"] = rest_field(
+        name="queueSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Queue settings for the job."""
+    user_assigned_identity_id: Optional[str] = rest_field(
+        name="userAssignedIdentityId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """user-assigned managed identity."""
+    gpu_count: Optional[int] = rest_field(name="gpuCount", visibility=["read", "create", "update", "delete", "query"])
+    """Number of GPUs to allocate for the job."""
+    is_archived: Optional[bool] = rest_field(
+        name="isArchived", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is the asset archived?."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        command: str,
+        environment_image_reference: str,
+        compute: str,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional[dict[str, str]] = None,
+        code: Optional[str] = None,
+        inputs: Optional[dict[str, "_models.Input"]] = None,
+        outputs: Optional[dict[str, "_models.Output"]] = None,
+        environment_variables: Optional[dict[str, str]] = None,
+        resources: Optional["_models.JobResourceConfiguration"] = None,
+        distribution: Optional["_models.DistributionConfiguration"] = None,
+        limits: Optional["_models.CommandJobLimits"] = None,
+        queue_settings: Optional["_models.QueueSettings"] = None,
+        user_assigned_identity_id: Optional[str] = None,
+        gpu_count: Optional[int] = None,
+        is_archived: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = "Command"  # type: ignore
+
+
+class CommandJobLimits(_Model):
+    """Command Job limit class.
+
+    :ivar job_limits_type: JobLimit type. Required. Default value is "Command".
+    :vartype job_limits_type: str
+    :ivar timeout: The max run duration in ISO 8601 format, after which the job will be cancelled.
+     Only supports duration with precision as low as Seconds.
+    :vartype timeout: ~datetime.timedelta
+    """
+
+    job_limits_type: Literal["Command"] = rest_field(
+        name="jobLimitsType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """JobLimit type. Required. Default value is \"Command\"."""
+    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The max run duration in ISO 8601 format, after which the job will be cancelled. Only supports
+     duration with precision as low as Seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timeout: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_limits_type: Literal["Command"] = "Command"
 
 
 class ComparisonFilter(_Model):
@@ -4815,6 +5095,42 @@ class Deployment(_Model):
         self,
         *,
         type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DistributionConfiguration(_Model):
+    """Distribution configuration of the job. If set, this should be one of Mpi, Tensorflow, PyTorch,
+    or null.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is None.
+    :vartype distribution_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    distribution_type: str = rest_discriminator(
+        name="distributionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of distribution framework. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        distribution_type: str,
     ) -> None: ...
 
     @overload
@@ -7141,6 +7457,57 @@ class InlineSkillSourceParam(_Model):
         self.media_type: Literal["application/zip"] = "application/zip"
 
 
+class Input(_Model):
+    """Job input definition.
+
+    :ivar type: Specifies the type of job input. Required. Known values are: "uri_file",
+     "uri_folder", "safetensors_model", and "literal".
+    :vartype type: str or ~azure.ai.projects.models.AssetTypes
+    :ivar path: Input Asset URI. Required for uri_file, uri_folder, and safetensors_model types.
+    :vartype path: str
+    :ivar mode: Input Asset Delivery Mode. Applies to uri-based inputs. Known values are:
+     "ReadOnlyMount", "ReadWriteMount", "Download", "Direct", and "Upload".
+    :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
+    :ivar value: Literal value. Required for literal type.
+    :vartype value: str
+    """
+
+    type: Union[str, "_models.AssetTypes"] = rest_field(
+        name="jobInputType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of job input. Required. Known values are: \"uri_file\", \"uri_folder\",
+     \"safetensors_model\", and \"literal\"."""
+    path: Optional[str] = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
+    """Input Asset URI. Required for uri_file, uri_folder, and safetensors_model types."""
+    mode: Optional[Union[str, "_models.InputOutputModes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Input Asset Delivery Mode. Applies to uri-based inputs. Known values are: \"ReadOnlyMount\",
+     \"ReadWriteMount\", \"Download\", \"Direct\", and \"Upload\"."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Literal value. Required for literal type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AssetTypes"],
+        path: Optional[str] = None,
+        mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Insight(_Model):
     """The response body for cluster insights.
 
@@ -7408,6 +7775,172 @@ class InsightSummary(_Model):
         unique_cluster_count: int,
         method: str,
         usage: "_models.ClusterTokenUsage",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Job(_Model):
+    """Job resource.
+
+    :ivar name: The name of the Job. This is case-sensitive. Required.
+    :vartype name: str
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar properties: Properties of the job. Required.
+    :vartype properties: ~azure.ai.projects.models.JobProperties
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.ai.projects.models.SystemData
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the Job. This is case-sensitive. Required."""
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The resource ID."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The resource type."""
+    properties: "_models.JobProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Properties of the job. Required."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata pertaining to creation and last modification of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.JobProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobResourceConfiguration(_Model):
+    """Compute Resource configuration for the job.
+
+    :ivar instance_count: Optional number of instances or nodes used by the compute target.
+    :vartype instance_count: int
+    :ivar instance_type: Optional type of VM used as supported by the compute target.
+    :vartype instance_type: str
+    :ivar properties: Additional properties bag.
+    :vartype properties: dict[str, any]
+    :ivar shm_size: Size of the docker container's shared memory block. This should be in the
+     format of (number)(unit) where number as to be greater than 0 and the unit can be one of
+     b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
+    :vartype shm_size: str
+    :ivar docker_args: Extra arguments to pass to the Docker run command. This would override any
+     parameters that have already been set by the system, or in this section. This parameter is only
+     supported for Azure ML compute types.
+    :vartype docker_args: str
+    """
+
+    instance_count: Optional[int] = rest_field(
+        name="instanceCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional number of instances or nodes used by the compute target."""
+    instance_type: Optional[str] = rest_field(
+        name="instanceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional type of VM used as supported by the compute target."""
+    properties: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional properties bag."""
+    shm_size: Optional[str] = rest_field(name="shmSize", visibility=["read", "create", "update", "delete", "query"])
+    """Size of the docker container's shared memory block. This should be in the format of
+     (number)(unit) where number as to be greater than 0 and the unit can be one of b(bytes),
+     k(kilobytes), m(megabytes), or g(gigabytes)."""
+    docker_args: Optional[str] = rest_field(
+        name="dockerArgs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Extra arguments to pass to the Docker run command. This would override any parameters that have
+     already been set by the system, or in this section. This parameter is only supported for Azure
+     ML compute types."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instance_count: Optional[int] = None,
+        instance_type: Optional[str] = None,
+        properties: Optional[dict[str, Any]] = None,
+        shm_size: Optional[str] = None,
+        docker_args: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class JobService(_Model):
+    """Job endpoint definition.
+
+    :ivar job_service_type: Endpoint type.
+    :vartype job_service_type: str
+    :ivar port: Port for endpoint.
+    :vartype port: int
+    :ivar endpoint: Url for endpoint.
+    :vartype endpoint: str
+    :ivar properties: Additional properties to set on the endpoint.
+    :vartype properties: dict[str, str]
+    :ivar nodes: Nodes that user would like to start the service on. If Nodes is not set or set to
+     null, the service will only be started on leader node.
+    :vartype nodes: ~azure.ai.projects.models.AllNodes
+    :ivar status: Status of endpoint.
+    :vartype status: str
+    :ivar error_message: Any error in the service.
+    :vartype error_message: str
+    """
+
+    job_service_type: Optional[str] = rest_field(
+        name="jobServiceType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoint type."""
+    port: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Port for endpoint."""
+    endpoint: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Url for endpoint."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional properties to set on the endpoint."""
+    nodes: Optional["_models.AllNodes"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Nodes that user would like to start the service on. If Nodes is not set or set to null, the
+     service will only be started on leader node."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of endpoint."""
+    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
+    """Any error in the service."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_service_type: Optional[str] = None,
+        port: Optional[int] = None,
+        endpoint: Optional[str] = None,
+        properties: Optional[dict[str, str]] = None,
+        nodes: Optional["_models.AllNodes"] = None,
     ) -> None: ...
 
     @overload
@@ -8594,6 +9127,42 @@ class MonthlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Monthly"):
         self.type = RecurrenceType.MONTHLY  # type: ignore
 
 
+class MpiDistribution(DistributionConfiguration, discriminator="Mpi"):
+    """MPI distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "Mpi".
+    :vartype distribution_type: str
+    :ivar process_count_per_node: Number of processes per MPI node.
+    :vartype process_count_per_node: int
+    """
+
+    distribution_type: Literal["Mpi"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"Mpi\"."""
+    process_count_per_node: Optional[int] = rest_field(
+        name="processCountPerNode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of processes per MPI node."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        process_count_per_node: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "Mpi"  # type: ignore
+
+
 class NoAuthenticationCredentials(BaseCredentials, discriminator="None"):
     """Credentials that do not require authentication.
 
@@ -9077,6 +9646,76 @@ class OtlpTelemetryEndpoint(TelemetryEndpoint, discriminator="OTLP"):
         self.kind = TelemetryEndpointKind.OTLP  # type: ignore
 
 
+class Output(_Model):
+    """Job output definition.
+
+    :ivar type: Specifies the type of job output. Required. Known values are: "uri_file",
+     "uri_folder", "safetensors_model", and "literal".
+    :vartype type: str or ~azure.ai.projects.models.AssetTypes
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", and "Upload".
+    :vartype mode: str or ~azure.ai.projects.models.InputOutputModes
+    :ivar asset_name: Name of the output data asset to register.
+    :vartype asset_name: str
+    :ivar asset_version: Version of the output data asset to register.
+    :vartype asset_version: str
+    :ivar uri: Output Asset URI.
+    :vartype uri: str
+    :ivar base_model_id: Base model ID. Applies to safetensors_model outputs.
+    :vartype base_model_id: str
+    :ivar description: Description for the output.
+    :vartype description: str
+    """
+
+    type: Union[str, "_models.AssetTypes"] = rest_field(
+        name="jobOutputType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of job output. Required. Known values are: \"uri_file\", \"uri_folder\",
+     \"safetensors_model\", and \"literal\"."""
+    mode: Optional[Union[str, "_models.InputOutputModes"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Output Asset Delivery Mode. Known values are: \"ReadOnlyMount\", \"ReadWriteMount\",
+     \"Download\", \"Direct\", and \"Upload\"."""
+    asset_name: Optional[str] = rest_field(name="assetName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the output data asset to register."""
+    asset_version: Optional[str] = rest_field(
+        name="assetVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Version of the output data asset to register."""
+    uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Output Asset URI."""
+    base_model_id: Optional[str] = rest_field(
+        name="baseModelId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Base model ID. Applies to safetensors_model outputs."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description for the output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.AssetTypes"],
+        mode: Optional[Union[str, "_models.InputOutputModes"]] = None,
+        asset_name: Optional[str] = None,
+        asset_version: Optional[str] = None,
+        uri: Optional[str] = None,
+        base_model_id: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PendingUploadRequest(_Model):
     """Represents a request for a pending upload.
 
@@ -9475,6 +10114,70 @@ class ProtocolVersionRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PyTorchDistribution(DistributionConfiguration, discriminator="PyTorch"):
+    """PyTorch distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "PyTorch".
+    :vartype distribution_type: str
+    :ivar process_count_per_instance: Number of processes per node.
+    :vartype process_count_per_instance: int
+    """
+
+    distribution_type: Literal["PyTorch"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"PyTorch\"."""
+    process_count_per_instance: Optional[int] = rest_field(
+        name="processCountPerInstance", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of processes per node."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        process_count_per_instance: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "PyTorch"  # type: ignore
+
+
+class QueueSettings(_Model):
+    """Queue settings for the job.
+
+    :ivar job_tier: Controls the compute job tier.
+    :vartype job_tier: str
+    """
+
+    job_tier: Optional[str] = rest_field(name="jobTier", visibility=["read", "create", "update", "delete", "query"])
+    """Controls the compute job tier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_tier: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RaiConfig(_Model):
     """Configuration for Responsible AI (RAI) content filtering and safety features.
 
@@ -9683,7 +10386,7 @@ class RedTeam(_Model):
     :ivar status: Status of the red-team. It is set by service and is read-only.
     :vartype status: str
     :ivar target: Target configuration for the red-team run. Required.
-    :vartype target: ~azure.ai.projects.models.TargetConfig
+    :vartype target: ~azure.ai.projects.models.RedTeamTargetConfig
     """
 
     name: str = rest_field(name="id", visibility=["read"])
@@ -9718,14 +10421,14 @@ class RedTeam(_Model):
      removed."""
     status: Optional[str] = rest_field(visibility=["read"])
     """Status of the red-team. It is set by service and is read-only."""
-    target: "_models.TargetConfig" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    target: "_models.RedTeamTargetConfig" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Target configuration for the red-team run. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        target: "_models.TargetConfig",
+        target: "_models.RedTeamTargetConfig",
         display_name: Optional[str] = None,
         num_turns: Optional[int] = None,
         attack_strategies: Optional[list[Union[str, "_models.AttackStrategy"]]] = None,
@@ -10657,6 +11360,39 @@ class StructuredOutputDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SystemData(_Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource.
+    :vartype created_by_type: str
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource.
+    :vartype last_modified_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The identity that created the resource."""
+    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
+    """The type of identity that created the resource."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The timestamp of resource creation (UTC)."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The identity that last modified the resource."""
+    last_modified_by_type: Optional[str] = rest_field(name="lastModifiedByType", visibility=["read"])
+    """The type of identity that last modified the resource."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp of resource last modification (UTC)."""
+
+
 class TaxonomyCategory(_Model):
     """Taxonomy category definition.
 
@@ -10796,6 +11532,49 @@ class TelemetryConfig(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TensorFlowDistribution(DistributionConfiguration, discriminator="TensorFlow"):
+    """TensorFlow distribution configuration.
+
+    :ivar distribution_type: Specifies the type of distribution framework. Required. Default value
+     is "TensorFlow".
+    :vartype distribution_type: str
+    :ivar worker_count: Number of workers. If not specified, will default to the instance count.
+    :vartype worker_count: int
+    :ivar parameter_server_count: Number of parameter server tasks.
+    :vartype parameter_server_count: int
+    """
+
+    distribution_type: Literal["TensorFlow"] = rest_discriminator(name="distributionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the type of distribution framework. Required. Default value is \"TensorFlow\"."""
+    worker_count: Optional[int] = rest_field(
+        name="workerCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of workers. If not specified, will default to the instance count."""
+    parameter_server_count: Optional[int] = rest_field(
+        name="parameterServerCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of parameter server tasks."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        worker_count: Optional[int] = None,
+        parameter_server_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.distribution_type = "TensorFlow"  # type: ignore
 
 
 class TextResponseFormat(_Model):

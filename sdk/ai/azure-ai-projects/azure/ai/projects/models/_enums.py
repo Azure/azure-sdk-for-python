@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -44,6 +45,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TOOLBOXES_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
     """DATA_GENERATION_JOBS_V1_PREVIEW."""
+    JOBS_V1_PREVIEW = "Jobs=V1Preview"
+    """JOBS_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -148,6 +151,19 @@ class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The agent version is being deleted."""
     DELETED = "deleted"
     """The agent version has been deleted."""
+
+
+class AssetTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of job input/output asset."""
+
+    URI_FILE = "uri_file"
+    """URI file asset."""
+    URI_FOLDER = "uri_folder"
+    """URI folder asset."""
+    SAFETENSORS_MODEL = "safetensors_model"
+    """Safetensors model asset."""
+    LITERAL = "literal"
+    """Literal value (inputs only)."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -581,6 +597,21 @@ class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LOW."""
 
 
+class InputOutputModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the input/output data delivery mode."""
+
+    READ_ONLY_MOUNT = "ReadOnlyMount"
+    """Read-only mount mode."""
+    READ_WRITE_MOUNT = "ReadWriteMount"
+    """Read-write mount mode."""
+    DOWNLOAD = "Download"
+    """Download mode."""
+    DIRECT = "Direct"
+    """Direct mode."""
+    UPLOAD = "Upload"
+    """Upload mode."""
+
+
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The request of the insights."""
 
@@ -605,6 +636,24 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job failed."""
     CANCELLED = "cancelled"
     """Job was cancelled by the caller."""
+
+
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of a job."""
+
+    COMMAND = "Command"
+    """Command job."""
+
+
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies which jobs to include in a list result based on their lifecycle state."""
+
+    ACTIVE_ONLY = "ActiveOnly"
+    """Show only active (non-archived) jobs."""
+    ARCHIVED_ONLY = "ArchivedOnly"
+    """Show only archived jobs."""
+    ALL = "All"
+    """Show all jobs regardless of archived state."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

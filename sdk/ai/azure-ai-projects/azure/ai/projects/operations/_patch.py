@@ -19,6 +19,7 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_sessions import BetaAgentsOperations
+from ._patch_jobs import JobsOperations
 from ._operations import (
     BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
@@ -115,6 +116,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.operations.BetaDatasetsOperations` operations"""
+    jobs: JobsOperations
+    """:class:`~azure.ai.projects.operations.JobsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -124,6 +127,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that adds flat CustomTrainingJob UX and auto header injection
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -149,6 +154,7 @@ __all__: List[str] = [
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "JobsOperations",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
