@@ -5,6 +5,12 @@
 ### Features Added
 
 - Added support for service API version `2025-07-01` [#46716](https://github.com/Azure/azure-sdk-for-python/pull/46716)
+- Added `KeyVaultEkmClient` (sync and async) for managing Managed HSM External Key Manager
+  (EKM) connections via the `2026-01-01-preview` API. The new client exposes
+  `get_ekm_connection`, `create_ekm_connection`, `update_ekm_connection`,
+  `delete_ekm_connection`, `get_ekm_certificate`, and `check_ekm_connection`.
+- Added `KeyVaultEkmConnection`, `KeyVaultEkmProxyClientCertificateInfo`, and
+  `KeyVaultEkmProxyInfo` models supporting the EKM client.
 
 ### Breaking Changes
 
