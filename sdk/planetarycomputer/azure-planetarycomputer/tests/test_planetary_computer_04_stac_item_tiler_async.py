@@ -92,7 +92,7 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_02_list_tile_matrices(self, planetarycomputer_endpoint):
+    async def test_02_get_tile_matrices(self, planetarycomputer_endpoint):
         """
         Test listing all available tile matrices.
 
@@ -101,14 +101,14 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         - Should include WebMercatorQuad, WorldCRS84Quad, etc.
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_02_list_tile_matrices")
+        test_logger.info("TEST: test_02_get_tile_matrices")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info("Calling: list_tile_matrices()")
-        response = await client.data.list_tile_matrices()
+        test_logger.info("Calling: get_tile_matrices()")
+        response = await client.data.get_tile_matrices()
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -157,7 +157,7 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         test_logger.info(
             f"Calling: list_available_assets(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}')"
         )
-        response = await client.data.list_item_available_assets(
+        response = await client.data.get_item_available_assets(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
         )
@@ -381,7 +381,7 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: list_statistics(...)")
-        response = await client.data.list_item_statistics(
+        response = await client.data.get_item_statistics(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             assets=["image"],
@@ -524,7 +524,7 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: crop_geo_json(...)")
-        response = await client.data.crop_feature_geo_json(
+        response = await client.data.crop_feature(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             body=geojson_feature,
@@ -575,7 +575,7 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: crop_geo_json_with_dimensions(...)")
-        response = await client.data.crop_feature_geo_json_width_by_height(
+        response = await client.data.crop_feature_width_by_height(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             width=256,
@@ -628,7 +628,7 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: get_geo_json_statistics(...)")
-        response = await client.data.get_item_geo_json_statistics(
+        response = await client.data.get_item_feature_statistics(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             body=geojson_feature,
@@ -665,10 +665,10 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         response = await client.data.get_item_bbox_crop(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
-            minx=bounds[0],
-            miny=bounds[1],
-            maxx=bounds[2],
-            maxy=bounds[3],
+            min_x=bounds[0],
+            min_y=bounds[1],
+            max_x=bounds[2],
+            max_y=bounds[3],
             format=TilerImageFormat.PNG,
             assets=["image"],
             asset_band_indices=["image|1,2,3"],
@@ -707,10 +707,10 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
         response = await client.data.get_item_bbox_crop_with_dimensions(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
-            minx=bounds[0],
-            miny=bounds[1],
-            maxx=bounds[2],
-            maxy=bounds[3],
+            min_x=bounds[0],
+            min_y=bounds[1],
+            max_x=bounds[2],
+            max_y=bounds[3],
             width=256,
             height=256,
             format=TilerImageFormat.PNG,
@@ -923,17 +923,17 @@ class TestPlanetaryComputerStacItemTilerAsync(PlanetaryComputerProClientTestBase
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_20_list_tilesets(
+    async def test_20_get_tilesets(
         self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id
     ):
         """Test listing tilesets for a specific item."""
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_20_list_tilesets")
+        test_logger.info("TEST: test_20_get_tilesets")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        response = await client.data.list_tilesets(
+        response = await client.data.get_tilesets(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
         )

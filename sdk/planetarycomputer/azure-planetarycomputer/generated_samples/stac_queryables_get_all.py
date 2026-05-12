@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.list_queryables()
+    response = client.stac.get_queryables()
     print(response)
 
 

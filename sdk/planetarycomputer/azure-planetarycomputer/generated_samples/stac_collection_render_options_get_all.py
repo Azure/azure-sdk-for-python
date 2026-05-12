@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.list_render_options(
+    response = client.stac.get_render_options(
         collection_id="naip-atl",
     )
     print(response)

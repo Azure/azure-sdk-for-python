@@ -61,14 +61,14 @@ def register_mosaics_search(client: PlanetaryComputerProClient, collection_id):
 
 def get_mosaics_search_info(client: PlanetaryComputerProClient, search_id):
     """Get mosaics search info."""
-    mosaics_info_search_response = client.data.get_searches_info(search_id=search_id)
+    mosaics_info_search_response = client.data.get_search_info(search_id=search_id)
     search = mosaics_info_search_response.search
     return search
 
 
 def get_mosaics_tile_json(client: PlanetaryComputerProClient, search_id, collection_id):
     """Get mosaics tile JSON."""
-    get_mosaics_tile_json_response = client.data.get_searches_tile_json(
+    get_mosaics_tile_json_response = client.data.get_search_tile_json(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         assets=["image"],
@@ -83,7 +83,7 @@ def get_mosaics_tile_json(client: PlanetaryComputerProClient, search_id, collect
 
 def get_mosaics_tile(client: PlanetaryComputerProClient, search_id, collection_id):
     """Get a mosaic tile and save it locally."""
-    mosaics_tile_matrix_sets_response = client.data.get_searches_tile_by_scale_and_format(
+    mosaics_tile_matrix_sets_response = client.data.get_search_tile_by_scale_and_format(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         z=13,
@@ -106,7 +106,7 @@ def get_mosaics_tile(client: PlanetaryComputerProClient, search_id, collection_i
 
 def get_mosaics_wmts_capabilities(client: PlanetaryComputerProClient, search_id):
     """Get WMTS capabilities for mosaics and save it locally."""
-    get_capabilities_xml_response = client.data.get_searches_wmts_capabilities(
+    get_capabilities_xml_response = client.data.get_search_wmts_capabilities(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         tile_format=TilerImageFormat.PNG,
@@ -129,7 +129,7 @@ def get_mosaics_wmts_capabilities(client: PlanetaryComputerProClient, search_id)
 def get_mosaics_assets_for_point(client: PlanetaryComputerProClient, search_id):
     """Get mosaic assets for a specific point (center of the bbox)."""
     # Using center point from the coordinate bbox: -84.43202751899601, 33.639647639722273
-    get_lon_lat_assets_response = client.data.get_searches_point_with_assets(
+    get_lon_lat_assets_response = client.data.get_search_point_with_assets(
         search_id=search_id,
         longitude=-84.43202751899601,
         latitude=33.639647639722273,
@@ -145,7 +145,7 @@ def get_mosaics_assets_for_point(client: PlanetaryComputerProClient, search_id):
 
 def get_mosaics_assets_for_tile(client: PlanetaryComputerProClient, search_id, collection_id):
     """Get mosaic assets for a specific tile."""
-    result = client.data.get_searches_assets_for_tile(
+    result = client.data.get_search_assets_for_tile(
         search_id=search_id,
         tile_matrix_set_id="WebMercatorQuad",
         z=13,

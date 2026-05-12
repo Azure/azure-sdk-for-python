@@ -54,9 +54,9 @@ async def get_tile_matrix_definitions(client: "PlanetaryComputerProClient"):
     logging.info(result)
 
 
-async def list_tile_matrices(client: "PlanetaryComputerProClient"):
+async def get_tile_matrices(client: "PlanetaryComputerProClient"):
     """List all available tile matrices."""
-    result = client.data.list_tile_matrices()
+    result = client.data.get_tile_matrices()
     logging.info(result)
 
 
@@ -68,7 +68,7 @@ async def get_asset_statistics(client: PlanetaryComputerProClient, collection_id
 
 async def list_available_assets(client: PlanetaryComputerProClient, collection_id, item_id):
     """List available assets for an item."""
-    result = client.data.list_item_available_assets(collection_id=collection_id, item_id=item_id)
+    result = client.data.get_item_available_assets(collection_id=collection_id, item_id=item_id)
     logging.info(result)
 
 
@@ -93,7 +93,7 @@ async def get_bounds(client: PlanetaryComputerProClient, collection_id, item_id)
 
 async def crop_geo_json(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry."""
-    crop_geo_json_response = await client.data.crop_feature_geo_json(
+    crop_geo_json_response = await client.data.crop_feature(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -107,7 +107,7 @@ async def crop_geo_json(client: PlanetaryComputerProClient, collection_id, item_
 
 async def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Crop an item using GeoJSON geometry with specific dimensions."""
-    crop_geo_json_with_dimensions_response = await client.data.crop_feature_geo_json_width_by_height(
+    crop_geo_json_with_dimensions_response = await client.data.crop_feature_width_by_height(
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
@@ -122,7 +122,7 @@ async def crop_geo_json_with_dimensions(client: PlanetaryComputerProClient, coll
 
 async def get_geo_json_statistics(client: PlanetaryComputerProClient, collection_id, item_id, geojson):
     """Get statistics for a GeoJSON area."""
-    result = await client.data.get_item_geo_json_statistics(
+    result = await client.data.get_item_feature_statistics(
         collection_id=collection_id, item_id=item_id, body=geojson, assets=["image"]
     )
     logging.info(result)
@@ -140,10 +140,10 @@ async def get_part(client: PlanetaryComputerProClient, collection_id, item_id, b
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
-        minx=bounds[0],
-        miny=bounds[1],
-        maxx=bounds[2],
-        maxy=bounds[3],
+        min_x=bounds[0],
+        min_y=bounds[1],
+        max_x=bounds[2],
+        max_y=bounds[3],
         width=512,
         height=512,
         assets=["image"],
@@ -158,10 +158,10 @@ async def get_part_with_dimensions(client: PlanetaryComputerProClient, collectio
         collection_id=collection_id,
         item_id=item_id,
         format=TilerImageFormat.PNG,
-        minx=bounds[0],
-        miny=bounds[1],
-        maxx=bounds[2],
-        maxy=bounds[3],
+        min_x=bounds[0],
+        min_y=bounds[1],
+        max_x=bounds[2],
+        max_y=bounds[3],
         width=512,
         height=512,
         assets=["image"],
@@ -213,7 +213,7 @@ async def get_preview_with_format(client: PlanetaryComputerProClient, collection
 
 async def list_statistics(client: PlanetaryComputerProClient, collection_id, item_id):
     """List statistics for an item."""
-    result = client.data.list_item_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
+    result = client.data.get_item_statistics(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info(result)
 
 
@@ -309,7 +309,7 @@ async def main():
 
     # Execute tiler operations
     await get_tile_matrix_definitions(client)
-    await list_tile_matrices(client)
+    await get_tile_matrices(client)
     await get_asset_statistics(client, collection_id, item_id)
     await list_available_assets(client, collection_id, item_id)
     await get_item_asset_details(client, collection_id, item_id)

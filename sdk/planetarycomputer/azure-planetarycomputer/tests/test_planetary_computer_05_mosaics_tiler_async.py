@@ -154,7 +154,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         test_logger.info(f"Registered search ID: {search_id}")
 
         test_logger.info(f"Calling: get_mosaics_search_info(search_id='{search_id}')")
-        response = await client.data.get_searches_info(search_id=search_id)
+        response = await client.data.get_search_info(search_id=search_id)
 
         test_logger.info(f"Response type: {type(response)}")
         if hasattr(response, "as_dict"):
@@ -227,7 +227,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_tile_json(...)")
-        response = await client.data.get_searches_tile_json(
+        response = await client.data.get_search_tile_json(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             assets=["image"],
@@ -310,7 +310,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_tile(...)")
-        response = await client.data.get_searches_tile_by_scale_and_format(
+        response = await client.data.get_search_tile_by_scale_and_format(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             z=13,
@@ -405,7 +405,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_wmts_capabilities(...)")
-        response = await client.data.get_searches_wmts_capabilities(
+        response = await client.data.get_search_wmts_capabilities(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             tile_format=TilerImageFormat.PNG,
@@ -486,7 +486,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_assets_for_point(...)")
-        response = await client.data.get_searches_point_with_assets(
+        response = await client.data.get_search_point_with_assets(
             search_id=search_id,
             longitude=-84.43202751899601,
             latitude=33.639647639722273,
@@ -576,7 +576,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         test_logger.info(f"Using search ID: {search_id}")
 
         test_logger.info("Calling: get_mosaics_assets_for_tile(...)")
-        response = await client.data.get_searches_assets_for_tile(
+        response = await client.data.get_search_assets_for_tile(
             search_id=search_id,
             tile_matrix_set_id="WebMercatorQuad",
             z=13,
@@ -601,10 +601,10 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_08_get_searches_point(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_08_get_search_point(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test getting point data from a mosaic search."""
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_08_get_searches_point")
+        test_logger.info("TEST: test_08_get_search_point")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -624,7 +624,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         search_id = register_response.search_id
 
         # Note: assets or expression is required for point queries (returns 400 without one)
-        response = await client.data.get_searches_point(
+        response = await client.data.get_search_point(
             search_id=search_id,
             longitude=-84.3860,
             latitude=33.6760,
@@ -639,10 +639,10 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_09_get_searches_bbox_crop(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_09_get_search_bbox_crop(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test getting a bbox crop from a mosaic search."""
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_09_get_searches_bbox_crop")
+        test_logger.info("TEST: test_09_get_search_bbox_crop")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -661,12 +661,12 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         register_response = await client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
 
-        response = await client.data.get_searches_bbox_crop(
+        response = await client.data.get_search_bbox_crop(
             search_id=search_id,
-            minx=-84.3900,
-            miny=33.6800,
-            maxx=-84.3850,
-            maxy=33.6850,
+            min_x=-84.3900,
+            min_y=33.6800,
+            max_x=-84.3850,
+            max_y=33.6850,
             format="png",
             assets=["image"],
             asset_band_indices=["image|1,2,3"],
@@ -681,10 +681,10 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_10_crop_searches_feature_geo_json(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_10_crop_search_feature(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test cropping a mosaic search by GeoJSON feature."""
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_10_crop_searches_feature_geo_json")
+        test_logger.info("TEST: test_10_crop_search_feature")
         test_logger.info("=" * 80)
 
         from azure.planetarycomputer.models import Feature, FeatureType, Polygon
@@ -721,7 +721,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
             properties={},
         )
 
-        response = await client.data.crop_searches_feature_geo_json(
+        response = await client.data.crop_search_feature(
             search_id=search_id,
             body=geojson_feature,
             assets=["image"],
@@ -737,10 +737,10 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_11_list_searches_tilesets(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_11_get_search_tilesets(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test listing tilesets for a mosaic search."""
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_11_list_searches_tilesets")
+        test_logger.info("TEST: test_11_get_search_tilesets")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -759,7 +759,7 @@ class TestPlanetaryComputerMosaicsTilerAsync(PlanetaryComputerProClientTestBaseA
         register_response = await client.data.register_mosaics_search(register_search_request)
         search_id = register_response.search_id
 
-        response = await client.data.list_searches_tilesets(
+        response = await client.data.get_search_tilesets(
             search_id=search_id,
         )
 

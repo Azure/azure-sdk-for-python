@@ -1,0 +1,382 @@
+2026-05-12 14:39:13,652 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:13,652 - test_stac_item_tiler - INFO - TEST: test_01_get_tile_matrix_definitions
+2026-05-12 14:39:13,652 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:13,652 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,652 - test_stac_item_tiler - INFO - Input - tile_matrix_set_id: WebMercatorQuad
+2026-05-12 14:39:13,653 - test_stac_item_tiler - INFO - Calling: get_tile_matrix_definitions(tile_matrix_set_id='WebMercatorQuad')
+2026-05-12 14:39:18,510 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileMatrixSet'>
+2026-05-12 14:39:18,511 - test_stac_item_tiler - INFO - Response keys: ['title', 'description', 'keywords', 'id', 'uri', 'orderedAxes', 'crs', 'wellKnownScaleSet', 'boundingBox', 'tileMatrices']
+2026-05-12 14:39:18,511 - test_stac_item_tiler - INFO - Number of tile matrices: 25
+2026-05-12 14:39:18,511 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,567 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,567 - test_stac_item_tiler - INFO - TEST: test_02_get_tile_matrices
+2026-05-12 14:39:18,567 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,567 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:18,568 - test_stac_item_tiler - INFO - Calling: get_tile_matrices()
+2026-05-12 14:39:18,573 - test_stac_item_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:18,573 - test_stac_item_tiler - INFO - Response: ['CDB1GlobalGrid', 'CanadianNAD83_LCC', 'EuropeanETRS89_LAEAQuad', 'GNOSISGlobalGrid', 'LINZAntarticaMapTilegrid', 'NZTM2000Quad', 'UPSAntarcticWGS84Quad', 'UPSArcticWGS84Quad', 'UTM31WGS84Quad', 'WGS1984Quad', 'WebMercatorQuad', 'WorldCRS84Quad', 'WorldMercatorWGS84Quad']
+2026-05-12 14:39:18,573 - test_stac_item_tiler - INFO - Number of tile matrices: 13
+2026-05-12 14:39:18,573 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,587 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,587 - test_stac_item_tiler - INFO - TEST: test_03_list_available_assets
+2026-05-12 14:39:18,587 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,587 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:18,588 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:18,588 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:18,588 - test_stac_item_tiler - INFO - Calling: list_available_assets(collection_id='naip', item_id='ga_m_3308421_se_16_060_20211114')
+2026-05-12 14:39:18,592 - test_stac_item_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:18,592 - test_stac_item_tiler - INFO - Response: ['image', 'tilejson']
+2026-05-12 14:39:18,592 - test_stac_item_tiler - INFO - Number of assets: 2
+2026-05-12 14:39:18,593 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,606 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,606 - test_stac_item_tiler - INFO - TEST: test_04_get_bounds
+2026-05-12 14:39:18,606 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,606 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:18,606 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:18,606 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:18,606 - test_stac_item_tiler - INFO - Calling: list_bounds(collection_id='naip', item_id='ga_m_3308421_se_16_060_20211114')
+2026-05-12 14:39:18,614 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacItemBounds'>
+2026-05-12 14:39:18,614 - test_stac_item_tiler - INFO - Response: {'bounds': [-84.44157, 33.621853, -84.370894, 33.690654]}
+2026-05-12 14:39:18,614 - test_stac_item_tiler - INFO - Bounds: [-84.44157, 33.621853, -84.370894, 33.690654]
+2026-05-12 14:39:18,614 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,647 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,648 - test_stac_item_tiler - INFO - TEST: test_05_get_preview
+2026-05-12 14:39:18,648 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,648 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:18,648 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:18,648 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:18,648 - test_stac_item_tiler - INFO - Input - dimensions: 512x512
+2026-05-12 14:39:18,648 - test_stac_item_tiler - INFO - Calling: get_preview(...)
+2026-05-12 14:39:18,653 - test_stac_item_tiler - INFO - Response type: <class 'generator'>
+2026-05-12 14:39:18,656 - test_stac_item_tiler - INFO - Image size: 714799 bytes
+2026-05-12 14:39:18,657 - test_stac_item_tiler - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-05-12 14:39:18,803 - test_stac_item_tiler - INFO - PIL Image format: PNG
+2026-05-12 14:39:18,803 - test_stac_item_tiler - INFO - PIL Image size: (512, 512)
+2026-05-12 14:39:18,803 - test_stac_item_tiler - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:18,803 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,817 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,817 - test_stac_item_tiler - INFO - TEST: test_06_get_info_geo_json
+2026-05-12 14:39:18,817 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,817 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:18,817 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:18,817 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:18,817 - test_stac_item_tiler - INFO - Calling: get_info_geo_json(...)
+2026-05-12 14:39:18,832 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerInfoGeoJsonFeature'>
+2026-05-12 14:39:18,832 - test_stac_item_tiler - INFO - Response keys: ['type', 'geometry', 'properties']
+2026-05-12 14:39:18,833 - test_stac_item_tiler - INFO -   type: <class 'str'>
+2026-05-12 14:39:18,833 - test_stac_item_tiler - INFO -   geometry: <class 'dict'>
+2026-05-12 14:39:18,833 - test_stac_item_tiler - INFO -   properties: <class 'dict'>
+2026-05-12 14:39:18,833 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,845 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,845 - test_stac_item_tiler - INFO - TEST: test_07_list_statistics
+2026-05-12 14:39:18,845 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,845 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:18,845 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:18,845 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:18,846 - test_stac_item_tiler - INFO - Calling: list_statistics(...)
+2026-05-12 14:39:18,859 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacItemStatistics'>
+2026-05-12 14:39:18,859 - test_stac_item_tiler - INFO - Response keys: ['image_b1', 'image_b2', 'image_b3', 'image_b4']
+2026-05-12 14:39:18,859 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,874 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,874 - test_stac_item_tiler - INFO - TEST: test_08_get_wmts_capabilities
+2026-05-12 14:39:18,874 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,874 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:18,874 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:18,874 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:18,875 - test_stac_item_tiler - INFO - Calling: get_wmts_capabilities(...)
+2026-05-12 14:39:18,881 - test_stac_item_tiler - INFO - Response type: <class 'generator'>
+2026-05-12 14:39:18,881 - test_stac_item_tiler - INFO - XML size: 8462 bytes
+2026-05-12 14:39:18,881 - test_stac_item_tiler - INFO - XML first 200 chars: <Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:
+2026-05-12 14:39:18,881 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,894 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,894 - test_stac_item_tiler - INFO - TEST: test_09_get_asset_statistics
+2026-05-12 14:39:18,894 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,895 - test_stac_item_tiler - INFO - Calling: get_asset_statistics(collection_id='naip', item_id='ga_m_3308421_se_16_060_20211114', assets=['image'])
+2026-05-12 14:39:18,907 - test_stac_item_tiler - INFO - Response: {'image': {'b1': {'min': 11.0, 'max': 246.0, 'mean': 122.09540892575887, 'count': 893952.0, 'sum': 109147435.0, 'std': 60.36645444129488, 'median': 125.0, 'majority': 209.0, 'minority': 244.0, 'unique': 234.0, 'histogram': [[61766, 117028, 110859, 87913, 83879, 103424, 111240, 97825, 97615, 22403], [11.0, 34.5, 58.0, 81.5, 105.0, 128.5, 152.0, 175.5, 199.0, 222.5, 246.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 26.0, 'percentile_98': 226.0}, 'b2': {'min': 38.0, 'max': 245.0, 'mean': 144.07083825529782, 'count': 893952.0, 'sum': 128792414.0, 'std': 48.5299357729891, 'median': 149.0, 'majority': 166.0, 'minority': 38.0, 'unique': 206.0, 'histogram': [[30430, 78066, 95120, 104046, 104894, 114066, 140175, 110035, 94264, 22856], [38.0, 58.7, 79.4, 100.1, 120.8, 141.5, 162.2, 182.9, 203.6, 224.29999999999998, 245.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 55.0, 'percentile_98': 227.0}, 'b3': {'min': 49.0, 'max': 241.0, 'mean': 128.610202784937, 'count': 893952.0, 'sum': 114971348.0, 'std': 48.88558925037479, 'median': 122.0, 'majority': 81.0, 'minority': 49.0, 'unique': 193.0, 'histogram': [[75113, 179336, 124008, 84332, 96200, 79850, 80252, 105476, 47208, 22177], [49.0, 68.2, 87.4, 106.6, 125.8, 145.0, 164.2, 183.4, 202.6, 221.79999999999998, 241.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 60.0, 'percentile_98': 224.0}, 'b4': {'min': 0.0, 'max': 244.0, 'mean': 134.29559752648913, 'count': 893952.0, 'sum': 120053818.0, 'std': 57.02485093862381, 'median': 149.0, 'majority': 188.0, 'minority': 244.0, 'unique': 244.0, 'histogram': [[38157, 65176, 68901, 71015, 82329, 110236, 144394, 213124, 84507, 16113], [0.0, 24.4, 48.8, 73.19999999999999, 97.6, 122.0, 146.39999999999998, 170.79999999999998, 195.2, 219.6, 244.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 17.0, 'percentile_98': 218.0}}}
+2026-05-12 14:39:18,908 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:18,963 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,964 - test_stac_item_tiler - INFO - TEST: test_10_crop_geo_json
+2026-05-12 14:39:18,964 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:18,964 - test_stac_item_tiler - INFO - Calling: crop_geo_json(...)
+2026-05-12 14:39:19,001 - test_stac_item_tiler - INFO - Image size: 5508348 bytes
+2026-05-12 14:39:19,001 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,027 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,028 - test_stac_item_tiler - INFO - TEST: test_11_crop_geo_json_with_dimensions
+2026-05-12 14:39:19,028 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,028 - test_stac_item_tiler - INFO - Calling: crop_geo_json_with_dimensions(...)
+2026-05-12 14:39:19,111 - test_stac_item_tiler - INFO - Image size: 180445 bytes
+2026-05-12 14:39:19,111 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,132 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,132 - test_stac_item_tiler - INFO - TEST: test_12_get_geo_json_statistics
+2026-05-12 14:39:19,132 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,133 - test_stac_item_tiler - INFO - Calling: get_geo_json_statistics(...)
+2026-05-12 14:39:19,151 - test_stac_item_tiler - INFO - Response: {'type': 'Feature', 'geometry': {'type': 'Polygon', 'coordinates': [[[-84.3906, 33.6714], [-84.3814, 33.6714], [-84.3814, 33.6806], [-84.3906, 33.6806], [-84.3906, 33.6714]]]}, 'properties': {'statistics': {'image_b1': {'min': 12.0, 'max': 234.0, 'mean': 77.8508653640747, 'count': 1048576.0, 'sum': 81632549.0, 'std': 47.207138516953336, 'median': 66.0, 'majority': 24.0, 'minority': 232.0, 'unique': 221.0, 'histogram': [[233498, 220491, 153557, 123548, 104204, 94734, 63116, 41309, 12328, 1791], [12.0, 34.2, 56.4, 78.6, 100.8, 123.0, 145.2, 167.4, 189.6, 211.79999999999998, 234.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 21.0, 'percentile_98': 184.0}, 'image_b2': {'min': 38.0, 'max': 233.0, 'mean': 109.85544681549072, 'count': 1048576.0, 'sum': 115191785.0, 'std': 40.59859883788109, 'median': 110.0, 'majority': 55.0, 'minority': 38.0, 'unique': 196.0, 'histogram': [[128443, 157918, 140551, 138892, 166576, 151710, 106349, 43548, 12627, 1962], [38.0, 57.5, 77.0, 96.5, 116.0, 135.5, 155.0, 174.5, 194.0, 213.5, 233.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 48.0, 'percentile_98': 190.0}, 'image_b3': {'min': 43.0, 'max': 232.0, 'mean': 91.10968494415283, 'count': 1048576.0, 'sum': 95535429.0, 'std': 30.78399360637365, 'median': 84.0, 'majority': 63.0, 'minority': 230.0, 'unique': 189.0, 'histogram': [[146488, 326060, 257516, 147715, 70753, 44995, 33257, 18088, 2807, 897], [43.0, 61.9, 80.8, 99.69999999999999, 118.6, 137.5, 156.39999999999998, 175.29999999999998, 194.2, 213.1, 232.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 54.0, 'percentile_98': 176.0}, 'image_b4': {'min': 6.0, 'max': 235.0, 'mean': 118.65080833435059, 'count': 1048576.0, 'sum': 124414390.0, 'std': 61.60935238521559, 'median': 128.0, 'majority': 188.0, 'minority': 6.0, 'unique': 225.0, 'histogram': [[91558, 135215, 101712, 81036, 82663, 99224, 131973, 176843, 142692, 5660], [6.0, 28.9, 51.8, 74.69999999999999, 97.6, 120.5, 143.39999999999998, 166.29999999999998, 189.2, 212.1, 235.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 17.0, 'percentile_98': 207.0}}}}
+2026-05-12 14:39:19,151 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,243 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,243 - test_stac_item_tiler - INFO - TEST: test_13_get_part
+2026-05-12 14:39:19,243 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,244 - test_stac_item_tiler - INFO - Calling: get_part(...)
+2026-05-12 14:39:19,319 - test_stac_item_tiler - INFO - Image size: 13366032 bytes
+2026-05-12 14:39:19,319 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,335 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,336 - test_stac_item_tiler - INFO - TEST: test_14_get_part_with_dimensions
+2026-05-12 14:39:19,336 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,336 - test_stac_item_tiler - INFO - Calling: get_part_with_dimensions(...)
+2026-05-12 14:39:19,340 - test_stac_item_tiler - INFO - Image size: 56604 bytes
+2026-05-12 14:39:19,341 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,357 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,357 - test_stac_item_tiler - INFO - TEST: test_15_get_point
+2026-05-12 14:39:19,357 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,357 - test_stac_item_tiler - INFO - Calling: get_point(...)
+2026-05-12 14:39:19,362 - test_stac_item_tiler - INFO - Response: {'coordinates': [-84.386, 33.676], 'values': [52.0, 75.0, 75.0, 86.0], 'band_names': ['image_b1', 'image_b2', 'image_b3', 'image_b4']}
+2026-05-12 14:39:19,362 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,376 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,376 - test_stac_item_tiler - INFO - TEST: test_16_get_preview_with_format
+2026-05-12 14:39:19,376 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,377 - test_stac_item_tiler - INFO - Calling: get_preview_with_format(...)
+2026-05-12 14:39:19,383 - test_stac_item_tiler - INFO - Image size: 397460 bytes
+2026-05-12 14:39:19,383 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,397 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,398 - test_stac_item_tiler - INFO - TEST: test_17_get_tile_json
+2026-05-12 14:39:19,398 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,398 - test_stac_item_tiler - INFO - Calling: get_tile_json(...)
+2026-05-12 14:39:19,405 - test_stac_item_tiler - INFO - Response: {'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/collections/naip/items/ga_m_3308421_se_16_060_20211114/tiles/WebMercatorQuad/{z}/{x}/{y}@1x.png?api-version=2026-04-15&assets=image&asset_bidx=image%7C1%2C2%2C3'], 'minzoom': 7, 'maxzoom': 14, 'bounds': [-84.44157, 33.621853, -84.370894, 33.690654], 'center': [-84.406232, 33.656253500000005, 7]}
+2026-05-12 14:39:19,405 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,418 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,419 - test_stac_item_tiler - INFO - TEST: test_18_get_tile
+2026-05-12 14:39:19,419 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,419 - test_stac_item_tiler - INFO - Calling: get_tile(...)
+2026-05-12 14:39:19,425 - test_stac_item_tiler - INFO - Tile size: 96962 bytes
+2026-05-12 14:39:19,425 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,440 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,440 - test_stac_item_tiler - INFO - TEST: test_19_get_item_asset_details
+2026-05-12 14:39:19,440 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,440 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,440 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:19,440 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:19,440 - test_stac_item_tiler - INFO - Calling: get_item_asset_details(...)
+2026-05-12 14:39:19,447 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerInfoMapResponse'>
+2026-05-12 14:39:19,447 - test_stac_item_tiler - INFO - Response: {'image': {'bounds': [-84.44157036219231, 33.62185311275707, -84.37089430625126, 33.690654419926105], 'band_metadata': [['b1', {}], ['b2', {}], ['b3', {}], ['b4', {}]], 'band_descriptions': [['b1', ''], ['b2', ''], ['b3', ''], ['b4', '']], 'dtype': 'uint8', 'nodata_type': 'None', 'colorinterp': ['red', 'green', 'blue', 'undefined'], 'minzoom': 12, 'maxzoom': 18, 'crs': 'http://www.opengis.net/def/crs/EPSG/0/4326', 'driver': 'GTiff', 'count': 4, 'width': 10620, 'height': 12460, 'overviews': [2, 4, 8, 16, 32]}}
+2026-05-12 14:39:19,447 - test_stac_item_tiler - INFO - Response dict keys: ['image']
+2026-05-12 14:39:19,448 - test_stac_item_tiler - INFO - Response dict: {'image': {'bounds': [-84.44157036219231, 33.62185311275707, -84.37089430625126, 33.690654419926105], 'band_metadata': [['b1', {}], ['b2', {}], ['b3', {}], ['b4', {}]], 'band_descriptions': [['b1', ''], ['b2', ''], ['b3', ''], ['b4', '']], 'dtype': 'uint8', 'nodata_type': 'None', 'colorinterp': ['red', 'green', 'blue', 'undefined'], 'minzoom': 12, 'maxzoom': 18, 'crs': 'http://www.opengis.net/def/crs/EPSG/0/4326', 'driver': 'GTiff', 'count': 4, 'width': 10620, 'height': 12460, 'overviews': [2, 4, 8, 16, 32]}}
+2026-05-12 14:39:19,465 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,465 - test_stac_item_tiler - INFO - TEST: test_20_get_tilesets
+2026-05-12 14:39:19,465 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,509 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
+2026-05-12 14:39:19,509 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,524 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,524 - test_stac_item_tiler - INFO - TEST: test_21_get_tileset_metadata
+2026-05-12 14:39:19,524 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,539 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetMetadata'>
+2026-05-12 14:39:19,540 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,556 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,556 - test_stac_item_tiler - INFO - TEST: test_01_get_tile_matrix_definitions
+2026-05-12 14:39:19,556 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,556 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,556 - test_stac_item_tiler - INFO - Input - tile_matrix_set_id: WebMercatorQuad
+2026-05-12 14:39:19,556 - test_stac_item_tiler - INFO - Calling: get_tile_matrix_definitions(tile_matrix_set_id='WebMercatorQuad')
+2026-05-12 14:39:19,584 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileMatrixSet'>
+2026-05-12 14:39:19,584 - test_stac_item_tiler - INFO - Response keys: ['title', 'description', 'keywords', 'id', 'uri', 'orderedAxes', 'crs', 'wellKnownScaleSet', 'boundingBox', 'tileMatrices']
+2026-05-12 14:39:19,584 - test_stac_item_tiler - INFO - Number of tile matrices: 25
+2026-05-12 14:39:19,584 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,609 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,609 - test_stac_item_tiler - INFO - TEST: test_02_get_tile_matrices
+2026-05-12 14:39:19,609 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,610 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,610 - test_stac_item_tiler - INFO - Calling: get_tile_matrices()
+2026-05-12 14:39:19,622 - test_stac_item_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:19,623 - test_stac_item_tiler - INFO - Response: ['CDB1GlobalGrid', 'CanadianNAD83_LCC', 'EuropeanETRS89_LAEAQuad', 'GNOSISGlobalGrid', 'LINZAntarticaMapTilegrid', 'NZTM2000Quad', 'UPSAntarcticWGS84Quad', 'UPSArcticWGS84Quad', 'UTM31WGS84Quad', 'WGS1984Quad', 'WebMercatorQuad', 'WorldCRS84Quad', 'WorldMercatorWGS84Quad']
+2026-05-12 14:39:19,623 - test_stac_item_tiler - INFO - Number of tile matrices: 13
+2026-05-12 14:39:19,623 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,636 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,637 - test_stac_item_tiler - INFO - TEST: test_03_list_available_assets
+2026-05-12 14:39:19,637 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,637 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,637 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:19,637 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:19,637 - test_stac_item_tiler - INFO - Calling: list_available_assets(collection_id='naip', item_id='ga_m_3308421_se_16_060_20211114')
+2026-05-12 14:39:19,641 - test_stac_item_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:19,642 - test_stac_item_tiler - INFO - Response: ['image', 'tilejson']
+2026-05-12 14:39:19,642 - test_stac_item_tiler - INFO - Number of assets: 2
+2026-05-12 14:39:19,642 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,656 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,656 - test_stac_item_tiler - INFO - TEST: test_04_get_bounds
+2026-05-12 14:39:19,656 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,656 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,656 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:19,656 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:19,656 - test_stac_item_tiler - INFO - Calling: list_bounds(collection_id='naip', item_id='ga_m_3308421_se_16_060_20211114')
+2026-05-12 14:39:19,662 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacItemBounds'>
+2026-05-12 14:39:19,662 - test_stac_item_tiler - INFO - Response: {'bounds': [-84.44157, 33.621853, -84.370894, 33.690654]}
+2026-05-12 14:39:19,662 - test_stac_item_tiler - INFO - Bounds: [-84.44157, 33.621853, -84.370894, 33.690654]
+2026-05-12 14:39:19,662 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,698 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,698 - test_stac_item_tiler - INFO - TEST: test_05_get_preview
+2026-05-12 14:39:19,698 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,698 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,698 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:19,698 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:19,698 - test_stac_item_tiler - INFO - Input - dimensions: 512x512
+2026-05-12 14:39:19,699 - test_stac_item_tiler - INFO - Calling: get_preview(...)
+2026-05-12 14:39:19,704 - test_stac_item_tiler - INFO - Response type: <class 'async_generator'>
+2026-05-12 14:39:19,706 - test_stac_item_tiler - INFO - Image size: 714799 bytes
+2026-05-12 14:39:19,706 - test_stac_item_tiler - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-05-12 14:39:19,706 - test_stac_item_tiler - INFO - PIL Image format: PNG
+2026-05-12 14:39:19,706 - test_stac_item_tiler - INFO - PIL Image size: (512, 512)
+2026-05-12 14:39:19,706 - test_stac_item_tiler - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:19,706 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,722 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,722 - test_stac_item_tiler - INFO - TEST: test_06_get_info_geo_json
+2026-05-12 14:39:19,722 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,722 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,722 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:19,722 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:19,723 - test_stac_item_tiler - INFO - Calling: get_info_geo_json(...)
+2026-05-12 14:39:19,731 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerInfoGeoJsonFeature'>
+2026-05-12 14:39:19,731 - test_stac_item_tiler - INFO - Response keys: ['type', 'geometry', 'properties']
+2026-05-12 14:39:19,732 - test_stac_item_tiler - INFO -   type: <class 'str'>
+2026-05-12 14:39:19,732 - test_stac_item_tiler - INFO -   geometry: <class 'dict'>
+2026-05-12 14:39:19,732 - test_stac_item_tiler - INFO -   properties: <class 'dict'>
+2026-05-12 14:39:19,732 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,745 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,745 - test_stac_item_tiler - INFO - TEST: test_07_list_statistics
+2026-05-12 14:39:19,745 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,745 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,745 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:19,745 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:19,745 - test_stac_item_tiler - INFO - Calling: list_statistics(...)
+2026-05-12 14:39:19,757 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacItemStatistics'>
+2026-05-12 14:39:19,757 - test_stac_item_tiler - INFO - Response keys: ['image_b1', 'image_b2', 'image_b3', 'image_b4']
+2026-05-12 14:39:19,757 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,773 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,773 - test_stac_item_tiler - INFO - TEST: test_08_get_wmts_capabilities
+2026-05-12 14:39:19,773 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,773 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:19,773 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:19,773 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:19,773 - test_stac_item_tiler - INFO - Calling: get_wmts_capabilities(...)
+2026-05-12 14:39:19,778 - test_stac_item_tiler - INFO - Response type: <class 'async_generator'>
+2026-05-12 14:39:19,778 - test_stac_item_tiler - INFO - XML size: 8450 bytes
+2026-05-12 14:39:19,779 - test_stac_item_tiler - INFO - XML first 200 chars: <Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:
+2026-05-12 14:39:19,779 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,792 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,793 - test_stac_item_tiler - INFO - TEST: test_09_get_asset_statistics
+2026-05-12 14:39:19,793 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,793 - test_stac_item_tiler - INFO - Calling: get_asset_statistics(collection_id='naip', item_id='ga_m_3308421_se_16_060_20211114', assets=['image'])
+2026-05-12 14:39:19,805 - test_stac_item_tiler - INFO - Response: {'image': {'b1': {'min': 11.0, 'max': 246.0, 'mean': 122.09540892575887, 'count': 893952.0, 'sum': 109147435.0, 'std': 60.36645444129488, 'median': 125.0, 'majority': 209.0, 'minority': 244.0, 'unique': 234.0, 'histogram': [[61766, 117028, 110859, 87913, 83879, 103424, 111240, 97825, 97615, 22403], [11.0, 34.5, 58.0, 81.5, 105.0, 128.5, 152.0, 175.5, 199.0, 222.5, 246.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 26.0, 'percentile_98': 226.0}, 'b2': {'min': 38.0, 'max': 245.0, 'mean': 144.07083825529782, 'count': 893952.0, 'sum': 128792414.0, 'std': 48.5299357729891, 'median': 149.0, 'majority': 166.0, 'minority': 38.0, 'unique': 206.0, 'histogram': [[30430, 78066, 95120, 104046, 104894, 114066, 140175, 110035, 94264, 22856], [38.0, 58.7, 79.4, 100.1, 120.8, 141.5, 162.2, 182.9, 203.6, 224.29999999999998, 245.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 55.0, 'percentile_98': 227.0}, 'b3': {'min': 49.0, 'max': 241.0, 'mean': 128.610202784937, 'count': 893952.0, 'sum': 114971348.0, 'std': 48.88558925037479, 'median': 122.0, 'majority': 81.0, 'minority': 49.0, 'unique': 193.0, 'histogram': [[75113, 179336, 124008, 84332, 96200, 79850, 80252, 105476, 47208, 22177], [49.0, 68.2, 87.4, 106.6, 125.8, 145.0, 164.2, 183.4, 202.6, 221.79999999999998, 241.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 60.0, 'percentile_98': 224.0}, 'b4': {'min': 0.0, 'max': 244.0, 'mean': 134.29559752648913, 'count': 893952.0, 'sum': 120053818.0, 'std': 57.02485093862381, 'median': 149.0, 'majority': 188.0, 'minority': 244.0, 'unique': 244.0, 'histogram': [[38157, 65176, 68901, 71015, 82329, 110236, 144394, 213124, 84507, 16113], [0.0, 24.4, 48.8, 73.19999999999999, 97.6, 122.0, 146.39999999999998, 170.79999999999998, 195.2, 219.6, 244.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 893952.0, 'percentile_2': 17.0, 'percentile_98': 218.0}}}
+2026-05-12 14:39:19,805 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,860 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,860 - test_stac_item_tiler - INFO - TEST: test_10_crop_geo_json
+2026-05-12 14:39:19,861 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,861 - test_stac_item_tiler - INFO - Calling: crop_geo_json(...)
+2026-05-12 14:39:19,885 - test_stac_item_tiler - INFO - Image size: 5508348 bytes
+2026-05-12 14:39:19,885 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,902 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,902 - test_stac_item_tiler - INFO - TEST: test_11_crop_geo_json_with_dimensions
+2026-05-12 14:39:19,902 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,903 - test_stac_item_tiler - INFO - Calling: crop_geo_json_with_dimensions(...)
+2026-05-12 14:39:19,911 - test_stac_item_tiler - INFO - Image size: 180445 bytes
+2026-05-12 14:39:19,911 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:19,923 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,924 - test_stac_item_tiler - INFO - TEST: test_12_get_geo_json_statistics
+2026-05-12 14:39:19,924 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:19,924 - test_stac_item_tiler - INFO - Calling: get_geo_json_statistics(...)
+2026-05-12 14:39:19,939 - test_stac_item_tiler - INFO - Response: {'type': 'Feature', 'geometry': {'type': 'Polygon', 'coordinates': [[[-84.3906, 33.6714], [-84.3814, 33.6714], [-84.3814, 33.6806], [-84.3906, 33.6806], [-84.3906, 33.6714]]]}, 'properties': {'statistics': {'image_b1': {'min': 12.0, 'max': 234.0, 'mean': 77.8508653640747, 'count': 1048576.0, 'sum': 81632549.0, 'std': 47.207138516953336, 'median': 66.0, 'majority': 24.0, 'minority': 232.0, 'unique': 221.0, 'histogram': [[233498, 220491, 153557, 123548, 104204, 94734, 63116, 41309, 12328, 1791], [12.0, 34.2, 56.4, 78.6, 100.8, 123.0, 145.2, 167.4, 189.6, 211.79999999999998, 234.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 21.0, 'percentile_98': 184.0}, 'image_b2': {'min': 38.0, 'max': 233.0, 'mean': 109.85544681549072, 'count': 1048576.0, 'sum': 115191785.0, 'std': 40.59859883788109, 'median': 110.0, 'majority': 55.0, 'minority': 38.0, 'unique': 196.0, 'histogram': [[128443, 157918, 140551, 138892, 166576, 151710, 106349, 43548, 12627, 1962], [38.0, 57.5, 77.0, 96.5, 116.0, 135.5, 155.0, 174.5, 194.0, 213.5, 233.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 48.0, 'percentile_98': 190.0}, 'image_b3': {'min': 43.0, 'max': 232.0, 'mean': 91.10968494415283, 'count': 1048576.0, 'sum': 95535429.0, 'std': 30.78399360637365, 'median': 84.0, 'majority': 63.0, 'minority': 230.0, 'unique': 189.0, 'histogram': [[146488, 326060, 257516, 147715, 70753, 44995, 33257, 18088, 2807, 897], [43.0, 61.9, 80.8, 99.69999999999999, 118.6, 137.5, 156.39999999999998, 175.29999999999998, 194.2, 213.1, 232.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 54.0, 'percentile_98': 176.0}, 'image_b4': {'min': 6.0, 'max': 235.0, 'mean': 118.65080833435059, 'count': 1048576.0, 'sum': 124414390.0, 'std': 61.60935238521559, 'median': 128.0, 'majority': 188.0, 'minority': 6.0, 'unique': 225.0, 'histogram': [[91558, 135215, 101712, 81036, 82663, 99224, 131973, 176843, 142692, 5660], [6.0, 28.9, 51.8, 74.69999999999999, 97.6, 120.5, 143.39999999999998, 166.29999999999998, 189.2, 212.1, 235.0]], 'valid_percent': 100.0, 'masked_pixels': 0.0, 'valid_pixels': 1048576.0, 'percentile_2': 17.0, 'percentile_98': 207.0}}}}
+2026-05-12 14:39:19,939 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,009 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,009 - test_stac_item_tiler - INFO - TEST: test_13_get_part
+2026-05-12 14:39:20,010 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,010 - test_stac_item_tiler - INFO - Calling: get_part(...)
+2026-05-12 14:39:20,054 - test_stac_item_tiler - INFO - Image size: 13366032 bytes
+2026-05-12 14:39:20,054 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,069 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,069 - test_stac_item_tiler - INFO - TEST: test_14_get_part_with_dimensions
+2026-05-12 14:39:20,069 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,069 - test_stac_item_tiler - INFO - Calling: get_part_with_dimensions(...)
+2026-05-12 14:39:20,075 - test_stac_item_tiler - INFO - Image size: 56604 bytes
+2026-05-12 14:39:20,075 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,089 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,089 - test_stac_item_tiler - INFO - TEST: test_15_get_point
+2026-05-12 14:39:20,089 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,089 - test_stac_item_tiler - INFO - Calling: get_point(...)
+2026-05-12 14:39:20,095 - test_stac_item_tiler - INFO - Response: {'coordinates': [-84.386, 33.676], 'values': [52.0, 75.0, 75.0, 86.0], 'band_names': ['image_b1', 'image_b2', 'image_b3', 'image_b4']}
+2026-05-12 14:39:20,095 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,111 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,111 - test_stac_item_tiler - INFO - TEST: test_16_get_preview_with_format
+2026-05-12 14:39:20,111 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,111 - test_stac_item_tiler - INFO - Calling: get_preview_with_format(...)
+2026-05-12 14:39:20,118 - test_stac_item_tiler - INFO - Image size: 397460 bytes
+2026-05-12 14:39:20,118 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,132 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,132 - test_stac_item_tiler - INFO - TEST: test_17_get_tile_json
+2026-05-12 14:39:20,132 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,132 - test_stac_item_tiler - INFO - Calling: get_tile_json(...)
+2026-05-12 14:39:20,138 - test_stac_item_tiler - INFO - Response: {'tilejson': '2.2.0', 'version': '1.0.0', 'scheme': 'xyz', 'tiles': ['https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/collections/naip/items/ga_m_3308421_se_16_060_20211114/tiles/WebMercatorQuad/{z}/{x}/{y}@1x.png?api-version=2026-04-15&assets=image&asset_bidx=image%7C1%2C2%2C3'], 'minzoom': 7, 'maxzoom': 14, 'bounds': [-84.44157, 33.621853, -84.370894, 33.690654], 'center': [-84.406232, 33.656253500000005, 7]}
+2026-05-12 14:39:20,138 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,153 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,153 - test_stac_item_tiler - INFO - TEST: test_18_get_tile
+2026-05-12 14:39:20,153 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,153 - test_stac_item_tiler - INFO - Calling: get_tile(...)
+2026-05-12 14:39:20,158 - test_stac_item_tiler - INFO - Tile size: 96962 bytes
+2026-05-12 14:39:20,158 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,172 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,172 - test_stac_item_tiler - INFO - TEST: test_19_get_item_asset_details
+2026-05-12 14:39:20,172 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,172 - test_stac_item_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,172 - test_stac_item_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,172 - test_stac_item_tiler - INFO - Input - item_id: ga_m_3308421_se_16_060_20211114
+2026-05-12 14:39:20,172 - test_stac_item_tiler - INFO - Calling: get_item_asset_details(...)
+2026-05-12 14:39:20,179 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerInfoMapResponse'>
+2026-05-12 14:39:20,179 - test_stac_item_tiler - INFO - Response: {'image': {'bounds': [-84.44157036219231, 33.62185311275707, -84.37089430625126, 33.690654419926105], 'band_metadata': [['b1', {}], ['b2', {}], ['b3', {}], ['b4', {}]], 'band_descriptions': [['b1', ''], ['b2', ''], ['b3', ''], ['b4', '']], 'dtype': 'uint8', 'nodata_type': 'None', 'colorinterp': ['red', 'green', 'blue', 'undefined'], 'minzoom': 12, 'maxzoom': 18, 'crs': 'http://www.opengis.net/def/crs/EPSG/0/4326', 'driver': 'GTiff', 'count': 4, 'width': 10620, 'height': 12460, 'overviews': [2, 4, 8, 16, 32]}}
+2026-05-12 14:39:20,179 - test_stac_item_tiler - INFO - Response dict keys: ['image']
+2026-05-12 14:39:20,179 - test_stac_item_tiler - INFO - Response dict: {'image': {'bounds': [-84.44157036219231, 33.62185311275707, -84.37089430625126, 33.690654419926105], 'band_metadata': [['b1', {}], ['b2', {}], ['b3', {}], ['b4', {}]], 'band_descriptions': [['b1', ''], ['b2', ''], ['b3', ''], ['b4', '']], 'dtype': 'uint8', 'nodata_type': 'None', 'colorinterp': ['red', 'green', 'blue', 'undefined'], 'minzoom': 12, 'maxzoom': 18, 'crs': 'http://www.opengis.net/def/crs/EPSG/0/4326', 'driver': 'GTiff', 'count': 4, 'width': 10620, 'height': 12460, 'overviews': [2, 4, 8, 16, 32]}}
+2026-05-12 14:39:20,197 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,197 - test_stac_item_tiler - INFO - TEST: test_20_get_tilesets
+2026-05-12 14:39:20,197 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,231 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
+2026-05-12 14:39:20,231 - test_stac_item_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,245 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,245 - test_stac_item_tiler - INFO - TEST: test_21_get_tileset_metadata
+2026-05-12 14:39:20,245 - test_stac_item_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,364 - test_stac_item_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetMetadata'>
+2026-05-12 14:39:20,365 - test_stac_item_tiler - INFO - Test PASSED
+

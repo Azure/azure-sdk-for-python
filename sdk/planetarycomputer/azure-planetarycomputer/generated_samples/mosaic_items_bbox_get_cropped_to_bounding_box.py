@@ -33,10 +33,10 @@ def main():
     response = client.data.get_item_bbox_crop(
         collection_id="naip-atl",
         item_id="ga_m_3308421_se_16_060_20211114",
-        minx=-122.5,
-        miny=37.7,
-        maxx=-122.3,
-        maxy=37.8,
+        min_x=-122.5,
+        min_y=37.7,
+        max_x=-122.3,
+        max_y=37.8,
         format="png",
     )
     print(response)

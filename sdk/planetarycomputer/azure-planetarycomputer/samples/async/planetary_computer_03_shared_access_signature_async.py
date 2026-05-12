@@ -55,7 +55,7 @@ async def sign_asset_href(client: PlanetaryComputerProClient, collection_id: str
     else:
         raise Exception("No thumbnail found in collection assets.")
 
-    get_sign_response = await client.sas.get_sign(href=href, duration_in_minutes=60)
+    get_sign_response = await client.sas.get_url(href=href, duration_in_minutes=60)
     return get_sign_response.href, href  # Return both signed and unsigned hrefs
 
 

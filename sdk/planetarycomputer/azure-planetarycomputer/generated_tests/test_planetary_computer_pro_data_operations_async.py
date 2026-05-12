@@ -27,9 +27,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_list_tile_matrices(self, planetarycomputerpro_endpoint):
+    async def test_data_get_tile_matrices(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.list_tile_matrices()
+        response = await client.data.get_tile_matrices()
 
         # please add some check logic here by yourself
         # ...
@@ -99,9 +99,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_list_tilesets(self, planetarycomputerpro_endpoint):
+    async def test_data_get_tilesets(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.list_tilesets(
+        response = await client.data.get_tilesets(
             collection_id="str",
             item_id="str",
         )
@@ -256,9 +256,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_feature_geo_json(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_feature(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_feature_geo_json(
+        response = await client.data.crop_feature(
             collection_id="str",
             item_id="str",
             body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
@@ -269,9 +269,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_feature_geo_json_format(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_feature_by_format(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_feature_geo_json_format(
+        response = await client.data.crop_feature_by_format(
             collection_id="str",
             item_id="str",
             format="str",
@@ -283,9 +283,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_feature_geo_json_width_by_height(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_feature_width_by_height(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_feature_geo_json_width_by_height(
+        response = await client.data.crop_feature_width_by_height(
             collection_id="str",
             item_id="str",
             width=0,
@@ -335,9 +335,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_list_item_available_assets(self, planetarycomputerpro_endpoint):
+    async def test_data_get_item_available_assets(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.list_item_available_assets(
+        response = await client.data.get_item_available_assets(
             collection_id="str",
             item_id="str",
         )
@@ -359,9 +359,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_list_item_statistics(self, planetarycomputerpro_endpoint):
+    async def test_data_get_item_statistics(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.list_item_statistics(
+        response = await client.data.get_item_statistics(
             collection_id="str",
             item_id="str",
         )
@@ -371,9 +371,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_item_geo_json_statistics(self, planetarycomputerpro_endpoint):
+    async def test_data_get_item_feature_statistics(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_item_geo_json_statistics(
+        response = await client.data.get_item_feature_statistics(
             collection_id="str",
             item_id="str",
             body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
@@ -396,9 +396,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_item_tile_json_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_item_tile_json_by_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_item_tile_json_tms(
+        response = await client.data.get_item_tile_json_by_tms(
             collection_id="str",
             item_id="str",
             tile_matrix_set_id="str",
@@ -421,9 +421,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_item_wmts_capabilities_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_item_wmts_capabilities_by_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_item_wmts_capabilities_tms(
+        response = await client.data.get_item_wmts_capabilities_by_tms(
             collection_id="str",
             item_id="str",
             tile_matrix_set_id="str",
@@ -478,10 +478,10 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
         response = await client.data.get_item_bbox_crop(
             collection_id="str",
             item_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
             format="str",
         )
 
@@ -495,10 +495,10 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
         response = await client.data.get_item_bbox_crop_with_dimensions(
             collection_id="str",
             item_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
             width=0,
             height=0,
             format="str",
@@ -509,9 +509,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_list_collection_tilesets(self, planetarycomputerpro_endpoint):
+    async def test_data_get_collection_tilesets(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.list_collection_tilesets(
+        response = await client.data.get_collection_tilesets(
             collection_id="str",
         )
 
@@ -667,9 +667,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_collection_tile_json_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_collection_tile_json_by_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_collection_tile_json_tms(
+        response = await client.data.get_collection_tile_json_by_tms(
             collection_id="str",
             tile_matrix_set_id="str",
         )
@@ -690,9 +690,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_collection_wmts_capabilities_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_collection_wmts_capabilities_by_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_collection_wmts_capabilities_tms(
+        response = await client.data.get_collection_wmts_capabilities_by_tms(
             collection_id="str",
             tile_matrix_set_id="str",
         )
@@ -735,10 +735,10 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
         response = await client.data.get_collection_assets_for_bbox(
             collection_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
         )
 
         # please add some check logic here by yourself
@@ -761,10 +761,10 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
         response = await client.data.get_collection_bbox_crop(
             collection_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
             format="str",
         )
 
@@ -777,10 +777,10 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
         response = await client.data.get_collection_bbox_crop_with_dimensions(
             collection_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
             width=0,
             height=0,
             format="str",
@@ -791,9 +791,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_collection_feature_geo_json(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_collection_feature(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_collection_feature_geo_json(
+        response = await client.data.crop_collection_feature(
             collection_id="str",
             body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
         )
@@ -803,9 +803,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_collection_feature_geo_json_format(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_collection_feature_by_format(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_collection_feature_geo_json_format(
+        response = await client.data.crop_collection_feature_by_format(
             collection_id="str",
             format="str",
             body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
@@ -816,9 +816,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_collection_feature_geo_json_width_by_height(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_collection_feature_width_by_height(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_collection_feature_geo_json_width_by_height(
+        response = await client.data.crop_collection_feature_width_by_height(
             collection_id="str",
             width=0,
             height=0,
@@ -857,9 +857,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_list_searches_tilesets(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tilesets(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.list_searches_tilesets(
+        response = await client.data.get_search_tilesets(
             search_id="str",
         )
 
@@ -868,9 +868,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tileset_metadata(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tileset_metadata(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tileset_metadata(
+        response = await client.data.get_search_tileset_metadata(
             search_id="str",
             tile_matrix_set_id="str",
         )
@@ -880,9 +880,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_by_scale_and_format(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_by_scale_and_format(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_by_scale_and_format(
+        response = await client.data.get_search_tile_by_scale_and_format(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
@@ -897,9 +897,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile(
+        response = await client.data.get_search_tile(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
@@ -912,9 +912,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_by_format(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_by_format(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_by_format(
+        response = await client.data.get_search_tile_by_format(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
@@ -928,9 +928,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_by_scale(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_by_scale(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_by_scale(
+        response = await client.data.get_search_tile_by_scale(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
@@ -944,9 +944,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_assets_for_tile(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_assets_for_tile(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_assets_for_tile(
+        response = await client.data.get_search_assets_for_tile(
             search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
@@ -960,9 +960,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_json_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_json_by_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_json_tms(
+        response = await client.data.get_search_tile_json_by_tms(
             search_id="str",
             tile_matrix_set_id="str",
         )
@@ -972,9 +972,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_wmts_capabilities_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_wmts_capabilities_by_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_wmts_capabilities_tms(
+        response = await client.data.get_search_wmts_capabilities_by_tms(
             search_id="str",
             tile_matrix_set_id="str",
         )
@@ -984,9 +984,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_info(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_info(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_info(
+        response = await client.data.get_search_info(
             search_id="str",
         )
 
@@ -995,14 +995,14 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_bbox_crop(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_bbox_crop(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_bbox_crop(
+        response = await client.data.get_search_bbox_crop(
             search_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
             format="str",
         )
 
@@ -1011,14 +1011,14 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_bbox_crop_with_dimensions(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_bbox_crop_with_dimensions(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_bbox_crop_with_dimensions(
+        response = await client.data.get_search_bbox_crop_with_dimensions(
             search_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
             width=0,
             height=0,
             format="str",
@@ -1029,14 +1029,14 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_bbox_assets(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_bbox_assets(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_bbox_assets(
+        response = await client.data.get_search_bbox_assets(
             search_id="str",
-            minx=0.0,
-            miny=0.0,
-            maxx=0.0,
-            maxy=0.0,
+            min_x=0.0,
+            min_y=0.0,
+            max_x=0.0,
+            max_y=0.0,
         )
 
         # please add some check logic here by yourself
@@ -1044,9 +1044,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_searches_feature_geo_json(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_search_feature(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_searches_feature_geo_json(
+        response = await client.data.crop_search_feature(
             search_id="str",
             body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
         )
@@ -1056,9 +1056,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_searches_feature_geo_json_format(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_search_feature_by_format(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_searches_feature_geo_json_format(
+        response = await client.data.crop_search_feature_by_format(
             search_id="str",
             format="str",
             body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
@@ -1069,9 +1069,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_crop_searches_feature_geo_json_width_by_height(self, planetarycomputerpro_endpoint):
+    async def test_data_crop_search_feature_width_by_height(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.crop_searches_feature_geo_json_width_by_height(
+        response = await client.data.crop_search_feature_width_by_height(
             search_id="str",
             width=0,
             height=0,
@@ -1084,9 +1084,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_wmts_capabilities(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_wmts_capabilities(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_wmts_capabilities(
+        response = await client.data.get_search_wmts_capabilities(
             search_id="str",
         )
 
@@ -1095,9 +1095,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_json(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_json(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_json(
+        response = await client.data.get_search_tile_json(
             search_id="str",
         )
 
@@ -1106,9 +1106,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_no_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_no_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_no_tms(
+        response = await client.data.get_search_tile_no_tms(
             search_id="str",
             z=0.0,
             x=0.0,
@@ -1120,9 +1120,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_no_tms_by_format(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_no_tms_by_format(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_no_tms_by_format(
+        response = await client.data.get_search_tile_no_tms_by_format(
             search_id="str",
             z=0.0,
             x=0.0,
@@ -1135,9 +1135,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_no_tms_by_scale(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_no_tms_by_scale(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_no_tms_by_scale(
+        response = await client.data.get_search_tile_no_tms_by_scale(
             search_id="str",
             z=0.0,
             x=0.0,
@@ -1150,9 +1150,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_tile_no_tms_by_scale_and_format(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_tile_no_tms_by_scale_and_format(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_tile_no_tms_by_scale_and_format(
+        response = await client.data.get_search_tile_no_tms_by_scale_and_format(
             search_id="str",
             z=0.0,
             x=0.0,
@@ -1166,9 +1166,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_assets_for_tile_no_tms(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_assets_for_tile_no_tms(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_assets_for_tile_no_tms(
+        response = await client.data.get_search_assets_for_tile_no_tms(
             search_id="str",
             z=0.0,
             x=0.0,
@@ -1180,9 +1180,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_point(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_point(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_point(
+        response = await client.data.get_search_point(
             search_id="str",
             longitude=0.0,
             latitude=0.0,
@@ -1193,9 +1193,9 @@ class TestPlanetaryComputerProDataOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_data_get_searches_point_with_assets(self, planetarycomputerpro_endpoint):
+    async def test_data_get_search_point_with_assets(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.data.get_searches_point_with_assets(
+        response = await client.data.get_search_point_with_assets(
             search_id="str",
             longitude=0.0,
             latitude=0.0,

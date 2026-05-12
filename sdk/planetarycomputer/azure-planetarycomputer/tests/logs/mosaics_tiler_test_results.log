@@ -1,0 +1,230 @@
+2026-05-12 14:39:20,390 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,392 - test_mosaics_tiler - INFO - TEST: test_01_register_mosaics_search
+2026-05-12 14:39:20,392 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,392 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,392 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,393 - test_mosaics_tiler - INFO - Search request: {'filter': {'op': 'and', 'args': [{'op': '=', 'args': [{'property': 'collection'}, 'naip']}, {'op': '>=', 'args': [{'property': 'datetime'}, '2021-01-01T00:00:00Z']}, {'op': '<=', 'args': [{'property': 'datetime'}, '2022-12-31T23:59:59Z']}]}, 'filter-lang': 'cql2-json', 'sortby': [{'direction': 'desc', 'field': 'datetime'}]}
+2026-05-12 14:39:20,394 - test_mosaics_tiler - INFO - Calling: register_mosaics_search(...)
+2026-05-12 14:39:20,409 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerMosaicSearchRegistrationResponse'>
+2026-05-12 14:39:20,409 - test_mosaics_tiler - INFO - Response: {'searchid': '5bdb874db9ec386ccd82e56af5d216a3', 'links': [{'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/5bdb874db9ec386ccd82e56af5d216a3/info', 'rel': 'metadata', 'type': 'application/json', 'title': 'Mosaic metadata'}, {'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/5bdb874db9ec386ccd82e56af5d216a3/tilejson.json', 'rel': 'tilejson', 'type': 'application/json', 'title': 'Link for TileJSON'}, {'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/5bdb874db9ec386ccd82e56af5d216a3/WMTSCapabilities.xml', 'rel': 'wmts', 'type': 'application/json', 'title': 'Link for WMTS'}]}
+2026-05-12 14:39:20,409 - test_mosaics_tiler - INFO - Search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,409 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,433 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,434 - test_mosaics_tiler - INFO - TEST: test_02_get_mosaics_search_info
+2026-05-12 14:39:20,434 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,434 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,434 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,445 - test_mosaics_tiler - INFO - Registered search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,445 - test_mosaics_tiler - INFO - Calling: get_mosaics_search_info(search_id='5bdb874db9ec386ccd82e56af5d216a3')
+2026-05-12 14:39:20,449 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacSearchRegistration'>
+2026-05-12 14:39:20,449 - test_mosaics_tiler - INFO - Response keys: ['search', 'links']
+2026-05-12 14:39:20,449 - test_mosaics_tiler - INFO - Search type: <class 'azure.planetarycomputer.models._models.TilerStacSearchDefinition'>
+2026-05-12 14:39:20,449 - test_mosaics_tiler - INFO - Search hash: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,449 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,462 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,462 - test_mosaics_tiler - INFO - TEST: test_03_get_mosaics_tile_json
+2026-05-12 14:39:20,462 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,462 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,462 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,471 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,472 - test_mosaics_tiler - INFO - Calling: get_mosaics_tile_json(...)
+2026-05-12 14:39:20,475 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileJsonMetadata'>
+2026-05-12 14:39:20,475 - test_mosaics_tiler - INFO - Response keys: ['tilejson', 'name', 'version', 'scheme', 'tiles', 'minzoom', 'maxzoom', 'bounds', 'center']
+2026-05-12 14:39:20,475 - test_mosaics_tiler - INFO - TileJSON version: 2.2.0
+2026-05-12 14:39:20,475 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,506 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,506 - test_mosaics_tiler - INFO - TEST: test_04_get_mosaics_tile
+2026-05-12 14:39:20,506 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,506 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,506 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,506 - test_mosaics_tiler - INFO - Input - tile coordinates: z=13, x=2174, y=3282
+2026-05-12 14:39:20,514 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,515 - test_mosaics_tiler - INFO - Calling: get_mosaics_tile(...)
+2026-05-12 14:39:20,517 - test_mosaics_tiler - INFO - Response type: <class 'generator'>
+2026-05-12 14:39:20,518 - test_mosaics_tiler - INFO - Image size: 120684 bytes
+2026-05-12 14:39:20,518 - test_mosaics_tiler - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-05-12 14:39:20,518 - test_mosaics_tiler - INFO - PIL Image format: PNG
+2026-05-12 14:39:20,518 - test_mosaics_tiler - INFO - PIL Image size: (256, 256)
+2026-05-12 14:39:20,518 - test_mosaics_tiler - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:20,518 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,532 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,533 - test_mosaics_tiler - INFO - TEST: test_05_get_mosaics_wmts_capabilities
+2026-05-12 14:39:20,533 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,533 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,533 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,541 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,542 - test_mosaics_tiler - INFO - Calling: get_mosaics_wmts_capabilities(...)
+2026-05-12 14:39:20,545 - test_mosaics_tiler - INFO - Response type: <class 'generator'>
+2026-05-12 14:39:20,545 - test_mosaics_tiler - INFO - XML size: 7900 bytes
+2026-05-12 14:39:20,545 - test_mosaics_tiler - INFO - XML first 200 chars: <Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:
+2026-05-12 14:39:20,545 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,559 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,559 - test_mosaics_tiler - INFO - TEST: test_06_get_mosaics_assets_for_point
+2026-05-12 14:39:20,559 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,559 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,560 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,560 - test_mosaics_tiler - INFO - Input - point: longitude=-84.43202751899601, latitude=33.639647639722273
+2026-05-12 14:39:20,571 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,571 - test_mosaics_tiler - INFO - Calling: get_mosaics_assets_for_point(...)
+2026-05-12 14:39:20,574 - test_mosaics_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:20,574 - test_mosaics_tiler - INFO - Number of assets: 2
+2026-05-12 14:39:20,574 - test_mosaics_tiler - INFO - First asset type: <class 'azure.planetarycomputer.models._models.StacItemPointAsset'>
+2026-05-12 14:39:20,574 - test_mosaics_tiler - INFO - First asset ID: ga_m_3308421_se_16_060_20211114_test
+2026-05-12 14:39:20,574 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,621 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,621 - test_mosaics_tiler - INFO - TEST: test_07_get_mosaics_assets_for_tile
+2026-05-12 14:39:20,621 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,621 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,621 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,621 - test_mosaics_tiler - INFO - Input - tile coordinates: z=13, x=2174, y=3282
+2026-05-12 14:39:20,637 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,637 - test_mosaics_tiler - INFO - Calling: get_mosaics_assets_for_tile(...)
+2026-05-12 14:39:20,640 - test_mosaics_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:20,640 - test_mosaics_tiler - INFO - Response: [{'id': 'ga_m_3308429_nw_16_060_20211114', 'bbox': [-84.504026, 33.559387, -84.43345, 33.628155], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile', 'eo:bands': [{'name': 'Red', 'common_name': 'red'}, {'name': 'Green', 'common_name': 'green'}, {'name': 'Blue', 'common_name': 'blue'}, {'name': 'NIR', 'common_name': 'nir', 'description': 'near-infrared'}]}, 'tilejson': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/tilejson.json', 'type': 'application/json', 'roles': ['tiles'], 'title': 'TileJSON with default rendering'}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/thumbnail.jpg', 'type': 'image/jpeg', 'roles': ['thumbnail'], 'title': 'Thumbnail'}, 'rendered_preview': {'rel': 'preview', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/rendered_preview.png', 'type': 'image/png', 'roles': ['overview'], 'title': 'Rendered preview'}}, 'collection': 'naip'}, {'id': 'ga_m_3308429_ne_16_060_20211114', 'bbox': [-84.441543, 33.559319, -84.370855, 33.628174], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile', 'eo:bands': [{'name': 'Red', 'common_name': 'red'}, {'name': 'Green', 'common_name': 'green'}, {'name': 'Blue', 'common_name': 'blue'}, {'name': 'NIR', 'common_name': 'nir', 'description': 'near-infrared'}]}, 'tilejson': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/tilejson.json', 'type': 'application/json', 'roles': ['tiles'], 'title': 'TileJSON with default rendering'}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/thumbnail.jpg', 'type': 'image/jpeg', 'roles': ['thumbnail'], 'title': 'Thumbnail'}, 'rendered_preview': {'rel': 'preview', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/rendered_preview.png', 'type': 'image/png', 'roles': ['overview'], 'title': 'Rendered preview'}}, 'collection': 'naip'}, {'id': 'ga_m_3308421_sw_16_060_20211114', 'bbox': [-84.504036, 33.621867, -84.433405, 33.690637], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile', 'eo:bands': [{'name': 'Red', 'common_name': 'red'}, {'name': 'Green', 'common_name': 'green'}, {'name': 'Blue', 'common_name': 'blue'}, {'name': 'NIR', 'common_name': 'nir', 'description': 'near-infrared'}]}, 'tilejson': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/tilejson.json', 'type': 'application/json', 'roles': ['tiles'], 'title': 'TileJSON with default rendering'}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/thumbnail.jpg', 'type': 'image/jpeg', 'roles': ['thumbnail'], 'title': 'Thumbnail'}, 'rendered_preview': {'rel': 'preview', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/rendered_preview.png', 'type': 'image/png', 'roles': ['overview'], 'title': 'Rendered preview'}}, 'collection': 'naip'}, {'id': 'ga_m_3308421_se_16_060_20211114_test', 'bbox': [-84.44157, 33.621853, -84.370894, 33.690654], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile'}}, 'collection': 'naip'}]
+2026-05-12 14:39:20,640 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,662 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,663 - test_mosaics_tiler - INFO - TEST: test_08_get_search_point
+2026-05-12 14:39:20,663 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,673 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerCoreModelsResponsesPoint'>
+2026-05-12 14:39:20,673 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,701 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,701 - test_mosaics_tiler - INFO - TEST: test_09_get_search_bbox_crop
+2026-05-12 14:39:20,701 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,719 - test_mosaics_tiler - INFO - Image size: 1612525 bytes
+2026-05-12 14:39:20,719 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,735 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,735 - test_mosaics_tiler - INFO - TEST: test_10_crop_search_feature
+2026-05-12 14:39:20,735 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,750 - test_mosaics_tiler - INFO - Image size: 428684 bytes
+2026-05-12 14:39:20,751 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,767 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,767 - test_mosaics_tiler - INFO - TEST: test_11_get_search_tilesets
+2026-05-12 14:39:20,767 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,796 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
+2026-05-12 14:39:20,796 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,818 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,818 - test_mosaics_tiler - INFO - TEST: test_01_register_mosaics_search
+2026-05-12 14:39:20,818 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,818 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,819 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,819 - test_mosaics_tiler - INFO - Search request: {'filter': {'op': 'and', 'args': [{'op': '=', 'args': [{'property': 'collection'}, 'naip']}, {'op': '>=', 'args': [{'property': 'datetime'}, '2021-01-01T00:00:00Z']}, {'op': '<=', 'args': [{'property': 'datetime'}, '2022-12-31T23:59:59Z']}]}, 'filter-lang': 'cql2-json', 'sortby': [{'direction': 'desc', 'field': 'datetime'}]}
+2026-05-12 14:39:20,819 - test_mosaics_tiler - INFO - Calling: register_mosaics_search(...)
+2026-05-12 14:39:20,827 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerMosaicSearchRegistrationResponse'>
+2026-05-12 14:39:20,827 - test_mosaics_tiler - INFO - Response: {'searchid': '5bdb874db9ec386ccd82e56af5d216a3', 'links': [{'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/5bdb874db9ec386ccd82e56af5d216a3/info', 'rel': 'metadata', 'type': 'application/json', 'title': 'Mosaic metadata'}, {'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/5bdb874db9ec386ccd82e56af5d216a3/tilejson.json', 'rel': 'tilejson', 'type': 'application/json', 'title': 'Link for TileJSON'}, {'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/data/mosaic/5bdb874db9ec386ccd82e56af5d216a3/WMTSCapabilities.xml', 'rel': 'wmts', 'type': 'application/json', 'title': 'Link for WMTS'}]}
+2026-05-12 14:39:20,827 - test_mosaics_tiler - INFO - Search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,827 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,847 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,847 - test_mosaics_tiler - INFO - TEST: test_02_get_mosaics_search_info
+2026-05-12 14:39:20,847 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,847 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,847 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,859 - test_mosaics_tiler - INFO - Registered search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,859 - test_mosaics_tiler - INFO - Calling: get_mosaics_search_info(search_id='5bdb874db9ec386ccd82e56af5d216a3')
+2026-05-12 14:39:20,862 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerStacSearchRegistration'>
+2026-05-12 14:39:20,862 - test_mosaics_tiler - INFO - Response keys: ['search', 'links']
+2026-05-12 14:39:20,862 - test_mosaics_tiler - INFO - Search type: <class 'azure.planetarycomputer.models._models.TilerStacSearchDefinition'>
+2026-05-12 14:39:20,862 - test_mosaics_tiler - INFO - Search hash: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,862 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,927 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,927 - test_mosaics_tiler - INFO - TEST: test_03_get_mosaics_tile_json
+2026-05-12 14:39:20,927 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,928 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,928 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,944 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:20,945 - test_mosaics_tiler - INFO - Calling: get_mosaics_tile_json(...)
+2026-05-12 14:39:20,948 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileJsonMetadata'>
+2026-05-12 14:39:20,948 - test_mosaics_tiler - INFO - Response keys: ['tilejson', 'name', 'version', 'scheme', 'tiles', 'minzoom', 'maxzoom', 'bounds', 'center']
+2026-05-12 14:39:20,948 - test_mosaics_tiler - INFO - TileJSON version: 2.2.0
+2026-05-12 14:39:20,948 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:20,997 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,997 - test_mosaics_tiler - INFO - TEST: test_04_get_mosaics_tile
+2026-05-12 14:39:20,997 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:20,997 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:20,997 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:20,997 - test_mosaics_tiler - INFO - Input - tile coordinates: z=13, x=2174, y=3282
+2026-05-12 14:39:21,007 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:21,007 - test_mosaics_tiler - INFO - Calling: get_mosaics_tile(...)
+2026-05-12 14:39:21,010 - test_mosaics_tiler - INFO - Response type: <class 'async_generator'>
+2026-05-12 14:39:21,010 - test_mosaics_tiler - INFO - Image size: 120684 bytes
+2026-05-12 14:39:21,010 - test_mosaics_tiler - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-05-12 14:39:21,010 - test_mosaics_tiler - INFO - PIL Image format: PNG
+2026-05-12 14:39:21,010 - test_mosaics_tiler - INFO - PIL Image size: (256, 256)
+2026-05-12 14:39:21,010 - test_mosaics_tiler - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:21,011 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:21,038 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,039 - test_mosaics_tiler - INFO - TEST: test_05_get_mosaics_wmts_capabilities
+2026-05-12 14:39:21,039 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,039 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,039 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:21,049 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:21,049 - test_mosaics_tiler - INFO - Calling: get_mosaics_wmts_capabilities(...)
+2026-05-12 14:39:21,052 - test_mosaics_tiler - INFO - Response type: <class 'async_generator'>
+2026-05-12 14:39:21,052 - test_mosaics_tiler - INFO - XML size: 7888 bytes
+2026-05-12 14:39:21,052 - test_mosaics_tiler - INFO - XML first 200 chars: <Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:
+2026-05-12 14:39:21,052 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:21,071 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,071 - test_mosaics_tiler - INFO - TEST: test_06_get_mosaics_assets_for_point
+2026-05-12 14:39:21,071 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,071 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,071 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:21,071 - test_mosaics_tiler - INFO - Input - point: longitude=-84.43202751899601, latitude=33.639647639722273
+2026-05-12 14:39:21,083 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:21,083 - test_mosaics_tiler - INFO - Calling: get_mosaics_assets_for_point(...)
+2026-05-12 14:39:21,086 - test_mosaics_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:21,086 - test_mosaics_tiler - INFO - Number of assets: 2
+2026-05-12 14:39:21,087 - test_mosaics_tiler - INFO - First asset type: <class 'azure.planetarycomputer.models._models.StacItemPointAsset'>
+2026-05-12 14:39:21,087 - test_mosaics_tiler - INFO - First asset ID: ga_m_3308421_se_16_060_20211114_test
+2026-05-12 14:39:21,087 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:21,104 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,104 - test_mosaics_tiler - INFO - TEST: test_07_get_mosaics_assets_for_tile
+2026-05-12 14:39:21,104 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,105 - test_mosaics_tiler - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,105 - test_mosaics_tiler - INFO - Input - collection_id: naip
+2026-05-12 14:39:21,105 - test_mosaics_tiler - INFO - Input - tile coordinates: z=13, x=2174, y=3282
+2026-05-12 14:39:21,121 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
+2026-05-12 14:39:21,121 - test_mosaics_tiler - INFO - Calling: get_mosaics_assets_for_tile(...)
+2026-05-12 14:39:21,125 - test_mosaics_tiler - INFO - Response type: <class 'list'>
+2026-05-12 14:39:21,125 - test_mosaics_tiler - INFO - Response: [{'id': 'ga_m_3308429_nw_16_060_20211114', 'bbox': [-84.504026, 33.559387, -84.43345, 33.628155], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile', 'eo:bands': [{'name': 'Red', 'common_name': 'red'}, {'name': 'Green', 'common_name': 'green'}, {'name': 'Blue', 'common_name': 'blue'}, {'name': 'NIR', 'common_name': 'nir', 'description': 'near-infrared'}]}, 'tilejson': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/tilejson.json', 'type': 'application/json', 'roles': ['tiles'], 'title': 'TileJSON with default rendering'}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/thumbnail.jpg', 'type': 'image/jpeg', 'roles': ['thumbnail'], 'title': 'Thumbnail'}, 'rendered_preview': {'rel': 'preview', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/a34/ga_m_3308429_nw_16_060_20211114/rendered_preview.png', 'type': 'image/png', 'roles': ['overview'], 'title': 'Rendered preview'}}, 'collection': 'naip'}, {'id': 'ga_m_3308429_ne_16_060_20211114', 'bbox': [-84.441543, 33.559319, -84.370855, 33.628174], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile', 'eo:bands': [{'name': 'Red', 'common_name': 'red'}, {'name': 'Green', 'common_name': 'green'}, {'name': 'Blue', 'common_name': 'blue'}, {'name': 'NIR', 'common_name': 'nir', 'description': 'near-infrared'}]}, 'tilejson': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/tilejson.json', 'type': 'application/json', 'roles': ['tiles'], 'title': 'TileJSON with default rendering'}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/thumbnail.jpg', 'type': 'image/jpeg', 'roles': ['thumbnail'], 'title': 'Thumbnail'}, 'rendered_preview': {'rel': 'preview', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/6f0/ga_m_3308429_ne_16_060_20211114/rendered_preview.png', 'type': 'image/png', 'roles': ['overview'], 'title': 'Rendered preview'}}, 'collection': 'naip'}, {'id': 'ga_m_3308421_sw_16_060_20211114', 'bbox': [-84.504036, 33.621867, -84.433405, 33.690637], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile', 'eo:bands': [{'name': 'Red', 'common_name': 'red'}, {'name': 'Green', 'common_name': 'green'}, {'name': 'Blue', 'common_name': 'blue'}, {'name': 'NIR', 'common_name': 'nir', 'description': 'near-infrared'}]}, 'tilejson': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/tilejson.json', 'type': 'application/json', 'roles': ['tiles'], 'title': 'TileJSON with default rendering'}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/thumbnail.jpg', 'type': 'image/jpeg', 'roles': ['thumbnail'], 'title': 'Thumbnail'}, 'rendered_preview': {'rel': 'preview', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/e27/ga_m_3308421_sw_16_060_20211114/rendered_preview.png', 'type': 'image/png', 'roles': ['overview'], 'title': 'Rendered preview'}}, 'collection': 'naip'}, {'id': 'ga_m_3308421_se_16_060_20211114_test', 'bbox': [-84.44157, 33.621853, -84.370894, 33.690654], 'assets': {'image': {'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/08a/ga_m_3308421_se_16_060_20211114_test/image.tif', 'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile'}}, 'collection': 'naip'}]
+2026-05-12 14:39:21,125 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:21,142 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,142 - test_mosaics_tiler - INFO - TEST: test_08_get_search_point
+2026-05-12 14:39:21,142 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,154 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerCoreModelsResponsesPoint'>
+2026-05-12 14:39:21,154 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:21,179 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,179 - test_mosaics_tiler - INFO - TEST: test_09_get_search_bbox_crop
+2026-05-12 14:39:21,179 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,198 - test_mosaics_tiler - INFO - Image size: 1612525 bytes
+2026-05-12 14:39:21,198 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:21,223 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,224 - test_mosaics_tiler - INFO - TEST: test_10_crop_search_feature
+2026-05-12 14:39:21,224 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,272 - test_mosaics_tiler - INFO - Image size: 428684 bytes
+2026-05-12 14:39:21,272 - test_mosaics_tiler - INFO - Test PASSED
+
+2026-05-12 14:39:21,333 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,334 - test_mosaics_tiler - INFO - TEST: test_11_get_search_tilesets
+2026-05-12 14:39:21,334 - test_mosaics_tiler - INFO - ================================================================================
+2026-05-12 14:39:21,385 - test_mosaics_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSetList'>
+2026-05-12 14:39:21,386 - test_mosaics_tiler - INFO - Test PASSED
+

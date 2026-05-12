@@ -118,9 +118,9 @@ class TestPlanetaryComputerProStacOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_stac_list_mosaics(self, planetarycomputerpro_endpoint):
+    async def test_stac_get_mosaics(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.stac.list_mosaics(
+        response = await client.stac.get_mosaics(
             collection_id="str",
         )
 
@@ -419,9 +419,9 @@ class TestPlanetaryComputerProStacOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_stac_list_render_options(self, planetarycomputerpro_endpoint):
+    async def test_stac_get_render_options(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.stac.list_render_options(
+        response = await client.stac.get_render_options(
             collection_id="str",
         )
 
@@ -777,9 +777,9 @@ class TestPlanetaryComputerProStacOperationsAsync(PlanetaryComputerProClientTest
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_stac_list_queryables(self, planetarycomputerpro_endpoint):
+    async def test_stac_get_queryables(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.stac.list_queryables()
+        response = await client.stac.get_queryables()
 
         # please add some check logic here by yourself
         # ...

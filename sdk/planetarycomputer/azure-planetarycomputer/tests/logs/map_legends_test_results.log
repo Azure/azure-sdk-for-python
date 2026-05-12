@@ -1,0 +1,120 @@
+2026-05-12 14:39:21,408 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,408 - test_map_legends - INFO - TEST: test_01_get_class_map_legend
+2026-05-12 14:39:21,408 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,408 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,408 - test_map_legends - INFO - Input - classmap_name: mtbs-severity
+2026-05-12 14:39:21,409 - test_map_legends - INFO - Calling: get_class_map_legend(classmap_name=mtbs-severity)
+2026-05-12 14:39:21,415 - test_map_legends - INFO - Response type: <class 'azure.planetarycomputer.models._models.ClassMapLegendResponse'>
+2026-05-12 14:39:21,415 - test_map_legends - INFO - Response: {'0': [0, 0, 0, 0], '1': [0, 100, 0, 255], '2': [127, 255, 212, 255], '3': [255, 255, 0, 255], '4': [255, 0, 0, 255], '5': [127, 255, 0, 255], '6': [255, 255, 255, 255]}
+2026-05-12 14:39:21,415 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,431 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,431 - test_map_legends - INFO - TEST: test_02_get_interval_legend
+2026-05-12 14:39:21,431 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,431 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,431 - test_map_legends - INFO - Input - classmap_name: modis-64A1
+2026-05-12 14:39:21,432 - test_map_legends - INFO - Calling: get_interval_legend(classmap_name=modis-64A1)
+2026-05-12 14:39:21,439 - test_map_legends - INFO - Response type: <class 'list'>
+2026-05-12 14:39:21,439 - test_map_legends - INFO - Response: [[[-2, 0], [0, 0, 0, 0]], [[1, 32], [255, 255, 178, 255]], [[32, 60], [255, 236, 147, 255]], [[60, 91], [254, 218, 115, 255]], [[91, 121], [254, 198, 89, 255]], [[121, 152], [254, 175, 77, 255]], [[152, 182], [253, 152, 66, 255]], [[182, 213], [251, 126, 55, 255]], [[213, 244], [246, 96, 45, 255]], [[244, 274], [241, 66, 35, 255]], [[274, 305], [226, 43, 34, 255]], [[305, 335], [208, 21, 36, 255]], [[335, 366], [189, 0, 38, 255]]]
+2026-05-12 14:39:21,439 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,453 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,453 - test_map_legends - INFO - TEST: test_03_get_legend_as_png
+2026-05-12 14:39:21,453 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,453 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,454 - test_map_legends - INFO - Input - color_map_name: rdylgn
+2026-05-12 14:39:21,454 - test_map_legends - INFO - Calling: get_legend(color_map_name='rdylgn')
+2026-05-12 14:39:21,458 - test_map_legends - INFO - Response type: <class 'generator'>
+2026-05-12 14:39:21,458 - test_map_legends - INFO - Legend size: 550 bytes
+2026-05-12 14:39:21,458 - test_map_legends - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-05-12 14:39:21,458 - test_map_legends - INFO - PNG magic bytes: 89504e470d0a1a0a
+2026-05-12 14:39:21,458 - test_map_legends - INFO - Response starts with PNG magic: True
+2026-05-12 14:39:21,458 - test_map_legends - INFO - PIL Image format: PNG
+2026-05-12 14:39:21,458 - test_map_legends - INFO - PIL Image size: (387, 11)
+2026-05-12 14:39:21,458 - test_map_legends - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:21,458 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,474 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,475 - test_map_legends - INFO - TEST: test_04_get_legend_with_different_colormap
+2026-05-12 14:39:21,475 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,475 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,475 - test_map_legends - INFO - Input - color_map_name: viridis
+2026-05-12 14:39:21,475 - test_map_legends - INFO - Calling: get_legend(color_map_name='viridis')
+2026-05-12 14:39:21,479 - test_map_legends - INFO - Response type: <class 'generator'>
+2026-05-12 14:39:21,479 - test_map_legends - INFO - Legend size: 533 bytes
+2026-05-12 14:39:21,479 - test_map_legends - INFO - PIL Image format: PNG
+2026-05-12 14:39:21,479 - test_map_legends - INFO - PIL Image size: (387, 11)
+2026-05-12 14:39:21,479 - test_map_legends - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:21,479 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,488 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,488 - test_map_legends - INFO - TEST: test_05_class_map_legend_structure
+2026-05-12 14:39:21,488 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,488 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,488 - test_map_legends - INFO - Input - classmap_name: mtbs-severity
+2026-05-12 14:39:21,489 - test_map_legends - INFO - Calling: get_class_map_legend(classmap_name=mtbs-severity)
+2026-05-12 14:39:21,494 - test_map_legends - INFO - Response type: <class 'azure.planetarycomputer.models._models.ClassMapLegendResponse'>
+2026-05-12 14:39:21,494 - test_map_legends - INFO - Response: {'0': [0, 0, 0, 0], '1': [0, 100, 0, 255], '2': [127, 255, 212, 255], '3': [255, 255, 0, 255], '4': [255, 0, 0, 255], '5': [127, 255, 0, 255], '6': [255, 255, 255, 255]}
+2026-05-12 14:39:21,494 - test_map_legends - INFO - Found 7 classes with 6 unique non-transparent colors
+2026-05-12 14:39:21,494 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,507 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,507 - test_map_legends - INFO - TEST: test_01_get_class_map_legend
+2026-05-12 14:39:21,507 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,508 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,508 - test_map_legends - INFO - Input - classmap_name: mtbs-severity
+2026-05-12 14:39:21,508 - test_map_legends - INFO - Calling: get_class_map_legend(classmap_name=mtbs-severity)
+2026-05-12 14:39:21,514 - test_map_legends - INFO - Response type: <class 'azure.planetarycomputer.models._models.ClassMapLegendResponse'>
+2026-05-12 14:39:21,514 - test_map_legends - INFO - Response: {'0': [0, 0, 0, 0], '1': [0, 100, 0, 255], '2': [127, 255, 212, 255], '3': [255, 255, 0, 255], '4': [255, 0, 0, 255], '5': [127, 255, 0, 255], '6': [255, 255, 255, 255]}
+2026-05-12 14:39:21,514 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,528 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,528 - test_map_legends - INFO - TEST: test_02_get_interval_legend
+2026-05-12 14:39:21,528 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,528 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,528 - test_map_legends - INFO - Input - classmap_name: modis-64A1
+2026-05-12 14:39:21,528 - test_map_legends - INFO - Calling: get_interval_legend(classmap_name=modis-64A1)
+2026-05-12 14:39:21,536 - test_map_legends - INFO - Response type: <class 'list'>
+2026-05-12 14:39:21,537 - test_map_legends - INFO - Response: [[[-2, 0], [0, 0, 0, 0]], [[1, 32], [255, 255, 178, 255]], [[32, 60], [255, 236, 147, 255]], [[60, 91], [254, 218, 115, 255]], [[91, 121], [254, 198, 89, 255]], [[121, 152], [254, 175, 77, 255]], [[152, 182], [253, 152, 66, 255]], [[182, 213], [251, 126, 55, 255]], [[213, 244], [246, 96, 45, 255]], [[244, 274], [241, 66, 35, 255]], [[274, 305], [226, 43, 34, 255]], [[305, 335], [208, 21, 36, 255]], [[335, 366], [189, 0, 38, 255]]]
+2026-05-12 14:39:21,537 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,551 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,551 - test_map_legends - INFO - TEST: test_03_get_legend_as_png
+2026-05-12 14:39:21,551 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,551 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,551 - test_map_legends - INFO - Input - color_map_name: rdylgn
+2026-05-12 14:39:21,551 - test_map_legends - INFO - Calling: get_legend(color_map_name='rdylgn')
+2026-05-12 14:39:21,555 - test_map_legends - INFO - Response type: <class 'async_generator'>
+2026-05-12 14:39:21,556 - test_map_legends - INFO - Legend size: 550 bytes
+2026-05-12 14:39:21,556 - test_map_legends - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-05-12 14:39:21,556 - test_map_legends - INFO - PNG magic bytes: 89504e470d0a1a0a
+2026-05-12 14:39:21,556 - test_map_legends - INFO - Response starts with PNG magic: True
+2026-05-12 14:39:21,556 - test_map_legends - INFO - PIL Image format: PNG
+2026-05-12 14:39:21,556 - test_map_legends - INFO - PIL Image size: (387, 11)
+2026-05-12 14:39:21,556 - test_map_legends - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:21,556 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,569 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,569 - test_map_legends - INFO - TEST: test_04_get_legend_with_different_colormap
+2026-05-12 14:39:21,569 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,569 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,569 - test_map_legends - INFO - Input - color_map_name: viridis
+2026-05-12 14:39:21,570 - test_map_legends - INFO - Calling: get_legend(color_map_name='viridis')
+2026-05-12 14:39:21,574 - test_map_legends - INFO - Response type: <class 'async_generator'>
+2026-05-12 14:39:21,574 - test_map_legends - INFO - Legend size: 533 bytes
+2026-05-12 14:39:21,574 - test_map_legends - INFO - PIL Image format: PNG
+2026-05-12 14:39:21,574 - test_map_legends - INFO - PIL Image size: (387, 11)
+2026-05-12 14:39:21,574 - test_map_legends - INFO - PIL Image mode: RGBA
+2026-05-12 14:39:21,574 - test_map_legends - INFO - Test PASSED
+
+2026-05-12 14:39:21,583 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,584 - test_map_legends - INFO - TEST: test_05_class_map_legend_structure
+2026-05-12 14:39:21,584 - test_map_legends - INFO - ================================================================================
+2026-05-12 14:39:21,584 - test_map_legends - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:21,584 - test_map_legends - INFO - Input - classmap_name: mtbs-severity
+2026-05-12 14:39:21,584 - test_map_legends - INFO - Calling: get_class_map_legend(classmap_name=mtbs-severity)
+2026-05-12 14:39:21,590 - test_map_legends - INFO - Response type: <class 'azure.planetarycomputer.models._models.ClassMapLegendResponse'>
+2026-05-12 14:39:21,590 - test_map_legends - INFO - Response: {'0': [0, 0, 0, 0], '1': [0, 100, 0, 255], '2': [127, 255, 212, 255], '3': [255, 255, 0, 255], '4': [255, 0, 0, 255], '5': [127, 255, 0, 255], '6': [255, 255, 255, 255]}
+2026-05-12 14:39:21,590 - test_map_legends - INFO - Found 7 classes with 6 unique non-transparent colors
+2026-05-12 14:39:21,591 - test_map_legends - INFO - Test PASSED
+

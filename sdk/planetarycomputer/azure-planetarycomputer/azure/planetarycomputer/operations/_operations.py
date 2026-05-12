@@ -33,9 +33,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import PlanetaryComputerProClientConfiguration
-# TODO: Remove pylint disable once pygen emitter fixes unused _deserialize_xml import
-# https://github.com/Azure/autorest.python/issues/XXXX
-from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml  # pylint: disable=unused-import
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 
@@ -695,7 +693,7 @@ def build_stac_get_mosaic_request(collection_id: str, mosaic_id: str, **kwargs: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_list_mosaics_request(collection_id: str, **kwargs: Any) -> HttpRequest:
+def build_stac_get_mosaics_request(collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1003,7 +1001,7 @@ def build_stac_get_render_option_request(collection_id: str, render_option_id: s
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_list_render_options_request(collection_id: str, **kwargs: Any) -> HttpRequest:
+def build_stac_get_render_options_request(collection_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1407,7 +1405,7 @@ def build_stac_delete_queryable_request(collection_id: str, queryable_name: str,
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_stac_list_queryables_request(**kwargs: Any) -> HttpRequest:
+def build_stac_get_queryables_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1509,7 +1507,7 @@ def build_data_get_tile_matrix_definitions_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_list_tile_matrices_request(**kwargs: Any) -> HttpRequest:
+def build_data_get_tile_matrices_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1650,7 +1648,7 @@ def build_data_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_list_tilesets_request(
+def build_data_get_tilesets_request(
     collection_id: str,
     item_id: str,
     *,
@@ -1660,7 +1658,6 @@ def build_data_list_tilesets_request(
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1692,8 +1689,6 @@ def build_data_list_tilesets_request(
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1712,7 +1707,6 @@ def build_data_get_tileset_metadata_request(
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1745,8 +1739,6 @@ def build_data_get_tileset_metadata_request(
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1788,7 +1780,6 @@ def build_data_get_tile_request(  # pylint: disable=too-many-locals,too-many-sta
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1864,8 +1855,6 @@ def build_data_get_tile_request(  # pylint: disable=too-many-locals,too-many-sta
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -1874,7 +1863,7 @@ def build_data_get_tile_request(  # pylint: disable=too-many-locals,too-many-sta
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_tile_by_format_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+def build_data_get_tile_by_format_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -1908,7 +1897,6 @@ def build_data_get_tile_by_format_request(  # pylint: disable=too-many-locals,to
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1983,8 +1971,6 @@ def build_data_get_tile_by_format_request(  # pylint: disable=too-many-locals,to
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -1993,7 +1979,7 @@ def build_data_get_tile_by_format_request(  # pylint: disable=too-many-locals,to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_tile_by_scale_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+def build_data_get_tile_by_scale_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2027,7 +2013,6 @@ def build_data_get_tile_by_scale_request(  # pylint: disable=too-many-locals,too
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2102,8 +2087,6 @@ def build_data_get_tile_by_scale_request(  # pylint: disable=too-many-locals,too
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -2112,7 +2095,7 @@ def build_data_get_tile_by_scale_request(  # pylint: disable=too-many-locals,too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_tile_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-branches,too-many-statements
+def build_data_get_tile_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2146,7 +2129,6 @@ def build_data_get_tile_by_scale_and_format_request(  # pylint: disable=name-too
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2222,8 +2204,6 @@ def build_data_get_tile_by_scale_and_format_request(  # pylint: disable=name-too
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -2266,7 +2246,6 @@ def build_data_get_tile_no_tms_request(  # pylint: disable=too-many-locals,too-m
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2343,8 +2322,6 @@ def build_data_get_tile_no_tms_request(  # pylint: disable=too-many-locals,too-m
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -2387,7 +2364,6 @@ def build_data_get_tile_no_tms_by_format_request(  # pylint: disable=name-too-lo
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2463,8 +2439,6 @@ def build_data_get_tile_no_tms_by_format_request(  # pylint: disable=name-too-lo
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -2507,7 +2481,6 @@ def build_data_get_tile_no_tms_by_scale_request(  # pylint: disable=name-too-lon
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2583,8 +2556,6 @@ def build_data_get_tile_no_tms_by_scale_request(  # pylint: disable=name-too-lon
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -2593,7 +2564,7 @@ def build_data_get_tile_no_tms_by_scale_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_tile_no_tms_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_tile_no_tms_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     item_id: str,
     z: float,
@@ -2627,7 +2598,6 @@ def build_data_get_tile_no_tms_by_scale_and_format_request(  # pylint: disable=n
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2702,8 +2672,6 @@ def build_data_get_tile_no_tms_by_scale_and_format_request(  # pylint: disable=n
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -2712,7 +2680,7 @@ def build_data_get_tile_no_tms_by_scale_and_format_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_feature_geo_json_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_feature_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     item_id: str,
     *,
@@ -2743,7 +2711,6 @@ def build_data_crop_feature_geo_json_request(  # pylint: disable=too-many-locals
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     format: Optional[Union[str, _models.TilerImageFormat]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -2819,8 +2786,6 @@ def build_data_crop_feature_geo_json_request(  # pylint: disable=too-many-locals
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if format is not None:
         _params["format"] = _SERIALIZER.query("format", format, "str")
 
@@ -2833,7 +2798,7 @@ def build_data_crop_feature_geo_json_request(  # pylint: disable=too-many-locals
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_feature_geo_json_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_feature_by_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     item_id: str,
     format: str,
@@ -2865,7 +2830,6 @@ def build_data_crop_feature_geo_json_format_request(  # pylint: disable=name-too
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2941,8 +2905,6 @@ def build_data_crop_feature_geo_json_format_request(  # pylint: disable=name-too
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if content_type is not None:
@@ -2953,7 +2915,7 @@ def build_data_crop_feature_geo_json_format_request(  # pylint: disable=name-too
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_feature_geo_json_width_by_height_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_feature_width_by_height_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     item_id: str,
     width: int,
@@ -2985,7 +2947,6 @@ def build_data_crop_feature_geo_json_width_by_height_request(  # pylint: disable
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3059,8 +3020,6 @@ def build_data_crop_feature_geo_json_width_by_height_request(  # pylint: disable
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if content_type is not None:
@@ -3081,7 +3040,6 @@ def build_data_get_item_bounds_request(
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3113,8 +3071,6 @@ def build_data_get_item_bounds_request(
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3132,7 +3088,6 @@ def build_data_get_item_info_request(
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     assets: Optional[List[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -3165,8 +3120,6 @@ def build_data_get_item_info_request(
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if assets is not None:
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
 
@@ -3186,7 +3139,6 @@ def build_data_get_item_info_geo_json_request(  # pylint: disable=name-too-long
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     assets: Optional[List[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -3219,8 +3171,6 @@ def build_data_get_item_info_geo_json_request(  # pylint: disable=name-too-long
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if assets is not None:
         _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
 
@@ -3230,7 +3180,7 @@ def build_data_get_item_info_geo_json_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_list_item_available_assets_request(  # pylint: disable=name-too-long
+def build_data_get_item_available_assets_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     *,
@@ -3240,7 +3190,6 @@ def build_data_list_item_available_assets_request(  # pylint: disable=name-too-l
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3272,8 +3221,6 @@ def build_data_list_item_available_assets_request(  # pylint: disable=name-too-l
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3281,7 +3228,7 @@ def build_data_list_item_available_assets_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_item_asset_statistics_request(  # pylint: disable=name-too-long,too-many-locals,too-many-branches,too-many-statements
+def build_data_get_item_asset_statistics_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     item_id: str,
     *,
@@ -3304,7 +3251,6 @@ def build_data_get_item_asset_statistics_request(  # pylint: disable=name-too-lo
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     asset_expression: Optional[List[str]] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
@@ -3365,8 +3311,6 @@ def build_data_get_item_asset_statistics_request(  # pylint: disable=name-too-lo
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if asset_expression is not None:
         _params["asset_expression"] = _SERIALIZER.query("asset_expression", asset_expression, "[str]", div=",")
     if height is not None:
@@ -3380,7 +3324,7 @@ def build_data_get_item_asset_statistics_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_list_item_statistics_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+def build_data_get_item_statistics_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     *,
@@ -3405,7 +3349,6 @@ def build_data_list_item_statistics_request(  # pylint: disable=too-many-locals,
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     algorithm: Optional[str] = None,
     algorithm_params: Optional[str] = None,
     height: Optional[int] = None,
@@ -3471,8 +3414,6 @@ def build_data_list_item_statistics_request(  # pylint: disable=too-many-locals,
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if algorithm is not None:
         _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
     if algorithm_params is not None:
@@ -3488,7 +3429,7 @@ def build_data_list_item_statistics_request(  # pylint: disable=too-many-locals,
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_item_geo_json_statistics_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_item_feature_statistics_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     item_id: str,
     *,
@@ -3515,7 +3456,6 @@ def build_data_get_item_geo_json_statistics_request(  # pylint: disable=name-too
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     algorithm: Optional[str] = None,
     algorithm_params: Optional[str] = None,
     height: Optional[int] = None,
@@ -3586,8 +3526,6 @@ def build_data_get_item_geo_json_statistics_request(  # pylint: disable=name-too
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if algorithm is not None:
         _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
     if algorithm_params is not None:
@@ -3638,7 +3576,6 @@ def build_data_get_item_tile_json_request(  # pylint: disable=too-many-locals,to
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3716,8 +3653,6 @@ def build_data_get_item_tile_json_request(  # pylint: disable=too-many-locals,to
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3725,7 +3660,7 @@ def build_data_get_item_tile_json_request(  # pylint: disable=too-many-locals,to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_item_tile_json_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_item_tile_json_by_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -3758,7 +3693,6 @@ def build_data_get_item_tile_json_tms_request(  # pylint: disable=name-too-long,
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3835,8 +3769,6 @@ def build_data_get_item_tile_json_tms_request(  # pylint: disable=name-too-long,
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3877,7 +3809,6 @@ def build_data_get_item_wmts_capabilities_request(  # pylint: disable=name-too-l
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3955,8 +3886,6 @@ def build_data_get_item_wmts_capabilities_request(  # pylint: disable=name-too-l
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3964,7 +3893,7 @@ def build_data_get_item_wmts_capabilities_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_item_wmts_capabilities_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_item_wmts_capabilities_by_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -3997,7 +3926,6 @@ def build_data_get_item_wmts_capabilities_tms_request(  # pylint: disable=name-t
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4074,8 +4002,6 @@ def build_data_get_item_wmts_capabilities_tms_request(  # pylint: disable=name-t
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4103,7 +4029,6 @@ def build_data_get_item_point_request(  # pylint: disable=too-many-locals
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     **kwargs: Any
@@ -4155,8 +4080,6 @@ def build_data_get_item_point_request(  # pylint: disable=too-many-locals
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if coordinate_reference_system is not None:
         _params["coord_crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
     if resampling is not None:
@@ -4199,7 +4122,6 @@ def build_data_get_item_preview_request(  # pylint: disable=too-many-locals,too-
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4273,8 +4195,6 @@ def build_data_get_item_preview_request(  # pylint: disable=too-many-locals,too-
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -4314,7 +4234,6 @@ def build_data_get_item_preview_with_format_request(  # pylint: disable=name-too
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4387,8 +4306,6 @@ def build_data_get_item_preview_with_format_request(  # pylint: disable=name-too
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -4400,10 +4317,10 @@ def build_data_get_item_preview_with_format_request(  # pylint: disable=name-too
 def build_data_get_item_bbox_crop_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     item_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     format: str,
     *,
     bidx: Optional[List[int]] = None,
@@ -4433,7 +4350,6 @@ def build_data_get_item_bbox_crop_request(  # pylint: disable=too-many-locals,to
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4447,10 +4363,10 @@ def build_data_get_item_bbox_crop_request(  # pylint: disable=too-many-locals,to
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -4512,8 +4428,6 @@ def build_data_get_item_bbox_crop_request(  # pylint: disable=too-many-locals,to
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -4522,13 +4436,13 @@ def build_data_get_item_bbox_crop_request(  # pylint: disable=too-many-locals,to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_item_bbox_crop_with_dimensions_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_item_bbox_crop_with_dimensions_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     item_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     width: int,
     height: int,
     format: str,
@@ -4558,7 +4472,6 @@ def build_data_get_item_bbox_crop_with_dimensions_request(  # pylint: disable=na
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4572,10 +4485,10 @@ def build_data_get_item_bbox_crop_with_dimensions_request(  # pylint: disable=na
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
         "width": _SERIALIZER.url("width", width, "int"),
         "height": _SERIALIZER.url("height", height, "int"),
         "format": _SERIALIZER.url("format", format, "str"),
@@ -4635,8 +4548,6 @@ def build_data_get_item_bbox_crop_with_dimensions_request(  # pylint: disable=na
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     if accept is not None:
@@ -4645,20 +4556,19 @@ def build_data_get_item_bbox_crop_with_dimensions_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_list_collection_tilesets_request(  # pylint: disable=name-too-long
+def build_data_get_collection_tilesets_request(  # pylint: disable=name-too-long
     collection_id: str,
     *,
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
     crs: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4683,8 +4593,8 @@ def build_data_list_collection_tilesets_request(  # pylint: disable=name-too-lon
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -4697,8 +4607,6 @@ def build_data_list_collection_tilesets_request(  # pylint: disable=name-too-lon
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4713,14 +4621,13 @@ def build_data_get_collection_tileset_metadata_request(  # pylint: disable=name-
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
     crs: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4746,8 +4653,8 @@ def build_data_get_collection_tileset_metadata_request(  # pylint: disable=name-
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -4760,8 +4667,6 @@ def build_data_get_collection_tileset_metadata_request(  # pylint: disable=name-
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -4794,7 +4699,7 @@ def build_data_get_collection_tile_by_scale_and_format_request(  # pylint: disab
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -4869,8 +4774,8 @@ def build_data_get_collection_tile_by_scale_and_format_request(  # pylint: disab
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -4938,7 +4843,7 @@ def build_data_get_collection_tile_request(  # pylint: disable=too-many-locals,t
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -5013,8 +4918,8 @@ def build_data_get_collection_tile_request(  # pylint: disable=too-many-locals,t
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -5087,7 +4992,7 @@ def build_data_get_collection_tile_by_format_request(  # pylint: disable=name-to
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -5162,8 +5067,8 @@ def build_data_get_collection_tile_by_format_request(  # pylint: disable=name-to
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -5234,7 +5139,7 @@ def build_data_get_collection_tile_by_scale_request(  # pylint: disable=name-too
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -5309,8 +5214,8 @@ def build_data_get_collection_tile_by_scale_request(  # pylint: disable=name-too
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -5381,7 +5286,7 @@ def build_data_get_collection_tile_no_tms_by_scale_and_format_request(  # pylint
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -5456,8 +5361,8 @@ def build_data_get_collection_tile_no_tms_by_scale_and_format_request(  # pylint
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -5526,7 +5431,7 @@ def build_data_get_collection_tile_no_tms_request(  # pylint: disable=name-too-l
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -5601,8 +5506,8 @@ def build_data_get_collection_tile_no_tms_request(  # pylint: disable=name-too-l
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -5676,7 +5581,7 @@ def build_data_get_collection_tile_no_tms_by_format_request(  # pylint: disable=
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -5751,8 +5656,8 @@ def build_data_get_collection_tile_no_tms_by_format_request(  # pylint: disable=
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -5824,7 +5729,7 @@ def build_data_get_collection_tile_no_tms_by_scale_request(  # pylint: disable=n
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -5899,8 +5804,8 @@ def build_data_get_collection_tile_no_tms_by_scale_request(  # pylint: disable=n
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -5968,7 +5873,7 @@ def build_data_get_collection_tile_json_request(  # pylint: disable=name-too-lon
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -6042,8 +5947,8 @@ def build_data_get_collection_tile_json_request(  # pylint: disable=name-too-lon
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -6097,7 +6002,7 @@ def build_data_get_collection_tile_json_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_collection_tile_json_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_collection_tile_json_by_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     tile_matrix_set_id: str,
     *,
@@ -6117,7 +6022,7 @@ def build_data_get_collection_tile_json_tms_request(  # pylint: disable=name-too
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -6191,8 +6096,8 @@ def build_data_get_collection_tile_json_tms_request(  # pylint: disable=name-too
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -6250,7 +6155,7 @@ def build_data_get_collection_wmts_capabilities_request(  # pylint: disable=name
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
@@ -6289,8 +6194,8 @@ def build_data_get_collection_wmts_capabilities_request(  # pylint: disable=name
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if tile_matrix_set_id is not None:
@@ -6326,14 +6231,14 @@ def build_data_get_collection_wmts_capabilities_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_collection_wmts_capabilities_tms_request(  # pylint: disable=name-too-long,too-many-locals
+def build_data_get_collection_wmts_capabilities_by_tms_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     tile_matrix_set_id: str,
     *,
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
     tile_scale: Optional[int] = None,
@@ -6372,8 +6277,8 @@ def build_data_get_collection_wmts_capabilities_tms_request(  # pylint: disable=
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if tile_format is not None:
@@ -6422,14 +6327,13 @@ def build_data_get_collection_assets_for_tile_request(  # pylint: disable=name-t
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
     crs: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6468,8 +6372,8 @@ def build_data_get_collection_assets_for_tile_request(  # pylint: disable=name-t
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -6482,8 +6386,6 @@ def build_data_get_collection_assets_for_tile_request(  # pylint: disable=name-t
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -6505,14 +6407,13 @@ def build_data_get_collection_assets_for_tile_no_tms_request(  # pylint: disable
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
     crs: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -6551,8 +6452,8 @@ def build_data_get_collection_assets_for_tile_no_tms_request(  # pylint: disable
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -6565,8 +6466,6 @@ def build_data_get_collection_assets_for_tile_no_tms_request(  # pylint: disable
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if tile_matrix_set_id is not None:
         _params["TileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
 
@@ -6578,10 +6477,10 @@ def build_data_get_collection_assets_for_tile_no_tms_request(  # pylint: disable
 
 def build_data_get_collection_assets_for_bbox_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     *,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
@@ -6591,14 +6490,13 @@ def build_data_get_collection_assets_for_bbox_request(  # pylint: disable=name-t
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
     crs: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     coordinate_reference_system: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -6612,10 +6510,10 @@ def build_data_get_collection_assets_for_bbox_request(  # pylint: disable=name-t
     _url = "/data/mosaic/collections/{collectionId}/bbox/{minx},{miny},{maxx},{maxy}/assets"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -6638,8 +6536,8 @@ def build_data_get_collection_assets_for_bbox_request(  # pylint: disable=name-t
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -6652,8 +6550,6 @@ def build_data_get_collection_assets_for_bbox_request(  # pylint: disable=name-t
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if coordinate_reference_system is not None:
         _params["coord_crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
 
@@ -6689,10 +6585,10 @@ def build_data_get_collection_info_request(collection_id: str, **kwargs: Any) ->
 
 def build_data_get_collection_bbox_crop_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     format: str,
     *,
     bidx: Optional[List[int]] = None,
@@ -6711,7 +6607,7 @@ def build_data_get_collection_bbox_crop_request(  # pylint: disable=name-too-lon
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -6745,10 +6641,10 @@ def build_data_get_collection_bbox_crop_request(  # pylint: disable=name-too-lon
     _url = "/data/mosaic/collections/{collectionId}/bbox/{minx},{miny},{maxx},{maxy}.{format}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -6788,8 +6684,8 @@ def build_data_get_collection_bbox_crop_request(  # pylint: disable=name-too-lon
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -6842,10 +6738,10 @@ def build_data_get_collection_bbox_crop_request(  # pylint: disable=name-too-lon
 
 def build_data_get_collection_bbox_crop_with_dimensions_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     width: int,
     height: int,
     format: str,
@@ -6866,7 +6762,7 @@ def build_data_get_collection_bbox_crop_with_dimensions_request(  # pylint: disa
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -6898,10 +6794,10 @@ def build_data_get_collection_bbox_crop_with_dimensions_request(  # pylint: disa
     _url = "/data/mosaic/collections/{collectionId}/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
         "width": _SERIALIZER.url("width", width, "int"),
         "height": _SERIALIZER.url("height", height, "int"),
         "format": _SERIALIZER.url("format", format, "str"),
@@ -6943,8 +6839,8 @@ def build_data_get_collection_bbox_crop_with_dimensions_request(  # pylint: disa
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -6991,7 +6887,7 @@ def build_data_get_collection_bbox_crop_with_dimensions_request(  # pylint: disa
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_collection_feature_geo_json_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_collection_feature_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     *,
     bidx: Optional[List[int]] = None,
@@ -7010,7 +6906,7 @@ def build_data_crop_collection_feature_geo_json_request(  # pylint: disable=name
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -7084,8 +6980,8 @@ def build_data_crop_collection_feature_geo_json_request(  # pylint: disable=name
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -7140,7 +7036,7 @@ def build_data_crop_collection_feature_geo_json_request(  # pylint: disable=name
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_collection_feature_geo_json_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_collection_feature_by_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     format: str,
     *,
@@ -7160,7 +7056,7 @@ def build_data_crop_collection_feature_geo_json_format_request(  # pylint: disab
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -7234,8 +7130,8 @@ def build_data_crop_collection_feature_geo_json_format_request(  # pylint: disab
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -7288,7 +7184,7 @@ def build_data_crop_collection_feature_geo_json_format_request(  # pylint: disab
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_collection_feature_geo_json_width_by_height_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_collection_feature_width_by_height_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     collection_id: str,
     width: int,
     height: int,
@@ -7310,7 +7206,7 @@ def build_data_crop_collection_feature_geo_json_width_by_height_request(  # pyli
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
@@ -7384,8 +7280,8 @@ def build_data_crop_collection_feature_geo_json_width_by_height_request(  # pyli
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -7434,7 +7330,7 @@ def build_data_crop_collection_feature_geo_json_width_by_height_request(  # pyli
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_collection_point_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+def build_data_get_collection_point_request(  # pylint: disable=too-many-locals
     collection_id: str,
     longitude: float,
     latitude: float,
@@ -7447,14 +7343,13 @@ def build_data_get_collection_point_request(  # pylint: disable=too-many-locals,
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
     crs: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     bidx: Optional[List[int]] = None,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -7501,8 +7396,8 @@ def build_data_get_collection_point_request(  # pylint: disable=too-many-locals,
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -7515,8 +7410,6 @@ def build_data_get_collection_point_request(  # pylint: disable=too-many-locals,
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if bidx is not None:
         _params["bidx"] = [_SERIALIZER.query("bidx", q, "int") if q is not None else "" for q in bidx]
     if assets is not None:
@@ -7557,14 +7450,13 @@ def build_data_get_collection_point_assets_request(  # pylint: disable=name-too-
     ids: Optional[str] = None,
     bbox: Optional[str] = None,
     query: Optional[str] = None,
-    sortby: Optional[str] = None,
+    sort_by: Optional[str] = None,
     datetime: Optional[str] = None,
     subdataset_name: Optional[str] = None,
     subdataset_bands: Optional[List[int]] = None,
     crs: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     coordinate_reference_system: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -7602,8 +7494,8 @@ def build_data_get_collection_point_assets_request(  # pylint: disable=name-too-
         _params["bbox"] = _SERIALIZER.query("bbox", bbox, "str")
     if query is not None:
         _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sortby is not None:
-        _params["sortby"] = _SERIALIZER.query("sortby", sortby, "str")
+    if sort_by is not None:
+        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
     if datetime is not None:
         _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
     if subdataset_name is not None:
@@ -7616,8 +7508,6 @@ def build_data_get_collection_point_assets_request(  # pylint: disable=name-too-
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if coordinate_reference_system is not None:
         _params["coord_crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
 
@@ -7627,7 +7517,7 @@ def build_data_get_collection_point_assets_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_list_searches_tilesets_request(  # pylint: disable=name-too-long
+def build_data_get_search_tilesets_request(
     search_id: str,
     *,
     subdataset_name: Optional[str] = None,
@@ -7636,7 +7526,6 @@ def build_data_list_searches_tilesets_request(  # pylint: disable=name-too-long
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -7667,8 +7556,6 @@ def build_data_list_searches_tilesets_request(  # pylint: disable=name-too-long
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -7676,7 +7563,7 @@ def build_data_list_searches_tilesets_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tileset_metadata_request(  # pylint: disable=name-too-long
+def build_data_get_search_tileset_metadata_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     *,
@@ -7686,7 +7573,6 @@ def build_data_get_searches_tileset_metadata_request(  # pylint: disable=name-to
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -7718,8 +7604,6 @@ def build_data_get_searches_tileset_metadata_request(  # pylint: disable=name-to
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -7727,7 +7611,7 @@ def build_data_get_searches_tileset_metadata_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -7861,7 +7745,7 @@ def build_data_get_searches_tile_by_scale_and_format_request(  # pylint: disable
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -7997,7 +7881,7 @@ def build_data_get_searches_tile_request(  # pylint: disable=too-many-locals,too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_by_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_by_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -8132,7 +8016,7 @@ def build_data_get_searches_tile_by_format_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_by_scale_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_by_scale_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -8267,7 +8151,7 @@ def build_data_get_searches_tile_by_scale_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_assets_for_tile_request(  # pylint: disable=name-too-long
+def build_data_get_search_assets_for_tile_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -8338,7 +8222,7 @@ def build_data_get_searches_assets_for_tile_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_json_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_json_by_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     tile_matrix_set_id: str,
     *,
@@ -8473,7 +8357,7 @@ def build_data_get_searches_tile_json_tms_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_wmts_capabilities_tms_request(  # pylint: disable=name-too-long
+def build_data_get_search_wmts_capabilities_by_tms_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     *,
@@ -8539,7 +8423,7 @@ def build_data_get_searches_wmts_capabilities_tms_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_info_request(search_id: str, **kwargs: Any) -> HttpRequest:
+def build_data_get_search_info_request(search_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -8563,12 +8447,12 @@ def build_data_get_searches_info_request(search_id: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_bbox_crop_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_bbox_crop_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     search_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     format: str,
     *,
     bidx: Optional[List[int]] = None,
@@ -8617,10 +8501,10 @@ def build_data_get_searches_bbox_crop_request(  # pylint: disable=name-too-long,
     _url = "/data/mosaic/searches/{searchId}/bbox/{minx},{miny},{maxx},{maxy}.{format}"
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
         "format": _SERIALIZER.url("format", format, "str"),
     }
 
@@ -8704,12 +8588,12 @@ def build_data_get_searches_bbox_crop_request(  # pylint: disable=name-too-long,
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_bbox_crop_with_dimensions_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_bbox_crop_with_dimensions_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     width: int,
     height: int,
     format: str,
@@ -8758,10 +8642,10 @@ def build_data_get_searches_bbox_crop_with_dimensions_request(  # pylint: disabl
     _url = "/data/mosaic/searches/{searchId}/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}"
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
         "width": _SERIALIZER.url("width", width, "int"),
         "height": _SERIALIZER.url("height", height, "int"),
         "format": _SERIALIZER.url("format", format, "str"),
@@ -8843,12 +8727,12 @@ def build_data_get_searches_bbox_crop_with_dimensions_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_bbox_assets_request(  # pylint: disable=name-too-long
+def build_data_get_search_bbox_assets_request(  # pylint: disable=name-too-long
     search_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
+    min_x: float,
+    min_y: float,
+    max_x: float,
+    max_y: float,
     *,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
@@ -8861,7 +8745,6 @@ def build_data_get_searches_bbox_assets_request(  # pylint: disable=name-too-lon
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     coordinate_reference_system: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -8875,10 +8758,10 @@ def build_data_get_searches_bbox_assets_request(  # pylint: disable=name-too-lon
     _url = "/data/mosaic/searches/{searchId}/bbox/{minx},{miny},{maxx},{maxy}/assets"
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "minx": _SERIALIZER.url("minx", minx, "float"),
-        "miny": _SERIALIZER.url("miny", miny, "float"),
-        "maxx": _SERIALIZER.url("maxx", maxx, "float"),
-        "maxy": _SERIALIZER.url("maxy", maxy, "float"),
+        "minx": _SERIALIZER.url("min_x", min_x, "float"),
+        "miny": _SERIALIZER.url("min_y", min_y, "float"),
+        "maxx": _SERIALIZER.url("max_x", max_x, "float"),
+        "maxy": _SERIALIZER.url("max_y", max_y, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -8907,8 +8790,6 @@ def build_data_get_searches_bbox_assets_request(  # pylint: disable=name-too-lon
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if coordinate_reference_system is not None:
         _params["coord_crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
 
@@ -8918,7 +8799,7 @@ def build_data_get_searches_bbox_assets_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_searches_feature_geo_json_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_search_feature_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     *,
     bidx: Optional[List[int]] = None,
@@ -9055,7 +8936,7 @@ def build_data_crop_searches_feature_geo_json_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_searches_feature_geo_json_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_search_feature_by_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     format: str,
     *,
@@ -9191,7 +9072,7 @@ def build_data_crop_searches_feature_geo_json_format_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_searches_feature_geo_json_width_by_height_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_crop_search_feature_width_by_height_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     width: int,
     height: int,
@@ -9325,7 +9206,7 @@ def build_data_crop_searches_feature_geo_json_width_by_height_request(  # pylint
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_wmts_capabilities_request(  # pylint: disable=name-too-long
+def build_data_get_search_wmts_capabilities_request(  # pylint: disable=name-too-long
     search_id: str,
     *,
     tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
@@ -9392,7 +9273,7 @@ def build_data_get_searches_wmts_capabilities_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_json_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_json_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     *,
     bidx: Optional[List[int]] = None,
@@ -9528,7 +9409,7 @@ def build_data_get_searches_tile_json_request(  # pylint: disable=name-too-long,
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_no_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_no_tms_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     z: float,
     x: float,
@@ -9665,7 +9546,7 @@ def build_data_get_searches_tile_no_tms_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_no_tms_by_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_no_tms_by_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     z: float,
     x: float,
@@ -9801,7 +9682,7 @@ def build_data_get_searches_tile_no_tms_by_format_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_no_tms_by_scale_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_no_tms_by_scale_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     z: float,
     x: float,
@@ -9937,7 +9818,7 @@ def build_data_get_searches_tile_no_tms_by_scale_request(  # pylint: disable=nam
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_tile_no_tms_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_tile_no_tms_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     z: float,
     x: float,
@@ -10072,7 +9953,7 @@ def build_data_get_searches_tile_no_tms_by_scale_and_format_request(  # pylint: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_assets_for_tile_no_tms_request(  # pylint: disable=name-too-long
+def build_data_get_search_assets_for_tile_no_tms_request(  # pylint: disable=name-too-long
     search_id: str,
     z: float,
     x: float,
@@ -10089,7 +9970,6 @@ def build_data_get_searches_assets_for_tile_no_tms_request(  # pylint: disable=n
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -10134,8 +10014,6 @@ def build_data_get_searches_assets_for_tile_no_tms_request(  # pylint: disable=n
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if tile_matrix_set_id is not None:
         _params["TileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
 
@@ -10145,8 +10023,7 @@ def build_data_get_searches_assets_for_tile_no_tms_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-# TODO: Remove pylint disable once pygen emitter generates fewer statements in request builders
-def build_data_get_searches_point_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
+def build_data_get_search_point_request(  # pylint: disable=too-many-locals
     search_id: str,
     longitude: float,
     latitude: float,
@@ -10162,7 +10039,6 @@ def build_data_get_searches_point_request(  # pylint: disable=too-many-locals,to
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     bidx: Optional[List[int]] = None,
     assets: Optional[List[str]] = None,
     expression: Optional[str] = None,
@@ -10215,8 +10091,6 @@ def build_data_get_searches_point_request(  # pylint: disable=too-many-locals,to
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if bidx is not None:
         _params["bidx"] = [_SERIALIZER.query("bidx", q, "int") if q is not None else "" for q in bidx]
     if assets is not None:
@@ -10244,7 +10118,7 @@ def build_data_get_searches_point_request(  # pylint: disable=too-many-locals,to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_point_with_assets_request(  # pylint: disable=name-too-long
+def build_data_get_search_point_with_assets_request(  # pylint: disable=name-too-long
     search_id: str,
     longitude: float,
     latitude: float,
@@ -10260,7 +10134,6 @@ def build_data_get_searches_point_with_assets_request(  # pylint: disable=name-t
     datetime: Optional[str] = None,
     sel: Optional[List[str]] = None,
     sel_method: Optional[Union[str, _models.SelMethod]] = None,
-    collection: Optional[str] = None,
     coordinate_reference_system: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -10304,8 +10177,6 @@ def build_data_get_searches_point_with_assets_request(  # pylint: disable=name-t
         _params["sel"] = [_SERIALIZER.query("sel", q, "str") if q is not None else "" for q in sel]
     if sel_method is not None:
         _params["sel_method"] = _SERIALIZER.query("sel_method", sel_method, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
     if coordinate_reference_system is not None:
         _params["coord_crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
 
@@ -10315,7 +10186,7 @@ def build_data_get_searches_point_with_assets_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sas_get_sign_request(*, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any) -> HttpRequest:
+def build_sas_get_url_request(*, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -12801,7 +12672,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_mosaics(self, collection_id: str, **kwargs: Any) -> List[_models.StacMosaic]:
+    def get_mosaics(self, collection_id: str, **kwargs: Any) -> List[_models.StacMosaic]:
         """Get Collection Mosaics.
 
         Get the mosaic definitions for a given collection.
@@ -12825,7 +12696,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[_models.StacMosaic]] = kwargs.pop("cls", None)
 
-        _request = build_stac_list_mosaics_request(
+        _request = build_stac_get_mosaics_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -14070,7 +13941,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_render_options(self, collection_id: str, **kwargs: Any) -> List[_models.RenderOption]:
+    def get_render_options(self, collection_id: str, **kwargs: Any) -> List[_models.RenderOption]:
         """Get Collection Render Options.
 
         Get all render options for a given collection.
@@ -14094,7 +13965,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
 
-        _request = build_stac_list_render_options_request(
+        _request = build_stac_get_render_options_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -15864,7 +15735,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_queryables(self, **kwargs: Any) -> _models.QueryableDefinitionsResponse:
+    def get_queryables(self, **kwargs: Any) -> _models.QueryableDefinitionsResponse:
         """Queryables.
 
         List all queryables in the GeoCatalog instance.
@@ -15887,7 +15758,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.QueryableDefinitionsResponse] = kwargs.pop("cls", None)
 
-        _request = build_stac_list_queryables_request(
+        _request = build_stac_get_queryables_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -16246,7 +16117,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_tile_matrices(self, **kwargs: Any) -> List[str]:
+    def get_tile_matrices(self, **kwargs: Any) -> List[str]:
         """Matrix List.
 
         Return Matrix List.
@@ -16268,7 +16139,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
-        _request = build_data_list_tile_matrices_request(
+        _request = build_data_get_tile_matrices_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -16770,7 +16641,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_tilesets(
+    def get_tilesets(
         self,
         collection_id: str,
         item_id: str,
@@ -16781,7 +16652,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileSetList:
         """Tileset List.
@@ -16808,8 +16678,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileSetList. The TileSetList is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileSetList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16827,7 +16695,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileSetList] = kwargs.pop("cls", None)
 
-        _request = build_data_list_tilesets_request(
+        _request = build_data_get_tilesets_request(
             collection_id=collection_id,
             item_id=item_id,
             subdataset_name=subdataset_name,
@@ -16836,7 +16704,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -16886,7 +16753,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileSetMetadata:
         """Tileset Metadata.
@@ -16915,8 +16781,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileSetMetadata. The TileSetMetadata is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileSetMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16944,7 +16808,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -17017,7 +16880,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid Plain.
@@ -17144,8 +17006,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17196,7 +17056,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -17275,7 +17134,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid Format.
@@ -17401,8 +17259,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17453,7 +17309,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -17532,7 +17387,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid Scale.
@@ -17658,8 +17512,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17710,7 +17562,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -17789,7 +17640,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid.
@@ -17914,8 +17764,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17966,7 +17814,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -18045,7 +17892,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Plain.
@@ -18177,8 +18023,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18229,7 +18073,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -18308,7 +18151,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Format.
@@ -18439,8 +18281,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18491,7 +18331,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -18570,7 +18409,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Scale.
@@ -18701,8 +18539,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18753,7 +18589,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -18832,7 +18667,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile.
@@ -18962,8 +18796,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19014,7 +18846,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -19058,7 +18889,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -19091,7 +18922,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         format: Optional[Union[str, _models.TilerImageFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19209,8 +19039,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword format: Output image format. Known values are: "png", "npy", "tif", "jpeg", "jpg",
          "jp2", "webp", and "pngraw". Default value is None.
         :paramtype format: str or ~azure.planetarycomputer.models.TilerImageFormat
@@ -19223,7 +19051,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -19256,7 +19084,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         format: Optional[Union[str, _models.TilerImageFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19374,8 +19201,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword format: Output image format. Known values are: "png", "npy", "tif", "jpeg", "jpg",
          "jp2", "webp", and "pngraw". Default value is None.
         :paramtype format: str or ~azure.planetarycomputer.models.TilerImageFormat
@@ -19388,7 +19213,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -19421,7 +19246,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         format: Optional[Union[str, _models.TilerImageFormat]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19539,8 +19363,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword format: Output image format. Known values are: "png", "npy", "tif", "jpeg", "jpg",
          "jp2", "webp", and "pngraw". Default value is None.
         :paramtype format: str or ~azure.planetarycomputer.models.TilerImageFormat
@@ -19553,7 +19375,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -19586,7 +19408,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         format: Optional[Union[str, _models.TilerImageFormat]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -19704,8 +19525,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword format: Output image format. Known values are: "png", "npy", "tif", "jpeg", "jpg",
          "jp2", "webp", and "pngraw". Default value is None.
         :paramtype format: str or ~azure.planetarycomputer.models.TilerImageFormat
@@ -19734,7 +19553,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_feature_geo_json_request(
+        _request = build_data_crop_feature_request(
             collection_id=collection_id,
             item_id=item_id,
             bidx=bidx,
@@ -19764,7 +19583,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             format=format,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -19811,7 +19629,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -19845,7 +19663,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -19964,8 +19781,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19975,7 +19790,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -20009,7 +19824,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -20128,8 +19942,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20139,7 +19951,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -20173,7 +19985,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -20292,8 +20103,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20303,7 +20112,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -20337,7 +20146,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Feature Crop With Format.
@@ -20456,8 +20264,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20483,7 +20289,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_feature_geo_json_format_request(
+        _request = build_data_crop_feature_by_format_request(
             collection_id=collection_id,
             item_id=item_id,
             format=format,
@@ -20514,7 +20320,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -20560,7 +20365,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_feature_geo_json_width_by_height(  # pylint: disable=too-many-locals
+    def crop_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -20594,7 +20399,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -20713,8 +20517,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20724,7 +20526,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_feature_geo_json_width_by_height(  # pylint: disable=too-many-locals
+    def crop_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -20758,7 +20560,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -20877,8 +20678,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20888,7 +20687,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_feature_geo_json_width_by_height(  # pylint: disable=too-many-locals
+    def crop_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -20922,7 +20721,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -21041,8 +20839,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21052,7 +20848,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_feature_geo_json_width_by_height(  # pylint: disable=too-many-locals
+    def crop_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -21086,7 +20882,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Feature Crop With Dimensions.
@@ -21205,8 +21000,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21232,7 +21025,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_feature_geo_json_width_by_height_request(
+        _request = build_data_crop_feature_width_by_height_request(
             collection_id=collection_id,
             item_id=item_id,
             width=width,
@@ -21263,7 +21056,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -21320,7 +21112,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.StacItemBounds:
         """Item Bounds.
@@ -21347,8 +21138,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: StacItemBounds. The StacItemBounds is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacItemBounds
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21375,7 +21164,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -21424,7 +21212,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         assets: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.TilerInfoMapResponse:
@@ -21452,8 +21239,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :return: TilerInfoMapResponse. The TilerInfoMapResponse is compatible with MutableMapping
@@ -21482,7 +21267,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             assets=assets,
             api_version=self._config.api_version,
             headers=_headers,
@@ -21532,7 +21316,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         assets: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.TilerInfoGeoJsonFeature:
@@ -21560,8 +21343,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :return: TilerInfoGeoJsonFeature. The TilerInfoGeoJsonFeature is compatible with MutableMapping
@@ -21590,7 +21371,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             assets=assets,
             api_version=self._config.api_version,
             headers=_headers,
@@ -21629,7 +21409,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_item_available_assets(
+    def get_item_available_assets(
         self,
         collection_id: str,
         item_id: str,
@@ -21640,7 +21420,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> List[str]:
         """Item Available Assets.
@@ -21667,8 +21446,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: list of str
         :rtype: list[str]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21686,7 +21463,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
-        _request = build_data_list_item_available_assets_request(
+        _request = build_data_get_item_available_assets_request(
             collection_id=collection_id,
             item_id=item_id,
             subdataset_name=subdataset_name,
@@ -21695,7 +21472,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -21757,7 +21533,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         asset_expression: Optional[List[str]] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
@@ -21840,8 +21615,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword asset_expression: Per asset band expression. Default value is None.
         :paramtype asset_expression: list[str]
         :keyword height: Force output image height. Default value is None.
@@ -21887,7 +21660,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             asset_expression=asset_expression,
             height=height,
             width=width,
@@ -21928,7 +21700,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_item_statistics(  # pylint: disable=too-many-locals
+    def get_item_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -21954,7 +21726,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         algorithm: Optional[str] = None,
         algorithm_params: Optional[str] = None,
         height: Optional[int] = None,
@@ -22042,8 +21813,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword algorithm: Algorithm name. Default value is None.
         :paramtype algorithm: str
         :keyword algorithm_params: Algorithm parameter. Default value is None.
@@ -22069,7 +21838,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TilerStacItemStatistics] = kwargs.pop("cls", None)
 
-        _request = build_data_list_item_statistics_request(
+        _request = build_data_get_item_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             bidx=bidx,
@@ -22093,7 +21862,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
             height=height,
@@ -22135,7 +21903,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def get_item_geo_json_statistics(  # pylint: disable=too-many-locals
+    def get_item_feature_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -22164,7 +21932,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         algorithm: Optional[str] = None,
         algorithm_params: Optional[str] = None,
         height: Optional[int] = None,
@@ -22260,8 +22027,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword algorithm: Algorithm name. Default value is None.
         :paramtype algorithm: str
         :keyword algorithm_params: Algorithm parameter. Default value is None.
@@ -22280,7 +22045,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def get_item_geo_json_statistics(  # pylint: disable=too-many-locals
+    def get_item_feature_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -22309,7 +22074,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         algorithm: Optional[str] = None,
         algorithm_params: Optional[str] = None,
         height: Optional[int] = None,
@@ -22405,8 +22169,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword algorithm: Algorithm name. Default value is None.
         :paramtype algorithm: str
         :keyword algorithm_params: Algorithm parameter. Default value is None.
@@ -22425,7 +22187,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def get_item_geo_json_statistics(  # pylint: disable=too-many-locals
+    def get_item_feature_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -22454,7 +22216,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         algorithm: Optional[str] = None,
         algorithm_params: Optional[str] = None,
         height: Optional[int] = None,
@@ -22550,8 +22311,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword algorithm: Algorithm name. Default value is None.
         :paramtype algorithm: str
         :keyword algorithm_params: Algorithm parameter. Default value is None.
@@ -22570,7 +22329,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def get_item_geo_json_statistics(  # pylint: disable=too-many-locals
+    def get_item_feature_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -22599,7 +22358,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         algorithm: Optional[str] = None,
         algorithm_params: Optional[str] = None,
         height: Optional[int] = None,
@@ -22695,8 +22453,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword algorithm: Algorithm name. Default value is None.
         :paramtype algorithm: str
         :keyword algorithm_params: Algorithm parameter. Default value is None.
@@ -22731,7 +22487,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_get_item_geo_json_statistics_request(
+        _request = build_data_get_item_feature_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             bidx=bidx,
@@ -22757,7 +22513,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
             height=height,
@@ -22835,7 +22590,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileJsonMetadata:
         """Item TileJson.
@@ -22964,8 +22718,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileJsonMetadata. The TileJsonMetadata is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileJsonMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23015,7 +22767,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -23053,7 +22804,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_item_tile_json_tms(  # pylint: disable=too-many-locals
+    def get_item_tile_json_by_tms(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -23087,7 +22838,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileJsonMetadata:
         """Item TileJson Tilematrixsetid As Path.
@@ -23211,8 +22961,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileJsonMetadata. The TileJsonMetadata is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileJsonMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23230,7 +22978,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
-        _request = build_data_get_item_tile_json_tms_request(
+        _request = build_data_get_item_tile_json_by_tms_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -23262,7 +23010,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -23334,7 +23081,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Item Wmts.
@@ -23461,8 +23207,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23512,7 +23256,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -23550,7 +23293,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_item_wmts_capabilities_tms(  # pylint: disable=too-many-locals
+    def get_item_wmts_capabilities_by_tms(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -23584,7 +23327,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Item Wmts Tilematrixsetid As Path.
@@ -23706,8 +23448,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23725,7 +23465,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_item_wmts_capabilities_tms_request(
+        _request = build_data_get_item_wmts_capabilities_by_tms_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -23757,7 +23497,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -23816,7 +23555,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         **kwargs: Any
@@ -23869,8 +23607,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
          to ``epsg:4326``. Default value is None.
         :paramtype coordinate_reference_system: str
@@ -23914,7 +23650,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             coordinate_reference_system=coordinate_reference_system,
             resampling=resampling,
             api_version=self._config.api_version,
@@ -23986,7 +23721,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Item Preview.
@@ -24100,8 +23834,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24149,7 +23881,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -24225,7 +23956,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Item Preview With Format.
@@ -24338,8 +24068,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24387,7 +24115,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -24435,10 +24162,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         format: str,
         *,
         bidx: Optional[List[int]] = None,
@@ -24468,7 +24195,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Item Bbox.
@@ -24479,14 +24205,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword bidx: Dataset band indexes. Default value is None.
@@ -24592,8 +24318,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24614,10 +24338,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         _request = build_data_get_item_bbox_crop_request(
             collection_id=collection_id,
             item_id=item_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             format=format,
             bidx=bidx,
             assets=assets,
@@ -24646,7 +24370,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -24694,10 +24417,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         width: int,
         height: int,
         format: str,
@@ -24727,7 +24450,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Item Bbox With Dimensions.
@@ -24738,14 +24460,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :param width: Force output image width. Required.
         :type width: int
         :param height: Force output image height. Required.
@@ -24851,8 +24573,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24873,10 +24593,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         _request = build_data_get_item_bbox_crop_with_dimensions_request(
             collection_id=collection_id,
             item_id=item_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             width=width,
             height=height,
             format=format,
@@ -24905,7 +24625,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -24949,21 +24668,20 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_collection_tilesets(  # pylint: disable=too-many-locals
+    def get_collection_tilesets(
         self,
         collection_id: str,
         *,
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
         crs: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileSetList:
         """Collection Tileset List.
@@ -24978,8 +24696,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -24997,8 +24715,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileSetList. The TileSetList is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileSetList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25016,19 +24732,18 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileSetList] = kwargs.pop("cls", None)
 
-        _request = build_data_list_collection_tilesets_request(
+        _request = build_data_get_collection_tilesets_request(
             collection_id=collection_id,
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
             crs=crs,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -25074,14 +24789,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
         crs: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileSetMetadata:
         """Collection Tileset Metadata.
@@ -25098,8 +24812,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -25117,8 +24831,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileSetMetadata. The TileSetMetadata is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileSetMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25142,14 +24854,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
             crs=crs,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -25213,7 +24924,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -25297,8 +25008,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -25426,7 +25137,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -25512,7 +25223,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -25594,8 +25305,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -25727,7 +25438,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -25816,7 +25527,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -25899,8 +25610,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -26030,7 +25741,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -26118,7 +25829,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -26201,8 +25912,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -26332,7 +26043,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -26420,7 +26131,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -26505,8 +26216,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -26640,7 +26351,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -26726,7 +26437,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -26807,8 +26518,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -26946,7 +26657,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -27035,7 +26746,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -27117,8 +26828,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -27254,7 +26965,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -27342,7 +27053,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -27424,8 +27135,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -27561,7 +27272,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -27645,7 +27356,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -27719,8 +27430,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -27861,7 +27572,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -27922,7 +27633,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_collection_tile_json_tms(  # pylint: disable=too-many-locals
+    def get_collection_tile_json_by_tms(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         tile_matrix_set_id: str,
@@ -27943,7 +27654,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -28018,8 +27729,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -28135,7 +27846,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
-        _request = build_data_get_collection_tile_json_tms_request(
+        _request = build_data_get_collection_tile_json_by_tms_request(
             collection_id=collection_id,
             tile_matrix_set_id=tile_matrix_set_id,
             bidx=bidx,
@@ -28154,7 +27865,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -28221,7 +27932,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
@@ -28250,8 +27961,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -28314,7 +28025,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
@@ -28366,7 +28077,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_collection_wmts_capabilities_tms(  # pylint: disable=too-many-locals
+    def get_collection_wmts_capabilities_by_tms(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         tile_matrix_set_id: str,
@@ -28374,7 +28085,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
         tile_scale: Optional[int] = None,
@@ -28404,8 +28115,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -28456,13 +28167,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_collection_wmts_capabilities_tms_request(
+        _request = build_data_get_collection_wmts_capabilities_by_tms_request(
             collection_id=collection_id,
             tile_matrix_set_id=tile_matrix_set_id,
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             tile_format=tile_format,
             tile_scale=tile_scale,
@@ -28529,14 +28240,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
         crs: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.TilerAssetGeoJson]:
         """Collection Assets For Tile Tilematrixsetid As Path.
@@ -28579,8 +28289,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -28598,8 +28308,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: list of TilerAssetGeoJson
         :rtype: list[~azure.planetarycomputer.models.TilerAssetGeoJson]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28631,14 +28339,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
             crs=crs,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -28691,14 +28398,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
         crs: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         **kwargs: Any
     ) -> List[Any]:
@@ -28740,8 +28446,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -28759,8 +28465,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
          (default:
          'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
@@ -28798,14 +28502,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
             crs=crs,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             tile_matrix_set_id=tile_matrix_set_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -28847,10 +28550,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
     def get_collection_assets_for_bbox(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         *,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -28860,14 +28563,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
         crs: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         coordinate_reference_system: Optional[str] = None,
         **kwargs: Any
     ) -> List[Any]:
@@ -28877,14 +28579,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000). Default value is
          None.
         :paramtype scan_limit: int
@@ -28907,8 +28609,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -28926,8 +28628,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
          to ``epsg:4326``. Default value is None.
         :paramtype coordinate_reference_system: str
@@ -28950,10 +28650,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_data_get_collection_assets_for_bbox_request(
             collection_id=collection_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
@@ -28962,14 +28662,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
             crs=crs,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             coordinate_reference_system=coordinate_reference_system,
             api_version=self._config.api_version,
             headers=_headers,
@@ -29075,10 +28774,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
     def get_collection_bbox_crop(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         format: str,
         *,
         bidx: Optional[List[int]] = None,
@@ -29097,7 +28796,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -29127,14 +28826,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword bidx: Dataset band indexes. Default value is None.
@@ -29179,8 +28878,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -29290,10 +28989,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_data_get_collection_bbox_crop_request(
             collection_id=collection_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             format=format,
             bidx=bidx,
             assets=assets,
@@ -29311,7 +29010,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -29379,10 +29078,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
     def get_collection_bbox_crop_with_dimensions(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         width: int,
         height: int,
         format: str,
@@ -29403,7 +29102,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -29431,14 +29130,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :param width: Force output image width. Required.
         :type width: int
         :param height: Force output image height. Required.
@@ -29487,8 +29186,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -29594,10 +29293,10 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_data_get_collection_bbox_crop_with_dimensions_request(
             collection_id=collection_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             width=width,
             height=height,
             format=format,
@@ -29617,7 +29316,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -29680,7 +29379,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_collection_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_collection_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         body: _models.Feature,
@@ -29701,7 +29400,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -29777,8 +29476,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -29881,7 +29580,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_collection_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_collection_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         body: JSON,
@@ -29902,7 +29601,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -29978,8 +29677,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -30082,7 +29781,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_collection_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_collection_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         body: IO[bytes],
@@ -30103,7 +29802,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -30179,8 +29878,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -30283,7 +29982,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_collection_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_collection_feature(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         body: Union[_models.Feature, JSON, IO[bytes]],
@@ -30304,7 +30003,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -30380,8 +30079,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -30500,7 +30199,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_collection_feature_geo_json_request(
+        _request = build_data_crop_collection_feature_request(
             collection_id=collection_id,
             bidx=bidx,
             assets=assets,
@@ -30518,7 +30217,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -30586,7 +30285,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_collection_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_collection_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         format: str,
@@ -30608,7 +30307,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -30685,8 +30384,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -30786,7 +30485,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_collection_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_collection_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         format: str,
@@ -30808,7 +30507,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -30885,8 +30584,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -30986,7 +30685,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_collection_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_collection_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         format: str,
@@ -31008,7 +30707,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -31085,8 +30784,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -31186,7 +30885,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_collection_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_collection_feature_by_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         format: str,
@@ -31208,7 +30907,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -31285,8 +30984,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -31402,7 +31101,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_collection_feature_geo_json_format_request(
+        _request = build_data_crop_collection_feature_by_format_request(
             collection_id=collection_id,
             format=format,
             bidx=bidx,
@@ -31421,7 +31120,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -31488,7 +31187,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_collection_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_collection_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         width: int,
@@ -31512,7 +31211,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -31591,8 +31290,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -31688,7 +31387,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_collection_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_collection_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         width: int,
@@ -31712,7 +31411,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -31791,8 +31490,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -31888,7 +31587,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_collection_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_collection_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         width: int,
@@ -31912,7 +31611,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -31991,8 +31690,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -32088,7 +31787,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_collection_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_collection_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         width: int,
@@ -32112,7 +31811,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
@@ -32191,8 +31890,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -32304,7 +32003,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_collection_feature_geo_json_width_by_height_request(
+        _request = build_data_crop_collection_feature_width_by_height_request(
             collection_id=collection_id,
             width=width,
             height=height,
@@ -32325,7 +32024,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -32404,14 +32103,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
         crs: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         bidx: Optional[List[int]] = None,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -32456,8 +32154,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -32475,8 +32173,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword bidx: Dataset band indexes. Default value is None.
         :paramtype bidx: list[int]
         :keyword assets: Asset's names. Default value is None.
@@ -32533,14 +32229,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
             crs=crs,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             bidx=bidx,
             assets=assets,
             expression=expression,
@@ -32602,14 +32297,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         ids: Optional[str] = None,
         bbox: Optional[str] = None,
         query: Optional[str] = None,
-        sortby: Optional[str] = None,
+        sort_by: Optional[str] = None,
         datetime: Optional[str] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[List[int]] = None,
         crs: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         coordinate_reference_system: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.StacItemPointAsset]:
@@ -32645,8 +32339,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype bbox: str
         :keyword query: JSON query expression for filtering items. Default value is None.
         :paramtype query: str
-        :keyword sortby: Sorting expression (e.g. +/-property). Default value is None.
-        :paramtype sortby: str
+        :keyword sort_by: Sorting expression (e.g. +/-property). Default value is None.
+        :paramtype sort_by: str
         :keyword datetime: Datetime filter expression (single datetime or range using ``/`` separator).
          Default value is None.
         :paramtype datetime: str
@@ -32664,8 +32358,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
          to ``epsg:4326``. Default value is None.
         :paramtype coordinate_reference_system: str
@@ -32698,14 +32390,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             ids=ids,
             bbox=bbox,
             query=query,
-            sortby=sortby,
+            sort_by=sort_by,
             datetime=datetime,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
             crs=crs,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             coordinate_reference_system=coordinate_reference_system,
             api_version=self._config.api_version,
             headers=_headers,
@@ -32744,7 +32435,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_searches_tilesets(
+    def get_search_tilesets(
         self,
         search_id: str,
         *,
@@ -32754,7 +32445,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileSetList:
         """Searches Tileset List.
@@ -32779,8 +32469,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileSetList. The TileSetList is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileSetList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32798,7 +32486,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileSetList] = kwargs.pop("cls", None)
 
-        _request = build_data_list_searches_tilesets_request(
+        _request = build_data_get_search_tilesets_request(
             search_id=search_id,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -32806,7 +32494,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -32844,7 +32531,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tileset_metadata(
+    def get_search_tileset_metadata(
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -32855,7 +32542,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TileSetMetadata:
         """Searches Tileset Metadata.
@@ -32882,8 +32568,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :return: TileSetMetadata. The TileSetMetadata is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileSetMetadata
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32901,7 +32585,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileSetMetadata] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tileset_metadata_request(
+        _request = build_data_get_search_tileset_metadata_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             subdataset_name=subdataset_name,
@@ -32910,7 +32594,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -32948,7 +32631,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_by_scale_and_format(  # pylint: disable=too-many-locals
+    def get_search_tile_by_scale_and_format(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -33150,7 +32833,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_by_scale_and_format_request(
+        _request = build_data_get_search_tile_by_scale_and_format_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -33232,7 +32915,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile(  # pylint: disable=too-many-locals
+    def get_search_tile(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -33436,7 +33119,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_request(
+        _request = build_data_get_search_tile_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -33518,7 +33201,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_by_format(  # pylint: disable=too-many-locals
+    def get_search_tile_by_format(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -33721,7 +33404,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_by_format_request(
+        _request = build_data_get_search_tile_by_format_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -33803,7 +33486,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_by_scale(  # pylint: disable=too-many-locals
+    def get_search_tile_by_scale(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -34006,7 +33689,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_by_scale_request(
+        _request = build_data_get_search_tile_by_scale_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -34088,7 +33771,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_assets_for_tile(  # pylint: disable=too-many-locals
+    def get_search_assets_for_tile(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -34178,7 +33861,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[_models.TilerAssetGeoJson]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_assets_for_tile_request(
+        _request = build_data_get_search_assets_for_tile_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -34233,7 +33916,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_json_tms(  # pylint: disable=too-many-locals
+    def get_search_tile_json_by_tms(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -34433,7 +34116,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_json_tms_request(
+        _request = build_data_get_search_tile_json_by_tms_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             bidx=bidx,
@@ -34508,7 +34191,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_wmts_capabilities_tms(  # pylint: disable=too-many-locals
+    def get_search_wmts_capabilities_by_tms(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -34582,7 +34265,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_wmts_capabilities_tms_request(
+        _request = build_data_get_search_wmts_capabilities_by_tms_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
@@ -34634,7 +34317,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_info(self, search_id: str, **kwargs: Any) -> _models.TilerStacSearchRegistration:
+    def get_search_info(self, search_id: str, **kwargs: Any) -> _models.TilerStacSearchRegistration:
         """Searches Info.
 
         Get Search query metadata.
@@ -34659,7 +34342,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TilerStacSearchRegistration] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_info_request(
+        _request = build_data_get_search_info_request(
             search_id=search_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -34698,13 +34381,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_bbox_crop(  # pylint: disable=too-many-locals
+    def get_search_bbox_crop(  # pylint: disable=too-many-locals
         self,
         search_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         format: str,
         *,
         bidx: Optional[List[int]] = None,
@@ -34749,14 +34432,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         :param search_id: Search Id (pgSTAC Search Hash). Required.
         :type search_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :keyword bidx: Dataset band indexes. Default value is None.
@@ -34901,12 +34584,12 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_bbox_crop_request(
+        _request = build_data_get_search_bbox_crop_request(
             search_id=search_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             format=format,
             bidx=bidx,
             assets=assets,
@@ -34985,13 +34668,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_bbox_crop_with_dimensions(  # pylint: disable=too-many-locals
+    def get_search_bbox_crop_with_dimensions(  # pylint: disable=too-many-locals
         self,
         search_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         width: int,
         height: int,
         format: str,
@@ -35036,14 +34719,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         :param search_id: Search Id (pgSTAC Search Hash). Required.
         :type search_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :param width: Force output image width. Required.
         :type width: int
         :param height: Force output image height. Required.
@@ -35188,12 +34871,12 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_bbox_crop_with_dimensions_request(
+        _request = build_data_get_search_bbox_crop_with_dimensions_request(
             search_id=search_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             width=width,
             height=height,
             format=format,
@@ -35272,13 +34955,13 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_bbox_assets(  # pylint: disable=too-many-locals
+    def get_search_bbox_assets(  # pylint: disable=too-many-locals
         self,
         search_id: str,
-        minx: float,
-        miny: float,
-        maxx: float,
-        maxy: float,
+        min_x: float,
+        min_y: float,
+        max_x: float,
+        max_y: float,
         *,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -35291,7 +34974,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         coordinate_reference_system: Optional[str] = None,
         **kwargs: Any
     ) -> List[Any]:
@@ -35301,14 +34983,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         :param search_id: Search Id (pgSTAC Search Hash). Required.
         :type search_id: str
-        :param minx: Bounding box min X. Required.
-        :type minx: float
-        :param miny: Bounding box min Y. Required.
-        :type miny: float
-        :param maxx: Bounding box max X. Required.
-        :type maxx: float
-        :param maxy: Bounding box max Y. Required.
-        :type maxy: float
+        :param min_x: Bounding box min X. Required.
+        :type min_x: float
+        :param min_y: Bounding box min Y. Required.
+        :type min_y: float
+        :param max_x: Bounding box max X. Required.
+        :type max_x: float
+        :param max_y: Bounding box max Y. Required.
+        :type max_y: float
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000). Default value is
          None.
         :paramtype scan_limit: int
@@ -35341,8 +35023,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
          to ``epsg:4326``. Default value is None.
         :paramtype coordinate_reference_system: str
@@ -35363,12 +35043,12 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[Any]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_bbox_assets_request(
+        _request = build_data_get_search_bbox_assets_request(
             search_id=search_id,
-            minx=minx,
-            miny=miny,
-            maxx=maxx,
-            maxy=maxy,
+            min_x=min_x,
+            min_y=min_y,
+            max_x=max_x,
+            max_y=max_y,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
@@ -35380,7 +35060,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             coordinate_reference_system=coordinate_reference_system,
             api_version=self._config.api_version,
             headers=_headers,
@@ -35419,7 +35098,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_searches_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_search_feature(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         body: _models.Feature,
@@ -35607,7 +35286,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_searches_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_search_feature(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         body: JSON,
@@ -35795,7 +35474,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_searches_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_search_feature(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         body: IO[bytes],
@@ -35983,7 +35662,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_searches_feature_geo_json(  # pylint: disable=too-many-locals
+    def crop_search_feature(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         body: Union[_models.Feature, JSON, IO[bytes]],
@@ -36187,7 +35866,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_searches_feature_geo_json_request(
+        _request = build_data_crop_search_feature_request(
             search_id=search_id,
             bidx=bidx,
             assets=assets,
@@ -36269,7 +35948,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_searches_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_search_feature_by_format(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         format: str,
@@ -36456,7 +36135,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_searches_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_search_feature_by_format(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         format: str,
@@ -36643,7 +36322,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_searches_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_search_feature_by_format(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         format: str,
@@ -36830,7 +36509,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_searches_feature_geo_json_format(  # pylint: disable=too-many-locals
+    def crop_search_feature_by_format(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         format: str,
@@ -37033,7 +36712,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_searches_feature_geo_json_format_request(
+        _request = build_data_crop_search_feature_by_format_request(
             search_id=search_id,
             format=format,
             bidx=bidx,
@@ -37115,7 +36794,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def crop_searches_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_search_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         width: int,
@@ -37302,7 +36981,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_searches_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_search_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         width: int,
@@ -37489,7 +37168,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    def crop_searches_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_search_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         width: int,
@@ -37676,7 +37355,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_searches_feature_geo_json_width_by_height(  # pylint: disable=name-too-long,too-many-locals
+    def crop_search_feature_width_by_height(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         width: int,
@@ -37879,7 +37558,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_data_crop_searches_feature_geo_json_width_by_height_request(
+        _request = build_data_crop_search_feature_width_by_height_request(
             search_id=search_id,
             width=width,
             height=height,
@@ -37961,7 +37640,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_wmts_capabilities(  # pylint: disable=too-many-locals
+    def get_search_wmts_capabilities(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         *,
@@ -38040,7 +37719,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_wmts_capabilities_request(
+        _request = build_data_get_search_wmts_capabilities_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             tile_format=tile_format,
@@ -38092,7 +37771,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_json(  # pylint: disable=too-many-locals
+    def get_search_tile_json(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         *,
@@ -38296,7 +37975,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileJsonMetadata] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_json_request(
+        _request = build_data_get_search_tile_json_request(
             search_id=search_id,
             bidx=bidx,
             assets=assets,
@@ -38371,7 +38050,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_no_tms(  # pylint: disable=too-many-locals
+    def get_search_tile_no_tms(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         z: float,
@@ -38579,7 +38258,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_no_tms_request(
+        _request = build_data_get_search_tile_no_tms_request(
             search_id=search_id,
             z=z,
             x=x,
@@ -38661,7 +38340,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_no_tms_by_format(  # pylint: disable=too-many-locals
+    def get_search_tile_no_tms_by_format(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         z: float,
@@ -38868,7 +38547,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_no_tms_by_format_request(
+        _request = build_data_get_search_tile_no_tms_by_format_request(
             search_id=search_id,
             z=z,
             x=x,
@@ -38950,7 +38629,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_no_tms_by_scale(  # pylint: disable=too-many-locals
+    def get_search_tile_no_tms_by_scale(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         z: float,
@@ -39157,7 +38836,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_no_tms_by_scale_request(
+        _request = build_data_get_search_tile_no_tms_by_scale_request(
             search_id=search_id,
             z=z,
             x=x,
@@ -39239,7 +38918,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_tile_no_tms_by_scale_and_format(  # pylint: disable=name-too-long,too-many-locals
+    def get_search_tile_no_tms_by_scale_and_format(  # pylint: disable=name-too-long,too-many-locals
         self,
         search_id: str,
         z: float,
@@ -39445,7 +39124,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_tile_no_tms_by_scale_and_format_request(
+        _request = build_data_get_search_tile_no_tms_by_scale_and_format_request(
             search_id=search_id,
             z=z,
             x=x,
@@ -39527,7 +39206,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_assets_for_tile_no_tms(  # pylint: disable=too-many-locals
+    def get_search_assets_for_tile_no_tms(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         z: float,
@@ -39545,7 +39224,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         **kwargs: Any
     ) -> List[Any]:
@@ -39596,8 +39274,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
          (default: 'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
          "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
@@ -39621,7 +39297,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[Any]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_assets_for_tile_no_tms_request(
+        _request = build_data_get_search_assets_for_tile_no_tms_request(
             search_id=search_id,
             z=z,
             x=x,
@@ -39637,7 +39313,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             tile_matrix_set_id=tile_matrix_set_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -39676,7 +39351,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_point(  # pylint: disable=too-many-locals
+    def get_search_point(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         longitude: float,
@@ -39693,7 +39368,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         bidx: Optional[List[int]] = None,
         assets: Optional[List[str]] = None,
         expression: Optional[str] = None,
@@ -39748,8 +39422,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword bidx: Dataset band indexes. Default value is None.
         :paramtype bidx: list[int]
         :keyword assets: Asset's names. Default value is None.
@@ -39794,7 +39466,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TilerCoreModelsResponsesPoint] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_point_request(
+        _request = build_data_get_search_point_request(
             search_id=search_id,
             longitude=longitude,
             latitude=latitude,
@@ -39809,7 +39481,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             bidx=bidx,
             assets=assets,
             expression=expression,
@@ -39857,7 +39528,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_searches_point_with_assets(  # pylint: disable=too-many-locals
+    def get_search_point_with_assets(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         longitude: float,
@@ -39874,7 +39545,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sel: Optional[List[str]] = None,
         sel_method: Optional[Union[str, _models.SelMethod]] = None,
-        collection: Optional[str] = None,
         coordinate_reference_system: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.StacItemPointAsset]:
@@ -39920,8 +39590,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          "nearest", "linear", "bilinear", "cubic", "cubic_spline", "lanczos", "area", and "mode".
          Default value is None.
         :paramtype sel_method: str or ~azure.planetarycomputer.models.SelMethod
-        :keyword collection: STAC Collection Identifier. Default value is None.
-        :paramtype collection: str
         :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
          to ``epsg:4326``. Default value is None.
         :paramtype coordinate_reference_system: str
@@ -39942,7 +39610,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[List[_models.StacItemPointAsset]] = kwargs.pop("cls", None)
 
-        _request = build_data_get_searches_point_with_assets_request(
+        _request = build_data_get_search_point_with_assets_request(
             search_id=search_id,
             longitude=longitude,
             latitude=latitude,
@@ -39957,7 +39625,6 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             datetime=datetime,
             sel=sel,
             sel_method=sel_method,
-            collection=collection,
             coordinate_reference_system=coordinate_reference_system,
             api_version=self._config.api_version,
             headers=_headers,
@@ -40016,7 +39683,7 @@ class SasOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_sign(
+    def get_url(
         self, *, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any
     ) -> _models.SharedAccessSignatureSignedLink:
         """sign an HREF in the format of a URL and returns a SharedAccessSignatureSignedHrefResponse.
@@ -40047,7 +39714,7 @@ class SasOperations:
 
         cls: ClsType[_models.SharedAccessSignatureSignedLink] = kwargs.pop("cls", None)
 
-        _request = build_sas_get_sign_request(
+        _request = build_sas_get_url_request(
             href=href,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,

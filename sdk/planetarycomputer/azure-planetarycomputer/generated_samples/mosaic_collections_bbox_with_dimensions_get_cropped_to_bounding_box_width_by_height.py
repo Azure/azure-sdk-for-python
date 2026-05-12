@@ -32,10 +32,10 @@ def main():
 
     response = client.data.get_collection_bbox_crop_with_dimensions(
         collection_id="naip-atl",
-        minx=-122.5,
-        miny=37.7,
-        maxx=-122.3,
-        maxy=37.8,
+        min_x=-122.5,
+        min_y=37.7,
+        max_x=-122.3,
+        max_y=37.8,
         width=256,
         height=256,
         format="png",

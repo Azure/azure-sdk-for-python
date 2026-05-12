@@ -30,12 +30,12 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.get_searches_bbox_assets(
+    response = client.data.get_search_bbox_assets(
         search_id="abc123def456",
-        minx=-122.5,
-        miny=37.7,
-        maxx=-122.3,
-        maxy=37.8,
+        min_x=-122.5,
+        min_y=37.7,
+        max_x=-122.3,
+        max_y=37.8,
     )
     print(response)
 

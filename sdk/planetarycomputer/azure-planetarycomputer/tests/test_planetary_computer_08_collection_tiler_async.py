@@ -177,10 +177,10 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
 
         response = await client.data.get_collection_bbox_crop(
             collection_id=planetarycomputer_collection_id,
-            minx=-84.3900,
-            miny=33.6800,
-            maxx=-84.3850,
-            maxy=33.6850,
+            min_x=-84.3900,
+            min_y=33.6800,
+            max_x=-84.3850,
+            max_y=33.6850,
             format="png",
             assets=["image"],
             asset_band_indices=["image|1,2,3"],
@@ -227,12 +227,12 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_08_crop_collection_feature_geo_json(
+    async def test_08_crop_collection_feature(
         self, planetarycomputer_endpoint, planetarycomputer_collection_id
     ):
         """Test cropping a collection by GeoJSON feature."""
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_08_crop_collection_feature_geo_json")
+        test_logger.info("TEST: test_08_crop_collection_feature")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
@@ -253,7 +253,7 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
             properties={},
         )
 
-        response = await client.data.crop_collection_feature_geo_json(
+        response = await client.data.crop_collection_feature(
             collection_id=planetarycomputer_collection_id,
             body=geojson_feature,
             assets=["image"],
@@ -270,15 +270,15 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_09_list_collection_tilesets(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_09_get_collection_tilesets(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test listing tilesets for a collection."""
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_09_list_collection_tilesets")
+        test_logger.info("TEST: test_09_get_collection_tilesets")
         test_logger.info("=" * 80)
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        response = await client.data.list_collection_tilesets(
+        response = await client.data.get_collection_tilesets(
             collection_id=planetarycomputer_collection_id,
         )
 

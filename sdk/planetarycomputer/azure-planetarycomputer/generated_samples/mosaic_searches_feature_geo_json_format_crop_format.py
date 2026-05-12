@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.crop_searches_feature_geo_json_format(
+    response = client.data.crop_search_feature_by_format(
         search_id="ba13fc7947b9b585690d84ee61aaa653",
         format="png",
         body={

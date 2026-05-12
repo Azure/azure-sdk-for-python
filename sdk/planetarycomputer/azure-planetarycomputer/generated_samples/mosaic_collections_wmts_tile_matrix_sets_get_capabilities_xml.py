@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.get_collection_wmts_capabilities_tms(
+    response = client.data.get_collection_wmts_capabilities_by_tms(
         collection_id="naip-atl",
         tile_matrix_set_id="WebMercatorQuad",
     )

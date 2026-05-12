@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.list_tile_matrices()
+    response = client.data.get_tile_matrices()
     print(response)
 
 

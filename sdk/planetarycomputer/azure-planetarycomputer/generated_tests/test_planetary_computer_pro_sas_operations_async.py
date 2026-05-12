@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerProClientTestBaseAsync
 class TestPlanetaryComputerProSasOperationsAsync(PlanetaryComputerProClientTestBaseAsync):
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy_async
-    async def test_sas_get_sign(self, planetarycomputerpro_endpoint):
+    async def test_sas_get_url(self, planetarycomputerpro_endpoint):
         client = self.create_async_client(endpoint=planetarycomputerpro_endpoint)
-        response = await client.sas.get_sign(
+        response = await client.sas.get_url(
             href="str",
         )
 

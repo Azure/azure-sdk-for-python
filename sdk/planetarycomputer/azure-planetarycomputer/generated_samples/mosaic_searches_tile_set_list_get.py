@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.list_searches_tilesets(
+    response = client.data.get_search_tilesets(
         search_id="ba13fc7947b9b585690d84ee61aaa653",
     )
     print(response)

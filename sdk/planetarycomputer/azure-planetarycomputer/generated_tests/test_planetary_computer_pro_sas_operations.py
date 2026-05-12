@@ -14,9 +14,9 @@ from testpreparer import PlanetaryComputerProClientTestBase, PlanetaryComputerPr
 class TestPlanetaryComputerProSasOperations(PlanetaryComputerProClientTestBase):
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy
-    def test_sas_get_sign(self, planetarycomputerpro_endpoint):
+    def test_sas_get_url(self, planetarycomputerpro_endpoint):
         client = self.create_client(endpoint=planetarycomputerpro_endpoint)
-        response = client.sas.get_sign(
+        response = client.sas.get_url(
             href="str",
         )
 

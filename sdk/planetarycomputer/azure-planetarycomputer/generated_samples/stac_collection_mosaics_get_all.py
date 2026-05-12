@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.list_mosaics(
+    response = client.stac.get_mosaics(
         collection_id="naip-atl",
     )
     print(response)

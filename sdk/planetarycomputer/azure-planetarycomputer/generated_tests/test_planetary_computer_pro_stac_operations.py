@@ -117,9 +117,9 @@ class TestPlanetaryComputerProStacOperations(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy
-    def test_stac_list_mosaics(self, planetarycomputerpro_endpoint):
+    def test_stac_get_mosaics(self, planetarycomputerpro_endpoint):
         client = self.create_client(endpoint=planetarycomputerpro_endpoint)
-        response = client.stac.list_mosaics(
+        response = client.stac.get_mosaics(
             collection_id="str",
         )
 
@@ -414,9 +414,9 @@ class TestPlanetaryComputerProStacOperations(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy
-    def test_stac_list_render_options(self, planetarycomputerpro_endpoint):
+    def test_stac_get_render_options(self, planetarycomputerpro_endpoint):
         client = self.create_client(endpoint=planetarycomputerpro_endpoint)
-        response = client.stac.list_render_options(
+        response = client.stac.get_render_options(
             collection_id="str",
         )
 
@@ -764,9 +764,9 @@ class TestPlanetaryComputerProStacOperations(PlanetaryComputerProClientTestBase)
 
     @PlanetaryComputerProPreparer()
     @recorded_by_proxy
-    def test_stac_list_queryables(self, planetarycomputerpro_endpoint):
+    def test_stac_get_queryables(self, planetarycomputerpro_endpoint):
         client = self.create_client(endpoint=planetarycomputerpro_endpoint)
-        response = client.stac.list_queryables()
+        response = client.stac.get_queryables()
 
         # please add some check logic here by yourself
         # ...

@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.get_searches_point_with_assets(
+    response = client.data.get_search_point_with_assets(
         search_id="ba13fc7947b9b585690d84ee61aaa653",
         longitude=-122.4194,
         latitude=37.7749,

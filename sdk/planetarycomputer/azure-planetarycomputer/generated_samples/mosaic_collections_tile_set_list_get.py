@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.list_collection_tilesets(
+    response = client.data.get_collection_tilesets(
         collection_id="naip-atl",
     )
     print(response)

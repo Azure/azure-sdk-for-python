@@ -1,0 +1,126 @@
+2026-05-12 14:39:13,378 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,378 - test_sas - INFO - TEST: test_01_get_token_with_default_duration
+2026-05-12 14:39:13,378 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,378 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,378 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,378 - test_sas - INFO - Calling: get_token(collection_id=naip)
+2026-05-12 14:39:13,384 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
+2026-05-12 14:39:13,384 - test_sas - INFO - Response: {'msft:expiry': '2026-05-13T12:24:04Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,384 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-05-13T12:24:04Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,384 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,404 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,404 - test_sas - INFO - TEST: test_02_get_token_with_custom_duration
+2026-05-12 14:39:13,404 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,404 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,404 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,404 - test_sas - INFO - Input - duration_in_minutes: 60
+2026-05-12 14:39:13,404 - test_sas - INFO - Calling: get_token(collection_id=naip, duration_in_minutes=60)
+2026-05-12 14:39:13,412 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
+2026-05-12 14:39:13,413 - test_sas - INFO - Response: {'msft:expiry': '2026-05-12T13:24:06Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,413 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-05-12T13:24:06Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,413 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,428 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,429 - test_sas - INFO - TEST: test_03_get_sign_with_collection_thumbnail
+2026-05-12 14:39:13,429 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,429 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,429 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,429 - test_sas - INFO - Getting collection...
+2026-05-12 14:39:13,441 - test_sas - INFO - Original HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png
+2026-05-12 14:39:13,441 - test_sas - INFO - Calling: get_url(href=https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png)
+2026-05-12 14:39:13,445 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureSignedLink'>
+2026-05-12 14:39:13,445 - test_sas - INFO - Response: {'msft:expiry': '2026-05-13T12:24:08Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T12%3A24%3A03Z&ske=2026-05-19T12%3A23%3A03Z&sks=b&skv=2025-01-05&sig=Sanitized'}
+2026-05-12 14:39:13,445 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-05-13T12:24:08Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T12%3A24%3A03Z&ske=2026-05-19T12%3A23%3A03Z&sks=b&skv=2025-01-05&sig=Sanitized'}
+2026-05-12 14:39:13,445 - test_sas - INFO - Signed HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T12%3A24%3A03Z&ske=2026-05-19T12%3A23%3A03Z&sks=b&skv=2025-01-05&sig=Sanitized
+2026-05-12 14:39:13,445 - test_sas - INFO - HREF changed: True
+2026-05-12 14:39:13,445 - test_sas - INFO - Has query params: True
+2026-05-12 14:39:13,445 - test_sas - INFO - Has sig param: True
+2026-05-12 14:39:13,446 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,467 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,467 - test_sas - INFO - TEST: test_04_signed_href_can_download_asset
+2026-05-12 14:39:13,467 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,467 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,467 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,468 - test_sas - INFO - Getting collection...
+2026-05-12 14:39:13,476 - test_sas - INFO - Thumbnail HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png
+2026-05-12 14:39:13,476 - test_sas - INFO - Calling: get_url(href=https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png)
+2026-05-12 14:39:13,479 - test_sas - INFO - Signed HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T12%3A24%3A03Z&ske=2026-05-19T12%3A23%3A03Z&sks=b&skv=2025-01-05&sig=Sanitized
+2026-05-12 14:39:13,479 - test_sas - INFO - Skipping download test (playback mode)
+2026-05-12 14:39:13,479 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,496 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,496 - test_sas - INFO - TEST: test_05_revoke_token
+2026-05-12 14:39:13,496 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,496 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,496 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,496 - test_sas - INFO - Step 1: Generating SAS token...
+2026-05-12 14:39:13,501 - test_sas - INFO - Token generated: Sanitized...
+2026-05-12 14:39:13,501 - test_sas - INFO - Step 2: Revoking token...
+2026-05-12 14:39:13,504 - test_sas - INFO - Token revoked successfully (no exception thrown)
+2026-05-12 14:39:13,504 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,520 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,520 - test_sas - INFO - TEST: test_01_get_token_with_default_duration
+2026-05-12 14:39:13,521 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,521 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,521 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,521 - test_sas - INFO - Calling: get_token(collection_id=naip)
+2026-05-12 14:39:13,526 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
+2026-05-12 14:39:13,526 - test_sas - INFO - Response: {'msft:expiry': '2026-05-13T13:32:40Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,526 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-05-13T13:32:40Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,526 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,542 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,542 - test_sas - INFO - TEST: test_02_get_token_with_custom_duration
+2026-05-12 14:39:13,542 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,542 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,542 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,542 - test_sas - INFO - Input - duration_in_minutes: 60
+2026-05-12 14:39:13,542 - test_sas - INFO - Calling: get_token(collection_id=naip, duration_in_minutes=60)
+2026-05-12 14:39:13,547 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
+2026-05-12 14:39:13,547 - test_sas - INFO - Response: {'msft:expiry': '2026-05-12T14:32:42Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,547 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-05-12T14:32:42Z', 'token': 'Sanitized'}
+2026-05-12 14:39:13,547 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,569 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,569 - test_sas - INFO - TEST: test_03_get_sign_with_collection_thumbnail
+2026-05-12 14:39:13,570 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,570 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,570 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,570 - test_sas - INFO - Getting collection...
+2026-05-12 14:39:13,579 - test_sas - INFO - Original HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png
+2026-05-12 14:39:13,579 - test_sas - INFO - Calling: get_url(href=https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png)
+2026-05-12 14:39:13,582 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureSignedLink'>
+2026-05-12 14:39:13,582 - test_sas - INFO - Response: {'msft:expiry': '2026-05-13T13:32:43Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T13%3A32%3A39Z&ske=2026-05-19T13%3A31%3A39Z&sks=b&skv=2025-01-05&sig=Sanitized'}
+2026-05-12 14:39:13,582 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-05-13T13:32:43Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T13%3A32%3A39Z&ske=2026-05-19T13%3A31%3A39Z&sks=b&skv=2025-01-05&sig=Sanitized'}
+2026-05-12 14:39:13,582 - test_sas - INFO - Signed HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T13%3A32%3A39Z&ske=2026-05-19T13%3A31%3A39Z&sks=b&skv=2025-01-05&sig=Sanitized
+2026-05-12 14:39:13,582 - test_sas - INFO - HREF changed: True
+2026-05-12 14:39:13,582 - test_sas - INFO - Has query params: True
+2026-05-12 14:39:13,582 - test_sas - INFO - Has sig param: True
+2026-05-12 14:39:13,582 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,602 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,602 - test_sas - INFO - TEST: test_04_signed_href_can_download_asset
+2026-05-12 14:39:13,602 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,602 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,602 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,603 - test_sas - INFO - Getting collection...
+2026-05-12 14:39:13,611 - test_sas - INFO - Thumbnail HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png
+2026-05-12 14:39:13,611 - test_sas - INFO - Calling: get_url(href=https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png)
+2026-05-12 14:39:13,613 - test_sas - INFO - Signed HREF: https://SANITIZED.blob.core.windows.net/naip-00000000/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-05-12T13%3A32%3A39Z&ske=2026-05-19T13%3A31%3A39Z&sks=b&skv=2025-01-05&sig=Sanitized
+2026-05-12 14:39:13,613 - test_sas - INFO - Skipping download test (playback mode)
+2026-05-12 14:39:13,613 - test_sas - INFO - Test PASSED
+
+2026-05-12 14:39:13,626 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,626 - test_sas - INFO - TEST: test_05_revoke_token
+2026-05-12 14:39:13,626 - test_sas - INFO - ================================================================================
+2026-05-12 14:39:13,626 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-05-12 14:39:13,626 - test_sas - INFO - Input - collection_id: naip
+2026-05-12 14:39:13,627 - test_sas - INFO - Step 1: Generating SAS token...
+2026-05-12 14:39:13,632 - test_sas - INFO - Token generated: Sanitized...
+2026-05-12 14:39:13,632 - test_sas - INFO - Step 2: Revoking token...
+2026-05-12 14:39:13,635 - test_sas - INFO - Token revoked successfully (no exception thrown)
+2026-05-12 14:39:13,635 - test_sas - INFO - Test PASSED
+

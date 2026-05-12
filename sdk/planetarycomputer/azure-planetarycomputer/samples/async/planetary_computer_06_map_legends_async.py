@@ -39,7 +39,7 @@ async def get_class_map_legend(client: "PlanetaryComputerProClient"):
 
 async def get_interval_legend(client: "PlanetaryComputerProClient"):
     """Get an interval legend (continuous color map)."""
-    result = await client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
+    result = await client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS_64A1)
     logging.info(result)
 
 

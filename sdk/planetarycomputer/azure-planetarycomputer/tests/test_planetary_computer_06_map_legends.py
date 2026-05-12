@@ -102,18 +102,18 @@ class TestPlanetaryComputerMapLegends(PlanetaryComputerProClientTestBase):
         Expected response structure:
         - List of intervals, each containing [[min, max], [R, G, B, A]]
         - Intervals represent continuous value ranges with color gradients
-        - MODIS64_A1: Fire radiative power intervals
+        - MODIS_64A1: Fire radiative power intervals
         """
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_02_get_interval_legend")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
-        test_logger.info(f"Input - classmap_name: {ColorMapNames.MODIS64_A1}")
+        test_logger.info(f"Input - classmap_name: {ColorMapNames.MODIS_64A1}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: get_interval_legend(classmap_name={ColorMapNames.MODIS64_A1})")
-        response = client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
+        test_logger.info(f"Calling: get_interval_legend(classmap_name={ColorMapNames.MODIS_64A1})")
+        response = client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS_64A1)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")

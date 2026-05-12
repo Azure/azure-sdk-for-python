@@ -179,8 +179,8 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         test_logger.info(f"Original HREF: {original_href}")
         assert original_href is not None
 
-        test_logger.info(f"Calling: get_sign(href={original_href})")
-        response = await client.sas.get_sign(href=original_href)
+        test_logger.info(f"Calling: get_url(href={original_href})")
+        response = await client.sas.get_url(href=original_href)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -253,8 +253,8 @@ class TestPlanetaryComputerSasAsync(PlanetaryComputerProClientTestBaseAsync):
         thumbnail_href = collection.assets["thumbnail"].href
         test_logger.info(f"Thumbnail HREF: {thumbnail_href}")
 
-        test_logger.info(f"Calling: get_sign(href={thumbnail_href})")
-        sign_response = await client.sas.get_sign(href=thumbnail_href)
+        test_logger.info(f"Calling: get_url(href={thumbnail_href})")
+        sign_response = await client.sas.get_url(href=thumbnail_href)
         signed_href = sign_response.href
         test_logger.info(f"Signed HREF: {signed_href}")
 

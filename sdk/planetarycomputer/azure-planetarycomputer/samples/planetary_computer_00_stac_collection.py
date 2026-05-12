@@ -206,7 +206,7 @@ def manage_render_options(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Check if render option already exists
-    stac_collection_mosaics_get_all_response = client.stac.list_render_options(collection_id=collection_id)
+    stac_collection_mosaics_get_all_response = client.stac.get_render_options(collection_id=collection_id)
 
     if any(ro.id == render_option.id for ro in stac_collection_mosaics_get_all_response):
         logging.info("Render option 'natural-color' already exists.")
@@ -226,7 +226,7 @@ def manage_render_options(client: PlanetaryComputerProClient, collection_id):
     client.stac.create_render_option(collection_id=collection_id, body=render_option)
 
     # List render options
-    client.stac.list_render_options(collection_id=collection_id)
+    client.stac.get_render_options(collection_id=collection_id)
 
     # Update with description
     render_option.description = "RGB from visual assets"
@@ -252,7 +252,7 @@ def manage_mosaics(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Check existing mosaics
-    stac_collection_mosaics_get_all_response = client.stac.list_mosaics(collection_id=collection_id)
+    stac_collection_mosaics_get_all_response = client.stac.get_mosaics(collection_id=collection_id)
 
     if any(m.id == mosaic.id for m in stac_collection_mosaics_get_all_response):
         logging.info(f"Mosaic {mosaic.id} already exists. Deleting it before creating a new one.")
@@ -346,7 +346,7 @@ def manage_queryables(client: PlanetaryComputerProClient, collection_id):
 
     logging.info(create_or_replace_queryable_response)
 
-    client.stac.list_queryables()
+    client.stac.get_queryables()
 
 
 def get_collection_configuration(client: PlanetaryComputerProClient, collection_id):

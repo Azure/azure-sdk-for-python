@@ -190,7 +190,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_05_list_render_options(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_05_get_render_options(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test listing render options for a collection.
 
@@ -199,15 +199,15 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         - Each has id, name, type, options, etc.
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_05_list_render_options")
+        test_logger.info("TEST: test_05_get_render_options")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: list_render_options(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.list_render_options(collection_id=planetarycomputer_collection_id)
+        test_logger.info(f"Calling: get_render_options(collection_id='{planetarycomputer_collection_id}')")
+        response = client.stac.get_render_options(collection_id=planetarycomputer_collection_id)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Number of render options: {len(response)}")
@@ -268,7 +268,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_07_list_mosaics(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    def test_07_get_mosaics(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """
         Test listing mosaics for a collection.
 
@@ -277,15 +277,15 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         - Each has id, name, cql filter
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_07_list_mosaics")
+        test_logger.info("TEST: test_07_get_mosaics")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
         test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(f"Calling: list_mosaics(collection_id='{planetarycomputer_collection_id}')")
-        response = client.stac.list_mosaics(collection_id=planetarycomputer_collection_id)
+        test_logger.info(f"Calling: get_mosaics(collection_id='{planetarycomputer_collection_id}')")
+        response = client.stac.get_mosaics(collection_id=planetarycomputer_collection_id)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Number of mosaics: {len(response)}")
@@ -343,7 +343,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_09_list_queryables(self, planetarycomputer_endpoint):
+    def test_09_get_queryables(self, planetarycomputer_endpoint):
         """
         Test listing all queryables (global).
 
@@ -352,14 +352,14 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         - Properties contain global queryable definitions
         """
         test_logger.info("=" * 80)
-        test_logger.info("TEST: test_09_list_queryables")
+        test_logger.info("TEST: test_09_get_queryables")
         test_logger.info("=" * 80)
         test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info("Calling: list_queryables()")
-        response = client.stac.list_queryables()
+        test_logger.info("Calling: get_queryables()")
+        response = client.stac.get_queryables()
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response keys: {list(response.keys()) if isinstance(response, MutableMapping) else 'N/A'}")

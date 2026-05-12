@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.sas.get_sign(
+    response = client.sas.get_url(
         href="https://SANITIZED.blob.core.windows.net/naip-atl-00000000/collection-assets/thumbnail/thumbnail.png",
     )
     print(response)

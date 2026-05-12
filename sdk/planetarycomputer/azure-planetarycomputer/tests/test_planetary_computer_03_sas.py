@@ -169,8 +169,8 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
         test_logger.info(f"Original HREF: {original_href}")
         assert original_href is not None
 
-        test_logger.info(f"Calling: get_sign(href={original_href})")
-        response = client.sas.get_sign(href=original_href)
+        test_logger.info(f"Calling: get_url(href={original_href})")
+        response = client.sas.get_url(href=original_href)
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
@@ -241,8 +241,8 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
         thumbnail_href = collection.assets["thumbnail"].href
         test_logger.info(f"Thumbnail HREF: {thumbnail_href}")
 
-        test_logger.info(f"Calling: get_sign(href={thumbnail_href})")
-        sign_response = client.sas.get_sign(href=thumbnail_href)
+        test_logger.info(f"Calling: get_url(href={thumbnail_href})")
+        sign_response = client.sas.get_url(href=thumbnail_href)
         signed_href = sign_response.href
         test_logger.info(f"Signed HREF: {signed_href}")
 
@@ -291,9 +291,7 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
 
         # Generate a SAS token first
         test_logger.info("Step 1: Generating SAS token...")
-        token_response = client.sas.get_token(
-            collection_id=planetarycomputer_collection_id, duration_in_minutes=60
-        )
+        token_response = client.sas.get_token(collection_id=planetarycomputer_collection_id, duration_in_minutes=60)
 
         test_logger.info(f"Token generated: {token_response.token[:50]}...")
         assert token_response is not None, "Token response should not be None"

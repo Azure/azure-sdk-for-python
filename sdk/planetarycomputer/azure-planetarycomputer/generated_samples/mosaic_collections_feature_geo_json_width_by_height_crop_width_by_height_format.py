@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.crop_collection_feature_geo_json_width_by_height(
+    response = client.data.crop_collection_feature_width_by_height(
         collection_id="naip-atl",
         width=256,
         height=256,

@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.get_collection_tile_json_tms(
+    response = client.data.get_collection_tile_json_by_tms(
         collection_id="naip-atl",
         tile_matrix_set_id="WebMercatorQuad",
     )

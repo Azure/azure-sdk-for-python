@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.data.list_item_statistics(
+    response = client.data.get_item_statistics(
         collection_id="naip-atl",
         item_id="ga_m_3308421_se_16_060_20211114",
     )
