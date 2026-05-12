@@ -11,5 +11,5 @@
         "specs.azure.versioning.previewversion.PreviewVersionClient.list_widgets": "_Specs_.Azure.Versioning.PreviewVersion.listWidgets",
         "specs.azure.versioning.previewversion.aio.PreviewVersionClient.list_widgets": "_Specs_.Azure.Versioning.PreviewVersion.listWidgets"
     },
-    "CrossLanguageVersion": "15e16bb34cd0"
+    "CrossLanguageVersion": "240b56f16179"
 }

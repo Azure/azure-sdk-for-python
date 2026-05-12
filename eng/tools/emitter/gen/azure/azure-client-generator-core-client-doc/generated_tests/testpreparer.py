@@ -7,20 +7,18 @@
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 import functools
-from generation.subdir import RecursiveClient
+from specs.azure.clientgenerator.core.clientdoc import ClientDocClient
 
 
-class RecursiveClientTestBase(AzureRecordedTestCase):
+class ClientDocClientTestBase(AzureRecordedTestCase):
 
     def create_client(self, endpoint):
-        credential = self.get_credential(RecursiveClient)
+        credential = self.get_credential(ClientDocClient)
         return self.create_client_from_credential(
-            RecursiveClient,
+            ClientDocClient,
             credential=credential,
             endpoint=endpoint,
         )
 
 
-RecursivePreparer = functools.partial(
-    PowerShellPreparer, "recursive", recursive_endpoint="https://fake_recursive_endpoint.com"
-)
+DocPreparer = functools.partial(PowerShellPreparer, "doc", doc_endpoint="https://fake_doc_endpoint.com")
