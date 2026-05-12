@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import logging
@@ -75,7 +75,7 @@ async def setup_and_teardown_async():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestExcludedLocationsAsync:
@@ -347,3 +347,4 @@ class TestExcludedLocationsAsync:
 
 if __name__ == "__main__":
     unittest.main()
+

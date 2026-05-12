@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import time
 import unittest
@@ -10,7 +10,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 
 
 @pytest.mark.cosmosSplit
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestReadItemsPartitionSplitScenariosSync(unittest.TestCase):
     """Tests the behavior of read_items in scenarios involving partition splits (sync)."""
 

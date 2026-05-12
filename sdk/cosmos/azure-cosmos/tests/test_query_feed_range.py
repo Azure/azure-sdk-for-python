@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import time
 import os
@@ -79,7 +79,7 @@ def get_container(setup, container_id: str):
     return setup["data_db"].get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestQueryFeedRange:
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     def test_query_with_feed_range_for_all_partitions(self, setup, container_id):
@@ -409,3 +409,4 @@ class TestQueryFeedRange:
 
 if __name__ == "__main__":
     unittest.main()
+

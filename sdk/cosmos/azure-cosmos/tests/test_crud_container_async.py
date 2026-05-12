@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -48,7 +48,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         return response
 
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.cosmosLong
 class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
@@ -1072,3 +1072,4 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

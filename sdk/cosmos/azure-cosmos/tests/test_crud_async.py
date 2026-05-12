@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -66,7 +66,7 @@ class TimeoutTransport(AioHttpTransport):
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
@@ -2000,4 +2000,5 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 

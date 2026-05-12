@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # cspell:ignore rerank reranker reranking
 import json
@@ -12,7 +12,7 @@ import test_config
 
 
 @pytest.mark.semanticReranker
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestSemanticReranker(unittest.TestCase):
     """Test to check semantic reranker behavior."""
     client: cosmos_client.CosmosClient = None
@@ -120,3 +120,4 @@ class TestSemanticReranker(unittest.TestCase):
             ]
         else:
             raise ValueError("Unsupported document type")
+

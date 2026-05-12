@@ -18,14 +18,16 @@ print("[AAD DEBUG] imported test_aggregate.py", flush=True)
 
 
 class _config:
+    is_aad_mode = test_config.TestConfig.data_auth_mode == "aad"
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
     connection_policy = test_config.TestConfig.connectionPolicy
     PARTITION_KEY = 'key'
     UNIQUE_PARTITION_KEY = 'uniquePartitionKey'
     FIELD = 'field'
-    DOCUMENTS_COUNT = 400
-    DOCS_WITH_SAME_PARTITION_KEY = 200
+    # Keep key-auth query coverage unchanged; trim only AAD runs to stay under CI timeout.
+    DOCUMENTS_COUNT = 120 if is_aad_mode else 400
+    DOCS_WITH_SAME_PARTITION_KEY = 60 if is_aad_mode else 200
     docs_with_numeric_id = 0
     sum = 0
 

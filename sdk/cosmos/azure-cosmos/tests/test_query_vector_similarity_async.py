@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import unittest
@@ -25,7 +25,7 @@ def verify_ordering(item_list, distance_function):
         for i in range(len(item_list) - 1):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.cosmosSearchQuery
 class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check vector similarity queries behavior."""
@@ -319,3 +319,4 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

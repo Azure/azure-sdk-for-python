@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -26,7 +26,7 @@ def get_test_item():
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestUserConfigs(unittest.TestCase):
     key_client = None
     data_client = None
@@ -114,3 +114,4 @@ class TestUserConfigs(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

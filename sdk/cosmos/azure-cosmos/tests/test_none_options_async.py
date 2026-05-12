@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import unittest
 import uuid
@@ -11,7 +11,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host
@@ -194,3 +194,4 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
         changes = [doc async for doc in pager]
         assert len(changes) >= 1
+

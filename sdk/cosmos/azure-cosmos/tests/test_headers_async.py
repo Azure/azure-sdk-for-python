@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -42,7 +42,7 @@ class ClientIDVerificationError(Exception):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
     key_client: CosmosClient = None
     client: CosmosClient = None
@@ -291,3 +291,4 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

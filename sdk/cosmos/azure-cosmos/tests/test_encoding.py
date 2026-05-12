@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -13,7 +13,7 @@ from azure.cosmos import DatabaseProxy, ContainerProxy
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestEncoding(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -49,7 +49,7 @@ class TestEncoding(unittest.TestCase):
             test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_unicode_characters_in_partition_key(self):
-        test_string = u'â‚¬â‚¬ Ú©Ù„ÛŒØ¯ Ù¾Ø§Ø±ØªÛŒØ´Ù† à¤µà¤¿à¤­à¤¾à¤œà¤¨ à¤•à¥à¤‚à¤œà¥€ 	123'  # cspell:disable-line
+        test_string = u'Ã¢â€šÂ¬Ã¢â€šÂ¬ ÃšÂ©Ã™â€žÃ›Å’Ã˜Â¯ Ã™Â¾Ã˜Â§Ã˜Â±Ã˜ÂªÃ›Å’Ã˜Â´Ã™â€  Ã Â¤ÂµÃ Â¤Â¿Ã Â¤Â­Ã Â¤Â¾Ã Â¤Å“Ã Â¤Â¨ Ã Â¤â€¢Ã Â¥ÂÃ Â¤â€šÃ Â¤Å“Ã Â¥â‚¬ 	123'  # cspell:disable-line
         document_definition = {'pk': test_string, 'id': 'myid' + str(uuid.uuid4())}
         created_doc = self.created_container.create_item(body=document_definition)
 
@@ -57,7 +57,7 @@ class TestEncoding(unittest.TestCase):
         self.assertEqual(read_doc['pk'], test_string)
 
     def test_create_document_with_line_separator_para_seperator_next_line_unicodes(self):
-        test_string = u'Line Separator (â€¨) & Paragraph Separator (â€©) & Next Line (Â…) & Ù†ÛŒÙ…â€ŒÙØ§ØµÙ„Ù‡'  # cspell:disable-line
+        test_string = u'Line Separator (Ã¢â‚¬Â¨) & Paragraph Separator (Ã¢â‚¬Â©) & Next Line (Ã‚â€¦) & Ã™â€ Ã›Å’Ã™â€¦Ã¢â‚¬Å’Ã™ÂÃ˜Â§Ã˜ÂµÃ™â€žÃ™â€¡'  # cspell:disable-line
         document_definition = {'pk': 'pk', 'id': 'myid' + str(uuid.uuid4()), 'unicode_content': test_string}
         created_doc = self.created_container.create_item(body=document_definition)
 
@@ -68,9 +68,9 @@ class TestEncoding(unittest.TestCase):
         # scripts.create_stored_procedure and scripts.get_stored_procedure are control-plane.
         # operations that will return 403 under AAD Data Contributor role. This test uses key_container
         # (key-auth) for these operations.
-        test_string = 'Line Separator (â€¨) & Paragraph Separator (â€©) & Next Line (Â…) & Ù†ÛŒÙ…â€ŒÙØ§ØµÙ„Ù‡'  # cspell:disable-line
+        test_string = 'Line Separator (Ã¢â‚¬Â¨) & Paragraph Separator (Ã¢â‚¬Â©) & Next Line (Ã‚â€¦) & Ã™â€ Ã›Å’Ã™â€¦Ã¢â‚¬Å’Ã™ÂÃ˜Â§Ã˜ÂµÃ™â€žÃ™â€¡'  # cspell:disable-line
 
-        test_string_unicode = u'Line Separator (â€¨) & Paragraph Separator (â€©) & Next Line (Â…) & Ù†ÛŒÙ…â€ŒÙØ§ØµÙ„Ù‡'  # cspell:disable-line
+        test_string_unicode = u'Line Separator (Ã¢â‚¬Â¨) & Paragraph Separator (Ã¢â‚¬Â©) & Next Line (Ã‚â€¦) & Ã™â€ Ã›Å’Ã™â€¦Ã¢â‚¬Å’Ã™ÂÃ˜Â§Ã˜ÂµÃ™â€žÃ™â€¡'  # cspell:disable-line
 
         stored_proc_definition = {'id': 'myid' + str(uuid.uuid4()), 'body': test_string}
         created_sp = self.key_container.scripts.create_stored_procedure(body=stored_proc_definition)
@@ -81,3 +81,4 @@ class TestEncoding(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

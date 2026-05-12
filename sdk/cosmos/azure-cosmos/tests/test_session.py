@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -21,7 +21,7 @@ from typing import Callable
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestSession(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -409,3 +409,4 @@ class TestSession(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

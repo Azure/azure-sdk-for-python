@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import random
@@ -14,7 +14,7 @@ from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestMultiOrderBy(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """
@@ -277,3 +277,4 @@ class TestMultiOrderBy(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

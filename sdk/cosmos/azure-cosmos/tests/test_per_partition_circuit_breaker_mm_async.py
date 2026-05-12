@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import os
@@ -104,7 +104,7 @@ async def cleanup_method(initialized_objects: list[dict[str, Any]]):
         await method_client.close()
 
 @pytest.mark.cosmosCircuitBreaker
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionCircuitBreakerMMAsync:
     host = test_config.TestConfig.host
@@ -499,3 +499,4 @@ class TestPerPartitionCircuitBreakerMMAsync:
 
 if __name__ == '__main__':
     unittest.main()
+

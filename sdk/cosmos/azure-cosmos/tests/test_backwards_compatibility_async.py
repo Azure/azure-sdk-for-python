@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -13,7 +13,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -127,7 +127,7 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
-        # Item — data-plane operations use AAD client
+        # Item â€” data-plane operations use AAD client
         data_container = self.data_database.get_container_client(container.id)
         item = await data_container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert item is not None
@@ -155,3 +155,4 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

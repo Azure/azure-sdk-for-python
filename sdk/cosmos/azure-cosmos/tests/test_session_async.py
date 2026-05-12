@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -22,7 +22,7 @@ from typing import Awaitable, Callable
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -413,3 +413,4 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(e.http_error_message, "Could not parse the received session token: 2")
             self.assertEqual(e.status_code, StatusCodes.INTERNAL_SERVER_ERROR)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
+

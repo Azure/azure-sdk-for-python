@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -80,7 +80,7 @@ def _is_all_versions_and_deletes_not_enabled(error: Exception) -> bool:
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.usefixtures("setup")
 class TestChangeAllVersionsFeed:
     """Test to verify All Versions And Delete change feed behavior"""
@@ -273,3 +273,4 @@ class TestChangeAllVersionsFeed:
 
 if __name__ == "__main__":
     unittest.main()
+

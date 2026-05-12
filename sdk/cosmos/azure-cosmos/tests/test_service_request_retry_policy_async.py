@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -14,7 +14,7 @@ from azure.cosmos.documents import _OperationType, ConnectionPolicy
 
 
 @pytest.mark.cosmosMultiRegion
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestServiceRequestRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     """Test cases for the read_items API."""
 
@@ -96,4 +96,5 @@ class TestServiceRequestRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
 

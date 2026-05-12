@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -145,7 +145,7 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_async")
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestPartitionKeyAsync:
     """Tests to verify if non-partitioned collections are properly accessed on migration with version 2018-12-31.
     """
@@ -211,3 +211,4 @@ class TestPartitionKeyAsync:
 
 if __name__ == '__main__':
     unittest.main()
+

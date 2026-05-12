@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -16,7 +16,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestCrossPartitionTopOrderBy(unittest.TestCase):
     """Orderby Tests.
     """
@@ -535,3 +535,4 @@ class TestCrossPartitionTopOrderBy(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

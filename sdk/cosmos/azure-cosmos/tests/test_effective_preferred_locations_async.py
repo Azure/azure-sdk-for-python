@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import asyncio
@@ -53,7 +53,7 @@ def preferred_locations():
     ]
 
 @pytest.mark.asyncio
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocationsAsync:
     host = test_config.TestConfig.host
@@ -219,3 +219,4 @@ class TestPreferredLocationsAsync:
             db_acc._EnableMultipleWritableLocations = multi_write
             db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
             return db_acc
+

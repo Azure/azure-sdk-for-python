@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import asyncio
@@ -14,7 +14,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.cosmosQuery
 class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
     """Tests for async query response headers functionality."""
@@ -465,3 +465,4 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

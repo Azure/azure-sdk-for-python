@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import time
@@ -32,7 +32,7 @@ async def run_queries(container, iterations):
 
 
 @pytest.mark.cosmosSplit
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
     # AAD client/database  -  data-plane (create_item, query_items, _routing_map_provider introspection)
     database: DatabaseProxy = None
@@ -970,4 +970,5 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
 

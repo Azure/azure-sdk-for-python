@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -15,7 +15,7 @@ from azure.cosmos.http_constants import HttpHeaders
 # TODO: add query tests once those changes are available
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestCosmosResponses(unittest.TestCase):
     """Python Cosmos Responses Tests.
     """
@@ -37,7 +37,7 @@ class TestCosmosResponses(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        # Key/data client setup (partial migration — most tests in this file are
+        # Key/data client setup (partial migration â€” most tests in this file are
         # control-plane response-shape tests that fundamentally exercise
         # `client.create_database` / `create_container` / `replace_throughput`,
         # which cannot run under an AAD data-plane token).
@@ -156,3 +156,4 @@ class TestCosmosResponses(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

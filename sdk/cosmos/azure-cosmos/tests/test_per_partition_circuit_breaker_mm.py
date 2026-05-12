@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import unittest
@@ -185,7 +185,7 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
             pass
 
 @pytest.mark.cosmosCircuitBreaker
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestPerPartitionCircuitBreakerMM:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey

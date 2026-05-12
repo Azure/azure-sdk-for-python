@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import pytest
 import pytest_asyncio
@@ -85,7 +85,7 @@ async def get_container(container_id: str):
     return _data_db.get_container_client(container_id)
 
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestQueryFeedRangeAsync:
@@ -467,3 +467,4 @@ class TestQueryFeedRangeAsync:
 
 if __name__ == "__main__":
     unittest.main()
+

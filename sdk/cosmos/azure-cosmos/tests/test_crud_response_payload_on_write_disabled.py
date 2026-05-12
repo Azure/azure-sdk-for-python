@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -68,7 +68,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -2899,3 +2899,4 @@ if __name__ == '__main__':
     except SystemExit as inst:
         if inst.args[0] is True:  # raised by sys.exit(True) when tests failed
             raise
+

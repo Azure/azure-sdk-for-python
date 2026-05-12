@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
@@ -8,7 +8,7 @@ import pytest
 import test_config
 
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.cosmosEmulator
 class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
@@ -48,3 +48,4 @@ class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(original_read_endpoint,
                          self.client.client_connection._global_endpoint_manager
                          .location_cache.get_write_regional_routing_context())
+

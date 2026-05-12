@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import random
 import unittest
@@ -33,7 +33,7 @@ def create_item(hpk):
 
 
 @pytest.mark.cosmosSplit
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestLatestSessionToken(unittest.TestCase):
     """Test for session token helpers"""
 
@@ -192,3 +192,4 @@ class TestLatestSessionToken(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

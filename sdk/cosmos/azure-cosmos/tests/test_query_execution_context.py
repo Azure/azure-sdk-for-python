@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -23,7 +23,7 @@ def get_document_collection_link(database, document_collection):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestQueryExecutionContextEndToEnd(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.
     """
@@ -210,3 +210,4 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

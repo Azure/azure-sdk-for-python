@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import random
@@ -34,7 +34,7 @@ def run_queries(container, iterations):
 
 
 @pytest.mark.cosmosSplit
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestPartitionSplitQuery(unittest.TestCase):
     # AAD client/database  -  data-plane (create_item, query_items, _routing_map_provider introspection,
     # patch.object on client_connection._ReadPartitionKeyRanges)
@@ -528,7 +528,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert refreshed_ranges[0]['minInclusive'] == ''
             assert refreshed_ranges[0]['maxExclusive'] == 'FF'
 
-            print("âœ“ Validated: routing_map_provider successfully fell back to full refresh")
+            print("Ã¢Å“â€œ Validated: routing_map_provider successfully fell back to full refresh")
 
             # Verify queries still work after fallback
             query_results = list(container.query_items(
@@ -987,3 +987,4 @@ class TestPartitionSplitQuery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

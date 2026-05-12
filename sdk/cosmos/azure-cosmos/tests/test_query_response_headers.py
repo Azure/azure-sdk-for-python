@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import os
@@ -17,7 +17,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestQueryResponseHeaders(unittest.TestCase):
     """Tests for query response headers functionality."""
 
@@ -452,3 +452,4 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

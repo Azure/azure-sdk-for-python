@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -12,7 +12,7 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host
@@ -163,3 +163,4 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

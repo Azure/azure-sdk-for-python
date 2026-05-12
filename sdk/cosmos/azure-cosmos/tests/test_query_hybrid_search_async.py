@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import time
@@ -15,7 +15,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check full text search and hybrid search queries behavior."""
@@ -592,3 +592,4 @@ class TestFullTextHybridSearchQueryAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

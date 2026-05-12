@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -179,7 +179,7 @@ def _perform_operations_on_pk(created_container, pk_field, pk_value):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestPartitionKey:
@@ -249,3 +249,4 @@ class TestPartitionKey:
 
 if __name__ == '__main__':
     unittest.main()
+

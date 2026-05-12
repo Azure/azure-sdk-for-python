@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
@@ -37,7 +37,7 @@ def create_threshold_errors():
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
 @pytest.mark.cosmosPerPartitionAutomaticFailover
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestPerPartitionAutomaticFailover:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey

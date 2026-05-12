@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -12,7 +12,7 @@ from azure.cosmos import PartitionKey, cosmos_client, exceptions, http_constants
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestResourceIds(unittest.TestCase):
     client: azure.cosmos.CosmosClient = None
     configs = test_config.TestConfig
@@ -147,3 +147,4 @@ class TestResourceIds(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

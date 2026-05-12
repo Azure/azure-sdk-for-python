@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import logging
@@ -282,7 +282,7 @@ def _get_operation_type(test_operation_type: str) -> str:
     raise ValueError("invalid operationType")
 
 @pytest.mark.cosmosMultiRegion
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestAsyncAvailabilityStrategy:

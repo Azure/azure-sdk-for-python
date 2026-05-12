@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -18,7 +18,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
         """
@@ -369,7 +369,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
         try:
             item_to_read = await created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             item_to_read2 = await created_container.create_item(
-                body={'id': 'item2', 'country': 'MEX', 'state': 'MichoacÃ¡n'})  # cspell:disable-line
+                body={'id': 'item2', 'country': 'MEX', 'state': 'MichoacÃƒÂ¡n'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             assert False, "{}".format(e.http_error_message)
 
@@ -451,7 +451,7 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
             item_to_del = await created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             await created_container.create_item(body={'id': 'item2',
                                                       'country': 'MEX',
-                                                      'state': 'MichoacÃ¡n'})  # cspell:disable-line
+                                                      'state': 'MichoacÃƒÂ¡n'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             assert False, "{}".format(e.http_error_message)
 
@@ -652,3 +652,4 @@ class TestContainerPropertiesCache(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

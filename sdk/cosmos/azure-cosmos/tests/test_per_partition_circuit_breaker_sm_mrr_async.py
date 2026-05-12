@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import asyncio
 import os
@@ -23,7 +23,7 @@ from test_per_partition_circuit_breaker_sm_mrr import validate_unhealthy_partiti
 COLLECTION = "created_collection"
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionCircuitBreakerSmMrrAsync:
     host = test_config.TestConfig.host
@@ -259,3 +259,4 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
 
 if __name__ == '__main__':
     unittest.main()
+

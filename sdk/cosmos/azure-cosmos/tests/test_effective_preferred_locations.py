@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import uuid
@@ -71,7 +71,7 @@ def error():
     return errors
 
 @pytest.mark.unittest
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocations:
     host = test_config.TestConfig.host
@@ -227,3 +227,4 @@ class TestPreferredLocations:
             db_acc._EnableMultipleWritableLocations = multi_write
             db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
             return db_acc
+

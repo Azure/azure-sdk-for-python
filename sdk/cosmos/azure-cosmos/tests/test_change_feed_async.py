@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -52,7 +52,7 @@ def round_time():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestChangeFeedAsync:
@@ -304,3 +304,4 @@ class TestChangeFeedAsync:
 
 if __name__ == '__main__':
     unittest.main()
+

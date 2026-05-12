@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -21,7 +21,7 @@ def get_subpartition_item(item_id):
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     """Python Transactional Batch Tests.
     """
@@ -430,3 +430,4 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

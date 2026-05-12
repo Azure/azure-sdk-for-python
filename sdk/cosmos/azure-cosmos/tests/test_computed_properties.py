@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -13,7 +13,7 @@ from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.exceptions as exceptions
 
 @pytest.mark.cosmosQuery
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestComputedPropertiesQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -279,3 +279,4 @@ class TestComputedPropertiesQuery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

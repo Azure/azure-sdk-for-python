@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -83,7 +83,7 @@ async def assert_change_feed(expected, actual):
                 assert expected_data[key] == actual_data[key]
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestAllVersionsChangeFeedAsync:
@@ -244,3 +244,4 @@ class TestAllVersionsChangeFeedAsync:
 
 if __name__ == '__main__':
     unittest.main()
+

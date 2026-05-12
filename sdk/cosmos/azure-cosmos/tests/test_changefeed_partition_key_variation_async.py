@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 import uuid
 import pytest
 from azure.cosmos.aio import CosmosClient
@@ -6,7 +6,7 @@ import test_config
 from azure.cosmos.partition_key import PartitionKey, _get_partition_key_from_partition_key_definition
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
     """Test change feed with different partition key variations (async version)."""
@@ -284,3 +284,4 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

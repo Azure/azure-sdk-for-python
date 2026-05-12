@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import json
@@ -16,7 +16,7 @@ import hybrid_search_data
 from azure.cosmos import http_constants, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.cosmosSearchQuery
 class TestFullTextHybridSearchQuery(unittest.TestCase):
     """Test to check full text search and hybrid search queries behavior."""
@@ -598,3 +598,4 @@ class TestFullTextHybridSearchQuery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

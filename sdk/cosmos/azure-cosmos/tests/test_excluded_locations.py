@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import logging
@@ -225,7 +225,7 @@ def setup_and_teardown():
 
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestExcludedLocations:
     @pytest.mark.parametrize('test_data', read_item_test_data())
     def test_read_item(self, test_data):
@@ -454,3 +454,4 @@ class TestExcludedLocations:
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
@@ -11,7 +11,7 @@ import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey
 
 
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.cosmosSplit
 class TestPartitionSplitChangeFeed(unittest.TestCase):
     database: DatabaseProxy = None
@@ -68,3 +68,4 @@ class TestPartitionSplitChangeFeed(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

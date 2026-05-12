@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
@@ -16,7 +16,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestReadItems(unittest.TestCase):
     """Test cases for the read_items API."""
 
@@ -598,3 +598,4 @@ class TestReadItems(unittest.TestCase):
 
         finally:
             self.key_database.delete_container(container_id)  # control-plane
+

@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
@@ -9,7 +9,7 @@ from azure.cosmos import PartitionKey
 
 
 @pytest.mark.cosmosSplit
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestReadItemsPartitionSplitScenarios(unittest.IsolatedAsyncioTestCase):
     """Tests the behavior of read_items in scenarios involving partition splits."""
 

@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import os
 import unittest
@@ -38,7 +38,7 @@ def validate_unhealthy_partitions(global_endpoint_manager,
     assert unhealthy_partitions == expected_unhealthy_partitions
 
 @pytest.mark.cosmosCircuitBreakerMultiRegion
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestPerPartitionCircuitBreakerSmMrr:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -256,4 +256,5 @@ class TestPerPartitionCircuitBreakerSmMrr:
 
 if __name__ == '__main__':
     unittest.main()
+
 

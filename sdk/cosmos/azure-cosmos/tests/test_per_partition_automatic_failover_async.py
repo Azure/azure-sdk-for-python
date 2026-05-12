@@ -1,4 +1,4 @@
-# The MIT License (MIT)
+﻿# The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
@@ -24,7 +24,7 @@ from test_per_partition_circuit_breaker_mm_async import perform_write_operation
 # These tests assume that the configured live account has one main write region and one secondary read region.
 
 @pytest.mark.cosmosPerPartitionAutomaticFailover
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 @pytest.mark.asyncio
 class TestPerPartitionAutomaticFailoverAsync:
     host = test_config.TestConfig.host
@@ -286,3 +286,4 @@ class TestPerPartitionAutomaticFailoverAsync:
 
 if __name__ == '__main__':
     unittest.main()
+

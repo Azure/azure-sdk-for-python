@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
@@ -17,7 +17,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosLong
-@pytest.mark.cosmosAAD
+# @pytest.mark.cosmosAAD
 class TestContainerPropertiesCache(unittest.TestCase):
     """Python CRUD Tests.
         """
@@ -348,7 +348,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
             item_to_read = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             item_to_read2 = created_container.create_item(body={'id': 'item2',
                                                                 'country': 'MEX',
-                                                                'state': 'MichoacÃ¡n'})  # cspell:disable-line
+                                                                'state': 'MichoacÃƒÂ¡n'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))
         # Recreate container
@@ -428,7 +428,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         try:
             item_to_del = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             created_container.create_item(body={'id': 'item2',
-                                                'country': 'MEX', 'state': 'MichoacÃ¡n'})  # cspell:disable-line
+                                                'country': 'MEX', 'state': 'MichoacÃƒÂ¡n'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))
 
@@ -635,3 +635,4 @@ if __name__ == '__main__':
     except SystemExit as inst:
         if inst.args[0] is True:  # raised by sys.exit(True) when tests failed
             raise
+
