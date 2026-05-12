@@ -15,5 +15,5 @@
         "client.structure.clientoperationgroup.SecondClient.five": "Client.Structure.AnotherClientOperationGroup.five",
         "client.structure.clientoperationgroup.aio.SecondClient.five": "Client.Structure.AnotherClientOperationGroup.five"
     },
-    "CrossLanguageVersion": "b12f584b7516"
+    "CrossLanguageVersion": "9a2ac74e66ac"
 }
