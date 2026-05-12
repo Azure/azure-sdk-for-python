@@ -91,8 +91,8 @@ TOOL CALLS MADE BY AGENT: {{tool_calls}}
 # Tasks
 ## Please provide your evaluation for the tool selection in relation to the user's query based on the definitions and examples above.
 
-## Status: Skipped
-Before performing any evaluation, check for the following conditions. If ANY are true, return `status: "skipped"` immediately without scoring:
+## Status: skipped\completed
+Before performing any evaluation, check for the following conditions. If ANY are true, return `status: "skipped"` immediately without scoring, else status is completed:
 1. **No tool calls to evaluate**: The TOOL CALLS MADE BY AGENT section is empty or not provided.
 2. **Missing tool definitions**: The TOOL DEFINITIONS section is empty or not provided.
 3. **No conversation context**: The CONVERSATION section is empty or not provided.
@@ -114,6 +114,6 @@ Your output should consist only of a JSON object with the following fields:
   - score: an integer value of 0 or 1 that represents the tool selection quality (0 = Fail, 1 = Pass). Set to null when status is "skipped".
   - status: a string indicating the evaluation status. Must be one of:
       - "completed": tool calls were present, tool definitions were available, and evaluation was performed.
-      - "skipped": evaluation was not performed because there were no tool calls to evaluate, or tool definitions were missing, or no conversation context was provided. When skipped, set score to null and properties to null.
+      - "skipped": evaluation was not performed because there were no tool calls to evaluate, or tool definitions were missing, or no conversation was provided. When skipped, set score to null and properties to null.
 
 # Output
