@@ -101,9 +101,13 @@ That's it. The decorator transforms your function into a `DurableTask` with `.ru
 `.start()`, and `.get()` methods. The function itself takes a single `TaskContext`
 parameter.
 
-If the process crashes mid-execution and you call `.run()` again with the same
-`task_id`, the framework detects the stale task, recovers it, and re-enters your
-function with `ctx.entry_mode = "recovered"`.
+If the container crashes mid-execution, the framework automatically recovers the
+task on restart — before any HTTP handlers go live. Your function is re-invoked
+with `ctx.entry_mode = "recovered"` and the same input. No caller action is needed.
+
+If a caller happens to call `.run()` again with the same `task_id` while a task
+is already in progress, the framework detects it and joins the existing execution
+rather than creating a duplicate.
 
 ---
 
