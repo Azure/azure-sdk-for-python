@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from azure.monitor.opentelemetry.exporter._constants import (  # pylint: disable=import-error,no-name-in-module
-    _AZURE_MONITOR_DISTRO_VERSION,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
 )
 
@@ -51,6 +50,9 @@ SUPPORTED_OTEL_SAMPLERS = (
     PARENT_BASED_ALWAYS_OFF_SAMPLER,
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
 )
+
+# Distro version
+AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
 
 # --------------------Autoinstrumentation Configuration------------------------------------------
 
