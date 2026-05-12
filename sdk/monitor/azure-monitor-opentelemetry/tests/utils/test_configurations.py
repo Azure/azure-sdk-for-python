@@ -815,7 +815,7 @@ class TestConfigurations(TestCase):
     def test_distro_version_env_var_matches_exporter_constant(self, resource_create_mock):
         """Verify the distro sets the same env var name the exporter reads."""
         from azure.monitor.opentelemetry.exporter._constants import (
-            AZURE_MONITOR_DISTRO_VERSION as EXPORTER_ENV_VAR_NAME,
+            _AZURE_MONITOR_DISTRO_VERSION as EXPORTER_ENV_VAR_NAME,
         )
         from azure.monitor.opentelemetry._constants import (
             AZURE_MONITOR_DISTRO_VERSION as DISTRO_ENV_VAR_NAME,
