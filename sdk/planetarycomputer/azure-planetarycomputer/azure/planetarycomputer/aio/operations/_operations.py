@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-branches,too-many-statements
+# pylint: disable=too-many-lines,too-many-branches,too-many-statements,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
