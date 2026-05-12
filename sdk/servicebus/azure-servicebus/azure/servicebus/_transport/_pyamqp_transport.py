@@ -249,53 +249,55 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         header_vals = annotated_message.header.values() if annotated_message.header else None
         # If header and non-None header values, create outgoing header.
         if header_vals and header_vals.count(None) != len(header_vals):
-            annotated_message.header = cast("AmqpMessageHeader", annotated_message.header)
+            # Bind the cast result to a local so mypy can narrow the Optional type.
+            header = cast("AmqpMessageHeader", annotated_message.header)
             message_header = Header(
-                delivery_count=annotated_message.header.delivery_count,
-                ttl=annotated_message.header.time_to_live,
-                first_acquirer=annotated_message.header.first_acquirer,
-                durable=annotated_message.header.durable,
-                priority=annotated_message.header.priority,
+                delivery_count=header.delivery_count,
+                ttl=header.time_to_live,
+                first_acquirer=header.first_acquirer,
+                durable=header.durable,
+                priority=header.priority,
             )
-            if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
+            if header.time_to_live and header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
                 creation_time_from_ttl = int(
                     time.mktime(datetime.datetime.now(timezone.utc).timetuple()) * 1000  # TODO: should this be * 1?
                 )
                 absolute_expiry_time_from_ttl = int(
-                    min(MAX_ABSOLUTE_EXPIRY_TIME, creation_time_from_ttl + annotated_message.header.time_to_live)
+                    min(MAX_ABSOLUTE_EXPIRY_TIME, creation_time_from_ttl + header.time_to_live)
                 )
 
         message_properties = None
         properties_vals = annotated_message.properties.values() if annotated_message.properties else None
         # If properties and non-None properties values, create outgoing properties.
         if properties_vals and properties_vals.count(None) != len(properties_vals):
-            annotated_message.properties = cast("AmqpMessageProperties", annotated_message.properties)
+            # Bind the cast result to a local so mypy can narrow the Optional type.
+            props = cast("AmqpMessageProperties", annotated_message.properties)
             creation_time = None
             absolute_expiry_time = None
             if ttl_set:
                 creation_time = creation_time_from_ttl
                 absolute_expiry_time = absolute_expiry_time_from_ttl
             else:
-                if annotated_message.properties.creation_time:
-                    creation_time = int(annotated_message.properties.creation_time)
-                if annotated_message.properties.absolute_expiry_time:
-                    absolute_expiry_time = int(annotated_message.properties.absolute_expiry_time)
+                if props.creation_time:
+                    creation_time = int(props.creation_time)
+                if props.absolute_expiry_time:
+                    absolute_expiry_time = int(props.absolute_expiry_time)
 
             message_properties = Properties(
-                message_id=annotated_message.properties.message_id,
-                user_id=annotated_message.properties.user_id,
-                to=annotated_message.properties.to,
-                subject=annotated_message.properties.subject,
-                reply_to=annotated_message.properties.reply_to,
-                correlation_id=annotated_message.properties.correlation_id,
-                content_type=annotated_message.properties.content_type,
-                content_encoding=annotated_message.properties.content_encoding,
+                message_id=props.message_id,
+                user_id=props.user_id,
+                to=props.to,
+                subject=props.subject,
+                reply_to=props.reply_to,
+                correlation_id=props.correlation_id,
+                content_type=props.content_type,
+                content_encoding=props.content_encoding,
                 creation_time=creation_time,
                 absolute_expiry_time=absolute_expiry_time,
-                group_id=annotated_message.properties.group_id,
-                group_sequence=annotated_message.properties.group_sequence,
-                reply_to_group_id=annotated_message.properties.reply_to_group_id,
+                group_id=props.group_id,
+                group_sequence=props.group_sequence,
+                reply_to_group_id=props.reply_to_group_id,
             )
         elif ttl_set:
             message_properties = Properties(  # type: ignore[call-arg]
@@ -388,6 +390,26 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :rtype: int
         """
         return handler._link.remote_max_message_size  # pylint: disable=protected-access
+
+    @staticmethod
+    def get_remote_max_message_batch_size(handler: "AMQPClient") -> Optional[int]:
+        """
+        Returns the max batch size from the vendor link property
+        'com.microsoft:max-message-batch-size', or None if unavailable.
+
+        :param ~pyamqp.AMQPClient handler: Client to read link properties from.
+        :return: Remote max message batch size, or None.
+        :rtype: Optional[int]
+        """
+        props = getattr(handler._link, "remote_properties", None)  # pylint: disable=protected-access
+        if props:
+            # pyamqp decodes AMQP symbols as bytes; check both forms for safety.
+            for key in (b"com.microsoft:max-message-batch-size", "com.microsoft:max-message-batch-size"):
+                if key in props:
+                    value = props[key]
+                    if isinstance(value, int) and value > 0:
+                        return value
+        return None
 
     @staticmethod
     def get_handler_link_name(handler: "AMQPClient") -> str:

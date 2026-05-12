@@ -7,6 +7,7 @@ Tests for the HTTP challenge authentication implementation. These tests aren't p
 the challenge cache is global to the process.
 """
 import asyncio
+import functools
 from itertools import product
 import os
 import time
@@ -19,7 +20,7 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
-from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy,HttpChallenge, HttpChallengeCache
+from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.keyvault.keys.aio import KeyClient
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -30,7 +31,6 @@ from _shared.helpers import Request, mock_response
 from _shared.helpers_async import async_validating_transport
 from _shared.test_case_async import KeyVaultTestCase
 from test_challenge_auth import (
-    empty_challenge_cache,
     get_random_url,
     add_url_port,
     CAE_CHALLENGE_RESPONSE,
@@ -46,7 +46,7 @@ only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSIO
 
 class TestChallengeAuth(KeyVaultTestCase):
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_default_version)
+    @pytest.mark.parametrize("api_version,is_hsm", only_default_version)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_multitenant_authentication(self, client, is_hsm, **kwargs):
@@ -80,6 +80,16 @@ class TestChallengeAuth(KeyVaultTestCase):
             os.environ["AZURE_TENANT_ID"] = original_tenant
         else:
             os.environ.pop("AZURE_TENANT_ID")
+
+
+def empty_challenge_cache(fn):
+    @functools.wraps(fn)
+    async def wrapper(**kwargs):
+        HttpChallengeCache.clear()
+        assert len(HttpChallengeCache._cache) == 0
+        return await fn(**kwargs)
+
+    return wrapper
 
 
 @pytest.mark.asyncio
@@ -132,9 +142,7 @@ async def test_scope(token_type):
             credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
         else:
             credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
-        pipeline = AsyncPipeline(
-            policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
-        )
+        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
@@ -201,9 +209,7 @@ async def test_tenant(token_type):
             credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
         else:
             credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
-        pipeline = AsyncPipeline(
-            policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
-        )
+        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
@@ -496,8 +502,8 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource, toke
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
     transport_2 = async_validating_transport(
         requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
@@ -505,8 +511,8 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource, toke
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
@@ -551,8 +557,8 @@ async def test_verify_challenge_resource_valid(verify_challenge_resource, token_
             mock_response(
                 status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
             ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
+            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}}),
+        ],
     )
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)

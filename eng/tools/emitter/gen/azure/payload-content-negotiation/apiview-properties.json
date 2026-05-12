@@ -10,5 +10,6 @@
         "payload.contentnegotiation.aio.operations.DifferentBodyOperations.get_avatar_as_png": "Payload.ContentNegotiation.DifferentBody.getAvatarAsPng",
         "payload.contentnegotiation.operations.DifferentBodyOperations.get_avatar_as_json": "Payload.ContentNegotiation.DifferentBody.getAvatarAsJson",
         "payload.contentnegotiation.aio.operations.DifferentBodyOperations.get_avatar_as_json": "Payload.ContentNegotiation.DifferentBody.getAvatarAsJson"
-    }
+    },
+    "CrossLanguageVersion": "0b97a8c9d74e"
 }

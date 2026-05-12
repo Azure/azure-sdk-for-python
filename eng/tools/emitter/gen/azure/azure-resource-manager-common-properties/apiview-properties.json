@@ -29,5 +29,6 @@
         "azure.resourcemanager.commonproperties.aio.operations.ErrorOperations.get_for_predefined_error": "Azure.ResourceManager.CommonProperties.Error.getForPredefinedError",
         "azure.resourcemanager.commonproperties.operations.ErrorOperations.create_for_user_defined_error": "Azure.ResourceManager.CommonProperties.Error.createForUserDefinedError",
         "azure.resourcemanager.commonproperties.aio.operations.ErrorOperations.create_for_user_defined_error": "Azure.ResourceManager.CommonProperties.Error.createForUserDefinedError"
-    }
+    },
+    "CrossLanguageVersion": "ad207ac2ccc3"
 }

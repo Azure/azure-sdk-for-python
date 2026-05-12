@@ -706,3 +706,237 @@ def test_compare_reports_with_absolute_paths(capsys):
     captured = capsys.readouterr()
     assert "===== changelog start =====" in captured.out
     assert "===== changelog end =====" in captured.out
+
+
+def _make_client_class_node(has_credential: bool):
+    init_params = {
+        "self": {"default": None, "param_type": "positional_or_keyword"},
+        "endpoint": {"default": None, "param_type": "positional_or_keyword"},
+    }
+    if has_credential:
+        init_params["credential"] = {"default": None, "param_type": "positional_or_keyword"}
+    return {
+        "type": None,
+        "methods": {
+            "__init__": {
+                "parameters": init_params,
+                "is_async": False,
+            }
+        },
+        "properties": {},
+    }
+
+
+def test_is_client_non_mgmt_sdk():
+    # For non-mgmt SDKs, any class ending with "Client" is considered a client
+    # regardless of whether __init__ has a "credential" parameter.
+    stable = {"azure.contoso": {"class_nodes": {}}}
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": _make_client_class_node(has_credential=False),
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    assert bc.is_client("azure.contoso", "ContosoClient") is True
+
+
+def test_is_client_mgmt_sdk_with_credential():
+    # For mgmt SDKs, the class name must end with "Client" AND __init__ must
+    # accept a "credential" parameter.
+    stable = {"azure.mgmt.contoso": {"class_nodes": {}}}
+    current = {
+        "azure.mgmt.contoso": {
+            "class_nodes": {
+                "ContosoMgmtClient": _make_client_class_node(has_credential=True),
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso")
+    assert bc.is_client("azure.mgmt.contoso", "ContosoMgmtClient") is True
+
+
+def test_is_client_mgmt_sdk_without_credential():
+    # A class in a mgmt namespace whose __init__ does not accept a "credential"
+    # parameter (e.g. ARMPollingClient) should NOT be treated as a client.
+    stable = {"azure.mgmt.contoso": {"class_nodes": {}}}
+    current = {
+        "azure.mgmt.contoso": {
+            "class_nodes": {
+                "ARMPollingClient": _make_client_class_node(has_credential=False),
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso")
+    assert bc.is_client("azure.mgmt.contoso", "ARMPollingClient") is False
+
+
+def test_is_client_non_client_suffix():
+    # Classes whose name does not end with "Client" are never clients.
+    stable = {"azure.contoso": {"class_nodes": {}}}
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    assert bc.is_client("azure.contoso", "ContosoModel") is False
+
+
+def test_added_client_mgmt_sdk_with_credential_reported_as_client():
+    # Adding a mgmt client whose __init__ takes a "credential" parameter
+    # should be reported as a new client.
+    existing = {"Existing": {"type": None, "methods": {}, "properties": {}}}
+    stable = {"azure.mgmt.contoso": {"class_nodes": dict(existing)}}
+    current = {
+        "azure.mgmt.contoso": {
+            "class_nodes": {
+                **existing,
+                "ContosoMgmtClient": _make_client_class_node(has_credential=True),
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso")
+    bc.run_checks()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLIENT_MSG
+    assert args == ["azure.mgmt.contoso", "ContosoMgmtClient"]
+
+
+def test_added_client_mgmt_sdk_without_credential_reported_as_class():
+    # Adding a mgmt class ending with "Client" but lacking the "credential"
+    # parameter (e.g. ARMPollingClient) should be reported as a new model/class,
+    # NOT as a new client.
+    existing = {"Existing": {"type": None, "methods": {}, "properties": {}}}
+    stable = {"azure.mgmt.contoso": {"class_nodes": dict(existing)}}
+    current = {
+        "azure.mgmt.contoso": {
+            "class_nodes": {
+                **existing,
+                "ARMPollingClient": _make_client_class_node(has_credential=False),
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso")
+    bc.run_checks()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLASS_MSG
+    assert args == ["azure.mgmt.contoso", "ARMPollingClient"]
+
+
+def test_added_client_non_mgmt_sdk_reported_as_client():
+    # For non-mgmt SDKs, a class ending with "Client" is always reported as
+    # a new client, even if no "credential" parameter exists.
+    existing = {"Existing": {"type": None, "methods": {}, "properties": {}}}
+    stable = {"azure.contoso": {"class_nodes": dict(existing)}}
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                **existing,
+                "ContosoClient": _make_client_class_node(has_credential=False),
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLIENT_MSG
+    assert args == ["azure.contoso", "ContosoClient"]
+
+
+def _make_client_with_init_kwarg(extra_kwargs=None):
+    params = {
+        "self": {"default": None, "param_type": "positional_or_keyword"},
+        "endpoint": {"default": None, "param_type": "positional_or_keyword"},
+        "credential": {"default": None, "param_type": "positional_or_keyword"},
+    }
+    if extra_kwargs:
+        params.update(extra_kwargs)
+    return {
+        "type": None,
+        "methods": {
+            "__init__": {
+                "parameters": params,
+                "is_async": False,
+            }
+        },
+        "properties": {},
+    }
+
+
+def test_added_keyword_only_param_to_mgmt_client_init_reported_as_client():
+    # Adding a keyword-only parameter to a mgmt client's __init__ should be
+    # reported using the client message, not the model/class message.
+    stable = {
+        "azure.mgmt.contoso": {
+            "class_nodes": {
+                "ContosoMgmtClient": _make_client_with_init_kwarg(),
+            }
+        }
+    }
+    current = {
+        "azure.mgmt.contoso": {
+            "class_nodes": {
+                "ContosoMgmtClient": _make_client_with_init_kwarg(
+                    {"cloud_setting": {"default": None, "param_type": "keyword_only"}}
+                ),
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso")
+    bc.run_checks()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLIENT_METHOD_PARAMETER_MSG
+    assert args == ["azure.mgmt.contoso", "ContosoMgmtClient", "cloud_setting", "__init__"]
+
+
+def test_added_keyword_only_param_to_model_method_still_reported_as_class():
+    # Adding a keyword-only parameter to a non-client class method should
+    # still be reported using the model/class message.
+    model_node = {
+        "type": None,
+        "methods": {
+            "do_something": {
+                "parameters": {
+                    "self": {"default": None, "param_type": "positional_or_keyword"},
+                },
+                "is_async": False,
+            }
+        },
+        "properties": {},
+    }
+    model_node_updated = {
+        "type": None,
+        "methods": {
+            "do_something": {
+                "parameters": {
+                    "self": {"default": None, "param_type": "positional_or_keyword"},
+                    "extra": {"default": None, "param_type": "keyword_only"},
+                },
+                "is_async": False,
+            }
+        },
+        "properties": {},
+    }
+    stable = {"azure.contoso": {"class_nodes": {"ContosoModel": model_node}}}
+    current = {"azure.contoso": {"class_nodes": {"ContosoModel": model_node_updated}}}
+
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
+    assert args == ["azure.contoso", "ContosoModel", "extra", "do_something"]
+

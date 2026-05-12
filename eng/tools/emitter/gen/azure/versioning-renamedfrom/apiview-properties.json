@@ -8,5 +8,6 @@
         "versioning.renamedfrom.aio.operations.NewInterfaceOperations.new_op_in_new_interface": "Versioning.RenamedFrom.NewInterface.newOpInNewInterface",
         "versioning.renamedfrom.RenamedFromClient.new_op": "Versioning.RenamedFrom.newOp",
         "versioning.renamedfrom.aio.RenamedFromClient.new_op": "Versioning.RenamedFrom.newOp"
-    }
+    },
+    "CrossLanguageVersion": "6ab68baca0bb"
 }

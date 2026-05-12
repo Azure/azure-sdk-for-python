@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
 import base64
 import random
 import tempfile
@@ -10,13 +12,15 @@ from io import BytesIO
 from math import ceil
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCode
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import NonSeekableStream, ProgressTracker
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCode
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -40,7 +44,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
         self.byte_blob = self.get_resource_name('byteblob')
@@ -63,7 +67,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        blob_data = 'hello world啊齄丂狛狜'.encode('utf-8')
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
@@ -82,7 +86,25 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        base64_data = (
+            'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7'
+            'PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3'
+            'eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKz'
+            'tLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v'
+            '8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSor'
+            'LC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZn'
+            'aGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKj'
+            'pKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f'
+            '4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRob'
+            'HB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZX'
+            'WFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKT'
+            'lJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P'
+            '0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoL'
+            'DA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZH'
+            'SElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKD'
+            'hIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/'
+            'wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        )
         binary_data = base64.b64decode(base64_data)
 
         blob_name = self._get_blob_reference()
@@ -207,7 +229,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         snapshot_ref = blob.create_snapshot()
         snapshot = self.bsc.get_blob_client(self.container_name, self.byte_blob, snapshot=snapshot_ref)
 
-        blob.upload_blob(self.byte_data, overwrite=True) # Modify the blob so the Etag no longer matches
+        blob.upload_blob(self.byte_data, overwrite=True)  # Modify the blob so the Etag no longer matches
 
         # Act
         content = snapshot.download_blob(max_concurrency=2).readall()
@@ -346,7 +368,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(len(self.byte_data),self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -372,7 +395,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -393,7 +417,6 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             total = response.context['data_stream_total']
             progress.append((current, total))
 
-
         # Act
         with tempfile.TemporaryFile() as temp_file:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
@@ -403,7 +426,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert blob_data == actual
-        self.assert_download_progress(len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(blob_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -460,7 +484,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data[start_range:end_range + start_range] == actual
-        self.assert_download_progress(end_range, self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(end_range, self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -685,7 +710,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(text, encoding='utf-16')
@@ -704,7 +729,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(text, encoding='utf-16')
@@ -766,7 +791,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
             with pytest.raises(ValueError):
                 downloader = blob.download_blob(max_concurrency=2)
-                properties = downloader.readinto(non_seekable_stream)
+                downloader.readinto(non_seekable_stream)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -790,13 +815,14 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Act
         with tempfile.TemporaryFile() as temp_file:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
-            properties = downloader.readinto(temp_file)
+            downloader.readinto(temp_file)
 
             # Assert
             temp_file.seek(0)
             actual = temp_file.read()
             assert byte_data == actual
-        self.assert_download_progress(len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy

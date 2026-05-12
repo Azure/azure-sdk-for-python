@@ -15,10 +15,6 @@ python -m pip install server-versions-notversioned
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Server Versions Notversioned instance.
 
-### Use with AI tools
-
-AI coding tools such as VS Code and GitHub Copilot can help you write and debug code that uses this library. See [Using the Azure SDK for Python with AI tools](https://aka.ms/azsdk/python/ai) for available integrations.
-
 
 ## Contributing
 

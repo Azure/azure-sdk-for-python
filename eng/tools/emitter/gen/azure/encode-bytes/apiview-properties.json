@@ -49,5 +49,6 @@
         "encode.bytes.aio.operations.ResponseBodyOperations.base64": "Encode.Bytes.ResponseBody.base64",
         "encode.bytes.operations.ResponseBodyOperations.base64_url": "Encode.Bytes.ResponseBody.base64url",
         "encode.bytes.aio.operations.ResponseBodyOperations.base64_url": "Encode.Bytes.ResponseBody.base64url"
-    }
+    },
+    "CrossLanguageVersion": "062ed6fd6c48"
 }

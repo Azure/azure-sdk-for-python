@@ -1,14 +1,14 @@
 # Release History
 
-## 1.40.1 (Unreleased)
+## 1.41.0 (2026-05-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- `AZURE_LOG_LEVEL` now accepts `VERBOSE` (case-insensitive) as an alias for `DEBUG`. #46668
 
 ### Other Changes
+
+- Invalid values for the `AZURE_LOG_LEVEL`, `AZURE_TRACING_ENABLED`, and `AZURE_SDK_TRACING_IMPLEMENTATION` environment variables no longer raise errors. Instead, a warning is logged and the default value is used (`INFO` for `AZURE_LOG_LEVEL`). #46668
 
 ## 1.40.0 (2026-04-30)
 

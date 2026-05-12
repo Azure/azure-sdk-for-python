@@ -32,5 +32,6 @@
         "specs.azure.clientgenerator.core.clientinitialization.default.aio.QueryParamClient.get_standalone": "_Specs_.Azure.ClientGenerator.Core.ClientInitialization.DefaultClient.QueryParam.getStandalone",
         "specs.azure.clientgenerator.core.clientinitialization.default.QueryParamClient.delete_standalone": "_Specs_.Azure.ClientGenerator.Core.ClientInitialization.DefaultClient.QueryParam.deleteStandalone",
         "specs.azure.clientgenerator.core.clientinitialization.default.aio.QueryParamClient.delete_standalone": "_Specs_.Azure.ClientGenerator.Core.ClientInitialization.DefaultClient.QueryParam.deleteStandalone"
-    }
+    },
+    "CrossLanguageVersion": "7a5849c52a1b"
 }

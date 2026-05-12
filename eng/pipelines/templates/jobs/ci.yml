@@ -29,9 +29,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: 'all'
   - name: InjectedPackages
     type: string
     default: ''
@@ -52,7 +49,7 @@ parameters:
   - name: VerifyAutorest
     type: boolean
     default: false
-  - name: UnsupportedToxEnvironments
+  - name: UnsupportedChecks
     type: string
     default: ''
   - name: TestProxy
@@ -324,9 +321,8 @@ jobs:
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: ${{ parameters.InjectedPackages }}
-        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
+        UnsupportedChecks: ${{ parameters.UnsupportedChecks }}
         TestProxy: ${{ parameters.TestProxy }}
 
   - ${{ if ne(parameters.ServiceDirectory, 'auto') }}:

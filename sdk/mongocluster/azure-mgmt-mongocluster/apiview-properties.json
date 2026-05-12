@@ -68,6 +68,7 @@
         "azure.mgmt.mongocluster.models.ReplicationState": "Microsoft.DocumentDB.ReplicationState",
         "azure.mgmt.mongocluster.models.AuthenticationMode": "Microsoft.DocumentDB.AuthenticationMode",
         "azure.mgmt.mongocluster.models.KeyEncryptionKeyIdentityType": "Microsoft.DocumentDB.KeyEncryptionKeyIdentityType",
+        "azure.mgmt.mongocluster.models.NetworkBypassMode": "Microsoft.DocumentDB.NetworkBypassMode",
         "azure.mgmt.mongocluster.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
         "azure.mgmt.mongocluster.models.CheckNameAvailabilityReason": "Azure.ResourceManager.CommonTypes.CheckNameAvailabilityReason",
         "azure.mgmt.mongocluster.models.PromoteOption": "Microsoft.DocumentDB.PromoteOption",

@@ -3,16 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
-import requests
 import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
-import os
-import typing
-import pytest
 
 import pytest
+import requests
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from settings.testcase import BlobPreparer
+from test_helpers import _build_base_file_share_headers, _create_file_share_oauth, NonSeekableStream, ProgressTracker
+
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.mgmt.storage import StorageManagementClient
 from azure.storage.blob import (
@@ -30,23 +35,13 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
-from settings.testcase import BlobPreparer
-from test_helpers import (
-    NonSeekableStream,
-    ProgressTracker,
-    _build_base_file_share_headers,
-    _create_file_share_oauth
-)
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 5 * 1024 + 5
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class TestStorageBlockBlob(StorageRecordedTestCase):
@@ -66,11 +61,11 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             try:
                 self.bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
@@ -101,7 +96,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         actual_data = blob.download_blob()
         assert actual_data.readall() == expected_data
 
-    #--Test cases for block blobs --------------------------------------------
+    # --Test cases for block blobs --------------------------------------------
     @BlobPreparer()
     @recorded_by_proxy
     def test_upload_blob_from_url_with_oauth(self, **kwargs):
@@ -170,7 +165,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                 requests.delete(
                     url=base_url,
                     headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
+                    params={'restype': 'share'},
+                    timeout=15
                 )
                 blob_service_client.delete_container(self.source_container_name)
 
@@ -226,7 +222,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                 requests.delete(
                     url=base_url,
                     headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
+                    params={'restype': 'share'},
+                    timeout=15
                 )
                 blob_service_client.delete_container(self.source_container_name)
 
@@ -596,10 +593,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             content_disposition='inline'
         )
         source_blob = self._create_blob(
-             data=b"This is test data to be copied over.",
-             tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"},
-             content_settings=content_settings,
-             standard_blob_tier=StandardBlobTier.Cool)
+            data=b"This is test data to be copied over.",
+            tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"},
+            content_settings=content_settings,
+            standard_blob_tier=StandardBlobTier.Cool)
         source_blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         source_blob_props = source_blob.get_blob_properties()
         sas = self.generate_sas(
@@ -626,9 +623,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Assert
         assert new_blob_copy1_props.content_settings.content_language == \
-               source_blob_props.content_settings.content_language
+            source_blob_props.content_settings.content_language
         assert new_blob_copy2_props.content_settings.content_language != \
-               source_blob_props.content_settings.content_language
+            source_blob_props.content_settings.content_language
 
         assert source_blob_props.lease.status == 'locked'
         assert new_blob_copy1_props.lease.status == 'unlocked'
@@ -688,7 +685,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob = self._create_blob()
 
         # Act
-        headers = blob.stage_block('1', u'啊齄丂狛狜')
+        headers = blob.stage_block('1', '啊齄丂狛狜')
         assert 'content_crc64' in headers
 
         # Assert
@@ -749,7 +746,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(storage_resource_group_name,
+                                               versioned_storage_account_name, container_name, blob_container=property)
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(container_name, blob_name)
@@ -780,7 +778,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             blob.delete_immutability_policy()
             blob.set_legal_hold(False)
             blob.delete_blob()
-            mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            mgmt_client.blob_containers.delete(storage_resource_group_name,
+                                               versioned_storage_account_name, container_name)
 
         return variables
 
@@ -801,7 +800,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         try:
             block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='4')]
             blob.commit_block_list(block_list)
-            self.fail()
+            pytest.fail()
         except HttpResponseError as e:
             assert str(e).find('specified block list is invalid') >= 0
 
@@ -831,7 +830,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
     def test_put_block_list_with_blob_tier_specified(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
 
         # Arrange
         self._setup(storage_account_name, storage_account_key)
@@ -1020,7 +1018,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data2 = b'hello second world'
 
         # Act
-        create_resp = blob.upload_blob(data1, overwrite=True)
+        blob.upload_blob(data1, overwrite=True)
         update_resp = blob.upload_blob(data2, overwrite=True)
 
         props = blob.get_blob_properties()
@@ -1072,7 +1070,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
+        blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
         update_resp = blob.upload_blob(data2, overwrite=True, metadata={'blobdata': 'data2'})
 
         props = blob.get_blob_properties()
@@ -1134,7 +1132,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = u'hello world'
+        data = b'hello world'
 
         # Act
         create_resp = blob.upload_blob(data)
@@ -1142,26 +1140,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        assert props.etag == create_resp.get('etag')
-        assert props.last_modified == create_resp.get('last_modified')
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_create_from_bytes_blob_unicode(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-
-        # Act
-        data = u'hello world'
-        create_resp = blob.upload_blob(data)
-        props = blob.get_blob_properties()
-
-        # Assert
-        self.assertBlobEqual(self.container_name, blob_name, data.encode('utf-8'))
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
 
@@ -1216,9 +1194,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
-                content_type='image/png',
-                content_language='spanish')
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
         blob.upload_blob(data, content_settings=content_settings)
 
         # Assert
@@ -1240,6 +1218,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1301,9 +1280,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
-                content_type='image/png',
-                content_language='spanish')
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
         blob.upload_blob(data[3:], length=5, content_settings=content_settings)
 
         # Assert
@@ -1430,6 +1409,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1457,7 +1437,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
+        content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
         with tempfile.TemporaryFile() as temp_file:
@@ -1550,6 +1530,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1581,7 +1562,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            resp = blob.upload_blob(temp_file, length=blob_size)
+            blob.upload_blob(temp_file, length=blob_size)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
@@ -1598,7 +1579,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
+        content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
         blob_size = len(data) - 301
@@ -1625,7 +1606,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
+        content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
         with tempfile.TemporaryFile() as temp_file:
@@ -1660,7 +1641,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2, standard_blob_tier=blob_tier)
+            blob.upload_blob(temp_file, content_settings=content_settings,
+                             max_concurrency=2, standard_blob_tier=blob_tier)
 
         properties = blob.get_blob_properties()
 
@@ -1676,7 +1658,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-8')
 
         # Act
@@ -1697,7 +1679,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
         # Act
@@ -1715,11 +1697,12 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -2110,4 +2093,4 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             assert blob.blob_tier == StandardBlobTier.SMART
             assert blob.smart_access_tier is not None
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------

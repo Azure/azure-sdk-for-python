@@ -4,19 +4,19 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
-import os
 import tempfile
-import uuid
 from io import BytesIO
 
 import pytest
-from azure.core.exceptions import HttpResponseError, ResourceModifiedError
-from azure.storage.fileshare import ShareFileClient, ShareServiceClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 from test_helpers import ProgressTracker
+
+from azure.core.exceptions import HttpResponseError, ResourceModifiedError
+from azure.storage.fileshare import ShareFileClient, ShareServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PREFIX = 'file'
@@ -73,7 +73,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         def read(self, count):
             return self.wrapped_file.read(count)
-    
+
         def seekable(self):
             return False
 
@@ -86,7 +86,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        file_data = 'hello world啊齄丂狛狜'.encode('utf-8')
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
                 self.account_url(storage_account_name, "file"),
@@ -110,7 +110,22 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        base64_data = (
+            'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0'
+            'xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYm'
+            'ZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm'
+            '5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM'
+            '0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gI'
+            'GCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNz'
+            's/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRob'
+            'HB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2h'
+            'pamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tb'
+            'a3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECA'
+            'wQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9Q'
+            'UVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2'
+            'en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6'
+            'uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        )
         binary_data = base64.b64decode(base64_data)
 
         file_name = self._get_file_reference()
@@ -541,7 +556,8 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=2).readinto(temp_file)
+            bytes_read = snapshot_client.download_file(
+                raw_response_hook=callback, max_concurrency=2).readinto(temp_file)
             # Assert
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
@@ -584,7 +600,8 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            bytes_read = snapshot_client.download_file(
+                raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
             # Assert
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
@@ -631,7 +648,8 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            bytes_read = snapshot_client.download_file(raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
+            bytes_read = snapshot_client.download_file(
+                raw_response_hook=callback, max_concurrency=1).readinto(temp_file)
             # Assert
             assert isinstance(bytes_read, int)
             temp_file.seek(0)
@@ -1023,7 +1041,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
@@ -1048,7 +1066,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
@@ -1345,7 +1363,7 @@ class TestStorageGetFile(StorageRecordedTestCase):
 
         # Act
         file_content = file_client.download_file(offset=0, length=1024, validate_content=True)
-    
+
         # Assert
         assert file_content.properties.server_encrypted
 

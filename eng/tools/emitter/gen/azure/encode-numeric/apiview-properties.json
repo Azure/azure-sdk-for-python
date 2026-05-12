@@ -10,5 +10,6 @@
         "encode.numeric.aio.operations.PropertyOperations.uint32_as_string_optional": "Encode.Numeric.Property.uint32AsStringOptional",
         "encode.numeric.operations.PropertyOperations.uint8_as_string": "Encode.Numeric.Property.uint8AsString",
         "encode.numeric.aio.operations.PropertyOperations.uint8_as_string": "Encode.Numeric.Property.uint8AsString"
-    }
+    },
+    "CrossLanguageVersion": "39128a5460ab"
 }

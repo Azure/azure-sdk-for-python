@@ -10,5 +10,6 @@
         "versioning.removed.aio.RemovedClient.v2": "Versioning.Removed.v2",
         "versioning.removed.RemovedClient.model_v3": "Versioning.Removed.modelV3",
         "versioning.removed.aio.RemovedClient.model_v3": "Versioning.Removed.modelV3"
-    }
+    },
+    "CrossLanguageVersion": "e675c365f9d5"
 }

@@ -17,7 +17,7 @@ from azure.keyvault.administration import KeyVaultBackupResult
 # 4. A user-assigned managed identity that has access to your managed HSM. For more information about how to create a
 #    user-assigned managed identity, refer to
 #    https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
-#    
+#
 # 5. A storage account, that your managed identity has access to, containing a blob storage container
 #    (See https://learn.microsoft.com/azure/storage/blobs/storage-blobs-introduction)
 #

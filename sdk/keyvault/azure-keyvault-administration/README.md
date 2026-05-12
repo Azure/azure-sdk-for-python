@@ -193,8 +193,7 @@ role_definition = client.set_role_definition(scope=scope, role_name=role_name, p
 ```python
 new_permissions = [
     KeyVaultPermission(
-        data_actions=[KeyVaultDataAction.READ_HSM_KEY],
-        not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
+        data_actions=[KeyVaultDataAction.READ_HSM_KEY], not_data_actions=[KeyVaultDataAction.CREATE_HSM_KEY]
     )
 ]
 unique_definition_name = role_definition.name

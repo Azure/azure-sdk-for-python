@@ -17,6 +17,7 @@ from azure.ai.evaluation._common.rai_service import (
     evaluate_with_rai_service_sync_multimodal,
     fetch_or_reuse_token,
     fetch_result,
+    get_common_headers,
     get_rai_svc_url,
     parse_response,
     submit_request,
@@ -796,3 +797,315 @@ class TestParseEvalResult:
         # Token counts should be extracted from properties.metrics
         assert result["violence_prompt_tokens"] == "15"
         assert result["violence_completion_tokens"] == "55"
+
+
+@pytest.mark.unittest
+class TestExtraHeaders:
+    """Tests for extra_headers propagation through the RAI service call chain."""
+
+    # ------------------------------------------------------------------ #
+    # get_common_headers
+    # ------------------------------------------------------------------ #
+
+    def test_get_common_headers_without_extra_headers(self):
+        """get_common_headers returns base headers when extra_headers is None."""
+        headers = get_common_headers("fake-token")
+        assert headers["Authorization"] == "Bearer fake-token"
+        assert "User-Agent" in headers
+        assert len(headers) == 2
+
+    def test_get_common_headers_with_extra_headers(self):
+        """get_common_headers merges extra_headers into the result."""
+        extra = {"X-Custom": "value", "X-Another": "42"}
+        headers = get_common_headers("fake-token", extra_headers=extra)
+        assert headers["Authorization"] == "Bearer fake-token"
+        assert headers["X-Custom"] == "value"
+        assert headers["X-Another"] == "42"
+
+    def test_get_common_headers_extra_headers_do_not_override_auth(self):
+        """SDK-owned headers (Authorization, User-Agent) must win over extra_headers."""
+        extra = {"Authorization": "Bearer override"}
+        headers = get_common_headers("fake-token", extra_headers=extra)
+        # SDK headers are applied after extra_headers, so they cannot be overridden
+        assert headers["Authorization"] == "Bearer fake-token"
+
+    def test_get_common_headers_with_evaluator_name_and_extra_headers(self):
+        """Both evaluator_name and extra_headers work together."""
+        extra = {"X-Trace-Id": "abc123"}
+        headers = get_common_headers("fake-token", evaluator_name="violence", extra_headers=extra)
+        assert "violence" in headers["User-Agent"]
+        assert headers["X-Trace-Id"] == "abc123"
+
+    # ------------------------------------------------------------------ #
+    # submit_request — raw HTTP path
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch(
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.post",
+        return_value=MockAsyncHttpResponse(
+            202,
+            json={"location": "this/is/the/op-id"},
+        ),
+    )
+    async def test_submit_request_extra_headers_included(self, post_mock):
+        """extra_headers should appear in the HTTP request headers for submit_request."""
+        extra = {"X-Custom": "submit-value"}
+        await submit_request(
+            data={"query": "q", "response": "r"},
+            metric="violence",
+            rai_svc_url="https://fake-url.com",
+            token="fake-token",
+            annotation_task=Tasks.CONTENT_HARM,
+            evaluator_name="violence",
+            extra_headers=extra,
+        )
+        _, call_kwargs = post_mock.call_args
+        sent_headers = call_kwargs.get("headers", {})
+        assert sent_headers.get("X-Custom") == "submit-value"
+        assert sent_headers.get("Authorization") == "Bearer fake-token"
+
+    # ------------------------------------------------------------------ #
+    # fetch_result — raw HTTP path
+    # ------------------------------------------------------------------ #
+
+    @patch(
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
+        return_value=MockAsyncHttpResponse(200, json={"result": "done"}),
+    )
+    @pytest.mark.usefixtures("mock_token")
+    @pytest.mark.asyncio
+    async def test_fetch_result_extra_headers_included(self, get_mock, mock_token):
+        """extra_headers should appear in the HTTP request headers for fetch_result."""
+        extra = {"X-Custom": "fetch-value"}
+        result = await fetch_result(
+            operation_id="op-id",
+            rai_svc_url="https://fake-url.com",
+            credential=None,
+            token=mock_token,
+            extra_headers=extra,
+        )
+        _, call_kwargs = get_mock.call_args
+        sent_headers = call_kwargs.get("headers", {})
+        assert sent_headers.get("X-Custom") == "fetch-value"
+        assert result["result"] == "done"
+
+    # ------------------------------------------------------------------ #
+    # ensure_service_availability — raw HTTP path
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch(
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
+        return_value=MockAsyncHttpResponse(200, json={}),
+    )
+    async def test_ensure_service_availability_extra_headers_included(self, get_mock):
+        """extra_headers should appear in the HTTP request headers for ensure_service_availability."""
+        extra = {"X-Custom": "avail-value"}
+        await ensure_service_availability("https://fake-url.com", "fake-token", extra_headers=extra)
+        _, call_kwargs = get_mock.call_args
+        sent_headers = call_kwargs.get("headers", {})
+        assert sent_headers.get("X-Custom") == "avail-value"
+
+    # ------------------------------------------------------------------ #
+    # _get_service_discovery_url — ARM call
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch(
+        "azure.ai.evaluation._http_utils.AsyncHttpPipeline.get",
+        return_value=MockAsyncHttpResponse(200, json={"properties": {"discoveryUrl": "https://disc.com/path"}}),
+    )
+    async def test_get_service_discovery_url_extra_headers_included(self, get_mock):
+        """extra_headers should appear in the ARM request headers."""
+        extra = {"X-Custom": "disc-value"}
+        project = {"subscription_id": "sub", "resource_group_name": "rg", "project_name": "proj"}
+        await _get_service_discovery_url(project, "fake-token", extra_headers=extra)
+        _, call_kwargs = get_mock.call_args
+        sent_headers = call_kwargs.get("headers", {})
+        assert sent_headers.get("X-Custom") == "disc-value"
+
+    # ------------------------------------------------------------------ #
+    # evaluate_with_rai_service_sync — non-onedp sync evals path
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
+    @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
+    @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
+    @patch("azure.ai.evaluation._common.rai_service.get_sync_http_client_with_retry")
+    async def test_evaluate_sync_extra_headers_in_http_request(
+        self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock
+    ):
+        """extra_headers should be merged into the sync_evals HTTP POST headers."""
+        fetch_token_mock.return_value = "fake-token"
+        get_url_mock.return_value = "https://fake-rai-url.com"
+        ensure_avail_mock.return_value = None
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"results": []}
+        mock_client = MagicMock()
+        mock_client.post.return_value = mock_response
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        http_client_mock.return_value = mock_client
+
+        extra = {"X-Custom": "sync-value"}
+        await evaluate_with_rai_service_sync(
+            data={"query": "q", "response": "r"},
+            metric_name=EvaluationMetrics.VIOLENCE,
+            project_scope={"subscription_id": "s", "project_name": "p", "resource_group_name": "rg"},
+            credential=DefaultAzureCredential(),
+            extra_headers=extra,
+        )
+
+        sent_headers = mock_client.post.call_args[1].get("headers", {})
+        assert sent_headers.get("X-Custom") == "sync-value"
+        # extra_headers should also be forwarded to get_rai_svc_url and ensure_service_availability
+        get_url_mock.assert_called_once()
+        _, url_kwargs = get_url_mock.call_args
+        assert url_kwargs.get("extra_headers") == extra
+        ensure_avail_mock.assert_called_once()
+        _, avail_kwargs = ensure_avail_mock.call_args
+        assert avail_kwargs.get("extra_headers") == extra
+
+    # ------------------------------------------------------------------ #
+    # evaluate_with_rai_service_sync — legacy routing
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.evaluate_with_rai_service", new_callable=AsyncMock)
+    async def test_evaluate_sync_legacy_passes_extra_headers(self, legacy_mock):
+        """extra_headers should be passed through to the legacy endpoint."""
+        legacy_mock.return_value = {"violence": "Very low", "violence_score": 0}
+        extra = {"X-Custom": "legacy-value"}
+
+        await evaluate_with_rai_service_sync(
+            data={"query": "q", "response": "r"},
+            metric_name=EvaluationMetrics.VIOLENCE,
+            project_scope={"subscription_id": "s", "project_name": "p", "resource_group_name": "rg"},
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=True,
+            extra_headers=extra,
+        )
+
+        _, kwargs = legacy_mock.call_args
+        assert kwargs["extra_headers"] == extra
+
+    # ------------------------------------------------------------------ #
+    # evaluate_with_rai_service_sync_multimodal — legacy routing
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.evaluate_with_rai_service_multimodal", new_callable=AsyncMock)
+    async def test_evaluate_sync_multimodal_legacy_passes_extra_headers(self, legacy_mm_mock):
+        """extra_headers should be passed through to the legacy multimodal endpoint."""
+        legacy_mm_mock.return_value = {}
+        extra = {"X-Custom": "mm-legacy-value"}
+
+        await evaluate_with_rai_service_sync_multimodal(
+            messages=[{"role": "user", "content": "test"}],
+            metric_name=EvaluationMetrics.VIOLENCE,
+            project_scope={"subscription_id": "s", "project_name": "p", "resource_group_name": "rg"},
+            credential=DefaultAzureCredential(),
+            use_legacy_endpoint=True,
+            extra_headers=extra,
+        )
+
+        _, kwargs = legacy_mm_mock.call_args
+        assert kwargs["extra_headers"] == extra
+
+    # ------------------------------------------------------------------ #
+    # evaluate_with_rai_service_sync_multimodal — non-onedp sync evals
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
+    @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
+    @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
+    @patch("azure.ai.evaluation._common.rai_service.get_sync_http_client_with_retry")
+    async def test_evaluate_sync_multimodal_extra_headers_in_http_request(
+        self, http_client_mock, ensure_avail_mock, get_url_mock, fetch_token_mock
+    ):
+        """extra_headers should be merged into the multimodal sync_evals HTTP POST headers."""
+        fetch_token_mock.return_value = "fake-token"
+        get_url_mock.return_value = "https://fake-rai-url.com"
+        ensure_avail_mock.return_value = None
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"results": []}
+        mock_client = MagicMock()
+        mock_client.post.return_value = mock_response
+        mock_client.__enter__ = MagicMock(return_value=mock_client)
+        mock_client.__exit__ = MagicMock(return_value=False)
+        http_client_mock.return_value = mock_client
+
+        extra = {"X-Custom": "mm-sync-value"}
+        await evaluate_with_rai_service_sync_multimodal(
+            messages=[{"role": "user", "content": "test"}, {"role": "assistant", "content": "reply"}],
+            metric_name="violence",
+            project_scope={"subscription_id": "s", "project_name": "p", "resource_group_name": "rg"},
+            credential=DefaultAzureCredential(),
+            extra_headers=extra,
+        )
+
+        sent_headers = mock_client.post.call_args[1].get("headers", {})
+        assert sent_headers.get("X-Custom") == "mm-sync-value"
+
+    # ------------------------------------------------------------------ #
+    # evaluate_with_rai_service — legacy non-onedp path
+    # ------------------------------------------------------------------ #
+
+    @pytest.mark.asyncio
+    @patch("azure.ai.evaluation._common.rai_service.fetch_or_reuse_token")
+    @patch("azure.ai.evaluation._common.rai_service.get_rai_svc_url")
+    @patch("azure.ai.evaluation._common.rai_service.ensure_service_availability")
+    @patch("azure.ai.evaluation._common.rai_service.submit_request", new_callable=AsyncMock)
+    @patch("azure.ai.evaluation._common.rai_service.fetch_result", new_callable=AsyncMock)
+    async def test_evaluate_legacy_passes_extra_headers_to_sub_functions(
+        self, fetch_result_mock, submit_mock, ensure_avail_mock, get_url_mock, fetch_token_mock
+    ):
+        """extra_headers should be passed to submit_request and fetch_result in legacy path."""
+        fetch_token_mock.return_value = "fake-token"
+        get_url_mock.return_value = "https://fake-rai-url.com"
+        ensure_avail_mock.return_value = None
+        submit_mock.return_value = "op-id"
+        fetch_result_mock.return_value = [{"violence": '{"label": 0, "reasoning": "safe"}'}]
+
+        extra = {"X-Custom": "legacy-sub-value"}
+        await evaluate_with_rai_service(
+            data={"query": "q", "response": "r"},
+            metric_name=EvaluationMetrics.VIOLENCE,
+            project_scope={"subscription_id": "s", "project_name": "p", "resource_group_name": "rg"},
+            credential=DefaultAzureCredential(),
+            extra_headers=extra,
+        )
+
+        _, submit_kwargs = submit_mock.call_args
+        assert submit_kwargs.get("extra_headers") == extra
+        _, fetch_kwargs = fetch_result_mock.call_args
+        assert fetch_kwargs.get("extra_headers") == extra
+
+    # ------------------------------------------------------------------ #
+    # RaiServiceEvaluatorBase — extra_headers stored from kwargs
+    # ------------------------------------------------------------------ #
+
+    def test_base_evaluator_stores_extra_headers(self):
+        """RaiServiceEvaluatorBase should store extra_headers from kwargs."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        # Simulate __init__ by setting attributes manually
+        extra = {"X-Custom": "eval-value"}
+        evaluator._extra_headers = extra
+        assert evaluator._extra_headers == extra
+
+    def test_base_evaluator_extra_headers_defaults_to_none(self):
+        """RaiServiceEvaluatorBase should default extra_headers to None when not provided."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+
+        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+        evaluator._extra_headers = None
+        assert evaluator._extra_headers is None

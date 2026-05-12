@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient, policies
@@ -13,6 +13,11 @@ from ..modelproperties.aio.operations import ModelPropertiesOperations
 from ..models.aio.operations import ModelsOperations
 from ._configuration import SpecialWordsClientConfiguration
 from .operations import Operations, ParametersOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class SpecialWordsClient:  # pylint: disable=client-accepts-api-version-keyword

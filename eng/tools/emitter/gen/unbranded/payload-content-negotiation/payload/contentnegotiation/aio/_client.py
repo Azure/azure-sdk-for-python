@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient, policies
@@ -11,6 +11,11 @@ from .._utils.serialization import Deserializer, Serializer
 from ..differentbody.aio.operations import DifferentBodyOperations
 from ..samebody.aio.operations import SameBodyOperations
 from ._configuration import ContentNegotiationClientConfiguration
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class ContentNegotiationClient:  # pylint: disable=client-accepts-api-version-keyword

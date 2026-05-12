@@ -23,30 +23,6 @@ from datetime import timezone
 TZ_UTC = timezone.utc
 
 
-class _FixedOffset(datetime.tzinfo):
-    """Fixed offset in minutes east from UTC.
-
-    Copy/pasted from Python doc
-
-    :param int offset: offset in minutes
-    """
-
-    def __init__(self, offset):
-        self.__offset = datetime.timedelta(minutes=offset)
-
-    def utcoffset(self, dt):  # pylint: disable=unused-argument
-        return self.__offset
-
-    def tzname(self, dt):  # pylint: disable=unused-argument
-        return str(self.__offset.total_seconds() / 3600)
-
-    def __repr__(self):
-        return "<FixedOffset {}>".format(self.tzname(None))
-
-    def dst(self, dt):  # pylint: disable=unused-argument
-        return datetime.timedelta(0)
-
-
 def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.

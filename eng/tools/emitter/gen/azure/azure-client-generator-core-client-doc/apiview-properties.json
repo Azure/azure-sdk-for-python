@@ -1,0 +1,9 @@
+{
+    "CrossLanguagePackageId": "_Specs_.Azure.ClientGenerator.Core.ClientDoc",
+    "CrossLanguageDefinitionId": {
+        "specs.azure.clientgenerator.core.clientdoc.models.Plant": "_Specs_.Azure.ClientGenerator.Core.ClientDoc.Documentation.Plant",
+        "specs.azure.clientgenerator.core.clientdoc.operations.DocumentationOperations.harvest": "_Specs_.Azure.ClientGenerator.Core.ClientDoc.Documentation.harvest",
+        "specs.azure.clientgenerator.core.clientdoc.aio.operations.DocumentationOperations.harvest": "_Specs_.Azure.ClientGenerator.Core.ClientDoc.Documentation.harvest"
+    },
+    "CrossLanguageVersion": "7296dc106249"
+}

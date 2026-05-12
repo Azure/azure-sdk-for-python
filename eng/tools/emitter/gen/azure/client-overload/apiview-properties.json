@@ -6,5 +6,6 @@
         "client.overload.aio.OverloadClient.list": "Client.Overload.list",
         "client.overload.OverloadClient.list_by_scope": "Client.Overload.listByScope",
         "client.overload.aio.OverloadClient.list_by_scope": "Client.Overload.listByScope"
-    }
+    },
+    "CrossLanguageVersion": "0563143ff17c"
 }

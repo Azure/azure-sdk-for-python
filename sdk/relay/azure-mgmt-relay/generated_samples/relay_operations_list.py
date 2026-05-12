@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.relay import RelayAPI
 
 """
@@ -34,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/relay/resource-manager/Microsoft.Relay/stable/2021-11-01/examples/RelayOperations_List.json
+# x-ms-original-file: specification/relay/resource-manager/Microsoft.Relay/Relay/stable/2017-04-01/examples/RelayOperations_List.json
 if __name__ == "__main__":
     main()

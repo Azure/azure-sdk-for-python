@@ -9,5 +9,6 @@
         "azure.resourcemanager.nonresource.aio.operations.NonResourceOperationsOperations.get": "Azure.ResourceManager.NonResource.NonResourceOperations.get",
         "azure.resourcemanager.nonresource.operations.NonResourceOperationsOperations.create": "Azure.ResourceManager.NonResource.NonResourceOperations.create",
         "azure.resourcemanager.nonresource.aio.operations.NonResourceOperationsOperations.create": "Azure.ResourceManager.NonResource.NonResourceOperations.create"
-    }
+    },
+    "CrossLanguageVersion": "9864df94c41d"
 }

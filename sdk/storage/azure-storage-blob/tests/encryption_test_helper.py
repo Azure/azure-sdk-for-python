@@ -68,23 +68,27 @@ class RSAKeyWrapper:
 
     def wrap_key(self, key, algorithm='RSA'):
         if algorithm == 'RSA':
-            return self.public_key.encrypt(key,
-                                           OAEP(
-                                               mgf=MGF1(algorithm=SHA1()),  # nosec
-                                               algorithm=SHA1(),    # nosec
-                                               label=None)
-                                           )
+            return self.public_key.encrypt(
+                key,
+                OAEP(
+                    mgf=MGF1(algorithm=SHA1()),  # nosec
+                    algorithm=SHA1(),    # nosec
+                    label=None
+                )
+           )
 
         raise ValueError(_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM)
 
     def unwrap_key(self, key, algorithm):
         if algorithm == 'RSA':
-            return self.private_key.decrypt(key,
-                                            OAEP(
-                                                mgf=MGF1(algorithm=SHA1()), # nosec
-                                                algorithm=SHA1(),   # nosec
-                                                label=None)
-                                            )
+            return self.private_key.decrypt(
+                key,
+                OAEP(
+                    mgf=MGF1(algorithm=SHA1()),  # nosec
+                    algorithm=SHA1(),   # nosec
+                    label=None
+                )
+            )
 
         raise ValueError(_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM)
 
@@ -103,9 +107,8 @@ def mock_urandom(size: int) -> bytes:
     """
     if size == 12:
         return b'Mb\xd5N\xc2\xbd\xa0\xc8\xa4L\xfb\xa0'
-    elif size == 16:
+    if size == 16:
         return b'\xbb\xd6\x87\xb6j\xe5\xdc\x93\xb0\x13\x1e\xcc\x9f\xf4\xca\xab'
-    elif size == 32:
+    if size == 32:
         return b'\x08\xe0A\xb6\xf2\xb7x\x8f\xe5\xdap\x87^6x~\xa4F\xc4\xe9\xb1\x8a:\xfbC%S\x0cZ\xbb\xbe\x88'
-    else:
-        return os.urandom(size)
+    return os.urandom(size)

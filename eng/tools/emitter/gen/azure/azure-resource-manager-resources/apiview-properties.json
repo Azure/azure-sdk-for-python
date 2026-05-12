@@ -74,5 +74,6 @@
         "azure.resourcemanager.resources.aio.operations.LocationResourcesOperations.delete": "Azure.ResourceManager.Resources.LocationResources.delete",
         "azure.resourcemanager.resources.operations.LocationResourcesOperations.list_by_location": "Azure.ResourceManager.Resources.LocationResources.listByLocation",
         "azure.resourcemanager.resources.aio.operations.LocationResourcesOperations.list_by_location": "Azure.ResourceManager.Resources.LocationResources.listByLocation"
-    }
+    },
+    "CrossLanguageVersion": "6c56d19cc7d4"
 }

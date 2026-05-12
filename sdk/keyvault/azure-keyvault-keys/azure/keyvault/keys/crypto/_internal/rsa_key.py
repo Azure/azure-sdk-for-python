@@ -33,7 +33,14 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
     _supported_encryption_algorithms = frozenset((Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()))
     _supported_key_wrap_algorithms = frozenset((Rsa1_5.name(), RsaOaep.name(), RsaOaep256.name()))
     _supported_signature_algorithms = frozenset(
-        (Ps256.name(), Ps384.name(), Ps512.name(), Rs256.name(), Rs384.name(), Rs512.name(),)
+        (
+            Ps256.name(),
+            Ps384.name(),
+            Ps512.name(),
+            Rs256.name(),
+            Rs384.name(),
+            Rs512.name(),
+        )
     )
 
     def __init__(self, kid=None):

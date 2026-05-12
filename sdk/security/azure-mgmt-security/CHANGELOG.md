@@ -1,5 +1,269 @@
 # Release History
 
+## 8.0.0b2 (2026-05-11)
+
+### Features Added
+
+  - Model `AadExternalSecuritySolution` added property `system_data`
+  - Model `AdvancedThreatProtectionSetting` added property `system_data`
+  - Model `Alert` added property `system_data`
+  - Model `AlertSyncSettings` added property `system_data`
+  - Model `AlertsSuppressionRule` added property `system_data`
+  - Model `AllowedConnectionsResource` added property `system_data`
+  - Model `ApiCollection` added property `system_data`
+  - Model `Application` added property `system_data`
+  - Model `AscLocation` added property `system_data`
+  - Enum `AssessedResourceType` added member `SERVER_VULNERABILITY_ASSESSMENT`
+  - Enum `AssessmentType` added member `CUSTOM`
+  - Enum `AssessmentType` added member `UNKNOWN`
+  - Model `AtaExternalSecuritySolution` added property `system_data`
+  - Enum `AuthenticationType` added member `ACCESS_TOKEN`
+  - Model `AutoProvisioningSetting` added property `system_data`
+  - Model `Automation` added property `system_data`
+  - Model `CefExternalSecuritySolution` added property `system_data`
+  - Model `Compliance` added property `system_data`
+  - Model `ComplianceResult` added property `system_data`
+  - Model `DataExportSettings` added property `system_data`
+  - Model `DefenderForStorageSetting` added property `system_data`
+  - Model `DeviceSecurityGroup` added property `system_data`
+  - Model `DiscoveredSecuritySolution` added property `system_data`
+  - Model `ExternalSecuritySolution` added property `properties`
+  - Model `ExternalSecuritySolution` added property `system_data`
+  - Model `GetSensitivitySettingsResponse` added property `system_data`
+  - Model `GovernanceAssignment` added property `system_data`
+  - Model `GovernanceRule` added property `system_data`
+  - Model `HealthReport` added property `system_data`
+  - Model `InformationProtectionPolicy` added property `system_data`
+  - Model `IoTSecurityAggregatedAlert` added property `system_data`
+  - Model `IoTSecurityAggregatedRecommendation` added property `system_data`
+  - Model `IoTSecuritySolutionAnalyticsModel` added property `system_data`
+  - Model `JitNetworkAccessPolicy` added property `system_data`
+  - Model `MalwareScanningProperties` added property `automated_response`
+  - Model `MdeOnboardingData` added property `system_data`
+  - Model `OperationStatusResult` added property `resource_id`
+  - Model `Pricing` added property `system_data`
+  - Enum `ProvisioningState` added member `CANCELED`
+  - Enum `ProvisioningState` added member `CREATING`
+  - Enum `ProvisioningState` added member `DELETING`
+  - Enum `ProvisioningState` added member `IN_PROGRESS`
+  - Model `ProxyResource` added property `system_data`
+  - Model `RegulatoryComplianceAssessment` added property `system_data`
+  - Model `RegulatoryComplianceControl` added property `system_data`
+  - Model `RegulatoryComplianceStandard` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceDetails` added property `id`
+  - Model `ResourceDetails` added property `connector_id`
+  - Enum `RiskLevel` added member `CRITICAL`
+  - Enum `RiskLevel` added member `NONE`
+  - Model `RuleResults` added property `system_data`
+  - Model `RuleResultsProperties` added property `latest_scan`
+  - Enum `RuleStatus` added member `NOT_APPLICABLE`
+  - Model `RulesResults` added property `next_link`
+  - Model `ScanResult` added property `system_data`
+  - Model `ScanSummary` added property `files`
+  - Model `SecureScoreControlDefinitionItem` added property `system_data`
+  - Model `SecureScoreControlDetails` added property `system_data`
+  - Model `SecureScoreItem` added property `system_data`
+  - Model `SecurityAssessment` added property `system_data`
+  - Model `SecurityAssessmentMetadataResponse` added property `system_data`
+  - Model `SecurityAssessmentResponse` added property `system_data`
+  - Model `SecurityContact` added property `system_data`
+  - Model `SecurityOperator` added property `system_data`
+  - Model `SecuritySolution` added property `system_data`
+  - Model `SecuritySolutionsReferenceData` added property `system_data`
+  - Model `SecurityStandard` added property `system_data`
+  - Model `SecuritySubAssessment` added property `system_data`
+  - Model `SecurityTask` added property `system_data`
+  - Model `ServerVulnerabilityAssessment` added property `system_data`
+  - Model `ServerVulnerabilityAssessmentsSetting` added property `properties`
+  - Model `Setting` added property `properties`
+  - Model `Setting` added property `system_data`
+  - Enum `SettingName` added member `MCAS`
+  - Enum `SettingName` added member `SENTINEL`
+  - Enum `SettingName` added member `WDATP`
+  - Enum `SettingName` added member `WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW`
+  - Enum `SettingName` added member `WDATP_UNIFIED_SOLUTION`
+  - Enum `Severity` added member `CRITICAL`
+  - Enum `Source` added member `AWS`
+  - Enum `Source` added member `GCP`
+  - Enum `Source` added member `ON_PREMISE_RESOURCE_DETAILS`
+  - Model `StandardAssignment` added property `system_data`
+  - Enum `State` added member `OFF`
+  - Enum `State` added member `ON`
+  - Model `TopologyResource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Model `WorkspaceSetting` added property `system_data`
+  - Added enum `ArmActionType`
+  - Added model `AssignedComponentItem`
+  - Added model `Assignment`
+  - Added model `AssignmentProperties`
+  - Added model `AssignmentPropertiesAdditionalData`
+  - Added enum `AutomatedResponseType`
+  - Added model `CloudError`
+  - Added model `CommonResourceDetails`
+  - Added model `ExtensionResource`
+  - Added model `FilesScanSummary`
+  - Added model `IssueCreationRequest`
+  - Added model `PrivateLinkGroupResource`
+  - Added model `PrivateLinkProperties`
+  - Added enum `PublicNetworkAccess`
+  - Added enum `ResourceIdentityType`
+  - Added enum `ScanOperationStatus`
+  - Added model `ScanPropertiesV2`
+  - Added model `ScanV2`
+  - Added model `ScoreDetails`
+  - Added model `SecurityAssessmentPropertiesBaseRiskPathsItemEdgeItem`
+  - Added model `SecurityAssessmentPropertiesBaseRiskPathsItemNodesItem`
+  - Added model `SqlVulnerabilityAssessmentScanOperationResult`
+  - Added model `SqlVulnerabilityAssessmentScanOperationResultProperties`
+  - Added model `SqlVulnerabilityAssessmentSettings`
+  - Added model `SqlVulnerabilityAssessmentSettingsProperties`
+  - Added enum `SqlVulnerabilityAssessmentState`
+  - Added model `Standard`
+  - Added model `StandardComponentProperties`
+  - Added model `StandardProperties`
+  - Added enum `StandardSupportedClouds`
+  - Operation group `DefenderForStorageOperations` added method `list`
+  - Operation group `SqlVulnerabilityAssessmentScansOperations` added method `begin_initiate_scan`
+  - Operation group `SqlVulnerabilityAssessmentScansOperations` added method `get_scan_operation_result`
+  - Added operation group `AssignmentsOperations`
+  - Added operation group `GitHubIssuesOperations`
+  - Added operation group `OperationResultsOperations`
+  - Added operation group `OperationStatusesOperations`
+  - Added operation group `SqlVulnerabilityAssessmentSettingsOperations`
+  - Added operation group `StandardsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Client `SecurityCenter` was renamed to `SecurityManagementClient`
+  - Model `AdvancedThreatProtectionSetting` moved instance variable `is_enabled` under property `properties` whose type is `AdvancedThreatProtectionProperties`
+  - Model `AlertSyncSettings` moved instance variable `enabled` under property `properties` whose type is `AlertSyncSettingProperties`
+  - Model `AutomationUpdateModel` moved instance variable `description`, `is_enabled`, `scopes`, `sources` and `actions` under property `properties` whose type is `AutomationProperties`
+  - Model `AzureServersSetting` moved instance variable `selected_provider` under property `properties` whose type is `ServerVulnerabilityAssessmentsAzureSettingProperties`
+  - Model `DataExportSettings` moved instance variable `enabled` under property `properties` whose type is `DataExportSettingProperties`
+  - Model `IoTSecuritySolutionModel` moved instance variable `workspace`, `display_name`, `status`, `export`, `disabled_data_sources`, `iot_hubs`, `user_defined_resources`, `auto_discovered_resources`, `recommendations_configuration`, `unmasked_ip_logging_status` and `additional_workspaces` under property `properties` whose type is `IoTSecuritySolutionProperties`
+  - Model `SecureScoreControlDetails` moved instance variable `display_name`, `healthy_resource_count`, `unhealthy_resource_count`, `not_applicable_resource_count`, `weight`, `definition`, `max`, `current` and `percentage` under property `properties` whose type is `SecureScoreControlScoreDetails`
+  - Model `SecurityAssessment` moved instance variable `risk`, `resource_details`, `display_name`, `additional_data`, `links`, `metadata`, `partners_data` and `status` under property `properties` whose type is `SecurityAssessmentProperties`
+  - Model `SecurityAssessmentMetadataResponse` moved instance variable `display_name`, `policy_definition_id`, `description`, `remediation_description`, `categories`, `severity`, `user_impact`, `implementation_effort`, `threats`, `preview`, `assessment_type`, `partner_data`, `publish_dates`, `planned_deprecation_date`, `tactics` and `techniques` under property `properties` whose type is `SecurityAssessmentMetadataPropertiesResponse`
+  - Model `SecurityAssessmentResponse` moved instance variable `risk`, `resource_details`, `display_name`, `additional_data`, `links`, `metadata`, `partners_data` and `status` under property `properties` whose type is `SecurityAssessmentPropertiesResponse`
+  - Model `UpdateIotSecuritySolutionData` moved instance variable `user_defined_resources` and `recommendations_configuration` under property `properties` whose type is `UpdateIoTSecuritySolutionProperties`
+  - Model `TrackedResource` deleted or renamed its instance variable `etag`
+  - Model `TrackedResource` deleted or renamed its instance variable `kind`
+  - Deleted or renamed enum value `AuthenticationType.AWS_ASSUME_ROLE`
+  - Deleted or renamed enum value `AuthenticationType.AWS_CREDS`
+  - Deleted or renamed enum value `AuthenticationType.GCP_CREDENTIALS`
+  - Deleted or renamed model `AadConnectivityState`
+  - Deleted or renamed model `ActiveConnectionsNotInAllowedRange`
+  - Deleted or renamed model `AmqpC2DMessagesNotInAllowedRange`
+  - Deleted or renamed model `AmqpC2DRejectedMessagesNotInAllowedRange`
+  - Deleted or renamed model `AmqpD2CMessagesNotInAllowedRange`
+  - Deleted or renamed model `ApplicationCondition`
+  - Deleted or renamed model `ApplicationConditionOperator`
+  - Deleted or renamed model `AuthenticationDetailsProperties`
+  - Deleted or renamed model `AuthenticationProvisioningState`
+  - Deleted or renamed model `AwAssumeRoleAuthenticationDetailsProperties`
+  - Deleted or renamed model `AwsCredsAuthenticationDetailsProperties`
+  - Deleted or renamed model `AzureDevOpsOrganizationConfiguration`
+  - Deleted or renamed model `AzureDevOpsProjectConfiguration`
+  - Deleted or renamed model `AzureTrackedResourceLocation`
+  - Deleted or renamed model `BaseResourceConfiguration`
+  - Deleted or renamed model `Code`
+  - Deleted or renamed model `Components1Uu4J47SchemasSecurityassessmentpropertiesbasePropertiesRiskPropertiesPathsItemsPropertiesEdgesItems`
+  - Deleted or renamed model `Condition`
+  - Deleted or renamed model `ConnectionFromIpNotAllowed`
+  - Deleted or renamed model `ConnectionToIpNotAllowed`
+  - Deleted or renamed model `ConnectorSetting`
+  - Deleted or renamed model `CustomAssessmentAutomation`
+  - Deleted or renamed model `CustomAssessmentAutomationRequest`
+  - Deleted or renamed model `CustomEntityStoreAssignment`
+  - Deleted or renamed model `CustomEntityStoreAssignmentRequest`
+  - Deleted or renamed model `DesiredOnboardingState`
+  - Deleted or renamed model `DirectMethodInvokesNotInAllowedRange`
+  - Deleted or renamed model `ETag`
+  - Deleted or renamed model `EdgeIdentifiers`
+  - Deleted or renamed model `EndOfSupportStatus`
+  - Deleted or renamed model `ErrorDetailAutoGenerated`
+  - Deleted or renamed model `ErrorDetailAutoGenerated2`
+  - Deleted or renamed model `ErrorResponseAutoGenerated`
+  - Deleted or renamed model `ErrorResponseAutoGenerated2`
+  - Deleted or renamed model `ExternalSecuritySolutionKind`
+  - Deleted or renamed model `FailedLocalLoginsNotInAllowedRange`
+  - Deleted or renamed model `FileUploadsNotInAllowedRange`
+  - Deleted or renamed model `GcpCredentialsDetailsProperties`
+  - Deleted or renamed model `GitHubOwnerConfiguration`
+  - Deleted or renamed model `GitLabGroupConfiguration`
+  - Deleted or renamed model `GovernanceRuleConditionOperator`
+  - Deleted or renamed model `HttpC2DMessagesNotInAllowedRange`
+  - Deleted or renamed model `HttpC2DRejectedMessagesNotInAllowedRange`
+  - Deleted or renamed model `HttpD2CMessagesNotInAllowedRange`
+  - Deleted or renamed model `HybridComputeProvisioningState`
+  - Deleted or renamed model `HybridComputeSettingsProperties`
+  - Deleted or renamed model `Kind`
+  - Deleted or renamed model `LocalUserNotAllowed`
+  - Deleted or renamed model `Location`
+  - Deleted or renamed model `MqttC2DMessagesNotInAllowedRange`
+  - Deleted or renamed model `MqttC2DRejectedMessagesNotInAllowedRange`
+  - Deleted or renamed model `MqttD2CMessagesNotInAllowedRange`
+  - Deleted or renamed model `NodeIdentifier`
+  - Deleted or renamed model `OperationStatusAutoGenerated`
+  - Deleted or renamed model `Path`
+  - Deleted or renamed model `PermissionProperty`
+  - Deleted or renamed model `PrivateLinkParameters`
+  - Deleted or renamed model `PrivateLinkResourceAutoGenerated`
+  - Deleted or renamed model `ProcessNotAllowed`
+  - Deleted or renamed model `ProxyServerProperties`
+  - Deleted or renamed model `QueuePurgesNotInAllowedRange`
+  - Deleted or renamed model `ResourceAutoGenerated`
+  - Deleted or renamed model `ResourceAutoGenerated2`
+  - Deleted or renamed model `ResourceAutoGenerated3`
+  - Deleted or renamed model `ResourceDetailsAutoGenerated`
+  - Deleted or renamed model `Scan`
+  - Deleted or renamed model `ScanProperties`
+  - Deleted or renamed model `SecureScoreControlScore`
+  - Deleted or renamed model `SecurityAssessmentMetadata`
+  - Deleted or renamed model `SecurityAssessmentPropertiesBaseRiskPathsPropertiesItemsItem`
+  - Deleted or renamed model `ServicePrincipalProperties`
+  - Deleted or renamed model `SettingNameAutoGenerated`
+  - Deleted or renamed model `Software`
+  - Deleted or renamed model `SupportedCloudEnum`
+  - Deleted or renamed model `TrackedResourceAutoGenerated`
+  - Deleted or renamed model `TwinUpdatesNotInAllowedRange`
+  - Deleted or renamed model `UnauthorizedOperationsNotInAllowedRange`
+  - Method `AlertsSuppressionRulesOperations.list` changed its parameter `alert_type` from `positional_or_keyword` to `keyword_only`
+  - Method `AssessmentsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PrivateEndpointConnectionsOperations.begin_create_or_update` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.begin_delete` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.get` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateEndpointConnectionsOperations.list` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateLinkResourcesOperations.get` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateLinkResourcesOperations.list` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateLinksOperations.begin_create` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateLinksOperations.begin_delete` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateLinksOperations.get` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateLinksOperations.head` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `PrivateLinksOperations.update` renamed its parameter `private_link_parameters` to `private_link_name`
+  - Method `SecureScoreControlsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SecureScoreControlsOperations.list_by_secure_score` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.add` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.create_or_update` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.delete` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.get` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentBaselineRulesOperations.list` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentScanResultsOperations.get` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentScanResultsOperations.list` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentScansOperations.get` renamed its parameter `workspace_id` to `database_name`
+  - Method `SqlVulnerabilityAssessmentScansOperations.list` renamed its parameter `workspace_id` to `database_name`
+  - Deleted or renamed operation group `ConnectorsOperations`
+  - Deleted or renamed operation group `CustomAssessmentAutomationsOperations`
+  - Deleted or renamed operation group `CustomEntityStoreAssignmentsOperations`
+  - Deleted or renamed operation group `SoftwareInventoriesOperations`
+
+### Other Changes
+
+  - Deleted model `AlertList`/`AlertsSuppressionRulesList`/`AllowedConnectionsList`/`ApiCollectionList`/`ApplicationsList`/`AscLocationList`/`AutoProvisioningSettingList`/`AutomationList`/`AzureDevOpsProjectListResponse`/`AzureDevOpsRepositoryListResponse`/`ComplianceList`/`ComplianceResultList`/`ConnectorSettingList`/`CustomRecommendationsList`/`DevOpsConfigurationListResponse`/`DeviceSecurityGroupList`/`DiscoveredSecuritySolutionList`/`ExternalSecuritySolutionList`/`GitHubRepositoryListResponse`/`GitLabProjectListResponse`/`GovernanceAssignmentsList`/`GovernanceRuleList`/`HealthReportsList`/`InformationProtectionPolicyList`/`IoTSecurityAggregatedAlertList`/`IoTSecurityAggregatedRecommendationList`/`IoTSecuritySolutionsList`/`JitNetworkAccessPoliciesList`/`PrivateLinksList`/`RegulatoryComplianceAssessmentList`/`RegulatoryComplianceControlList`/`RegulatoryComplianceStandardList`/`ScanResults`/`Scans`/`SecureScoreControlDefinitionList`/`SecureScoreControlList`/`SecureScoresList`/`SecurityAssessmentList`/`SecurityAssessmentMetadataResponseList`/`SecurityConnectorsList`/`SecurityContactList`/`SecurityOperatorList`/`SecuritySolutionList`/`SecurityStandardList`/`SecuritySubAssessmentList`/`SecurityTaskList`/`ServerVulnerabilityAssessmentsSettingsList`/`SettingsList`/`SoftwaresList`/`StandardAssignmentsList`/`TopologyList`/`WorkspaceSettingList` which actually were not used by SDK users
+
 ## 8.0.0b1 (2025-08-25)
 
 ### Breaking Changes

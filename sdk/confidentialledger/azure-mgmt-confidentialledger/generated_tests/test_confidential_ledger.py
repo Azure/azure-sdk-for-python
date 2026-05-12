@@ -23,7 +23,7 @@ class TestConfidentialLedger(AzureMgmtRecordedTestCase):
     def test_check_name_availability(self, resource_group):
         response = self.client.check_name_availability(
             name_availability_request={"name": "str", "type": "str"},
-            api_version="2024-09-19-preview",
+            api_version="2022-05-13",
         )
 
         # please add some check logic here by yourself

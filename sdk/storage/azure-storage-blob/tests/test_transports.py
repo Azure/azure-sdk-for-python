@@ -3,15 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from azure.storage.blob import BlobClient, BlobServiceClient
-from azure.core.exceptions import ResourceExistsError
-from azure.core.pipeline.transport import RequestsTransport
+# pylint: disable=attribute-defined-outside-init
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import MockLegacyTransport
+
+from azure.storage.blob import BlobClient, BlobServiceClient
+from azure.core.exceptions import ResourceExistsError
+from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
 
 
 class TestStorageTransports(StorageRecordedTestCase):

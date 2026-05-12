@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
     _TaskNavigationEfficiencyEvaluator,
@@ -33,6 +35,33 @@ class TestTaskNavigationEfficiencyEvaluator:
         assert result["task_navigation_efficiency_result"] == "pass"
         assert result["task_navigation_efficiency_threshold"] == 1.0
         assert "task_navigation_efficiency_properties" in result
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["f1_score"] == 1.0
+
+    def test_json_stringified_valid_inputs(self):
+        """Test that JSON-stringified response and ground_truth are parsed and evaluated correctly."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "report", "arguments": {}}],
+            },
+        ]
+        ground_truth = ["search", "analyze", "report"]
+
+        result = evaluator(response=json.dumps(response), ground_truth=json.dumps(ground_truth))
+        assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_result"] == "pass"
         assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
         assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
         assert result["task_navigation_efficiency_properties"]["f1_score"] == 1.0

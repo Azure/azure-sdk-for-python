@@ -12,5 +12,6 @@
         "versioning.added.aio.AddedClient.v1": "Versioning.Added.v1",
         "versioning.added.AddedClient.v2": "Versioning.Added.v2",
         "versioning.added.aio.AddedClient.v2": "Versioning.Added.v2"
-    }
+    },
+    "CrossLanguageVersion": "effaedc31171"
 }

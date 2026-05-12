@@ -9,5 +9,6 @@
         "payload.mediatype.aio.operations.StringBodyOperations.send_as_json": "Payload.MediaType.StringBody.sendAsJson",
         "payload.mediatype.operations.StringBodyOperations.get_as_json": "Payload.MediaType.StringBody.getAsJson",
         "payload.mediatype.aio.operations.StringBodyOperations.get_as_json": "Payload.MediaType.StringBody.getAsJson"
-    }
+    },
+    "CrossLanguageVersion": "efe8d9437b10"
 }

@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_authentication.py
@@ -24,6 +23,7 @@ USAGE:
 
 import os
 import sys
+
 
 class AuthSamples(object):
     url = "https://{}.blob.core.windows.net".format(
@@ -81,10 +81,12 @@ class AuthSamples(object):
         # [END create_blob_client]
 
         # [START create_blob_client_sas_url]
-        from azure.storage.blob import BlobClient
-
-        sas_url = "https://account.blob.core.windows.net/container/blob-name?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
-        blob_client = BlobClient.from_blob_url(sas_url)
+        sas_url = (
+            "https://account.blob.core.windows.net/container/blob-name?sv=2015-04-05&"
+            "st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&"
+            "sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+        )
+        _blob_client = BlobClient.from_blob_url(sas_url)
         # [END create_blob_client_sas_url]
 
     def auth_shared_access_signature(self):
@@ -117,9 +119,12 @@ class AuthSamples(object):
     def auth_default_azure_credential(self):
         # [START create_blob_service_client_oauth]
         # Get a credential for authentication
-        # Default Azure Credentials attempt a chained set of authentication methods, per documentation here: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-        # For example user (who must be an Azure Event Hubs Data Owner role) to be logged in can be specified by the environment variable AZURE_USERNAME
-        # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
+        # Default Azure Credentials attempt a chained set of authentication methods, per documentation here:
+        # https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
+        # For example user (who must be an Azure Event Hubs Data Owner role)
+        # to be logged in can be specified by the environment variable AZURE_USERNAME
+        # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID,
+        # and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
         # The docs above specify all mechanisms which the defaultCredential internally support.
         from azure.identity import DefaultAzureCredential
         default_credential = DefaultAzureCredential()
@@ -134,6 +139,7 @@ class AuthSamples(object):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_service_properties()
+
 
 if __name__ == '__main__':
     sample = AuthSamples()

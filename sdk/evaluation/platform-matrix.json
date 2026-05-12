@@ -45,7 +45,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "InjectedPackages": "semantic-kernel",
-          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
+          "UnsupportedChecks": "sdist,depends,latestdependency,mindependency,whl_no_aio"
         }
       }
     },
@@ -69,7 +69,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "InjectedPackages": "pyrit==0.11.0 !promptflow-devkit !promptflow-core",
-          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio,pylint,mypy,pyright,black,verifytypes,apistub,samples"
+          "UnsupportedChecks": "sdist,depends,latestdependency,mindependency,whl_no_aio,pylint,mypy,pyright,black,verifytypes,apistub,samples"
         }
       }
     }

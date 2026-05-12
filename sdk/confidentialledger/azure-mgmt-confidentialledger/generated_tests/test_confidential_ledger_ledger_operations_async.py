@@ -25,7 +25,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.ledger.get(
             resource_group_name=resource_group.name,
             ledger_name="str",
-            api_version="2024-09-19-preview",
+            api_version="2022-05-13",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.ledger.begin_delete(
                 resource_group_name=resource_group.name,
                 ledger_name="str",
-                api_version="2024-09-19-preview",
+                api_version="2022-05-13",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -53,30 +53,20 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 ledger_name="str",
                 confidential_ledger={
-                    "location": "str",
                     "id": "str",
+                    "location": "str",
                     "name": "str",
                     "properties": {
                         "aadBasedSecurityPrincipals": [
                             {"ledgerRoleName": "str", "principalId": "str", "tenantId": "str"}
                         ],
-                        "applicationType": "str",
                         "certBasedSecurityPrincipals": [{"cert": "str", "ledgerRoleName": "str"}],
-                        "enclavePlatform": "str",
-                        "hostLevel": "str",
                         "identityServiceUri": "str",
                         "ledgerInternalNamespace": "str",
                         "ledgerName": "str",
-                        "ledgerSku": "str",
                         "ledgerType": "str",
                         "ledgerUri": "str",
-                        "maxBodySizeInMb": 0,
-                        "nodeCount": 0,
                         "provisioningState": "str",
-                        "runningState": "str",
-                        "subjectName": "str",
-                        "workerThreads": 0,
-                        "writeLBAddressPrefix": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -89,7 +79,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-19-preview",
+                api_version="2022-05-13",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,30 +94,20 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 ledger_name="str",
                 confidential_ledger={
-                    "location": "str",
                     "id": "str",
+                    "location": "str",
                     "name": "str",
                     "properties": {
                         "aadBasedSecurityPrincipals": [
                             {"ledgerRoleName": "str", "principalId": "str", "tenantId": "str"}
                         ],
-                        "applicationType": "str",
                         "certBasedSecurityPrincipals": [{"cert": "str", "ledgerRoleName": "str"}],
-                        "enclavePlatform": "str",
-                        "hostLevel": "str",
                         "identityServiceUri": "str",
                         "ledgerInternalNamespace": "str",
                         "ledgerName": "str",
-                        "ledgerSku": "str",
                         "ledgerType": "str",
                         "ledgerUri": "str",
-                        "maxBodySizeInMb": 0,
-                        "nodeCount": 0,
                         "provisioningState": "str",
-                        "runningState": "str",
-                        "subjectName": "str",
-                        "workerThreads": 0,
-                        "writeLBAddressPrefix": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -140,7 +120,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-19-preview",
+                api_version="2022-05-13",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -152,7 +132,7 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_ledger_list_by_resource_group(self, resource_group):
         response = self.client.ledger.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-09-19-preview",
+            api_version="2022-05-13",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -162,38 +142,8 @@ class TestConfidentialLedgerLedgerOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_ledger_list_by_subscription(self, resource_group):
         response = self.client.ledger.list_by_subscription(
-            api_version="2024-09-19-preview",
+            api_version="2022-05-13",
         )
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_ledger_begin_backup(self, resource_group):
-        response = await (
-            await self.client.ledger.begin_backup(
-                resource_group_name=resource_group.name,
-                ledger_name="str",
-                confidential_ledger={"uri": "str", "restoreRegion": "str"},
-                api_version="2024-09-19-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_ledger_begin_restore(self, resource_group):
-        response = await (
-            await self.client.ledger.begin_restore(
-                resource_group_name=resource_group.name,
-                ledger_name="str",
-                confidential_ledger={"fileShareName": "str", "restoreRegion": "str", "uri": "str"},
-                api_version="2024-09-19-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...

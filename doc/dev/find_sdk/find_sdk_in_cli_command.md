@@ -1,4 +1,4 @@
-How to Find the SDK in CLI 
+How to Find the SDK in CLI
 ======
 
 This article aims to provide a guide for customer to find the sdk in Azure CLI.
@@ -91,6 +91,6 @@ In this file, you could search the function name to find the function definition
 Above the `begin_delete` function, you could find it from [here](https://github.com/Azure/azure-sdk-for-python/blob/9d3f4aaf3125cc6ae63c8425d0d15d20d488d61e/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations/_operations.py#L4188).
 The same, the `create_or_update` function is [here](https://github.com/Azure/azure-sdk-for-python/blob/9d3f4aaf3125cc6ae63c8425d0d15d20d488d61e/sdk/resources/azure-mgmt-resource/azure/mgmt/resource/resources/operations/_operations.py#L4019).
 
-Finally, you also could find the usage of function by [Azure doc](https://docs.microsoft.com/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group) or [Azure samples](https://github.com/Azure-Samples/azure-samples-python-management).
+Finally, you also could find the usage of function by [Azure doc](https://learn.microsoft.com/azure/developer/python/sdk/examples/azure-sdk-example-resource-group#3-write-code-to-provision-a-resource-group) or [Azure samples](https://github.com/Azure-Samples/azure-samples-python-management).
 
 Feel free to contact Azure SDK team at any time through any channels. We are passionate to build the world-class cloud product.

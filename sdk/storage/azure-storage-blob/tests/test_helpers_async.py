@@ -4,19 +4,19 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-import aiohttp
 from collections import deque
 from datetime import datetime, timezone
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
-from unittest.mock import Mock, AsyncMock
 
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
+import aiohttp
+from aiohttp import ClientResponse
+from aiohttp.client_proto import ResponseHandler
+from aiohttp.streams import StreamReader
+
+from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport  # pylint: disable=no-name-in-module
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
-from aiohttp import ClientResponse
-from aiohttp.streams import StreamReader
-from aiohttp.client_proto import ResponseHandler
 
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
@@ -145,6 +145,7 @@ class MockLegacyTransport(AsyncHttpTransport):
     This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
+
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
         if request.method == 'GET':
             # download_blob

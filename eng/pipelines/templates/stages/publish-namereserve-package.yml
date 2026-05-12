@@ -40,7 +40,7 @@ extends:
       jobs:
         - deployment: PublishPackage
           displayName: "Publish to PyPI"
-          environment: package-publish
+          environment: none
 
           variables:
             PUBLISHDIRECTORY: "$(Pipeline.Workspace)/esrp-release/"

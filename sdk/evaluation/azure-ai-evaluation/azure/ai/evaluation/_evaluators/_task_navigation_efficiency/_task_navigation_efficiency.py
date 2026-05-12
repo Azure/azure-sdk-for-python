@@ -263,6 +263,15 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
+        # If response or ground_truth is a string, try to parse it as JSON
+        for key in ("response", "ground_truth"):
+            value = eval_input.get(key)
+            if isinstance(value, str):
+                try:
+                    eval_input[key] = json.loads(value)
+                except (ValueError, TypeError):
+                    pass
+
         response = eval_input["response"]
         ground_truth = eval_input["ground_truth"]
 

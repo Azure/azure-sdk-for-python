@@ -7,5 +7,6 @@
         "specs.azure.clientgenerator.core.clientlocation.subclient.aio.operations.AdminOperationsOperations.delete_user": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.UserOperations.deleteUser",
         "specs.azure.clientgenerator.core.clientlocation.subclient.operations.UserOperationsOperations.get_user": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.UserOperations.getUser",
         "specs.azure.clientgenerator.core.clientlocation.subclient.aio.operations.UserOperationsOperations.get_user": "_Specs_.Azure.ClientGenerator.Core.ClientLocation.MoveToExistingSubClient.UserOperations.getUser"
-    }
+    },
+    "CrossLanguageVersion": "649f42b235aa"
 }

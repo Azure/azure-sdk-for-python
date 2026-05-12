@@ -6,5 +6,6 @@
         "server.path.multiple.aio.MultipleClient.no_operation_params": "Server.Path.Multiple.noOperationParams",
         "server.path.multiple.MultipleClient.with_operation_path_param": "Server.Path.Multiple.withOperationPathParam",
         "server.path.multiple.aio.MultipleClient.with_operation_path_param": "Server.Path.Multiple.withOperationPathParam"
-    }
+    },
+    "CrossLanguageVersion": "a4d06292b155"
 }

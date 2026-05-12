@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Mapping, Optional, overload
+from typing import Any, Mapping, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -27,11 +27,11 @@ class ModelWithDefaultValues(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name property with no default value. Required."""
-    timeout: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    timeout: int = rest_field(visibility=["read", "create", "update", "delete", "query"], default=30)
     """Timeout property with client default value of 30."""
-    tier: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tier: str = rest_field(visibility=["read", "create", "update", "delete", "query"], default="standard")
     """Tier property with client default value of 'standard'."""
-    retry: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    retry: bool = rest_field(visibility=["read", "create", "update", "delete", "query"], default=True)
     """Retry property with client default value of true."""
 
     @overload
@@ -39,9 +39,9 @@ class ModelWithDefaultValues(_Model):
         self,
         *,
         name: str,
-        timeout: Optional[int] = None,
-        tier: Optional[str] = None,
-        retry: Optional[bool] = None,
+        timeout: int = 30,
+        tier: str = "standard",
+        retry: bool = True,
     ) -> None: ...
 
     @overload

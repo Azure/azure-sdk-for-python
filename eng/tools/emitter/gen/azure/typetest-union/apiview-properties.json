@@ -58,5 +58,6 @@
         "typetest.union.aio.operations.MixedTypesOperations.get": "Type.Union.MixedTypes.get",
         "typetest.union.operations.MixedTypesOperations.send": "Type.Union.MixedTypes.send",
         "typetest.union.aio.operations.MixedTypesOperations.send": "Type.Union.MixedTypes.send"
-    }
+    },
+    "CrossLanguageVersion": "c7cd2991c88b"
 }

@@ -3,5 +3,6 @@
     "CrossLanguageDefinitionId": {
         "parameters.query.operations.ConstantOperations.post": "Parameters.Query.Constant.post",
         "parameters.query.aio.operations.ConstantOperations.post": "Parameters.Query.Constant.post"
-    }
+    },
+    "CrossLanguageVersion": "e2bfb58d3cc1"
 }

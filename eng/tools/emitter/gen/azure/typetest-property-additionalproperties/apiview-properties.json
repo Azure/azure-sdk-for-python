@@ -162,5 +162,6 @@
         "typetest.property.additionalproperties.aio.operations.SpreadRecordNonDiscriminatedUnion3Operations.get": "Type.Property.AdditionalProperties.SpreadRecordNonDiscriminatedUnion3.get",
         "typetest.property.additionalproperties.operations.SpreadRecordNonDiscriminatedUnion3Operations.put": "Type.Property.AdditionalProperties.SpreadRecordNonDiscriminatedUnion3.put",
         "typetest.property.additionalproperties.aio.operations.SpreadRecordNonDiscriminatedUnion3Operations.put": "Type.Property.AdditionalProperties.SpreadRecordNonDiscriminatedUnion3.put"
-    }
+    },
+    "CrossLanguageVersion": "ea3736cf5adf"
 }

@@ -39,6 +39,7 @@ from azure.storage.blob import BlobServiceClient
 STORAGE_URL = 'STORAGE_ACCOUNT_BLOB_URL'
 KEYVAULT_URL = 'KEYVAULT_URL'
 
+
 def get_env_var(key):
     try:
         return os.environ[key]
@@ -46,18 +47,20 @@ def get_env_var(key):
         print('{} must be set.'.format(key))
         sys.exit(1)
 
+
 def make_resource_name(prefix):
     return '{}{}'.format(prefix, str(uuid.uuid4()).replace('-', ''))
+
 
 class KeyWrapper:
     """ Class that fulfills the interface used by the storage SDK's
         automatic client-side encyrption and decryption routines. """
 
-    def __init__(self, kek, credential):
+    def __init__(self, key_encryption_key, token_credential):
         self.algorithm = KeyWrapAlgorithm.rsa_oaep_256
-        self.kek = kek
-        self.kid = kek.id
-        self.client = CryptographyClient(kek, credential)
+        self.kek = key_encryption_key
+        self.kid = key_encryption_key.id
+        self.client = CryptographyClient(key_encryption_key, token_credential)
 
     def wrap_key(self, key):
         if self.algorithm != KeyWrapAlgorithm.rsa_oaep_256:
@@ -76,6 +79,7 @@ class KeyWrapper:
 
     def get_kid(self):
         return self.kid
+
 
 # Retrieve sensitive data from environment variables
 storage_url = get_env_var(STORAGE_URL)

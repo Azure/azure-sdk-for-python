@@ -20,22 +20,22 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Denotes a vault state in which deletion is an irreversible operation, without the possibility
     for recovery. This level corresponds to no protection being available against a Delete
     operation; the data is irretrievably lost upon accepting a Delete operation at the entity level
-    or higher (vault, resource group, subscription etc.)"""
+    or higher (vault, resource group, subscription etc.)."""
     RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
     """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
     permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted entity
     during the retention interval (90 days), unless a Purge operation is requested, or the
-    subscription is cancelled. System wil permanently delete it after 90 days, if not recovered"""
+    subscription is cancelled. System wil permanently delete it after 90 days, if not recovered."""
     RECOVERABLE = "Recoverable"
     """Denotes a vault state in which deletion is recoverable without the possibility for immediate
     and permanent deletion (i.e. purge). This level guarantees the recoverability of the deleted
     entity during the retention interval(90 days) and while the subscription is still available.
-    System wil permanently delete it after 90 days, if not recovered"""
+    System wil permanently delete it after 90 days, if not recovered."""
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
     """Denotes a vault and subscription state in which deletion is recoverable within retention
     interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in
     which the subscription itself  cannot be permanently canceled. System wil permanently delete it
-    after 90 days, if not recovered"""
+    after 90 days, if not recovered."""
     CUSTOMIZED_RECOVERABLE_PURGEABLE = "CustomizedRecoverable+Purgeable"
     """Denotes a vault state in which deletion is recoverable, and which also permits immediate and
     permanent deletion (i.e. purge when 7 <= SoftDeleteRetentionInDays < 90). This level guarantees
@@ -145,45 +145,45 @@ class JsonWebKeySignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
     PS256 = "PS256"
     """RSASSA-PSS using SHA-256 and MGF1 with SHA-256, as described in
-    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_"""
+    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_."""
     PS384 = "PS384"
     """RSASSA-PSS using SHA-384 and MGF1 with SHA-384, as described in
-    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_"""
+    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_."""
     PS512 = "PS512"
     """RSASSA-PSS using SHA-512 and MGF1 with SHA-512, as described in
-    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_"""
+    `https://tools.ietf.org/html/rfc7518 <https://tools.ietf.org/html/rfc7518>`_."""
     RS256 = "RS256"
     """RSASSA-PKCS1-v1_5 using SHA-256, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     RS384 = "RS384"
     """RSASSA-PKCS1-v1_5 using SHA-384, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     RS512 = "RS512"
     """RSASSA-PKCS1-v1_5 using SHA-512, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     HS256 = "HS256"
     """HMAC using SHA-256, as described in  `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     HS384 = "HS384"
     """HMAC using SHA-384, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     HS512 = "HS512"
     """HMAC using SHA-512, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     RSNULL = "RSNULL"
-    """Reserved"""
+    """Reserved."""
     ES256 = "ES256"
     """ECDSA using P-256 and SHA-256, as described in `https://tools.ietf.org/html/rfc7518
     <https://tools.ietf.org/html/rfc7518>`_."""
     ES384 = "ES384"
     """ECDSA using P-384 and SHA-384, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     ES512 = "ES512"
     """ECDSA using P-521 and SHA-512, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
     ES256_K = "ES256K"
     """ECDSA using P-256K and SHA-256, as described in `https://tools.ietf.org/html/rfc7518
-    <https://tools.ietf.org/html/rfc7518>`_"""
+    <https://tools.ietf.org/html/rfc7518>`_."""
 
 
 class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -197,11 +197,11 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EC_HSM = "EC-HSM"
     """Elliptic Curve with a private key which is stored in the HSM."""
     RSA = "RSA"
-    """RSA (`https://tools.ietf.org/html/rfc3447 <https://tools.ietf.org/html/rfc3447>`_)"""
+    """RSA (`https://tools.ietf.org/html/rfc3447 <https://tools.ietf.org/html/rfc3447>`_)."""
     RSA_HSM = "RSA-HSM"
     """RSA with a private key which is stored in the HSM."""
     OCT = "oct"
-    """Octet sequence (used to represent symmetric keys)"""
+    """Octet sequence (used to represent symmetric keys)."""
     OCT_HSM = "oct-HSM"
     """Octet sequence (used to represent symmetric keys) which is stored the HSM."""
 

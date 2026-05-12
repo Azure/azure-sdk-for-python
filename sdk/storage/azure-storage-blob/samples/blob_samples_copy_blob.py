@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -20,6 +18,7 @@ import sys
 import time
 from azure.storage.blob import BlobServiceClient
 
+
 def main():
     try:
         CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
@@ -35,7 +34,7 @@ def main():
     copied_blob = blob_service_client.get_blob_client("mycontainer", '59466-0.txt')
     # Copy started
     copied_blob.start_copy_from_url(source_blob)
-    for i in range(10):
+    for _ in range(10):
         props = copied_blob.get_blob_properties()
         if props.copy.status is not None:
             status = props.copy.status
@@ -59,6 +58,7 @@ def main():
             sys.exit(1)
         props = copied_blob.get_blob_properties()
         print(props.copy.status)
+
 
 if __name__ == "__main__":
     main()

@@ -145,5 +145,6 @@
         "typetest.property.optional.aio.operations.RequiredAndOptionalOperations.put_all": "Type.Property.Optional.RequiredAndOptional.putAll",
         "typetest.property.optional.operations.RequiredAndOptionalOperations.put_required_only": "Type.Property.Optional.RequiredAndOptional.putRequiredOnly",
         "typetest.property.optional.aio.operations.RequiredAndOptionalOperations.put_required_only": "Type.Property.Optional.RequiredAndOptional.putRequiredOnly"
-    }
+    },
+    "CrossLanguageVersion": "ee8da79f548d"
 }

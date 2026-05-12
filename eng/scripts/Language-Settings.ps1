@@ -520,7 +520,7 @@ function Get-python-DirectoriesForGeneration () {
   | Get-ChildItem -Directory
   | Where-Object { $_ -notmatch "-mgmt-" }
   | Where-Object { (Test-Path "$_/tsp-location.yaml") }
-  # TODO: Reenable swagger generation when tox generate supports arbitrary generator versions
+  # TODO: Reenable swagger generation when generate supports arbitrary generator versions
   # -or (Test-Path "$_/swagger/README.md")
 }
 

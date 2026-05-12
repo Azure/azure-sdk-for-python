@@ -23,5 +23,6 @@
         "typetest.model.enumdiscriminator.aio.EnumDiscriminatorClient.get_fixed_model_missing_discriminator": "Type.Model.Inheritance.EnumDiscriminator.getFixedModelMissingDiscriminator",
         "typetest.model.enumdiscriminator.EnumDiscriminatorClient.get_fixed_model_wrong_discriminator": "Type.Model.Inheritance.EnumDiscriminator.getFixedModelWrongDiscriminator",
         "typetest.model.enumdiscriminator.aio.EnumDiscriminatorClient.get_fixed_model_wrong_discriminator": "Type.Model.Inheritance.EnumDiscriminator.getFixedModelWrongDiscriminator"
-    }
+    },
+    "CrossLanguageVersion": "b54c968a2da8"
 }

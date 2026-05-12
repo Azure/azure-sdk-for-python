@@ -5,17 +5,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
 import inspect
 import os
+import unittest
 from io import BytesIO
 
 import pytest
-import unittest
+
 from azure.storage.blob._shared.avro.avro_io_async import AsyncDatumReader
 from azure.storage.blob._shared.avro.datafile_async import AsyncDataFileReader
-
 from .test_avro import SCHEMAS_TO_VALIDATE
+
 
 CODECS_TO_VALIDATE = ['null']
 
@@ -35,13 +35,18 @@ CHANGE_FEED_RECORD = {
         'storageDiagnostics': {'bid': 'd3053fa1-a006-0042-00dd-902bbb000000',
                                'seq': '(5908,134,4044,0)',
                                'sid': '5aaf98bf-f1d8-dd76-2dd2-9b60c689538d'},
-        'url': ''},
+        'url': ''
+    },
     'eventTime': '2019-11-01T17:53:07.5106080Z',
     'eventType': 'BlobCreated',
     'id': 'bb219c8e-401e-0028-1fdd-90f393069ae4',
     'schemaVersion': 3,
     'subject': '/blobServices/default/containers/test/blobs/sdf.txt',
-    'topic': '/subscriptions/ba45b233-e2ef-4169-8808-49eb0d8eba0d/resourceGroups/XClient/providers/Microsoft.Storage/storageAccounts/seanchangefeedstage'}
+    'topic': (
+        '/subscriptions/ba45b233-e2ef-4169-8808-49eb0d8eba0d/resourceGroups/'
+        'XClient/providers/Microsoft.Storage/storageAccounts/seanchangefeedstage'
+    )
+}
 
 
 class AsyncBufferedReaderWrapper:
@@ -68,9 +73,10 @@ class AvroReaderTestsAsync(unittest.TestCase):
     async def test_reader(self):
         correct = 0
         nitems = 10
-        for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
+        for iexample, (_, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
-                file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, 'test_' + codec + '_' + str(iexample) + '.avro')
+                file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root,
+                                         'test_' + codec + '_' + str(iexample) + '.avro')
                 with open(file_path, 'rb') as reader:
                     datum_reader = AsyncDatumReader()
                     async_reader = AsyncBufferedReaderWrapper(reader)
@@ -127,6 +133,7 @@ class AvroReaderTestsAsync(unittest.TestCase):
             records.append(record)
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
         self.assertIsNot(partial_data_stream.object_position, 0)
+
 
 class _HeaderStream(object):
     def __init__(self):

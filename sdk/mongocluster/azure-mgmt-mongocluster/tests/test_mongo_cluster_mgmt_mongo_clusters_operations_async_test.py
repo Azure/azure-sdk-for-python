@@ -26,4 +26,11 @@ class TestMongoClusterMgmtMongoClustersOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
-        assert result == []
+        assert len(result) == 0
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_mongo_clusters_list(self, resource_group):
+        response = self.client.mongo_clusters.list()
+        result = [r async for r in response]
+        assert len(result) == 0

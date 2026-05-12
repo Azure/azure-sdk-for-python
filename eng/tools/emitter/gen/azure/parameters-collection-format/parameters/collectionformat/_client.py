@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -18,6 +18,11 @@ from ._configuration import CollectionFormatClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .header.operations import HeaderOperations
 from .query.operations import QueryOperations
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class CollectionFormatClient:  # pylint: disable=client-accepts-api-version-keyword

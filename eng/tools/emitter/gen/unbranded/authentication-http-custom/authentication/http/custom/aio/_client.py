@@ -1,8 +1,8 @@
 # coding=utf-8
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from corehttp.credentials import ServiceKeyCredential
 from corehttp.rest import AsyncHttpResponse, HttpRequest
@@ -11,6 +11,11 @@ from corehttp.runtime import AsyncPipelineClient, policies
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import CustomClientConfiguration
 from ._operations import _CustomClientOperationsMixin
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class CustomClient(_CustomClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword

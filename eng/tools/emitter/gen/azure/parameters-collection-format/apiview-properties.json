@@ -11,5 +11,6 @@
         "parameters.collectionformat.aio.operations.QueryOperations.csv": "Parameters.CollectionFormat.Query.csv",
         "parameters.collectionformat.operations.HeaderOperations.csv": "Parameters.CollectionFormat.Header.csv",
         "parameters.collectionformat.aio.operations.HeaderOperations.csv": "Parameters.CollectionFormat.Header.csv"
-    }
+    },
+    "CrossLanguageVersion": "069d582db9dc"
 }

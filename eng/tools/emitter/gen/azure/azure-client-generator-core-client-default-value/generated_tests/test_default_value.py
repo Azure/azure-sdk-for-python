@@ -17,7 +17,7 @@ class TestDefaultValue(ClientDefaultValueClientTestBase):
     def test_put_model_property(self, defaultvalue_endpoint):
         client = self.create_client(endpoint=defaultvalue_endpoint)
         response = client.put_model_property(
-            body={"name": "str", "retry": bool, "tier": "str", "timeout": 0},
+            body={"name": "str", "retry": True, "tier": "standard", "timeout": 30},
         )
 
         # please add some check logic here by yourself

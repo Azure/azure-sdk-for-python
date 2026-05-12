@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable, protected-access
 
 """
 FILE: blob_samples_service.py
@@ -17,6 +16,7 @@ USAGE: python blob_samples_service.py
 import os
 import sys
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
+
 
 class BlobServiceSamples(object):
 
@@ -52,7 +52,8 @@ class BlobServiceSamples(object):
         from azure.storage.blob import BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
         # Create logging settings
-        logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = BlobAnalyticsLogging(
+            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
@@ -160,26 +161,6 @@ class BlobServiceSamples(object):
             # Delete the container
             blob_service_client.delete_container("containertest")
 
-    def get_blob_service_client_from_container_client(self):
-        if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_blob_service_client_from_container_client")
-            sys.exit(1)
-
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import ContainerClient
-        container_client1 = ContainerClient.from_connection_string(self.connection_string, "container")
-        container_client1.create_container()
-
-        # [START get_blob_service_client_from_container_client]
-        blob_service_client = container_client1._get_blob_service_client()
-        print(blob_service_client.get_service_properties())
-        container_client2 = blob_service_client.get_container_client("container")
-
-        print(container_client2.get_container_properties())
-        container_client2.delete_container()
-        # [END get_blob_service_client_from_container_client]
-
 
 if __name__ == '__main__':
     sample = BlobServiceSamples()
@@ -188,4 +169,3 @@ if __name__ == '__main__':
     sample.container_operations()
     sample.blob_service_properties()
     sample.blob_service_stats()
-    sample.get_blob_service_client_from_container_client()

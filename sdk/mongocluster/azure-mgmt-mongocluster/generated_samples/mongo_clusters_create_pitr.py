@@ -37,7 +37,7 @@ def main():
         resource={
             "location": "westus2",
             "properties": {
-                "administrator": {"password": "password", "userName": "mongoAdmin"},
+                "administrator": {"password": "********", "userName": "mongoAdmin"},
                 "createMode": "PointInTimeRestore",
                 "restoreParameters": {
                     "pointInTimeUTC": "2023-01-13T20:07:35Z",
@@ -49,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/MongoClusters_CreatePITR.json
+# x-ms-original-file: 2026-02-01-preview/MongoClusters_CreatePITR.json
 if __name__ == "__main__":
     main()

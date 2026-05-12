@@ -3,12 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-public-methods
 
-import requests
 from datetime import datetime, timedelta
 from time import sleep
 
 import pytest
+import requests
+
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.storage.blob import (
@@ -25,21 +31,18 @@ from azure.storage.blob import (
     PremiumPageBlobTier,
     PublicAccess,
     ResourceTypes,
-    StandardBlobTier
-    )
+    StandardBlobTier,
+)
 
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
-from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class TestStorageContainer(StorageRecordedTestCase):
 
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
     def _get_container_reference(self, prefix=TEST_CONTAINER_PREFIX):
         container_name = self.get_resource_name(prefix)
         return container_name
@@ -53,7 +56,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             pass
         return container
 
-    #--Test cases for containers -----------------------------------------
+    # --Test cases for containers -----------------------------------------
     @BlobPreparer()
     @recorded_by_proxy
     def test_create_container(self, **kwargs):
@@ -120,7 +123,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         created = container.create_container(public_access='blob')
 
         blob = container.get_blob_client("blob1")
-        blob.upload_blob(u'xyz')
+        blob.upload_blob('xyz')
 
         anonymous_service = BlobClient(
             self.account_url(storage_account_name, "blob"),
@@ -242,7 +245,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        container_name = u'啊齄丂狛狜'
+        container_name = '啊齄丂狛狜'
 
         container = bsc.get_container_client(container_name)
         # Act
@@ -317,12 +320,13 @@ class TestStorageContainer(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         metadata = {'hello': 'world', 'number': '42'}
-        resp = container.set_container_metadata(metadata)
+        container.set_container_metadata(metadata)
 
         # Act
         containers = list(bsc.list_containers(
             name_starts_with=container.container_name,
-            include_metadata=True))
+            include_metadata=True)
+        )
 
         # Assert
         assert containers is not None
@@ -347,7 +351,7 @@ class TestStorageContainer(StorageRecordedTestCase):
                                      expiry=expiry_time,
                                      start=start_time)
         signed_identifiers = {'testid': access_policy}
-        resp = container.set_container_access_policy(signed_identifiers, public_access=PublicAccess.Blob)
+        container.set_container_access_policy(signed_identifiers, public_access=PublicAccess.Blob)
 
         # Act
         containers = list(bsc.list_containers(name_starts_with=container.container_name))
@@ -695,7 +699,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        container.set_container_access_policy(signed_identifiers=dict(), public_access='container')
+        container.set_container_access_policy(signed_identifiers={}, public_access='container')
 
         # Assert
         acl = container.get_container_access_policy()
@@ -712,7 +716,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        container.set_container_access_policy(signed_identifiers=dict())
+        container.set_container_access_policy(signed_identifiers={})
 
         # Assert
         acl = container.get_container_access_policy()
@@ -816,7 +820,6 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         return variables
 
-
     @BlobPreparer()
     @recorded_by_proxy
     def test_set_container_acl_too_many_ids(self, **kwargs):
@@ -834,7 +837,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             container_name.set_container_access_policy(identifiers)
-        assert str(e.value.args[0]) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+        assert str(e.value.args[0]) == (
+            'Too many access policies provided. The server does not support '
+            'setting more than 5 access policies on a single resource.'
+        )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -860,7 +866,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
-        self.sleep(10)
+        if self.is_live:
+            self.sleep(10)
         lease_id_start = lease.id
 
         # Act
@@ -868,10 +875,12 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         # Assert
         assert lease.id == lease_id_start
-        self.sleep(5)
+        if self.is_live:
+            self.sleep(5)
         with pytest.raises(HttpResponseError):
             container.delete_container()
-        self.sleep(10)
+        if self.is_live:
+            self.sleep(10)
         container.delete_container()
 
     @BlobPreparer()
@@ -888,7 +897,8 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         # Assert
         lease.break_lease(lease_break_period=5)
-        self.sleep(8)
+        if self.is_live:
+            self.sleep(10)
         with pytest.raises(HttpResponseError):
             container.delete_container(lease=lease)
 
@@ -919,12 +929,13 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
 
         # Act
-        lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
+        container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
         # Assert
         with pytest.raises(HttpResponseError):
             container.acquire_lease()
-        self.sleep(17)
+        if self.is_live:
+            self.sleep(17)
         container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
     @BlobPreparer()
@@ -1007,15 +1018,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         container_name = self._get_container_reference()
         container = bsc.get_container_client(container_name)
 
-        # Act
-        with LogCaptured(self) as log_captured:
-            with pytest.raises(ResourceNotFoundError):
-                container.delete_container()
-
-            log_as_str = log_captured.getvalue()
-            #assert 'ERROR' in log_as_str
-
-        # Assert
+        with pytest.raises(ResourceNotFoundError):
+            container.delete_container()
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1090,7 +1094,6 @@ class TestStorageContainer(StorageRecordedTestCase):
         container_list = list(bsc.list_containers(include_deleted=True))
         assert len(container_list) >= 1
 
-        restored_version = 0
         for container in container_list:
             # find the deleted container and restore it
             if container.deleted and container.name == container_client.container_name:
@@ -1113,11 +1116,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob1').upload_blob(data)
         container.get_blob_client('blob2').upload_blob(data)
 
-
         # Act
         blobs = [b.name for b in container.list_blobs()]
 
-        assert blobs, ['blob1' == 'blob2']
+        assert blobs == ['blob1', 'blob2']
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
@@ -1255,7 +1257,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
         blob1.upload_blob(data)
-        lease = blob1.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        blob1.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         resp = list(container.list_blobs())
@@ -1306,7 +1308,6 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob_a3').upload_blob(data)
         container.get_blob_client('blob_b1').upload_blob(data)
 
-
         # Act
         blobs = list(next(container.list_blobs(results_per_page=2).by_page()))
 
@@ -1355,13 +1356,16 @@ class TestStorageContainer(StorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
         blob1 = container.get_blob_client('blob1')
-        blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        blob1.upload_blob(data, overwrite=True, content_settings=content_settings,
+                          metadata={'number': '1', 'name': 'bob'})
         blob1.create_snapshot()
 
-        container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        container.get_blob_client('blob2').upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'}
+        )
 
         # Act
-        blobs =list(container.list_blobs(include="metadata"))
+        blobs = list(container.list_blobs(include="metadata"))
 
         # Assert
         assert len(blobs) == 2
@@ -1380,25 +1384,31 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         content_settings = ContentSettings(
             content_language='spanish',
             content_disposition='inline')
         blob1 = container.get_blob_client('blob1')
-        resp = blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        resp = blob1.upload_blob(data, overwrite=True, content_settings=content_settings,
+                                 metadata={'number': '1', 'name': 'bob'})
         version_id_1 = resp['version_id']
         blob1.upload_blob(b"abc", overwrite=True)
         root_content = b"cde"
         root_version_id = blob1.upload_blob(root_content, overwrite=True)['version_id']
         blob1.delete_blob()
 
-        container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
-        container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        container.get_blob_client('blob2').upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'}
+        )
+        container.get_blob_client('blob3').upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'}
+        )
 
         # Act
-        blobs =list(container.list_blobs(include=["deletedwithversions"]))
+        blobs = list(container.list_blobs(include=["deletedwithversions"]))
         downloaded_root_content = blob1.download_blob(version_id=root_version_id).readall()
         downloaded_original_content = blob1.download_blob(version_id=version_id_1).readall()
 
@@ -1513,7 +1523,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         data = b'hello world'
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        other_tags = {'tag1' : 'other'}
+        other_tags = {'tag1': 'other'}
         filter_expression = "tag1='firsttag' and tag2='secondtag'"
 
         container.get_blob_client('blob1').upload_blob(data, tags=tags)
@@ -1591,13 +1601,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
         data = b'hello world'
 
-        try:
-            blob_client1 = container.get_blob_client('blob1')
-            blob_client1.upload_blob(data)
-            container.get_blob_client('blob2').upload_blob(data)
-            container.get_blob_client('blob3').upload_blob(data)
-        except:
-            pass
+        blob_client1 = container.get_blob_client('blob1')
+        blob_client1.upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
 
         # Act
         response = container.delete_blobs(
@@ -1617,7 +1624,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -1650,16 +1658,14 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
-        try:
-            blob = bsc.get_blob_client(container.container_name, 'blob1')
-            blob.upload_blob(data, length=len(data))
-            container.get_blob_client('blob2').upload_blob(data)
-        except:
-            pass
+        blob = bsc.get_blob_client(container.container_name, 'blob1')
+        blob.upload_blob(data, length=len(data), overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
 
         # Act
         blob = bsc.get_blob_client(container.container_name, 'blob1')
@@ -1692,7 +1698,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -1743,13 +1750,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = ContainerClient.from_container_url(container_client.url, credential=sas_token)
         data = b'hello world'
 
-        try:
-            blob_client1 = container.get_blob_client('blob1')
-            blob_client1.upload_blob(data)
-            container.get_blob_client('blob2').upload_blob(data)
-            container.get_blob_client('blob3').upload_blob(data)
-        except:
-            pass
+        blob_client1 = container.get_blob_client('blob1')
+        blob_client1.upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
 
         # Act
         response = container.delete_blobs(
@@ -1776,13 +1780,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         data = b'hello world'
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
 
-        try:
-            blob_client1 = container.get_blob_client('blob1')
-            blob_client1.upload_blob(data, overwrite=True, tags=tags)
-            container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
-            container.get_blob_client('blob3').upload_blob(data,  overwrite=True, tags=tags)
-        except:
-            pass
+        blob_client1 = container.get_blob_client('blob1')
+        blob_client1.upload_blob(data, tags=tags, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, tags=tags, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, tags=tags, overwrite=True)
 
         if self.is_live:
             sleep(10)
@@ -1874,12 +1875,9 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc)
         data = b'hello world'
 
-        try:
-            container.get_blob_client('blob1').upload_blob(data)
-            container.get_blob_client('blob2').upload_blob(data)
-            container.get_blob_client('blob3').upload_blob(data)
-        except:
-            pass
+        container.get_blob_client('blob1').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
 
         # Act
         response = container.delete_blobs(
@@ -1905,20 +1903,18 @@ class TestStorageContainer(StorageRecordedTestCase):
         container = self._create_container(bsc, prefix="test")
         data = b'hello world'
 
-        try:
-            blob1_client = container.get_blob_client('blob1')
-            blob1_client.upload_blob(data)
-            blob1_client.create_snapshot()
-            container.get_blob_client('blob2').upload_blob(data)
-            container.get_blob_client('blob3').upload_blob(data)
-        except:
-            pass
+        blob1_client = container.get_blob_client('blob1')
+        blob1_client.upload_blob(data, overwrite=True)
+        blob1_client.create_snapshot()
+        container.get_blob_client('blob2').upload_blob(data, overwrite=True)
+        container.get_blob_client('blob3').upload_blob(data, overwrite=True)
+
         blobs = list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
         try:
-            response = container.delete_blobs(
+            container.delete_blobs(
                 'blob1',
                 'blob2',
                 'blob3',
@@ -1946,7 +1942,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            response = container.delete_blobs(
+            container.delete_blobs(
                 'blob1',
                 'blob2',
                 'blob3',
@@ -1982,7 +1978,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             assert not blob_ref2.blob_tier_inferred
             assert blob_ref2.blob_tier_change_time is not None
 
-        response = container.delete_blobs(
+        container.delete_blobs(
             'blob1',
             'blob2',
             'blob3',
@@ -2004,7 +2000,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            response = container.delete_blobs(
+            container.delete_blobs(
                 'blob1',
                 'blob2',
                 'blob3',
@@ -2014,9 +2010,9 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob2 = container.get_blob_client('blob2')
             blob3 = container.get_blob_client('blob3')
             data = b'hello world'
-            resp1 = blob.upload_blob(data, overwrite=True)
+            blob.upload_blob(data, overwrite=True)
             resp2 = blob2.upload_blob(data, overwrite=True)
-            resp3 = blob3.upload_blob(data, overwrite=True)
+            blob3.upload_blob(data, overwrite=True)
             snapshot = blob3.create_snapshot()
 
             data2 = b'abc'
@@ -2046,7 +2042,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             assert not blob_ref2.blob_tier_inferred
             assert blob_ref2.blob_tier_change_time is not None
 
-        response = container.delete_blobs(
+        container.delete_blobs(
             'blob1',
             'blob2',
             'blob3',
@@ -2131,7 +2127,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            response = container.delete_blobs(
+            container.delete_blobs(
                 'blob1',
                 'blob2',
                 'blob3',
@@ -2165,7 +2161,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             assert not blob_ref2.blob_tier_inferred
             assert blob_ref2.blob_tier_change_time is not None
 
-        response = container.delete_blobs(
+        container.delete_blobs(
             'blob1',
             'blob2',
             'blob3',
@@ -2176,13 +2172,9 @@ class TestStorageContainer(StorageRecordedTestCase):
     # once we have premium tests, still we don't want to test Py 2.7
     # @pytest.mark.skipif(sys.version_info < (3, 0), reason="Batch not supported on Python 2.7")
     @BlobPreparer()
-    def test_premium_tier_set_tier_api_batch(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        url = self._get_premium_account_url()
-        credential = self._get_premium_shared_key_credential()
+    def test_premium_tier_set_tier_api_batch(self):
+        url = self._get_premium_account_url()  # pylint: disable=no-member
+        credential = self._get_premium_shared_key_credential()  # pylint: disable=no-member
         pbs = BlobServiceClient(url, credential=credential)
 
         try:
@@ -2219,7 +2211,6 @@ class TestStorageContainer(StorageRecordedTestCase):
             assert parts[1].status_code in [200, 202]
             assert parts[2].status_code in [200, 202]
 
-
             blob_ref2 = pblob.get_blob_properties()
             assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
             assert not blob_ref2.blob_tier_inferred
@@ -2243,6 +2234,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob4').upload_blob(data)
 
         blob_list = []
+
         def recursive_walk(prefix):
             for b in prefix:
                 if b.get('prefix'):
@@ -2255,7 +2247,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
         # Assert
         assert len(blob_list) == 4
-        assert blob_list, ['a/blob1', 'a/blob2', 'b/c/blob3' == 'blob4']
+        assert blob_list == ['a/blob1', 'a/blob2', 'b/c/blob3', 'blob4']
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2263,7 +2255,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -2344,7 +2337,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
-        blob_name  = 'blob1'
+        blob_name = 'blob1'
         data = b'hello world'
 
         blob = container.get_blob_client(blob_name)
@@ -2360,7 +2353,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        response = requests.get(blob.url)
+        response = requests.get(blob.url, timeout=15)
 
         # Assert
         assert response.ok
@@ -2477,7 +2470,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -2515,7 +2509,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client(blob_name).upload_blob(data, overwrite=True)
 
         # Act
-        downloader= container.download_blob(blob_name)
+        downloader = container.download_blob(blob_name)
         downloaded_data = b''
         chunk_size_list = []
         for chunk in downloader.chunks():
@@ -2534,7 +2528,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -2603,12 +2598,12 @@ class TestStorageContainer(StorageRecordedTestCase):
                                 max_chunk_get_size=666)
         container = self._create_container(bsc)
         data = b'hello world python storage test chunks' * 1024
-        blob_name =  self.get_resource_name("testiteratechunks")
+        blob_name = self.get_resource_name("testiteratechunks")
 
         container.get_blob_client(blob_name).upload_blob(data, overwrite=True)
 
         # Act
-        downloader= container.download_blob(blob_name)
+        downloader = container.download_blob(blob_name)
         downloaded_data = b''
         chunk_size_list = []
         for chunk in downloader.chunks():
@@ -2637,7 +2632,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client(blob_name).upload_blob(data, overwrite=True)
 
         # Act
-        downloader= container.download_blob(blob_name)
+        downloader = container.download_blob(blob_name)
         downloaded_data = b''
         chunk_size_list = []
         for chunk in downloader.chunks():
@@ -2795,6 +2790,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client('blob6').upload_blob(data)
 
         blobs = []
+
         def recursive_walk(prefix):
             for b in prefix:
                 if b.get('prefix'):
