@@ -36,33 +36,29 @@ Azure AI Hosted Agent containers can be killed at any time — OOM kills, node
 preemptions, rolling deployments, or unexpected crashes. Without durability,
 any in-flight work is lost and the agent starts from scratch.
 
-`@durable_task` makes your agent functions **crash-resilient**:
+`@durable_task` solves this. Decorate your async function, and the framework
+guarantees it runs to completion — even if the container restarts mid-execution.
+On recovery, your function is re-invoked with the same input and
+last-saved metadata, so it can pick up where it left off.
 
-1. **Before your function runs**, the framework persists the task's input and
-   metadata to a durable store and acquires a lease.
-2. **While your function runs**, the framework renews the lease in the background
-   and auto-flushes metadata changes so progress is never lost.
-3. **If the container dies**, the lease expires (or is immediately reclaimed on
-   restart via stable session identity). On the next container boot — before any
-   HTTP handlers go live — the framework detects the orphaned task and
-   **re-invokes your function** with `entry_mode="recovered"`, restoring the
-   original input and last-flushed metadata.
-4. **When your function completes or suspends**, the framework transitions the
-   task to terminal state in the store.
+**Your contract:**
 
-The net effect: you write a normal `async` function, and the framework guarantees
-it runs to completion even across container restarts.
+- Write a normal `async` function that takes a `TaskContext`
+- Use `ctx.metadata` to checkpoint progress you'd want after a crash
+- Check `ctx.entry_mode` if you need to distinguish fresh runs from recoveries
+- Return a result, or `await ctx.suspend()` for multi-turn patterns
 
-You do **not** need to think about:
+**What you get:**
 
-- Whether the task is starting fresh, resuming, or recovering from a crash
-- Task state persistence (status, input, metadata, output)
-- Lease management, stale detection, or concurrency conflicts
-- Retry scheduling and backoff computation
+- Automatic crash recovery — your function re-runs without any caller intervention
+- Input and metadata persistence across restarts
+- Retry with configurable backoff on failures
+- Cooperative cancellation and timeout
+- Streaming incremental output to observers
+- Suspend/resume for multi-turn conversational agents
 
-The framework manages all of this. Your function receives a `TaskContext` with the
-current `entry_mode` and input, does its work, and returns a result — or suspends
-to wait for more input.
+You do **not** need to manage task state, leases, concurrency, or retry
+scheduling. The framework handles all of that.
 
 **What the framework does NOT manage**: application-level persistence. If you need to
 store invocation results, conversation history, or any data your API serves to callers,
