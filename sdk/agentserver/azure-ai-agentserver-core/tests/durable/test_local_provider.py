@@ -29,7 +29,7 @@ def sample_create_request() -> TaskCreateRequest:
     """A minimal task creation request."""
     return TaskCreateRequest(
         agent_name="test-agent",
-        session_id="sess-001",
+        session_id="session-001",
         status="pending",
         payload={"input": {"data": "hello"}},
         lease_owner="owner-1",

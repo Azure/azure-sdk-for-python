@@ -196,7 +196,7 @@ async def process_order(ctx: TaskContext[dict]) -> dict:
 
     if ctx.entry_mode == "fresh":
         # First time — validate and begin processing
-        ctx.metadata.set("step", "validating")
+        ctx.metadata["step"] = "validating"
 
     elif ctx.entry_mode == "recovered":
         # Crashed mid-execution — check what was already done
@@ -210,7 +210,7 @@ async def process_order(ctx: TaskContext[dict]) -> dict:
         pass
 
     # ... do work ...
-    ctx.metadata.set("step", "charged")
+    ctx.metadata["step"] = "charged"
     return {"status": "completed", "order_id": order["id"]}
 ```
 
@@ -218,12 +218,24 @@ async def process_order(ctx: TaskContext[dict]) -> dict:
 progress so that recovered tasks can skip completed steps:
 
 ```python
-ctx.metadata.set("progress", 50)          # key-value set
-ctx.metadata.increment("items_processed") # atomic increment
-ctx.metadata.append("logs", "step 3 done") # append to list
-progress = ctx.metadata.get("progress")   # read value
-snapshot = ctx.metadata.to_dict()         # full snapshot
+# Dict-style access (recommended)
+ctx.metadata["progress"] = 50               # set a value
+ctx.metadata["phase"] = "summarizing"        # set another
+progress = ctx.metadata["progress"]          # read (raises KeyError if missing)
+if "phase" in ctx.metadata:                  # containment check
+    print(f"Phase: {ctx.metadata['phase']}")
+for key in ctx.metadata:                     # iterate keys
+    print(f"{key}: {ctx.metadata[key]}")
+
+# Convenience methods for special operations
+ctx.metadata.increment("items_processed")    # atomic increment
+ctx.metadata.append("logs", "step 3 done")  # append to list
+progress = ctx.metadata.get("progress")      # read with default (no KeyError)
+snapshot = ctx.metadata.to_dict()            # full snapshot copy
 ```
+
+All mutations (including `[]` assignment and `del`) are automatically tracked
+and flushed to the task store on a 5-second debounce interval.
 
 ---
 
@@ -278,7 +290,7 @@ async def chat_session(ctx: TaskContext[dict]) -> dict:
     # Track conversation history in metadata
     history.append({"role": "user", "content": message})
     history.append({"role": "assistant", "content": reply})
-    ctx.metadata.set("history", history)
+    ctx.metadata["history"] = history
 
     # Suspend — waiting for the next user message
     return await ctx.suspend(output={"reply": reply})

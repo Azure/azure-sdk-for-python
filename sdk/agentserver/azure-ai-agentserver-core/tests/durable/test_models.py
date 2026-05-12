@@ -35,7 +35,7 @@ class TestTaskCreateRequest:
         """Minimal request has required fields."""
         req = TaskCreateRequest(
             agent_name="agent",
-            session_id="sess",
+            session_id="test-session",
             status="pending",
             payload={},
         )
@@ -46,7 +46,7 @@ class TestTaskCreateRequest:
         """Default status is 'pending'."""
         req = TaskCreateRequest(
             agent_name="agent",
-            session_id="sess",
+            session_id="test-session",
         )
         assert req.status == "pending"
 
@@ -54,7 +54,7 @@ class TestTaskCreateRequest:
         """Optional fields default to None."""
         req = TaskCreateRequest(
             agent_name="agent",
-            session_id="sess",
+            session_id="test-session",
         )
         assert req.lease_owner is None
         assert req.lease_instance_id is None

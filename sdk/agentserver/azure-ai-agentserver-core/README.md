@@ -113,6 +113,54 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
+### Durable long-running agents
+
+The `@durable_task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
+
+```python
+from datetime import timedelta
+from azure.ai.agentserver.core.durable import durable_task, TaskContext, RetryPolicy
+
+@durable_task(
+    timeout=timedelta(minutes=30),
+    retry=RetryPolicy.exponential_backoff(max_attempts=3),
+    tags={"priority": "high"},
+)
+async def process_document(ctx: TaskContext[dict]) -> dict:
+    ctx.metadata["phase"] = "processing"
+    result = await analyze(ctx.input["document_url"])
+    ctx.metadata["phase"] = "complete"
+    return {"summary": result}
+```
+
+**Start and await a task:**
+
+```python
+result = await process_document.run(task_id="doc-42", input={"document_url": "..."})
+print(result.output)  # {"summary": "..."}
+```
+
+**Multi-turn suspend/resume (e.g., conversational agents):**
+
+```python
+@durable_task()
+async def chat_session(ctx: TaskContext[dict]) -> dict:
+    message = ctx.input["message"]
+    history = ctx.metadata.get("history", [])
+    reply = await generate_reply(message, history)
+    history.append({"role": "user", "content": message})
+    history.append({"role": "assistant", "content": reply})
+    ctx.metadata["history"] = history
+    return await ctx.suspend(output={"reply": reply})
+
+# Each call resumes the same session:
+result = await chat_session.run(task_id="session-1", input={"message": "Hello"})
+print(result.output)          # {"reply": "Hi! How can I help?"}
+print(result.is_suspended)    # True
+```
+
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-developer-guide.md) for the full API reference.
+
 ## Troubleshooting
 
 ### Logging
@@ -130,6 +178,7 @@ To report an issue with the client library, or request additional features, plea
 ## Next steps
 
 - Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
+- Read the [Durable Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-developer-guide.md) for crash-resilient long-running agents.
 - See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing

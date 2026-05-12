@@ -61,3 +61,52 @@ Tracked items from container spec (`durable-task-convenience-api.md`) gap analys
 - **Signature convention**: `(input: Input, task_id: str) -> T` — same as existing title callable
 - **Type safety requirement**: The callable signature must carry the `Input` generic so developers get type-checked parameters. The decorator already knows `Input` from `TaskContext[Input]` — thread it through to the callable type so IDE autocomplete and mypy validate the input parameter.
 
+---
+
+### Container Lifecycle
+
+#### 10. ~~`ctx.shutdown` event (container spec §9.2)~~ ✅ Already implemented
+- Already on `TaskContext` as `shutdown: asyncio.Event`
+
+#### 11. ~~`ctx.agent_name` (container spec §5)~~ ✅ Already implemented
+- Already on `TaskContext` as `agent_name: str`
+
+---
+
+### Observable Progress
+
+#### 12. ~~`TaskMetadata` rich mutation API (container spec §5, §6.2)~~ ✅ Already implemented
+- `ctx.metadata.set(key, value)`, `.increment(key, delta)`, `.append(key, value)` all exist in `_metadata.py`
+- Debounced auto-flush to task store (5s interval) with explicit `.flush()`
+
+#### ~~13. `handle.metadata` snapshot read (container spec §4.1, §6.2)~~ ✅ Already implemented
+- `TaskRun.metadata` property returns live `TaskMetadata` reference
+- `TaskRun.refresh()` pulls latest snapshot from task store
+- No live subscription — callers poll via `refresh()` if needed
+
+---
+
+### Task Cleanup
+
+#### ~~14. `handle.delete()` (container spec §4.1)~~ ✅ Already implemented
+- `TaskRun.delete()` calls `_provider.delete(task_id, force=True)`
+- Raises `TaskNotFound` if record does not exist
+
+---
+
+### Naming Conventions
+
+#### ~~15. Switch `name` default from `fn.__name__` to `fn.__qualname__` (container spec §2.1)~~ ✅ Already implemented
+- `_decorator.py:675` already uses `func.__qualname__`
+- Aligns with Celery/Dramatiq convention
+
+---
+
+### API Ergonomics
+
+#### ~~16. Make `TaskMetadata` dict-like (container spec §6.2)~~ ✅ Done (spec 007)
+- Added `__setitem__`, `__getitem__`, `__delitem__`, `__iter__`, `__len__`, `__contains__`
+- Added `keys()`, `values()`, `items()` delegating to internal `_data`
+- Registered as `collections.abc.MutableMapping` virtual subclass
+- Mutating operations call `_mark_dirty()` for auto-flush
+- Existing `.set()`, `.get()`, `.increment()`, `.append()` unchanged

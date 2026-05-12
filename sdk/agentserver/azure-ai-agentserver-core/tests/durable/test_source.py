@@ -85,7 +85,7 @@ class TestSourceLocalProvider:
         src = {"type": "test", "run_id": "abc123"}
         req = TaskCreateRequest(
             agent_name="agent",
-            session_id="sess",
+            session_id="test-session",
             source=src,
         )
         created = await provider.create(req)
@@ -103,7 +103,7 @@ class TestSourceLocalProvider:
         )
 
         provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
-        req = TaskCreateRequest(agent_name="agent", session_id="sess")
+        req = TaskCreateRequest(agent_name="agent", session_id="test-session")
         created = await provider.create(req)
         assert created.source is None
 
@@ -122,7 +122,7 @@ class TestSourceLocalProvider:
         provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
         req = TaskCreateRequest(
             agent_name="agent",
-            session_id="sess",
+            session_id="test-session",
             source={"type": "original"},
         )
         created = await provider.create(req)

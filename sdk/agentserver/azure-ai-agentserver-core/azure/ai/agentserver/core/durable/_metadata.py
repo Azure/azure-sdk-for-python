@@ -10,7 +10,9 @@ debounced persistence to the task storage backend.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import collections.abc
 import logging
+from collections.abc import Iterator
 from typing import Any
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
@@ -118,6 +120,51 @@ class TaskMetadata:
         """
         return dict(self._data)
 
+    # -- Dict protocol (MutableMapping) ------------------------------------
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        if not isinstance(key, str):
+            raise TypeError(f"Metadata key must be a string, got {type(key).__name__}")
+        self._data[key] = value
+        self._mark_dirty()
+
+    def __getitem__(self, key: str) -> Any:
+        return self._data[key]
+
+    def __delitem__(self, key: str) -> None:
+        del self._data[key]
+        self._mark_dirty()
+
+    def __contains__(self, key: object) -> bool:
+        return key in self._data
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._data)
+
+    def __len__(self) -> int:
+        return len(self._data)
+
+    def keys(self) -> collections.abc.KeysView[str]:
+        """Return a view of metadata keys.
+
+        :rtype: ~collections.abc.KeysView[str]
+        """
+        return self._data.keys()
+
+    def values(self) -> collections.abc.ValuesView[Any]:
+        """Return a view of metadata values.
+
+        :rtype: ~collections.abc.ValuesView[Any]
+        """
+        return self._data.values()
+
+    def items(self) -> collections.abc.ItemsView[str, Any]:
+        """Return a view of metadata key-value pairs.
+
+        :rtype: ~collections.abc.ItemsView[str, Any]
+        """
+        return self._data.items()
+
     async def flush(self) -> None:
         """Force-flush pending metadata changes to the store.
 
@@ -166,3 +213,8 @@ class TaskMetadata:
             await asyncio.sleep(self._flush_interval)
             async with self._lock:
                 await self._do_flush()
+
+
+# Register as a virtual subclass so isinstance checks work
+# without inheriting (preserves custom increment/append/flush).
+collections.abc.MutableMapping.register(TaskMetadata)

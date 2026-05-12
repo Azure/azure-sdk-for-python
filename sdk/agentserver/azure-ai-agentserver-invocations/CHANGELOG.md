@@ -4,11 +4,15 @@
 
 ### Features Added
 
+- **Durable invocation samples** — Added `durable_langgraph` and `durable_multiturn` sample applications demonstrating crash-resilient long-running agents using `@durable_task` with the invocations protocol.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b4`.
 
 ## 1.0.0b3 (2026-04-22)
 

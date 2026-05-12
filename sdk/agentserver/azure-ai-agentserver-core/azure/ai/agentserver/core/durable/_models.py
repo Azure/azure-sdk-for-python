@@ -18,7 +18,7 @@ TaskStatus = Literal["pending", "in_progress", "suspended", "completed"]
 class LeaseInfo:
     """Lease details on a task record.
 
-    :param owner: Stable lease owner (e.g. ``"session:sess_abc"``).
+    :param owner: Stable lease owner (e.g. ``"session:session_abc"``).
     :type owner: str
     :param instance_id: Ephemeral per-process instance identifier.
     :type instance_id: str

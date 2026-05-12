@@ -139,3 +139,109 @@ class TestTaskMetadataFlush:
 
         assert len(captured) == 1
         assert captured[0]["key"] == "value"
+
+
+class TestTaskMetadataDictProtocol:
+    """Tests for dict-like access (MutableMapping protocol)."""
+
+    def test_setitem_getitem(self) -> None:
+        """[] assignment and retrieval works."""
+        meta = TaskMetadata()
+        meta["key"] = "value"
+        assert meta["key"] == "value"
+
+    def test_getitem_missing_raises_keyerror(self) -> None:
+        """[] on missing key raises KeyError."""
+        meta = TaskMetadata()
+        with pytest.raises(KeyError):
+            _ = meta["missing"]
+
+    def test_setitem_marks_dirty(self) -> None:
+        """[] assignment marks metadata as dirty."""
+        meta = TaskMetadata()
+        assert not meta._dirty
+        meta["key"] = "value"
+        assert meta._dirty
+
+    def test_setitem_non_string_key_raises(self) -> None:
+        """[] with non-string key raises TypeError."""
+        meta = TaskMetadata()
+        with pytest.raises(TypeError):
+            meta[42] = "value"  # type: ignore[index]
+
+    def test_delitem(self) -> None:
+        """del removes a key and marks dirty."""
+        meta = TaskMetadata()
+        meta["key"] = "value"
+        meta._dirty = False
+        del meta["key"]
+        assert "key" not in meta
+        assert meta._dirty
+
+    def test_delitem_missing_raises_keyerror(self) -> None:
+        """del on missing key raises KeyError."""
+        meta = TaskMetadata()
+        with pytest.raises(KeyError):
+            del meta["missing"]
+
+    def test_contains(self) -> None:
+        """'in' operator works."""
+        meta = TaskMetadata()
+        meta["key"] = "value"
+        assert "key" in meta
+        assert "missing" not in meta
+
+    def test_len(self) -> None:
+        """len() returns number of keys."""
+        meta = TaskMetadata()
+        assert len(meta) == 0
+        meta["a"] = 1
+        meta["b"] = 2
+        assert len(meta) == 2
+
+    def test_iter(self) -> None:
+        """Iteration yields keys."""
+        meta = TaskMetadata()
+        meta["a"] = 1
+        meta["b"] = 2
+        assert sorted(meta) == ["a", "b"]
+
+    def test_keys_values_items(self) -> None:
+        """keys(), values(), items() delegate to internal dict."""
+        meta = TaskMetadata()
+        meta["x"] = 10
+        meta["y"] = 20
+        assert set(meta.keys()) == {"x", "y"}
+        assert set(meta.values()) == {10, 20}
+        assert set(meta.items()) == {("x", 10), ("y", 20)}
+
+    def test_isinstance_mutable_mapping(self) -> None:
+        """TaskMetadata is registered as MutableMapping."""
+        import collections.abc
+
+        meta = TaskMetadata()
+        assert isinstance(meta, collections.abc.MutableMapping)
+
+    def test_existing_methods_still_work(self) -> None:
+        """Existing .set(), .get(), .increment(), .append() are unchanged."""
+        meta = TaskMetadata()
+        meta.set("counter", 0)
+        meta.increment("counter", 5)
+        assert meta.get("counter") == 5
+        meta.append("log", "entry")
+        assert meta.get("log") == ["entry"]
+        assert meta.to_dict() == {"counter": 5, "log": ["entry"]}
+
+    @pytest.mark.asyncio
+    async def test_setitem_triggers_auto_flush(self) -> None:
+        """[] assignment triggers flush via dirty-tracking."""
+        captured: list[dict[str, Any]] = []
+
+        async def callback(data: dict[str, Any]) -> None:
+            captured.append(data)
+
+        meta = TaskMetadata(flush_callback=callback)
+        meta["key"] = "value"
+        await meta.flush()
+        assert len(captured) == 1
+        assert captured[0]["key"] == "value"
