@@ -1,6 +1,9 @@
 # Azure AI Agent Server Invocations client library for Python
 
-The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
+The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and supports two transports on the same host:
+
+- **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`.
+- **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
 
 ## Getting started
 
@@ -25,6 +28,7 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 - `@app.invoke_handler` — **Required.** Handles `POST /invocations`.
 - `@app.get_invocation_handler` — Optional. Handles `GET /invocations/{id}`.
 - `@app.cancel_invocation_handler` — Optional. Handles `POST /invocations/{id}/cancel`.
+- `@app.ws_handler` — Optional. Handles WebSocket connections at `/invocations_ws`.
 
 ### Protocol endpoints
 
@@ -34,6 +38,7 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 | `GET` | `/invocations/{invocation_id}` | No | Retrieve invocation status or result |
 | `POST` | `/invocations/{invocation_id}/cancel` | No | Cancel a running invocation |
 | `GET` | `/invocations/docs/openapi.json` | No | Serve the agent's OpenAPI 3.x spec |
+| `WS`   | `/invocations_ws` | No | Full-duplex WebSocket transport (`invocations_ws` protocol) |
 
 ### Request and response headers
 
@@ -182,6 +187,57 @@ app = InvocationAgentServerHost(openapi_spec={
 })
 ```
 
+## WebSocket protocol (`invocations_ws`)
+
+The same `InvocationAgentServerHost` object also exposes a WebSocket transport at `/invocations_ws`. Container authors do not install or import a second package — registering an `@app.ws_handler` is the only step. A multi-protocol agent shares one host, one session, and one process.
+
+### Quick start
+
+```python
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+from starlette.websockets import WebSocket
+
+app = InvocationAgentServerHost()
+
+
+@app.invoke_handler                 # POST /invocations (HTTP)
+async def invoke(request: Request) -> Response:
+    payload = await request.json()
+    return JSONResponse({"echo": payload})
+
+
+@app.ws_handler                     # /invocations_ws (WebSocket)
+async def ws(websocket: WebSocket) -> None:
+    async for message in websocket.iter_text():
+        await websocket.send_text(message)
+
+
+app.run()
+```
+
+### What the SDK does for `@app.ws_handler`
+
+- Registers `/invocations_ws` on the same Starlette host as `/invocations` and `/readiness`.
+- Calls `await websocket.accept()` before invoking your handler.
+- Runs WebSocket Ping/Pong keep-alive in the background — default 30 s, configurable via `InvocationAgentServerHost(ws_ping_interval=...)`. Set `ws_ping_interval=0` to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across Azure APIM and Azure Load Balancer's ~4 minute idle timeout without any extra application traffic.
+- Closes the connection cleanly on handler return (close code `1000`) or maps an uncaught handler exception to close code `1011`.
+- Emits a structured close-event log line carrying `ws.session_id`, `ws.close_code`, and `ws.duration_ms`. The same fields are recorded as OpenTelemetry span attributes so the connection lifetime is visible end-to-end.
+- Inherits `/readiness`, OpenTelemetry export, graceful shutdown, and the `x-platform-server` identity header from `azure-ai-agentserver-core`.
+
+### Handler signature
+
+The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`. The full WebSocket API — `iter_text`, `iter_bytes`, `iter_json`, `send_text`, `send_bytes`, `send_json`, `close`, `headers`, `query_params`, `client`, `state` — is available, so application protocols on top of `invocations_ws` are entirely under your control.
+
+[starlette-ws]: https://www.starlette.io/websockets/
+
+### Reference: configuration
+
+| Constructor argument | Default | Description |
+|---|---|---|
+| `ws_ping_interval` | `30.0` (seconds) | WebSocket protocol Ping interval. `0` disables keep-alive. Negative or non-finite values are rejected. |
+
 ## Troubleshooting
 
 ### Reporting issues
@@ -196,6 +252,8 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 |---|---|
 | [simple_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent/) | Minimal synchronous request-response |
 | [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
+| [ws_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent/) | Combined `POST /invocations` (HTTP) and `/invocations_ws` (WebSocket) host |
+| [ws_bidirectional_streaming_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent/) | Full-duplex `/invocations_ws` agent: server-pushed heartbeats + concurrent token streams + mid-flight cancel |
 
 ## Contributing
 
