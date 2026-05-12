@@ -159,7 +159,7 @@
           "TestMarkArgument": "cosmosAADQuery",
           "COSMOS_TEST_DATA_AUTH_MODE": "aad"
         },
-        "Ubuntu2404_313_aad_ppaf": {
+        "Ubuntu2404_313_aad_per_partition_automatic_failover": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.13",

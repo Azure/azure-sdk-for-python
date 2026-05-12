@@ -41,7 +41,6 @@ class TestSemanticReranker(unittest.TestCase):
     def tearDownClass(cls):
         try:
             cls.key_db.delete_container(cls.TEST_CONTAINER_ID)
-            cls.key_client.delete_database(cls.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError:
             pass
 
@@ -120,4 +119,3 @@ class TestSemanticReranker(unittest.TestCase):
             ]
         else:
             raise ValueError("Unsupported document type")
-

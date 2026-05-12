@@ -83,7 +83,6 @@ async def assert_change_feed(expected, actual):
                 assert expected_data[key] == actual_data[key]
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestAllVersionsChangeFeedAsync:
@@ -244,4 +243,3 @@ class TestAllVersionsChangeFeedAsync:
 
 if __name__ == '__main__':
     unittest.main()
-

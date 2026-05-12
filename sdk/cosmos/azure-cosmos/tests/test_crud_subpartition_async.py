@@ -84,8 +84,29 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID))
         await self.key_client.__aenter__()
         await self.client.__aenter__()
+        self._tracked_container_ids = []
+        self._original_create_container = self.key_database.create_container
+        self._original_execute_function_async = _retry_utility_async.ExecuteFunctionAsync
+
+        async def _tracked_create_container(*args, **kwargs):
+            container = await self._original_create_container(*args, **kwargs)
+            self._tracked_container_ids.append(container.id)
+            return container
+
+        self.key_database.create_container = _tracked_create_container
 
     async def asyncTearDown(self):
+        _retry_utility_async.ExecuteFunctionAsync = self._original_execute_function_async
+        self.key_database.create_container = self._original_create_container
+
+        for container_id in reversed(self._tracked_container_ids):
+            try:
+                await self.key_database.delete_container(container_id)
+            except exceptions.CosmosHttpResponseError as exc:
+                if exc.status_code != StatusCodes.NOT_FOUND:
+                    raise
+
+        self.last_headers.clear()
         await self.client.close()
         await self.key_client.close()
 
@@ -744,4 +765,3 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

@@ -110,6 +110,16 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         await self.key_client.__aenter__()
         self.key_database_for_test = self.key_client.get_database_client(
             self.configs.TEST_DATABASE_ID)
+        self._tracked_container_ids = []
+        self._original_create_container = self.key_database_for_test.create_container
+        self._original_execute_function_async = _retry_utility_async.ExecuteFunctionAsync
+
+        async def _tracked_create_container(*args, **kwargs):
+            container = await self._original_create_container(*args, **kwargs)
+            self._tracked_container_ids.append(container.id)
+            return container
+
+        self.key_database_for_test.create_container = _tracked_create_container
         # Data-plane client honoring COSMOS_TEST_DATA_AUTH_MODE (AAD when set).
         self.client = test_config.TestConfig.create_data_client_async(no_response_on_write=True)
         await self.client.__aenter__()
@@ -118,6 +128,17 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         self.logger.setLevel(logging.DEBUG)
 
     async def asyncTearDown(self):
+        _retry_utility_async.ExecuteFunctionAsync = self._original_execute_function_async
+        self.key_database_for_test.create_container = self._original_create_container
+
+        for container_id in reversed(self._tracked_container_ids):
+            try:
+                await self.key_database_for_test.delete_container(container_id)
+            except exceptions.CosmosHttpResponseError as exc:
+                if exc.status_code != StatusCodes.NOT_FOUND:
+                    raise
+
+        self.last_headers.clear()
         await self.client.close()
         await self.key_client.close()
 
@@ -2593,4 +2614,3 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
 if __name__ == '__main__':
     unittest.main()
-

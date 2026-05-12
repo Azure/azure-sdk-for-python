@@ -11,7 +11,6 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     host = configs.host
@@ -194,4 +193,3 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
         changes = [doc async for doc in pager]
         assert len(changes) >= 1
-

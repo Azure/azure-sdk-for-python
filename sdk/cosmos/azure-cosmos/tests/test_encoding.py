@@ -13,7 +13,6 @@ from azure.cosmos import DatabaseProxy, ContainerProxy
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
 class TestEncoding(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
@@ -81,4 +80,3 @@ class TestEncoding(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

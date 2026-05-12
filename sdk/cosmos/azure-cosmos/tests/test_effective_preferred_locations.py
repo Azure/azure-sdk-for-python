@@ -71,7 +71,6 @@ def error():
     return errors
 
 @pytest.mark.unittest
-@pytest.mark.cosmosAADMultiRegion
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocations:
     host = test_config.TestConfig.host
@@ -145,6 +144,7 @@ class TestPreferredLocations:
         assert read_endpoints == expected_endpoints
 
     @pytest.mark.cosmosMultiRegion
+    @pytest.mark.cosmosAADMultiRegion
     @pytest.mark.parametrize("error", error())
     def test_read_no_preferred_locations_with_errors(self, setup, error):
         container = setup[COLLECTION]
@@ -176,6 +176,7 @@ class TestPreferredLocations:
             fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key], excluded_locations=[REGION_2])
 
     @pytest.mark.cosmosMultiRegion
+    @pytest.mark.cosmosAADMultiRegion
     def test_write_no_preferred_locations_with_errors(self, setup):
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransport()
@@ -227,4 +228,3 @@ class TestPreferredLocations:
             db_acc._EnableMultipleWritableLocations = multi_write
             db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
             return db_acc
-

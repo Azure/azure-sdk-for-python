@@ -8,7 +8,6 @@ import pytest
 import test_config
 
 
-@pytest.mark.cosmosAADLong
 @pytest.mark.cosmosEmulator
 class TestRegionalRoutingContext(unittest.TestCase):
     host = test_config.TestConfig.host
@@ -42,4 +41,3 @@ class TestRegionalRoutingContext(unittest.TestCase):
         self.assertEqual(original_read_endpoint,
                          self.client.client_connection._global_endpoint_manager
                          .location_cache.get_write_regional_routing_context())
-

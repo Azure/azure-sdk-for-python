@@ -41,7 +41,6 @@ def partition_merge_support_response_hook(raw_response):
            http_constants.SDKSupportedCapabilities.PARTITION_MERGE
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
 class TestHeaders(unittest.TestCase):
     database: DatabaseProxy = None
     key_client: cosmos_client.CosmosClient = None
@@ -336,4 +335,3 @@ class TestHeaders(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

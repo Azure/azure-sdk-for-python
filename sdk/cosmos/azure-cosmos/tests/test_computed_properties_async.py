@@ -43,6 +43,15 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
             test_config.TestConfig.create_test_clients_async(self.TEST_DATABASE_ID))
         await self.key_client.__aenter__()
         await self.client.__aenter__()
+        self._tracked_container_ids = []
+        self._original_create_container = self.key_db.create_container
+
+        async def _tracked_create_container(*args, **kwargs):
+            container = await self._original_create_container(*args, **kwargs)
+            self._tracked_container_ids.append(container.id)
+            return container
+
+        self.key_db.create_container = _tracked_create_container
         self.items = [
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5, 'stringProperty': 'prefixOne', 'db_group': 'GroUp1'},
             {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5, 'stringProperty': 'prefixTwo', 'db_group': 'GrOUp1'},
@@ -60,6 +69,13 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
                                    {'name': "cp_str_len", 'query': "SELECT VALUE LENGTH(c.stringProperty) FROM c"}]
 
     async def asyncTearDown(self):
+        self.key_db.create_container = self._original_create_container
+        for container_id in reversed(self._tracked_container_ids):
+            try:
+                await self.key_db.delete_container(container_id)
+            except exceptions.CosmosHttpResponseError as exc:
+                if exc.status_code != 404:
+                    raise
         await self.client.close()
         await self.key_client.close()
 
@@ -330,4 +346,3 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

@@ -125,6 +125,31 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         cls.logger = logging.getLogger("DisableResponseOnWriteTestLogger")
         cls.logger.setLevel(logging.DEBUG)
 
+    def setUp(self):
+        self._tracked_container_ids = []
+        self._original_create_container = self.key_databaseForTest.create_container
+        self._original_execute_function = _retry_utility.ExecuteFunction
+
+        def _tracked_create_container(*args, **kwargs):
+            container = self._original_create_container(*args, **kwargs)
+            self._tracked_container_ids.append(container.id)
+            return container
+
+        self.key_databaseForTest.create_container = _tracked_create_container
+
+    def tearDown(self):
+        _retry_utility.ExecuteFunction = self._original_execute_function
+        self.key_databaseForTest.create_container = self._original_create_container
+
+        for container_id in reversed(self._tracked_container_ids):
+            try:
+                self.key_databaseForTest.delete_container(container_id)
+            except exceptions.CosmosHttpResponseError as exc:
+                if exc.status_code != StatusCodes.NOT_FOUND:
+                    raise
+
+        self.last_headers.clear()
+
     def test_database_crud(self):
         database_id = str(uuid.uuid4())
         created_db = self.key_client.create_database(database_id)
@@ -2899,4 +2924,3 @@ if __name__ == '__main__':
     except SystemExit as inst:
         if inst.args[0] is True:  # raised by sys.exit(True) when tests failed
             raise
-

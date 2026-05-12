@@ -56,6 +56,26 @@ class TestComputedPropertiesQuery(unittest.TestCase):
                                    {'name': "cp_power", 'query': "SELECT VALUE POWER(c.val, 2) FROM c"},
                                    {'name': "cp_str_len", 'query': "SELECT VALUE LENGTH(c.stringProperty) FROM c"}]
 
+    def setUp(self):
+        self._tracked_container_ids = []
+        self._original_create_container = self.key_db.create_container
+
+        def _tracked_create_container(*args, **kwargs):
+            container = self._original_create_container(*args, **kwargs)
+            self._tracked_container_ids.append(container.id)
+            return container
+
+        self.key_db.create_container = _tracked_create_container
+
+    def tearDown(self):
+        self.key_db.create_container = self._original_create_container
+        for container_id in reversed(self._tracked_container_ids):
+            try:
+                self.key_db.delete_container(container_id)
+            except exceptions.CosmosHttpResponseError as exc:
+                if exc.status_code != 404:
+                    raise
+
     def computedPropertiesTestCases(self, created_collection):
         # Check that computed properties were properly sent
         self.assertListEqual(self.computed_properties, created_collection.read()["computedProperties"])
@@ -279,4 +299,3 @@ class TestComputedPropertiesQuery(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

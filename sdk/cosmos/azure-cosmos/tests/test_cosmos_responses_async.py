@@ -16,7 +16,6 @@ from azure.cosmos.http_constants import HttpHeaders
 # TODO: add query tests once those changes are available
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
 class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
     """Python Cosmos Responses Tests.
     """
@@ -162,4 +161,3 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

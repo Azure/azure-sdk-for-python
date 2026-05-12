@@ -46,7 +46,6 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
         """Async teardown for each test."""
         try:
             await self.key_db.delete_container(self.TEST_CONTAINER_ID)
-            await self.key_client.delete_database(self.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError:
             pass
         finally:
@@ -128,4 +127,3 @@ class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
             ]
         else:
             raise ValueError("Unsupported document type")
-

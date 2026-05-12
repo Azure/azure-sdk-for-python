@@ -11,7 +11,6 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
 class TestNoneOptions(unittest.TestCase):
     configs = test_config.TestConfig
     host = configs.host
@@ -184,4 +183,3 @@ class TestNoneOptions(unittest.TestCase):
                                                        priority=None, mode=None, response_hook=None)
         changes = list(pager)
         assert len(changes) >= 1
-

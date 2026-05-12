@@ -13,7 +13,6 @@ from azure.cosmos.aio import CosmosClient, DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
 class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
@@ -155,4 +154,3 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

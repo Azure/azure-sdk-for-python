@@ -14,7 +14,6 @@ from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADQuery
 @pytest.mark.cosmosQuery
 class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
     """Tests for async query response headers functionality."""
@@ -465,4 +464,3 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

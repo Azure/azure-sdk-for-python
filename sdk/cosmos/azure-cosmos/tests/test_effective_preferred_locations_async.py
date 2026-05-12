@@ -53,7 +53,6 @@ def preferred_locations():
     ]
 
 @pytest.mark.asyncio
-@pytest.mark.cosmosAADMultiRegion
 @pytest.mark.usefixtures("setup")
 class TestPreferredLocationsAsync:
     host = test_config.TestConfig.host
@@ -219,4 +218,3 @@ class TestPreferredLocationsAsync:
             db_acc._EnableMultipleWritableLocations = multi_write
             db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
             return db_acc
-
