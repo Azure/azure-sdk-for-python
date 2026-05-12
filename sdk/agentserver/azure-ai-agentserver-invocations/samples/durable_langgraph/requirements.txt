@@ -1,0 +1,4 @@
+azure-ai-agentserver-invocations
+langgraph>=0.2
+langgraph-checkpoint-sqlite>=2.0
+langchain-core>=0.3

@@ -175,6 +175,19 @@ class AgentServerHost(Starlette):
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
 
+        # Durable task manager (optional — enabled by default) ----
+        self._durable_task_manager: Optional[Any] = None
+        try:
+            from .durable._manager import (  # pylint: disable=import-outside-toplevel
+                DurableTaskManager,
+            )
+
+            self._durable_task_manager = DurableTaskManager(
+                _config.AgentConfig.from_env()
+            )
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass  # durable tasks not available — continue without
+
         # Server version segments for the x-platform-server header.
         # Protocol packages call register_server_version() to add their
         # own portion; the middleware joins them at response time.
@@ -240,6 +253,15 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
+            # --- Durable task manager startup ---
+            if self._durable_task_manager is not None:
+                from .durable._manager import (  # pylint: disable=import-outside-toplevel
+                    set_task_manager,
+                )
+
+                set_task_manager(self._durable_task_manager)
+                await self._durable_task_manager.startup()
+
             yield
 
             # --- SHUTDOWN: runs once when the server is stopping ---
@@ -247,6 +269,14 @@ class AgentServerHost(Starlette):
                 "AgentServerHost shutting down (graceful timeout=%ss)",
                 self._graceful_shutdown_timeout,
             )
+
+            # Durable task manager shutdown
+            if self._durable_task_manager is not None:
+                try:
+                    await self._durable_task_manager.shutdown()
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Error shutting down durable task manager", exc_info=True)
+
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")
             else:
@@ -263,11 +293,17 @@ class AgentServerHost(Starlette):
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error in on_shutdown", exc_info=True)
 
-        # Merge routes: subclass routes (if any) + health endpoint
+        # Merge routes: subclass routes (if any) + health endpoint + durable tasks
         all_routes: list[Any] = list(routes or [])
         all_routes.append(
             Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
         )
+        if self._durable_task_manager is not None:
+            from .durable._resume_route import (  # pylint: disable=import-outside-toplevel
+                create_resume_route,
+            )
+
+            all_routes.append(create_resume_route())
 
         # Initialize Starlette with combined routes, lifespan, and middleware
         super().__init__(

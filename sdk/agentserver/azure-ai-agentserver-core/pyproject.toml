@@ -23,9 +23,15 @@ keywords = ["azure", "azure sdk", "agent", "agentserver", "core"]
 dependencies = [
     "starlette>=0.45.0",
     "hypercorn>=0.17.0",
+    "httpx>=0.27.0",
     "opentelemetry-api>=1.40.0",
     "opentelemetry-sdk>=1.40.0",
     "microsoft-opentelemetry>=0.1.0b1",
+]
+
+[project.optional-dependencies]
+hosted = [
+    "azure-identity>=1.16.0",
 ]
 
 [build-system]

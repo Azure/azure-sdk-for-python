@@ -21,6 +21,7 @@ Public API::
         trace_stream,
     )
 """
+
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._base import AgentServerHost
@@ -39,16 +40,50 @@ from ._tracing import (
     trace_stream,
 )
 from ._version import VERSION
+from .durable import (
+    DurableTask,
+    DurableTaskOptions,
+    EntryMode,
+    RetryPolicy,
+    Suspended,
+    TaskCancelled,
+    TaskConflictError,
+    TaskContext,
+    TaskFailed,
+    TaskInfo,
+    TaskMetadata,
+    TaskNotFound,
+    TaskRun,
+    TaskStatus,
+    TaskSuspended,
+    durable_task,
+)
 
 __all__ = [
     "AgentConfig",
     "AgentServerHost",
+    "DurableTask",
+    "DurableTaskOptions",
+    "EntryMode",
     "InboundRequestLoggingMiddleware",
     "RequestIdMiddleware",
+    "RetryPolicy",
+    "Suspended",
+    "TaskCancelled",
+    "TaskConflictError",
+    "TaskContext",
+    "TaskFailed",
+    "TaskInfo",
+    "TaskMetadata",
+    "TaskNotFound",
+    "TaskRun",
+    "TaskStatus",
+    "TaskSuspended",
     "build_server_version",
     "configure_observability",
     "create_error_response",
     "detach_context",
+    "durable_task",
     "end_span",
     "flush_spans",
     "record_error",

@@ -32,11 +32,11 @@ Usage::
         -d '{"message": "Budget is $5000, prefer direct flights"}'
     # -> {"reply": "Here is a suggested itinerary ...", ...}
 """
+
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-
 
 app = InvocationAgentServerHost()
 
@@ -91,11 +91,13 @@ async def handle_invoke(request: Request) -> Response:
     reply = _build_reply(history)
     history.append({"role": "assistant", "content": reply})
 
-    return JSONResponse({
-        "reply": reply,
-        "session_id": session_id,
-        "turn": len([m for m in history if m["role"] == "user"]),
-    })
+    return JSONResponse(
+        {
+            "reply": reply,
+            "session_id": session_id,
+            "turn": len([m for m in history if m["role"] == "user"]),
+        }
+    )
 
 
 if __name__ == "__main__":
