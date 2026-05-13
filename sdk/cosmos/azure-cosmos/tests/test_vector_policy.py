@@ -580,6 +580,76 @@ class TestVectorPolicy(unittest.TestCase):
             assert e.status_code == 400
             assert "The Vector Embedding Policy has an invalid DistanceFunction:handMeasured" in e.http_error_message
 
+    def test_create_vector_embedding_with_embedding_source(self):
+        # Verify a vector embedding policy that includes the optional ``embeddingSource`` round-trips
+        # correctly for both ``ApiKey`` and ``Entra`` auth types.
+        for auth_type in ["ApiKey", "Entra"]:
+            vector_embedding_policy = {
+                "vectorEmbeddings": [
+                    {
+                        "path": "/embedding",
+                        "dataType": "float32",
+                        "dimensions": 1536,
+                        "distanceFunction": "cosine",
+                        "embeddingSource": {
+                            "sourcePaths": [
+                                "/journal_title",
+                                "/title",
+                                "/toc_abstract",
+                                "/abstract",
+                                "/full_text",
+                            ],
+                            "deploymentName": "text-embedding-3-small",
+                            "modelName": "text-embedding-3-small",
+                            "endpoint": "https://embedding-south-central.cognitiveservices.azure.com/",
+                            "authType": auth_type,
+                        },
+                    }
+                ]
+            }
+            container_id = "vector_embedding_source_container_" + auth_type.lower() + "_" + str(uuid.uuid4())
+            created_container = self.test_db.create_container(
+                id=container_id,
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
+            )
+            properties = created_container.read()
+            assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            self.test_db.delete_container(container_id)
+
+    def test_fail_create_vector_embedding_source_invalid_auth_type(self):
+        # An ``embeddingSource`` with an unsupported ``authType`` should be rejected by the service
+        # (only ``ApiKey`` and ``Entra`` are valid).
+        vector_embedding_policy = {
+            "vectorEmbeddings": [
+                {
+                    "path": "/embedding",
+                    "dataType": "float32",
+                    "dimensions": 1536,
+                    "distanceFunction": "cosine",
+                    "embeddingSource": {
+                        "sourcePaths": ["/title"],
+                        "deploymentName": "text-embedding-3-small",
+                        "modelName": "text-embedding-3-small",
+                        "endpoint": "https://embedding-south-central.cognitiveservices.azure.com/",
+                        "authType": "NotAnAuthType",
+                    },
+                }
+            ]
+        }
+
+        try:
+            self.test_db.create_container(
+                id="vector_embedding_source_bad_auth_" + str(uuid.uuid4()),
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
+            )
+            pytest.fail("Container creation should have failed for invalid embeddingSource authType.")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 400
+            assert "The auth type provided in the embedding source of vector policy is invalid." \
+                in e.http_error_message
+
 
 if __name__ == '__main__':
     unittest.main()

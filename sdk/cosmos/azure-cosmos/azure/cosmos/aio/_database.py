@@ -206,7 +206,10 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :keyword dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
             embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
-            is generated for a particular distance function.
+            is generated for a particular distance function. Each vector embedding may also include an optional
+            ``embeddingSource`` describing how the embedding is produced; the source object supports
+            ``sourcePaths`` (list of item paths whose values are embedded), ``deploymentName``, ``modelName``,
+            ``endpoint`` (embedding service endpoint), and ``authType`` (one of ``ApiKey`` or ``Entra``).
         :keyword dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
             the container.
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
@@ -283,7 +286,10 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :keyword dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
             embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
-            is generated for a particular distance function.
+            is generated for a particular distance function. Each vector embedding may also include an optional
+            ``embeddingSource`` describing how the embedding is produced; the source object supports ``sourcePaths``
+            (list of item paths whose values are embedded), ``deploymentName``, ``modelName``, ``endpoint``
+            (embedding service endpoint), and ``authType`` (one of ``ApiKey`` or ``Entra``).
         :keyword dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
             the container.
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
@@ -347,7 +353,10 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :keyword dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
             embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
-            is generated for a particular distance function.
+            is generated for a particular distance function. Each vector embedding may also include an optional
+            ``embeddingSource`` describing how the embedding is produced; the source object supports ``sourcePaths``
+            (list of item paths whose values are embedded), ``deploymentName``, ``modelName``, ``endpoint``
+            (embedding service endpoint), and ``authType`` (one of ``ApiKey`` or ``Entra``).
         :keyword dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
             the container.
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
@@ -497,7 +506,10 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :keyword dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
-            data type, and is generated for a particular distance function.
+            data type, and is generated for a particular distance function. Each vector embedding may also include an
+            optional ``embeddingSource`` describing how the embedding is produced; the source object supports
+            ``sourcePaths`` (list of item paths whose values are embedded), ``deploymentName``, ``modelName``,
+            ``endpoint`` (embedding service endpoint), and ``authType`` (one of ``ApiKey`` or ``Entra``).
         :keyword dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
             the container.
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
@@ -558,7 +570,10 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :keyword dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
-            data type, and is generated for a particular distance function.
+            data type, and is generated for a particular distance function. Each vector embedding may also include an
+            optional ``embeddingSource`` describing how the embedding is produced; the source object supports
+            ``sourcePaths`` (list of item paths whose values are embedded), ``deploymentName``, ``modelName``,
+            ``endpoint`` (embedding service endpoint), and ``authType`` (one of ``ApiKey`` or ``Entra``).
         :keyword dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
             the container.
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
@@ -606,7 +621,10 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :keyword dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
-            data type, and is generated for a particular distance function.
+            data type, and is generated for a particular distance function. Each vector embedding may also include an
+            optional ``embeddingSource`` describing how the embedding is produced; the source object supports
+            ``sourcePaths`` (list of item paths whose values are embedded), ``deploymentName``, ``modelName``,
+            ``endpoint`` (embedding service endpoint), and ``authType`` (one of ``ApiKey`` or ``Entra``).
         :keyword dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
             the container.
         :keyword dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
