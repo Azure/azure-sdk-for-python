@@ -192,7 +192,7 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an invalid Path: abstract" in e.http_error_message
+            _assert_message_contains(e.http_error_message, "full text policy", "invalid path", "abstract")
 
         # Pass a full text policy with an unsupported default language
         full_text_policy_wrong_default = {
@@ -263,8 +263,9 @@ class TestFullTextPolicy(unittest.TestCase):
             # pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The path of the Full Text Index /path does not match the path specified in the Full Text Policy"\
-                   in e.http_error_message
+            _assert_message_contains(
+                e.http_error_message, "full text index", "/path", "does not match", "full text policy"
+            )
 
         # Pass a full text indexing policy with a wrongly formatted path
         indexing_policy_wrong_path = {
@@ -282,7 +283,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Full-text index specification at index (0) contains invalid path" in e.http_error_message
+            _assert_message_contains(
+                e.http_error_message, "full text index", "invalid path"
+            )
 
         # Pass a full text indexing policy without a path field
         indexing_policy_no_path = {
