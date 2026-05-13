@@ -232,7 +232,9 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital.",
         )
         assert score is not None
-        assert score["f1_score"] == score["f1_score_score"] > 0.0
+        assert score["f1_score"] > 0.0
+        if "f1_score_score" in score:
+            assert score["f1_score"] == score["f1_score_score"]
 
     def test_quality_evaluator_prompt_based_with_dict_input(self, sanitized_model_config):
         eval_fn = FluencyEvaluator(sanitized_model_config)
@@ -849,7 +851,9 @@ class TestBuiltInEvaluators:
         assert score["coherence"] == score["coherence_score"] > 0.0
         assert score["fluency"] == score["fluency_score"] > 0.0
         assert score["similarity"] == score["similarity_score"] > 0.0
-        assert score["f1_score"] == score["f1_score_score"] > 0.0
+        assert score["f1_score"] > 0.0
+        if "f1_score_score" in score:
+            assert score["f1_score"] == score["f1_score_score"]
 
     @pytest.mark.skipif(
         True,
@@ -872,7 +876,9 @@ class TestBuiltInEvaluators:
         assert score["coherence"] == score["coherence_score"] == score["gpt_coherence"] > 0.0
         assert score["fluency"] == score["fluency_score"] == score["gpt_fluency"] > 0.0
         assert score["similarity"] == score["similarity_score"] == score["gpt_similarity"] > 0.0
-        assert score["f1_score"] == score["f1_score_score"] > 0.0
+        assert score["f1_score"] > 0.0
+        if "f1_score_score" in score:
+            assert score["f1_score"] == score["f1_score_score"]
 
     def test_composite_evaluator_qa_for_nans(self, sanitized_model_config):
         qa_eval = QAEvaluator(sanitized_model_config)

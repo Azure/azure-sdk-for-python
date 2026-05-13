@@ -235,7 +235,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             elif isinstance(llm_output, str):
                 try:
                     parsed_output = json.loads(llm_output)
-                except (TypeError, ValueError):
+                except ValueError:
                     parsed_output = None
 
             if isinstance(parsed_output, dict):
@@ -256,8 +256,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             score = float(score) if score is not None else math.nan
             binary_result = self._get_binary_result(score)
             passed = None if math.isnan(score) else binary_result == EVALUATION_PASS_FAIL_MAPPING[True]
-            properties = {
-                **llm_properties,
+            metadata = {
                 "prompt_tokens": input_token_count,
                 "completion_tokens": output_token_count,
                 "total_tokens": total_token_count,
@@ -266,6 +265,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 "sample_input": sample_input,
                 "sample_output": sample_output,
             }
+            properties = {**llm_properties, **metadata}
             return {
                 self._result_key: score,
                 f"gpt_{self._result_key}": score,
@@ -276,13 +276,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_properties": properties,
-                f"{self._result_key}_prompt_tokens": input_token_count,
-                f"{self._result_key}_completion_tokens": output_token_count,
-                f"{self._result_key}_total_tokens": total_token_count,
-                f"{self._result_key}_finish_reason": finish_reason,
-                f"{self._result_key}_model": model_id,
-                f"{self._result_key}_sample_input": sample_input,
-                f"{self._result_key}_sample_output": sample_output,
+                f"{self._result_key}_prompt_tokens": metadata["prompt_tokens"],
+                f"{self._result_key}_completion_tokens": metadata["completion_tokens"],
+                f"{self._result_key}_total_tokens": metadata["total_tokens"],
+                f"{self._result_key}_finish_reason": metadata["finish_reason"],
+                f"{self._result_key}_model": metadata["model"],
+                f"{self._result_key}_sample_input": metadata["sample_input"],
+                f"{self._result_key}_sample_output": metadata["sample_output"],
             }
 
         binary_result = self._get_binary_result(score)

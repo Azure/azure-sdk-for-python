@@ -8,9 +8,10 @@ from typing import Dict, Union
 
 from typing_extensions import overload, override
 
+from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
+
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
-from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
 
 
 class RougeType(str, Enum):
@@ -200,6 +201,20 @@ class RougeScoreEvaluator(EvaluatorBase):
         rouge_recall_result = EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_recall_passed"]]
         rouge_f1_score_result = EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_f1_score_passed"]]
         is_passed = binary_results["rouge_f1_score_passed"]
+        properties = {
+            "rouge_precision": rouge_precision,
+            "rouge_recall": rouge_recall,
+            "rouge_f1_score": rouge_f1_score,
+            "rouge_precision_result": rouge_precision_result,
+            "rouge_recall_result": rouge_recall_result,
+            "rouge_f1_score_result": rouge_f1_score_result,
+            "rouge_precision_passed": binary_results["rouge_precision_passed"],
+            "rouge_recall_passed": binary_results["rouge_recall_passed"],
+            "rouge_f1_score_passed": binary_results["rouge_f1_score_passed"],
+            "rouge_precision_threshold": self._threshold["precision"],
+            "rouge_recall_threshold": self._threshold["recall"],
+            "rouge_f1_score_threshold": self._threshold["f1_score"],
+        }
         return {
             "rouge": rouge_f1_score,
             "rouge_score": rouge_f1_score,
@@ -208,29 +223,8 @@ class RougeScoreEvaluator(EvaluatorBase):
             "rouge_reason": None,
             "rouge_status": "completed",
             "rouge_threshold": self._threshold["f1_score"],
-            "rouge_properties": {
-                "rouge_precision": rouge_precision,
-                "rouge_recall": rouge_recall,
-                "rouge_f1_score": rouge_f1_score,
-                "rouge_precision_result": rouge_precision_result,
-                "rouge_recall_result": rouge_recall_result,
-                "rouge_f1_score_result": rouge_f1_score_result,
-                "rouge_precision_passed": binary_results["rouge_precision_passed"],
-                "rouge_recall_passed": binary_results["rouge_recall_passed"],
-                "rouge_f1_score_passed": binary_results["rouge_f1_score_passed"],
-                "rouge_precision_threshold": self._threshold["precision"],
-                "rouge_recall_threshold": self._threshold["recall"],
-                "rouge_f1_score_threshold": self._threshold["f1_score"],
-            },
-            "rouge_precision": rouge_precision,
-            "rouge_recall": rouge_recall,
-            "rouge_f1_score": rouge_f1_score,
-            "rouge_precision_result": rouge_precision_result,
-            "rouge_recall_result": rouge_recall_result,
-            "rouge_f1_score_result": rouge_f1_score_result,
-            "rouge_precision_threshold": self._threshold["precision"],
-            "rouge_recall_threshold": self._threshold["recall"],
-            "rouge_f1_score_threshold": self._threshold["f1_score"],
+            "rouge_properties": properties,
+            **properties,
         }
 
     @overload  # type: ignore
