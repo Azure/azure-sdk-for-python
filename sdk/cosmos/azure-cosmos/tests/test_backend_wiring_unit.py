@@ -121,17 +121,34 @@ def _iter_py_files():
         yield path
 
 
+# Walk every ``.py`` file under ``azure/cosmos/`` once at module load
+# time and cache (relative-path, list-of-import-lines) tuples. The
+# parametrised test below then scans the cache for each guarded name
+# instead of re-reading every file five times. Same coverage, fifth
+# the I/O.
+def _collect_import_lines():
+    cached = []
+    for py in _iter_py_files():
+        rel = py.relative_to(_PKG_ROOT)
+        text = py.read_text(encoding="utf-8", errors="ignore")
+        import_lines = _IMPORT_RE.findall(text)
+        if import_lines:
+            cached.append((rel, import_lines))
+    return cached
+
+
+_IMPORT_LINE_CACHE = _collect_import_lines()
+
+
 @pytest.mark.parametrize("guarded_name,allowed_files", list(_ALLOWED.items()))
 def test_import_guard(guarded_name, allowed_files):
     """No module outside the allow-list may import the guarded name."""
     offenders = []
     name_re = re.compile(r"\b" + re.escape(guarded_name) + r"\b")
-    for py in _iter_py_files():
-        rel = py.relative_to(_PKG_ROOT)
+    for rel, import_lines in _IMPORT_LINE_CACHE:
         if rel in allowed_files:
             continue
-        text = py.read_text(encoding="utf-8", errors="ignore")
-        for line in _IMPORT_RE.findall(text):
+        for line in import_lines:
             if name_re.search(line):
                 offenders.append("{}: {}".format(rel, line.strip()))
     assert not offenders, (

@@ -58,5 +58,19 @@ class RustBackend(CosmosBackend):
         self._driver = _pyo3_driver
 
     def create_item(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
+        # Two failure modes for the rust path today, ordered by which
+        # one a developer is more likely to hit. The shared
+        # "not implemented yet" prefix is part of the contract the
+        # dispatch tests assert against.
+        if self._driver is None:
+            raise NotImplementedError(
+                "RustBackend.create_item not implemented yet "
+                "(also: compiled azure.cosmos._azure_cosmos_pyo3 module "
+                "is not present in this environment; build it with "
+                "`maturin develop` from azure_data_cosmos_driver/, or "
+                "install the package built with the rust extension "
+                "enabled). The adapter that calls into the binary will "
+                "land in a later change."
+            )
         raise NotImplementedError("RustBackend.create_item not implemented yet")
 

@@ -1,0 +1,188 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+"""Pure helpers shared by the sync and async item-helper classes.
+
+The sync ``ItemHelper`` and async ``AsyncItemHelper`` differ only in
+where they say ``await``: the dispatch decision, the option-dict
+build, and the kwarg-stamping for the user-agent policy are all the
+same logic. Putting that logic here means the two classes stay short
+and the dispatch / option-build behaviour cannot drift between sync
+and async by accident.
+
+Nothing in this module performs I/O or awaits anything; both helpers
+operate on plain dicts and return values the caller then routes
+through the appropriate sync or async I/O path.
+"""
+from __future__ import annotations
+
+import warnings
+from typing import Any, Dict, Optional
+
+from .._availability_strategy_config import _validate_request_hedging_strategy
+from .._backend.base import CosmosBackend
+from .._backend.constants import REQUEST_OPTION_BACKEND_KEY
+from .._base import build_options
+from .._constants import _Constants as Constants
+
+
+def merge_create_item_explicit_kwargs(
+    kwargs: Dict[str, Any],
+    *,
+    pre_trigger_include: Any = None,
+    post_trigger_include: Any = None,
+    session_token: Any = None,
+    initial_headers: Any = None,
+    priority: Any = None,
+    no_response: Any = None,
+    retry_write: Any = None,
+    throughput_bucket: Any = None,
+    availability_strategy: Any = None,
+    response_hook: Any = None,
+) -> None:
+    """Move every non-None explicit ``create_item`` kwarg into ``kwargs``.
+
+    The two ``Container.create_item`` methods (sync and async) each
+    used to inline ``if X is not None: kwargs['X'] = X`` for ten
+    optional kwargs. This helper folds that boilerplate into one
+    place so the two methods stay short and the option-name mapping
+    cannot drift between sync and async.
+
+    The async sibling does not expose ``response_hook`` as an explicit
+    parameter (it rides through ``**kwargs`` directly), so the async
+    caller simply leaves the default ``response_hook=None``.
+
+    ``availability_strategy`` is passed through the hedging-strategy
+    validator here because both call sites used to do that inline and
+    the validator is pure.
+    """
+    if pre_trigger_include is not None:
+        kwargs['pre_trigger_include'] = pre_trigger_include
+    if post_trigger_include is not None:
+        kwargs['post_trigger_include'] = post_trigger_include
+    if session_token is not None:
+        kwargs['session_token'] = session_token
+    if initial_headers is not None:
+        kwargs['initial_headers'] = initial_headers
+    if priority is not None:
+        kwargs['priority'] = priority
+    if no_response is not None:
+        kwargs['no_response'] = no_response
+    if retry_write is not None:
+        kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+    if throughput_bucket is not None:
+        kwargs["throughput_bucket"] = throughput_bucket
+    if availability_strategy is not None:
+        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
+    if response_hook is not None:
+        kwargs['response_hook'] = response_hook
+
+
+def choose_backend(client_connection: Any, kwargs: Dict[str, Any]) -> Optional[CosmosBackend]:
+    """Return the backend that should handle this call, stamping kwargs.
+
+    The decision rule is the same on sync and async:
+
+    * If a Rust backend is configured **and** the call did not pass
+      ``availability_strategy`` or ``retry_write`` (the two kwargs
+      the Rust driver does not yet support), pick Rust.
+    * Otherwise pick the always-present core-python backend.
+
+    Mutates ``kwargs`` in place to stamp
+    ``REQUEST_OPTION_BACKEND_KEY`` with the chosen backend's name so
+    the user-agent policy can append ``; backend=<name>`` to the
+    ``User-Agent`` header on every request that flows out of this
+    call.
+
+    :param client_connection: The connection that owns the two
+        backend attributes (``_rust_backend`` and
+        ``_core_python_backend``). Either may be missing on a
+        connection built outside ``CosmosClient`` (some unit tests);
+        the function tolerates that and returns ``None`` so the
+        caller falls through to the legacy code path.
+    :type client_connection: Any
+    :param kwargs: The per-call kwargs dict. Read for the dispatch
+        decision and mutated to stamp the backend name.
+    :type kwargs: Dict[str, Any]
+    :returns: The chosen backend instance, or ``None`` when neither
+        backend is wired on the connection.
+    :rtype: Optional[CosmosBackend]
+    """
+    rust_backend = getattr(client_connection, "_rust_backend", None)
+    core_python_backend = getattr(client_connection, "_core_python_backend", None)
+    # Fast path for the production-default configuration (no Rust
+    # backend wired up): skip the two ``kwargs.get`` lookups that
+    # only matter for the Rust-vs-fallback decision.
+    if rust_backend is None:
+        backend = core_python_backend
+    else:
+        availability_strategy = kwargs.get("availability_strategy")
+        retry_write = kwargs.get(Constants.Kwargs.RETRY_WRITE)
+        # Read with ``.get()`` (not ``.pop()``) on purpose: both kwargs
+        # also have semantic meaning downstream — ``availability_strategy``
+        # is consumed by the legacy CreateItem (and was already validated
+        # at the container layer); ``retry_write`` flows into
+        # ``ConnectionPolicy.RetryNonIdempotentWrites`` via build_options.
+        # Popping them here would silently drop those downstream effects.
+        if availability_strategy is None and retry_write is None:
+            backend = rust_backend
+        else:
+            backend = core_python_backend
+    if backend is not None:
+        kwargs[REQUEST_OPTION_BACKEND_KEY] = backend.name
+    return backend
+
+
+def build_create_item_request_options(
+    kwargs: Dict[str, Any],
+    *,
+    enable_automatic_id_generation: bool,
+    indexing_directive: Optional[int],
+    populate_query_metrics: Optional[bool] = None,
+) -> Dict[str, Any]:
+    """Build the request-options dict the legacy ``CreateItem`` consumes.
+
+    Pure function. Same behaviour as the inline option-build that used
+    to live in ``Container.create_item``: the legacy
+    ``build_options(kwargs)`` produces the base dict, then the three
+    explicit container-method kwargs are stamped on top.
+
+    The ``populate_query_metrics`` parameter is only meaningful on
+    the sync container method (the async sibling never exposed it).
+    Pass ``None`` from the async caller; the warning + option-key
+    write are skipped in that case.
+
+    :param kwargs: The per-call kwargs dict. Forwarded to
+        ``build_options``; not mutated by this function.
+    :type kwargs: Dict[str, Any]
+    :param enable_automatic_id_generation: From the container's
+        explicit kwarg. The negation lands in
+        ``options["disableAutomaticIdGeneration"]``.
+    :type enable_automatic_id_generation: bool
+    :param indexing_directive: From the container's explicit kwarg.
+        Written to ``options["indexingDirective"]`` when supplied.
+    :type indexing_directive: Optional[int]
+    :param populate_query_metrics: From the sync container's explicit
+        kwarg. When truthy, emits the existing deprecation warning
+        and writes the option key. ``None`` (the async default)
+        skips both.
+    :type populate_query_metrics: Optional[bool]
+    :returns: The request-options dict, ready to be handed to the
+        cache-populate callback and then to ``CreateItem``.
+    :rtype: Dict[str, Any]
+    """
+    request_options = build_options(kwargs)
+    request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
+    if populate_query_metrics:
+        warnings.warn(
+            "the populate_query_metrics flag does not apply to this method "
+            "and will be removed in the future",
+            DeprecationWarning,
+        )
+        request_options["populateQueryMetrics"] = populate_query_metrics
+    if indexing_directive is not None:
+        request_options["indexingDirective"] = indexing_directive
+    return request_options
+

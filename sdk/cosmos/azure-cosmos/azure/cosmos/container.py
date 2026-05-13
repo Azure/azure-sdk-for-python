@@ -41,6 +41,8 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
+from ._helpers._item_dispatch import merge_create_item_explicit_kwargs
+from ._helpers.item_helper import ItemHelper
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -1433,61 +1435,43 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        # Pick the backend that will handle this call. Two attributes on
-        # client_connection name the two backend types directly:
-        #   - _rust_backend: present iff Rust is configured as default
-        #   - _core_python_backend: always present
-        # Two kwargs always force the core-python path (Rust doesn't yet
-        # support multi-region hedging or non-idempotent write retries).
-        rust_backend = getattr(self.client_connection, "_rust_backend", None)
-        core_python_backend = getattr(self.client_connection, "_core_python_backend", None)
-        if rust_backend is not None and availability_strategy is None and retry_write is None:
-            backend = rust_backend
-        else:
-            backend = core_python_backend
-        if backend is not None:
-            # Stamp the backend that actually handled this call so the
-            # user-agent policy can append `; backend=<name>` per request.
-            kwargs[REQUEST_OPTION_BACKEND_KEY] = backend.name
-            backend_response = backend.create_item(prepared=None)
-            if backend_response is not None:
-                return backend_response  # pragma: no cover
+        # Move the explicit-keyword shortcuts into the kwargs dict so
+        # the ItemHelper sees a single uniform source of truth. Shared
+        # with the async sibling via ``_item_dispatch`` so the option-
+        # name mapping cannot drift between the two.
+        merge_create_item_explicit_kwargs(
+            kwargs,
+            pre_trigger_include=pre_trigger_include,
+            post_trigger_include=post_trigger_include,
+            session_token=session_token,
+            initial_headers=initial_headers,
+            priority=priority,
+            no_response=no_response,
+            retry_write=retry_write,
+            throughput_bucket=throughput_bucket,
+            availability_strategy=availability_strategy,
+            response_hook=response_hook,
+        )
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
-        if session_token is not None:
-            kwargs['session_token'] = session_token
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
-        if priority is not None:
-            kwargs['priority'] = priority
-        if no_response is not None:
-            kwargs['no_response'] = no_response
-        if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not None:
-            kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-        if response_hook is not None:
-            kwargs['response_hook'] = response_hook
-        request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
-        if populate_query_metrics:
-            warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
-                DeprecationWarning,
-            )
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
-        self._get_properties_with_options(request_options)
-        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        result = self.client_connection.CreateItem(
-                database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
-        return result
+        # Hand off to the per-call item helper. It owns the backend
+        # dispatch, request-options build, container-rid stamp, and
+        # the legacy ``CreateItem`` call. The
+        # ``ensure_container_cached`` callback delegates the
+        # cache-populate step back to this proxy so the existing
+        # ``container_cache_lock`` is taken and per-call options like
+        # ``excluded_locations`` and timeouts flow into the cache
+        # refresh exactly the way the legacy code path did.
+        return ItemHelper(
+            self.client_connection,
+            ensure_container_cached=self._get_properties_with_options,
+        ).create_item(
+            container_link=self.container_link,
+            body=body,
+            populate_query_metrics=populate_query_metrics,
+            indexing_directive=indexing_directive,
+            enable_automatic_id_generation=enable_automatic_id_generation,
+            **kwargs,
+        )
 
     @distributed_trace
     def patch_item(
