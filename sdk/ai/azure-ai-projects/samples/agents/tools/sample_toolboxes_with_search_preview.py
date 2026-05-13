@@ -54,8 +54,8 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 TOOLBOX_NAME = "toolbox_with_mcp_tool"
-INNER_MCP_LABEL = "api-specs"
-INNER_MCP_URL = "https://gitmcp.io/Azure/azure-rest-api-specs"
+INNER_MCP_LABEL = "github"
+INNER_MCP_URL = "https://api.githubcopilot.com/mcp"
 TOOLBOX_MCP_LABEL = "search-tool"
 
 
@@ -71,12 +71,6 @@ with (
         require_approval="never",
         project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
     )
-
-    try:
-        project_client.beta.toolboxes.delete(TOOLBOX_NAME)
-        print(f"Deleted existing toolbox `{TOOLBOX_NAME}`.")
-    except ResourceNotFoundError:
-        print(f"Toolbox `{TOOLBOX_NAME}` does not exist; nothing to delete.")
 
     toolbox_version = project_client.beta.toolboxes.create_version(
         name=TOOLBOX_NAME,
@@ -111,10 +105,7 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}).")
 
     response = openai_client.responses.create(
-        input=(
-            "Use `tool_search` to find a tool that can fetch the Azure REST API specs README, "
-            "then use `call_tool` to invoke it and summarize the result."
-        ),
+        input="What is my username in Github profile?",
         extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
