@@ -123,7 +123,11 @@ class LocalFileDurableTaskProvider:
         started_at: str | None = None
         status: TaskStatus = request.status
 
-        if request.lease_owner and request.lease_instance_id and request.lease_duration_seconds:
+        if (
+            request.lease_owner
+            and request.lease_instance_id
+            and request.lease_duration_seconds
+        ):
             expires_at = (
                 datetime.datetime.now(datetime.timezone.utc)
                 + datetime.timedelta(seconds=request.lease_duration_seconds)
@@ -170,7 +174,9 @@ class LocalFileDurableTaskProvider:
             return None
         return self._read_task(path)
 
-    async def update(self, task_id: str, patch: TaskPatchRequest) -> TaskInfo:  # pylint: disable=too-many-branches,too-many-statements
+    async def update(
+        self, task_id: str, patch: TaskPatchRequest
+    ) -> TaskInfo:  # pylint: disable=too-many-branches,too-many-statements
         """Update a task via PATCH semantics.
 
         :param task_id: The task identifier.
@@ -191,7 +197,9 @@ class LocalFileDurableTaskProvider:
 
         # ETag check
         if patch.if_match is not None and patch.if_match != task.etag:
-            raise ValueError(f"ETag mismatch: expected {patch.if_match!r}, " f"got {task.etag!r}")
+            raise ValueError(
+                f"ETag mismatch: expected {patch.if_match!r}, " f"got {task.etag!r}"
+            )
 
         now = _now_iso()
 
@@ -209,15 +217,21 @@ class LocalFileDurableTaskProvider:
             # Lease handling on status transitions
             if patch.status in ("completed", "suspended"):
                 task.lease = None
-            elif patch.status == "in_progress" and patch.lease_owner and patch.lease_instance_id:
+            elif (
+                patch.status == "in_progress"
+                and patch.lease_owner
+                and patch.lease_instance_id
+            ):
                 duration = patch.lease_duration_seconds or 60
                 expires_at = (
-                    datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=duration)
+                    datetime.datetime.now(datetime.timezone.utc)
+                    + datetime.timedelta(seconds=duration)
                 ).isoformat()
                 old_gen = task.lease.generation if task.lease else -1
                 new_gen = (
                     old_gen + 1
-                    if patch.lease_instance_id != (task.lease.instance_id if task.lease else "")
+                    if patch.lease_instance_id
+                    != (task.lease.instance_id if task.lease else "")
                     else max(old_gen, 0)
                 )
                 task.lease = LeaseInfo(
@@ -232,7 +246,8 @@ class LocalFileDurableTaskProvider:
         if patch.status is None and patch.lease_owner and patch.lease_instance_id:
             duration = patch.lease_duration_seconds or 60
             expires_at = (
-                datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=duration)
+                datetime.datetime.now(datetime.timezone.utc)
+                + datetime.timedelta(seconds=duration)
             ).isoformat()
             if task.lease and patch.lease_instance_id != task.lease.instance_id:
                 # Reclaim with new instance
@@ -270,15 +285,12 @@ class LocalFileDurableTaskProvider:
                 expiry_count=task.lease.expiry_count,
             )
 
-        # Payload shallow-merge
+        # Payload shallow-merge (spec §11: root-level additive, values replaced)
         if patch.payload is not None:
             if task.payload is None:
                 task.payload = {}
             for key, value in patch.payload.items():
-                if isinstance(value, dict) and isinstance(task.payload.get(key), dict):
-                    task.payload[key].update(value)
-                else:
-                    task.payload[key] = value
+                task.payload[key] = value
 
         # Tags null-as-delete merge
         if patch.tags is not None:
@@ -326,6 +338,7 @@ class LocalFileDurableTaskProvider:
         session_id: str,
         status: TaskStatus | None = None,
         lease_owner: str | None = None,
+        tag: dict[str, str] | None = None,
     ) -> list[TaskInfo]:
         """List tasks from the filesystem.
 
@@ -337,6 +350,8 @@ class LocalFileDurableTaskProvider:
         :paramtype status: TaskStatus | None
         :keyword lease_owner: Filter by lease owner.
         :paramtype lease_owner: str | None
+        :keyword tag: Filter by tags (AND semantics — all must match).
+        :paramtype tag: dict[str, str] | None
         :return: Matching task records.
         :rtype: list[TaskInfo]
         """
@@ -353,6 +368,10 @@ class LocalFileDurableTaskProvider:
                 continue
             if lease_owner is not None:
                 if task.lease is None or task.lease.owner != lease_owner:
+                    continue
+            if tag is not None:
+                task_tags = task.tags or {}
+                if not all(task_tags.get(k) == v for k, v in tag.items()):
                     continue
             results.append(task)
         return results

@@ -15,6 +15,7 @@ import logging
 import os
 import time
 import uuid
+from collections.abc import Awaitable, Callable
 
 from ._models import TaskPatchRequest
 from ._provider import DurableTaskProvider
@@ -58,6 +59,7 @@ async def lease_renewal_loop(
     cancel_event: asyncio.Event,
     on_failure_count: int = 3,
     on_cancel_callback: asyncio.Event | None = None,
+    steering_poll_callback: Callable[[], Awaitable[None]] | None = None,
 ) -> None:
     """Run a background lease renewal loop at half the lease duration.
 
@@ -84,6 +86,9 @@ async def lease_renewal_loop(
     :paramtype on_failure_count: int
     :keyword on_cancel_callback: Event to signal on repeated renewal failure.
     :paramtype on_cancel_callback: asyncio.Event | None
+    :keyword steering_poll_callback: Async callback invoked each renewal to poll
+        for steering inputs. Called after successful lease renewal.
+    :paramtype steering_poll_callback: Callable[[], Awaitable[None]] | None
     """
     interval = max(1, lease_duration_seconds // 2)
     consecutive_failures = 0
@@ -110,6 +115,15 @@ async def lease_renewal_loop(
             )
             consecutive_failures = 0
             logger.debug("Lease renewed for task %s", task_id)
+
+            # Poll for steering inputs after successful renewal
+            if steering_poll_callback is not None:
+                try:
+                    await steering_poll_callback()
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "Steering poll failed for task %s", task_id, exc_info=True
+                    )
         except Exception:  # pylint: disable=broad-exception-caught
             consecutive_failures += 1
             logger.warning(
@@ -119,7 +133,10 @@ async def lease_renewal_loop(
                 on_failure_count,
                 exc_info=True,
             )
-            if consecutive_failures >= on_failure_count and on_cancel_callback is not None:
+            if (
+                consecutive_failures >= on_failure_count
+                and on_cancel_callback is not None
+            ):
                 logger.error(
                     "Lease renewal failed %d times for task %s — signalling cancellation",
                     on_failure_count,

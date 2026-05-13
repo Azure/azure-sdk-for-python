@@ -43,7 +43,9 @@ class TestLocalProviderCRUD:
 
     @pytest.mark.asyncio
     async def test_create_and_get(
-        self, provider: LocalFileDurableTaskProvider, sample_create_request: TaskCreateRequest
+        self,
+        provider: LocalFileDurableTaskProvider,
+        sample_create_request: TaskCreateRequest,
     ) -> None:
         """create returns a TaskInfo; get retrieves it."""
         task = await provider.create(sample_create_request)
@@ -57,7 +59,9 @@ class TestLocalProviderCRUD:
 
     @pytest.mark.asyncio
     async def test_update_status(
-        self, provider: LocalFileDurableTaskProvider, sample_create_request: TaskCreateRequest
+        self,
+        provider: LocalFileDurableTaskProvider,
+        sample_create_request: TaskCreateRequest,
     ) -> None:
         """update changes the status."""
         task = await provider.create(sample_create_request)
@@ -70,7 +74,9 @@ class TestLocalProviderCRUD:
 
     @pytest.mark.asyncio
     async def test_update_payload(
-        self, provider: LocalFileDurableTaskProvider, sample_create_request: TaskCreateRequest
+        self,
+        provider: LocalFileDurableTaskProvider,
+        sample_create_request: TaskCreateRequest,
     ) -> None:
         """update merges payload."""
         task = await provider.create(sample_create_request)
@@ -86,7 +92,9 @@ class TestLocalProviderCRUD:
 
     @pytest.mark.asyncio
     async def test_etag_mismatch_raises(
-        self, provider: LocalFileDurableTaskProvider, sample_create_request: TaskCreateRequest
+        self,
+        provider: LocalFileDurableTaskProvider,
+        sample_create_request: TaskCreateRequest,
     ) -> None:
         """update raises on ETag mismatch."""
         task = await provider.create(sample_create_request)
@@ -98,14 +106,18 @@ class TestLocalProviderCRUD:
             await provider.update(task.id, patch)
 
     @pytest.mark.asyncio
-    async def test_get_nonexistent_returns_none(self, provider: LocalFileDurableTaskProvider) -> None:
+    async def test_get_nonexistent_returns_none(
+        self, provider: LocalFileDurableTaskProvider
+    ) -> None:
         """get returns None for nonexistent task."""
         result = await provider.get("nonexistent-id")
         assert result is None
 
     @pytest.mark.asyncio
     async def test_delete_task(
-        self, provider: LocalFileDurableTaskProvider, sample_create_request: TaskCreateRequest
+        self,
+        provider: LocalFileDurableTaskProvider,
+        sample_create_request: TaskCreateRequest,
     ) -> None:
         """delete removes a task."""
         task = await provider.create(sample_create_request)
@@ -118,7 +130,9 @@ class TestLocalProviderListing:
     """Tests for listing/querying tasks."""
 
     @pytest.mark.asyncio
-    async def test_list_tasks_by_agent(self, provider: LocalFileDurableTaskProvider) -> None:
+    async def test_list_tasks_by_agent(
+        self, provider: LocalFileDurableTaskProvider
+    ) -> None:
         """list filters by agent_name and session_id."""
         req1 = TaskCreateRequest(
             agent_name="agent-a",
@@ -140,7 +154,9 @@ class TestLocalProviderListing:
         assert tasks[0].agent_name == "agent-a"
 
     @pytest.mark.asyncio
-    async def test_list_tasks_by_status(self, provider: LocalFileDurableTaskProvider) -> None:
+    async def test_list_tasks_by_status(
+        self, provider: LocalFileDurableTaskProvider
+    ) -> None:
         """list filters by status."""
         req = TaskCreateRequest(
             agent_name="agent",
@@ -155,8 +171,12 @@ class TestLocalProviderListing:
         )
         await provider.update(task.id, patch)
 
-        pending = await provider.list(agent_name="agent", session_id="s1", status="pending")
+        pending = await provider.list(
+            agent_name="agent", session_id="s1", status="pending"
+        )
         assert len(pending) == 0
 
-        active = await provider.list(agent_name="agent", session_id="s1", status="in_progress")
+        active = await provider.list(
+            agent_name="agent", session_id="s1", status="in_progress"
+        )
         assert len(active) == 1

@@ -52,7 +52,9 @@ def _flush_provider():
         provider.force_flush()
 
 
-def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_POLL_TIMEOUT):
+def _poll_appinsights(
+    logs_client, resource_id, query, *, timeout=_APPINSIGHTS_POLL_TIMEOUT
+):
     """Poll Application Insights until the KQL query returns ≥1 row or timeout.
 
     Returns the list of rows from the first table, or an empty list on timeout.
@@ -73,6 +75,7 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
 # ---------------------------------------------------------------------------
 # Minimal echo app factories using core's AgentServerHost + request_span()
 # ---------------------------------------------------------------------------
+
 
 def _make_echo_app():
     """Create an AgentServerHost with a POST /echo route that creates a traced span.
@@ -104,6 +107,7 @@ def _make_streaming_echo_app():
         req_id = str(uuid.uuid4())
         request_ids.append(req_id)
         with app.request_span(dict(request.headers), req_id, "invoke_agent"):
+
             async def generate():
                 for chunk in [b"chunk1\n", b"chunk2\n", b"chunk3\n"]:
                     yield chunk
@@ -151,7 +155,9 @@ def _make_failing_echo_app():
         req_id = str(uuid.uuid4())
         request_ids.append(req_id)
         try:
-            with app.request_span(dict(request.headers), req_id, "invoke_agent") as span:
+            with app.request_span(
+                dict(request.headers), req_id, "invoke_agent"
+            ) as span:
                 raise ValueError("e2e error test")
         except ValueError:
             span.set_status(trace.StatusCode.ERROR, "e2e error test")
@@ -168,6 +174,7 @@ def _make_failing_echo_app():
 # ---------------------------------------------------------------------------
 # E2E: Verify spans are ingested into Application Insights
 # ---------------------------------------------------------------------------
+
 
 class TestAppInsightsIngestionE2E:
     """Query Application Insights ``requests`` table to confirm spans were
@@ -219,9 +226,9 @@ class TestAppInsightsIngestionE2E:
             "| take 1"
         )
         rows = _poll_appinsights(logs_query_client, appinsights_resource_id, query)
-        assert len(rows) > 0, (
-            f"Streaming span with response_id={req_id} not found in App Insights"
-        )
+        assert (
+            len(rows) > 0
+        ), f"Streaming span with response_id={req_id} not found in App Insights"
 
     def test_error_span_in_appinsights(
         self,
@@ -243,9 +250,9 @@ class TestAppInsightsIngestionE2E:
             "| take 1"
         )
         rows = _poll_appinsights(logs_query_client, appinsights_resource_id, query)
-        assert len(rows) > 0, (
-            f"Error span with response_id={req_id} not found in App Insights"
-        )
+        assert (
+            len(rows) > 0
+        ), f"Error span with response_id={req_id} not found in App Insights"
 
     def test_genai_attributes_in_appinsights(
         self,
@@ -305,14 +312,16 @@ class TestAppInsightsIngestionE2E:
             "| project id, name, operation_Id, operation_ParentId "
             "| take 1"
         )
-        child_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, child_query)
+        child_rows = _poll_appinsights(
+            logs_query_client, appinsights_resource_id, child_query
+        )
         assert len(child_rows) > 0, (
             f"Child framework_child span (id={child_span_id}) not found in "
             f"dependencies table after {_APPINSIGHTS_POLL_TIMEOUT}s"
         )
 
-        operation_id = child_rows[0][2]       # operation_Id column
-        child_parent_id = child_rows[0][3]    # operation_ParentId column
+        operation_id = child_rows[0][2]  # operation_Id column
+        child_parent_id = child_rows[0][3]  # operation_ParentId column
 
         # Step 2: Find the parent span in the requests table using the child's operation_ParentId.
         parent_query = (
@@ -322,12 +331,14 @@ class TestAppInsightsIngestionE2E:
             "| project id, name, operation_Id "
             "| take 1"
         )
-        parent_rows = _poll_appinsights(logs_query_client, appinsights_resource_id, parent_query)
+        parent_rows = _poll_appinsights(
+            logs_query_client, appinsights_resource_id, parent_query
+        )
         assert len(parent_rows) > 0, (
             f"Parent span (id={child_parent_id}) referenced by child's "
             f"operation_ParentId not found in requests table"
         )
 
-        assert parent_rows[0][1] == "invoke_agent", (
-            f"Expected parent span name 'invoke_agent', got '{parent_rows[0][1]}'"
-        )
+        assert (
+            parent_rows[0][1] == "invoke_agent"
+        ), f"Expected parent span name 'invoke_agent', got '{parent_rows[0][1]}'"

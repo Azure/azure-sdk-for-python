@@ -12,7 +12,6 @@ from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import resolve_port
 
 
-
 # ------------------------------------------------------------------ #
 # Port resolution
 # ------------------------------------------------------------------ #

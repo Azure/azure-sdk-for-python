@@ -20,8 +20,8 @@ class TaskResult(Generic[Output]):
     :type task_id: str
     :param output: The task output value (typed for completion, optional for suspension).
     :type output: Output | None
-    :param status: Whether the task completed or suspended.
-    :type status: ~typing.Literal["completed", "suspended"]
+    :param status: Whether the task completed, suspended, or was superseded.
+    :type status: ~typing.Literal["completed", "suspended", "superseded"]
     :param suspension_reason: Human-readable suspension reason, if suspended.
     :type suspension_reason: str | None
     """
@@ -33,12 +33,12 @@ class TaskResult(Generic[Output]):
         *,
         task_id: str,
         output: Output | None = None,
-        status: Literal["completed", "suspended"],
+        status: Literal["completed", "suspended", "superseded"],
         suspension_reason: str | None = None,
     ) -> None:
         self.task_id = task_id
         self.output = output
-        self.status: Literal["completed", "suspended"] = status
+        self.status: Literal["completed", "suspended", "superseded"] = status
         self.suspension_reason = suspension_reason
 
     @property
@@ -59,11 +59,22 @@ class TaskResult(Generic[Output]):
         """
         return self.status == "suspended"
 
+    @property
+    def is_superseded(self) -> bool:
+        """Whether the generation was superseded by a steering input.
+
+        :return: True if this generation was cancelled by a newer input.
+        :rtype: bool
+        """
+        return self.status == "superseded"
+
     def __repr__(self) -> str:
         output_repr = repr(self.output)
         if len(output_repr) > 60:
             output_repr = output_repr[:57] + "..."
-        parts = [f"TaskResult(task_id={self.task_id!r}, status={self.status!r}, output={output_repr}"]
+        parts = [
+            f"TaskResult(task_id={self.task_id!r}, status={self.status!r}, output={output_repr}"
+        ]
         if self.suspension_reason is not None:
             parts.append(f", suspension_reason={self.suspension_reason!r}")
         parts.append(")")

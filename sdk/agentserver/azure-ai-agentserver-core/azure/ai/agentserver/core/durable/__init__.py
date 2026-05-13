@@ -46,6 +46,8 @@ Public API::
 from ._context import EntryMode, TaskContext
 from ._decorator import DurableTask, DurableTaskOptions, durable_task
 from ._exceptions import (
+    EtagConflict,
+    SteeringQueueFull,
     TaskCancelled,
     TaskConflictError,
     TaskFailed,
@@ -76,6 +78,8 @@ __all__ = [
     "TaskNotFound",
     "TaskConflictError",
     "TaskTerminated",
+    "EtagConflict",
+    "SteeringQueueFull",
     "EntryMode",
     "TaskInfo",
 ]

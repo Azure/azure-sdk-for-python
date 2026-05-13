@@ -97,9 +97,13 @@ class TestNestedTaskResultGuard:
 
         provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
         config = type(
-            "C", (), {
-                "agent_name": "test", "session_id": "test",
-                "agent_version": "1.0.0", "is_hosted": False,
+            "C",
+            (),
+            {
+                "agent_name": "test",
+                "session_id": "test",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
             },
         )()
         manager = DurableTaskManager(config=config, provider=provider)

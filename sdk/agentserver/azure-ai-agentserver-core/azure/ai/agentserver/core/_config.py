@@ -120,7 +120,8 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
             session_id=os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, ""),
             port=resolve_port(None),
             appinsights_connection_string=os.environ.get(
-                _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""),
+                _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""
+            ),
             otlp_endpoint=os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, ""),
             sse_keepalive_interval=resolve_sse_keepalive_interval(None),
         )
@@ -158,9 +159,7 @@ def _require_int(name: str, value: object) -> int:
     :raises ValueError: If *value* is not an integer.
     """
     if isinstance(value, bool) or not isinstance(value, int):
-        raise ValueError(
-            f"Invalid value for {name}: {value!r} (expected an integer)"
-        )
+        raise ValueError(f"Invalid value for {name}: {value!r} (expected an integer)")
     return value
 
 
@@ -176,9 +175,7 @@ def _validate_port(value: int, source: str) -> int:
     :raises ValueError: If the port is outside 1-65535.
     """
     if not 1 <= value <= 65535:
-        raise ValueError(
-            f"Invalid value for {source}: {value} (expected 1-65535)"
-        )
+        raise ValueError(f"Invalid value for {source}: {value} (expected 1-65535)")
     return value
 
 
@@ -239,9 +236,7 @@ def resolve_appinsights_connection_string(
     """
     if connection_string is not None:
         return connection_string
-    return os.environ.get(
-        _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING
-    )
+    return os.environ.get(_ENV_APPLICATIONINSIGHTS_CONNECTION_STRING)
 
 
 def resolve_log_level(level: Optional[str]) -> str:

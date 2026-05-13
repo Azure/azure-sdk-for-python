@@ -119,3 +119,44 @@ class TaskConflictError(RuntimeError):
         self.task_id = task_id
         self.current_status = current_status
         super().__init__(f"Task '{task_id}' is already {current_status}")
+
+
+class EtagConflict(RuntimeError):
+    """Raised when an optimistic concurrency (etag) check fails.
+
+    The task record was modified between read and write. Callers should
+    retry the operation with the updated etag.
+
+    :param task_id: The task ID where the conflict occurred.
+    :type task_id: str
+    :param message: Optional detail message.
+    :type message: str | None
+    """
+
+    __slots__ = ("task_id",)
+
+    def __init__(self, task_id: str, message: str | None = None) -> None:
+        self.task_id = task_id
+        msg = message or f"Etag conflict on task '{task_id}'"
+        super().__init__(msg)
+
+
+class SteeringQueueFull(RuntimeError):
+    """Raised when the steering pending-input queue is at capacity.
+
+    The caller should retry later or increase ``max_pending``.
+
+    :param task_id: The task whose queue is full.
+    :type task_id: str
+    :param max_pending: The configured queue capacity.
+    :type max_pending: int
+    """
+
+    __slots__ = ("task_id", "max_pending")
+
+    def __init__(self, task_id: str, max_pending: int) -> None:
+        self.task_id = task_id
+        self.max_pending = max_pending
+        super().__init__(
+            f"Steering queue full for task '{task_id}' " f"(max_pending={max_pending})"
+        )

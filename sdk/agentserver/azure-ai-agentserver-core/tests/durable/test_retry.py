@@ -11,7 +11,12 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from azure.ai.agentserver.core.durable import RetryPolicy, TaskContext, TaskFailed, durable_task
+from azure.ai.agentserver.core.durable import (
+    RetryPolicy,
+    TaskContext,
+    TaskFailed,
+    durable_task,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -55,14 +60,18 @@ class TestRetryPolicyConstruction:
 
     def test_validation_max_delay_below_initial(self) -> None:
         with pytest.raises(ValueError, match="max_delay.*must be >= initial_delay"):
-            RetryPolicy(initial_delay=timedelta(seconds=10), max_delay=timedelta(seconds=5))
+            RetryPolicy(
+                initial_delay=timedelta(seconds=10), max_delay=timedelta(seconds=5)
+            )
 
     def test_validation_max_attempts_zero(self) -> None:
         with pytest.raises(ValueError, match="max_attempts must be >= 1"):
             RetryPolicy(max_attempts=0)
 
     def test_validation_retry_on_non_exception(self) -> None:
-        with pytest.raises(TypeError, match="retry_on entries must be Exception subclasses"):
+        with pytest.raises(
+            TypeError, match="retry_on entries must be Exception subclasses"
+        ):
             RetryPolicy(retry_on=(str,))  # type: ignore[arg-type]
 
     def test_repr(self) -> None:
@@ -137,16 +146,16 @@ class TestComputeDelay:
             max_delay=timedelta(seconds=200),
             jitter=False,
         )
-        assert p.compute_delay(0) == 2.0   # 2 * 3^0
-        assert p.compute_delay(1) == 6.0   # 2 * 3^1
+        assert p.compute_delay(0) == 2.0  # 2 * 3^0
+        assert p.compute_delay(1) == 6.0  # 2 * 3^1
         assert p.compute_delay(2) == 18.0  # 2 * 3^2
 
     def test_linear_preset_delay(self) -> None:
         p = RetryPolicy.linear_backoff(initial_delay=timedelta(seconds=2))
-        assert p.compute_delay(0) == 2.0   # 2 * (0+1) = 2
-        assert p.compute_delay(1) == 4.0   # 2 * (1+1) = 4
-        assert p.compute_delay(2) == 6.0   # 2 * (2+1) = 6
-        assert p.compute_delay(3) == 8.0   # 2 * (3+1) = 8
+        assert p.compute_delay(0) == 2.0  # 2 * (0+1) = 2
+        assert p.compute_delay(1) == 4.0  # 2 * (1+1) = 4
+        assert p.compute_delay(2) == 6.0  # 2 * (2+1) = 6
+        assert p.compute_delay(3) == 8.0  # 2 * (3+1) = 8
 
 
 # ---------------------------------------------------------------------------
@@ -162,7 +171,9 @@ class TestShouldRetry:
 
     def test_exhausted(self) -> None:
         p = RetryPolicy(max_attempts=3, jitter=False)
-        assert p.should_retry(2, RuntimeError("test")) is False  # attempt 2 is the 3rd try
+        assert (
+            p.should_retry(2, RuntimeError("test")) is False
+        )  # attempt 2 is the 3rd try
         assert p.should_retry(5, RuntimeError("test")) is False
 
     def test_matching_exception(self) -> None:
@@ -181,7 +192,9 @@ class TestShouldRetry:
 
     def test_subclass_matching(self) -> None:
         p = RetryPolicy(max_attempts=5, retry_on=(OSError,), jitter=False)
-        assert p.should_retry(0, ConnectionError("net")) is True  # ConnectionError is OSError subclass
+        assert (
+            p.should_retry(0, ConnectionError("net")) is True
+        )  # ConnectionError is OSError subclass
 
 
 # ---------------------------------------------------------------------------
@@ -206,7 +219,9 @@ class TestPresets:
         assert p.jitter is False
 
     def test_linear_backoff(self) -> None:
-        p = RetryPolicy.linear_backoff(initial_delay=timedelta(seconds=2), max_attempts=6)
+        p = RetryPolicy.linear_backoff(
+            initial_delay=timedelta(seconds=2), max_attempts=6
+        )
         assert p.backoff_coefficient == 1.0
         assert p.initial_delay == timedelta(seconds=2)
         assert p.max_attempts == 6
@@ -239,12 +254,16 @@ class TestRetryIntegration:
         import azure.ai.agentserver.core.durable._manager as mgr_mod
 
         provider = LocalFileDurableTaskProvider(Path(str(tmp_path)))
-        config = type("C", (), {
-            "agent_name": "test-agent",
-            "session_id": "test-session",
-            "agent_version": "1.0.0",
-            "is_hosted": False,
-        })()
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
         manager = DurableTaskManager(config=config, provider=provider)
         mgr_mod._manager = manager
         await manager.startup()

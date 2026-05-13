@@ -58,6 +58,4 @@ def create_error_response(
         body["type"] = error_type
     if details is not None:
         body["details"] = details
-    return JSONResponse(
-        {"error": body}, status_code=status_code, headers=headers
-    )
+    return JSONResponse({"error": body}, status_code=status_code, headers=headers)

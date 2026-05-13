@@ -88,7 +88,10 @@ class TaskMetadata:
             raise TypeError(f"Delta must be numeric, got {type(delta).__name__}")
         current = self._data.get(key, 0)
         if not isinstance(current, (int, float)):
-            raise TypeError(f"Cannot increment non-numeric value at key {key!r}: " f"{type(current).__name__}")
+            raise TypeError(
+                f"Cannot increment non-numeric value at key {key!r}: "
+                f"{type(current).__name__}"
+            )
         self._data[key] = current + delta
         self._mark_dirty()
 
@@ -109,7 +112,10 @@ class TaskMetadata:
         elif isinstance(current, list):
             current.append(value)
         else:
-            raise TypeError(f"Cannot append to non-list value at key {key!r}: " f"{type(current).__name__}")
+            raise TypeError(
+                f"Cannot append to non-list value at key {key!r}: "
+                f"{type(current).__name__}"
+            )
         self._mark_dirty()
 
     def to_dict(self) -> dict[str, Any]:
@@ -182,8 +188,14 @@ class TaskMetadata:
         Called by the framework when the task starts executing. Should
         not be called by user code.
         """
-        if self._flush_interval > 0 and self._flush_callback is not None and self._flush_task is None:
-            self._flush_task = asyncio.get_event_loop().create_task(self._auto_flush_loop())
+        if (
+            self._flush_interval > 0
+            and self._flush_callback is not None
+            and self._flush_task is None
+        ):
+            self._flush_task = asyncio.get_event_loop().create_task(
+                self._auto_flush_loop()
+            )
 
     async def stop_auto_flush(self) -> None:
         """Stop the auto-flush loop and perform a final flush."""

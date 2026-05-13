@@ -87,7 +87,9 @@ class HostedDurableTaskProvider:
         if request.source is not None:
             body["source"] = request.source
 
-        response = await self._client.post(self._base_url, json=body, headers=headers, params=params)
+        response = await self._client.post(
+            self._base_url, json=body, headers=headers, params=params
+        )
         response.raise_for_status()
         return TaskInfo.from_dict(response.json())
 
@@ -195,6 +197,7 @@ class HostedDurableTaskProvider:
         session_id: str,
         status: TaskStatus | None = None,
         lease_owner: str | None = None,
+        tag: dict[str, str] | None = None,
     ) -> list[TaskInfo]:
         """List tasks via GET /storage/tasks.
 
@@ -206,6 +209,8 @@ class HostedDurableTaskProvider:
         :paramtype status: TaskStatus | None
         :keyword lease_owner: Filter by lease owner.
         :paramtype lease_owner: str | None
+        :keyword tag: Filter by tag key-value pairs.
+        :paramtype tag: dict[str, str] | None
         :return: Matching task records.
         :rtype: list[TaskInfo]
         """
@@ -219,8 +224,13 @@ class HostedDurableTaskProvider:
             params["status"] = status
         if lease_owner is not None:
             params["lease_owner"] = lease_owner
+        if tag:
+            for key, value in tag.items():
+                params[f"tag.{key}"] = value
 
-        response = await self._client.get(self._base_url, headers=headers, params=params)
+        response = await self._client.get(
+            self._base_url, headers=headers, params=params
+        )
         response.raise_for_status()
         data = response.json()
         items: list[dict[str, Any]] = data.get("data", data.get("items", []))

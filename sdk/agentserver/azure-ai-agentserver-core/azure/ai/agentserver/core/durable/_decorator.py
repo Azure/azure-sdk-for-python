@@ -19,9 +19,18 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
+import logging as _logging
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
-from typing import Any, Generic, TypeVar, get_args, get_type_hints, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    TypeVar,
+    get_args,
+    get_type_hints,
+    overload,
+)
 
 import re
 
@@ -30,12 +39,44 @@ from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import TaskRun
 
+if TYPE_CHECKING:
+    from ._models import TaskStatus
+
 Input = TypeVar("Input")
 Output = TypeVar("Output")
 F = TypeVar("F", bound=Callable[..., Any])
 
 _VALID_TASK_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 _MAX_TASK_ID_LENGTH = 256
+
+#: Prefix for framework-reserved tags. Developer tags with this prefix are
+#: silently stripped to prevent collisions with auto-stamped tags.
+_RESERVED_TAG_PREFIX = "_durable_task_"
+
+_logger = _logging.getLogger("azure.ai.agentserver.durable")
+
+
+def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
+    """Remove framework-reserved tags from developer-provided tags.
+
+    Tags prefixed with ``_durable_task_`` are reserved for framework use.
+    If a developer provides them, they are silently dropped with a warning.
+
+    :param tags: Developer-provided tags.
+    :type tags: dict[str, str]
+    :return: Tags with reserved keys removed.
+    :rtype: dict[str, str]
+    """
+    reserved = [k for k in tags if k.startswith(_RESERVED_TAG_PREFIX)]
+    if reserved:
+        _logger.warning(
+            "Ignoring reserved tag(s) %s — tags prefixed with %r are "
+            "framework-owned and cannot be overridden",
+            reserved,
+            _RESERVED_TAG_PREFIX,
+        )
+        return {k: v for k, v in tags.items() if not k.startswith(_RESERVED_TAG_PREFIX)}
+    return tags
 
 
 def _validate_task_id(task_id: str) -> None:
@@ -162,7 +203,10 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
 class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
     """Options for a durable task.
 
-    :param name: Task function name.
+    :param name: **Stable identity anchor.** Used for recovery routing and
+        source stamping.  If you rename the Python function later, existing
+        in-flight tasks are still recovered correctly because the framework
+        matches on this name.
     :type name: str
     :param title: Human-readable title template.
     :type title: str | Callable[[Any, str], str] | None
@@ -190,8 +234,8 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
         "store_input",
         "ephemeral",
         "retry",
-        "source",
-        "cancel_grace_seconds",
+        "steerable",
+        "max_pending",
     )
 
     def __init__(
@@ -205,8 +249,8 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
         store_input: bool = True,
         ephemeral: bool = True,
         retry: RetryPolicy | None = None,
-        source: dict[str, Any] | None = None,
-        cancel_grace_seconds: float = 5.0,
+        steerable: bool = False,
+        max_pending: int = 10,
     ) -> None:
         self.name = name
         self.title = title
@@ -217,14 +261,15 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
         self.store_input = store_input
         self.ephemeral = ephemeral
         self.retry = retry
-        self.source = source
-        self.cancel_grace_seconds = cancel_grace_seconds
+        self.steerable = steerable
+        self.max_pending = max_pending
 
     def __repr__(self) -> str:
         return (
             f"DurableTaskOptions(name={self.name!r}, lease_duration_seconds={self.lease_duration_seconds}, "
             f"store_input={self.store_input}, ephemeral={self.ephemeral}, retry={self.retry!r}, "
-            f"timeout={self.timeout!r}, cancel_grace_seconds={self.cancel_grace_seconds})"
+            f"timeout={self.timeout!r}, "
+            f"steerable={self.steerable}, max_pending={self.max_pending})"
         )
 
 
@@ -262,10 +307,11 @@ class DurableTask(Generic[Input, Output]):
             return self._opts.title
         return f"{self.name}:{task_id[:8]}"
 
-    def _resolve_tags(
-        self, input_val: Input, task_id: str
-    ) -> dict[str, str]:
+    def _resolve_tags(self, input_val: Input, task_id: str) -> dict[str, str]:
         """Resolve decorator-level tags (static dict or callable factory).
+
+        Reserved tags (prefixed with ``_durable_task_``) are stripped to
+        prevent developer code from colliding with framework-stamped tags.
 
         :param input_val: The task input value.
         :type input_val: Input
@@ -282,12 +328,10 @@ class DurableTask(Generic[Input, Output]):
                     f"tags callable must return dict[str, str], "
                     f"got {type(result).__name__}"
                 )
-            return result
-        return dict(tags) if tags else {}
+            return _strip_reserved_tags(result)
+        return _strip_reserved_tags(dict(tags) if tags else {})
 
-    def _resolve_description(
-        self, input_val: Input, task_id: str
-    ) -> str | None:
+    def _resolve_description(self, input_val: Input, task_id: str) -> str | None:
         """Resolve decorator-level description (static or callable).
 
         :param input_val: The task input value.
@@ -313,7 +357,7 @@ class DurableTask(Generic[Input, Output]):
     ) -> dict[str, str]:
         merged = self._resolve_tags(input_val, task_id)
         if call_tags:
-            merged.update(call_tags)
+            merged.update(_strip_reserved_tags(call_tags))
         return merged
 
     async def run(
@@ -325,7 +369,6 @@ class DurableTask(Generic[Input, Output]):
         title: str | None = None,
         tags: dict[str, str] | None = None,
         retry: RetryPolicy | None = None,
-        source: dict[str, Any] | None = None,
         stale_timeout: float = 300.0,
     ) -> TaskResult[Output]:
         """Run a lifecycle-aware durable task and return the result.
@@ -351,8 +394,6 @@ class DurableTask(Generic[Input, Output]):
         :paramtype tags: dict[str, str] | None
         :keyword retry: Retry policy override. Overrides decorator-level retry.
         :paramtype retry: ~azure.ai.agentserver.core.durable.RetryPolicy | None
-        :keyword source: Provenance metadata override. Overrides decorator-level source.
-        :paramtype source: dict[str, Any] | None
         :keyword stale_timeout: Seconds before an in-progress task is considered
             stale and eligible for recovery. Default 300 (5 minutes).
         :paramtype stale_timeout: float
@@ -370,7 +411,6 @@ class DurableTask(Generic[Input, Output]):
             title=title,
             tags=tags,
             retry=retry,
-            source=source,
             stale_timeout=stale_timeout,
         )
         return await handle.result()
@@ -384,7 +424,6 @@ class DurableTask(Generic[Input, Output]):
         title: str | None = None,
         tags: dict[str, str] | None = None,
         retry: RetryPolicy | None = None,
-        source: dict[str, Any] | None = None,
         stale_timeout: float = 300.0,
     ) -> TaskRun[Output]:
         """Start a lifecycle-aware durable task and return a handle.
@@ -404,8 +443,6 @@ class DurableTask(Generic[Input, Output]):
         :paramtype tags: dict[str, str] | None
         :keyword retry: Retry policy override. Overrides decorator-level retry.
         :paramtype retry: ~azure.ai.agentserver.core.durable.RetryPolicy | None
-        :keyword source: Provenance metadata override. Overrides decorator-level source.
-        :paramtype source: dict[str, Any] | None
         :keyword stale_timeout: Seconds before an in-progress task is considered
             stale and eligible for recovery. Default 300 (5 minutes).
         :paramtype stale_timeout: float
@@ -422,7 +459,6 @@ class DurableTask(Generic[Input, Output]):
             title=title,
             tags=tags,
             retry=retry,
-            source=source,
             stale_timeout=stale_timeout,
         )
 
@@ -444,6 +480,120 @@ class DurableTask(Generic[Input, Output]):
         manager = get_task_manager()
         return await manager.provider.get(task_id)
 
+    async def list(
+        self,
+        *,
+        session_id: str | None = None,
+        status: TaskStatus | None = None,
+    ) -> list[Any]:
+        """List tasks created by this durable task function.
+
+        Automatically scoped to this function's ``name`` via the
+        ``_durable_task_name`` tag (server-side) and ``source.type``
+        (client-side). Only returns tasks created by this framework.
+
+        :keyword session_id: Session scope override.  Defaults to the
+            manager's configured session ID.
+        :paramtype session_id: str | None
+        :keyword status: Filter by task status (e.g., ``"in_progress"``,
+            ``"suspended"``, ``"completed"``).
+        :paramtype status: ~azure.ai.agentserver.core.durable.TaskStatus | None
+        :return: Matching task records.
+        :rtype: list[~azure.ai.agentserver.core.durable.TaskInfo]
+
+        Example::
+
+            tasks = await my_task.list(status="suspended")
+            for t in tasks:
+                print(t.id, t.status)
+        """
+        from ._manager import (  # pylint: disable=import-outside-toplevel
+            get_task_manager,
+        )
+
+        manager = get_task_manager()
+        return await manager.list_tasks(
+            fn_name=self.name,
+            session_id=session_id,
+            status=status,
+        )
+
+    async def _append_steering_input(  # pylint: disable=protected-access
+        self,
+        manager: Any,
+        *,
+        task_id: str,
+        input_val: Any,
+        existing: Any,
+    ) -> None:
+        """Append a steering input to the task's pending queue."""
+        from ._exceptions import (  # pylint: disable=import-outside-toplevel
+            SteeringQueueFull,
+        )
+        from ._models import (  # pylint: disable=import-outside-toplevel
+            TaskPatchRequest,
+        )
+
+        max_retries = 5
+        serialized = _serialize_input(input_val)
+
+        for _attempt in range(max_retries):
+            task_info = (
+                existing if _attempt == 0 else await manager.provider.get(task_id)
+            )
+            if task_info is None:
+                raise RuntimeError(
+                    f"Task {task_id!r} disappeared during steering append"
+                )
+
+            payload = dict(task_info.payload) if task_info.payload else {}
+            steering = dict(payload.get("_steering", {}))
+            pending: list[Any] = list(steering.get("pending_inputs", []))
+
+            if len(pending) >= self._opts.max_pending:
+                raise SteeringQueueFull(task_id, self._opts.max_pending)
+
+            pending.append(serialized)
+            steering["pending_inputs"] = pending
+            steering["cancel_requested"] = True
+            if "generation" not in steering:
+                steering["generation"] = 0
+            payload["_steering"] = steering
+
+            etag = getattr(task_info, "etag", None) or None
+            try:
+                await manager.provider.update(
+                    task_id,
+                    TaskPatchRequest(payload=payload, if_match=etag),
+                )
+                # Signal the running task's cancel event so it can short-circuit
+                active = manager._active_tasks.get(
+                    task_id
+                )  # pylint: disable=protected-access  # noqa: SLF001
+                if active and hasattr(active, "context") and active.context is not None:
+                    active.context.cancel.set()
+                return
+            except ValueError:
+                # Local provider etag conflict — retry
+                continue
+
+        raise RuntimeError(
+            f"Failed to append steering input after {max_retries} retries"
+        )
+
+    def _create_steering_ack_run(
+        self,
+        manager: Any,
+        task_id: str,
+        future: Any,
+    ) -> TaskRun[Output]:
+        """Create a TaskRun for a queued steering input."""
+        return TaskRun(
+            task_id=task_id,
+            provider=manager.provider,
+            result_future=future,
+        )
+
     async def _lifecycle_start(
         self,
         *,
@@ -453,7 +603,6 @@ class DurableTask(Generic[Input, Output]):
         title: str | None,
         tags: dict[str, str] | None,
         retry: RetryPolicy | None,
-        source: dict[str, Any] | None,
         stale_timeout: float,
     ) -> TaskRun[Output]:
         """Resolve lifecycle state and start/resume/recover accordingly.
@@ -470,8 +619,6 @@ class DurableTask(Generic[Input, Output]):
         :paramtype tags: dict[str, str] | None
         :keyword retry: Retry policy override.
         :paramtype retry: RetryPolicy | None
-        :keyword source: Provenance metadata override.
-        :paramtype source: dict[str, Any] | None
         :keyword stale_timeout: Stale timeout in seconds.
         :paramtype stale_timeout: float
         :return: A handle to the running task.
@@ -488,7 +635,6 @@ class DurableTask(Generic[Input, Output]):
         existing = await manager.provider.get(task_id)
 
         resolved_retry = retry or self._opts.retry
-        resolved_source = source or self._opts.source
 
         if existing is None or existing.status == "pending":
             # Fresh start
@@ -517,7 +663,6 @@ class DurableTask(Generic[Input, Output]):
                 description=self._resolve_description(input, task_id),
                 opts=self._opts,
                 retry=resolved_retry,
-                source=resolved_source,
                 entry_mode="fresh",
             )
 
@@ -536,20 +681,39 @@ class DurableTask(Generic[Input, Output]):
             updated_info = await manager.provider.get(task_id)
             if updated_info is None:
                 raise RuntimeError(f"Task {task_id!r} disappeared after input patch")
-            return await manager._start_existing_task(  # pylint: disable=protected-access
-                fn=self._fn,
-                fn_name=self.name,
-                task_info=updated_info,
-                entry_mode="resumed",
-                input_val=input,
-                input_type=self._input_type,
-                opts=self._opts,
-                retry=resolved_retry,
+            return (
+                await manager._start_existing_task(  # pylint: disable=protected-access
+                    fn=self._fn,
+                    fn_name=self.name,
+                    task_info=updated_info,
+                    entry_mode="resumed",
+                    input_val=input,
+                    input_type=self._input_type,
+                    opts=self._opts,
+                    retry=resolved_retry,
+                )
             )
 
         if existing.status == "in_progress":
             if _is_stale(existing.updated_at, stale_timeout):
-                # Stale — recover
+                # Stale — check for steering recovery state first
+                if self._opts.steerable and existing.payload:
+                    steering = existing.payload.get("_steering", {})
+                    if steering.get("drain_in_progress") or steering.get(
+                        "pending_inputs"
+                    ):
+                        # Stale with steering state — recover via steered path
+                        return await manager._start_existing_task(  # pylint: disable=protected-access
+                            fn=self._fn,
+                            fn_name=self.name,
+                            task_info=existing,
+                            entry_mode="recovered",
+                            input_val=input,
+                            input_type=self._input_type,
+                            opts=self._opts,
+                            retry=resolved_retry,
+                        )
+                # Normal stale recovery
                 return await manager._start_existing_task(  # pylint: disable=protected-access
                     fn=self._fn,
                     fn_name=self.name,
@@ -560,6 +724,24 @@ class DurableTask(Generic[Input, Output]):
                     opts=self._opts,
                     retry=resolved_retry,
                 )
+            if self._opts.steerable:
+                # Steering path: append input to queue, signal cancel, return ack
+                ack_future = manager._register_steering_future(
+                    task_id
+                )  # pylint: disable=protected-access
+                await self._append_steering_input(
+                    manager,
+                    task_id=task_id,
+                    input_val=input,
+                    existing=existing,
+                )
+                # Set cancel on in-memory context if task runs in this process
+                active = manager._active_tasks.get(
+                    task_id
+                )  # pylint: disable=protected-access
+                if active:
+                    active.context.cancel.set()
+                return self._create_steering_ack_run(manager, task_id, ack_future)
             raise TaskConflictError(task_id, "in_progress")
 
         # completed (or any other terminal status)
@@ -576,8 +758,8 @@ class DurableTask(Generic[Input, Output]):
         store_input: bool | None = None,
         ephemeral: bool | None = None,
         retry: RetryPolicy | None = None,
-        source: dict[str, Any] | None = None,
-        cancel_grace_seconds: float | None = None,
+        steerable: bool | None = None,
+        max_pending: int | None = None,
     ) -> DurableTask[Input, Output]:
         """Return a new DurableTask with merged options.
 
@@ -587,14 +769,10 @@ class DurableTask(Generic[Input, Output]):
         :paramtype timeout: timedelta | None
         :keyword ephemeral: Whether to delete task on terminal exit.
         :paramtype ephemeral: bool | None
-        :keyword cancel_grace_seconds: Grace period override.
-        :paramtype cancel_grace_seconds: float | None
         :keyword tags: Tag overrides.
         :paramtype tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None
         :keyword store_input: Whether to persist input.
         :paramtype store_input: bool | None
-        :keyword source: Provenance metadata override.
-        :paramtype source: dict[str, Any] | None
         :keyword retry: Retry policy override.
         :paramtype retry: RetryPolicy | None
         :keyword title: Title override.
@@ -603,6 +781,10 @@ class DurableTask(Generic[Input, Output]):
         :paramtype description: str | Callable[[Any, str], str | None] | None
         :keyword lease_duration_seconds: Lease TTL override.
         :paramtype lease_duration_seconds: int | None
+        :keyword steerable: Whether this task accepts steering inputs.
+        :paramtype steerable: bool | None
+        :keyword max_pending: Maximum queued steering inputs.
+        :paramtype max_pending: int | None
         :return: A new DurableTask with overridden options.
         :rtype: DurableTask[Input, Output]
         """
@@ -619,7 +801,7 @@ class DurableTask(Generic[Input, Output]):
                 resolved_tags = tags
             else:
                 existing = self._opts.tags if isinstance(self._opts.tags, dict) else {}
-                resolved_tags = {**existing, **(tags or {})}
+                resolved_tags = _strip_reserved_tags({**existing, **(tags or {})})
         else:
             resolved_tags = self._opts.tags
 
@@ -641,11 +823,9 @@ class DurableTask(Generic[Input, Output]):
             ),
             ephemeral=(ephemeral if ephemeral is not None else self._opts.ephemeral),
             retry=retry if retry is not None else self._opts.retry,
-            source=source if source is not None else self._opts.source,
-            cancel_grace_seconds=(
-                cancel_grace_seconds
-                if cancel_grace_seconds is not None
-                else self._opts.cancel_grace_seconds
+            steerable=(steerable if steerable is not None else self._opts.steerable),
+            max_pending=(
+                max_pending if max_pending is not None else self._opts.max_pending
             ),
         )
         return DurableTask(
@@ -674,8 +854,8 @@ def durable_task(
     store_input: bool = ...,
     ephemeral: bool = ...,
     retry: RetryPolicy | None = ...,
-    source: dict[str, Any] | None = ...,
-    cancel_grace_seconds: float = ...,
+    steerable: bool = ...,
+    max_pending: int = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
     DurableTask[Input, Output],
@@ -694,8 +874,8 @@ def durable_task(
     store_input: bool = True,
     ephemeral: bool = True,
     retry: RetryPolicy | None = None,
-    source: dict[str, Any] | None = None,
-    cancel_grace_seconds: float = 5.0,
+    steerable: bool = False,
+    max_pending: int = 10,
 ) -> Any:
     """Turn an async function into a crash-resilient durable task.
 
@@ -709,22 +889,27 @@ def durable_task(
 
     :param fn: The async function to decorate (when used without parens).
     :type fn: Callable[..., Any] | None
-    :keyword name: Task name for logging. Defaults to ``fn.__qualname__``.
+    :keyword name: **Stable identity anchor.** Used for recovery routing and
+        source stamping. Defaults to ``fn.__qualname__``. Always provide an
+        explicit name for production tasks — if you rename the function later,
+        existing in-flight tasks are still recovered correctly because the
+        framework matches on this name, not the Python function name.
     :keyword title: Human-readable title (string or callable).
     :keyword tags: Default tags (static dict or callable factory receiving
         ``(input, task_id)``). Merged with per-call ``tags=`` overrides.
     :keyword description: Task description (static string or callable factory
         receiving ``(input, task_id)``).
-    :keyword timeout: Execution timeout. When elapsed, ``ctx.cancel`` is set,
-        followed by hard cancellation after ``cancel_grace_seconds``.
+    :keyword timeout: Execution timeout. When elapsed, ``ctx.cancel`` is set
+        cooperatively. If the function does not exit, the lease eventually
+        expires and the task is recovered.
     :keyword lease_duration_seconds: Lease TTL (default 60).
     :keyword store_input: Whether to persist input on the task record.
     :keyword ephemeral: Delete task on terminal exit (default True).
     :keyword retry: Default retry policy for this task.
-    :keyword source: Default provenance metadata for this task.
-    :keyword cancel_grace_seconds: Seconds to wait between cooperative cancel
-        (``ctx.cancel``) and hard cancellation (``asyncio.Task.cancel()``).
-        Default 5.0.
+    :keyword steerable: Whether this task accepts steering inputs. When True,
+        calling ``start()`` on an ``in_progress`` task queues the input and
+        signals cancel instead of raising ``TaskConflictError``. Default False.
+    :keyword max_pending: Maximum number of queued steering inputs. Default 10.
     :return: A ``DurableTask[Input, Output]`` wrapper.
     :rtype: Any
     """
@@ -743,10 +928,15 @@ def durable_task(
                 f"lease_duration_seconds must be >= 1, got {lease_duration_seconds}"
             )
 
+        if max_pending < 1:
+            raise ValueError(f"max_pending must be >= 1, got {max_pending}")
+
         input_type, output_type = _extract_generic_args(func)
 
-        # Preserve callable tags as-is; only copy static dicts
-        resolved_tags = tags if callable(tags) else (dict(tags) if tags else {})
+        # Preserve callable tags as-is (stripped at resolve time); strip static dicts now
+        resolved_tags = (
+            tags if callable(tags) else _strip_reserved_tags(dict(tags) if tags else {})
+        )
 
         opts = DurableTaskOptions(
             name=name or func.__qualname__,
@@ -758,8 +948,8 @@ def durable_task(
             store_input=store_input,
             ephemeral=ephemeral,
             retry=retry,
-            source=source,
-            cancel_grace_seconds=cancel_grace_seconds,
+            steerable=steerable,
+            max_pending=max_pending,
         )
 
         task = DurableTask(

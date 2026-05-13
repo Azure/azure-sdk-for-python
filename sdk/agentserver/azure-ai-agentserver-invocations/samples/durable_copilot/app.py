@@ -1,48 +1,31 @@
-"""HTTP host for the LangGraph durable agent with steering support.
+"""HTTP host for the Copilot durable agent with steering.
 
-Wires the LangGraph durable task (``agent.py``) to the invocations framework.
-Per-invocation results are written by the durable task itself (inside the
-crash-resilient execution boundary), not by a background collector.
+Wires the Copilot durable task (``agent.py``) to the invocations framework.
+With ``steerable=True``, calling ``start()`` on an in-progress task queues
+the new input — no manual cancel/wait/restart logic needed.
 
-Steering is handled by the framework: the durable task is declared with
-``steerable=True``, so calling ``start()`` on an in-progress task **queues**
-the new input instead of raising ``TaskConflictError``.  The running function
-sees ``ctx.cancel`` set and short-circuits.  The framework then drains the
-queue and re-enters the function with the next input.
+Requires the **GitHub Copilot SDK** (``pip install github-copilot-sdk``)
+and the Copilot CLI installed and authenticated (``gh auth login``).
 
 Usage::
 
     pip install -r requirements.txt
 
-    python -m durable_langgraph.app
-    # — or —
-    python app.py
+    python -m durable_copilot.app
 
     # Turn 1
     curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
         -H "Content-Type: application/json" \\
-        -d '{"message": "I need help planning a trip to Tokyo"}'
-    # → 202  (x-agent-invocation-id: <inv-1>)
+        -d '{"message": "Explain Python decorators"}'
 
     # Poll that invocation
     curl "http://localhost:8088/invocations/<inv-1>"
     # → {"invocation_id": "<inv-1>", "status": "completed", "output": {...}}
 
-    # Turn 2
+    # Steer (while turn 1 is still running)
     curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
         -H "Content-Type: application/json" \\
-        -d '{"message": "Budget is $3000 for 10 days"}'
-
-    # Steer — send a new invocation while turn 2 is still running.
-    # The framework queues the new input; the function short-circuits.
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
-        -d '{"message": "Actually, let us go to Paris instead"}'
-
-    # End session
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
-        -d '{"message": "done"}'
+        -d '{"message": "Actually, explain async/await instead"}'
 """
 
 from __future__ import annotations
@@ -54,7 +37,7 @@ from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import invocation_store, langgraph_session
+from .agent import copilot_session, invocation_store
 
 logger = logging.getLogger(__name__)
 
@@ -63,12 +46,7 @@ app = InvocationAgentServerHost()
 
 @app.invoke_handler
 async def handle_invoke(request: Request) -> Response:
-    """Start or steer a LangGraph session.
-
-    Each POST is one invocation.  With ``steerable=True`` on the durable
-    task, calling ``start()`` on an in-progress task automatically queues
-    the new input and returns a handle.  No manual cancel/wait is needed.
-    """
+    """Start or steer a Copilot session."""
     data = await request.json()
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
@@ -83,14 +61,11 @@ async def handle_invoke(request: Request) -> Response:
 
     # Write "queued" to the invocation store before start() — if the task
     # is already running, this input will be queued and the function will
-    # overwrite to "running" when it picks it up.
+    # overwrite to "running" when it picks it up.  If the task is fresh,
+    # the function overwrites to "running" immediately.
     invocation_store.save(invocation_id, {"status": "queued"})
 
-    # steerable=True means start() queues input if already in_progress
-    run = await langgraph_session.start(
-        task_id=task_id,
-        input=task_input,
-    )
+    run = await copilot_session.start(task_id=task_id, input=task_input)
 
     # Respond with invocation status from the store (queued vs running)
     stored = invocation_store.load(invocation_id)

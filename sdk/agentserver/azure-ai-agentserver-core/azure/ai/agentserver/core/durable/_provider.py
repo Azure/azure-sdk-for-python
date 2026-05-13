@@ -82,6 +82,7 @@ class DurableTaskProvider(Protocol):
         session_id: str,
         status: TaskStatus | None = None,
         lease_owner: str | None = None,
+        tag: dict[str, str] | None = None,
     ) -> list[TaskInfo]:
         """List tasks with filters.
 
@@ -93,6 +94,8 @@ class DurableTaskProvider(Protocol):
         :paramtype status: TaskStatus | None
         :keyword lease_owner: Filter by lease owner.
         :paramtype lease_owner: str | None
+        :keyword tag: Filter by tags (AND semantics — all must match).
+        :paramtype tag: dict[str, str] | None
         :return: Matching task records.
         :rtype: list[TaskInfo]
         """

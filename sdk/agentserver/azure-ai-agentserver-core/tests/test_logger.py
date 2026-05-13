@@ -16,4 +16,5 @@ def test_log_level_preserved_across_imports() -> None:
     lib_logger = logging.getLogger("azure.ai.agentserver")
     lib_logger.setLevel(logging.ERROR)
     from azure.ai.agentserver.core import _base  # noqa: F401
+
     assert lib_logger.level == logging.ERROR

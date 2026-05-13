@@ -11,7 +11,10 @@ from unittest import mock
 import pytest
 
 from azure.ai.agentserver.core import AgentServerHost
-from azure.ai.agentserver.core._config import resolve_graceful_shutdown_timeout, _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+from azure.ai.agentserver.core._config import (
+    resolve_graceful_shutdown_timeout,
+    _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT,
+)
 
 
 # ------------------------------------------------------------------ #
@@ -26,7 +29,10 @@ class TestResolveGracefulShutdownTimeout:
         assert resolve_graceful_shutdown_timeout(10) == 10
 
     def test_default(self) -> None:
-        assert resolve_graceful_shutdown_timeout(None) == _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+        assert (
+            resolve_graceful_shutdown_timeout(None)
+            == _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+        )
 
     def test_non_int_explicit_raises(self) -> None:
         with pytest.raises(ValueError, match="expected an integer"):
@@ -193,7 +199,10 @@ async def test_failing_shutdown_is_logged(caplog: pytest.LogCaptureFixture) -> N
         await agent(scope, receive, send)
 
     # The error should be logged
-    assert any("on_shutdown" in r.message.lower() or "error" in r.message.lower() for r in caplog.records)
+    assert any(
+        "on_shutdown" in r.message.lower() or "error" in r.message.lower()
+        for r in caplog.records
+    )
     # Server should still complete shutdown
     assert any(m["type"] == "lifespan.shutdown.complete" for m in sent_messages)
 
@@ -204,7 +213,9 @@ async def test_failing_shutdown_is_logged(caplog: pytest.LogCaptureFixture) -> N
 
 
 @pytest.mark.asyncio
-async def test_slow_shutdown_cancelled_with_warning(caplog: pytest.LogCaptureFixture) -> None:
+async def test_slow_shutdown_cancelled_with_warning(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """A shutdown handler exceeding the timeout is cancelled and a warning is logged."""
     agent = AgentServerHost(graceful_shutdown_timeout=1)
 
@@ -230,7 +241,10 @@ async def test_slow_shutdown_cancelled_with_warning(caplog: pytest.LogCaptureFix
     with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
         await agent(scope, receive, send)
 
-    assert any("did not complete" in r.message.lower() or "timeout" in r.message.lower() for r in caplog.records)
+    assert any(
+        "did not complete" in r.message.lower() or "timeout" in r.message.lower()
+        for r in caplog.records
+    )
     assert any(m["type"] == "lifespan.shutdown.complete" for m in sent_messages)
 
 
@@ -341,7 +355,9 @@ class TestSigtermHandler:
         finally:
             signal.signal(signal.SIGTERM, original)
 
-    def test_sigterm_handler_logs_and_re_raises(self, caplog: pytest.LogCaptureFixture) -> None:
+    def test_sigterm_handler_logs_and_re_raises(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
         """The installed SIGTERM handler logs then re-raises via os.kill."""
         original = signal.getsignal(signal.SIGTERM)
         try:

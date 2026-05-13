@@ -59,7 +59,9 @@ class TestResumeRoute:
     def test_not_found_returns_404(self, mock_get: AsyncMock) -> None:
         """Resume of nonexistent task returns 404."""
         mock_manager = AsyncMock()
-        mock_manager.handle_resume = AsyncMock(side_effect=ValueError("Task 'xyz' not found"))
+        mock_manager.handle_resume = AsyncMock(
+            side_effect=ValueError("Task 'xyz' not found")
+        )
         mock_get.return_value = mock_manager
 
         app = _build_test_app()
@@ -71,7 +73,9 @@ class TestResumeRoute:
     def test_conflict_returns_409(self, mock_get: AsyncMock) -> None:
         """Resume of task not in 'suspended' state returns 409."""
         mock_manager = AsyncMock()
-        mock_manager.handle_resume = AsyncMock(side_effect=ValueError("Task is 'in_progress', not 'suspended'"))
+        mock_manager.handle_resume = AsyncMock(
+            side_effect=ValueError("Task is 'in_progress', not 'suspended'")
+        )
         mock_get.return_value = mock_manager
 
         app = _build_test_app()

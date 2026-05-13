@@ -114,9 +114,7 @@ class TestCallableTags:
                 return "done"
 
             task_id = uuid.uuid4().hex
-            await my_task.run(
-                task_id=task_id, input=None, tags={"extra": "call-site"}
-            )
+            await my_task.run(task_id=task_id, input=None, tags={"extra": "call-site"})
 
             task = await manager.provider.get(task_id)
             assert task.tags["source"] == "factory"
@@ -154,7 +152,9 @@ class TestCallableDescription:
         manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
         try:
 
-            @durable_task(name="static_desc", description="A static description", ephemeral=False)
+            @durable_task(
+                name="static_desc", description="A static description", ephemeral=False
+            )
             async def my_task(ctx: TaskContext[Any]) -> str:
                 return "done"
 

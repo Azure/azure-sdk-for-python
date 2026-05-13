@@ -28,6 +28,7 @@ Usage::
     curl http://localhost:8088/readiness
     # -> {"status": "healthy"}
 """
+
 import logging
 import os
 import uuid
@@ -54,7 +55,9 @@ class SelfHostedInvocationHost(AgentServerHost):
 
     async def _invoke(self, request: Request) -> Response:
         """POST /invocations — handle an invocation request with tracing."""
-        invocation_id = request.headers.get("x-agent-invocation-id") or str(uuid.uuid4())
+        invocation_id = request.headers.get("x-agent-invocation-id") or str(
+            uuid.uuid4()
+        )
         session_id = (
             request.query_params.get("agent_session_id")
             or os.environ.get("FOUNDRY_AGENT_SESSION_ID")
@@ -62,10 +65,15 @@ class SelfHostedInvocationHost(AgentServerHost):
         )
 
         with self.request_span(
-            request.headers, invocation_id, "invoke_agent",
-            operation_name="invoke_agent", session_id=session_id,
+            request.headers,
+            invocation_id,
+            "invoke_agent",
+            operation_name="invoke_agent",
+            session_id=session_id,
         ) as otel_span:
-            logger.info("Processing invocation %s in session %s", invocation_id, session_id)
+            logger.info(
+                "Processing invocation %s in session %s", invocation_id, session_id
+            )
 
             try:
                 data = await request.json()

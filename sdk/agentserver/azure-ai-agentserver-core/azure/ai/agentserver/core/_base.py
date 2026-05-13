@@ -168,7 +168,9 @@ class AgentServerHost(Starlette):
         log_level: Optional[str] = None,
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
-        configure_observability: Optional[Callable[..., None]] = _tracing.configure_observability,
+        configure_observability: Optional[
+            Callable[..., None]
+        ] = _tracing.configure_observability,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -200,7 +202,10 @@ class AgentServerHost(Starlette):
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
 
         # Observability (logging + tracing) --------------------------------
-        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        _conn_str = (
+            applicationinsights_connection_string
+            or self.config.appinsights_connection_string
+        )
         if configure_observability is not None:
             try:
                 configure_observability(
@@ -210,13 +215,18 @@ class AgentServerHost(Starlette):
             except ValueError:
                 raise  # invalid log_level etc. — user should fix their config
             except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
+                logger.warning(
+                    "Failed to initialize observability; continuing without it.",
+                    exc_info=True,
+                )
 
         # Access logging ---------------------------------------------------
         self._access_log: Optional[logging.Logger] = (
             logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         )
-        self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
+        self._access_log_format: str = (
+            access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
+        )
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
@@ -225,7 +235,9 @@ class AgentServerHost(Starlette):
 
         # Build lifespan context manager
         @contextlib.asynccontextmanager
-        async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
+        async def _lifespan(
+            _app: Starlette,
+        ) -> AsyncGenerator[None, None]:  # noqa: RUF029
             logger.info("AgentServerHost started")
 
             # --- Startup configuration logging ---
@@ -238,7 +250,11 @@ class AgentServerHost(Starlette):
                 cfg.agent_version or _NOT_SET,
                 cfg.port,
                 cfg.session_id or _NOT_SET,
-                cfg.sse_keepalive_interval if cfg.sse_keepalive_interval > 0 else "disabled",
+                (
+                    cfg.sse_keepalive_interval
+                    if cfg.sse_keepalive_interval > 0
+                    else "disabled"
+                ),
             )
             logger.info(
                 "Connectivity: project_endpoint=%s, otlp_endpoint=%s, appinsights_configured=%s",
@@ -246,7 +262,11 @@ class AgentServerHost(Starlette):
                 _mask_uri(cfg.otlp_endpoint),
                 bool(cfg.appinsights_connection_string),
             )
-            protocols = ", ".join(self._server_version_segments) if self._server_version_segments else _NOT_SET
+            protocols = (
+                ", ".join(self._server_version_segments)
+                if self._server_version_segments
+                else _NOT_SET
+            )
             logger.info(
                 "Host options: shutdown_timeout=%ss, protocols=%s",
                 self._graceful_shutdown_timeout,
@@ -275,7 +295,9 @@ class AgentServerHost(Starlette):
                 try:
                     await self._durable_task_manager.shutdown()
                 except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Error shutting down durable task manager", exc_info=True)
+                    logger.warning(
+                        "Error shutting down durable task manager", exc_info=True
+                    )
 
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")
@@ -296,7 +318,12 @@ class AgentServerHost(Starlette):
         # Merge routes: subclass routes (if any) + health endpoint + durable tasks
         all_routes: list[Any] = list(routes or [])
         all_routes.append(
-            Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
+            Route(
+                "/readiness",
+                self._readiness_endpoint,
+                methods=["GET"],
+                name="readiness",
+            ),
         )
         if self._durable_task_manager is not None:
             from .durable._resume_route import (  # pylint: disable=import-outside-toplevel
@@ -416,7 +443,9 @@ class AgentServerHost(Starlette):
     # Shutdown handler (server-level lifecycle)
     # ------------------------------------------------------------------
 
-    def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]:
+    def shutdown_handler(
+        self, fn: Callable[[], Awaitable[None]]
+    ) -> Callable[[], Awaitable[None]]:
         """Register a function as the shutdown handler.
 
         :param fn: Async function called during graceful shutdown.
@@ -491,7 +520,9 @@ class AgentServerHost(Starlette):
         finally:
             signal.signal(signal.SIGTERM, original_sigterm)
 
-    async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
+    async def run_async(
+        self, host: str = "0.0.0.0", port: Optional[int] = None
+    ) -> None:
         """Start the server asynchronously (awaitable).
 
         :param host: Network interface to bind. Defaults to ``"0.0.0.0"``.
@@ -510,7 +541,9 @@ class AgentServerHost(Starlette):
     # Health endpoint
     # ------------------------------------------------------------------
 
-    async def _readiness_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+    async def _readiness_endpoint(
+        self, request: Request
+    ) -> Response:  # pylint: disable=unused-argument
         """GET /readiness — readiness check endpoint.
 
         :param request: The incoming Starlette request.
@@ -552,7 +585,9 @@ class AgentServerHost(Starlette):
             if pending is None:
                 pending = asyncio.ensure_future(ait.__anext__())
             try:
-                chunk = await asyncio.wait_for(asyncio.shield(pending), timeout=interval)
+                chunk = await asyncio.wait_for(
+                    asyncio.shield(pending), timeout=interval
+                )
                 pending = None  # consumed — create new task next iteration
                 yield chunk
             except asyncio.TimeoutError:

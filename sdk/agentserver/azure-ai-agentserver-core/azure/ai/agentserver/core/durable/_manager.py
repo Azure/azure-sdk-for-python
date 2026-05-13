@@ -23,13 +23,26 @@ from ._decorator import DurableTaskOptions, _deserialize_input, _serialize_input
 from ._exceptions import TaskFailed, TaskNotFound
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
 from ._metadata import TaskMetadata
-from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest
+from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest, TaskStatus
 from ._provider import DurableTaskProvider
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
+from .._version import VERSION as _CORE_VERSION
+from .._server_version import build_server_version as _build_server_version
 
 logger = logging.getLogger("azure.ai.agentserver.durable")
+
+#: Auto-stamped source type for all tasks created by this framework.
+_SOURCE_TYPE = "agentserver.durable_task"
+
+#: Reserved tag key for task name filtering via the LIST API.
+_TAG_TASK_NAME = "_durable_task_name"
+
+#: Pre-computed server version segment for source stamps.
+_SOURCE_SERVER_VERSION = _build_server_version(
+    "azure-ai-agentserver-core", _CORE_VERSION
+)
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
@@ -48,7 +61,7 @@ def get_task_manager() -> DurableTaskManager:
     if _manager is None:
         raise RuntimeError(
             "DurableTaskManager not initialized. Ensure durable tasks "
-            "are enabled on the AgentServerHost."
+            "are enabled on the AgentServerHost."  # pylint: disable=implicit-str-concat
         )
     return _manager
 
@@ -65,7 +78,7 @@ def set_task_manager(manager: DurableTaskManager | None) -> None:
     _manager = manager
 
 
-class _ActiveTask:
+class _ActiveTask:  # pylint: disable=too-many-instance-attributes
     """In-memory tracking for a running task."""
 
     __slots__ = (
@@ -77,6 +90,10 @@ class _ActiveTask:
         "renewal_cancel",
         "result_future",
         "terminate_event",
+        "fn",
+        "input_type",
+        "opts",
+        "retry",
     )
 
     def __init__(
@@ -89,6 +106,10 @@ class _ActiveTask:
         renewal_cancel: asyncio.Event,
         result_future: asyncio.Future[Any],
         terminate_event: asyncio.Event | None = None,
+        fn: Callable[..., Awaitable[Any]] | None = None,
+        input_type: type[Any] | None = None,
+        opts: DurableTaskOptions | None = None,
+        retry: RetryPolicy | None = None,
     ) -> None:
         self.task_id = task_id
         self.fn_name = fn_name
@@ -98,6 +119,10 @@ class _ActiveTask:
         self.renewal_cancel = renewal_cancel
         self.result_future = result_future
         self.terminate_event = terminate_event or asyncio.Event()
+        self.fn = fn
+        self.input_type = input_type
+        self.opts = opts
+        self.retry = retry
 
 
 class DurableTaskManager:
@@ -112,6 +137,9 @@ class DurableTaskManager:
     :type provider: DurableTaskProvider | None
     :param shutdown_event: Shared shutdown event from the host.
     :type shutdown_event: asyncio.Event | None
+    :param shutdown_grace_seconds: Seconds to wait for tasks to checkpoint
+        before force-expiring leases during shutdown. Defaults to 25.0.
+    :type shutdown_grace_seconds: float
     """
 
     def __init__(
@@ -120,6 +148,7 @@ class DurableTaskManager:
         *,
         provider: DurableTaskProvider | None = None,
         shutdown_event: asyncio.Event | None = None,
+        shutdown_grace_seconds: float = 25.0,
     ) -> None:
         self._config = config
         self._provider = provider or self._create_provider(config)
@@ -128,6 +157,30 @@ class DurableTaskManager:
         self._lease_owner = derive_lease_owner(config.session_id or "local")
         self._instance_id = generate_instance_id()
         self._shutdown_event = shutdown_event or asyncio.Event()
+        self._shutdown_grace_seconds = shutdown_grace_seconds
+        self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
+        self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
+
+    @staticmethod
+    def _build_source(fn_name: str) -> dict[str, str]:
+        """Build the framework-owned source stamp for a task.
+
+        The ``fn_name`` is the developer-provided ``name`` from the decorator
+        (or ``fn.__qualname__`` when omitted).  It serves as the **stable
+        identity anchor** — recovery routing matches ``source.name`` against
+        registered callbacks to dispatch recovered tasks back to the correct
+        function.
+
+        :param fn_name: The task name (from ``@durable_task(name=...)``).
+        :type fn_name: str
+        :return: Source metadata dict.
+        :rtype: dict[str, str]
+        """
+        return {
+            "type": _SOURCE_TYPE,
+            "name": fn_name,
+            "server_version": _SOURCE_SERVER_VERSION,
+        }
 
     @staticmethod
     def _create_provider(config: AgentConfig) -> DurableTaskProvider:
@@ -165,7 +218,7 @@ class DurableTaskManager:
                 ) from exc
 
             logger.info(
-                "Task Storage API enabled via FOUNDRY_TASK_API_ENABLED; "
+                "Task Storage API enabled via FOUNDRY_TASK_API_ENABLED; "  # pylint: disable=implicit-str-concat
                 "using HostedDurableTaskProvider"
             )
             return HostedDurableTaskProvider(
@@ -209,6 +262,67 @@ class DurableTaskManager:
         """
         self._resume_callbacks[fn_name] = fn
 
+        self._resume_callbacks[fn_name] = fn
+
+    async def list_tasks(
+        self,
+        *,
+        fn_name: str,
+        session_id: str | None = None,
+        status: TaskStatus | None = None,
+    ) -> list[TaskInfo]:
+        """List tasks scoped to a specific durable task function.
+
+        Uses server-side filtering (``agent_name``, ``session_id``,
+        ``_durable_task_name`` tag, ``status``) and client-side filtering
+        (``source.type``) to return only tasks created by this framework
+        for the given function.
+
+        :keyword fn_name: The task function name (stable identity anchor).
+        :paramtype fn_name: str
+        :keyword session_id: Session scope override. Defaults to config.
+        :paramtype session_id: str | None
+        :keyword status: Filter by task status.
+        :paramtype status: ~azure.ai.agentserver.core.durable.TaskStatus | None
+        :return: Matching task records.
+        :rtype: list[TaskInfo]
+        """
+        resolved_session = session_id or self._config.session_id or "local"
+        agent_name = self._config.agent_name or "default"
+
+        # Server-side filters: agent_name, session_id, tag, status
+        results = await self._provider.list(
+            agent_name=agent_name,
+            session_id=resolved_session,
+            status=status,
+            tag={_TAG_TASK_NAME: fn_name},
+        )
+
+        # Client-side filter: source.type (until source_type server filter exists)
+        return [
+            task
+            for task in results
+            if task.source and task.source.get("type") == _SOURCE_TYPE
+        ]
+
+    def _register_steering_future(self, task_id: str) -> asyncio.Future[Any]:
+        """Create and register a future for a queued steering input.
+
+        Must be called BEFORE ``_append_steering_input()`` to avoid a race
+        where the drain pops the queue before the future exists.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The registered future.
+        :rtype: asyncio.Future[Any]
+        """
+        loop = asyncio.get_event_loop()
+        future: asyncio.Future[Any] = loop.create_future()
+        if task_id not in self._pending_steering_futures:
+            self._pending_steering_futures[task_id] = []
+        self._pending_steering_futures[task_id].append(future)
+        return future
+
     async def startup(self) -> None:
         """Initialize the manager and recover stale tasks.
 
@@ -234,9 +348,9 @@ class DurableTaskManager:
         for active in self._active_tasks.values():
             active.context.shutdown.set()
 
-        # Wait briefly for tasks to checkpoint
+        # Wait for tasks to checkpoint before force-expiring leases
         if self._active_tasks:
-            await asyncio.sleep(2)
+            await asyncio.sleep(self._shutdown_grace_seconds)
 
         # Force-expire all leases
         for active in list(self._active_tasks.values()):
@@ -280,7 +394,6 @@ class DurableTaskManager:
         tags: dict[str, str],
         opts: DurableTaskOptions,
         retry: RetryPolicy | None = None,
-        source: dict[str, Any] | None = None,
         entry_mode: EntryMode = "fresh",
     ) -> Any:
         """Create a task, run the function, and return the result.
@@ -303,8 +416,6 @@ class DurableTaskManager:
         :paramtype opts: DurableTaskOptions
         :keyword entry_mode: Entry mode.
         :paramtype entry_mode: EntryMode
-        :keyword source: Provenance metadata.
-        :paramtype source: dict[str, Any] | None
         :keyword retry: Retry policy.
         :paramtype retry: RetryPolicy | None
         :keyword title: Human-readable title.
@@ -325,7 +436,6 @@ class DurableTaskManager:
             tags=tags,
             opts=opts,
             retry=retry,
-            source=source,
             entry_mode=entry_mode,
         )
         return await handle.result()
@@ -344,10 +454,12 @@ class DurableTaskManager:
         description: str | None = None,
         opts: DurableTaskOptions,
         retry: RetryPolicy | None = None,
-        source: dict[str, Any] | None = None,
         entry_mode: EntryMode = "fresh",
     ) -> TaskRun[Any]:
         """Create a task, start the function, and return a handle.
+
+        Source provenance is auto-stamped by the framework using
+        ``fn_name`` and the core SDK version.
 
         :keyword fn: The async task function.
         :paramtype fn: Callable[..., Awaitable[Any]]
@@ -371,8 +483,6 @@ class DurableTaskManager:
         :paramtype opts: DurableTaskOptions
         :keyword retry: Retry policy.
         :paramtype retry: RetryPolicy | None
-        :keyword source: Source provenance metadata.
-        :paramtype source: dict[str, Any] | None
         :keyword entry_mode: Why this execution is starting.
         :paramtype entry_mode: EntryMode
         :return: A ``TaskRun`` handle.
@@ -386,6 +496,14 @@ class DurableTaskManager:
         if opts.store_input:
             payload["input"] = _serialize_input(input_val)
         payload["metadata"] = {}
+
+        # Auto-stamp source provenance (framework-owned, not user-overridable)
+        source = self._build_source(fn_name)
+
+        # Auto-stamp task name tag for LIST filtering
+        if tags is None:
+            tags = {}
+        tags[_TAG_TASK_NAME] = fn_name
 
         # Create task with lease
         task_info = await self._provider.create(
@@ -423,6 +541,7 @@ class DurableTaskManager:
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
             title=title,
+            description=description,
             session_id=resolved_session,
             agent_name=agent_name,
             tags=tags,
@@ -434,12 +553,31 @@ class DurableTaskManager:
             shutdown=self._shutdown_event,
             stream_queue=stream_queue,
             entry_mode=entry_mode,
+            generation=0,
         )
         loop = asyncio.get_event_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
 
         # Start lease renewal
         renewal_cancel = asyncio.Event()
+
+        # Build steering poll callback for steerable tasks
+        steering_poll_cb_cs: Callable[[], Awaitable[None]] | None = None
+        if opts.steerable:
+
+            async def _steering_poll_cs() -> None:
+                active = self._active_tasks.get(task_id)
+                if active is None or active.context.cancel.is_set():
+                    return
+                info = await self._provider.get(task_id)
+                if info is None or not info.payload:
+                    return
+                st = info.payload.get("_steering", {})
+                if st.get("pending_inputs"):
+                    active.context.cancel.set()
+
+            steering_poll_cb_cs = _steering_poll_cs
+
         renewal_task = asyncio.create_task(
             lease_renewal_loop(
                 self._provider,
@@ -449,6 +587,7 @@ class DurableTaskManager:
                 lease_duration_seconds=opts.lease_duration_seconds,
                 cancel_event=renewal_cancel,
                 on_cancel_callback=cancel_event,
+                steering_poll_callback=steering_poll_cb_cs,
             )
         )
 
@@ -479,6 +618,10 @@ class DurableTaskManager:
             renewal_cancel=renewal_cancel,
             result_future=result_future,
             terminate_event=terminate_event,
+            fn=fn,
+            input_type=input_type,
+            opts=opts,
+            retry=retry,
         )
         self._active_tasks[task_id] = active
 
@@ -528,7 +671,7 @@ class DurableTaskManager:
 
         logger.info("Resumed task %s", task_id)
 
-    async def _start_existing_task(  # pylint: disable=too-many-locals
+    async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -611,9 +754,44 @@ class DurableTaskManager:
 
         lease_gen = task_info.lease.generation if task_info.lease else 0
 
+        # Extract steering context from payload
+        steering = (task_info.payload or {}).get("_steering", {})
+        # Detect steering context from payload (covers recovered-mid-drain)
+        was_steered = bool(
+            steering.get("drain_in_progress")
+            or steering.get("pending_inputs")
+            or steering.get("generation", 0) > 0
+        )
+
+        # For steerable recovery with drain_in_progress, use active_input
+        if (
+            entry_mode == "recovered"
+            and steering.get("drain_in_progress")
+            and "active_input" in steering
+        ):
+            raw_active = steering["active_input"]
+            if input_type is not None:
+                resolved_input = _deserialize_input(raw_active, input_type)
+            else:
+                resolved_input = raw_active
+
+        prev_input_raw = steering.get("previous_input")
+        previous_input = None
+        if prev_input_raw is not None and input_type is not None:
+            previous_input = _deserialize_input(prev_input_raw, input_type)
+        elif prev_input_raw is not None:
+            previous_input = prev_input_raw
+        pending_snapshot = tuple(steering.get("pending_inputs", ()))
+        generation = steering.get("generation", 0)
+
+        # Pre-set cancel if cancel_requested is True (steering short-circuit)
+        if steering.get("cancel_requested"):
+            cancel_event.set()
+
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
             title=task_info.title or "",
+            description=task_info.description,
             session_id=task_info.session_id,
             agent_name=task_info.agent_name,
             tags=task_info.tags or {},
@@ -625,12 +803,35 @@ class DurableTaskManager:
             shutdown=self._shutdown_event,
             stream_queue=stream_queue,
             entry_mode=entry_mode,
+            was_steered=was_steered,
+            previous_input=previous_input,
+            pending_inputs=pending_snapshot,
+            generation=generation,
         )
 
         loop = asyncio.get_event_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
 
         renewal_cancel = asyncio.Event()
+
+        # Build steering poll callback for steerable tasks
+        steering_poll_cb: Callable[[], Awaitable[None]] | None = None
+        if resolved_opts.steerable:
+
+            async def _steering_poll() -> None:
+                """Poll provider for new steering inputs and signal cancel."""
+                active = self._active_tasks.get(task_id)
+                if active is None or active.context.cancel.is_set():
+                    return
+                info = await self._provider.get(task_id)
+                if info is None or not info.payload:
+                    return
+                st = info.payload.get("_steering", {})
+                if st.get("pending_inputs"):
+                    active.context.cancel.set()
+
+            steering_poll_cb = _steering_poll
+
         renewal_task = asyncio.create_task(
             lease_renewal_loop(
                 self._provider,
@@ -640,6 +841,7 @@ class DurableTaskManager:
                 lease_duration_seconds=lease_duration,
                 cancel_event=renewal_cancel,
                 on_cancel_callback=cancel_event,
+                steering_poll_callback=steering_poll_cb,
             )
         )
 
@@ -668,6 +870,10 @@ class DurableTaskManager:
             renewal_cancel=renewal_cancel,
             result_future=result_future,
             terminate_event=terminate_event,
+            fn=fn,
+            input_type=input_type,
+            opts=resolved_opts,
+            retry=retry,
         )
         self._active_tasks[task_id] = active
         metadata.start_auto_flush()
@@ -682,46 +888,31 @@ class DurableTaskManager:
             terminate_event=terminate_event,
             execution_task=execution_task,
             terminate_reason_ref=terminate_reason_ref,
+            lease_expiry_count=task_info.lease.expiry_count if task_info.lease else 0,
         )
 
     async def _timeout_watchdog(
         self,
         timeout_seconds: float,
         cancel_event: asyncio.Event,
-        grace_seconds: float,
-        execution_task: asyncio.Task[Any],
-        terminate_event: asyncio.Event,
     ) -> None:
         """Background watchdog that enforces execution timeout.
 
-        Phase 1: After *timeout_seconds*, sets *cancel_event* (cooperative).
-        Phase 2: After *grace_seconds* more, sets *terminate_event* and
-                 hard-cancels *execution_task*.
+        After *timeout_seconds*, sets *cancel_event* (cooperative).
+        The function is expected to check ``ctx.cancel`` and exit
+        gracefully.  If it doesn't, the lease will eventually expire
+        and the task will be recovered.
 
         :param timeout_seconds: Seconds before cooperative cancel.
         :type timeout_seconds: float
         :param cancel_event: Event to set for cooperative cancel.
         :type cancel_event: asyncio.Event
-        :param grace_seconds: Grace period before hard cancel.
-        :type grace_seconds: float
-        :param execution_task: The task to hard-cancel.
-        :type execution_task: asyncio.Task[Any]
-        :param terminate_event: Event to set for hard cancel.
-        :type terminate_event: asyncio.Event
         """
         await asyncio.sleep(timeout_seconds)
         cancel_event.set()
         logger.info(
             "Timeout watchdog fired cooperative cancel after %.1fs", timeout_seconds
         )
-        await asyncio.sleep(grace_seconds)
-        if not execution_task.done():
-            terminate_event.set()
-            execution_task.cancel()
-            logger.warning(
-                "Timeout watchdog escalated to hard cancel after %.1fs grace",
-                grace_seconds,
-            )
 
     async def _execute_task(
         self,
@@ -766,19 +957,12 @@ class DurableTaskManager:
         # Start timeout watchdog if configured
         watchdog_task: asyncio.Task[None] | None = None
         if opts.timeout is not None:
-            # We need a reference to the execution asyncio.Task, but we ARE
-            # inside it. Get it from the running loop.
-            current_task = asyncio.current_task()
-            if current_task is not None:
-                watchdog_task = asyncio.create_task(
-                    self._timeout_watchdog(
-                        timeout_seconds=opts.timeout.total_seconds(),
-                        cancel_event=ctx.cancel,
-                        grace_seconds=opts.cancel_grace_seconds,
-                        execution_task=current_task,
-                        terminate_event=resolved_terminate,
-                    )
+            watchdog_task = asyncio.create_task(
+                self._timeout_watchdog(
+                    timeout_seconds=opts.timeout.total_seconds(),
+                    cancel_event=ctx.cancel,
                 )
+            )
 
         attempt = 0  # pylint: disable=unused-variable
         try:
@@ -801,7 +985,7 @@ class DurableTaskManager:
                 except asyncio.CancelledError:
                     pass
 
-    async def _execute_task_loop(  # pylint: disable=too-many-statements
+    async def _execute_task_loop(  # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -836,19 +1020,42 @@ class DurableTaskManager:
         :paramtype terminate_reason_ref: list[str | None] | None
         """
         resolved_terminate = terminate_event or asyncio.Event()
-        reason_ref = terminate_reason_ref if terminate_reason_ref is not None else [None]
+        reason_ref = (
+            terminate_reason_ref if terminate_reason_ref is not None else [None]
+        )
         attempt = 0
+        # Mutable ref: steering drain may swap the active result_future
+        current_result_future = result_future
         while True:
             ctx.run_attempt = attempt
             try:
                 result = await fn(ctx)
 
-                # Stop lease renewal
-                renewal_cancel.set()
-                await ctx.metadata.stop_auto_flush()
-
                 if isinstance(result, Suspended):
-                    # Suspend flow — never retried
+                    # STEERING: check for pending inputs BEFORE persisting suspend
+                    if opts.steerable:
+                        new_ctx = await self._try_drain_steering(
+                            task_id=task_id,
+                            ctx=ctx,
+                            opts=opts,
+                            result_future=current_result_future,
+                        )
+                        if new_ctx is not None:
+                            # Drain found pending input — loop with new context
+                            ctx = new_ctx
+                            attempt = 0
+                            # Update result future to the new generation's future
+                            active = self._active_tasks.get(task_id)
+                            if (
+                                active
+                                and active.result_future is not current_result_future
+                            ):
+                                current_result_future = active.result_future
+                            continue
+
+                    # No pending steering — normal suspend flow
+                    renewal_cancel.set()
+                    await ctx.metadata.stop_auto_flush()
                     await self._handle_suspend(
                         task_id=task_id,
                         reason=result.reason,
@@ -856,8 +1063,8 @@ class DurableTaskManager:
                         metadata=ctx.metadata,
                         opts=opts,
                     )
-                    if not result_future.done():
-                        result_future.set_result(
+                    if not current_result_future.done():
+                        current_result_future.set_result(
                             TaskResult(
                                 task_id=task_id,
                                 output=result.output,
@@ -873,15 +1080,59 @@ class DurableTaskManager:
                             "Return raw output instead — the framework wraps "
                             "it in TaskResult automatically."
                         )
+
+                    # STEERING: check for pending before completing
+                    if opts.steerable:
+                        new_ctx = await self._try_drain_steering(
+                            task_id=task_id,
+                            ctx=ctx,
+                            opts=opts,
+                            result_future=current_result_future,
+                            partial_output=result,
+                        )
+                        if new_ctx is not None:
+                            ctx = new_ctx
+                            attempt = 0
+                            active = self._active_tasks.get(task_id)
+                            if (
+                                active
+                                and active.result_future is not current_result_future
+                            ):
+                                current_result_future = active.result_future
+                            continue
+
                     # Success flow
-                    await self._handle_success(
+                    renewal_cancel.set()
+                    await ctx.metadata.stop_auto_flush()
+                    completed = await self._handle_success(
                         task_id=task_id,
                         result=result,
                         metadata=ctx.metadata,
                         opts=opts,
                     )
-                    if not result_future.done():
-                        result_future.set_result(
+                    if not completed:
+                        # Etag conflict on steerable completion — re-drain
+                        renewal_cancel = asyncio.Event()  # reset for next iteration
+                        new_ctx = await self._try_drain_steering(
+                            task_id=task_id,
+                            ctx=ctx,
+                            opts=opts,
+                            result_future=current_result_future,
+                            partial_output=result,
+                        )
+                        if new_ctx is not None:
+                            ctx = new_ctx
+                            attempt = 0
+                            active = self._active_tasks.get(task_id)
+                            if (
+                                active
+                                and active.result_future is not current_result_future
+                            ):
+                                current_result_future = active.result_future
+                            continue
+                        # No pending found despite conflict — complete anyway
+                    if not current_result_future.done():
+                        current_result_future.set_result(
                             TaskResult(
                                 task_id=task_id,
                                 output=result,
@@ -906,18 +1157,18 @@ class DurableTaskManager:
                         metadata=ctx.metadata,
                         opts=opts,
                     )
-                    if not result_future.done():
-                        result_future.set_exception(
+                    if not current_result_future.done():
+                        current_result_future.set_exception(
                             TaskTerminated(task_id, reason=reason_ref[0])
                         )
                 else:
                     # Cooperative cancellation (suspend or caller cancel)
-                    if not result_future.done():
+                    if not current_result_future.done():
                         from ._exceptions import (  # pylint: disable=import-outside-toplevel
                             TaskCancelled,
                         )
 
-                        result_future.set_exception(TaskCancelled(task_id))
+                        current_result_future.set_exception(TaskCancelled(task_id))
                 break  # cancellation is never retried
 
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -977,8 +1228,8 @@ class DurableTaskManager:
                     metadata=ctx.metadata,
                     opts=opts,
                 )
-                if not result_future.done():
-                    result_future.set_exception(TaskFailed(task_id, error_dict))
+                if not current_result_future.done():
+                    current_result_future.set_exception(TaskFailed(task_id, error_dict))
                 break
 
         self._active_tasks.pop(task_id, None)
@@ -988,7 +1239,167 @@ class DurableTaskManager:
                 _STREAM_SENTINEL,
             )  # pylint: disable=import-outside-toplevel
 
-            await ctx._stream_queue.put(_STREAM_SENTINEL)  # pylint: disable=protected-access
+            await ctx._stream_queue.put(
+                _STREAM_SENTINEL
+            )  # pylint: disable=protected-access
+
+    async def _try_drain_steering(  # pylint: disable=too-many-branches
+        self,
+        *,
+        task_id: str,
+        ctx: TaskContext[Any],
+        opts: DurableTaskOptions,
+        result_future: asyncio.Future[Any],
+        partial_output: Any | None = None,
+    ) -> TaskContext[Any] | None:
+        """Check for pending steering inputs and drain the next one.
+
+        Called BEFORE persisting suspend/complete to avoid lease/status conflicts.
+        Returns a new ``TaskContext`` if a drain occurred, or ``None`` if no
+        pending inputs exist.
+
+        :keyword task_id: The task identifier.
+        :keyword ctx: Current task context.
+        :keyword opts: Task options.
+        :keyword result_future: The current generation's result future.
+        :keyword partial_output: Output from the completed generation (for race recovery).
+        :return: New context for the drained generation, or None.
+        """
+        task_info = await self._provider.get(task_id)
+        if task_info is None:
+            return None
+
+        payload = dict(task_info.payload) if task_info.payload else {}
+        steering = dict(payload.get("_steering", {}))
+        pending: list[Any] = list(steering.get("pending_inputs", []))
+
+        if not pending:
+            return None
+
+        # Pop the next input from the queue
+        next_input_raw = pending.pop(0)
+        previous_input_raw = steering.get("active_input")
+
+        # Update steering state
+        steering["active_input"] = next_input_raw
+        if previous_input_raw is not None:
+            steering["previous_input"] = previous_input_raw
+        steering["pending_inputs"] = pending
+        old_generation = steering.get("generation", 0)
+        steering["generation"] = old_generation + 1
+        steering["cancel_requested"] = len(pending) > 0
+        steering["drain_in_progress"] = True
+
+        # Save partial output if function completed (race recovery)
+        if partial_output is not None:
+            gen_results = dict(steering.get("generation_results", {}))
+            gen_results[str(old_generation)] = _serialize_input(partial_output)
+            steering["generation_results"] = gen_results
+
+        payload["_steering"] = steering
+
+        try:
+            etag = getattr(task_info, "etag", None) or None
+            await self._provider.update(
+                task_id,
+                TaskPatchRequest(payload=payload, if_match=etag),
+            )
+        except ValueError:
+            # Etag conflict — re-read and retry once
+            logger.warning(
+                "Etag conflict during steering drain for %s, retrying", task_id
+            )
+            return await self._try_drain_steering(
+                task_id=task_id,
+                ctx=ctx,
+                opts=opts,
+                result_future=result_future,
+                partial_output=partial_output,
+            )
+
+        # Pop and bind the next pending steering future (if any)
+        new_future: asyncio.Future[Any] | None = None
+        had_registered_future = False
+        steering_futures = self._pending_steering_futures.get(task_id, [])
+        if steering_futures:
+            new_future = steering_futures.pop(0)
+            had_registered_future = True
+
+        # Resolve the superseded generation's future (only for external steer callers)
+        if had_registered_future and not result_future.done():
+            result_future.set_result(
+                TaskResult(task_id=task_id, output=partial_output, status="superseded")
+            )
+
+        # Update active generation future
+        if new_future is not None:
+            self._active_generation_future[task_id] = new_future
+
+        # Deserialize input
+        active_task = self._active_tasks.get(task_id)
+        input_type = active_task.input_type if active_task else None
+        if input_type is not None:
+            resolved_input = _deserialize_input(next_input_raw, input_type)
+        else:
+            resolved_input = next_input_raw
+
+        # Deserialize previous input
+        previous_input = None
+        if previous_input_raw is not None and input_type is not None:
+            previous_input = _deserialize_input(previous_input_raw, input_type)
+        elif previous_input_raw is not None:
+            previous_input = previous_input_raw
+
+        # Build new context, reusing metadata and shutdown event
+        cancel_event = asyncio.Event()
+        if steering["cancel_requested"]:
+            cancel_event.set()
+
+        new_ctx: TaskContext[Any] = TaskContext(
+            task_id=task_id,
+            title=ctx.title,
+            description=ctx.description,
+            session_id=ctx.session_id,
+            agent_name=ctx.agent_name,
+            tags=ctx.tags,
+            input=resolved_input,
+            metadata=ctx.metadata,
+            run_attempt=0,
+            lease_generation=ctx.lease_generation,
+            cancel=cancel_event,
+            shutdown=ctx.shutdown,
+            stream_queue=ctx._stream_queue,  # pylint: disable=protected-access
+            entry_mode="resumed",
+            was_steered=True,
+            previous_input=previous_input,
+            pending_inputs=tuple(pending),
+            generation=old_generation + 1,
+        )
+
+        # Update active task tracking
+        if active_task is not None:
+            active_task.context = new_ctx
+            if new_future is not None:
+                active_task.result_future = new_future
+
+        # Clear drain_in_progress
+        steering["drain_in_progress"] = False
+        payload["_steering"] = steering
+        try:
+            await self._provider.update(
+                task_id,
+                TaskPatchRequest(payload=payload),
+            )
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Failed to clear drain_in_progress for %s", task_id)
+
+        logger.info(
+            "Steering drain: task %s generation %d → %d",
+            task_id,
+            old_generation,
+            old_generation + 1,
+        )
+        return new_ctx
 
     async def _handle_success(
         self,
@@ -997,7 +1408,7 @@ class DurableTaskManager:
         result: Any,
         metadata: TaskMetadata,
         opts: DurableTaskOptions,
-    ) -> None:
+    ) -> bool:
         """Handle successful task completion.
 
         :keyword task_id: The task identifier.
@@ -1008,6 +1419,9 @@ class DurableTaskManager:
         :paramtype metadata: TaskMetadata
         :keyword opts: The task options.
         :paramtype opts: DurableTaskOptions
+        :return: True if completion succeeded, False if etag conflict
+            detected (steerable tasks only — caller should re-drain).
+        :rtype: bool
         """
         if opts.ephemeral:
             # Delete immediately — no intermediate PATCH
@@ -1023,18 +1437,43 @@ class DurableTaskManager:
                 "metadata": metadata.to_dict(),
                 "output": _serialize_input(result),
             }
-            try:
-                await self._provider.update(
-                    task_id,
-                    TaskPatchRequest(
-                        status="completed",
-                        payload=payload_patch,
-                    ),
-                )
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to complete task %s", task_id, exc_info=True)
+
+            # For steerable tasks, use etag to detect concurrent steering
+            if opts.steerable:
+                try:
+                    task_info = await self._provider.get(task_id)
+                    etag = getattr(task_info, "etag", None) if task_info else None
+                    await self._provider.update(
+                        task_id,
+                        TaskPatchRequest(
+                            status="completed",
+                            payload=payload_patch,
+                            if_match=etag,
+                        ),
+                    )
+                except ValueError:
+                    # Etag conflict — another process may have steered
+                    logger.info(
+                        "Etag conflict completing task %s — re-checking for steers",
+                        task_id,
+                    )
+                    return False
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to complete task %s", task_id, exc_info=True)
+            else:
+                try:
+                    await self._provider.update(
+                        task_id,
+                        TaskPatchRequest(
+                            status="completed",
+                            payload=payload_patch,
+                        ),
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to complete task %s", task_id, exc_info=True)
 
         logger.info("Task %s completed successfully", task_id)
+        return True
 
     async def _handle_failure(
         self,
@@ -1185,16 +1624,26 @@ class DurableTaskManager:
     def _find_resume_callback(self, task_info: TaskInfo) -> Callable[..., Any] | None:
         """Find a registered resume callback for a task.
 
+        Matches by ``source.name`` (auto-stamped function name) first,
+        then falls back to title prefix match or single-callback default.
+
         :param task_info: The task record to match.
         :type task_info: TaskInfo
         :return: A matching resume callback, or None.
         :rtype: Callable[..., Any] | None
         """
-        # Try to find by title prefix or any registered callback
+        # Preferred: match by source.name (framework auto-stamped fn name)
+        if task_info.source and "name" in task_info.source:
+            source_name = task_info.source["name"]
+            if source_name in self._resume_callbacks:
+                return self._resume_callbacks[source_name]
+
+        # Fallback: title prefix match
         for name, fn in self._resume_callbacks.items():
             if task_info.title and task_info.title.startswith(name):
                 return fn
-        # Fall back to the first registered callback if only one exists
+
+        # Last resort: single registered callback
         if len(self._resume_callbacks) == 1:
             return next(iter(self._resume_callbacks.values()))
         return None

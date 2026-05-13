@@ -48,7 +48,7 @@ class Suspended(Generic[Output]):
         return f"Suspended(reason={self.reason!r})"
 
 
-class TaskRun(Generic[Output]):
+class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     """Handle to a running or completed durable task.
 
     Returned by :meth:`DurableTask.start`. Provides external observation
@@ -79,6 +79,7 @@ class TaskRun(Generic[Output]):
         "_status",
         "_stream_queue",
         "_execution_task",
+        "_lease_expiry_count",
     )
 
     def __init__(
@@ -87,19 +88,20 @@ class TaskRun(Generic[Output]):
         *,
         provider: DurableTaskProvider,
         result_future: asyncio.Future[TaskResult[Output]],
-        metadata: TaskMetadata,
-        cancel_event: asyncio.Event,
+        metadata: TaskMetadata | None = None,
+        cancel_event: asyncio.Event | None = None,
         status: TaskStatus = "in_progress",
         stream_queue: asyncio.Queue[Any] | None = None,
         terminate_event: asyncio.Event | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         terminate_reason_ref: list[str | None] | None = None,
+        lease_expiry_count: int = 0,
     ) -> None:
         self.task_id = task_id
         self._provider = provider
         self._result_future = result_future
-        self._metadata = metadata
-        self._cancel_event = cancel_event
+        self._metadata = metadata or TaskMetadata()
+        self._cancel_event = cancel_event or asyncio.Event()
         self._terminate_event = terminate_event or asyncio.Event()
         self._terminate_reason_ref: list[str | None] = (
             terminate_reason_ref if terminate_reason_ref is not None else [None]
@@ -107,6 +109,7 @@ class TaskRun(Generic[Output]):
         self._status = status
         self._stream_queue: asyncio.Queue[Any] | None = stream_queue
         self._execution_task: asyncio.Task[Any] | None = execution_task
+        self._lease_expiry_count = lease_expiry_count
 
     @property
     def status(self) -> TaskStatus:
@@ -128,6 +131,18 @@ class TaskRun(Generic[Output]):
         :rtype: TaskMetadata
         """
         return self._metadata
+
+    @property
+    def lease_expiry_count(self) -> int:
+        """Number of times the lease expired and ownership changed.
+
+        Useful for dashboards to detect ownership churn. Call
+        :meth:`refresh` to get the latest value.
+
+        :return: The lease expiry count.
+        :rtype: int
+        """
+        return self._lease_expiry_count
 
     async def result(self) -> TaskResult[Output]:
         """Await task completion and return the result.
@@ -190,6 +205,9 @@ class TaskRun(Generic[Output]):
         if task_info is None:
             raise TaskNotFound(self.task_id)
         self._status = task_info.status
+        # Update lease expiry count
+        if task_info.lease is not None:
+            self._lease_expiry_count = task_info.lease.expiry_count
         # Update metadata from payload
         if task_info.payload and "metadata" in task_info.payload:
             meta_data: dict[str, Any] = task_info.payload["metadata"]

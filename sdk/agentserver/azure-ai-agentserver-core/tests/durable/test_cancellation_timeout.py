@@ -77,7 +77,6 @@ class TestExecutionTimeout:
             @durable_task(
                 name="timeout_coop",
                 timeout=timedelta(seconds=0.2),
-                cancel_grace_seconds=5.0,
             )
             async def slow_task(ctx: TaskContext[Any]) -> str:
                 # Wait until cooperative cancel fires
@@ -91,28 +90,6 @@ class TestExecutionTimeout:
 
             assert cancel_observed.is_set()
             assert result.output == "cooperated"
-        finally:
-            await _ManagerFixture.teardown(manager, mgr_mod)
-
-    @pytest.mark.asyncio
-    async def test_timeout_hard_cancel(self, tmp_path):
-        """Task that ignores cooperative cancel gets hard-cancelled."""
-        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
-        try:
-
-            @durable_task(
-                name="timeout_hard",
-                timeout=timedelta(seconds=0.1),
-                cancel_grace_seconds=0.1,
-            )
-            async def stubborn_task(ctx: TaskContext[Any]) -> str:
-                # Ignore cooperative cancel, just sleep forever
-                await asyncio.sleep(100)
-                return "never"
-
-            run = await stubborn_task.start(task_id=uuid.uuid4().hex, input=None)
-            with pytest.raises(TaskTerminated):
-                await run.result()
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 

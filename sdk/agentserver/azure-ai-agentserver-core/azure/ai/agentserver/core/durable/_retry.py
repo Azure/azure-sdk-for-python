@@ -56,10 +56,14 @@ class RetryPolicy:
     ) -> None:
         if initial_delay.total_seconds() < 0:
             raise ValueError(f"initial_delay must be >= 0, got {initial_delay}")
-        if max_attempts < 1 and not (max_attempts == 1 and initial_delay == timedelta(0)):
+        if max_attempts < 1 and not (
+            max_attempts == 1 and initial_delay == timedelta(0)
+        ):
             pass  # allow no_retry preset
         if backoff_coefficient < 1.0:
-            raise ValueError(f"backoff_coefficient must be >= 1.0, got {backoff_coefficient}")
+            raise ValueError(
+                f"backoff_coefficient must be >= 1.0, got {backoff_coefficient}"
+            )
         if max_delay < initial_delay:
             raise ValueError(
                 f"max_delay ({max_delay}) must be >= initial_delay ({initial_delay})"
@@ -68,7 +72,9 @@ class RetryPolicy:
             raise ValueError(f"max_attempts must be >= 1, got {max_attempts}")
         if retry_on is not None:
             for exc_type in retry_on:
-                if not isinstance(exc_type, type) or not issubclass(exc_type, Exception):
+                if not isinstance(exc_type, type) or not issubclass(
+                    exc_type, Exception
+                ):
                     raise TypeError(
                         f"retry_on entries must be Exception subclasses, got {exc_type!r}"
                     )
@@ -95,7 +101,7 @@ class RetryPolicy:
             raw = base_seconds * (attempt + 1)
         else:
             # Exponential: delay = initial_delay * coefficient ^ attempt
-            raw = base_seconds * (self.backoff_coefficient ** attempt)
+            raw = base_seconds * (self.backoff_coefficient**attempt)
 
         capped = min(raw, self.max_delay.total_seconds())
 

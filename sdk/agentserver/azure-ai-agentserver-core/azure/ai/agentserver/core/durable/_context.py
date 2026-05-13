@@ -10,7 +10,7 @@ and the ``suspend()`` method for pausing execution.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from typing import Any, Generic, Literal, TypeVar
+from typing import Any, Generic, Literal, Sequence, TypeVar
 
 from ._metadata import TaskMetadata
 
@@ -24,9 +24,12 @@ EntryMode = Literal["fresh", "resumed", "recovered"]
 - ``"resumed"`` — Re-entered after suspension. On developer-initiated resume
   (via ``.run()``), ``ctx.input`` contains the new input. On platform-initiated
   resume (via ``/tasks/{task_id}/resume``), ``ctx.input`` contains the task's
-  persisted input.
+  persisted input. Also used when a steering input drains from the queue —
+  check ``ctx.was_steered`` to distinguish steering re-entry from normal resume.
 - ``"recovered"`` — Re-entered after stale task detection. The previous execution
   crashed or timed out. ``ctx.input`` contains the task's persisted input.
+  If a steerable task crashed mid-drain, ``ctx.was_steered`` will be ``True``
+  and steering context (``previous_input``, ``generation``) is meaningful.
 """
 
 
@@ -55,6 +58,8 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
     :type task_id: str
     :param title: Human-readable task title.
     :type title: str
+    :param description: Optional task description.
+    :type description: str | None
     :param session_id: Session scope identifier.
     :type session_id: str
     :param agent_name: Agent name from config.
@@ -78,6 +83,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
     __slots__ = (
         "task_id",
         "title",
+        "description",
         "session_id",
         "agent_name",
         "tags",
@@ -90,6 +96,10 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         "_suspend_callback",
         "_stream_queue",
         "entry_mode",
+        "was_steered",
+        "previous_input",
+        "pending_inputs",
+        "generation",
     )
 
     def __init__(
@@ -97,6 +107,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         *,
         task_id: str,
         title: str,
+        description: str | None = None,
         session_id: str,
         agent_name: str,
         tags: dict[str, str],
@@ -108,9 +119,14 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         shutdown: asyncio.Event | None = None,
         stream_queue: asyncio.Queue[Any] | None = None,
         entry_mode: EntryMode = "fresh",
+        was_steered: bool = False,
+        previous_input: Input | None = None,
+        pending_inputs: Sequence[Any] | None = None,
+        generation: int = 0,
     ) -> None:
         self.task_id = task_id
         self.title = title
+        self.description = description
         self.session_id = session_id
         self.agent_name = agent_name
         self.tags = tags
@@ -123,6 +139,12 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self._suspend_callback: Any = None
         self._stream_queue: asyncio.Queue[Any] | None = stream_queue
         self.entry_mode: EntryMode = entry_mode
+        self.was_steered: bool = was_steered
+        self.previous_input: Input | None = previous_input
+        self.pending_inputs: Sequence[Any] = (
+            pending_inputs if pending_inputs is not None else ()
+        )
+        self.generation: int = generation
 
     async def suspend(
         self,

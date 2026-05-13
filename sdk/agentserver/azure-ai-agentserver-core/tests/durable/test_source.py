@@ -22,12 +22,16 @@ class TestTaskInfoSource:
 
     def test_set_at_construction(self):
         src = {"type": "user", "origin": "cli"}
-        info = TaskInfo(id="t1", agent_name="a", session_id="s", status="pending", source=src)
+        info = TaskInfo(
+            id="t1", agent_name="a", session_id="s", status="pending", source=src
+        )
         assert info.source == src
 
     def test_to_dict_includes_source(self):
         src = {"type": "api", "request_id": "r1"}
-        info = TaskInfo(id="t1", agent_name="a", session_id="s", status="pending", source=src)
+        info = TaskInfo(
+            id="t1", agent_name="a", session_id="s", status="pending", source=src
+        )
         d = info.to_dict()
         assert d["source"] == src
 
@@ -54,7 +58,9 @@ class TestTaskInfoSource:
 
     def test_round_trip(self):
         src = {"origin": "test", "nested": {"a": 1}}
-        info = TaskInfo(id="t1", agent_name="a", session_id="s", status="pending", source=src)
+        info = TaskInfo(
+            id="t1", agent_name="a", session_id="s", status="pending", source=src
+        )
         restored = TaskInfo.from_dict(info.to_dict())
         assert restored.source == src
 
