@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.portal import Portal
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.portal import Portal
     pip install azure-identity
     pip install azure-mgmt-portal
 # USAGE
-    python delete_tenant_configuration.py
+    python tenant_configurations_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +31,26 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.tenant_configurations.delete(
+    response = client.tenant_configurations.create(
         configuration_name="default",
+        resource={
+            "id": "str",
+            "name": "str",
+            "properties": {"enforcePrivateMarkdownStorage": bool, "provisioningState": "str"},
+            "systemData": {
+                "createdAt": "2020-02-20 00:00:00",
+                "createdBy": "str",
+                "createdByType": "str",
+                "lastModifiedAt": "2020-02-20 00:00:00",
+                "lastModifiedBy": "str",
+                "lastModifiedByType": "str",
+            },
+            "type": "str",
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2020-09-01-preview/examples/TenantConfiguration/DeleteTenantConfiguration.json
+# x-ms-original-file: specification/portal/resource-manager/Microsoft.Portal/preview/2020-09-01-preview/examples/TenantConfigurations_Create.json
 if __name__ == "__main__":
     main()
