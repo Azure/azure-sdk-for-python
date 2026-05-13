@@ -168,9 +168,7 @@ class TestTagIsStableForTypeSpec:
         pkg = result["packages"][0]
         assert pkg["tagIsStable"] is True
 
-    def test_swagger_preview_by_judge(self, io_paths):
-        """When judge_tag_preview returns True (preview), tagIsStable should be False,
-        regardless of sdkReleaseType."""
+    def test_swagger_preview_by_sdk_release_type(self, io_paths):
         input_path, output_path = io_paths
         input_data = {
             "specFolder": "spec",
