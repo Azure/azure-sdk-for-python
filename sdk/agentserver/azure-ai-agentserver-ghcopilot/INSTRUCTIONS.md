@@ -1,4 +1,4 @@
-# azure-ai-agentserver-githubcopilot — Getting Started
+# azure-ai-agentserver-ghcopilot — Getting Started
 
 Instructions for using, testing, and contributing to the GitHub Copilot SDK adapter package for Azure AI Agent Server.
 
@@ -24,7 +24,7 @@ That's it — skill discovery, session management, auth, and RAPI event mapping 
 ## Package Structure
 
 ```
-azure-ai-agentserver-githubcopilot/
+azure-ai-agentserver-ghcopilot/
 ├── azure/ai/agentserver/githubcopilot/
 │   ├── __init__.py                    ← Public API: GitHubCopilotAdapter, CopilotAdapter, ToolAcl
 │   ├── _copilot_adapter.py            ← Core + convenience adapter classes
@@ -55,7 +55,7 @@ This package is the **production home** for the adapter code that previously liv
 |---|---|---|
 | **Purpose** | Reference repo with example agents, deploy scripts, skills | The adapter library itself |
 | **Adapter code** | Vendored in `.foundry/runtime/vendor/` | First-party in `azure/ai/agentserver/githubcopilot/` |
-| **How agents use it** | Copies vendor code into container | `pip install azure-ai-agentserver-githubcopilot` |
+| **How agents use it** | Copies vendor code into container | `pip install azure-ai-agentserver-ghcopilot` |
 | **Where it ships** | Not shipped — internal reference | Ships via Azure SDK pipeline |
 
 Going forward, adapter code changes should be made here. The foundry-declarative-agent repo will eventually consume this package via `pip install` instead of vendoring.
@@ -93,7 +93,7 @@ Going forward, adapter code changes should be made here. The foundry-declarative
 Install the package and its dependencies locally for validation and testing:
 
 ```bash
-cd sdk/agentserver/azure-ai-agentserver-githubcopilot
+cd sdk/agentserver/azure-ai-agentserver-ghcopilot
 pip install --pre -e ".[dev]" 2>/dev/null || pip install --pre azure-ai-agentserver-core github-copilot-sdk==0.2.0 azure-identity PyYAML python-dotenv
 ```
 
@@ -197,7 +197,7 @@ my-agent/
 │   ├── my-skill/SKILL.md
 │   └── another/SKILL.md
 ├── Dockerfile
-├── requirements.txt       ← includes azure-ai-agentserver-githubcopilot
+├── requirements.txt       ← includes azure-ai-agentserver-ghcopilot
 └── .env
 ```
 

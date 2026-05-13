@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # ---------------------------------------------------------
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+
 """GitHub Copilot SDK adapter for Azure AI Agent Server.
 
 Bridges the GitHub Copilot SDK to the Azure AI Foundry hosted agent
@@ -18,7 +20,6 @@ Usage::
     adapter = GitHubCopilotAdapter.from_project(".")
     adapter.run()
 """
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._copilot_adapter import CopilotAdapter, GitHubCopilotAdapter
 from ._tool_acl import ToolAcl

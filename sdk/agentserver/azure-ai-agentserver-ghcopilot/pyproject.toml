@@ -1,5 +1,5 @@
 [project]
-name = "azure-ai-agentserver-githubcopilot"
+name = "azure-ai-agentserver-ghcopilot"
 dynamic = ["version", "readme"]
 description = "GitHub Copilot SDK adapter for Azure AI Agent Server"
 requires-python = ">=3.11"

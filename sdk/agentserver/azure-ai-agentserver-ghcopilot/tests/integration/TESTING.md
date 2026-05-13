@@ -1,7 +1,7 @@
 # Integration Tests
 
 End-to-end tests that deploy a minimal agent to Azure AI Foundry ADC
-and verify the `azure-ai-agentserver-githubcopilot` package works in a real
+and verify the `azure-ai-agentserver-ghcopilot` package works in a real
 hosted agent environment.
 
 ## Prerequisites
