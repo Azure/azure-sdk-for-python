@@ -186,7 +186,8 @@ class CorsRule(GeneratedCorsRule):
     """The comma-delimited string representation of the list of HTTP methods that are allowed to be executed
         by the origin."""
     allowed_headers: str
-    """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin request."""
+    """The comma-delimited string representation of the list of headers allowed to be part of
+        the cross-origin request."""
     exposed_headers: str
     """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
     max_age_in_seconds: int
