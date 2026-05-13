@@ -8,11 +8,12 @@ from collections import deque
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
-from azure.core.rest import HttpRequest
 from aiohttp import ClientResponse
-from aiohttp.streams import StreamReader
 from aiohttp.client_proto import ResponseHandler
+from aiohttp.streams import StreamReader
+
+from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport  # pylint: disable=no-name-in-module
+from azure.core.rest import HttpRequest
 
 
 class ProgressTracker:

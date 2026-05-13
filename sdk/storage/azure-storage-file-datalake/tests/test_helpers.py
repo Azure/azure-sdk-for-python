@@ -5,13 +5,14 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Dict, Optional
-from typing_extensions import Self
 from urllib.parse import urlparse
 
-from azure.core.pipeline.transport import HttpTransport, RequestsTransportResponse
-from azure.core.rest import HttpRequest
 from requests import Response
+from typing_extensions import Self
 from urllib3 import HTTPResponse
+
+from azure.core.pipeline.transport import HttpTransport, RequestsTransportResponse  # pylint: disable=no-name-in-module
+from azure.core.rest import HttpRequest
 
 
 class ProgressTracker:
