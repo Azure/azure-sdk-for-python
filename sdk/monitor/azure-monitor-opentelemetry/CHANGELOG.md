@@ -3,6 +3,7 @@
 ## 1.8.8 (Unreleased)
 
 ### Features Added
+- Move `AZURE_MONITOR_DISTRO_VERSION` env var assignment before exporter imports
 - Set `AZURE_MONITOR_DISTRO_VERSION` environment variable to pass distro version to the exporter
   ([#46666](https://github.com/Azure/azure-sdk-for-python/pull/46666))
 - Register GenAI main-agent attribution processors to automatically propagate

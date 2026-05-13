@@ -1094,3 +1094,10 @@ class TestConfigure(unittest.TestCase):
         is_on_functions_mock.return_value = True
         _send_attach_warning()
         mock_diagnostics.warning.assert_not_called()
+
+    def test_distro_version_env_var_set_at_import(self):
+        """Verify AZURE_MONITOR_DISTRO_VERSION env var is set when _configure module loads."""
+        import os
+        from azure.monitor.opentelemetry._version import VERSION
+
+        self.assertEqual(os.environ.get("AZURE_MONITOR_DISTRO_VERSION"), VERSION)
