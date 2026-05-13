@@ -3,19 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import sys
 from datetime import datetime, timedelta
 
 import pytest
-from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions, generate_blob_sas, generate_container_sas
-from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
-from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions, generate_blob_sas, generate_container_sas
+from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
+from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
+
 
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse
@@ -23,22 +27,22 @@ else:
     from urlparse import parse_qs, urlparse
     from urllib2 import quote
 
-_AUTHORIZATION_HEADER_NAME = "Authorization"
+_AUTHORIZATION_HEADER_NAME = 'Authorization'
 
 
 class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, bsc):
-        self.container_name = self.get_resource_name("utcontainer")
+        self.container_name = self.get_resource_name('utcontainer')
 
         # create source blob to be copied from
-        self.source_blob_name = self.get_resource_name("srcblob")
+        self.source_blob_name = self.get_resource_name('srcblob')
         self.source_blob_data = self.get_random_bytes(4 * 1024)
         source_blob = bsc.get_blob_client(self.container_name, self.source_blob_name)
 
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             await source_blob.upload_blob(self.source_blob_data, overwrite=True)
 
@@ -62,13 +66,12 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, logging_enable=True
-        )
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, logging_enable=True)
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
-        request_body = "testloggingbody"
+        request_body = 'testloggingbody'
         blob_name = self.get_resource_name("testloggingblob")
         blob_client = container.get_blob_client(blob_name)
         await blob_client.upload_blob(request_body, overwrite=True)
@@ -102,7 +105,7 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             # make sure authorization header is logged, but its value is not
             # the keyword SharedKey is present in the authorization header's value
             assert _AUTHORIZATION_HEADER_NAME in log_as_str
-            assert not "SharedKey" in log_as_str
+            assert not 'SharedKey' in log_as_str
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -150,23 +153,24 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         await self._setup(bsc)
         # Arrange
-        dest_blob_name = self.get_resource_name("destblob")
+        dest_blob_name = self.get_resource_name('destblob')
         dest_blob = bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # parse out the signed signature
         query_parameters = urlparse(self.source_blob_url).query
         token_components = parse_qs(query_parameters)
         if QueryStringConstants.SIGNED_SIGNATURE not in token_components:
-            pytest.fail(
-                "Blob URL {} doesn't contain {}, parsed query params: {}".format(
-                    self.source_blob_url, QueryStringConstants.SIGNED_SIGNATURE, list(token_components.keys())
-                )
-            )
+            pytest.fail("Blob URL {} doesn't contain {}, parsed query params: {}".format(
+                self.source_blob_url,
+                QueryStringConstants.SIGNED_SIGNATURE,
+                list(token_components.keys())
+            ))
         signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
         # Act
         with LogCaptured(self) as log_captured:
-            await dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True, logging_enable=True)
+            await dest_blob.start_copy_from_url(
+                self.source_blob_url, requires_sync=True, logging_enable=True)
             log_as_str = log_captured.getvalue()
 
             # Assert
@@ -177,7 +181,7 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             # make sure authorization header is logged, but its value is not
             # the keyword SharedKey is present in the authorization header's value
             assert _AUTHORIZATION_HEADER_NAME in log_as_str
-            assert not "SharedKey" in log_as_str
+            assert not 'SharedKey' in log_as_str
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -190,17 +194,17 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             storage_account_key.secret,
             logging_enable=True,
-            logging_body=True,
+            logging_body=True
         )
-        container_name = self.get_resource_name("utcontainer")
+        container_name = self.get_resource_name('utcontainer')
         container = bsc.get_container_client(container_name)
         if self.is_live:
             try:
                 await container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
-        request_body = "testoverridelogging"
+        request_body = 'testoverridelogging'
         blob_name = self.get_resource_name("testoverride")
         blob_client = container.get_blob_client(blob_name)
         await blob_client.upload_blob(request_body, overwrite=True)
@@ -221,18 +225,18 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
 
         # Act - Upload with logging_body=False (test request logging override)
         with LogCaptured(self) as log_captured:
-            await blob_client.upload_blob("uploadtest", overwrite=True, logging_body=False)
+            await blob_client.upload_blob('uploadtest', overwrite=True, logging_body=False)
             log_as_str = log_captured.getvalue()
             # Assert - Request body should NOT be logged
-            assert "uploadtest" not in log_as_str
+            assert 'uploadtest' not in log_as_str
 
         # Act - Upload/Download with logging_enable=False (should override constructor and disable logging entirely)
         with LogCaptured(self) as log_captured:
-            await blob_client.upload_blob("uploadtest", overwrite=True, logging_enable=False)
+            await blob_client.upload_blob('uploadtest', overwrite=True, logging_enable=False)
             await blob_client.download_blob(logging_enable=False)
             log_as_str = log_captured.getvalue()
             # Assert - No logging should occur
-            assert log_as_str == ""
+            assert log_as_str == ''
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -245,18 +249,18 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             storage_account_key.secret,
             logging_enable=True,
-            logging_body=True,
+            logging_body=True
         )
-        container_name = self.get_resource_name("utcontainer")
+        container_name = self.get_resource_name('utcontainer')
         container = bsc.get_container_client(container_name)
         if self.is_live:
             try:
                 await container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
-        request_body_1 = "isolationtest1"
-        request_body_2 = "isolationtest2"
+        request_body_1 = 'isolationtest1'
+        request_body_2 = 'isolationtest2'
         blob_name_1 = self.get_resource_name("testblob1")
         blob_name_2 = self.get_resource_name("testblob2")
         blob_client_1 = container.get_blob_client(blob_name_1)
@@ -297,7 +301,7 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             storage_account_key.secret,
             logging_enable=True,
-            logging_body=False,
+            logging_body=False
         )
         container_no_body = bsc_no_body.get_container_client(container_name)
         blob_client_no_body = container_no_body.get_blob_client(blob_name_1)
@@ -331,15 +335,15 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             initial_backoff=0.1,
             increment_base=0.1,
         )
-        container_name = self.get_resource_name("utcontainer")
+        container_name = self.get_resource_name('utcontainer')
         container = bsc.get_container_client(container_name)
         if self.is_live:
             try:
                 await container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
-        request_body = "testretrylogging"
+        request_body = 'testretrylogging'
         blob_name = self.get_resource_name("testretry")
         blob_client = container.get_blob_client(blob_name)
         await blob_client.upload_blob(request_body, overwrite=True)

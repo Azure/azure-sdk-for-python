@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -16,15 +14,17 @@ USAGE: python blob_samples_query.py
 """
 import os
 import sys
+
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobServiceClient, DelimitedJsonDialect, DelimitedTextDialect
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-BASE_FILE = os.path.join(current_dir, "./sample-blobs/quick_query.csv")
+BASE_FILE = os.path.join(current_dir, './sample-blobs/quick_query.csv')
 
 
 def main():
     try:
-        CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
+        CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 
     except KeyError:
         print("STORAGE_CONNECTION_STRING must be set.")
@@ -35,7 +35,7 @@ def main():
     container_client = blob_service_client.get_container_client(container_name)
     try:
         container_client.create_container()
-    except:
+    except HttpResponseError:
         pass
     # [START query]
     errors = []
@@ -51,12 +51,10 @@ def main():
     # select the second column of the csv file
     query_expression = "SELECT _2 from BlobStorage"
     input_format = DelimitedTextDialect(
-        delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=False
-    )
-    output_format = DelimitedJsonDialect(delimiter="\n")
+        delimiter=',', quotechar='"', lineterminator='\n', escapechar="", has_header=False)
+    output_format = DelimitedJsonDialect(delimiter='\n')
     reader = blob_client.query_blob(
-        query_expression, on_error=on_error, blob_format=input_format, output_format=output_format
-    )
+        query_expression, on_error=on_error, blob_format=input_format, output_format=output_format)
     content = reader.readall()
     # [END query]
     print(content)

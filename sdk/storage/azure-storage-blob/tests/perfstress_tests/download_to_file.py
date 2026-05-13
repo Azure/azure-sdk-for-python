@@ -5,7 +5,6 @@
 
 import os
 import tempfile
-from typing import Optional
 
 from devtools_testutils.perfstress_tests import RandomStream
 

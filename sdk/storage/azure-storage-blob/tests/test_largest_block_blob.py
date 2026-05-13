@@ -3,20 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import platform
 import tempfile
 import uuid
-from os import path, remove, urandom
+from os import urandom
 
 import pytest
+
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.storage.blob import BlobBlock, BlobServiceClient
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.blob._shared.uploads import SubStream
 
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "largestblob"

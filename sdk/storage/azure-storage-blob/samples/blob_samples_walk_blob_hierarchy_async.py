@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -42,6 +40,7 @@ import asyncio
 import os
 import sys
 
+from azure.core.exceptions import HttpResponseError
 from azure.storage.blob.aio import BlobServiceClient, BlobPrefix
 
 try:
@@ -85,7 +84,7 @@ async def main():
             containers = service_client.list_containers()
             async for container in containers:
                 await walk_container(service_client, container)
-    except Exception as error:
+    except HttpResponseError as error:
         print(error)
         sys.exit(1)
 

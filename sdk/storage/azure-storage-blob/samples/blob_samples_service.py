@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable, protected-access
 
 """
 FILE: blob_samples_service.py
@@ -25,35 +24,27 @@ class BlobServiceSamples(object):
 
     def get_storage_account_information(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_storage_account_information"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_storage_account_information")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # [START get_blob_service_account_info]
         account_info = blob_service_client.get_account_information()
-        print("Using Storage SKU: {}".format(account_info["sku_name"]))
+        print('Using Storage SKU: {}'.format(account_info['sku_name']))
         # [END get_blob_service_account_info]
 
     def blob_service_properties(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: blob_service_properties"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_service_properties")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # [START set_blob_service_properties]
@@ -62,17 +53,15 @@ class BlobServiceSamples(object):
 
         # Create logging settings
         logging = BlobAnalyticsLogging(
-            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
-        )
+            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-        minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
-        )
+        minute_metrics = Metrics(enabled=True, include_apis=True,
+                                 retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Create CORS rules
-        cors_rule = CorsRule(["www.xyz.com"], ["GET"])
+        cors_rule = CorsRule(['www.xyz.com'], ['GET'])
         cors = [cors_rule]
 
         # Set the service properties
@@ -85,12 +74,12 @@ class BlobServiceSamples(object):
 
     def blob_service_stats(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: blob_service_stats")
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_service_stats")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # [START get_blob_service_stats]
@@ -99,16 +88,12 @@ class BlobServiceSamples(object):
 
     def container_operations(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: container_operations"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: container_operations")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         try:
@@ -124,12 +109,12 @@ class BlobServiceSamples(object):
             # List all containers
             all_containers = blob_service_client.list_containers(include_metadata=True)
             for container in all_containers:
-                print(container["name"], container["metadata"])
+                print(container['name'], container['metadata'])
 
             # Filter results with name prefix
-            test_containers = blob_service_client.list_containers(name_starts_with="test-")
+            test_containers = blob_service_client.list_containers(name_starts_with='test-')
             for container in test_containers:
-                print(container["name"], container["metadata"])
+                print(container['name'], container['metadata'])
             # [END bsc_list_containers]
 
         finally:
@@ -143,16 +128,12 @@ class BlobServiceSamples(object):
 
     def get_blob_and_container_clients(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_blob_and_container_clients"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_blob_and_container_clients")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # [START bsc_get_container_client]
@@ -180,36 +161,11 @@ class BlobServiceSamples(object):
             # Delete the container
             blob_service_client.delete_container("containertest")
 
-    def get_blob_service_client_from_container_client(self):
-        if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_blob_service_client_from_container_client"
-            )
-            sys.exit(1)
 
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import ContainerClient
-
-        container_client1 = ContainerClient.from_connection_string(self.connection_string, "container")
-        container_client1.create_container()
-
-        # [START get_blob_service_client_from_container_client]
-        blob_service_client = container_client1._get_blob_service_client()
-        print(blob_service_client.get_service_properties())
-        container_client2 = blob_service_client.get_container_client("container")
-
-        print(container_client2.get_container_properties())
-        container_client2.delete_container()
-        # [END get_blob_service_client_from_container_client]
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     sample = BlobServiceSamples()
     sample.get_storage_account_information()
     sample.get_blob_and_container_clients()
     sample.container_operations()
     sample.blob_service_properties()
     sample.blob_service_stats()
-    sample.get_blob_service_client_from_container_client()

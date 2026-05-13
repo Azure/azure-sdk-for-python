@@ -11,5 +11,5 @@
         "specs.azure.clientgenerator.core.clientdefaultvalue.ClientDefaultValueClient.get_header_parameter": "_Specs_.Azure.ClientGenerator.Core.ClientDefaultValue.getHeaderParameter",
         "specs.azure.clientgenerator.core.clientdefaultvalue.aio.ClientDefaultValueClient.get_header_parameter": "_Specs_.Azure.ClientGenerator.Core.ClientDefaultValue.getHeaderParameter"
     },
-    "CrossLanguageVersion": "170edb31e329"
+    "CrossLanguageVersion": "ff5b04329ed1"
 }

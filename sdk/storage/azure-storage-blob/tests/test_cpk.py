@@ -3,10 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE, NEW_CPK_KEY_HASH, NEW_CPK_KEY_VALUE
+from settings.testcase import BlobPreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobBlock,
@@ -17,10 +24,6 @@ from azure.storage.blob import (
     generate_blob_sas,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE, NEW_CPK_KEY_HASH, NEW_CPK_KEY_VALUE
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
@@ -43,7 +46,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.delete_container(self.container_name)
-            except:
+            except HttpResponseError:
                 pass
 
     # --Helpers-----------------------------------------------------------------

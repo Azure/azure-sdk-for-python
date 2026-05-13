@@ -1,9 +1,10 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
 import base64
 import random
 import tempfile
@@ -11,16 +12,18 @@ from io import BytesIO
 from math import ceil
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCode
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import NonSeekableStream, ProgressTracker
 
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCode
+
+
 # ------------------------------------------------------------------------------
-TEST_BLOB_PREFIX = "blob"
+TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
 
 
@@ -33,19 +36,18 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=key.secret,
             max_single_get_size=1024,
-            max_chunk_get_size=1024,
-        )
+            max_chunk_get_size=1024)
         self.config = self.bsc._config
-        self.container_name = self.get_resource_name("utcontainer")
+        self.container_name = self.get_resource_name('utcontainer')
 
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
-        self.byte_blob = self.get_resource_name("byteblob")
+        self.byte_blob = self.get_resource_name('byteblob')
         self.byte_data = self.get_random_bytes(64 * 1024 + 5)
 
         if self.is_live and upload_blob:
@@ -65,7 +67,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_data = "hello world啊齄丂狛狜".encode("utf-8")
+        blob_data = 'hello world啊齄丂狛狜'.encode('utf-8')
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
@@ -84,7 +86,25 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        base64_data = "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=="
+        base64_data = (
+            'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7'
+            'PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3'
+            'eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKz'
+            'tLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v'
+            '8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSor'
+            'LC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZn'
+            'aGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKj'
+            'pKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f'
+            '4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRob'
+            'HB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZX'
+            'WFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKT'
+            'lJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P'
+            '0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoL'
+            'DA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZH'
+            'SElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKD'
+            'hIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/'
+            'wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        )
         binary_data = base64.b64decode(base64_data)
 
         blob_name = self._get_blob_reference()
@@ -105,7 +125,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_data = b""
+        blob_data = b''
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
@@ -164,7 +184,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_data = b""
+        blob_data = b''
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
@@ -186,7 +206,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_data = b"foobar"
+        blob_data = b'foobar'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
@@ -230,8 +250,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -240,8 +260,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert self.byte_data == content
         self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(self.byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -254,8 +276,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -264,8 +286,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert self.byte_data == content
         self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(self.byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -282,8 +306,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -292,8 +316,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert blob_data == content
         self.assert_download_progress(
-            len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(blob_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -329,8 +355,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -342,9 +368,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -357,8 +382,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -370,9 +395,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -389,8 +413,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -402,9 +426,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert blob_data == actual
-        self.assert_download_progress(
-            len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+        self.assert_download_progress(len(blob_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -441,8 +464,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -450,18 +473,19 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         end_range = self.config.max_single_get_size + 1024
         with tempfile.TemporaryFile() as temp_file:
             downloader = blob.download_blob(
-                offset=start_range, length=end_range, raw_response_hook=callback, max_concurrency=2
-            )
+                offset=start_range,
+                length=end_range,
+                raw_response_hook=callback,
+                max_concurrency=2)
             read_bytes = downloader.readinto(temp_file)
 
             # Assert
             assert read_bytes == end_range
             temp_file.seek(0)
             actual = temp_file.read()
-            assert self.byte_data[start_range : end_range + start_range] == actual
-        self.assert_download_progress(
-            end_range, self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            assert self.byte_data[start_range:end_range + start_range] == actual
+        self.assert_download_progress(end_range, self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -566,13 +590,13 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # parallel tests introduce random order of requests, can only run live
 
         self._setup(storage_account_name, storage_account_key)
-        text_blob = self.get_resource_name("textblob")
+        text_blob = self.get_resource_name('textblob')
         text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
         blob.upload_blob(text_data)
 
         # Act
-        stream = blob.download_blob(max_concurrency=2, encoding="UTF-8")
+        stream = blob.download_blob(max_concurrency=2, encoding='UTF-8')
         content = stream.readall()
 
         # Assert
@@ -587,7 +611,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # parallel tests introduce random order of requests, can only run live
 
         self._setup(storage_account_name, storage_account_key)
-        text_blob = self.get_resource_name("textblob")
+        text_blob = self.get_resource_name('textblob')
         text_data = self.get_random_text_data(self.config.max_single_get_size + 1)
         blob = self.bsc.get_blob_client(self.container_name, text_blob)
         blob.upload_blob(text_data)
@@ -595,19 +619,24 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        stream = blob.download_blob(raw_response_hook=callback, max_concurrency=2, encoding="UTF-8")
+        stream = blob.download_blob(
+            raw_response_hook=callback,
+            max_concurrency=2,
+            encoding='UTF-8')
         content = stream.readall()
 
         # Assert
         assert text_data == content
         self.assert_download_progress(
-            len(text_data.encode("utf-8")), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(text_data.encode('utf-8')),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -624,19 +653,24 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        stream = blob.download_blob(raw_response_hook=callback, max_concurrency=1, encoding="UTF-8")
+        stream = blob.download_blob(
+            raw_response_hook=callback,
+            max_concurrency=1,
+            encoding='UTF-8')
         content = stream.readall()
 
         # Assert
         assert text_data == content
         self.assert_download_progress(
-            len(text_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(text_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -653,19 +687,21 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        stream = blob.download_blob(raw_response_hook=callback, encoding="UTF-8")
+        stream = blob.download_blob(raw_response_hook=callback, encoding='UTF-8')
         content = stream.readall()
 
         # Assert
         assert blob_data == content
         self.assert_download_progress(
-            len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(blob_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -674,13 +710,13 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = "hello 啊齄丂狛狜 world"
+        text = 'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(text, encoding="utf-16")
+        blob.upload_blob(text, encoding='utf-16')
 
         # Act
-        stream = blob.download_blob(encoding="UTF-16")
+        stream = blob.download_blob(encoding='UTF-16')
         content = stream.readall()
 
         # Assert
@@ -693,27 +729,29 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = "hello 啊齄丂狛狜 world"
+        text = 'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(text, encoding="utf-16")
+        blob.upload_blob(text, encoding='utf-16')
 
         # Act
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
-        stream = blob.download_blob(raw_response_hook=callback, encoding="UTF-16")
+        stream = blob.download_blob(raw_response_hook=callback, encoding='UTF-16')
         content = stream.readall()
 
         # Assert
         assert text == content
         self.assert_download_progress(
-            len(text.encode("utf-8")), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(text.encode('utf-8')),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -753,7 +791,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
             with pytest.raises(ValueError):
                 downloader = blob.download_blob(max_concurrency=2)
-                properties = downloader.readinto(non_seekable_stream)
+                downloader.readinto(non_seekable_stream)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -770,22 +808,21 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
-            properties = downloader.readinto(temp_file)
+            downloader.readinto(temp_file)
 
             # Assert
             temp_file.seek(0)
             actual = temp_file.read()
             assert byte_data == actual
-        self.assert_download_progress(
-            len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+        self.assert_download_progress(len(byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -802,8 +839,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -812,8 +849,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert byte_data == content
         self.assert_download_progress(
-            len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -823,15 +862,17 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
-        byte_data = self.get_random_bytes(self.config.max_single_get_size + self.config.max_chunk_get_size)
+        byte_data = self.get_random_bytes(
+            self.config.max_single_get_size +
+            self.config.max_chunk_get_size)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(byte_data)
 
         progress = []
 
         def callback(response):
-            current = response.context["download_stream_current"]
-            total = response.context["data_stream_total"]
+            current = response.context['download_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
@@ -840,8 +881,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert byte_data == content
         self.assert_download_progress(
-            len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
-        )
+            len(byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -893,7 +936,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         props = blob.get_blob_properties()
-        props.content_settings.content_md5 = b"MDAwMDAwMDA="
+        props.content_settings.content_md5 = b'MDAwMDAwMDA='
         blob.set_http_headers(props.content_settings)
 
         # Act
@@ -904,7 +947,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert downloader.size == 1024
         assert read_bytes == 1024
-        assert b"MDAwMDAwMDA=" == downloader.properties.content_settings.content_md5
+        assert b'MDAwMDAwMDA=' == downloader.properties.content_settings.content_md5
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -918,7 +961,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         props = blob.get_blob_properties()
-        props.content_settings.content_md5 = b"MDAwMDAwMDA="
+        props.content_settings.content_md5 = b'MDAwMDAwMDA='
         blob.set_http_headers(props.content_settings)
 
         # Act
@@ -926,7 +969,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Assert
         assert content.properties.size == 1024
-        assert b"MDAwMDAwMDA=" == content.properties.content_settings.content_md5
+        assert b'MDAwMDAwMDA=' == content.properties.content_settings.content_md5
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -957,7 +1000,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        data = b"a" * 512
+        data = b'a' * 512
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(data, overwrite=True)
@@ -977,7 +1020,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        data = b"a" * 5120
+        data = b'a' * 5120
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(data, overwrite=True)
@@ -998,7 +1041,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # parallel tests introduce random order of requests, can only run live
         self._setup(storage_account_name, storage_account_key)
-        data = b"a" * 5120
+        data = b'a' * 5120
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(data, overwrite=True)
@@ -1019,7 +1062,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # parallel tests introduce random order of requests, can only run live
         self._setup(storage_account_name, storage_account_key)
-        data = b"a" * 5120
+        data = b'a' * 5120
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(data, overwrite=True)
@@ -1029,7 +1072,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         blob.download_blob(
-            offset=512, length=length, max_concurrency=3, progress_hook=progress.assert_progress
+            offset=512,
+            length=length,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress
         ).readall()
 
         # Assert
@@ -1043,7 +1089,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # parallel tests introduce random order of requests, can only run live
         self._setup(storage_account_name, storage_account_key)
-        data = b"a" * 5120
+        data = b'a' * 5120
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(data, overwrite=True)
@@ -1066,7 +1112,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        data = b""
+        data = b''
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1085,7 +1131,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        data = b"12345" * 205 * 5  # 5125 bytes
+        data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1105,7 +1151,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         self.bsc._config.max_single_get_size = 10 * 1024
         self.bsc._config.max_chunk_get_size = 10 * 1024
 
-        data = b"12345" * 205 * 5  # 5125 bytes
+        data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
@@ -1131,7 +1177,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = b"12345" * 205 * 5  # 5125 bytes
+        data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
@@ -1157,7 +1203,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = b"12345" * 205 * 5  # 5125 bytes
+        data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
@@ -1183,7 +1229,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        data = b"12345" * 205 * 5  # 5125 bytes
+        data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
@@ -1210,7 +1256,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Random chunk sizes, can only run live
         self._setup(storage_account_name, storage_account_key)
-        data = b"12345" * 205 * 15  # 15375 bytes
+        data = b'12345' * 205 * 15  # 15375 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
@@ -1235,7 +1281,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # parallel tests introduce random order of requests, can only run live
         self._setup(storage_account_name, storage_account_key)
-        data = b"12345" * 205 * 15  # 15375 bytes
+        data = b'12345' * 205 * 15  # 15375 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob(max_concurrency=3)
@@ -1264,13 +1310,13 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         self.bsc._config.max_single_put_size = 1024
         self.bsc._config.max_block_size = 1024
 
-        data = b"12345" * 205 * 15  # 15375 bytes
+        data = b'12345' * 205 * 15  # 15375 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         stream = blob.download_blob()
 
         # Act
-        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "-copy")
+        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + '-copy')
         blob2.upload_blob(stream, overwrite=True)
         result = blob2.download_blob().readall()
 
@@ -1284,7 +1330,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        data = b"Hello World"
+        data = b'Hello World'
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1296,7 +1342,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         assert result == data
         for _ in range(3):
             result = stream.read(100)
-            assert result == b""
+            assert result == b''
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1305,7 +1351,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = b"12345" * 205 * 5  # 5125 bytes
+        data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1317,8 +1363,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         data1 = stream.read(read_size)
         data2 = stream.read(read_size)
 
-        assert data1 == data[offset : offset + read_size]
-        assert data2 == data[offset + read_size : offset + length]
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
 
         offset, length = 501, 3000
         stream = blob.download_blob(offset=offset, length=length)
@@ -1327,8 +1373,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         data1 = stream.read(read_size)
         data2 = stream.read(read_size)
 
-        assert data1 == data[offset : offset + read_size]
-        assert data2 == data[offset + read_size : offset + length]
+        assert data1 == data[offset:offset + read_size]
+        assert data2 == data[offset + read_size:offset + length]
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1337,7 +1383,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        data = b"Hello World"
+        data = b'Hello World'
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1367,7 +1413,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         second = second_stream.getvalue()
 
         assert first == data
-        assert second == b""
+        assert second == b''
         assert read_size == 0
 
     @BlobPreparer()
@@ -1377,7 +1423,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = b"12345" * 205 * 10  # 10250 bytes
+        data = b'12345' * 205 * 10  # 10250 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1413,7 +1459,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = b"12345" * 205 * 10  # 10250 bytes
+        data = b'12345' * 205 * 10  # 10250 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
         offset, length = 1024, 2048
@@ -1423,16 +1469,16 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         first = stream.read(100)  # Read in first chunk
         second = stream.readall()
 
-        assert first == data[offset : offset + 100]
-        assert second == data[offset + 100 : offset + length]
+        assert first == data[offset:offset + 100]
+        assert second == data[offset + 100:offset + length]
 
         offset, length = 501, 5000
         stream = blob.download_blob(offset=offset, length=length)
         first = stream.read(3000)  # Read past first chunk
         second = stream.readall()
 
-        assert first == data[offset : offset + 3000]
-        assert second == data[offset + 3000 : offset + length]
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
 
         stream = blob.download_blob(offset=offset, length=length)
         first = stream.read(3000)  # Read past first chunk
@@ -1440,8 +1486,8 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         read_size = stream.readinto(second_stream)
         second = second_stream.getvalue()
 
-        assert first == data[offset : offset + 3000]
-        assert second == data[offset + 3000 : offset + length]
+        assert first == data[offset:offset + 3000]
+        assert second == data[offset + 3000:offset + length]
         assert read_size == len(second)
 
     @BlobPreparer()
@@ -1451,7 +1497,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = b"12345" * 205 * 5  # 5125 bytes
+        data = b'12345' * 205 * 5  # 5125 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1481,7 +1527,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = "你好世界" * 260  # 3120 bytes
+        data = '你好世界' * 260  # 3120 bytes
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, overwrite=True)
 
@@ -1497,7 +1543,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
                 self.num_read += 1
 
         progress = CustomProgressTracker()
-        stream = blob.download_blob(encoding="utf-8", progress_hook=progress.assert_progress)
+        stream = blob.download_blob(encoding='utf-8', progress_hook=progress.assert_progress)
 
         # Act / Assert
         for _ in range(4):
@@ -1511,18 +1557,18 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = "你好世界" * 5
+        data = '你好世界' * 5
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob.upload_blob(data, encoding="utf-8", overwrite=True)
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
 
-        stream = blob.download_blob(encoding="utf-8")
+        stream = blob.download_blob(encoding='utf-8')
         assert stream.read() == data
 
-        stream = blob.download_blob(encoding="utf-8")
+        stream = blob.download_blob(encoding='utf-8')
         assert stream.read(chars=100000) == data
 
-        result = ""
-        stream = blob.download_blob(encoding="utf-8")
+        result = ''
+        stream = blob.download_blob(encoding='utf-8')
         for _ in range(4):
             chunk = stream.read(chars=5)
             result += chunk
@@ -1538,18 +1584,18 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = "你好世界" * 256  # 3 KiB
+        data = '你好世界' * 256  # 3 KiB
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob.upload_blob(data, encoding="utf-8", overwrite=True)
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
 
-        stream = blob.download_blob(encoding="utf-8")
+        stream = blob.download_blob(encoding='utf-8')
         assert stream.read() == data
 
-        stream = blob.download_blob(encoding="utf-8")
+        stream = blob.download_blob(encoding='utf-8')
         assert stream.read(chars=100000) == data
 
-        result = ""
-        stream = blob.download_blob(encoding="utf-8")
+        result = ''
+        stream = blob.download_blob(encoding='utf-8')
         for _ in range(4):
             chunk = stream.read(chars=100)
             result += chunk
@@ -1565,21 +1611,21 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = "你好世界" * 256  # 3 KiB
+        data = '你好世界' * 256  # 3 KiB
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob.upload_blob(data, encoding="utf-8", overwrite=True)
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
 
         # Offset and length need to be multiple of 3 to meet unicode boundaries
         offset, length = 9, 1500
-        expected = data[offset // 3 : offset // 3 + length // 3]
-        stream = blob.download_blob(offset=offset, length=length, encoding="utf-8")
+        expected = data[offset//3: offset//3 + length//3]
+        stream = blob.download_blob(offset=offset, length=length, encoding='utf-8')
         assert stream.read() == expected
 
-        stream = blob.download_blob(offset=offset, length=length, encoding="utf-8")
+        stream = blob.download_blob(offset=offset, length=length, encoding='utf-8')
         assert stream.read(chars=100000) == expected
 
-        result = ""
-        stream = blob.download_blob(offset=offset, length=length, encoding="utf-8")
+        result = ''
+        stream = blob.download_blob(offset=offset, length=length, encoding='utf-8')
         for _ in range(4):
             chunk = stream.read(chars=100)
             result += chunk
@@ -1595,28 +1641,28 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = "你好世界" * 2
+        data = '你好世界' * 2
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        blob.upload_blob(data, encoding="utf-8", overwrite=True)
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
 
-        stream = blob.download_blob(encoding="utf-8")
+        stream = blob.download_blob(encoding='utf-8')
 
         # Read some data as chars, this should prevent any reading as bytes
-        assert stream.read(chars=4) == "你好世界"
+        assert stream.read(chars=4) == '你好世界'
 
         # readinto, chunks, and read(size=x) should now be blocked
         with pytest.raises(ValueError) as e:
             stream.readinto(BytesIO())
-        assert "Stream has been partially read in text mode." in str(e.value)
+        assert 'Stream has been partially read in text mode.' in str(e.value)
         with pytest.raises(ValueError) as e:
             stream.chunks()
-        assert "Stream has been partially read in text mode." in str(e.value)
+        assert 'Stream has been partially read in text mode.' in str(e.value)
         with pytest.raises(ValueError) as e:
             stream.read(size=12)
-        assert "Stream has been partially read in text mode." in str(e.value)
+        assert 'Stream has been partially read in text mode.' in str(e.value)
 
         # read() should still work to get remaining chars
-        assert stream.read() == "你好世界"
+        assert stream.read() == '你好世界'
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1625,15 +1671,15 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, upload_blob=False)
-        data = "你好世界" * 256
-        encoding = "utf-32"
+        data = '你好世界' * 256
+        encoding = 'utf-32'
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         blob.upload_blob(data, encoding=encoding, overwrite=True)
 
         stream = blob.download_blob(encoding=encoding)
         assert stream.read() == data
 
-        result = ""
+        result = ''
         stream = blob.download_blob(encoding=encoding)
         for _ in range(4):
             chunk = stream.read(chars=100)

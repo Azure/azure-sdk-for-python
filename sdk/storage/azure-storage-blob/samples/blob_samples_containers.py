@@ -1,11 +1,9 @@
-# pylint: disable=line-too-long,useless-suppression
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_container.py
@@ -25,7 +23,7 @@ from datetime import datetime, timedelta
 from azure.core.exceptions import ResourceExistsError
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
+SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
 
 
 class ContainerSamples(object):
@@ -36,13 +34,13 @@ class ContainerSamples(object):
 
     def container_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: container_sample")
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: container_sample")
             sys.exit(1)
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -52,7 +50,17 @@ class ContainerSamples(object):
         # [START create_container_client_sasurl]
         from azure.storage.blob import ContainerClient
 
-        sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+        sas_url = (
+            "https://account.blob.core.windows.net/mycontainer"
+            "?sv=2015-04-05"
+            "&st=2015-04-29T22%3A18%3A26Z"
+            "&se=2015-04-30T02%3A23%3A26Z"
+            "&sr=b"
+            "&sp=rw"
+            "&sip=168.1.5.60-168.1.5.70"
+            "&spr=https"
+            "&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+        )
         container = ContainerClient.from_container_url(sas_url)
         # [END create_container_client_sasurl]
 
@@ -72,16 +80,12 @@ class ContainerSamples(object):
 
     def acquire_lease_on_container(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: acquire_lease_on_container"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: acquire_lease_on_container")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -103,16 +107,12 @@ class ContainerSamples(object):
 
     def set_metadata_on_container(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: set_metadata_on_container"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: set_metadata_on_container")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -124,7 +124,7 @@ class ContainerSamples(object):
 
             # [START set_container_metadata]
             # Create key, value pairs for metadata
-            metadata = {"type": "test"}
+            metadata = {'type': 'test'}
 
             # Set metadata on the container
             container_client.set_container_metadata(metadata=metadata)
@@ -139,21 +139,18 @@ class ContainerSamples(object):
 
     def container_access_policy(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: container_access_policy"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: container_access_policy")
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myaccesscontainer")
         if container_client.account_name is None:
-            print("Connection string did not provide an account name.\nTest: container_access_policy")
+            print("Connection string did not provide an account name." + '\n' +
+                  "Test: container_access_policy")
             sys.exit(1)
 
         try:
@@ -163,14 +160,11 @@ class ContainerSamples(object):
             # [START set_container_access_policy]
             # Create access policy
             from azure.storage.blob import AccessPolicy, ContainerSasPermissions
+            access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
+                                         expiry=datetime.utcnow() + timedelta(hours=1),
+                                         start=datetime.utcnow() - timedelta(minutes=1))
 
-            access_policy = AccessPolicy(
-                permission=ContainerSasPermissions(read=True),
-                expiry=datetime.utcnow() + timedelta(hours=1),
-                start=datetime.utcnow() - timedelta(minutes=1),
-            )
-
-            identifiers = {"test": access_policy}
+            identifiers = {'test': access_policy}
 
             # Set the access policy on the container
             container_client.set_container_access_policy(signed_identifiers=identifiers)
@@ -188,16 +182,16 @@ class ContainerSamples(object):
                 container_client.account_name,
                 container_client.container_name,
                 account_key=container_client.credential.account_key,
-                policy_id="my-access-policy-id",
+                policy_id='my-access-policy-id'
             )
             # [END generate_sas_token]
 
             # Use the sas token to authenticate a new client
             # [START create_container_client_sastoken]
             from azure.storage.blob import ContainerClient
-
             container = ContainerClient.from_container_url(
-                container_url="https://account.blob.core.windows.net/mycontainer", credential=sas_token
+                container_url="https://account.blob.core.windows.net/mycontainer",
+                credential=sas_token
             )
             # [END create_container_client_sastoken]
 
@@ -207,16 +201,12 @@ class ContainerSamples(object):
 
     def list_blobs_in_container(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: list_blobs_in_container"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: list_blobs_in_container")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -235,7 +225,7 @@ class ContainerSamples(object):
         # [START list_blobs_in_container]
         blobs_list = container_client.list_blobs()
         for blob in blobs_list:
-            print(blob.name + "\n")
+            print(blob.name + '\n')
         # [END list_blobs_in_container]
 
         # Delete container
@@ -243,16 +233,12 @@ class ContainerSamples(object):
 
     def get_blob_client_from_container(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_blob_client_from_container"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_blob_client_from_container")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -272,33 +258,8 @@ class ContainerSamples(object):
         # Delete container
         container_client.delete_container()
 
-    def get_container_client_from_blob_client(self):
-        if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_container_client_from_blob_client"
-            )
-            sys.exit(1)
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-
-        # [START get_container_client_from_blob_client]
-        container_client1 = blob_service_client.get_container_client("blobcontainer1")
-        container_client1.create_container()
-        print(container_client1.get_container_properties())
-        blob_client1 = container_client1.get_blob_client("blob")
-        blob_client1.upload_blob("hello")
-
-        container_client2 = blob_client1._get_container_client()
-        print(container_client2.get_container_properties())
-        container_client2.delete_container()
-        # [END get_container_client_from_blob_client]
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     sample = ContainerSamples()
     sample.container_sample()
     sample.acquire_lease_on_container()
@@ -306,4 +267,3 @@ if __name__ == "__main__":
     sample.container_access_policy()
     sample.list_blobs_in_container()
     sample.get_blob_client_from_container()
-    sample.get_container_client_from_blob_client()

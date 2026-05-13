@@ -1,6 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -22,7 +19,8 @@ USAGE: python blob_samples_container_access_policy_async.py
 EXAMPLE OUTPUT:
 
 ..Creating container
-Created container has identifier 'read' with permissions 'rw', start date '2019-10-18T22:14:36Z', and expiry date '2019-10-18T23:15:36Z'.
+Created container has identifier 'read' with permissions 'rw',
+start date '2019-10-18T22:14:36Z', and expiry date '2019-10-18T23:15:36Z'.
 
 ..Getting container access policy
 Blob Access Type: container
@@ -33,12 +31,13 @@ import os
 import sys
 import asyncio
 from datetime import datetime, timedelta
-from azure.core.exceptions import ResourceExistsError
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import AccessPolicy, ContainerSasPermissions, PublicAccess
 from azure.storage.blob.aio import BlobServiceClient
 
 try:
-    CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
+    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
 except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
@@ -55,13 +54,11 @@ async def get_and_set_container_access_policy():
         except ResourceExistsError:
             pass
         # Create access policy
-        access_policy = AccessPolicy(
-            permission=ContainerSasPermissions(read=True, write=True),
-            expiry=datetime.utcnow() + timedelta(hours=1),
-            start=datetime.utcnow() - timedelta(minutes=1),
-        )
+        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow() - timedelta(minutes=1))
 
-        identifiers = {"read": access_policy}
+        identifiers = {'read': access_policy}
 
         # Specifies full public read access for container and blob data.
         public_access = PublicAccess.CONTAINER
@@ -71,26 +68,25 @@ async def get_and_set_container_access_policy():
 
         for identifier_name, access_policy in identifiers.items():
             print(
-                "Created container has identifier '{}' with permissions '{}', start date '{}', and expiry date '{}'.".format(
-                    identifier_name, access_policy.permission, access_policy.start, access_policy.expiry
-                )
+                f"Created container has identifier {identifier_name} "
+                f"with permissions {access_policy.permission}, "
+                f"start date {access_policy.start}, and expiry date {access_policy.expiry}"
             )
 
         # Get the access policy on the container
         print("\n..Getting container access policy")
         access_policy_dict = await container_client.get_container_access_policy()
         print(f"Blob Access Type: {access_policy_dict['public_access']}")
-        for identifier in access_policy_dict["signed_identifiers"]:
+        for identifier in access_policy_dict['signed_identifiers']:
             print(f"Identifier '{identifier.id}' has permissions '{identifier.access_policy.permission}''")
 
 
 async def main():
     try:
         await get_and_set_container_access_policy()
-    except Exception as error:
+    except HttpResponseError as error:
         print(error)
         sys.exit(1)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(main())

@@ -3,23 +3,27 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
+# pylint: disable=attribute-defined-outside-init
+
 from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
-from azure.core import MatchConditions
-from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
-from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
-from azure.storage.blob.aio import BlobServiceClient
+import pytest
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
+from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
+from azure.storage.blob.aio import BlobServiceClient
+
+
 # ------------------------------------------------------------------------------
-TEST_CONTAINER_PREFIX = "container"
-TEST_BLOB_PREFIX = "blob"
+TEST_CONTAINER_PREFIX = 'container'
+TEST_BLOB_PREFIX = 'blob'
 # ------------------------------------------------------------------------------
 
 
@@ -49,7 +53,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
     async def _create_empty_block_blob(self, tags=None):
         blob_name = self._get_blob_reference()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
-        resp = await blob_client.upload_blob(b"", length=0, overwrite=True, tags=tags)
+        resp = await blob_client.upload_blob(b'', length=0, overwrite=True, tags=tags)
         return blob_client, resp
 
     async def _create_append_blob(self, tags=None):
@@ -68,7 +72,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         container_name = self.get_resource_name(prefix)
         try:
             await self.bsc.create_container(container_name)
-        except:
+        except ResourceExistsError:
             pass
         return container_name
 
@@ -98,7 +102,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
         await self._setup(storage_account_name, storage_account_key)
         blob_client, _ = await self._create_block_blob()
-        lease = await blob_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
+        lease = await blob_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -130,7 +134,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
         # Act
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        resp = await blob_client.set_blob_tags(tags, version_id=resp["version_id"])
+        resp = await blob_client.set_blob_tags(tags, version_id=resp['version_id'])
 
         # Assert
         assert resp is not None
@@ -251,20 +255,24 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
         await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        blob_client, resp = await self._create_empty_block_blob(tags={"condition tag": "test tag"})
+        blob_client, resp = await self._create_empty_block_blob(tags={'condition tag': 'test tag'})
 
-        await blob_client.stage_block("1", b"AAA")
-        await blob_client.stage_block("2", b"BBB")
-        await blob_client.stage_block("3", b"CCC")
+        await blob_client.stage_block('1', b'AAA')
+        await blob_client.stage_block('2', b'BBB')
+        await blob_client.stage_block('3', b'CCC')
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         with pytest.raises(ResourceModifiedError):
             await blob_client.commit_block_list(
-                block_list, tags=tags, if_tags_match_condition="\"condition tag\"='wrong tag'"
+                block_list,
+                tags=tags,
+                if_tags_match_condition="\"condition tag\"='wrong tag'"
             )
         await blob_client.commit_block_list(
-            block_list, tags=tags, if_tags_match_condition="\"condition tag\"='test tag'"
+            block_list,
+            tags=tags,
+            if_tags_match_condition="\"condition tag\"='test tag'"
         )
 
         resp = await blob_client.get_blob_tags()
@@ -284,18 +292,17 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         blob_client, resp = await self._create_block_blob()
 
         # Act
-        sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_client.blob_name
-        )
+        sourceblob = '{0}/{1}/{2}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob_client.blob_name)
 
-        copyblob = self.bsc.get_blob_client(self.container_name, "blob1copy")
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         copy = await copyblob.start_copy_from_url(sourceblob, tags=tags)
 
         # Assert
         assert copy is not None
-        assert copy["copy_status"] == "success"
-        assert not isinstance(copy["copy_status"], Enum)
-        assert copy["copy_id"] is not None
+        assert copy['copy_status'] == 'success'
+        assert not isinstance(copy['copy_status'], Enum)
+        assert copy['copy_id'] is not None
 
         copy_content = await (await copyblob.download_blob()).readall()
         assert copy_content == self.byte_data
@@ -315,7 +322,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        await source_blob.upload_blob(b"Hello World", overwrite=True, tags=tags)
+        await source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
 
         source_sas = self.generate_sas(
             generate_blob_sas,
@@ -326,8 +333,8 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
             permission=BlobSasPermissions(read=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        source_url = source_blob.url + "?" + source_sas
-        dest_blob = self.bsc.get_blob_client(self.container_name, "blob1copy")
+        source_url = source_blob.url + '?' + source_sas
+        dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
 
         # Act
         with pytest.raises(ValueError):
@@ -337,9 +344,9 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
         # Assert
         assert copy is not None
-        assert copy["copy_status"] == "success"
-        assert not isinstance(copy["copy_status"], Enum)
-        assert copy["copy_id"] is not None
+        assert copy['copy_status'] == 'success'
+        assert not isinstance(copy['copy_status'], Enum)
+        assert copy['copy_id'] is not None
 
         copy_tags = await dest_blob.get_blob_tags()
 
@@ -357,7 +364,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         tags2 = {"hello": "world"}
         source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        await source_blob.upload_blob(b"Hello World", overwrite=True, tags=tags)
+        await source_blob.upload_blob(b'Hello World', overwrite=True, tags=tags)
 
         source_sas = self.generate_sas(
             generate_blob_sas,
@@ -368,17 +375,17 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        source_url = source_blob.url + "?" + source_sas
-        dest_blob = self.bsc.get_blob_client(self.container_name, "blob1copy")
+        source_url = source_blob.url + '?' + source_sas
+        dest_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
 
         # Act
         copy = await dest_blob.start_copy_from_url(source_url, tags=tags2, requires_sync=True)
 
         # Assert
         assert copy is not None
-        assert copy["copy_status"] == "success"
-        assert not isinstance(copy["copy_status"], Enum)
-        assert copy["copy_id"] is not None
+        assert copy['copy_status'] == 'success'
+        assert not isinstance(copy['copy_status'], Enum)
+        assert copy['copy_id'] is not None
 
         copy_tags = await dest_blob.get_blob_tags()
 
@@ -437,9 +444,9 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
         assert 2 == len(items_on_page1)
         assert 2 == len(items_on_page2)
-        assert len(items_on_page2[0]["tags"]) == 2
-        assert items_on_page2[0]["tags"]["tag1"] == "firsttag"
-        assert items_on_page2[0]["tags"]["tag2"] == "secondtag"
+        assert len(items_on_page2[0]['tags']) == 2
+        assert items_on_page2[0]['tags']['tag1'] == 'firsttag'
+        assert items_on_page2[0]['tags']['tag2'] == 'secondtag'
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -464,14 +471,14 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError):
             await blob.get_blob_tags(if_modified_since=early)
         with pytest.raises(ResourceModifiedError):
-            await blob.set_blob_tags(first_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfModified)
+            await blob.set_blob_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
 
         await blob.set_blob_tags(first_tags, if_unmodified_since=early)
         tags = await blob.get_blob_tags(if_unmodified_since=early)
         assert tags == first_tags
 
-        await blob.set_blob_tags(second_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfNotModified)
-        tags = await blob.get_blob_tags(etag=first_resp["etag"], match_condition=MatchConditions.IfNotModified)
+        await blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+        tags = await blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
         assert tags == second_tags
 
         await blob.upload_blob(b"def456", overwrite=True)
@@ -481,15 +488,14 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError):
             await blob.get_blob_tags(if_unmodified_since=early)
         with pytest.raises(ResourceModifiedError):
-            await blob.set_blob_tags(first_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfNotModified)
+            await blob.set_blob_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
 
         await blob.set_blob_tags(first_tags, if_modified_since=early)
         tags = await blob.get_blob_tags(if_modified_since=early)
         assert tags == first_tags
 
-        await blob.set_blob_tags(second_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfModified)
-        tags = await blob.get_blob_tags(etag=first_resp["etag"], match_condition=MatchConditions.IfModified)
+        await blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+        tags = await blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
         assert tags == second_tags
-
 
 # ------------------------------------------------------------------------------

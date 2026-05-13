@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_service_async.py
@@ -27,36 +26,28 @@ class BlobServiceSamplesAsync(object):
 
     async def get_storage_account_information_async(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_storage_account_information_async"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_storage_account_information_async")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
             # [START get_blob_service_account_info]
             account_info = await blob_service_client.get_account_information()
-            print("Using Storage SKU: {}".format(account_info["sku_name"]))
+            print('Using Storage SKU: {}'.format(account_info['sku_name']))
             # [END get_blob_service_account_info]
 
     async def blob_service_properties_async(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: blob_service_properties_async"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_service_properties_async")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -65,20 +56,17 @@ class BlobServiceSamplesAsync(object):
             from azure.storage.blob import BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
             # Create logging settings
-            logging = BlobAnalyticsLogging(
-                read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
-            )
+            logging = BlobAnalyticsLogging(read=True, write=True, delete=True,
+                                           retention_policy=RetentionPolicy(enabled=True, days=5))
 
             # Create metrics for requests statistics
-            hour_metrics = Metrics(
-                enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
-            )
-            minute_metrics = Metrics(
-                enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
-            )
+            hour_metrics = Metrics(enabled=True, include_apis=True,
+                                   retention_policy=RetentionPolicy(enabled=True, days=5))
+            minute_metrics = Metrics(enabled=True, include_apis=True,
+                                     retention_policy=RetentionPolicy(enabled=True, days=5))
 
             # Create CORS rules
-            cors_rule = CorsRule(["www.xyz.com"], ["GET"])
+            cors_rule = CorsRule(['www.xyz.com'], ['GET'])
             cors = [cors_rule]
 
             # Set the service properties
@@ -91,16 +79,12 @@ class BlobServiceSamplesAsync(object):
 
     async def blob_service_stats_async(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: blob_service_stats_async"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: blob_service_stats_async")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -110,16 +94,12 @@ class BlobServiceSamplesAsync(object):
 
     async def container_operations_async(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: container_operations_async"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: container_operations_async")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -139,15 +119,15 @@ class BlobServiceSamplesAsync(object):
                     all_containers.append(container)
 
                 for container in all_containers:
-                    print(container["name"], container["metadata"])
+                    print(container['name'], container['metadata'])
 
                 # Filter results with name prefix
                 test_containers = []
-                async for name in blob_service_client.list_containers(name_starts_with="test-"):
+                async for name in blob_service_client.list_containers(name_starts_with='test-'):
                     test_containers.append(name)
 
                 for container in test_containers:
-                    print(container["name"], container["metadata"])
+                    print(container['name'], container['metadata'])
                 # [END bsc_list_containers]
 
             finally:
@@ -161,16 +141,12 @@ class BlobServiceSamplesAsync(object):
 
     async def get_blob_and_container_clients_async(self):
         if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_blob_and_container_clients_async"
-            )
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_blob_and_container_clients_async")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -204,31 +180,6 @@ class BlobServiceSamplesAsync(object):
                 # Delete the container
                 await blob_service_client.delete_container("containertestasync")
 
-    async def get_blob_service_client_from_container_client_async(self):
-        if self.connection_string is None:
-            print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING."
-                + "\n"
-                + "Test: get_blob_service_client_from_container_client_async"
-            )
-            sys.exit(1)
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob.aio import ContainerClient
-
-        container_client1 = ContainerClient.from_connection_string(self.connection_string, "containerasync")
-
-        await container_client1.create_container()
-
-        # [START get_blob_service_client_from_container_client]
-        blob_service_client = container_client1._get_blob_service_client()
-        print(await blob_service_client.get_service_properties())
-        container_client2 = blob_service_client.get_container_client("containerasync")
-
-        print(await container_client2.get_container_properties())
-        await container_client2.delete_container()
-        await container_client1.close()
-        # [END get_blob_service_client_from_container_client]
-
 
 async def main():
     sample = BlobServiceSamplesAsync()
@@ -237,8 +188,6 @@ async def main():
     await sample.container_operations_async()
     await sample.blob_service_properties_async()
     await sample.blob_service_stats_async()
-    await sample.get_blob_service_client_from_container_client_async()
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     asyncio.run(main())
