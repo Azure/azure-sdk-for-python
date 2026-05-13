@@ -1589,7 +1589,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
         response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
         response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
         response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
