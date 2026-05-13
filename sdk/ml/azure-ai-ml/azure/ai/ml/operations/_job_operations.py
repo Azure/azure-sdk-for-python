@@ -471,6 +471,7 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
             **kwargs,
         )
+
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]) -> Optional[Union[Compute, str]]:
         # pylint: disable=too-many-return-statements
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
