@@ -2643,6 +2643,10 @@ def _extract_metric_values(
                     type(metric_value).__name__,
                 )
             continue
+        # Skip per-turn list values produced by _flatten_evaluation_per_turn_columns;
+        # they are not scalar metrics and cannot be processed by _update_metric_value.
+        if isinstance(metric_value, list):
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
