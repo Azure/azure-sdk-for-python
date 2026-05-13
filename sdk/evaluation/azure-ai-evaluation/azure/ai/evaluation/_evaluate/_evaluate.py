@@ -1331,6 +1331,7 @@ def emit_eval_result_events_to_app_insights(
         LOGGER.debug("No results to log to App Insights")
         return
 
+    logger_provider = None
     try:
         # Configure OpenTelemetry logging with anonymized Resource attributes
 
@@ -1398,6 +1399,14 @@ def emit_eval_result_events_to_app_insights(
 
     except Exception as e:
         LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")
+    finally:
+        # Shut down the logger provider to stop background threads (e.g. OneSettings
+        # configuration poller) that would otherwise keep the process alive indefinitely.
+        if logger_provider is not None:
+            try:
+                logger_provider.shutdown()
+            except Exception:
+                pass
 
 
 def _preprocess_data(
