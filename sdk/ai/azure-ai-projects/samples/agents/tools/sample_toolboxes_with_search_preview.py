@@ -10,14 +10,14 @@ DESCRIPTION:
     invoke it from a Prompt Agent using the synchronous AIProjectClient and
     the OpenAI-compatible client.
 
-    A toolbox version that includes ``ToolboxSearchPreviewTool`` exposes only
-    two meta tools at its ``/mcp`` endpoint -- ``tool_search`` and ``call_tool``
-    -- and defers every other tool behind them. The agent uses an ``MCPTool``
-    pointed at the toolbox's versioned ``/mcp`` URL to discover and invoke
+    A toolbox version that includes 'ToolboxSearchPreviewTool' exposes only
+    two meta tools at its '/mcp' endpoint -- 'tool_search' and 'call_tool'
+    -- and defers every other tool behind them. The agent uses an 'MCPTool'
+    pointed at the toolbox's versioned '/mcp' URL to discover and invoke
     those inner tools.
 
     Toolboxes and tool search are preview features. CRUD goes through
-    ``project_client.beta.toolboxes``.
+    'project_client.beta.toolboxes'.
 
 USAGE:
     python sample_toolboxes_with_search_preview.py
