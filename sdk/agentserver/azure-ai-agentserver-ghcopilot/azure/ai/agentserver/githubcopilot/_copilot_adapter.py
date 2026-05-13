@@ -98,6 +98,66 @@ async def _extract_input_with_attachments(context: ResponseContext) -> str:
 
 _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
 
+# ---------------------------------------------------------------------------
+# Per-request AML credential extraction
+# ---------------------------------------------------------------------------
+
+# Header names for per-request Azure ML BYOK.  Consumers pass their own
+# AML bearer token, model endpoint, and model deployment so the adapter
+# uses *their* Azure ML resources for inference rather than the server's.
+_AML_HEADER_TOKEN = "x-aml-token"
+_AML_HEADER_ENDPOINT = "x-aml-endpoint"
+_AML_HEADER_MODEL = "x-aml-model"
+_AML_HEADER_WIRE_API = "x-aml-wire-api"
+
+
+def _extract_aml_override(context) -> Optional[Dict[str, str]]:
+    """Extract per-request AML credentials from the request context.
+
+    Looks for credentials in ``context.client_headers`` (HTTP headers) first,
+    then falls back to ``request.metadata`` (RAPI body metadata).
+
+    Returns a dict with keys ``token``, ``endpoint``, ``model``, and
+    optionally ``wire_api`` when the consumer provided AML credentials,
+    or *None* when the request does not carry AML overrides.
+
+    Both ``token`` and ``endpoint`` are required; ``model`` is strongly
+    recommended but will log a warning if absent.
+    """
+    headers = getattr(context, "client_headers", {}) or {}
+    token = headers.get(_AML_HEADER_TOKEN)
+    endpoint = headers.get(_AML_HEADER_ENDPOINT)
+    model = headers.get(_AML_HEADER_MODEL)
+    wire_api = headers.get(_AML_HEADER_WIRE_API)
+
+    # Fallback: check request metadata
+    if not (token and endpoint):
+        request = getattr(context, "request", None)
+        metadata = None
+        if request is not None:
+            metadata = getattr(request, "metadata", None)
+            # Metadata can be a dict-like or a model object; normalise.
+            if metadata is not None and not isinstance(metadata, dict):
+                metadata = dict(metadata) if hasattr(metadata, "__iter__") else None
+        if isinstance(metadata, dict):
+            token = token or metadata.get("aml_token")
+            endpoint = endpoint or metadata.get("aml_endpoint")
+            model = model or metadata.get("aml_model")
+            wire_api = wire_api or metadata.get("aml_wire_api")
+
+    if not token or not endpoint:
+        return None  # No AML override for this request
+
+    if not model:
+        logger.warning("AML override: endpoint and token provided but model is missing")
+
+    return {
+        "token": token,
+        "endpoint": endpoint,
+        "model": model or "",
+        "wire_api": wire_api or "completions",
+    }
+
 
 # ---------------------------------------------------------------------------
 # MCP server SDK config helper
@@ -383,6 +443,50 @@ class CopilotAdapter:
         )
         return session
 
+    async def _create_aml_session(self, aml_override: Dict[str, str]):
+        """Create a one-shot Copilot session using per-request AML credentials.
+
+        The session is NOT cached — each request with AML overrides gets a
+        fresh session because the token/endpoint may differ between users.
+
+        :param aml_override: Dict with ``token``, ``endpoint``, ``model``,
+            and ``wire_api`` as returned by :func:`_extract_aml_override`.
+        :returns: A new CopilotSession configured for the caller's AML endpoint.
+        """
+        client = await self._ensure_client()
+        config = dict(self._session_config)
+
+        # Build a per-request ProviderConfig pointing at the user's AML endpoint
+        base_url = aml_override["endpoint"].rstrip("/")
+        if not base_url.endswith("/"):
+            base_url += "/"
+
+        config["provider"] = ProviderConfig(
+            type="openai",
+            base_url=base_url,
+            bearer_token=aml_override["token"],
+            wire_api=aml_override.get("wire_api", "completions"),
+        )
+        if aml_override.get("model"):
+            config["model"] = aml_override["model"]
+
+        # Strip internal flags and None values
+        sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
+        sdk_config = _prepare_mcp_servers_for_sdk(sdk_config)
+
+        session = await client.create_session(
+            **sdk_config,
+            on_permission_request=self._make_permission_handler(),
+            streaming=True,
+        )
+        logger.info(
+            "Created AML-override session: endpoint=%s model=%s wire_api=%s",
+            aml_override["endpoint"],
+            aml_override.get("model", "<none>"),
+            aml_override.get("wire_api", "completions"),
+        )
+        return session
+
     # ------------------------------------------------------------------
     # Server setup and run
     # ------------------------------------------------------------------
@@ -432,7 +536,14 @@ class CopilotAdapter:
 
         logger.info(f"Request: input={input_text[:100]!r} conversation_id={conversation_id}")
 
-        session = await self._get_or_create_session(conversation_id)
+        # Check for per-request AML credential overrides.  When present,
+        # create an ephemeral session using the caller's own AML endpoint
+        # and token instead of the server's default provider.
+        aml_override = _extract_aml_override(context)
+        if aml_override:
+            session = await self._create_aml_session(aml_override)
+        else:
+            session = await self._get_or_create_session(conversation_id)
 
         # Set up event queue
         queue: asyncio.Queue = asyncio.Queue()
