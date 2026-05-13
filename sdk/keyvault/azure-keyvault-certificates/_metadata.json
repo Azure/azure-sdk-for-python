@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-07-01",
+  "apiVersions": {
+    "KeyVault": "2025-07-01"
+  },
+  "commit": "80cf521033f9499c3c86305d11c7de6451e796e5",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/keyvault/data-plane/Certificates",
+  "emitterVersion": "0.61.2"
+}

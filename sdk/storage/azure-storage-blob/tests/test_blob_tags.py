@@ -3,14 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
+
 import os
-import pytest
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
+import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
 from azure.storage.blob import (
     AccountSasPermissions,
     BlobBlock,
@@ -19,17 +26,15 @@ from azure.storage.blob import (
     BlobServiceClient,
     generate_account_sas,
     generate_blob_sas,
-    ResourceTypes
+    ResourceTypes,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
 
 class TestStorageBlobTags(StorageRecordedTestCase):
 
@@ -44,15 +49,14 @@ class TestStorageBlobTags(StorageRecordedTestCase):
                 pass
         self.byte_data = self.get_random_bytes(1024)
 
-
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except OSError:
                 pass
 
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
@@ -84,11 +88,11 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         container_name = self.get_resource_name(prefix)
         try:
             self.bsc.create_container(container_name)
-        except:
+        except ResourceExistsError:
             pass
         return container_name
 
-    #-- test cases for blob tags ----------------------------------------------
+    # -- test cases for blob tags ----------------------------------------------
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -275,7 +279,8 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
         with pytest.raises(ResourceModifiedError):
-            blob_client.commit_block_list(block_list, tags=tags, if_tags_match_condition="\"condition tag\"='wrong tag'")
+            blob_client.commit_block_list(
+                block_list, tags=tags, if_tags_match_condition="\"condition tag\"='wrong tag'")
         blob_client.commit_block_list(block_list, tags=tags, if_tags_match_condition="\"condition tag\"='test tag'")
 
         resp = blob_client.get_blob_tags()
@@ -408,7 +413,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         container = self.bsc.get_container_client(self.container_name)
         blob_list = container.list_blobs(include="tags")
 
-        #Assert
+        # Assert
         for blob in blob_list:
             assert blob.tag_count == len(tags)
             for key, value in blob.tags.items():
@@ -574,4 +579,4 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         tags = blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
         assert tags == second_tags
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------

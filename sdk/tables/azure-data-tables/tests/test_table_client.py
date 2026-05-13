@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -925,14 +926,14 @@ class TestTableClientUnitTests(TableTestCase):
     def test_create_client_with_api_version(self):
         url = self.account_url(self.tables_storage_account_name, "table")
         client = TableServiceClient(url, credential=self.credential)
-        assert client._client._config.version == "2019-02-02"
+        assert client._client._config.api_version == "2019-02-02"
         table = client.get_table_client("tablename")
-        assert table._client._config.version == "2019-02-02"
+        assert table._client._config.api_version == "2019-02-02"
 
         client = TableServiceClient(url, credential=self.credential, api_version="2019-07-07")
-        assert client._client._config.version == "2019-07-07"
+        assert client._client._config.api_version == "2019-07-07"
         table = client.get_table_client("tablename")
-        assert table._client._config.version == "2019-07-07"
+        assert table._client._config.api_version == "2019-07-07"
 
         with pytest.raises(ValueError):
             TableServiceClient(url, credential=self.credential, api_version="foo")
@@ -1049,3 +1050,36 @@ class TestTableClientUnitTests(TableTestCase):
         assert tsc._primary_endpoint == "http://127.0.0.1:10002/devstoreaccount1"
         assert tsc._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
         assert not tsc._cosmos_endpoint
+
+    def test_list_entities_rejects_query_filter(self):
+        """Regression test: list_entities raises ValueError for query_filter instead of leaking to transport."""
+        credential = AzureNamedKeyCredential(
+            "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        )
+        client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
+
+        with pytest.raises(ValueError, match="query_filter"):
+            client.list_entities(query_filter="PartitionKey eq 'pk001'")
+        client.close()
+
+    def test_list_entities_rejects_query_filter_with_parameters(self):
+        """Regression test: list_entities raises ValueError when query_filter is passed with parameters."""
+        credential = AzureNamedKeyCredential(
+            "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        )
+        client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
+
+        with pytest.raises(ValueError, match="query_entities"):
+            client.list_entities(query_filter="PartitionKey eq @pk", parameters={"pk": "pk001"})
+        client.close()
+
+    def test_list_entities_rejects_parameters_without_query_filter(self):
+        """Regression test: list_entities raises ValueError when parameters are passed without query_filter."""
+        credential = AzureNamedKeyCredential(
+            "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
+        )
+        client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
+
+        with pytest.raises(ValueError, match="parameters"):
+            client.list_entities(parameters={"pk": "pk001"})
+        client.close()

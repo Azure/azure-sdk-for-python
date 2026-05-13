@@ -23,10 +23,12 @@ from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
+    _AZURE_MONITOR_DISTRO_VERSION,
     _DEFAULT_AAD_SCOPE,
     _FUNCTIONS_WORKER_RUNTIME,
     _INSTRUMENTATIONS_BIT_MAP,
     _KUBERNETES_SERVICE_HOST,
+    _MICROSOFT_OPENTELEMETRY_VERSION,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
     _GEN_AI_ATTRIBUTES,
@@ -117,8 +119,25 @@ def _get_sdk_version_prefix():
 
 
 def _get_sdk_version():
+    prefix = _get_sdk_version_prefix()
+    distro_version = environ.get(_AZURE_MONITOR_DISTRO_VERSION)
+    ms_otel_version = environ.get(_MICROSOFT_OPENTELEMETRY_VERSION)
+    if ms_otel_version:
+        return "{}py{}:otel{}:mot{}".format(
+            prefix,
+            platform.python_version(),
+            opentelemetry_version,
+            ms_otel_version,
+        )
+    if distro_version:
+        return "{}py{}:otel{}:dst{}".format(
+            prefix,
+            platform.python_version(),
+            opentelemetry_version,
+            distro_version,
+        )
     return "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(),
+        prefix,
         platform.python_version(),
         opentelemetry_version,
         ext_version,
@@ -297,12 +316,12 @@ def _get_cloud_role(resource: Resource) -> str:
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
-    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-    if service_instance_id:
-        return service_instance_id  # type: ignore
     k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
     if k8s_pod_name:
         return k8s_pod_name  # type: ignore
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
     return platform.node()  # hostname default
 
 
@@ -337,6 +356,18 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
     return False
 
 
+def _is_status_code_success(status_code: Optional[int], is_trace: bool = False) -> bool:
+    if status_code is None or status_code == 0:
+        return False
+    try:
+        code = int(status_code)
+        if is_trace:
+            return code not in range(400, 500)
+        return code < 400
+    except ValueError:
+        return False
+
+
 def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
     """
     Check if the telemetry should be marked as synthetic from any source.
@@ -351,7 +382,8 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    max_length = 64 * 1024
+    max_length = 8 * 1024
+    max_length_for_gen_ai_attributes = 256 * 1024
     processed_properties: Dict[str, str] = {}
     if not properties:
         return processed_properties
@@ -361,11 +393,11 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             if not filter(key, val):
                 continue
         # Apply truncation rules
-        # Max key length is 150, value is 64 * 1024
+        # Max key length is 150, value is 8 * 1024
         if not key or len(key) > 150 or val is None:
             continue
         if key in _GEN_AI_ATTRIBUTES:
-            processed_properties[key] = str(val)
+            processed_properties[key] = str(val)[:max_length_for_gen_ai_attributes]
         else:
             processed_properties[key] = str(val)[:max_length]
     return processed_properties

@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
     _TaskNavigationEfficiencyEvaluator,
@@ -29,11 +31,40 @@ class TestTaskNavigationEfficiencyEvaluator:
         ground_truth = ["search", "analyze", "report"]
 
         result = evaluator(response=response, ground_truth=ground_truth)
+        assert result["task_navigation_efficiency_passed"] is True
         assert result["task_navigation_efficiency_result"] == "pass"
-        assert "task_navigation_efficiency_details" in result
-        assert result["task_navigation_efficiency_details"]["precision_score"] == 1.0
-        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0
-        assert result["task_navigation_efficiency_details"]["f1_score"] == 1.0
+        assert result["task_navigation_efficiency_threshold"] == 1.0
+        assert "task_navigation_efficiency_properties" in result
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["f1_score"] == 1.0
+
+    def test_json_stringified_valid_inputs(self):
+        """Test that JSON-stringified response and ground_truth are parsed and evaluated correctly."""
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "report", "arguments": {}}],
+            },
+        ]
+        ground_truth = ["search", "analyze", "report"]
+
+        result = evaluator(response=json.dumps(response), ground_truth=json.dumps(ground_truth))
+        assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_result"] == "pass"
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["f1_score"] == 1.0
 
     def test_in_order_match_with_extra_steps(self):
         """Test when agent has extra steps but maintains order."""
@@ -62,10 +93,10 @@ class TestTaskNavigationEfficiencyEvaluator:
         ground_truth = ["search", "analyze", "report"]
 
         result = evaluator(response=response, ground_truth=ground_truth)
-        assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["task_navigation_efficiency_details"]["precision_score"] == 0.75  # 3/4
-        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0  # 3/3
-        assert result["task_navigation_efficiency_details"]["f1_score"] == pytest.approx(0.857, rel=1e-2)
+        assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 0.75  # 3/4
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0  # 3/3
+        assert result["task_navigation_efficiency_properties"]["f1_score"] == pytest.approx(0.857, rel=1e-2)
 
     def test_any_order_match(self):
         """Test when agent has all steps but in wrong order."""
@@ -90,10 +121,10 @@ class TestTaskNavigationEfficiencyEvaluator:
         ground_truth = ["search", "analyze", "report"]
 
         result = evaluator(response=response, ground_truth=ground_truth)
-        assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["task_navigation_efficiency_details"]["precision_score"] == 1.0
-        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0
-        assert result["task_navigation_efficiency_details"]["f1_score"] == 1.0
+        assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["f1_score"] == 1.0
 
     def test_exact_match_failure(self):
         """Test when exact match fails but other matches succeed."""
@@ -121,10 +152,10 @@ class TestTaskNavigationEfficiencyEvaluator:
         ground_truth = ["search", "analyze"]
 
         exact_result = exact_evaluator(response=response, ground_truth=ground_truth)
-        assert exact_result["task_navigation_efficiency_result"] == "fail"
+        assert exact_result["task_navigation_efficiency_passed"] is False
 
         in_order_result = in_order_evaluator(response=response, ground_truth=ground_truth)
-        assert in_order_result["task_navigation_efficiency_result"] == "pass"
+        assert in_order_result["task_navigation_efficiency_passed"] is True
 
     def test_invalid_ground_truth(self):
         """Test with invalid ground truth steps."""
@@ -161,10 +192,10 @@ class TestTaskNavigationEfficiencyEvaluator:
         )
 
         result = evaluator(response=response, ground_truth=ground_truth)
-        assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["task_navigation_efficiency_details"]["precision_score"] == 1.0
-        assert result["task_navigation_efficiency_details"]["recall_score"] == 1.0
-        assert result["task_navigation_efficiency_details"]["f1_score"] == 1.0
+        assert result["task_navigation_efficiency_passed"] is True
+        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
+        assert result["task_navigation_efficiency_properties"]["f1_score"] == 1.0
 
     def test_matching_mode_validation(self):
         """Test validation of matching_mode parameter."""

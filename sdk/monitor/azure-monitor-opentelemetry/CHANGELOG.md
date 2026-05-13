@@ -1,15 +1,35 @@
 # Release History
 
-## 1.8.7 (Unreleased)
+## 1.8.8 (Unreleased)
 
 ### Features Added
-- Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
+- Move `AZURE_MONITOR_DISTRO_VERSION` env var assignment before exporter imports
+  ([#46869](https://github.com/Azure/azure-sdk-for-python/pull/46869))
+- Set `AZURE_MONITOR_DISTRO_VERSION` environment variable to pass distro version to the exporter
+  ([#46666](https://github.com/Azure/azure-sdk-for-python/pull/46666))
+- Register GenAI main-agent attribution processors to automatically propagate
+  `microsoft.gen_ai.main_agent.*` attributes in multi-agent GenAI systems per [spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/genai_main_agent_attribution.md)
+  ([#46703](https://github.com/Azure/azure-sdk-for-python/pull/46703))
 
 ### Breaking Changes
+- Dropped support for Python 3.9. This package now supports Python 3.10+. [Follows upstream otel dropping support](https://github.com/open-telemetry/opentelemetry-python/pull/5076)
+  ([#46695](https://github.com/Azure/azure-sdk-for-python/pull/46695))
 
 ### Bugs Fixed
 
 ### Other Changes
+- Remove deprecated events packages.
+  ([#45684](https://github.com/Azure/azure-sdk-for-python/pull/45684))
+
+## 1.8.7 (2026-03-20)
+
+### Features Added
+- Add Browser SDK loader feature
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/42904))
+
+### Other Changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes
+  ([#45539](https://github.com/Azure/azure-sdk-for-python/pull/45539))
 - Remove internal import from sample file
   ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
 
@@ -27,6 +47,7 @@
 
 ### Other Changes
 - Add missing copyright headers and ensure consistent formatting across files.
+  ([#44908](https://github.com/Azure/azure-sdk-for-python/pull/44908))
 
 ## 1.8.5 (2026-01-28)
 

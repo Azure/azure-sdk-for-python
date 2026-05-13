@@ -184,6 +184,42 @@ class FoundryResultProcessor:
 
         return jsonl_content
 
+    def to_jsonl_per_strategy(self, output_dir: str, risk_value: str) -> Dict[str, str]:
+        """Write per-strategy JSONL files using the scenario's strategy grouping.
+
+        Uses ``ScenarioOrchestrator.get_attack_results_by_strategy()`` which
+        returns results keyed by ``atomic_attack_name`` — the FoundryStrategy
+        value (e.g. ``"baseline"``, ``"crescendo"``, ``"base64"``).  This
+        avoids any heuristic mapping from PyRIT class names to strategy names.
+
+        :param output_dir: Directory to write per-strategy JSONL files
+        :type output_dir: str
+        :param risk_value: Risk category value (used for file naming)
+        :type risk_value: str
+        :return: Dictionary mapping strategy name to JSONL file path
+        :rtype: Dict[str, str]
+        """
+        results_by_strategy = self.scenario.get_attack_results_by_strategy()
+        memory = self.scenario.get_memory()
+
+        strategy_files: Dict[str, str] = {}
+
+        for strategy_name, attack_results in results_by_strategy.items():
+            jsonl_lines = []
+            for attack_result in attack_results:
+                entry = self._process_attack_result(attack_result, memory)
+                if entry:
+                    jsonl_lines.append(json.dumps(entry, ensure_ascii=False))
+
+            strategy_path = os.path.join(output_dir, f"{risk_value}_{strategy_name}_results.jsonl")
+            Path(strategy_path).parent.mkdir(parents=True, exist_ok=True)
+            with open(strategy_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(jsonl_lines))
+
+            strategy_files[strategy_name] = strategy_path
+
+        return strategy_files
+
     def _process_attack_result(
         self,
         attack_result: AttackResult,
@@ -303,11 +339,25 @@ class FoundryResultProcessor:
         sorted_pieces = sorted(conversation_pieces, key=lambda p: getattr(p, "sequence", 0))
 
         for piece in sorted_pieces:
+            # Skip context pieces (from prepended_conversation).
+            # These are tool context SeedPrompts for categories like
+            # sensitive_data_leakage and should not appear in the conversation.
+            pm = getattr(piece, "prompt_metadata", None)
+            if isinstance(pm, dict) and pm.get("is_context") is True:
+                continue
+
             # Get role, handling api_role property
             role = getattr(piece, "api_role", None) or getattr(piece, "role", "user")
 
-            # Get content (prefer converted_value over original_value)
-            content = getattr(piece, "converted_value", None) or getattr(piece, "original_value", "")
+            # Get content: for user messages show the original adversarial prompt,
+            # not the converter output (e.g., Base64-encoded or tense-rephrased text).
+            # For assistant messages, show the response as-is.
+            if role == "user":
+                original = getattr(piece, "original_value", None)
+                converted = getattr(piece, "converted_value", None)
+                content = original if isinstance(original, str) and original else (converted or "")
+            else:
+                content = getattr(piece, "converted_value", None) or getattr(piece, "original_value", "")
 
             message: Dict[str, Any] = {
                 "role": role,
@@ -324,6 +374,10 @@ class FoundryResultProcessor:
                             message["context"] = context_dict["contexts"]
                     except (json.JSONDecodeError, TypeError):
                         pass
+
+                token_usage = piece.labels.get("token_usage")
+                if token_usage:
+                    message["token_usage"] = token_usage
 
             messages.append(message)
 

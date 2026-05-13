@@ -25,6 +25,10 @@ USAGE:
 import asyncio
 import os
 
+from datetime import datetime, timedelta
+from azure.storage.filedatalake.aio import DataLakeServiceClient
+
+
 connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
 account_name = os.getenv('DATALAKE_STORAGE_ACCOUNT_NAME', "")
 
@@ -34,8 +38,6 @@ async def main():
 
     # Instantiate a DataLakeServiceClient using a connection string
     # [START create_datalake_service_client]
-    from azure.storage.filedatalake.aio import DataLakeServiceClient
-    from datetime import datetime, timedelta, timezone
 
     datalake_service_client = DataLakeServiceClient.from_connection_string(connection_string)
     # [END create_datalake_service_client]
@@ -51,7 +53,6 @@ async def main():
     async with datalake_service_client:
         # get user delegation key
         # [START get_user_delegation_key]
-        from datetime import datetime, timedelta
         user_delegation_key = await datalake_service_client.get_user_delegation_key(datetime.utcnow(),
                                                                               datetime.utcnow() + timedelta(hours=1))
         # [END get_user_delegation_key]
@@ -84,7 +85,8 @@ async def main():
         from azure.storage.filedatalake import ContentSettings
         content_settings = ContentSettings(
             content_language='spanish',
-            content_disposition='inline')
+            content_disposition='inline'
+        )
         await file_client.create_file(content_settings=content_settings)
         await file_client.set_metadata(metadata=metadata)
         file_props = await file_client.get_file_properties()
@@ -102,6 +104,7 @@ async def main():
         await file_system_client.delete_file_system()
 
     await token_credential.close()
+
 
 if __name__ == '__main__':
     asyncio.run(main())

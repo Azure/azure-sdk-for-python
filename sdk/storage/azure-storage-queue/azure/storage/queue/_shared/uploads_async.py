@@ -189,7 +189,10 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             # Buffer until we either reach the end of the stream or get a whole chunk.
             while True:
                 if self.total_size:
-                    read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
+                    read_size = min(
+                        self.chunk_size - len(data),
+                        self.total_size - (index + len(data)),
+                    )
                 temp = self.stream.read(read_size)
                 if inspect.isawaitable(temp):
                     temp = await temp
@@ -437,7 +440,11 @@ class AsyncIterStreamer:
     File-like streaming object for AsyncGenerators.
     """
 
-    def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
+    def __init__(
+        self,
+        generator: AsyncGenerator[Union[bytes, str], None],
+        encoding: str = "UTF-8",
+    ):
         self.iterator = generator.__aiter__()
         self.leftover = b""
         self.encoding = encoding

@@ -1,0 +1,71 @@
+[project]
+name = "azure-ai-agentserver-responses"
+dynamic = ["version", "readme"]
+description = "Python SDK for building servers implementing the Azure AI Responses protocol"
+
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Microsoft Corporation" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "azure-ai-agentserver-core>=2.0.0b3",
+    "azure-core>=1.30.0",
+    "isodate>=0.6.1",
+    "aiohttp>=3.10.0,<4.0.0",
+]
+keywords = ["azure", "azure sdk"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.responses._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "type_spec*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+    "scripts*",
+]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
+azure-core = { path = "../../core/azure-core" }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+
+[tool.azure-sdk-build]
+verifytypes = false
+latestdependency = false

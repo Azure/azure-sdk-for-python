@@ -5,23 +5,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import unittest
 import asyncio
+import os
 from datetime import datetime, timedelta, timezone
 
 import pytest
-from azure.core.exceptions import ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError
-from azure.storage.fileshare import (
-    generate_share_sas,
-    NTFSAttributes,
-    ShareSasPermissions,
-    StorageErrorCode
-)
-from azure.storage.fileshare.aio import ShareDirectoryClient, ShareServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import FileSharePreparer
+
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.storage.fileshare import (
+    generate_share_sas,
+    NTFSAttributes,
+    ShareSasPermissions,
+    StorageErrorCode,
+)
+from azure.storage.fileshare.aio import ShareDirectoryClient, ShareServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
@@ -115,7 +117,8 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         directory_client = share_client.get_directory_client('dir1')
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
+        file_creation_time = file_last_write_time = file_change_time = (
+            datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc))
 
         # Act
         await directory_client.create_directory(
@@ -937,7 +940,9 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         # Act
         list_dir = []
-        async for d in directory.list_directories_and_files(include=["timestamps", "Etag", "Attributes", "PermissionKey"]):
+        async for d in directory.list_directories_and_files(
+            include=["timestamps", "Etag", "Attributes", "PermissionKey"]
+        ):
             list_dir.append(d)
 
         assert len(list_dir) == 6
@@ -1023,7 +1028,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
             directory.create_subdirectory("subdir1"),
             directory.create_subdirectory("subdir2"),
             directory.upload_file("file1", "data1"))
-        
+
         snapshot = await share_client.create_snapshot()
         await asyncio.gather(
             directory.create_subdirectory("subdir3"),
@@ -1378,7 +1383,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         props = await new_directory.get_directory_properties()
         assert props is not None
         assert props.is_directory
-        assert str(file_attributes), props.file_attributes.replace(' ' == '')
+        assert str(file_attributes) == props.file_attributes.replace(' ', '')
         assert file_creation_time == props.creation_time
         assert file_last_write_time == props.last_write_time
         assert file_change_time == props.change_time
@@ -1517,7 +1522,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
             share_client.share_name, 'dir1.',
             credential=token_credential,
             token_intent=TEST_INTENT,
-            audience=f'https://badaudience.file.core.windows.net'
+            audience='https://badaudience.file.core.windows.net'
         )
 
         # Assert
@@ -1579,5 +1584,28 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         assert server_returned_permission == user_given_permission_binary
 
         await new_directory_client.delete_directory()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_directory_semantics(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        directory = await share_client.create_directory('dir1', file_property_semantics=None)
+        props = await directory.get_directory_properties()
+        assert props is not None
+
+        directory = await share_client.create_directory('dir2', file_property_semantics='New')
+        props = await directory.get_directory_properties()
+        assert props is not None
+
+        directory = await share_client.create_directory(
+            'dir3', file_property_semantics='Restore', file_permission=TEST_FILE_PERMISSIONS
+        )
+        props = await directory.get_directory_properties()
+        assert props is not None
 
 # ------------------------------------------------------------------------------

@@ -15,13 +15,13 @@ steps:
           if ($filesInCommonDir.Count -gt 0)
           {
             Write-Host "##vso[task.LogIssue type=error;]Changes to files under 'eng/common' directory should not be made in this Repo`n${filesInCommonDir}"
-            Write-Host "##vso[task.LogIssue type=error;]Please follow workflow at https://github.com/Azure/azure-sdk-tools/blob/main/doc/common/common_engsys.md"
+            Write-Host "##vso[task.LogIssue type=error;]Follow the workflow at https://github.com/Azure/azure-sdk-tools/blob/main/doc/common/common_engsys.md"
             exit 1
           }
         }
         if ((!"$(System.PullRequest.SourceBranch)".StartsWith("sync-.github")) -and "$(System.PullRequest.TargetBranch)" -match "^(refs/heads/)?$(DefaultBranch)$")
         {
-          # This list needs to be kept in sync with the FilePatterns listed in eng/pipelines/eng-github-config-sync.yml
+          # This list needs to be kept in sync with the FilePatterns listed in eng/pipelines/sync-.github.yml
           $filePatterns = @(".github/workflows/*event*", ".github/workflows/post-apiview.yml", ".github/skills/azsdk-common-*/**")
           $filesInCommonDir = @()
           foreach ($filePattern in $filePatterns) {
@@ -30,7 +30,7 @@ steps:
           if ($filesInCommonDir.Count -gt 0)
           {
             Write-Host "##vso[task.LogIssue type=error;]Changes to selected files under '.github/' directory should not be made in this Repo`n${filesInCommonDir}"
-            Write-Host "##vso[task.LogIssue type=error;]Please follow workflow at https://github.com/Azure/azure-sdk-tools/blob/main/doc/workflows/engsys_workflows.md"
+            Write-Host "##vso[task.LogIssue type=error;]Follow the workflow at https://github.com/Azure/azure-sdk-tools/blob/main/doc/engsys_workflows_and_skills.md"
             exit 1
           }
         }

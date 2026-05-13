@@ -165,6 +165,11 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
         if eval_input["response"] is None or eval_input["response"] == []:
             raise EvaluationException(
                 message="response cannot be None or empty for the Tool Call Success evaluator.",
@@ -174,29 +179,34 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
-        # Check for intermediate response
-        if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
-                "Intermediate response. Please provide the agent's final response for evaluation.",
-                self._threshold,
-            )
-
-        # Preprocess messages if they are lists
         if isinstance(eval_input.get("response"), list):
             eval_input["response"] = _preprocess_messages(eval_input["response"])
+            eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
+        # If response is a string, pass directly without reformatting
+        elif isinstance(eval_input["response"], str):
+            eval_input["tool_calls"] = eval_input["response"]
+        else:
+            raise EvaluationException(
+                message="response must be either a list of messages or a string.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
+            )
+
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
 
-        eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
-
-        if "tool_definitions" in eval_input:
+        # If tool definitions are string, pass directly without reformatting, else format it.
+        if "tool_definitions" in eval_input and not isinstance(eval_input["tool_definitions"], str):
             tool_definitions = eval_input["tool_definitions"]
-            filtered_tool_definitions = _filter_to_used_tools(
-                tool_definitions=tool_definitions,
-                msgs_list=eval_input["response"],
-                logger=logger,
-            )
-            eval_input["tool_definitions"] = _reformat_tool_definitions(filtered_tool_definitions, logger)
+            # Only if response is not a string, we filter tool definitions to only tools needed.
+            if not isinstance(eval_input["response"], str):
+                tool_definitions = _filter_to_used_tools(
+                    tool_definitions=tool_definitions,
+                    msgs_list=eval_input["response"],
+                    logger=logger,
+                )
+            eval_input["tool_definitions"] = _reformat_tool_definitions(tool_definitions, logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)

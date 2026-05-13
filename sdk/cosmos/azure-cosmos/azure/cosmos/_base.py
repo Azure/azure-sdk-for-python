@@ -115,10 +115,10 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-    if 'read_timeout' in kwargs:
-        options['read_timeout'] = kwargs['read_timeout']
-    if 'timeout' in kwargs:
-        options['timeout'] = kwargs['timeout']
+    if Constants.Kwargs.READ_TIMEOUT in kwargs:
+        options[Constants.Kwargs.READ_TIMEOUT] = kwargs[Constants.Kwargs.READ_TIMEOUT]
+    if Constants.Kwargs.TIMEOUT in kwargs:
+        options[Constants.Kwargs.TIMEOUT] = kwargs[Constants.Kwargs.TIMEOUT]
 
 
     options[Constants.OperationStartTime] = time.time()
@@ -443,8 +443,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
-    if resource_type != 'dbs' and options.get("containerRID"):
-        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
+    if resource_type != 'dbs' and options.get(Constants.ContainerRID):
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options[Constants.ContainerRID]
 
     if resource_type == "":
         resource_type = http_constants.ResourceType.DatabaseAccount
@@ -1079,8 +1079,8 @@ def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
     """
     pk_range_options: dict[str, Any] = {}
     if query_options is not None:
-        if "containerRID" in query_options:
-            pk_range_options["containerRID"] = query_options["containerRID"]
+        if Constants.ContainerRID in query_options:
+            pk_range_options[Constants.ContainerRID] = query_options[Constants.ContainerRID]
         if "excludedLocations" in query_options:
             pk_range_options["excludedLocations"] = query_options["excludedLocations"]
     return pk_range_options

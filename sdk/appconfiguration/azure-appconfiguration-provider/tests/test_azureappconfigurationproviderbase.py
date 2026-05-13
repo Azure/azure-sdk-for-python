@@ -13,10 +13,8 @@ from typing import Dict, Any
 
 from azure.appconfiguration import FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
-    delay_failure,
     is_json_content_type,
     _build_watched_setting,
-    sdk_allowed_kwargs,
     AzureAppConfigurationProviderBase,
 )
 from azure.appconfiguration.provider._models import SettingSelector
@@ -28,28 +26,6 @@ from azure.appconfiguration.provider._constants import (
     FEATURE_FLAG_REFERENCE_KEY,
 )
 from azure.appconfiguration.provider._refresh_timer import _RefreshTimer
-
-
-class TestDelayFailure(unittest.TestCase):
-    """Test the delay_failure function."""
-
-    def test_delay_failure_when_enough_time_passed(self):
-        """Test that no delay occurs when enough time has passed."""
-        start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-        with patch("time.sleep") as mock_sleep:
-            delay_failure(start_time)
-            mock_sleep.assert_not_called()
-
-    def test_delay_failure_when_insufficient_time_passed(self):
-        """Test that delay occurs when insufficient time has passed."""
-        start_time = datetime.datetime.now() - datetime.timedelta(seconds=2)
-        with patch("time.sleep") as mock_sleep:
-            delay_failure(start_time)
-            mock_sleep.assert_called_once()
-            # Verify the delay is approximately correct (around 3 seconds)
-            called_delay = mock_sleep.call_args[0][0]
-            self.assertGreater(called_delay, 2)
-            self.assertLess(called_delay, 4)
 
 
 class TestIsJsonContentType(unittest.TestCase):
@@ -106,28 +82,6 @@ class TestBuildWatchedSetting(unittest.TestCase):
         """Test that wildcard in label raises ValueError."""
         with self.assertRaises(ValueError):
             _build_watched_setting(("test_key", "test*label"))
-
-
-class TestSdkAllowedKwargs(unittest.TestCase):
-    """Test the sdk_allowed_kwargs function."""
-
-    def test_filters_allowed_kwargs(self):
-        """Test that only allowed kwargs are returned."""
-        kwargs = {
-            "headers": {"test": "value"},
-            "timeout": 30,
-            "invalid_param": "should_be_filtered",
-            "user_agent": "test_agent",
-            "unknown_param": "filtered_out",
-        }
-        result = sdk_allowed_kwargs(kwargs)
-        expected = {"headers": {"test": "value"}, "timeout": 30, "user_agent": "test_agent"}
-        self.assertEqual(result, expected)
-
-    def test_empty_kwargs(self):
-        """Test with empty kwargs."""
-        result = sdk_allowed_kwargs({})
-        self.assertEqual(result, {})
 
 
 class TestRefreshTimer(unittest.TestCase):
