@@ -48,8 +48,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
     :type environment_variables: dict
     :param app_insights_enabled: Whether application insights is enabled.
     :type app_insights_enabled: bool
-    :param display_name: Display name of the deployment template.
-    :type display_name: str
     :param stage: Stage of the deployment template. Can be "Active" or "Archived".
     :type stage: str
     """
@@ -59,7 +57,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         name: str,
         version: str,
         *,
-        display_name: Optional[str] = None,
         description: Optional[str] = None,
         environment: Optional[Union[Environment, str]] = None,
         request_settings: Optional[OnlineRequestSettings] = None,
@@ -90,7 +87,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         super().__init__(name=name, **parent_kwargs)
 
         self.version = version
-        self.display_name = display_name
         self.description = description
         self.environment = environment
         self.request_settings = request_settings
@@ -285,8 +281,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             "version": self.version,
         }
 
-        if self.display_name:
-            result["display_name"] = self.display_name
         if self.description:
             result["description"] = self.description
         if self.environment:
@@ -351,7 +345,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
                 version = "1.0"
 
         # Extract other fields from properties first, then fallback to top-level
-        display_name = get_value(properties, "displayName") or get_value(obj, "display_name")
         description = get_value(properties, "description") or get_value(obj, "description")
         tags = get_value(properties, "tags") or get_value(obj, "tags", {})
 
@@ -448,7 +441,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         template = cls(
             name=name or "unknown",
             version=version or "1.0",
-            display_name=display_name,
             description=description,
             tags=tags,  # Include tags from REST response
             properties=properties,  # Include properties from REST response
@@ -529,9 +521,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
             result["type"] = "deploymenttemplates"  # Default type if not specified
 
         # Add optional basic fields
-        if self.display_name:
-            result["displayName"] = self.display_name
-
         if self.description:
             result["description"] = self.description
 
@@ -619,8 +608,6 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         }
 
         # Add optional basic fields
-        if self.display_name:
-            result["displayName"] = self.display_name
         if self.description:
             result["description"] = self.description
         if self.stage:

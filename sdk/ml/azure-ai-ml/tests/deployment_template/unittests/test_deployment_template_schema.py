@@ -30,7 +30,6 @@ class TestDeploymentTemplateSchema:
         expected_fields = {
             "name",
             "version",
-            "display_name",
             "description",
             "tags",
             "environment_variables",
@@ -56,7 +55,6 @@ class TestDeploymentTemplateSchema:
         data = {
             "name": "test-template",
             "version": "1.0",
-            "display_name": "My Test Template",
             "description": "Test deployment template",
             "tags": {"env": "test"},
             "environment_variables": {"VAR1": "value1"},
@@ -70,7 +68,6 @@ class TestDeploymentTemplateSchema:
         assert isinstance(result, DeploymentTemplate)
         assert result.name == "test-template"
         assert result.version == "1.0"
-        assert result.display_name == "My Test Template"
         assert result.description == "Test deployment template"
         assert result.tags == {"env": "test"}
         assert result.environment_variables == {"VAR1": "value1"}

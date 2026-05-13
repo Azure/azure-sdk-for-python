@@ -31,7 +31,6 @@ module_logger = logging.getLogger(__name__)
 @experimental
 class DeploymentTemplateSchema(PathAwareSchema):
     name = fields.Str(required=True)
-    display_name = fields.Str(metadata={"description": "Display name of the deployment template."})
     description = fields.Str(metadata={"description": "Description of the deployment template ."})
     version = VersionField()
     tags = fields.Dict()
