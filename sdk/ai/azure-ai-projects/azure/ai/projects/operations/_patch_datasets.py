@@ -151,7 +151,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         folder: str,
         connection_name: Optional[str] = None,
         file_pattern: Optional[re.Pattern] = None,
-        max_workers: Optional[int] = None,
+        max_concurrency: Optional[int] = None,
         progress_callback: Optional[Callable[[DatasetsFolderUploadProgress], None]] = None,
         **kwargs: Any,
     ) -> FolderDatasetVersion:
@@ -173,9 +173,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :keyword file_pattern: A regex pattern to filter files to be uploaded. Only files matching the pattern
          will be uploaded. Optional.
         :paramtype file_pattern: re.Pattern
-        :keyword max_workers: Maximum number of parallel upload threads. If None (the default),
-         uses ThreadPoolExecutor's default of min(32, cpu_count + 4). Optional.
-        :paramtype max_workers: int
+        :keyword max_concurrency: Maximum number of parallel upload threads. If None (the default),
+         uses ThreadPoolExecutor's `max_workers` default of min(32, cpu_count + 4). Optional.
+        :paramtype max_concurrency: int
         :keyword progress_callback: A callback function that receives a DatasetsFolderUploadProgress object
          after each file upload completes. Optional.
         :paramtype progress_callback: Callable[[DatasetsFolderUploadProgress], None]
@@ -254,9 +254,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             total_files = len(files_to_upload)
 
             # Upload files in parallel using ThreadPoolExecutor
-            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            with ThreadPoolExecutor(max_workers=max_concurrency) as executor:
                 logger.debug(
-                    "[upload_folder] Starting parallel upload of %d files with max_workers=%s.",
+                    "[upload_folder] Starting parallel upload of %d files with max_concurrency=%s.",
                     total_files,
                     executor._max_workers,  # pylint: disable=protected-access
                 )

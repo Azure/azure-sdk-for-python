@@ -176,7 +176,7 @@ class TestDatasets(TestBase):
                 connection_name=connection_name,
                 file_pattern=re.compile(r"\.(txt|csv|md)$", re.IGNORECASE),
                 progress_callback=progress_callback,
-                # max_workers=4, # To test with non-default values
+                # max_concurrency=4, # To test with non-default values
             )
             print(dataset)
             TestBase.validate_dataset(

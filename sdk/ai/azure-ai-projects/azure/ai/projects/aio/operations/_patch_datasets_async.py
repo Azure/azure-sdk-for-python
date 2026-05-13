@@ -175,7 +175,8 @@ class DatasetsOperations(DatasetsOperationsGenerated):
         :keyword file_pattern: A regex pattern to filter files to be uploaded. Only files matching the pattern
          will be uploaded. Optional.
         :paramtype file_pattern: re.Pattern
-        :keyword max_concurrency: Maximum number of concurrent uploads. Defaults to 10. Optional.
+        :keyword max_concurrency: Maximum number of concurrent uploads. If None (the default),
+         uses min(32, cpu_count + 4). Optional.
         :paramtype max_concurrency: int
         :keyword progress_callback: A callback function that receives a DatasetsFolderUploadProgress object
          after each file upload completes. Optional.
@@ -194,8 +195,9 @@ class DatasetsOperations(DatasetsOperationsGenerated):
             name=name, input_version=version, connection_name=connection_name
         )
 
-        # Use semaphore for concurrency control (default 10 concurrent uploads)
-        semaphore = asyncio.Semaphore(max_concurrency or 10)
+        # Use semaphore for concurrency control (default matches ThreadPoolExecutor behavior)
+        effective_max_concurrency = max_concurrency or min(32, (os.cpu_count() or 1) + 4)
+        semaphore = asyncio.Semaphore(effective_max_concurrency)
 
         # Progress tracking with asyncio.Lock for thread safety
         progress_lock = asyncio.Lock()
@@ -255,7 +257,7 @@ class DatasetsOperations(DatasetsOperationsGenerated):
 
             total_files = len(files_to_upload)
             logger.debug("[upload_folder] Starting parallel upload of %d files with max_concurrency=%s.",
-                        total_files, max_concurrency or 10)
+                        total_files, effective_max_concurrency)
 
             # Upload all files concurrently using asyncio.gather
             await asyncio.gather(*[upload_single_file(f, total_files) for f in files_to_upload])
