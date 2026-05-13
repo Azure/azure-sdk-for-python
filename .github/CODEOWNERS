@@ -281,7 +281,7 @@
 # PRLabel: %Hosted Agents
 /sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi
 # PRLabel: %Hosted Agents
-/sdk/agentserver/azure-ai-agentserver-githubcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
+/sdk/agentserver/azure-ai-agentserver-ghcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
 # ServiceOwners: @ankitbko @vangarp @RaviPidaparthi

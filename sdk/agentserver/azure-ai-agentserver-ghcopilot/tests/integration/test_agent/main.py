@@ -1,4 +1,4 @@
-"""Minimal test agent — proves the azure-ai-agentserver-githubcopilot package works end-to-end."""
+"""Minimal test agent — proves the azure-ai-agentserver-ghcopilot package works end-to-end."""
 
 import logging
 import os

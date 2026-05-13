@@ -18,7 +18,7 @@ event model and the Foundry Responses API (RAPI) protocol.
 ### Install the package
 
 ```bash
-pip install azure-ai-agentserver-githubcopilot
+pip install azure-ai-agentserver-ghcopilot
 ```
 
 ### Quick start

@@ -19,7 +19,7 @@ import urllib.request
 from pathlib import Path
 
 INTEGRATION_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = INTEGRATION_DIR.parent.parent  # azure-ai-agentserver-githubcopilot/
+PROJECT_ROOT = INTEGRATION_DIR.parent.parent  # azure-ai-agentserver-ghcopilot/
 
 # Add integration dir to path for _token_cache import
 sys.path.insert(0, str(INTEGRATION_DIR))

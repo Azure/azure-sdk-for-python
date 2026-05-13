@@ -23,7 +23,7 @@ import time
 from pathlib import Path
 
 INTEGRATION_DIR = Path(__file__).resolve().parent
-PACKAGE_ROOT = INTEGRATION_DIR.parent.parent  # azure-ai-agentserver-githubcopilot/
+PACKAGE_ROOT = INTEGRATION_DIR.parent.parent  # azure-ai-agentserver-ghcopilot/
 TEST_AGENT_DIR = INTEGRATION_DIR / "test_agent"
 
 
