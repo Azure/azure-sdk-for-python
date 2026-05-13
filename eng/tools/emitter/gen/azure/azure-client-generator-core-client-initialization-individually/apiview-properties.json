@@ -36,5 +36,6 @@
         "specs.azure.clientgenerator.core.clientinitialization.individually.aio.IndividuallyNestedWithParamAliasClient.with_aliased_name": "_Specs_.Azure.ClientGenerator.Core.ClientInitialization.IndividuallyClient.IndividuallyNestedWithParamAlias.withAliasedName",
         "specs.azure.clientgenerator.core.clientinitialization.individually.IndividuallyNestedWithParamAliasClient.with_original_name": "_Specs_.Azure.ClientGenerator.Core.ClientInitialization.IndividuallyClient.IndividuallyNestedWithParamAlias.withOriginalName",
         "specs.azure.clientgenerator.core.clientinitialization.individually.aio.IndividuallyNestedWithParamAliasClient.with_original_name": "_Specs_.Azure.ClientGenerator.Core.ClientInitialization.IndividuallyClient.IndividuallyNestedWithParamAlias.withOriginalName"
-    }
+    },
+    "CrossLanguageVersion": "47936e117ac6"
 }
