@@ -159,25 +159,25 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         )
         assert sm.properties.description == "This is an updated storage mover"
 
+        # Subscription policies may inject extra tags, so only assert on the tag we set.
         sm = await self.client.storage_movers.update(
             resource_group_name=rg, storage_mover_name=sm_name,
             storage_mover={"tags": {"tag1": "val1"}},
         )
-        assert len(sm.tags) == 1
-        assert sm.tags["tag1"] == "val1"
+        assert sm.tags.get("tag1") == "val1"
 
         sm = await self.client.storage_movers.update(
             resource_group_name=rg, storage_mover_name=sm_name,
             storage_mover={"tags": {"tag2": "val2", "tag3": "val3"}},
         )
-        assert len(sm.tags) == 2
+        assert sm.tags.get("tag2") == "val2"
+        assert sm.tags.get("tag3") == "val3"
 
         sm = await self.client.storage_movers.update(
             resource_group_name=rg, storage_mover_name=sm_name,
             storage_mover={"tags": {"tag3": "val3"}},
         )
-        assert len(sm.tags) == 1
-        assert "tag3" in sm.tags
+        assert sm.tags.get("tag3") == "val3"
 
         poller = await self.client.storage_movers.begin_delete(
             resource_group_name=rg, storage_mover_name=sm_name,

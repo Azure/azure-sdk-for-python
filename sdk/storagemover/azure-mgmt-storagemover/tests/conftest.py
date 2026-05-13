@@ -13,6 +13,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers,
 )
 
 load_dotenv()
@@ -33,3 +34,10 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+    # Remove default sanitizers that clobber non-sensitive fields the storage mover
+    # tests need to assert on:
+    #  - AZSDK3430: $..id (resource ARM IDs - subscription is already sanitized)
+    #  - AZSDK3493: $..name (resource names like storage mover / endpoint / project names)
+    #  - AZSDK2003: Location header (needed for LRO polling on begin_delete, etc.)
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])

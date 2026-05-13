@@ -51,6 +51,7 @@ class TestStorageMoverMgmtAgentsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
+    @pytest.mark.skip(reason="Requires a registered agent VM; agents cannot be created via the RP. Live-only test.")
     @pytest.mark.asyncio
     @recorded_by_proxy_async
     async def test_agents_get_list_update(self):

@@ -111,7 +111,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_with_weekly_schedule(self, resource_group):
+    async def test_create_with_weekly_schedule(self, resource_group, **kwargs):
         rg = resource_group.name
         sm_name = "testsm-jdwk"
         project_name = "testproj-jdwk"
@@ -120,7 +120,14 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
         await self._provision_parents(rg, sm_name, project_name, source_endpoint, target_endpoint)
 
         jd_name = "jobdef-sched-wk"
+        variables = kwargs.pop("variables", {})
         now = datetime.now(timezone.utc)
+        start_date = variables.setdefault(
+            "schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        )
+        end_date = variables.setdefault(
+            "schedule_end", (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        )
         body = {"properties": {
             "copyMode": "Additive",
             "sourceName": source_endpoint,
@@ -131,8 +138,8 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                 "frequency": "Weekly",
                 "isActive": True,
                 "executionTime": {"hour": 2},
-                "startDate": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "endDate": (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "startDate": start_date,
+                "endDate": end_date,
                 "daysOfWeek": ["Monday", "Wednesday", "Friday"],
             },
         }}
@@ -160,9 +167,11 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
         )
         await poller.result()
 
+        return variables
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_with_daily_schedule_and_preserve_permissions(self, resource_group):
+    async def test_create_with_daily_schedule_and_preserve_permissions(self, resource_group, **kwargs):
         rg = resource_group.name
         sm_name = "testsm-jddl"
         project_name = "testproj-jddl"
@@ -171,7 +180,14 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
         await self._provision_parents(rg, sm_name, project_name, source_endpoint, target_endpoint)
 
         jd_name = "jobdef-sched-daily"
+        variables = kwargs.pop("variables", {})
         now = datetime.now(timezone.utc)
+        start_date = variables.setdefault(
+            "schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        )
+        end_date = variables.setdefault(
+            "schedule_end", (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        )
         body = {"properties": {
             "copyMode": "Mirror",
             "sourceName": source_endpoint,
@@ -183,8 +199,8 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                 "frequency": "Daily",
                 "isActive": True,
                 "executionTime": {"hour": 0},
-                "startDate": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "endDate": (now + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "startDate": start_date,
+                "endDate": end_date,
             },
         }}
 
@@ -203,9 +219,11 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
         )
         await poller.result()
 
+        return variables
+
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_with_onetime_schedule(self, resource_group):
+    async def test_create_with_onetime_schedule(self, resource_group, **kwargs):
         rg = resource_group.name
         sm_name = "testsm-jdot"
         project_name = "testproj-jdot"
@@ -214,7 +232,11 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
         await self._provision_parents(rg, sm_name, project_name, source_endpoint, target_endpoint)
 
         jd_name = "jobdef-sched-once"
+        variables = kwargs.pop("variables", {})
         now = datetime.now(timezone.utc)
+        start_date = variables.setdefault(
+            "schedule_start", (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        )
         body = {"properties": {
             "copyMode": "Additive",
             "sourceName": source_endpoint,
@@ -224,7 +246,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
                 "frequency": "Onetime",
                 "isActive": True,
                 "executionTime": {"hour": 10},
-                "startDate": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "startDate": start_date,
             },
         }}
 
@@ -241,3 +263,5 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
             job_definition_name=jd_name,
         )
         await poller.result()
+
+        return variables

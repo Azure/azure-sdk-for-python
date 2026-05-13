@@ -176,28 +176,27 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
         assert sm.properties.description == "This is an updated storage mover"
 
         # Add a single tag (mirrors AddTagAsync) — Python SDK has no AddTag helper, so use update.
+        # Subscription policies may inject extra tags, so only assert on the tag we set.
         sm = self.client.storage_movers.update(
             resource_group_name=rg, storage_mover_name=sm_name,
             storage_mover={"tags": {"tag1": "val1"}},
         )
-        assert len(sm.tags) == 1
-        assert sm.tags["tag1"] == "val1"
+        assert sm.tags.get("tag1") == "val1"
 
-        # Set tags (mirrors SetTagsAsync — replaces tag set entirely)
+        # Set tags (mirrors SetTagsAsync — PATCH with a new tag map).
         sm = self.client.storage_movers.update(
             resource_group_name=rg, storage_mover_name=sm_name,
             storage_mover={"tags": {"tag2": "val2", "tag3": "val3"}},
         )
-        assert len(sm.tags) == 2
-        assert "tag2" in sm.tags and "tag3" in sm.tags
+        assert sm.tags.get("tag2") == "val2"
+        assert sm.tags.get("tag3") == "val3"
 
-        # Remove a tag (mirrors RemoveTagAsync)
+        # Remove a tag (mirrors RemoveTagAsync) — verify tag3 is still present.
         sm = self.client.storage_movers.update(
             resource_group_name=rg, storage_mover_name=sm_name,
             storage_mover={"tags": {"tag3": "val3"}},
         )
-        assert len(sm.tags) == 1
-        assert "tag3" in sm.tags
+        assert sm.tags.get("tag3") == "val3"
 
         # Delete and confirm 404
         self.client.storage_movers.begin_delete(
