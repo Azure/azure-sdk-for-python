@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Tuple, Optional, List, Callable
 from pathlib import Path
 from urllib.parse import urlsplit
