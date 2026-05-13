@@ -19,6 +19,10 @@ from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from typing import Awaitable, Callable
 
+AAD_MWR_SKIP_REASON = (
+    "MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only."
+)
+
 
 
 @pytest.mark.cosmosEmulator
@@ -297,6 +301,12 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.key_db.delete_container(test_container_ref)  # control-plane
 
+    # This test injects emulator-style multi-write topology with a localhost endpoint.
+    # In AAD live lanes that injected secondary endpoint is unreachable, so skip there.
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason=AAD_MWR_SKIP_REASON
+    )
     async def test_session_token_mwr_for_ops_async(self):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs

@@ -20,6 +20,7 @@ PkField = Union[str, None, type[partition_key.NonePartitionKeyValue], type[parti
 COLLECTION = "created_collection"
 DATABASE = "created_db"
 VERSIONS = [1, 2]
+AAD_PK_DELETE_SKIP_REASON = "DeleteAllItemsByPartitionKey account capability isn't enabled in AAD live lane."
 
 
 def _new_null_pk_doc(pk_field: PkField) -> ItemDict:
@@ -196,6 +197,10 @@ class TestPartitionKey:
     TEST_CONTAINER_ID: str = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     @pytest.mark.parametrize("version", VERSIONS)
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason=AAD_PK_DELETE_SKIP_REASON,
+    )
     def test_multi_partition_collection_read_document_with_no_pk(self, setup, version) -> None:
         pk_val: PkField = partition_key.NonePartitionKeyValue  # type: ignore[assignment]
         # Control-plane container creation.
@@ -212,6 +217,10 @@ class TestPartitionKey:
             setup["key_db"].delete_container(container_id)
 
     @pytest.mark.parametrize("version", VERSIONS)
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason=AAD_PK_DELETE_SKIP_REASON,
+    )
     def test_with_null_pk(self, setup, version) -> None:
         pk_field = 'pk'
         pk_vals = [None, partition_key.NullPartitionKeyValue]

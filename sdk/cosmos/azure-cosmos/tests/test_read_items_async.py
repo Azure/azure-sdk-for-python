@@ -66,18 +66,49 @@ class TestReadItemsAsync(unittest.IsolatedAsyncioTestCase):
             await self.key_client.close()
 
     @staticmethod
+    async def _create_item_with_retry(container, document, max_attempts=6):
+        """Create an item with bounded retries for transient 429 throttling."""
+        for attempt in range(max_attempts):
+            try:
+                await container.create_item(document)
+                return
+            except CosmosHttpResponseError as ex:
+                if ex.status_code != 429 or attempt == max_attempts - 1:
+                    raise
+
+                retry_after_ms = 100
+                if ex.headers and ex.headers.get('x-ms-retry-after-ms'):
+                    retry_after_ms = int(ex.headers.get('x-ms-retry-after-ms'))
+
+                # Respect server retry hints and add a small exponential backoff to reduce burst retries.
+                backoff_seconds = max(retry_after_ms / 1000.0, 0.05) * (2 ** min(attempt, 3))
+                await asyncio.sleep(backoff_seconds)
+
+    @staticmethod
     async def _create_records_for_read_items(container, count, id_prefix="item"):
         """Helper to create items and return a list for read_items."""
         items_to_read = []
         item_ids = []
-        tasks = []
+        documents = []
         for i in range(count):
             doc_id = f"{id_prefix}_{i}_{uuid.uuid4()}"
             item_ids.append(doc_id)
             items_to_read.append((doc_id, doc_id))
-            tasks.append(container.create_item({'id': doc_id, 'data': i}))
+            documents.append({'id': doc_id, 'data': i})
 
-        await asyncio.gather(*tasks)
+        # Avoid creating thousands of concurrent writes that can exceed RU budget in live AAD lanes.
+        max_parallel_writes = 16 if count >= 1000 else 32
+        semaphore = asyncio.Semaphore(max_parallel_writes)
+
+        async def create_one(document):
+            async with semaphore:
+                await TestReadItemsAsync._create_item_with_retry(container, document)
+
+        chunk_size = max_parallel_writes * 4
+        for i in range(0, len(documents), chunk_size):
+            chunk = documents[i:i + chunk_size]
+            await asyncio.gather(*(create_one(doc) for doc in chunk))
+
         return items_to_read, item_ids
 
     @staticmethod

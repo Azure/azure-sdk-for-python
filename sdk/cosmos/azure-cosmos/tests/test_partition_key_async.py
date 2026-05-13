@@ -21,6 +21,7 @@ from test_partition_key import ItemDict, PkField, _assert_pk, VERSIONS, _new_nul
 COLLECTION = "created_collection"
 DATABASE = "created_db"
 CLIENT = "client"
+AAD_PK_DELETE_SKIP_REASON = "DeleteAllItemsByPartitionKey account capability isn't enabled in AAD live lane."
 
 async def _read_and_assert(container: ContainerProxy, doc_id: str, pk_field: Optional[str] = 'pk', pk_value: Any = None) -> None:
     item = await container.read_item(item=doc_id, partition_key=pk_value)
@@ -160,6 +161,10 @@ class TestPartitionKeyAsync:
     TEST_CONTAINER_ID: str = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
     @pytest.mark.parametrize("version", VERSIONS)
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason=AAD_PK_DELETE_SKIP_REASON,
+    )
     async def test_multi_partition_collection_read_document_with_no_pk_async(self, setup_async, version) -> None:
         pk_val = partition_key.NonePartitionKeyValue
         # Control-plane container creation.
@@ -176,6 +181,10 @@ class TestPartitionKeyAsync:
 
 
     @pytest.mark.parametrize("version", VERSIONS)
+    @pytest.mark.skipif(
+        test_config.TestConfig.data_auth_mode == 'aad',
+        reason=AAD_PK_DELETE_SKIP_REASON,
+    )
     async def test_with_null_pk_async(self, setup_async, version) -> None:
         pk_field = 'pk'
         pk_values = [None, partition_key.NullPartitionKeyValue]
