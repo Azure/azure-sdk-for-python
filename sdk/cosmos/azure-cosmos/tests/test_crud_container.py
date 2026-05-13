@@ -48,7 +48,6 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.cosmosAADLong
 @pytest.mark.cosmosLong
 class TestCRUDContainerOperations(unittest.TestCase):
     """Python CRUD Tests.
@@ -173,6 +172,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
         created_db.delete_container(created_collection.id)
 
+    @pytest.mark.cosmosAADLong
     def test_partitioned_collection_partition_key_extraction(self):
         created_db = self.key_databaseForTest
         data_db = self.data_databaseForTest
@@ -241,6 +241,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
         created_db.delete_container(created_collection1.id)
         created_db.delete_container(created_collection2.id)
 
+    @pytest.mark.cosmosAADLong
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
         created_db = self.key_databaseForTest
         data_db = self.data_databaseForTest

@@ -348,7 +348,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
             item_to_read = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             item_to_read2 = created_container.create_item(body={'id': 'item2',
                                                                 'country': 'MEX',
-                                                                'state': 'MichoacÃƒÂ¡n'})  # cspell:disable-line
+                                                                'state': 'Michoacán'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))
         # Recreate container
@@ -428,7 +428,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         try:
             item_to_del = created_container.create_item(body={'id': 'item1', 'country': 'USA', 'state': 'CA'})
             created_container.create_item(body={'id': 'item2',
-                                                'country': 'MEX', 'state': 'MichoacÃƒÂ¡n'})  # cspell:disable-line
+                                                'country': 'MEX', 'state': 'Michoacán'})  # cspell:disable-line
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))
 

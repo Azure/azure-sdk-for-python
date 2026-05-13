@@ -124,6 +124,7 @@ class TestPreferredLocationsAsync:
         assert read_endpoints == expected_endpoints
 
     @pytest.mark.cosmosMultiRegion
+    @pytest.mark.cosmosAADMultiRegion
     @pytest.mark.parametrize("error", error())
     async def test_read_no_preferred_locations_with_errors_async(self, setup, error):
         container = setup[COLLECTION]
@@ -161,6 +162,7 @@ class TestPreferredLocationsAsync:
                 await fault_setup["client"].close()
 
     @pytest.mark.cosmosMultiRegion
+    @pytest.mark.cosmosAADMultiRegion
     async def test_write_no_preferred_locations_with_errors_async(self, setup):
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransportAsync()

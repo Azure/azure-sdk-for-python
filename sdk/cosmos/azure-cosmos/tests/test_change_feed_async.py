@@ -63,8 +63,11 @@ class TestChangeFeedAsync:
         created_collection_ref = await setup["key_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"))
         created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
-        result = [feed_range async for feed_range in created_collection.read_feed_ranges()]
-        assert len(result) == 1
+        try:
+            result = [feed_range async for feed_range in created_collection.read_feed_ranges()]
+            assert len(result) == 1
+        finally:
+            await setup["key_db"].delete_container(created_collection_ref.id)
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
     async def test_query_change_feed_with_different_filter_async(self, change_feed_filter_param, setup):
@@ -284,30 +287,33 @@ class TestChangeFeedAsync:
     )
     async def test_query_change_feed_with_multi_partition_async(self, setup):
         created_collection_ref = await setup["key_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"),
-                                                              offer_throughput=11000)
+                                                               PartitionKey(path="/pk"),
+                                                               offer_throughput=11000)
         created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
 
-        # create one doc and make sure change feed query can return the document
-        new_documents = [
-            {'pk': 'pk', 'id': 'doc1'},
-            {'pk': 'pk2', 'id': 'doc2'},
-            {'pk': 'pk3', 'id': 'doc3'},
-            {'pk': 'pk4', 'id': 'doc4'}]
-        expected_ids = ['doc1', 'doc2', 'doc3', 'doc4']
+        try:
+            # create one doc and make sure change feed query can return the document
+            new_documents = [
+                {'pk': 'pk', 'id': 'doc1'},
+                {'pk': 'pk2', 'id': 'doc2'},
+                {'pk': 'pk3', 'id': 'doc3'},
+                {'pk': 'pk4', 'id': 'doc4'}]
+            expected_ids = ['doc1', 'doc2', 'doc3', 'doc4']
 
-        for document in new_documents:
-            await created_collection.create_item(body=document)
+            for document in new_documents:
+                await created_collection.create_item(body=document)
 
-        # Regression note: under AAD, service-side RBAC propagation right after container create
-        # can intermittently reject readChangeFeed with 403/5302, so this runs in non-AAD mode only.
-        query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
-        it = query_iterable.__aiter__()
-        actual_ids = []
-        async for item in it:
-            actual_ids.append(item['id'])
+            # Regression note: under AAD, service-side RBAC propagation right after container create
+            # can intermittently reject readChangeFeed with 403/5302, so this runs in non-AAD mode only.
+            query_iterable = created_collection.query_items_change_feed(start_time="Beginning")
+            it = query_iterable.__aiter__()
+            actual_ids = []
+            async for item in it:
+                actual_ids.append(item['id'])
 
-        assert actual_ids == expected_ids
+            assert actual_ids == expected_ids
+        finally:
+            await setup["key_db"].delete_container(created_collection_ref.id)
 
 if __name__ == '__main__':
     unittest.main()

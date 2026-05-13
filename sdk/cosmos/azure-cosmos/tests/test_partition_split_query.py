@@ -528,7 +528,7 @@ class TestPartitionSplitQuery(unittest.TestCase):
             assert refreshed_ranges[0]['minInclusive'] == ''
             assert refreshed_ranges[0]['maxExclusive'] == 'FF'
 
-            print("Ã¢Å“â€œ Validated: routing_map_provider successfully fell back to full refresh")
+            print("✓ Validated: routing_map_provider successfully fell back to full refresh")
 
             # Verify queries still work after fallback
             query_results = list(container.query_items(
