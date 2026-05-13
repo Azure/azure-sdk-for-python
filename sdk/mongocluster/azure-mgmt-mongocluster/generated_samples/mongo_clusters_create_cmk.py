@@ -43,7 +43,7 @@ def main():
             },
             "location": "westus2",
             "properties": {
-                "administrator": {"password": "password", "userName": "mongoAdmin"},
+                "administrator": {"password": "********", "userName": "mongoAdmin"},
                 "compute": {"tier": "M30"},
                 "encryption": {
                     "customerManagedKeyEncryption": {
@@ -63,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/MongoClusters_Create_CMK.json
+# x-ms-original-file: 2026-02-01-preview/MongoClusters_Create_CMK.json
 if __name__ == "__main__":
     main()
