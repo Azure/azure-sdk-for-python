@@ -169,7 +169,7 @@ class DependencyCheck(Check):
             )
             return True
 
-        verify_script = os.path.join(REPO_ROOT, "eng/tox/verify_installed_packages.py")
+        verify_script = os.path.join(REPO_ROOT, "eng/scripts/verify_installed_packages.py")
         verify_command = [verify_script, "--packages-file", packages_file]
         verify_result = self.run_venv_command(executable, verify_command, cwd=package_dir)
 

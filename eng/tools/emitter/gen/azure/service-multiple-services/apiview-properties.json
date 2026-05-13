@@ -1,0 +1,15 @@
+{
+    "CrossLanguagePackageId": "Service.MultipleServices.ServiceA",
+    "CrossLanguageDefinitionId": {
+        "service.multipleservices.servicea.models.VersionsA": "Service.MultipleServices.ServiceA.VersionsA",
+        "service.multipleservices.servicea.models.VersionsB": "Service.MultipleServices.ServiceB.VersionsB",
+        "service.multipleservices.servicea.operations.SubNamespaceOperations.sub_op_a": "Service.MultipleServices.ServiceA.SubNamespace.subOpA",
+        "service.multipleservices.servicea.aio.operations.SubNamespaceOperations.sub_op_a": "Service.MultipleServices.ServiceA.SubNamespace.subOpA",
+        "service.multipleservices.servicea.operations.Operations.op_a": "Service.MultipleServices.ServiceA.Operations.opA",
+        "service.multipleservices.servicea.aio.operations.Operations.op_a": "Service.MultipleServices.ServiceA.Operations.opA",
+        "service.multipleservices.servicea.operations.SubNamespaceOperations.sub_op_b": "Service.MultipleServices.ServiceB.SubNamespace.subOpB",
+        "service.multipleservices.servicea.aio.operations.SubNamespaceOperations.sub_op_b": "Service.MultipleServices.ServiceB.SubNamespace.subOpB",
+        "service.multipleservices.servicea.operations.Operations.op_b": "Service.MultipleServices.ServiceB.Operations.opB",
+        "service.multipleservices.servicea.aio.operations.Operations.op_b": "Service.MultipleServices.ServiceB.Operations.opB"
+    }
+}

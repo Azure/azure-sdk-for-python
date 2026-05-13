@@ -53,6 +53,9 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     :keyword _use_legacy_endpoint: Whether to use the legacy evaluation endpoint instead of the sync_evals endpoint.
         Defaults to False. Can be passed as a keyword argument.
     :paramtype _use_legacy_endpoint: bool
+    :keyword extra_headers: Additional HTTP headers to include in every backend request.
+        Can be passed as a keyword argument.
+    :paramtype extra_headers: Optional[Dict[str, str]]
     """
 
     @override
@@ -83,6 +86,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
         self._higher_is_better = _higher_is_better
         # Handle _use_legacy_endpoint parameter from kwargs
         self._use_legacy_endpoint = kwargs.get("_use_legacy_endpoint", False)
+        # Handle extra_headers parameter from kwargs
+        self._extra_headers: Optional[Dict[str, str]] = kwargs.get("extra_headers", None)
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
@@ -150,6 +155,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 project_scope=self._azure_ai_project,
                 credential=self._credential,
                 use_legacy_endpoint=True,
+                extra_headers=self._extra_headers,
             )
             # Wrap as single-turn result and aggregate to produce evaluation_per_turn structure
             return self._aggregate_results([result])
@@ -166,6 +172,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
                 project_scope=self._azure_ai_project,
                 credential=self._credential,
                 use_legacy_endpoint=self._use_legacy_endpoint,
+                extra_headers=self._extra_headers,
             )
             parsed = self._parse_eval_result(turn_result)
             per_turn_results.append(parsed)
@@ -233,6 +240,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
             annotation_task=self._get_task(),
             evaluator_name=self.__class__.__name__,
             use_legacy_endpoint=self._use_legacy_endpoint,
+            extra_headers=self._extra_headers,
         )
 
         # Legacy endpoint returns a pre-parsed dict from parse_response(); return directly
