@@ -360,31 +360,31 @@ class TestMassEvaluate:
             # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
             assert len(row_result_df.keys()) >= 33
         else:
-            # 103 columns: includes evaluation_per_turn fields for all evaluators
-            assert len(row_result_df.keys()) == 103
+            # 98 columns: includes evaluation_per_turn fields for all evaluators
+            assert len(row_result_df.keys()) == 98
         known_keys = [
             "outputs.content_safety.hate_unfairness",
             "outputs.content_safety.hate_unfairness_score",
             "outputs.content_safety.hate_unfairness_reason",
-            "outputs.content_safety.hate_unfairness_passed",
+            "outputs.content_safety.hate_unfairness_result",
             "outputs.content_safety.self_harm",
             "outputs.content_safety.self_harm_score",
             "outputs.content_safety.self_harm_reason",
-            "outputs.content_safety.self_harm_passed",
+            "outputs.content_safety.self_harm_result",
             "outputs.content_safety.sexual",
             "outputs.content_safety.sexual_score",
             "outputs.content_safety.sexual_reason",
-            "outputs.content_safety.sexual_passed",
+            "outputs.content_safety.sexual_result",
             "outputs.content_safety.violence",
             "outputs.content_safety.violence_score",
             "outputs.content_safety.violence_reason",
-            "outputs.content_safety.violence_passed",
+            "outputs.content_safety.violence_result",
             "outputs.protected_material.protected_material_label",
             "outputs.protected_material.protected_material_reason",
             "outputs.sexual.sexual",
             "outputs.sexual.sexual_score",
             "outputs.sexual.sexual_reason",
-            "outputs.sexual.sexual_passed",
+            "outputs.sexual.sexual_result",
         ]
         for key in known_keys:
             assert key in row_result_df.keys()
