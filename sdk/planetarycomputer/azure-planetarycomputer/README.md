@@ -24,7 +24,7 @@ This client library enables developers to interact with GeoCatalog resources, su
 
 ### Prerequisites
 
-- Python 3.9 or later is required to use this package.
+- Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - A deployed Microsoft Planetary Computer Pro GeoCatalog resource in your Azure subscription.
 
@@ -95,7 +95,7 @@ client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential)
 #### Shared Access Signature Operations (`client.sas`)
 
 - **Token Generation**: Generate SAS tokens with configurable duration for collections to enable secure access
-- **Asset Signing**: Sign asset HREFs for secure downloads of managed storage assets
+- **Asset Signing**: Sign asset HREFs for secure downloads of managed storage assets using `get_url`
 - **Token Revocation**: Revoke tokens when needed to control access, all secured via Microsoft Entra ID
 
 ## Examples
@@ -263,7 +263,7 @@ tile_settings = TileSettings(min_zoom=6, max_items_per_tile=10)
 client.stac.replace_tile_settings(collection_id=collection_id, body=tile_settings)
 
 # List all render options
-for option in client.stac.list_render_options(collection_id=collection_id):
+for option in client.stac.get_render_options(collection_id=collection_id):
     print(f"Render option: {option.id} - {option.name}")
 ```
 
@@ -292,7 +292,7 @@ registration = client.data.register_mosaics_search(
 print(f"Search ID: {registration.search_id}")
 
 # Get TileJSON metadata for the registered mosaic
-tile_json = client.data.get_searches_tile_json(
+tile_json = client.data.get_search_tile_json(
     search_id=registration.search_id,
     tile_matrix_set_id="WebMercatorQuad",
     assets=["image"],
@@ -448,7 +448,7 @@ print(f"SAS Token: {token_response.token}")
 print(f"Expiry: {token_response.expires_on}")
 
 # Sign an asset HREF for secure download
-signed = client.sas.get_sign(
+signed = client.sas.get_url(
     href="https://storage.blob.core.windows.net/container/path/to/asset.tif",
     duration_in_minutes=60,
 )
