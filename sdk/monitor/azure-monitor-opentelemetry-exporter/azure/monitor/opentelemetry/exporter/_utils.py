@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import datetime
-from importlib.metadata import version
 import locale
 from os import environ
 from os.path import isdir
@@ -36,8 +35,19 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RP_Names,
 )
 
+opentelemetry_version = ""
+
 # Workaround for missing version file
-opentelemetry_version = version("opentelemetry-sdk")
+try:
+    from importlib.metadata import version
+
+    opentelemetry_version = version("opentelemetry-sdk")
+except ImportError:
+    # Temporary workaround for <Py3.8
+    # importlib-metadata causing issues in CI
+    import pkg_resources  # type: ignore
+
+    opentelemetry_version = pkg_resources.get_distribution("opentelemetry-sdk").version
 
 
 # Azure App Service
