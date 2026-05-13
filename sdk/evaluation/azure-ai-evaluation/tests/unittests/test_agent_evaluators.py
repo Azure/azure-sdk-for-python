@@ -67,10 +67,10 @@ class TestEvaluate:
             ],
         )
         assert result[ToolCallAccuracyEvaluator._RESULT_KEY] is None
-        assert result[f"{ToolCallAccuracyEvaluator._KEY_PREFIX}_passed"] is None
-        assert result[f"{ToolCallAccuracyEvaluator._KEY_PREFIX}_status"] == "skipped"
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_passed"] is None
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_status"] == "skipped"
         assert (
-            "not applicable" in result[f"{ToolCallAccuracyEvaluator._KEY_PREFIX}_reason"].lower()
+            "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"].lower()
             and ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-            in result[f"{ToolCallAccuracyEvaluator._KEY_PREFIX}_reason"]
+            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
         )

@@ -72,7 +72,7 @@ class TestResponseCompletenessEvaluator:
         result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
         key = ResponseCompletenessEvaluator._RESULT_KEY
-        prefix = ResponseCompletenessEvaluator._KEY_PREFIX
+        prefix = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
         assert (
             key in result
@@ -95,7 +95,7 @@ class TestResponseCompletenessEvaluator:
         result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
         key = ResponseCompletenessEvaluator._RESULT_KEY
-        prefix = ResponseCompletenessEvaluator._KEY_PREFIX
+        prefix = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
 
         assert (
@@ -121,7 +121,7 @@ class TestResponseCompletenessEvaluator:
         result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
         key = ResponseCompletenessEvaluator._RESULT_KEY
-        prefix = ResponseCompletenessEvaluator._KEY_PREFIX
+        prefix = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
 
         assert (
