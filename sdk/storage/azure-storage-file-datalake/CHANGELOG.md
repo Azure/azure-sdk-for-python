@@ -1,6 +1,6 @@
 # Release History
 
-## 12.24.0 (2026-05-12)
+## 12.24.0 (2026-05-13)
 
 ### Features Added
 - Stable release of features from 12.24.0b1
