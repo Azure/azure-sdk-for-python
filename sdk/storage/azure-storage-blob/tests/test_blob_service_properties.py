@@ -33,10 +33,10 @@ class TestServiceProperties(StorageRecordedTestCase):
     def _assert_properties_default(self, prop):
         assert prop is not None
 
-        self._assert_logging_equal(prop['analytics_logging'], BlobAnalyticsLogging())
-        self._assert_metrics_equal(prop['hour_metrics'], Metrics())
-        self._assert_metrics_equal(prop['minute_metrics'], Metrics())
-        self._assert_cors_equal(prop['cors'], [])
+        self._assert_logging_equal(prop["analytics_logging"], BlobAnalyticsLogging())
+        self._assert_metrics_equal(prop["hour_metrics"], Metrics())
+        self._assert_metrics_equal(prop["minute_metrics"], Metrics())
+        self._assert_cors_equal(prop["cors"], [])
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -119,14 +119,14 @@ class TestServiceProperties(StorageRecordedTestCase):
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=[],
-            target_version='2014-02-14'
+            target_version="2014-02-14",
         )
 
         # Assert
         assert resp is None
         props = bsc.get_service_properties()
         self._assert_properties_default(props)
-        assert '2014-02-14' == props['target_version']
+        assert "2014-02-14" == props["target_version"]
 
     # --Test cases per feature ---------------------------------------
     @BlobPreparer()
@@ -148,11 +148,11 @@ class TestServiceProperties(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         # Act
-        bsc.set_service_properties(target_version='2014-02-14')
+        bsc.set_service_properties(target_version="2014-02-14")
 
         # Assert
         received_props = bsc.get_service_properties()
-        assert received_props['target_version'] == '2014-02-14'
+        assert received_props["target_version"] == "2014-02-14"
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -168,7 +168,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props["delete_retention_policy"], delete_retention_policy)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -182,7 +182,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props["delete_retention_policy"], delete_retention_policy)
 
         # Should work with maximum settings
         delete_retention_policy = RetentionPolicy(enabled=True, days=365)
@@ -190,7 +190,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props["delete_retention_policy"], delete_retention_policy)
 
         # Should not work with 0 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=0)
@@ -201,7 +201,8 @@ class TestServiceProperties(StorageRecordedTestCase):
         # Assert
         received_props = bsc.get_service_properties()
         self._assert_delete_retention_policy_not_equal(
-            received_props['delete_retention_policy'], delete_retention_policy)
+            received_props["delete_retention_policy"], delete_retention_policy
+        )
 
         # Should not work with 366 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=366)
@@ -212,7 +213,8 @@ class TestServiceProperties(StorageRecordedTestCase):
         # Assert
         received_props = bsc.get_service_properties()
         self._assert_delete_retention_policy_not_equal(
-            received_props['delete_retention_policy'], delete_retention_policy)
+            received_props["delete_retention_policy"], delete_retention_policy
+        )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -228,7 +230,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props["delete_retention_policy"], delete_retention_policy)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -238,16 +240,15 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         static_website = StaticWebsite(
-            enabled=True,
-            index_document="index.html",
-            error_document404_path="errors/error/404error.html")
+            enabled=True, index_document="index.html", error_document404_path="errors/error/404error.html"
+        )
 
         # Act
         bsc.set_service_properties(static_website=static_website)
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -257,16 +258,15 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         static_website = StaticWebsite(
-            enabled=True,
-            error_document404_path="errors/error/404error.html",
-            default_index_document_path="index.html")
+            enabled=True, error_document404_path="errors/error/404error.html", default_index_document_path="index.html"
+        )
 
         # Act
         bsc.set_service_properties(static_website=static_website)
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -284,7 +284,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
 
         # Case2: Arrange index document missing
         static_website = StaticWebsite(enabled=True, error_document404_path="errors/error/404error.html")
@@ -294,7 +294,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
 
         # Case3: Arrange error document missing
         static_website = StaticWebsite(enabled=True, index_document="index.html")
@@ -304,7 +304,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -313,15 +313,16 @@ class TestServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        static_website = StaticWebsite(enabled=False, index_document="index.html",
-                                       error_document404_path="errors/error/404error.html")
+        static_website = StaticWebsite(
+            enabled=False, index_document="index.html", error_document404_path="errors/error/404error.html"
+        )
 
         # Act
         bsc.set_service_properties(static_website=static_website)
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], StaticWebsite(enabled=False))
+        self._assert_static_website_equal(received_props["static_website"], StaticWebsite(enabled=False))
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -330,10 +331,10 @@ class TestServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
 
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -342,7 +343,8 @@ class TestServiceProperties(StorageRecordedTestCase):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers,
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -351,19 +353,20 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert cors is updated
         received_props = bsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_cors_equal(received_props["cors"], cors)
 
         # Arrange to set static website properties
-        static_website = StaticWebsite(enabled=True, index_document="index.html",
-                                       error_document404_path="errors/error/404error.html")
+        static_website = StaticWebsite(
+            enabled=True, index_document="index.html", error_document404_path="errors/error/404error.html"
+        )
 
         # Act to set static website
         bsc.set_service_properties(static_website=static_website)
 
         # Assert static website was updated was cors was unchanged
         received_props = bsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
+        self._assert_cors_equal(received_props["cors"], cors)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -372,15 +375,16 @@ class TestServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        logging = BlobAnalyticsLogging(read=True, write=True, delete=True,
-                                       retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = BlobAnalyticsLogging(
+            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         bsc.set_service_properties(analytics_logging=logging)
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_logging_equal(received_props['analytics_logging'], logging)
+        self._assert_logging_equal(received_props["analytics_logging"], logging)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -396,7 +400,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
+        self._assert_metrics_equal(received_props["hour_metrics"], hour_metrics)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -405,15 +409,16 @@ class TestServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         bsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
+        self._assert_metrics_equal(received_props["minute_metrics"], minute_metrics)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -422,10 +427,10 @@ class TestServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
 
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -434,7 +439,8 @@ class TestServiceProperties(StorageRecordedTestCase):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers,
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -443,7 +449,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_cors_equal(received_props["cors"], cors)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -457,7 +463,7 @@ class TestServiceProperties(StorageRecordedTestCase):
             account_key=storage_account_key.secret,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=3)
+            expiry=datetime.utcnow() + timedelta(hours=3),
         )
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=sas_token)
 
@@ -482,11 +488,10 @@ class TestServiceProperties(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         cors = []
         for _ in range(6):
-            cors.append(CorsRule(['www.xyz.com'], ['GET']))
+            cors.append(CorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
-        pytest.raises(HttpResponseError,
-                      bsc.set_service_properties, None, None, None, cors)
+        pytest.raises(HttpResponseError, bsc.set_service_properties, None, None, None, cors)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -495,13 +500,12 @@ class TestServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=366))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366)
+        )
 
         # Assert
-        pytest.raises(HttpResponseError,
-                      bsc.set_service_properties,
-                      None, None, minute_metrics)
+        pytest.raises(HttpResponseError, bsc.set_service_properties, None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

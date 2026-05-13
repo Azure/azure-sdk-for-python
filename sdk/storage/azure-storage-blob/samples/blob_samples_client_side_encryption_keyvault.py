@@ -40,7 +40,6 @@ STORAGE_URL = "STORAGE_ACCOUNT_BLOB_URL"
 KEYVAULT_URL = "KEYVAULT_URL"
 
 
-
 def get_env_var(key):
     try:
         return os.environ[key]
@@ -51,7 +50,6 @@ def get_env_var(key):
 
 def make_resource_name(prefix):
     return "{}{}".format(prefix, str(uuid.uuid4()).replace("-", ""))
-
 
 
 class KeyWrapper:

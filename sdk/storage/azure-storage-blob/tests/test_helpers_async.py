@@ -14,7 +14,10 @@ from aiohttp import ClientResponse
 from aiohttp.client_proto import ResponseHandler
 from aiohttp.streams import StreamReader
 
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport  # pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import (
+    AioHttpTransportResponse,
+    AsyncHttpTransport,
+)  # pylint: disable=no-name-in-module
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
 

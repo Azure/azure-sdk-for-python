@@ -98,7 +98,9 @@ class BlobPropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in (self._response.segment.blob_items or [])]
+        # Flat list responses expose `blob_items` directly; hierarchy responses nest them under `segment`.
+        items_source = getattr(self._response, "segment", None) or self._response
+        self.current_page = [self._build_item(item) for item in (items_source.blob_items or [])]
 
         return self._response.next_marker or None, self.current_page
 

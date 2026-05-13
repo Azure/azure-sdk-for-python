@@ -157,40 +157,6 @@ class ArrowField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobFlatListSegment(_Model):
-    """The blob flat list segment.
-
-    :ivar blob_items: The blob items. Required.
-    :vartype blob_items: ~azure.storage.blob._generated.models.BlobItemInternal
-    """
-
-    blob_items: list["_models.BlobItemInternal"] = rest_field(
-        name="blobItems",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "Blob", "name": "Blob", "text": False, "unwrapped": True},
-    )
-    """The blob items. Required."""
-
-    _xml = {"attribute": False, "name": "BlobFlatListSegment", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        blob_items: list["_models.BlobItemInternal"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class BlobHierarchyListSegment(_Model):
     """Represents an array of blobs.
 
@@ -1996,8 +1962,8 @@ class ListBlobsResponse(_Model):
     :vartype marker: str
     :ivar max_results: The max results of the blobs.
     :vartype max_results: int
-    :ivar segment: The blob segment. Required.
-    :vartype segment: ~azure.storage.blob._generated.models.BlobFlatListSegment
+    :ivar blob_items: The blob items. Required.
+    :vartype blob_items: ~azure.storage.blob._generated.models.BlobItemInternal
     :ivar next_marker: The next marker of the blobs.
     :vartype next_marker: str
     """
@@ -2030,11 +1996,12 @@ class ListBlobsResponse(_Model):
         xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
     )
     """The max results of the blobs."""
-    segment: "_models.BlobFlatListSegment" = rest_field(
+    blob_items: list["_models.BlobItemInternal"] = rest_field(
+        name="blobItems",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Blobs", "text": False, "unwrapped": False},
+        xml={"attribute": False, "itemsName": "Blob", "name": "Blobs", "text": False, "unwrapped": False},
     )
-    """The blob segment. Required."""
+    """The blob items. Required."""
     next_marker: Optional[str] = rest_field(
         name="nextMarker",
         visibility=["read", "create", "update", "delete", "query"],
@@ -2050,7 +2017,7 @@ class ListBlobsResponse(_Model):
         *,
         service_endpoint: str,
         container_name: str,
-        segment: "_models.BlobFlatListSegment",
+        blob_items: list["_models.BlobItemInternal"],
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -2069,7 +2036,7 @@ class ListBlobsResponse(_Model):
 
 
 class ListContainersSegmentResponse(_Model):
-    """The list container segment response.
+    """The list containers response.
 
     :ivar service_endpoint: The service endpoint. Required.
     :vartype service_endpoint: str

@@ -22,18 +22,12 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ServiceResponseError,
-    ServiceResponseTimeoutError
+    ServiceResponseTimeoutError,
 )
 from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
 from azure.storage.blob._shared.authentication import AzureSigningError
 from azure.storage.blob._shared.models import StorageErrorCode
-from azure.storage.blob import (
-    BlobClient,
-    BlobServiceClient,
-    ExponentialRetry,
-    LinearRetry,
-    LocationMode
-)
+from azure.storage.blob import BlobClient, BlobServiceClient, ExponentialRetry, LinearRetry, LocationMode
 
 
 class TimeoutRequestsTransport(RequestsTransport):
@@ -67,7 +61,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
 
         # Force the create call to 'timeout' with a 408
@@ -91,10 +85,11 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
+        )
 
         callback = ResponseCallback(status=201, new_status=408).override_status
 
@@ -116,17 +111,18 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
+        )
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
 
         def assert_exception_is_present_on_retry_context(**kwargs):
-            assert kwargs.get('response') is not None
-            assert kwargs['response'].status_code == 408
+            assert kwargs.get("response") is not None
+            assert kwargs["response"].status_code == 408
 
         # Act
         try:
@@ -134,8 +130,8 @@ class TestStorageRetry(StorageRecordedTestCase):
             # The retry will then get a 409 and return false.
             with pytest.raises(ResourceExistsError):
                 service.create_container(
-                    container_name, raw_response_hook=callback,
-                    retry_hook=assert_exception_is_present_on_retry_context)
+                    container_name, raw_response_hook=callback, retry_hook=assert_exception_is_present_on_retry_context
+                )
         finally:
             service.delete_container(container_name)
 
@@ -146,12 +142,12 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
-        blob_name = self.get_resource_name('blob')
+        container_name = self.get_resource_name("utcontainer")
+        blob_name = self.get_resource_name("blob")
         # Upload a blob that can be downloaded to test read timeout
         service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
         container = service.create_container(container_name)
-        container.upload_blob(blob_name, b'Hello World', overwrite=True)
+        container.upload_blob(blob_name, b"Hello World", overwrite=True)
 
         retry = LinearRetry(backoff=1, random_jitter_range=1)
         timeout_transport = TimeoutRequestsTransport()
@@ -160,7 +156,8 @@ class TestStorageRetry(StorageRecordedTestCase):
             storage_account_name,
             storage_account_key,
             retry_policy=retry,
-            transport=timeout_transport)
+            transport=timeout_transport,
+        )
         blob = timeout_service.get_blob_client(container_name, blob_name)
 
         # Act
@@ -181,9 +178,10 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_total=0)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_total=0
+        )
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -193,7 +191,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             with pytest.raises(HttpResponseError) as error:
                 service.create_container(container_name, raw_response_hook=callback)
             assert error.value.status_code == 408
-            assert error.value.reason == 'Created'
+            assert error.value.reason == "Created"
 
         finally:
             service.delete_container(container_name)
@@ -205,10 +203,11 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
+        )
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -231,10 +230,11 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
+        )
 
         try:
             container = service.create_container(container_name)
@@ -247,7 +247,7 @@ class TestStorageRetry(StorageRecordedTestCase):
                 container.get_container_properties(raw_response_hook=callback.override_status)
 
             # Assert the response was called the right number of times (1 initial request + 3 retries)
-            assert callback.count == 1+3
+            assert callback.count == 1 + 3
         finally:
             # Clean up
             service.delete_container(container_name)
@@ -261,28 +261,28 @@ class TestStorageRetry(StorageRecordedTestCase):
 
         for _ in range(10):
             # Act
-            context_stub['count'] = 0
+            context_stub["count"] = 0
             backoff = retry_policy.get_backoff_time(context_stub)
 
             # Assert backoff interval is within +/- 3 of 1
             assert 0 <= backoff <= 4
 
             # Act
-            context_stub['count'] = 1
+            context_stub["count"] = 1
             backoff = retry_policy.get_backoff_time(context_stub)
 
             # Assert backoff interval is within +/- 3 of 4(1+3^1)
             assert 1 <= backoff <= 7
 
             # Act
-            context_stub['count'] = 2
+            context_stub["count"] = 2
             backoff = retry_policy.get_backoff_time(context_stub)
 
             # Assert backoff interval is within +/- 3 of 10(1+3^2)
             assert 7 <= backoff <= 13
 
             # Act
-            context_stub['count'] = 3
+            context_stub["count"] = 3
             backoff = retry_policy.get_backoff_time(context_stub)
 
             # Assert backoff interval is within +/- 3 of 28(1+3^3)
@@ -323,10 +323,11 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
+        )
 
         # Force the create call to fail by pretending it's a teapot
         callback = ResponseCallback(status=201, new_status=418).override_status
@@ -336,7 +337,7 @@ class TestStorageRetry(StorageRecordedTestCase):
             with pytest.raises(HttpResponseError) as error:
                 service.create_container(container_name, raw_response_hook=callback)
             assert error.value.status_code == 418
-            assert error.value.reason == 'Created'
+            assert error.value.reason == "Created"
         finally:
             service.delete_container(container_name)
 
@@ -347,17 +348,18 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('retry')
+        container_name = self.get_resource_name("retry")
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
+        )
 
         try:
             service.create_container(container_name)
 
             # Act
             callback = ResponseCallback(status=200, new_status=408).override_first_status
-            containers = service.list_containers(name_starts_with='retry', raw_response_hook=callback)
+            containers = service.list_containers(name_starts_with="retry", raw_response_hook=callback)
 
             # Assert
             containers = list(containers)
@@ -393,12 +395,12 @@ class TestStorageRetry(StorageRecordedTestCase):
             def send(self, request, **kwargs):
                 if MockTransport.ENABLE:
                     if MockTransport.CALL_NUMBER == 2:
-                        if request.method != 'PUT':
-                            assert '-secondary' in request.url
+                        if request.method != "PUT":
+                            assert "-secondary" in request.url
                         # Here's our hack
                         # Replace with primary so the test works even
                         # if secondary is not ready
-                        request.url = request.url.replace('-secondary', '')
+                        request.url = request.url.replace("-secondary", "")
 
                 response = super(MockTransport, self).send(request, **kwargs)
 
@@ -416,8 +418,7 @@ class TestStorageRetry(StorageRecordedTestCase):
 
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry,
-            transport=MockTransport()
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, transport=MockTransport()
         )
 
         # Act
@@ -435,9 +436,10 @@ class TestStorageRetry(StorageRecordedTestCase):
                 assert LocationMode.PRIMARY == location_mode
             else:
                 pytest.fail("This test is not supposed to retry more than once")
+
         put_retry_callback.called = False
 
-        container = service.get_container_client('containername')
+        container = service.get_container_client("containername")
         container.create_container(retry_hook=put_retry_callback)
         assert put_retry_callback.called
 
@@ -450,13 +452,13 @@ class TestStorageRetry(StorageRecordedTestCase):
                 assert LocationMode.SECONDARY == location_mode
             else:
                 pytest.fail("This test is not supposed to retry more than once")
+
         retry_callback.called = False
 
         # Try list
         MockTransport.CALL_NUMBER = 1
         retry_callback.called = False
-        containers = service.list_containers(
-            results_per_page=1, retry_hook=retry_callback)
+        containers = service.list_containers(results_per_page=1, retry_hook=retry_callback)
         next(containers)
         assert retry_callback.called
 
@@ -473,10 +475,11 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
+        )
         service.credential.account_name = "dummy_account_name"
         service.credential.account_key = "dummy_account_key"
 
@@ -517,10 +520,12 @@ class TestStorageRetry(StorageRecordedTestCase):
             print(counter[0])  # 2
             ```
         """
+
         @wraps(func)
         def inner(*args, **kwargs):
             counter[0] += 1
             return func(*args, **kwargs)
+
         return inner
 
     @BlobPreparer()
@@ -531,9 +536,8 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Should check that multiple requests went through the pipeline
-        container_name = self.get_resource_name('utcontainer')
-        service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key)
+        container_name = self.get_resource_name("utcontainer")
+        service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
         container = service.get_container_client(container_name)
         container.create_container()
         assert container.exists()
@@ -560,11 +564,7 @@ class TestStorageRetry(StorageRecordedTestCase):
 
         # Arrange
         blob_client = self._create_storage_service(
-            BlobClient,
-            storage_account_name,
-            storage_account_key,
-            container_name="foo",
-            blob_name="bar"
+            BlobClient, storage_account_name, storage_account_key, container_name="foo", blob_name="bar"
         )
 
         retry_counter = RetryCounter()
@@ -575,8 +575,10 @@ class TestStorageRetry(StorageRecordedTestCase):
             blob_client.get_blob_properties(retry_hook=retry_callback)
 
         # Assert
-        assert ("This is likely due to an invalid shared key. Please check your shared key and try again." in
-                e.value.message)
+        assert (
+            "This is likely due to an invalid shared key. Please check your shared key and try again."
+            in e.value.message
+        )
         assert retry_counter.count == 0
 
     @BlobPreparer()
@@ -586,53 +588,48 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         retry = LinearRetry(backoff=1, retry_total=3)
         retry_counter = RetryCounter()
         service = self._create_storage_service(
-            BlobServiceClient,
-            storage_account_name,
-            storage_account_key,
-            retry_policy=retry
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry
         )
 
         def response_handler(raw_response):
             if retry_counter.count == 0:
                 raw_response.http_response.status_code = 400
-                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '408'
-                raw_response.http_response.headers['x-ms-copy-source-error-code'] = (
-                    StorageErrorCode.OPERATION_TIMED_OUT)
+                raw_response.http_response.headers["x-ms-copy-source-status-code"] = "408"
+                raw_response.http_response.headers["x-ms-copy-source-error-code"] = StorageErrorCode.OPERATION_TIMED_OUT
             elif retry_counter.count == 1:
                 raw_response.http_response.status_code = 400
-                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '500'
-                raw_response.http_response.headers['x-ms-copy-source-error-code'] = StorageErrorCode.INTERNAL_ERROR
+                raw_response.http_response.headers["x-ms-copy-source-status-code"] = "500"
+                raw_response.http_response.headers["x-ms-copy-source-error-code"] = StorageErrorCode.INTERNAL_ERROR
             elif retry_counter.count == 2:
                 raw_response.http_response.status_code = 400
-                raw_response.http_response.headers['x-ms-copy-source-status-code'] = '503'
-                raw_response.http_response.headers['x-ms-copy-source-error-code'] = StorageErrorCode.SERVER_BUSY
+                raw_response.http_response.headers["x-ms-copy-source-status-code"] = "503"
+                raw_response.http_response.headers["x-ms-copy-source-error-code"] = StorageErrorCode.SERVER_BUSY
 
         def assert_exception_retry_hook(**kwargs):
-            assert kwargs.get('response') is not None
+            assert kwargs.get("response") is not None
             if retry_counter.count == 0:
-                assert kwargs['response'].status_code == 400
-                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '408'
-                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == (
-                    StorageErrorCode.OPERATION_TIMED_OUT)
+                assert kwargs["response"].status_code == 400
+                assert kwargs["response"].headers["x-ms-copy-source-status-code"] == "408"
+                assert kwargs["response"].headers["x-ms-copy-source-error-code"] == (
+                    StorageErrorCode.OPERATION_TIMED_OUT
+                )
             elif retry_counter.count == 1:
-                assert kwargs['response'].status_code == 400
-                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '500'
-                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == StorageErrorCode.INTERNAL_ERROR
+                assert kwargs["response"].status_code == 400
+                assert kwargs["response"].headers["x-ms-copy-source-status-code"] == "500"
+                assert kwargs["response"].headers["x-ms-copy-source-error-code"] == StorageErrorCode.INTERNAL_ERROR
             elif retry_counter.count == 2:
-                assert kwargs['response'].status_code == 400
-                assert kwargs['response'].headers['x-ms-copy-source-status-code'] == '503'
-                assert kwargs['response'].headers['x-ms-copy-source-error-code'] == StorageErrorCode.SERVER_BUSY
+                assert kwargs["response"].status_code == 400
+                assert kwargs["response"].headers["x-ms-copy-source-status-code"] == "503"
+                assert kwargs["response"].headers["x-ms-copy-source-error-code"] == StorageErrorCode.SERVER_BUSY
             retry_counter.simple_count(retry)
 
         with pytest.raises(HttpResponseError):
             service.create_container(
-                container_name,
-                raw_response_hook=response_handler,
-                retry_hook=assert_exception_retry_hook
+                container_name, raw_response_hook=response_handler, retry_hook=assert_exception_retry_hook
             )
 
         assert retry_counter.count == 3
@@ -644,22 +641,19 @@ class TestStorageRetry(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        container_name = self.get_resource_name('utcontainer')
-        blob_name = self.get_resource_name('blob')
+        container_name = self.get_resource_name("utcontainer")
+        blob_name = self.get_resource_name("blob")
         service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, max_block_size=4)
+            BlobServiceClient, storage_account_name, storage_account_key, max_block_size=4
+        )
         container = service.create_container(container_name)
-        data = b'abcd' * 4
+        data = b"abcd" * 4
         container.upload_blob(blob_name, data, overwrite=True)
 
         retry = LinearRetry(backoff=1, random_jitter_range=1)
         retry_counter = RetryCounter()
         retry_service = self._create_storage_service(
-            BlobServiceClient,
-            storage_account_name,
-            storage_account_key,
-            retry_policy=retry,
-            max_block_size=4
+            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, max_block_size=4
         )
         blob = retry_service.get_blob_client(container_name, blob_name)
 
@@ -678,8 +672,7 @@ class TestStorageRetry(StorageRecordedTestCase):
         # Act
         try:
             with mock.patch(
-                'azure.storage.blob._download.process_content',
-                side_effect=mock_process_content_with_error
+                "azure.storage.blob._download.process_content", side_effect=mock_process_content_with_error
             ):
                 downloaded_data = blob.download_blob().readall()
             assert downloaded_data == data

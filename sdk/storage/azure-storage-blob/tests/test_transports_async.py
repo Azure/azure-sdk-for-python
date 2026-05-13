@@ -13,7 +13,10 @@ from settings.testcase import BlobPreparer
 from test_helpers_async import AsyncStream, MockLegacyTransport
 
 from azure.core.exceptions import ResourceExistsError
-from azure.core.pipeline.transport import AioHttpTransport, AsyncioRequestsTransport  # pylint: disable=no-name-in-module
+from azure.core.pipeline.transport import (
+    AioHttpTransport,
+    AsyncioRequestsTransport,
+)  # pylint: disable=no-name-in-module
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 
