@@ -1,0 +1,116 @@
+parameters:
+  - name: IncludeManagement
+    type: boolean
+    default: true
+
+jobs:
+  - job: RegenerateApiMd
+    displayName: 'Regenerate api.md for all packages'
+    timeoutInMinutes: 480
+
+    pool:
+      name: azsdk-pool
+      image: ubuntu-24.04
+      os: linux
+
+    variables:
+      - template: /eng/pipelines/templates/variables/globals.yml
+      - ${{ if parameters.IncludeManagement }}:
+        - name: FilterTypeArg
+          value: ''
+      - ${{ else }}:
+        - name: FilterTypeArg
+          value: '--filter-type=Omit_management'
+
+    steps:
+      - checkout: self
+        persistCredentials: true
+        fetchDepth: 0
+
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.10'
+        inputs:
+          versionSpec: '3.10'
+
+      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+
+      - template: /eng/pipelines/templates/steps/use-venv.yml
+        parameters:
+          VirtualEnvironmentName: "venv-apiview-md"
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $(PIP_EXE) install -r eng/ci_tools.txt
+        displayName: 'Install CI tools'
+
+      - script: |
+          git config --global user.name "azure-sdk"
+          git config --global user.email "azuresdk@microsoft.com"
+        displayName: 'Configure git'
+
+      # Run `azpysdk apistub --md` for all packages in parallel via dispatch_checks.py.
+      # Each package is processed in its own isolated virtual environment. The generated
+      # api.md is written directly into each package directory so git can detect the changes.
+      #
+      # Excluded packages (--exclude-packages):
+      #   - nspkg: namespace packages with no public API surface; apistub produces no output.
+      #   - azure-storage-extensions: contains C extension modules that are not importable
+      #     in a standard Python environment without a build step; apistub cannot introspect them.
+      #   - azure-mgmt-app, azure-mgmt-videoanalyzer, azure-mgmt-changeanalysis: last released
+      #     in 2022 and depend on the deprecated `msrest` package, which is not available in
+      #     the apistub virtual environment and causes an import error at generation time.
+      #   - azure-mgmt-apimanagement: contains two types whose names differ only by casing
+      #     (`LLMDiagnosticSettings` model and `LlmDiagnosticSettings` enum); PowerShell's
+      #     ConvertFrom-Json treats object keys case-insensitively and fails to parse the
+      #     generated token JSON. The package should rename one of these types to fix this.
+      - task: PythonScript@0
+        displayName: 'Regenerate api.md for all packages'
+        continueOnError: true
+        inputs:
+          scriptPath: 'eng/scripts/dispatch_checks.py'
+          arguments: >-
+            "azure-*"
+            --checks="apistub"
+            --md
+            --disablecov
+            $(FilterTypeArg)
+            --max-parallel 8
+            --exclude-packages="nspkg,azure-storage-extensions,azure-mgmt-app,azure-mgmt-videoanalyzer,azure-mgmt-changeanalysis,azure-mgmt-apimanagement"
+
+      # Stage only api.md files so the PR contains exclusively api.md updates.
+      - bash: |
+          git add -- "sdk/**/api.md"
+          if ! git diff --cached --quiet; then
+            echo "api.md changes detected; will open a draft PR."
+            git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" \
+              commit -m "[Auto] Regenerate api.md for all packages"
+            echo "##vso[task.setvariable variable=HasChanges]true"
+          else
+            echo "No api.md changes detected. Exiting successfully."
+            echo "##vso[task.setvariable variable=HasChanges]false"
+          fi
+        displayName: 'Stage and commit api.md changes'
+
+      # login to azure a single time. we will source and target the same owner, so a single login is sufficient for the PR creation step
+      # versus allowing multiple logins to occur for `Azure` twice
+      - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
+      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+        parameters:
+          AuthToken: '$(GH_TOKEN)'
+          PROwner: 'Azure'
+          PRBranchName: 'automated/apiview-md-regen-$(Build.BuildId)'
+          CommitMsg: '[Auto] Regenerate api.md for all packages'
+          PRTitle: '[Auto] Regenerate api.md for all packages'
+          PRBody: |
+            This PR was automatically generated to regenerate `api.md` files across all Python SDK packages.
+
+            The `api.md` files are produced by `azpysdk apistub --md`, which runs the API stub generator and converts the output to a human-readable markdown file using `Export-APIViewMarkdown.ps1`.
+
+            **Why this PR was created**: the `apiview-stub-generator` version in `eng/apiview_reqs.txt` was updated, so all `api.md` files need to be regenerated to reflect any format changes.
+
+            Generated by: https://dev.azure.com/azure-sdk/internal/_build?definitionId=$(System.DefinitionId)&buildId=$(Build.BuildId)
+          BaseBranchName: main
+          OpenAsDraft: true
+          SkipCheckingForChanges: true
