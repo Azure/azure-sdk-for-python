@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.serialconsole import MicrosoftSerialConsoleClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.serialconsole import MicrosoftSerialConsoleClient
     pip install azure-identity
     pip install azure-mgmt-serialconsole
 # USAGE
-    python connect_to_a_virtual_machine_serial_port.py
+    python serial_port_connect_vm.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -39,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/serialconsole/resource-manager/Microsoft.SerialConsole/stable/2018-05-01/examples/SerialPortConnectVM.json
+# x-ms-original-file: specification/serialconsole/resource-manager/Microsoft.SerialConsole/SerialConsole/stable/2018-05-01/examples/SerialPortConnectVM.json
 if __name__ == "__main__":
     main()
