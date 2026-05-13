@@ -3,30 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import tempfile
-from io import StringIO, BytesIO
+from io import BytesIO, StringIO
 from json import loads
 from math import ceil
-from os import path, remove, unlink, urandom
+from os import unlink, urandom
 from unittest import mock
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobServiceClient, BlobType
-from azure.storage.blob._encryption import (
-    _dict_to_encryption_data,
-    _validate_and_unwrap_cek,
-    _generate_AES_CBC_cipher,
-    _ERROR_OBJECT_INVALID,
-    _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
-)
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobServiceClient, BlobType
+from azure.storage.blob._encryption import (
+    _dict_to_encryption_data,
+    _ERROR_OBJECT_INVALID,
+    _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
+    _generate_AES_CBC_cipher,
+    _validate_and_unwrap_cek,
+)
 
 
 # ------------------------------------------------------------------------------
@@ -58,7 +60,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_container_reference(self):
@@ -80,12 +82,15 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                     credential=storage_account_key.secret)
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
 
         # Act
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_1():
+            # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
@@ -93,7 +98,9 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         with pytest.raises(AttributeError):
             self._create_small_blob(BlobType.BlockBlob)
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_2():
+            # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
@@ -101,7 +108,9 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         with pytest.raises(AttributeError):
             self._create_small_blob(BlobType.BlockBlob)
 
-        invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_3():
+            # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
@@ -114,16 +123,19 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        self.container_name = self.get_resource_name('utcontainer')
+        self.bytes = b'Foo'
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                     credential=storage_account_key.secret)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
 
         self.bsc.key_encryption_key.get_key_wrap_algorithm = None
         try:
             self._create_small_blob(BlobType.BlockBlob)
-            self.fail()
+            pytest.fail()
         except AttributeError as e:
-            assert str(e), _ERROR_OBJECT_INVALID.format('key encryption key' == 'get_key_wrap_algorithm')
+            assert str(e) == _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm')
 
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.key_encryption_key.get_kid = None
@@ -150,14 +162,18 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         # Act
         # Note that KeyWrapper has a default value for key_id, so these Exceptions
         # are not due to non_matching kids.
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_1():
+            # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute unwrap_key
         blob.key_encryption_key = invalid_key_1
         with pytest.raises(HttpResponseError):
             blob.download_blob().readall()
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_2():
+            # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_2.unwrap_key = valid_key.unwrap_key
         blob.key_encryption_key = invalid_key_2
         # No attribute get_kid
@@ -268,8 +284,8 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        small_stream = StringIO(u'small')
-        large_stream = StringIO(u'large' * self.config.max_single_put_size)
+        small_stream = StringIO('small')
+        large_stream = StringIO('large' * self.config.max_single_put_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -774,10 +790,10 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         stream = BytesIO(content)
         self._create_blob_from_star(BlobType.PageBlob, content, stream, length=512)
 
-        stream = tempfile.NamedTemporaryFile(delete=False)
-        path_name = stream.name
-        stream.write(content)
-        stream.close()
+        with tempfile.NamedTemporaryFile(delete=False) as stream:
+            path_name = stream.name
+            stream.write(content)
+            stream.close()
 
         with open(path_name, 'rb') as stream:
             self._create_blob_from_star(BlobType.PageBlob, content, stream)
