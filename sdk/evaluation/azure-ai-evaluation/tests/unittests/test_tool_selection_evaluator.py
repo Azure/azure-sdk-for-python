@@ -88,7 +88,7 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._KEY_PREFIX
+        key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result
         assert result[f"{key}_score"] == 1
@@ -125,7 +125,7 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._KEY_PREFIX
+        key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
         assert f"{key}_score" in result
         assert result[f"{key}_score"] == 0
@@ -156,7 +156,7 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._KEY_PREFIX
+        key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 1
         assert result[f"{key}_passed"] is True
@@ -185,7 +185,7 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._KEY_PREFIX
+        key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 1
         assert result[f"{key}_passed"] is True
@@ -214,7 +214,7 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = _ToolSelectionEvaluator._KEY_PREFIX
+        key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] == 1
         assert result[f"{key}_passed"] is True
