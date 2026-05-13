@@ -3,10 +3,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
-
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultEkmClient, KeyVaultEkmConnection
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -14,88 +10,105 @@ from azure.keyvault.administration import KeyVaultEkmClient, KeyVaultEkmConnecti
 #
 # 2. azure-keyvault-administration and azure-identity libraries (pip install these)
 #
-# 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM
+# 3. Set environment variable MANAGED_HSM_URL with the URL of your managed HSM, EKM_PROXY_HOST with the host of your EKM proxy,
+#    and CA_CERTIFICATE with the proxy server's certificate in DER format and base64 encoded.
 #
 # 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
 #    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # 5. An EKM (External Key Manager) proxy reachable from the Managed HSM. Replace the placeholder host
-#    and certificate bytes below with values that match your EKM proxy deployment. See
-#    https://learn.microsoft.com/azure/key-vault/managed-hsm/external-key-manager-overview for details.
+#    and certificate bytes below with values that match your EKM proxy deployment.
 #
-# Note: EKM operations are only available on the 2026-01-01-preview service API version. Pass
-# api_version="2026-01-01-preview" when constructing the client.
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates Managed HSM External Key Manager (EKM) connection management
 #
-# 1. Get the EKM proxy client certificate (get_ekm_certificate)
+# 1. Create an EKM connection (create_ekm_connection)
 #
-# 2. Create an EKM connection (create_ekm_connection)
+# 2. Read the EKM connection (get_ekm_connection)
 #
-# 3. Read the EKM connection (get_ekm_connection)
+# 3. Get the EKM proxy client certificate (get_ekm_certificate)
 #
-# 4. Update the EKM connection (update_ekm_connection)
+# 4. Check an EKM connection (check_ekm_connection)
 #
-# 5. Check connectivity to the EKM proxy (check_ekm_connection)
+# 5. Update the EKM connection (update_ekm_connection)
 #
 # 6. Delete the EKM connection (delete_ekm_connection)
 # ----------------------------------------------------------------------------------------------------------
 
-MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
-
-# Instantiate an EKM client. EKM operations require service API version 2026-01-01-preview.
+# Instantiate an EKM client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
+# [START create_a_ekm_client]
+import os
+import base64
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultEkmClient, KeyVaultEkmConnection
+
+MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
+EKM_PROXY_HOST = os.environ["EKM_PROXY_HOST"]
+CA_CERTIFICATE = os.environ["CA_CERTIFICATE"]
+CA_CERTIFICATES = [CA_CERTIFICATE]
 credential = DefaultAzureCredential()
-client = KeyVaultEkmClient(vault_url=MANAGED_HSM_URL, credential=credential, api_version="2026-01-01-preview")
+client = KeyVaultEkmClient(vault_url=MANAGED_HSM_URL, credential=credential)
+# [END create_a_ekm_client]
 
-# 1. Inspect the EKM proxy client certificate the Managed HSM will present when contacting your EKM proxy.
-#    Use the subject common name and CA chain to provision the proxy to trust the HSM as a client.
-print("\n.. Get EKM proxy client certificate info")
-cert_info = client.get_ekm_certificate()
-print(f"Client subject common name: {cert_info.subject_common_name}")
-print(f"Client CA certificate count: {len(cert_info.ca_certificates or [])}")
-
-# 2. Create an EKM connection. Replace these placeholder values with the FQDN of your EKM proxy and the
-#    DER-encoded server CA certificate chain that issued its server certificate.
-ekm_proxy_host = "ekm.contoso.com"
-server_ca_chain = [b"\x30\x82\x01\x00"]  # Replace with your real DER-encoded CA certificate(s)
-
+# First, let's create an EKM connection
 print("\n.. Create EKM connection")
-new_connection = KeyVaultEkmConnection(
-    host=ekm_proxy_host,
-    server_ca_certificates=server_ca_chain,
-    path_prefix="/api",
-    server_subject_common_name=ekm_proxy_host,
+# [START create_ekm_connection]
+ekm_connection = KeyVaultEkmConnection(
+    host=EKM_PROXY_HOST,
+    server_ca_certificates=[base64.b64decode(cert) for cert in CA_CERTIFICATES],
+    path_prefix="/api/v1",
 )
-created = client.create_ekm_connection(new_connection)
-print(f"EKM connection created for host: {created.host} (path_prefix={created.path_prefix})")
+created_ekm_connection = client.create_ekm_connection(connection=ekm_connection)
+print(f"EKM connection created with host: {created_ekm_connection.host}")
+# [END create_ekm_connection]
 
-# 3. Read the EKM connection back from the service.
+# Let's get the EKM connection we just created
 print("\n.. Get EKM connection")
-fetched = client.get_ekm_connection()
-print(f"Configured EKM host: {fetched.host}")
-
-# 4. Update the EKM connection (e.g., flip the path_prefix to a new API version).
-print("\n.. Update EKM connection path_prefix")
-updated_input = KeyVaultEkmConnection(
-    host=fetched.host,
-    server_ca_certificates=fetched.server_ca_certificates,
-    path_prefix="/v2",
-    server_subject_common_name=fetched.server_subject_common_name,
-)
-updated = client.update_ekm_connection(updated_input)
-print(f"Updated path_prefix to: {updated.path_prefix}")
-
-# 5. Check the connection by having the HSM ping the EKM proxy.
-print("\n.. Check EKM connection")
-proxy_info = client.check_ekm_connection()
+# [START get_ekm_connection]
+retrieved_ekm_connection = client.get_ekm_connection()
+print("Retrieved EKM connection with:")
+print(f"\tHost: {retrieved_ekm_connection.host}")
+print(f"\tPath prefix: {retrieved_ekm_connection.path_prefix}")
 print(
-    f"EKM proxy reachable: vendor={proxy_info.proxy_vendor}, name={proxy_info.proxy_name}, "
-    f"api_version={proxy_info.api_version}, ekm_vendor={proxy_info.ekm_vendor}, "
-    f"ekm_product={proxy_info.ekm_product}"
+    f"\tServer subject common name: {retrieved_ekm_connection.server_subject_common_name}"
 )
+# [END get_ekm_connection]
 
-# 6. Tear down the EKM connection.
+# Get the EKM certificate
+print("\n.. Get EKM certificate")
+# [START get_ekm_certificate]
+ekm_certificate = client.get_ekm_certificate()
+print(f"EKM certificate retrieved with subject: {ekm_certificate.subject_common_name}")
+# [END get_ekm_certificate]
+
+# Check the EKM connection status
+print("\n.. Check EKM connection")
+# [START check_ekm_connection]
+connection_status = client.check_ekm_connection()
+print("EKM connection status:")
+print(f"\tAPI Version: {connection_status.api_version}")
+print(f"\tProxy Vendor: {connection_status.proxy_vendor}")
+print(f"\tProxy Name: {connection_status.proxy_name}")
+print(f"\tEKM Vendor: {connection_status.ekm_vendor}")
+print(f"\tEKM Product: {connection_status.ekm_product}")
+# [END check_ekm_connection]
+
+# Update the EKM connection
+print("\n.. Update EKM connection")
+# [START update_ekm_connection]
+updated_ekm_connection = KeyVaultEkmConnection(
+    host="ekm-proxy-updated.contoso.com",
+    server_ca_certificates=[base64.b64decode(cert) for cert in CA_CERTIFICATES],
+    path_prefix="/api/v2",
+)
+result = client.update_ekm_connection(connection=updated_ekm_connection)
+print(f"EKM connection updated with host: {result.host}")
+# [END update_ekm_connection]
+
+# Finally, let's delete the EKM connection
 print("\n.. Delete EKM connection")
-deleted = client.delete_ekm_connection()
-print(f"Deleted EKM connection for host: {deleted.host}")
+# [START delete_ekm_connection]
+deleted_ekm_connection = client.delete_ekm_connection()
+print("EKM connection deleted successfully")
+# [END delete_ekm_connection]
