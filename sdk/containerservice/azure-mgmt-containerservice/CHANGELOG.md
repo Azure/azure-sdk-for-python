@@ -1,5 +1,27 @@
 # Release History
 
+## 41.2.0b2 (2026-05-13)
+
+### Features Added
+
+  - Model `AgentPoolNetworkProfile` added property `node_public_ip_prefix_i_ds`
+  - Model `AgentPoolNetworkProfile` added property `secondary_network_interfaces`
+  - Model `KubeletConfig` added property `kube_reserved`
+  - Model `KubeletConfig` added property `hard_eviction_threshold`
+  - Model `ManagedClusterProperties` added property `enable_fips`
+  - Model `ManagedClusterProperties` added property `node_disruption_profile`
+  - Enum `OSSKU` added member `AZURE_CONTAINER_LINUX`
+  - Added model `AgentPoolNetworkInterface`
+  - Added enum `AgentPoolNetworkInterfaceType`
+  - Added model `HardEvictionThreshold`
+  - Added model `KubeReserved`
+  - Added enum `NodeDisruptionPolicy`
+  - Added model `NodeDisruptionProfile`
+
+### Breaking Changes
+
+  - Model `ManagedClusterStorageProfileDiskCSIDriver` deleted or renamed its instance variable `version`
+
 ## 41.2.0b1 (2026-04-24)
 
 ### Features Added
