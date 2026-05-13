@@ -235,6 +235,7 @@ def update_metadata_json(package_path: Path, pipeline_input, codegen_config, spe
 
 @return_origin_path
 def judge_tag_preview(path: str, package_name: str) -> bool:
+    return False
     os.chdir(path)
     first_level = package_name.split("-")[0]
     files = [i for i in Path(".").glob(f"{first_level}/**/*.py")]

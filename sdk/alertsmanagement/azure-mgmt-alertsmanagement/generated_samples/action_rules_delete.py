@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.alertsmanagement import AlertsManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
     pip install azure-identity
     pip install azure-mgmt-alertsmanagement
 # USAGE
-    python get_prometheus_rule_group.py
+    python action_rules_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +28,16 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
 def main():
     client = AlertsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7",
+        subscription_id="1e3ff1c0-771a-4119-a03b-be82a51e232d",
     )
 
-    response = client.prometheus_rule_groups.get(
-        resource_group_name="giladstest",
-        rule_group_name="myPrometheusRuleGroup",
+    response = client.action_rules.delete(
+        resource_group_name="alertscorrelationrg",
+        action_rule_name="DailySuppression",
     )
     print(response)
 
 
-# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/preview/2021-07-22-preview/examples/getPrometheusRuleGroup.json
+# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/preview/2019-05-05-preview/examples/ActionRules_Delete.json
 if __name__ == "__main__":
     main()
