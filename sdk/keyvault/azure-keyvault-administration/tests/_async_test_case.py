@@ -133,7 +133,7 @@ class KeyVaultSettingsClientPreparer(BaseClientPreparer):
         return self.create_client_from_credential(
             KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
-
+    
 
 class KeyVaultEkmClientPreparer(BaseClientPreparer):
     def __call__(self, fn):

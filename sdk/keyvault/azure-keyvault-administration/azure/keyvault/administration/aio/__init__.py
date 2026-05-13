@@ -7,4 +7,9 @@ from ._backup_client import KeyVaultBackupClient
 from ._ekm_client import KeyVaultEkmClient
 from ._settings_client import KeyVaultSettingsClient
 
-__all__ = ["KeyVaultAccessControlClient", "KeyVaultBackupClient", "KeyVaultEkmClient", "KeyVaultSettingsClient"]
+__all__ = [
+    "KeyVaultAccessControlClient",
+    "KeyVaultBackupClient",
+    "KeyVaultEkmClient",
+    "KeyVaultSettingsClient",
+]
