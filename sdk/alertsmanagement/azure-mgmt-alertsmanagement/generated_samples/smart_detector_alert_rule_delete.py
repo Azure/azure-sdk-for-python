@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.alertsmanagement import AlertsManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
     pip install azure-identity
     pip install azure-mgmt-alertsmanagement
 # USAGE
-    python alert_processing_rules_patch.py
+    python smart_detector_alert_rule_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +28,15 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
 def main():
     client = AlertsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="1e3ff1c0-771a-4119-a03b-be82a51e232d",
+        subscription_id="b368ca2f-e298-46b7-b0ab-012281956afa",
     )
 
-    response = client.alert_processing_rules.update(
-        resource_group_name="alertscorrelationrg",
-        alert_processing_rule_name="WeeklySuppression",
-        alert_processing_rule_patch={"properties": {"enabled": False}, "tags": {"key1": "value1", "key2": "value2"}},
+    client.smart_detector_alert_rules.delete(
+        resource_group_name="MyAlertRules",
+        alert_rule_name="MyAlertRule",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/stable/2021-08-08/examples/AlertProcessingRules_Patch.json
+# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/stable/2019-06-01/examples/SmartDetectorAlertRule_Delete.json
 if __name__ == "__main__":
     main()

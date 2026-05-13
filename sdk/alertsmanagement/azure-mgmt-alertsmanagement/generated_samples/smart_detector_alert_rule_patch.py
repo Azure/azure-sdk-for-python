@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.alertsmanagement import AlertsManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
     pip install azure-identity
     pip install azure-mgmt-alertsmanagement
 # USAGE
-    python alert_processing_rules_create_or_update_add_action_group_all_alerts_in_subscription.py
+    python smart_detector_alert_rule_patch.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,33 +28,20 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
 def main():
     client = AlertsManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subId1",
+        subscription_id="b368ca2f-e298-46b7-b0ab-012281956afa",
     )
 
-    response = client.alert_processing_rules.create_or_update(
-        resource_group_name="alertscorrelationrg",
-        alert_processing_rule_name="AddActionGroupToSubscription",
-        alert_processing_rule={
-            "location": "Global",
-            "properties": {
-                "actions": [
-                    {
-                        "actionGroupIds": [
-                            "/subscriptions/subId1/resourcegroups/RGId1/providers/microsoft.insights/actiongroups/ActionGroup1"
-                        ],
-                        "actionType": "AddActionGroups",
-                    }
-                ],
-                "description": "Add ActionGroup1 to all alerts in the subscription",
-                "enabled": True,
-                "scopes": ["/subscriptions/subId1"],
-            },
-            "tags": {},
+    response = client.smart_detector_alert_rules.patch(
+        resource_group_name="MyAlertRules",
+        alert_rule_name="MyAlertRule",
+        parameters={
+            "properties": {"description": "New description for patching", "frequency": "PT1M"},
+            "tags": {"newKey": "newVal"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/stable/2021-08-08/examples/AlertProcessingRules_Create_or_update_add_action_group_all_alerts_in_subscription.json
+# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/stable/2019-06-01/examples/SmartDetectorAlertRule_Patch.json
 if __name__ == "__main__":
     main()
