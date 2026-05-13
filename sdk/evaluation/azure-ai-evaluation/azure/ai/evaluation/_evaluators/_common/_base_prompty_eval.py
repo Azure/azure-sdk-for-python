@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import math
 import re
 import os
@@ -216,6 +217,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
+        reason = ""
+        llm_properties: Dict = {}
         if prompty_output_dict:
             llm_output = prompty_output_dict.get("llm_output", "")
             input_token_count = prompty_output_dict.get("input_token_count", 0)
@@ -225,33 +228,54 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             model_id = prompty_output_dict.get("model_id", "")
             sample_input = prompty_output_dict.get("sample_input", "")
             sample_output = prompty_output_dict.get("sample_output", "")
-            # Parse out score and reason from evaluators known to possess them.
-            if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
-                score, reason = parse_quality_evaluator_reason_score(llm_output)
-                binary_result = self._get_binary_result(score)
-                return {
-                    self._result_key: float(score),
-                    f"gpt_{self._result_key}": float(score),
-                    f"{self._result_key}_reason": reason,
-                    f"{self._result_key}_result": binary_result,
-                    f"{self._result_key}_threshold": self._threshold,
-                    f"{self._result_key}_prompt_tokens": input_token_count,
-                    f"{self._result_key}_completion_tokens": output_token_count,
-                    f"{self._result_key}_total_tokens": total_token_count,
-                    f"{self._result_key}_finish_reason": finish_reason,
-                    f"{self._result_key}_model": model_id,
-                    f"{self._result_key}_sample_input": sample_input,
-                    f"{self._result_key}_sample_output": sample_output,
-                }
-            match = re.search(r"\d", llm_output)
-            if match:
-                score = float(match.group())
-                binary_result = self._get_binary_result(score)
+
+            parsed_output = None
+            if isinstance(llm_output, dict):
+                parsed_output = llm_output
+            elif isinstance(llm_output, str):
+                try:
+                    parsed_output = json.loads(llm_output)
+                except (TypeError, ValueError):
+                    parsed_output = None
+
+            if isinstance(parsed_output, dict):
+                if parsed_output.get("status") == "skipped":
+                    return self._return_not_applicable_result(parsed_output.get("reason", ""), self._threshold)
+                score = parsed_output.get("score", score)
+                reason = parsed_output.get("reason", "")
+                llm_properties = parsed_output.get("properties", {}) or {}
+            else:
+                # Parse out score and reason from evaluators known to possess them.
+                if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
+                    score, reason = parse_quality_evaluator_reason_score(llm_output)
+                else:
+                    match = re.search(r"\d", llm_output)
+                    if match:
+                        score = float(match.group())
+
+            score = float(score) if score is not None else math.nan
+            binary_result = self._get_binary_result(score)
+            passed = None if math.isnan(score) else binary_result == EVALUATION_PASS_FAIL_MAPPING[True]
+            properties = {
+                **llm_properties,
+                "prompt_tokens": input_token_count,
+                "completion_tokens": output_token_count,
+                "total_tokens": total_token_count,
+                "finish_reason": finish_reason,
+                "model": model_id,
+                "sample_input": sample_input,
+                "sample_output": sample_output,
+            }
             return {
-                self._result_key: float(score),
-                f"gpt_{self._result_key}": float(score),
+                self._result_key: score,
+                f"gpt_{self._result_key}": score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_reason": reason,
                 f"{self._result_key}_result": binary_result,
+                f"{self._result_key}_passed": passed,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": properties,
                 f"{self._result_key}_prompt_tokens": input_token_count,
                 f"{self._result_key}_completion_tokens": output_token_count,
                 f"{self._result_key}_total_tokens": total_token_count,
@@ -421,9 +445,13 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         # If no tool calls were made or tool call type is not supported, return threshold as score with pass result
         result = {
             self._result_key: threshold,
+            f"{self._result_key}_score": None,
             f"{self._result_key}_result": "pass",
+            f"{self._result_key}_passed": None,
             f"{self._result_key}_threshold": threshold,
             f"{self._result_key}_reason": f"Not applicable: {error_message}",
+            f"{self._result_key}_status": "skipped",
+            f"{self._result_key}_properties": None,
             f"{self._result_key}_prompt_tokens": 0,
             f"{self._result_key}_completion_tokens": 0,
             f"{self._result_key}_total_tokens": 0,

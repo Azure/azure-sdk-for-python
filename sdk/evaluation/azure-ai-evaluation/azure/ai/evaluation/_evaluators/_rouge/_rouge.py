@@ -3,13 +3,14 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+import math
 from typing import Dict, Union
+
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
-from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-import math
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
 
 
 class RougeType(str, Enum):
@@ -141,9 +142,9 @@ class RougeScoreEvaluator(EvaluatorBase):
         """
         # Initialize results with False for NaN values
         results = {
-            "rouge_precision_result": False,
-            "rouge_recall_result": False,
-            "rouge_f1_score_result": False,
+            "rouge_precision_passed": False,
+            "rouge_recall_passed": False,
+            "rouge_f1_score_passed": False,
         }
 
         # Check if values are valid (not NaN) before comparison
@@ -153,18 +154,18 @@ class RougeScoreEvaluator(EvaluatorBase):
 
         if self._higher_is_better:
             if precision_valid:
-                results["rouge_precision_result"] = rouge_precision >= self._threshold["precision"]
+                results["rouge_precision_passed"] = rouge_precision >= self._threshold["precision"]
             if recall_valid:
-                results["rouge_recall_result"] = rouge_recall >= self._threshold["recall"]
+                results["rouge_recall_passed"] = rouge_recall >= self._threshold["recall"]
             if f1_valid:
-                results["rouge_f1_score_result"] = rouge_f1_score >= self._threshold["f1_score"]
+                results["rouge_f1_score_passed"] = rouge_f1_score >= self._threshold["f1_score"]
         else:
             if precision_valid:
-                results["rouge_precision_result"] = rouge_precision <= self._threshold["precision"]
+                results["rouge_precision_passed"] = rouge_precision <= self._threshold["precision"]
             if recall_valid:
-                results["rouge_recall_result"] = rouge_recall <= self._threshold["recall"]
+                results["rouge_recall_passed"] = rouge_recall <= self._threshold["recall"]
             if f1_valid:
-                results["rouge_f1_score_result"] = rouge_f1_score <= self._threshold["f1_score"]
+                results["rouge_f1_score_passed"] = rouge_f1_score <= self._threshold["f1_score"]
 
         return results
 
@@ -182,9 +183,9 @@ class RougeScoreEvaluator(EvaluatorBase):
         scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type])
         metrics = scorer.score(ground_truth, response)[self._rouge_type]
         binary_results = {
-            "rouge_precision_result": False,
-            "rouge_recall_result": False,
-            "rouge_f1_score_result": False,
+            "rouge_precision_passed": False,
+            "rouge_recall_passed": False,
+            "rouge_f1_score_passed": False,
         }
         # Convert metrics to floats, using nan for None or non-convertible values
         rouge_precision = float(metrics.precision) if metrics.precision is not None else float("nan")
@@ -195,13 +196,38 @@ class RougeScoreEvaluator(EvaluatorBase):
             rouge_recall=rouge_recall,
             rouge_f1_score=rouge_f1_score,
         )
+        rouge_precision_result = EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_precision_passed"]]
+        rouge_recall_result = EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_recall_passed"]]
+        rouge_f1_score_result = EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_f1_score_passed"]]
+        is_passed = binary_results["rouge_f1_score_passed"]
         return {
+            "rouge": rouge_f1_score,
+            "rouge_score": rouge_f1_score,
+            "rouge_passed": is_passed,
+            "rouge_result": EVALUATION_PASS_FAIL_MAPPING[is_passed],
+            "rouge_reason": None,
+            "rouge_status": "completed",
+            "rouge_threshold": self._threshold["f1_score"],
+            "rouge_properties": {
+                "rouge_precision": rouge_precision,
+                "rouge_recall": rouge_recall,
+                "rouge_f1_score": rouge_f1_score,
+                "rouge_precision_result": rouge_precision_result,
+                "rouge_recall_result": rouge_recall_result,
+                "rouge_f1_score_result": rouge_f1_score_result,
+                "rouge_precision_passed": binary_results["rouge_precision_passed"],
+                "rouge_recall_passed": binary_results["rouge_recall_passed"],
+                "rouge_f1_score_passed": binary_results["rouge_f1_score_passed"],
+                "rouge_precision_threshold": self._threshold["precision"],
+                "rouge_recall_threshold": self._threshold["recall"],
+                "rouge_f1_score_threshold": self._threshold["f1_score"],
+            },
             "rouge_precision": rouge_precision,
             "rouge_recall": rouge_recall,
             "rouge_f1_score": rouge_f1_score,
-            "rouge_precision_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_precision_result"]],
-            "rouge_recall_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_recall_result"]],
-            "rouge_f1_score_result": EVALUATION_PASS_FAIL_MAPPING[binary_results["rouge_f1_score_result"]],
+            "rouge_precision_result": rouge_precision_result,
+            "rouge_recall_result": rouge_recall_result,
+            "rouge_f1_score_result": rouge_f1_score_result,
             "rouge_precision_threshold": self._threshold["precision"],
             "rouge_recall_threshold": self._threshold["recall"],
             "rouge_f1_score_threshold": self._threshold["f1_score"],
