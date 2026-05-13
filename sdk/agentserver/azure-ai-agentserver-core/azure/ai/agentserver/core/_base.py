@@ -160,7 +160,7 @@ class AgentServerHost(Starlette):
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-statements
         self,
         *,
         applicationinsights_connection_string: Optional[str] = None,

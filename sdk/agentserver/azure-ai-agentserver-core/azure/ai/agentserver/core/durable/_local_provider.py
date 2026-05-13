@@ -70,7 +70,13 @@ class LocalFileDurableTaskProvider:
         return self._task_dir(agent_name, session_id) / f"{task_id}.json"
 
     def _find_task_path(self, task_id: str) -> Path | None:
-        """Search all agent/session dirs for a task file."""
+        """Search all agent/session dirs for a task file.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The path to the task file, or None.
+        :rtype: ~pathlib.Path | None
+        """
         if not self._base_dir.exists():
             return None
         for agent_dir in self._base_dir.iterdir():
@@ -164,7 +170,7 @@ class LocalFileDurableTaskProvider:
             return None
         return self._read_task(path)
 
-    async def update(self, task_id: str, patch: TaskPatchRequest) -> TaskInfo:
+    async def update(self, task_id: str, patch: TaskPatchRequest) -> TaskInfo:  # pylint: disable=too-many-branches,too-many-statements
         """Update a task via PATCH semantics.
 
         :param task_id: The task identifier.
@@ -190,7 +196,7 @@ class LocalFileDurableTaskProvider:
         now = _now_iso()
 
         if patch.status is not None:
-            old_status = task.status
+            old_status = task.status  # noqa: F841  # pylint: disable=unused-variable
             task.status = patch.status
 
             if patch.status == "in_progress" and task.started_at is None:
@@ -295,8 +301,8 @@ class LocalFileDurableTaskProvider:
         self,
         task_id: str,
         *,
-        force: bool = False,
-        cascade: bool = False,
+        force: bool = False,  # pylint: disable=unused-argument
+        cascade: bool = False,  # pylint: disable=unused-argument
     ) -> None:
         """Delete a task JSON file.
 

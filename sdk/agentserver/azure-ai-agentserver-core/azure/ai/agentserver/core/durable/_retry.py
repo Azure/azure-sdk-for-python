@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import random
 from datetime import timedelta
-from typing import Any
 
 
 class RetryPolicy:

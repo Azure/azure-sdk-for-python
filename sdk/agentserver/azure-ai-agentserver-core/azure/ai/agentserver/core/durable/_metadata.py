@@ -147,6 +147,7 @@ class TaskMetadata:
     def keys(self) -> collections.abc.KeysView[str]:
         """Return a view of metadata keys.
 
+        :return: A view of the metadata keys.
         :rtype: ~collections.abc.KeysView[str]
         """
         return self._data.keys()
@@ -154,6 +155,7 @@ class TaskMetadata:
     def values(self) -> collections.abc.ValuesView[Any]:
         """Return a view of metadata values.
 
+        :return: A view of the metadata values.
         :rtype: ~collections.abc.ValuesView[Any]
         """
         return self._data.values()
@@ -161,6 +163,7 @@ class TaskMetadata:
     def items(self) -> collections.abc.ItemsView[str, Any]:
         """Return a view of metadata key-value pairs.
 
+        :return: A view of the metadata key-value pairs.
         :rtype: ~collections.abc.ItemsView[str, Any]
         """
         return self._data.items()

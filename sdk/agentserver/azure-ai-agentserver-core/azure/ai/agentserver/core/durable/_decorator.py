@@ -23,17 +23,16 @@ from collections.abc import Awaitable, Callable
 from datetime import timedelta
 from typing import Any, Generic, TypeVar, get_args, get_type_hints, overload
 
-from ._context import EntryMode, TaskContext
+import re
+
+from ._context import TaskContext
 from ._result import TaskResult
 from ._retry import RetryPolicy
-from ._run import Suspended, TaskRun
+from ._run import TaskRun
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
 F = TypeVar("F", bound=Callable[..., Any])
-
-# Regex for validating task IDs
-import re
 
 _VALID_TASK_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 _MAX_TASK_ID_LENGTH = 256
@@ -60,7 +59,10 @@ def _extract_generic_args(
     The function must accept a single ``TaskContext[Input]`` parameter
     and return ``Output``.
 
+    :param fn: The async function to inspect.
+    :type fn: Callable[..., Any]
     :returns: ``(InputType, OutputType)`` tuple.
+    :rtype: tuple[type[Any], type[Any]]
     :raises TypeError: If the signature doesn't match expectations.
     """
     hints = get_type_hints(fn)
@@ -94,7 +96,13 @@ def _extract_generic_args(
 
 
 def _serialize_input(value: Any) -> Any:
-    """Serialize an input value for storage in the task payload."""
+    """Serialize an input value for storage in the task payload.
+
+    :param value: The input value to serialize.
+    :type value: Any
+    :return: The serialized form of the input.
+    :rtype: Any
+    """
     # Pydantic model
     if hasattr(value, "model_dump"):
         return value.model_dump()
@@ -103,7 +111,15 @@ def _serialize_input(value: Any) -> Any:
 
 
 def _deserialize_input(value: Any, input_type: type[Any]) -> Any:
-    """Deserialize an input value from the task payload."""
+    """Deserialize an input value from the task payload.
+
+    :param value: The serialized input value.
+    :type value: Any
+    :param input_type: The expected type to deserialize into.
+    :type input_type: type[Any]
+    :return: The deserialized input value.
+    :rtype: Any
+    """
     if value is None:
         return None
     # Pydantic model
@@ -126,8 +142,11 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
     """Check if an in_progress task is stale based on its updated_at timestamp.
 
     :param task_updated_at: ISO 8601 timestamp of the task's last update.
+    :type task_updated_at: str
     :param timeout: Seconds after which the task is considered stale.
+    :type timeout: float
     :returns: True if the task is stale.
+    :rtype: bool
     """
     if not task_updated_at:
         return False
@@ -140,7 +159,7 @@ def _is_stale(task_updated_at: str, timeout: float) -> bool:
     return (now - updated).total_seconds() > timeout
 
 
-class DurableTaskOptions:
+class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
     """Options for a durable task.
 
     :param name: Task function name.
@@ -246,7 +265,15 @@ class DurableTask(Generic[Input, Output]):
     def _resolve_tags(
         self, input_val: Input, task_id: str
     ) -> dict[str, str]:
-        """Resolve decorator-level tags (static dict or callable factory)."""
+        """Resolve decorator-level tags (static dict or callable factory).
+
+        :param input_val: The task input value.
+        :type input_val: Input
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: Resolved tags dictionary.
+        :rtype: dict[str, str]
+        """
         tags = self._opts.tags
         if callable(tags):
             result = tags(input_val, task_id)
@@ -261,7 +288,15 @@ class DurableTask(Generic[Input, Output]):
     def _resolve_description(
         self, input_val: Input, task_id: str
     ) -> str | None:
-        """Resolve decorator-level description (static or callable)."""
+        """Resolve decorator-level description (static or callable).
+
+        :param input_val: The task input value.
+        :type input_val: Input
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: Resolved description string or None.
+        :rtype: str | None
+        """
         desc = self._opts.description
         if callable(desc):
             result = desc(input_val, task_id)
@@ -421,7 +456,27 @@ class DurableTask(Generic[Input, Output]):
         source: dict[str, Any] | None,
         stale_timeout: float,
     ) -> TaskRun[Output]:
-        """Resolve lifecycle state and start/resume/recover accordingly."""
+        """Resolve lifecycle state and start/resume/recover accordingly.
+
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword input: Typed input value.
+        :paramtype input: Input
+        :keyword session_id: Session scope override.
+        :paramtype session_id: str | None
+        :keyword title: Title override.
+        :paramtype title: str | None
+        :keyword tags: Per-call tag overrides.
+        :paramtype tags: dict[str, str] | None
+        :keyword retry: Retry policy override.
+        :paramtype retry: RetryPolicy | None
+        :keyword source: Provenance metadata override.
+        :paramtype source: dict[str, Any] | None
+        :keyword stale_timeout: Stale timeout in seconds.
+        :paramtype stale_timeout: float
+        :return: A handle to the running task.
+        :rtype: TaskRun[Output]
+        """
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskConflictError,
         )
@@ -439,7 +494,7 @@ class DurableTask(Generic[Input, Output]):
             # Fresh start
             if existing is not None and existing.status == "pending":
                 # Pending task exists — patch to in_progress and execute
-                return await manager._start_existing_task(
+                return await manager._start_existing_task(  # pylint: disable=protected-access
                     fn=self._fn,
                     fn_name=self.name,
                     task_info=existing,
@@ -481,7 +536,7 @@ class DurableTask(Generic[Input, Output]):
             updated_info = await manager.provider.get(task_id)
             if updated_info is None:
                 raise RuntimeError(f"Task {task_id!r} disappeared after input patch")
-            return await manager._start_existing_task(
+            return await manager._start_existing_task(  # pylint: disable=protected-access
                 fn=self._fn,
                 fn_name=self.name,
                 task_info=updated_info,
@@ -495,7 +550,7 @@ class DurableTask(Generic[Input, Output]):
         if existing.status == "in_progress":
             if _is_stale(existing.updated_at, stale_timeout):
                 # Stale — recover
-                return await manager._start_existing_task(
+                return await manager._start_existing_task(  # pylint: disable=protected-access
                     fn=self._fn,
                     fn_name=self.name,
                     task_info=existing,
@@ -528,6 +583,26 @@ class DurableTask(Generic[Input, Output]):
 
         The original is unchanged.
 
+        :keyword timeout: Execution timeout override.
+        :paramtype timeout: timedelta | None
+        :keyword ephemeral: Whether to delete task on terminal exit.
+        :paramtype ephemeral: bool | None
+        :keyword cancel_grace_seconds: Grace period override.
+        :paramtype cancel_grace_seconds: float | None
+        :keyword tags: Tag overrides.
+        :paramtype tags: dict[str, str] | Callable[[Any, str], dict[str, str]] | None
+        :keyword store_input: Whether to persist input.
+        :paramtype store_input: bool | None
+        :keyword source: Provenance metadata override.
+        :paramtype source: dict[str, Any] | None
+        :keyword retry: Retry policy override.
+        :paramtype retry: RetryPolicy | None
+        :keyword title: Title override.
+        :paramtype title: str | Callable[[Any, str], str] | None
+        :keyword description: Description override.
+        :paramtype description: str | Callable[[Any, str], str | None] | None
+        :keyword lease_duration_seconds: Lease TTL override.
+        :paramtype lease_duration_seconds: int | None
         :return: A new DurableTask with overridden options.
         :rtype: DurableTask[Input, Output]
         """
@@ -633,6 +708,7 @@ def durable_task(
         async def my_task(ctx: TaskContext[MyInput]) -> MyOutput: ...
 
     :param fn: The async function to decorate (when used without parens).
+    :type fn: Callable[..., Any] | None
     :keyword name: Task name for logging. Defaults to ``fn.__qualname__``.
     :keyword title: Human-readable title (string or callable).
     :keyword tags: Default tags (static dict or callable factory receiving
@@ -650,6 +726,7 @@ def durable_task(
         (``ctx.cancel``) and hard cancellation (``asyncio.Task.cancel()``).
         Default 5.0.
     :return: A ``DurableTask[Input, Output]`` wrapper.
+    :rtype: Any
     """
 
     def _wrap(

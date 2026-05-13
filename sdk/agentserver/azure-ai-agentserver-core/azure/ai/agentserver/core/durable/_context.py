@@ -44,7 +44,7 @@ class _Suspended:
         self.output = output
 
 
-class TaskContext(Generic[Input]):
+class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attributes
     """The single parameter to a durable task function.
 
     Provides access to the task's identity, typed input, mutable metadata

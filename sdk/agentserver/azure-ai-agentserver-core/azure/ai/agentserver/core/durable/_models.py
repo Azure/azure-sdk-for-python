@@ -65,7 +65,7 @@ class LeaseInfo:
         )
 
 
-class TaskInfo:
+class TaskInfo:  # pylint: disable=too-many-instance-attributes
     """Internal representation of a task record from the store.
 
     :param id: Unique task identifier.
@@ -249,7 +249,7 @@ class TaskInfo:
         return result
 
 
-class TaskCreateRequest:
+class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
     """Request body for creating a task.
 
     :param agent_name: Agent scope.

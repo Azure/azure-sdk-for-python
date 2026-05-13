@@ -69,13 +69,21 @@ async def lease_renewal_loop(
     The loop exits when ``cancel_event`` is set or the task is cancelled.
 
     :param provider: The storage provider.
+    :type provider: DurableTaskProvider
     :param task_id: The task to renew.
-    :param lease_owner: The stable lease owner.
-    :param lease_instance_id: The ephemeral instance ID.
-    :param lease_duration_seconds: The lease TTL in seconds.
-    :param cancel_event: Event that stops the loop when set.
-    :param on_failure_count: Consecutive failures before signalling cancel.
-    :param on_cancel_callback: Event to signal on repeated renewal failure.
+    :type task_id: str
+    :keyword lease_owner: The stable lease owner.
+    :paramtype lease_owner: str
+    :keyword lease_instance_id: The ephemeral instance ID.
+    :paramtype lease_instance_id: str
+    :keyword lease_duration_seconds: The lease TTL in seconds.
+    :paramtype lease_duration_seconds: int
+    :keyword cancel_event: Event that stops the loop when set.
+    :paramtype cancel_event: asyncio.Event
+    :keyword on_failure_count: Consecutive failures before signalling cancel.
+    :paramtype on_failure_count: int
+    :keyword on_cancel_callback: Event to signal on repeated renewal failure.
+    :paramtype on_cancel_callback: asyncio.Event | None
     """
     interval = max(1, lease_duration_seconds // 2)
     consecutive_failures = 0
@@ -113,7 +121,7 @@ async def lease_renewal_loop(
             )
             if consecutive_failures >= on_failure_count and on_cancel_callback is not None:
                 logger.error(
-                    "Lease renewal failed %d times for task %s — " "signalling cancellation",
+                    "Lease renewal failed %d times for task %s — signalling cancellation",
                     on_failure_count,
                     task_id,
                 )
@@ -122,5 +130,9 @@ async def lease_renewal_loop(
 
 
 async def _wait_for_event(event: asyncio.Event) -> None:
-    """Await an asyncio event. Used with ``wait_for`` for interruptible sleep."""
+    """Await an asyncio event. Used with ``wait_for`` for interruptible sleep.
+
+    :param event: The asyncio event to wait for.
+    :type event: asyncio.Event
+    """
     await event.wait()

@@ -17,7 +17,6 @@ import httpx
 
 from ._exceptions import TaskNotFound
 from ._models import (
-    LeaseInfo,
     TaskCreateRequest,
     TaskInfo,
     TaskPatchRequest,

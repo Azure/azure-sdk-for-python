@@ -20,7 +20,7 @@ from typing import Any, TypeVar
 from .._config import AgentConfig
 from ._context import EntryMode, TaskContext
 from ._decorator import DurableTaskOptions, _deserialize_input, _serialize_input
-from ._exceptions import TaskFailed, TaskNotFound, TaskSuspended
+from ._exceptions import TaskFailed, TaskNotFound
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
 from ._metadata import TaskMetadata
 from ._models import TaskCreateRequest, TaskInfo, TaskPatchRequest
@@ -139,6 +139,11 @@ class DurableTaskManager:
         set.  Set the ``FOUNDRY_TASK_API_ENABLED=1`` environment variable
         to opt in to the HTTP-backed provider for testing once the APIs
         are lit up.
+
+        :param config: The agent configuration.
+        :type config: AgentConfig
+        :return: The storage provider instance.
+        :rtype: DurableTaskProvider
         """
         import os  # pylint: disable=import-outside-toplevel
 
@@ -198,7 +203,9 @@ class DurableTaskManager:
         """Register a function as a resume callback.
 
         :param fn_name: The durable task function name.
+        :type fn_name: str
         :param fn: The async function to call on resume.
+        :type fn: Callable[..., Any]
         """
         self._resume_callbacks[fn_name] = fn
 
@@ -278,7 +285,32 @@ class DurableTaskManager:
     ) -> Any:
         """Create a task, run the function, and return the result.
 
+        :keyword fn: The async function to execute.
+        :paramtype fn: Callable[..., Awaitable[Any]]
+        :keyword fn_name: The registered function name.
+        :paramtype fn_name: str
+        :keyword task_id: Unique task identifier.
+        :paramtype task_id: str
+        :keyword input_val: The input value.
+        :paramtype input_val: Any
+        :keyword input_type: The input type.
+        :paramtype input_type: type[Any]
+        :keyword session_id: Session scope.
+        :paramtype session_id: str | None
+        :keyword tags: Task tags.
+        :paramtype tags: dict[str, str]
+        :keyword opts: Task options.
+        :paramtype opts: DurableTaskOptions
+        :keyword entry_mode: Entry mode.
+        :paramtype entry_mode: EntryMode
+        :keyword source: Provenance metadata.
+        :paramtype source: dict[str, Any] | None
+        :keyword retry: Retry policy.
+        :paramtype retry: RetryPolicy | None
+        :keyword title: Human-readable title.
+        :paramtype title: str
         :returns: The function's return value.
+        :rtype: Any
         :raises TaskFailed: On unhandled exception.
         :raises TaskSuspended: If the function suspends.
         """
@@ -298,14 +330,14 @@ class DurableTaskManager:
         )
         return await handle.result()
 
-    async def create_and_start(
+    async def create_and_start(  # pylint: disable=too-many-locals
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
         fn_name: str,
         task_id: str,
         input_val: Any,
-        input_type: type[Any],
+        input_type: type[Any],  # pylint: disable=unused-argument
         session_id: str | None,
         title: str,
         tags: dict[str, str],
@@ -317,7 +349,33 @@ class DurableTaskManager:
     ) -> TaskRun[Any]:
         """Create a task, start the function, and return a handle.
 
-        :returns: A ``TaskRun`` handle.
+        :keyword fn: The async task function.
+        :paramtype fn: Callable[..., Awaitable[Any]]
+        :keyword fn_name: Function name for logging.
+        :paramtype fn_name: str
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword input_val: The task input value.
+        :paramtype input_val: Any
+        :keyword input_type: Type for deserializing input.
+        :paramtype input_type: type[Any]
+        :keyword session_id: Session scope identifier.
+        :paramtype session_id: str | None
+        :keyword title: Human-readable task title.
+        :paramtype title: str
+        :keyword tags: Merged decorator + call-site tags.
+        :paramtype tags: dict[str, str]
+        :keyword description: Optional task description.
+        :paramtype description: str | None
+        :keyword opts: Task options.
+        :paramtype opts: DurableTaskOptions
+        :keyword retry: Retry policy.
+        :paramtype retry: RetryPolicy | None
+        :keyword source: Source provenance metadata.
+        :paramtype source: dict[str, Any] | None
+        :keyword entry_mode: Why this execution is starting.
+        :paramtype entry_mode: EntryMode
+        :return: A ``TaskRun`` handle.
         :rtype: TaskRun
         """
         resolved_session = session_id or self._config.session_id or "local"
@@ -443,6 +501,7 @@ class DurableTaskManager:
         """Resume a suspended task.
 
         :param task_id: The task to resume.
+        :type task_id: str
         :raises TaskNotFound: If the task doesn't exist.
         :raises ValueError: If the task is not suspended or no callback.
         """
@@ -469,7 +528,7 @@ class DurableTaskManager:
 
         logger.info("Resumed task %s", task_id)
 
-    async def _start_existing_task(
+    async def _start_existing_task(  # pylint: disable=too-many-locals
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -486,15 +545,24 @@ class DurableTaskManager:
         Used by lifecycle-aware ``.run()``/``.start()`` for suspended,
         pending, and stale in_progress tasks.
 
-        :param fn: The durable task function.
-        :param fn_name: Function name for logging.
-        :param task_info: The current task record.
-        :param entry_mode: Why this execution is starting.
-        :param input_val: New input to use (if provided, overrides persisted input).
-        :param input_type: Type for deserializing persisted input.
-        :param opts: Task options (uses defaults if not provided).
-        :param retry: Retry policy.
-        :returns: A TaskRun handle.
+        :keyword fn: The durable task function.
+        :paramtype fn: Callable[..., Awaitable[Any]]
+        :keyword fn_name: Function name for logging.
+        :paramtype fn_name: str
+        :keyword task_info: The current task record.
+        :paramtype task_info: TaskInfo
+        :keyword entry_mode: Why this execution is starting.
+        :paramtype entry_mode: EntryMode
+        :keyword input_val: New input (overrides persisted input).
+        :paramtype input_val: Any | None
+        :keyword input_type: Type for deserializing persisted input.
+        :paramtype input_type: type[Any] | None
+        :keyword opts: Task options (uses defaults if not provided).
+        :paramtype opts: DurableTaskOptions | None
+        :keyword retry: Retry policy.
+        :paramtype retry: RetryPolicy | None
+        :return: A TaskRun handle.
+        :rtype: TaskRun[Any]
         """
         task_id = task_info.id
         resolved_opts = opts or DurableTaskOptions(name=fn_name, ephemeral=False)
@@ -512,9 +580,10 @@ class DurableTaskManager:
         )
 
         # Re-fetch updated task
-        task_info = await self._provider.get(task_id)
-        if task_info is None:
+        updated_info: TaskInfo | None = await self._provider.get(task_id)
+        if updated_info is None:
             raise TaskNotFound(task_id)
+        task_info = updated_info
 
         # Resolve input: prefer caller-provided, fall back to persisted
         if input_val is not None:
@@ -628,6 +697,17 @@ class DurableTaskManager:
         Phase 1: After *timeout_seconds*, sets *cancel_event* (cooperative).
         Phase 2: After *grace_seconds* more, sets *terminate_event* and
                  hard-cancels *execution_task*.
+
+        :param timeout_seconds: Seconds before cooperative cancel.
+        :type timeout_seconds: float
+        :param cancel_event: Event to set for cooperative cancel.
+        :type cancel_event: asyncio.Event
+        :param grace_seconds: Grace period before hard cancel.
+        :type grace_seconds: float
+        :param execution_task: The task to hard-cancel.
+        :type execution_task: asyncio.Task[Any]
+        :param terminate_event: Event to set for hard cancel.
+        :type terminate_event: asyncio.Event
         """
         await asyncio.sleep(timeout_seconds)
         cancel_event.set()
@@ -661,6 +741,25 @@ class DurableTaskManager:
         When a ``RetryPolicy`` is provided, failed attempts are retried
         with the configured delay and backoff. Suspend and cancellation
         always exit immediately — they are not retried.
+
+        :keyword fn: The async task function.
+        :paramtype fn: Callable[..., Awaitable[Any]]
+        :keyword ctx: The task context.
+        :paramtype ctx: TaskContext[Any]
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword opts: The task options.
+        :paramtype opts: DurableTaskOptions
+        :keyword result_future: Future to resolve with the result.
+        :paramtype result_future: asyncio.Future[Any]
+        :keyword renewal_cancel: Event to cancel lease renewal.
+        :paramtype renewal_cancel: asyncio.Event
+        :keyword retry: Optional retry policy.
+        :paramtype retry: RetryPolicy | None
+        :keyword terminate_event: Optional terminate event.
+        :paramtype terminate_event: asyncio.Event | None
+        :keyword terminate_reason_ref: Mutable ref for terminate reason.
+        :paramtype terminate_reason_ref: list[str | None] | None
         """
         resolved_terminate = terminate_event or asyncio.Event()
 
@@ -681,7 +780,7 @@ class DurableTaskManager:
                     )
                 )
 
-        attempt = 0
+        attempt = 0  # pylint: disable=unused-variable
         try:
             await self._execute_task_loop(
                 fn=fn,
@@ -702,7 +801,7 @@ class DurableTaskManager:
                 except asyncio.CancelledError:
                     pass
 
-    async def _execute_task_loop(
+    async def _execute_task_loop(  # pylint: disable=too-many-statements
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -715,7 +814,27 @@ class DurableTaskManager:
         terminate_event: asyncio.Event | None = None,
         terminate_reason_ref: list[str | None] | None = None,
     ) -> None:
-        """Inner execution loop — separated from watchdog management."""
+        """Inner execution loop — separated from watchdog management.
+
+        :keyword fn: The async task function.
+        :paramtype fn: Callable[..., Awaitable[Any]]
+        :keyword ctx: The task context.
+        :paramtype ctx: TaskContext[Any]
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword opts: The task options.
+        :paramtype opts: DurableTaskOptions
+        :keyword result_future: Future to resolve with the result.
+        :paramtype result_future: asyncio.Future[Any]
+        :keyword renewal_cancel: Event to cancel lease renewal.
+        :paramtype renewal_cancel: asyncio.Event
+        :keyword retry: Optional retry policy.
+        :paramtype retry: RetryPolicy | None
+        :keyword terminate_event: Optional terminate event.
+        :paramtype terminate_event: asyncio.Event | None
+        :keyword terminate_reason_ref: Mutable ref for terminate reason.
+        :paramtype terminate_reason_ref: list[str | None] | None
+        """
         resolved_terminate = terminate_event or asyncio.Event()
         reason_ref = terminate_reason_ref if terminate_reason_ref is not None else [None]
         attempt = 0
@@ -750,9 +869,9 @@ class DurableTaskManager:
                     # Guard: task functions must return raw output, not TaskResult
                     if isinstance(result, TaskResult):
                         raise TypeError(
-                            f"Task function returned TaskResult directly. "
-                            f"Return raw output instead — the framework wraps "
-                            f"it in TaskResult automatically."
+                            "Task function returned TaskResult directly. "
+                            "Return raw output instead — the framework wraps "
+                            "it in TaskResult automatically."
                         )
                     # Success flow
                     await self._handle_success(
@@ -801,7 +920,7 @@ class DurableTaskManager:
                         result_future.set_exception(TaskCancelled(task_id))
                 break  # cancellation is never retried
 
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-exception-caught
                 if retry and retry.should_retry(attempt, exc):
                     delay = retry.compute_delay(attempt)
                     logger.warning(
@@ -864,12 +983,12 @@ class DurableTaskManager:
 
         self._active_tasks.pop(task_id, None)
         # Signal end of streaming to any async-for consumers
-        if ctx._stream_queue is not None:
+        if ctx._stream_queue is not None:  # pylint: disable=protected-access
             from ._run import (
                 _STREAM_SENTINEL,
             )  # pylint: disable=import-outside-toplevel
 
-            await ctx._stream_queue.put(_STREAM_SENTINEL)
+            await ctx._stream_queue.put(_STREAM_SENTINEL)  # pylint: disable=protected-access
 
     async def _handle_success(
         self,
@@ -879,7 +998,17 @@ class DurableTaskManager:
         metadata: TaskMetadata,
         opts: DurableTaskOptions,
     ) -> None:
-        """Handle successful task completion."""
+        """Handle successful task completion.
+
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword result: The task result value.
+        :paramtype result: Any
+        :keyword metadata: The task metadata.
+        :paramtype metadata: TaskMetadata
+        :keyword opts: The task options.
+        :paramtype opts: DurableTaskOptions
+        """
         if opts.ephemeral:
             # Delete immediately — no intermediate PATCH
             try:
@@ -915,7 +1044,17 @@ class DurableTaskManager:
         metadata: TaskMetadata,
         opts: DurableTaskOptions,
     ) -> None:
-        """Handle task failure."""
+        """Handle task failure.
+
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword exc: The exception that caused the failure.
+        :paramtype exc: Exception
+        :keyword metadata: The task metadata.
+        :paramtype metadata: TaskMetadata
+        :keyword opts: The task options.
+        :paramtype opts: DurableTaskOptions
+        """
         error_dict = {
             "type": type(exc).__name__,
             "message": str(exc),
@@ -957,9 +1096,21 @@ class DurableTaskManager:
         reason: str | None,
         output: Any | None,
         metadata: TaskMetadata,
-        opts: DurableTaskOptions,
+        opts: DurableTaskOptions,  # pylint: disable=unused-argument
     ) -> None:
-        """Handle task suspension."""
+        """Handle task suspension.
+
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword reason: Optional suspension reason.
+        :paramtype reason: str | None
+        :keyword output: Optional output snapshot.
+        :paramtype output: Any | None
+        :keyword metadata: The task metadata.
+        :paramtype metadata: TaskMetadata
+        :keyword opts: The task options.
+        :paramtype opts: DurableTaskOptions
+        """
         payload_patch: dict[str, Any] = {
             "metadata": metadata.to_dict(),
         }
@@ -1032,7 +1183,13 @@ class DurableTaskManager:
                     )
 
     def _find_resume_callback(self, task_info: TaskInfo) -> Callable[..., Any] | None:
-        """Find a registered resume callback for a task."""
+        """Find a registered resume callback for a task.
+
+        :param task_info: The task record to match.
+        :type task_info: TaskInfo
+        :return: A matching resume callback, or None.
+        :rtype: Callable[..., Any] | None
+        """
         # Try to find by title prefix or any registered callback
         for name, fn in self._resume_callbacks.items():
             if task_info.title and task_info.title.startswith(name):
@@ -1045,7 +1202,13 @@ class DurableTaskManager:
     def _make_metadata_flush(
         self, task_id: str
     ) -> Callable[[dict[str, Any]], Awaitable[None]]:
-        """Create a flush callback for metadata persistence."""
+        """Create a flush callback for metadata persistence.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: An async callback that flushes metadata.
+        :rtype: Callable[[dict[str, Any]], Awaitable[None]]
+        """
 
         async def _flush(data: dict[str, Any]) -> None:
             await self._provider.update(

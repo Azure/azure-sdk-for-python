@@ -9,13 +9,10 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Generic, TypeVar
 
 from ._exceptions import (
-    TaskCancelled,
-    TaskFailed,
     TaskNotFound,
-    TaskSuspended,
 )
 from ._metadata import TaskMetadata
-from ._models import TaskInfo, TaskPatchRequest, TaskStatus
+from ._models import TaskInfo, TaskStatus
 from ._provider import DurableTaskProvider
 from ._result import TaskResult
 
@@ -89,7 +86,7 @@ class TaskRun(Generic[Output]):
         task_id: str,
         *,
         provider: DurableTaskProvider,
-        result_future: asyncio.Future[Output],
+        result_future: asyncio.Future[TaskResult[Output]],
         metadata: TaskMetadata,
         cancel_event: asyncio.Event,
         status: TaskStatus = "in_progress",
@@ -104,7 +101,9 @@ class TaskRun(Generic[Output]):
         self._metadata = metadata
         self._cancel_event = cancel_event
         self._terminate_event = terminate_event or asyncio.Event()
-        self._terminate_reason_ref = terminate_reason_ref if terminate_reason_ref is not None else [None]
+        self._terminate_reason_ref: list[str | None] = (
+            terminate_reason_ref if terminate_reason_ref is not None else [None]
+        )
         self._status = status
         self._stream_queue: asyncio.Queue[Any] | None = stream_queue
         self._execution_task: asyncio.Task[Any] | None = execution_task
