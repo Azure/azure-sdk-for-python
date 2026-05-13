@@ -181,6 +181,24 @@ def add_sanitizers(test_proxy, sanitized_values):
         regex=r"(?i)^Bearer\s+github_pat_[A-Za-z0-9_]+$",
     )
 
+    # Sanitize raw Entra-ID JWTs (no "Bearer " prefix) passed via MCPTool.authorization
+    # to match the `fake_token` value the FakeTokenCredential returns during playback.
+    add_body_key_sanitizer(
+        json_path="$..authorization",
+        value="fake_token",
+        regex=r"^eyJ[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+\.[A-Za-z0-9_\-]+$",
+    )
+
+    # Sanitize Cognitive Services / Foundry account hostnames inside request and
+    # response bodies (e.g. MCPTool.server_url built from FOUNDRY_PROJECT_ENDPOINT).
+    # URL-path sanitizers above already redact /accounts/<x>, /projects/<x>, etc.,
+    # but the host is built into body fields and needs its own redaction so
+    # recordings match the playback FOUNDRY_PROJECT_ENDPOINT.
+    add_body_regex_sanitizer(
+        regex=r"https://[a-z0-9-]+\.services\.ai\.azure\.com",
+        value=f"https://{SanitizedValues.ACCOUNT_NAME}.services.ai.azure.com",
+    )
+
     # Sanitize Azure Blob account host while preserving container path and SAS shape.
     # This avoids creating inconsistent recordings where sasUri points to a different
     # container than the corresponding blob RequestUri entries.
