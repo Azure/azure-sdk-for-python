@@ -138,7 +138,7 @@ def discover_mcp_servers(
        server.  When provided and ``mcp.json`` does not already define a
        ``"foundry-toolbox"`` entry, one is added automatically with the
        required ``Foundry-Features`` header and ``_auto_auth`` marker.
-    3. ``FOUNDRY_AGENT_TOOLBOX_URL`` environment variable — fallback when
+    3. ``AZURE_AI_TOOLBOX_URL`` environment variable — fallback when
        neither ``mcp.json`` nor *toolbox_endpoint* defines a toolbox entry.
        This allows setting the toolbox URL via agent metadata without
        editing files.
@@ -163,11 +163,11 @@ def discover_mcp_servers(
         except Exception:
             logger.warning("Failed to load mcp.json", exc_info=True)
 
-    # 2. Explicit toolbox endpoint or FOUNDRY_AGENT_TOOLBOX_URL env var
+    # 2. Explicit toolbox endpoint or AZURE_AI_TOOLBOX_URL env var
     if not toolbox_endpoint:
-        toolbox_endpoint = os.environ.get("FOUNDRY_AGENT_TOOLBOX_URL", "").strip() or None
+        toolbox_endpoint = os.environ.get("AZURE_AI_TOOLBOX_URL", "").strip() or None
         if toolbox_endpoint:
-            logger.info("Using toolbox URL from FOUNDRY_AGENT_TOOLBOX_URL: %s", toolbox_endpoint)
+            logger.info("Using toolbox URL from AZURE_AI_TOOLBOX_URL: %s", toolbox_endpoint)
 
     if toolbox_endpoint and _FOUNDRY_TOOLBOX_SERVER_KEY not in servers:
         servers[_FOUNDRY_TOOLBOX_SERVER_KEY] = {
