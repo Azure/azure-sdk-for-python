@@ -624,13 +624,15 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 keys = list(result.keys())
                 contains_result_key = any(key.endswith("_result") for key in keys)
                 contains_threshold_key = any(key.endswith("_threshold") for key in keys)
-                if not contains_result_key or not contains_threshold_key:
+                contains_passed_key = any(key.endswith("_passed") for key in keys)
+                if not contains_result_key or not contains_threshold_key or not contains_passed_key:
                     for key in keys:
                         if key.endswith("_score"):
                             score_value = result[key]
                             base_key = key[:-6]  # Remove "_score" suffix
                             result_key = f"{base_key}_result"
                             threshold_key = f"{base_key}_threshold"
+                            passed_key = f"{base_key}_passed"
                             threshold_value = (
                                 self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
                             )
@@ -645,17 +647,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             if not contains_threshold_key:
                                 result[threshold_key] = threshold_value
 
+                            if self._higher_is_better:
+                                passed_value = float(score_value) >= threshold_value
+                            else:
+                                passed_value = float(score_value) <= threshold_value
+
                             if not contains_result_key:
-                                if self._higher_is_better:
-                                    if float(score_value) >= threshold_value:
-                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
-                                    else:
-                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
-                                else:
-                                    if float(score_value) <= threshold_value:
-                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
-                                    else:
-                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[passed_value]
+
+                            if not contains_passed_key:
+                                result[passed_key] = passed_value
             except Exception as e:
                 logger.warning(f"Error calculating binary result: {e}")
             per_turn_results.append(result)
