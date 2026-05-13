@@ -257,9 +257,9 @@ def test_tracing__incoming_baggage_merged_into_context() -> None:
     assert captured_baggage.get("custom.key") == "custom-value"
 
 
-def test_tracing__incoming_baggage_does_not_break_span_parenting() -> None:
-    """Incoming baggage header does not break parent-child span relationships.
-    Framework spans should be parented directly under the incoming traceparent."""
+def test_tracing__framework_span_parented_under_incoming_traceparent() -> None:
+    """A span created inside the handler is parented directly under the
+    incoming traceparent — no intermediate invoke_agent span."""
     try:
         from opentelemetry import trace
         from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
@@ -283,7 +283,27 @@ def test_tracing__incoming_baggage_does_not_break_span_parenting() -> None:
     span_id_hex = uuid.uuid4().hex[:16]
     traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
 
-    client = _build_client()
+    captured_trace_id = None
+    captured_parent_id = None
+
+    def _span_handler(request, context, cancellation_signal):
+        nonlocal captured_trace_id, captured_parent_id
+        tracer = trace.get_tracer("test.framework")
+        with tracer.start_as_current_span("framework_create_response") as span:
+            captured_trace_id = format(span.context.trace_id, "032x")
+            captured_parent_id = format(span.parent.span_id, "016x") if span.parent else None
+
+        async def _events():
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    options = ResponsesServerOptions()
+    app = ResponsesAgentServerHost(options=options)
+    app.response_handler(_span_handler)
+    client = TestClient(app)
+
     resp = client.post(
         "/responses",
         json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
@@ -293,6 +313,20 @@ def test_tracing__incoming_baggage_does_not_break_span_parenting() -> None:
         },
     )
     assert resp.status_code == 200
+
+    # Framework span should share the same trace ID as the incoming traceparent
+    assert captured_trace_id == trace_id_hex
+    # Framework span should be parented directly under the incoming span
+    assert captured_parent_id == span_id_hex
+
+    # Verify via exporter as well
+    spans = exporter.get_finished_spans()
+    fw_spans = [s for s in spans if s.name == "framework_create_response"]
+    assert len(fw_spans) == 1
+    fw = fw_spans[0]
+    assert format(fw.context.trace_id, "032x") == trace_id_hex
+    assert fw.parent is not None
+    assert format(fw.parent.span_id, "016x") == span_id_hex
 
 
 def test_tracing__incoming_baggage_empty_header_no_error() -> None:
