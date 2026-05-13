@@ -51,6 +51,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _adjust_for_inverse_metric,
     _is_inverse_metric,
     _create_result_object,
+    emit_eval_result_events_to_app_insights,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -3175,3 +3176,70 @@ class TestGetMetricFromCriteria:
 
     def test_fallback_to_criteria_name(self):
         assert _get_metric_from_criteria("my_criteria", "unknown_key", ["f1_score"]) == "my_criteria"
+
+
+@pytest.mark.unittest
+@pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
+class TestEmitEvalResultShutdown:
+    """Tests that emit_eval_result_events_to_app_insights shuts down the LoggerProvider."""
+
+    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_shutdown_called_on_success(self, mock_lp_cls, mock_exporter_cls):
+        """logger_provider.shutdown() must be called after successful export."""
+        mock_lp = mock_lp_cls.return_value
+        mock_lp.force_flush.return_value = True
+        results = [
+            {
+                "results": [{"metric": "coherence", "score": 4.5}],
+                "datasource_item": {},
+            }
+        ]
+        config = {"connection_string": "InstrumentationKey=fake-key"}
+
+        emit_eval_result_events_to_app_insights(config, results)
+        mock_lp.shutdown.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_shutdown_called_on_exception(self, mock_lp_cls, mock_exporter_cls):
+        """logger_provider.shutdown() must be called even when an exception occurs."""
+        mock_lp = mock_lp_cls.return_value
+        mock_lp.force_flush.side_effect = RuntimeError("boom")
+        results = [
+            {
+                "results": [{"metric": "coherence", "score": 4.5}],
+                "datasource_item": {},
+            }
+        ]
+        config = {"connection_string": "InstrumentationKey=fake-key"}
+
+        # Should not raise — the exception is caught internally
+        emit_eval_result_events_to_app_insights(config, results)
+        mock_lp.shutdown.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_shutdown_called_on_flush_timeout(self, mock_lp_cls, mock_exporter_cls):
+        """logger_provider.shutdown() must be called even when flush times out."""
+        mock_lp = mock_lp_cls.return_value
+        mock_lp.force_flush.return_value = False  # Simulates timeout
+        results = [
+            {
+                "results": [{"metric": "coherence", "score": 4.5}],
+                "datasource_item": {},
+            }
+        ]
+        config = {"connection_string": "InstrumentationKey=fake-key"}
+
+        emit_eval_result_events_to_app_insights(config, results)
+        mock_lp.shutdown.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter")
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_no_shutdown_when_results_empty(self, mock_lp_cls, mock_exporter_cls):
+        """When results list is empty, no LoggerProvider is created so no shutdown."""
+        config = {"connection_string": "InstrumentationKey=fake-key"}
+
+        emit_eval_result_events_to_app_insights(config, [])
+        mock_lp_cls.assert_not_called()
