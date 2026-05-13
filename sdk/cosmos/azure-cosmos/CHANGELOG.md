@@ -3,7 +3,7 @@
 ### 4.16.0b3 (Unreleased)
 
 #### Features Added
-* Documented support for the optional `embeddingSource` field on entries in `vector_embedding_policy.vectorEmbeddings`, including the `sourcePaths`, `deploymentName`, `modelName`, `endpoint`, and `authType` (`ApiKey` or `Entra`) properties used to have the service generate vector embeddings from the specified item paths.
+* Documented support for the optional `embeddingSource` field on entries in `vector_embedding_policy.vectorEmbeddings`, properties used to have the service generate vector embeddings from the specified item paths. See [46870](https://github.com/Azure/azure-sdk-for-python/pull/46870)
 
 #### Breaking Changes
 
