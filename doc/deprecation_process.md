@@ -66,9 +66,11 @@ Replace ALL existing text with a disclaimer in the following format.
 
 ## CHANGELOG.md and _version.py
 
-- Update the version in the `azure/mypackage/_version.py` file to a [post-release](https://peps.python.org/pep-0440/#post-releases) of the last released version. This file may be called `version.py` if your package is very old. For example:
+- Update the version in the `azure/mypackage/_version.py` file to a [post-release](https://peps.python.org/pep-0440/#post-releases) of the last released version. This file may be called `version.py` if your package is very old. If the last released version is already a post-release, increment the existing post segment instead of appending another `.post1`. For example:
   - If the last released version was 1.0.0b1, the new version should be 1.0.0b1.post1.
+  - If the last released version was 1.0.0b1.post1, the new version should be 1.0.0b1.post2.
   - If the last released version was 1.2.3, the new version should be 1.2.3.post1.
+  - If the last released version was 1.2.3.post1, the new version should be 1.2.3.post2.
 - In `CHANGELOG.md`, add the new version with the same disclaimer as in the `README.md`, along with a release date. No other changes/features added/breaking changes should be included for this version. For example:
   ```md
   ## 1.2.3.post1 (2023-03-31)
