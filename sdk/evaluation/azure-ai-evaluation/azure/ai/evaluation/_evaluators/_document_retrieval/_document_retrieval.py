@@ -5,6 +5,7 @@ import math
 import operator
 from itertools import starmap
 from typing import Any, Dict, List, TypedDict, Tuple, Optional, Union
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._exceptions import EvaluationException
 from typing_extensions import override, overload
@@ -430,6 +431,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         return {
             "document_retrieval_score": ndcg_score,
             "document_retrieval_passed": ndcg_passed,
+            "document_retrieval_result": EVALUATION_PASS_FAIL_MAPPING[ndcg_passed],
             "document_retrieval_reason": None,
             "document_retrieval_status": "completed",
             "document_retrieval_threshold": self._threshold,
