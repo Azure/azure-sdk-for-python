@@ -3351,5 +3351,3 @@ class TestUpdateMetricValuePreservesExplicitPassed:
         assert len(results) == 1
         assert results[0]["passed"] is True
         assert results[0]["label"] == "Pass"
-
-
