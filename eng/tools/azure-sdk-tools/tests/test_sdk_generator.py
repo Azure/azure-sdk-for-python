@@ -175,7 +175,7 @@ class TestTagIsStableForTypeSpec:
         input_data = {
             "specFolder": "spec",
             "relatedReadmeMdFiles": ["specification/test/resource-manager/readme.md"],
-            "sdkReleaseType": "stable",  # even though release type says "stable"
+            "sdkReleaseType": "stable",
         }
         result = self._run_main(
             input_path,
@@ -185,7 +185,7 @@ class TestTagIsStableForTypeSpec:
             judge_return=True,  # preview → tagIsStable = False
         )
         pkg = result["packages"][0]
-        assert pkg["tagIsStable"] is False
+        assert pkg["tagIsStable"] is True
 
 
 class TestExtractSdkFolder:

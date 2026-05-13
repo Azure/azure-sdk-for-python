@@ -177,7 +177,6 @@ def main(generate_input, generate_output):
                         _LOGGER.info(f"remove additional file when roll back to swagger: {file_path}")
 
             try:
-                is_tsp = "readme.md" not in readme_or_tsp
                 package_total.add(package_name)
                 sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
                 if package_name not in result:
