@@ -57,9 +57,11 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             partition_key=PartitionKey(path="/id"),
             vector_embedding_policy=vector_embedding_policy,
             indexing_policy=indexing_policy)
-        properties = await created_container.read()
-        assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
-        await self.test_db.delete_container(created_container.id)
+        try:
+            properties = await created_container.read()
+            assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
+        finally:
+            await self.test_db.delete_container(created_container.id)
 
     async def test_create_valid_vector_embedding_policy_async(self):
         # Using valid data types
@@ -78,9 +80,11 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 id=container_id,
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy)
-            properties = await created_container.read()
-            assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
-            await self.test_db.delete_container(container_id)
+            try:
+                properties = await created_container.read()
+                assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+            finally:
+                await self.test_db.delete_container(container_id)
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
@@ -121,10 +125,12 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             vector_embedding_policy=vector_embedding_policy,
             indexing_policy=indexing_policy
         )
-        properties = await created_container.read()
-        assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-        assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
-        await self.test_db.delete_container(container_id)
+        try:
+            properties = await created_container.read()
+            assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+        finally:
+            await self.test_db.delete_container(container_id)
 
     async def test_replace_vector_indexing_policy_async(self):
         # Replace should work so long as the new indexing policy doesn't change the vector indexes, and as long as
@@ -196,15 +202,18 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                     "indexingSearchListSize": 100
                 }]
         }
-        await self.test_db.replace_container(
-            created_container,
-            PartitionKey(path="/id"),
-            vector_embedding_policy=vector_embedding_policy,
-            indexing_policy=new_indexing_policy)
-        properties = await created_container.read()
-        assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-        assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
-        await self.test_db.delete_container(container_id)
+
+        try:
+            await self.test_db.replace_container(
+                created_container,
+                PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy,
+                indexing_policy=new_indexing_policy)
+            properties = await created_container.read()
+            assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+        finally:
+            await self.test_db.delete_container(container_id)
 
     async def test_fail_create_vector_indexing_policy_async(self):
         vector_embedding_policy = {
@@ -365,53 +374,55 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             indexing_policy=indexing_policy,
             vector_embedding_policy=vector_embedding_policy
         )
-        # don't provide vector embedding policy
         try:
-            await self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                indexing_policy=indexing_policy)
-            pytest.fail("Container replace should have failed for missing embedding policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
-                    in e.http_error_message)
-        # using a new indexing policy
-        new_indexing_policy = {
-            "vectorIndexes": [
-                {"path": "/vector1", "type": "quantizedFlat"}]
-        }
-        try:
-            await self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy,
-                indexing_policy=new_indexing_policy)
-            pytest.fail("Container replace should have failed for new indexing policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
-                    in e.http_error_message)
-        # using a new vector embedding policy
-        new_embedding_policy = {
-            "vectorEmbeddings": [
-                {
-                    "path": "/vector1",
-                    "dataType": "float32",
-                    "dimensions": 384,
-                    "distanceFunction": "euclidean"}]}
-        try:
-            await self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                vector_embedding_policy=new_embedding_policy,
-                indexing_policy=indexing_policy)
-            pytest.fail("Container replace should have failed for new embedding policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
-                    in e.http_error_message)
-        await self.test_db.delete_container(container_id)
+            # don't provide vector embedding policy
+            try:
+                await self.test_db.replace_container(
+                    created_container,
+                    PartitionKey(path="/id"),
+                    indexing_policy=indexing_policy)
+                pytest.fail("Container replace should have failed for missing embedding policy.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
+                        in e.http_error_message)
+            # using a new indexing policy
+            new_indexing_policy = {
+                "vectorIndexes": [
+                    {"path": "/vector1", "type": "quantizedFlat"}]
+            }
+            try:
+                await self.test_db.replace_container(
+                    created_container,
+                    PartitionKey(path="/id"),
+                    vector_embedding_policy=vector_embedding_policy,
+                    indexing_policy=new_indexing_policy)
+                pytest.fail("Container replace should have failed for new indexing policy.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
+                        in e.http_error_message)
+            # using a new vector embedding policy
+            new_embedding_policy = {
+                "vectorEmbeddings": [
+                    {
+                        "path": "/vector1",
+                        "dataType": "float32",
+                        "dimensions": 384,
+                        "distanceFunction": "euclidean"}]}
+            try:
+                await self.test_db.replace_container(
+                    created_container,
+                    PartitionKey(path="/id"),
+                    vector_embedding_policy=new_embedding_policy,
+                    indexing_policy=indexing_policy)
+                pytest.fail("Container replace should have failed for new embedding policy.")
+            except exceptions.CosmosHttpResponseError as e:
+                assert e.status_code == 400
+                assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
+                        in e.http_error_message)
+        finally:
+            await self.test_db.delete_container(container_id)
 
     async def test_fail_create_vector_embedding_policy_async(self):
         # Using invalid data type
@@ -492,6 +503,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "The Vector Embedding Policy has an invalid DistanceFunction:handMeasured" in e.http_error_message
 
+    @unittest.skip("Skipped until the embedding generation service is in preview.")
     async def test_create_vector_embedding_with_embedding_source_async(self):
         # Verify a vector embedding policy that includes the optional ``embeddingSource`` round-trips
         # correctly for both ``ApiKey`` and ``Entra`` auth types.
@@ -513,7 +525,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                             ],
                             "deploymentName": "text-embedding-3-small",
                             "modelName": "text-embedding-3-small",
-                            "endpoint": "https://embedding-south-central.cognitiveservices.azure.com/",
+                            "endpoint": "https://example.com",
                             "authType": auth_type,
                         },
                     }
@@ -525,10 +537,13 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 partition_key=PartitionKey(path="/id"),
                 vector_embedding_policy=vector_embedding_policy,
             )
-            properties = await created_container.read()
-            assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-            await self.test_db.delete_container(container_id)
+            try:
+                properties = await created_container.read()
+                assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+            finally:
+                await self.test_db.delete_container(container_id)
 
+    @unittest.skip("Skipped until the embedding generation service is in preview.")
     async def test_fail_create_vector_embedding_source_invalid_auth_type_async(self):
         # An ``embeddingSource`` with an unsupported ``authType`` should be rejected by the service
         # (only ``ApiKey`` and ``Entra`` are valid).
@@ -543,7 +558,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                         "sourcePaths": ["/title"],
                         "deploymentName": "text-embedding-3-small",
                         "modelName": "text-embedding-3-small",
-                        "endpoint": "https://embedding-south-central.cognitiveservices.azure.com/",
+                        "endpoint": "https://example.com",
                         "authType": "NotAnAuthType",
                     },
                 }
