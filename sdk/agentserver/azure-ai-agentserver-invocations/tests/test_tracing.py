@@ -151,7 +151,7 @@ def _make_streaming_tracing_server(**kwargs):
 # ---------------------------------------------------------------------------
 
 def test_tracing_disabled_by_default():
-    """Invoke spans are still created by the global tracer when tracing is not explicitly configured."""
+    """No invoke_agent span is created — only framework/user spans appear."""
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
@@ -164,77 +164,61 @@ def test_tracing_disabled_by_default():
     client = TestClient(app)
     client.post("/invocations", content=b"test")
 
-    # With the function-based tracing design, spans are always created
-    # when OTel is installed (via the global tracer). The difference is
-    # whether exporters are configured. Verify a span IS created.
+    # No invoke_agent SERVER span is created (request_context only propagates context)
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
+    assert len(invoke_spans) == 0
 
 
 # ---------------------------------------------------------------------------
-# Tracing enabled creates invoke span with correct name
+# Tracing enabled — no invoke_agent span created
 # ---------------------------------------------------------------------------
 
-def test_tracing_enabled_creates_invoke_span():
-    """Tracing enabled creates a span named 'invoke_agent'."""
+def test_tracing_enabled_no_invoke_span():
+    """Tracing enabled does NOT create an invoke_agent span (context-only propagation)."""
     server = _make_tracing_server()
     client = TestClient(server)
     client.post("/invocations", content=b"test")
 
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    assert invoke_spans[0].name.startswith("invoke_agent")
+    assert len(invoke_spans) == 0
 
 
 # ---------------------------------------------------------------------------
-# Invoke error records exception
+# Invoke error returns 500
 # ---------------------------------------------------------------------------
 
-def test_invoke_error_records_exception():
-    """When handler raises, the span records the exception."""
+def test_invoke_error_returns_500():
+    """When handler raises, a 500 response is returned."""
     server = _make_failing_tracing_server()
     client = TestClient(server)
     resp = client.post("/invocations", content=b"test")
     assert resp.status_code == 500
 
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    span = invoke_spans[0]
-    # Should have error status
-    assert span.status.status_code.name == "ERROR"
-
 
 # ---------------------------------------------------------------------------
-# GET/cancel create spans
+# GET/cancel endpoints still work
 # ---------------------------------------------------------------------------
 
-def test_get_invocation_creates_span():
-    """GET /invocations/{id} creates a span."""
+def test_get_invocation_returns_response():
+    """GET /invocations/{id} returns the stored response."""
     server = _make_tracing_server_with_get_cancel()
     client = TestClient(server)
     resp = client.post("/invocations", content=b"data")
     inv_id = resp.headers["x-agent-invocation-id"]
-    client.get(f"/invocations/{inv_id}")
-
-    spans = _get_spans()
-    get_spans = [s for s in spans if "get_invocation" in s.name]
-    assert len(get_spans) >= 1
+    get_resp = client.get(f"/invocations/{inv_id}")
+    assert get_resp.status_code == 200
 
 
-def test_cancel_invocation_creates_span():
-    """POST /invocations/{id}/cancel creates a span."""
+def test_cancel_invocation_returns_response():
+    """POST /invocations/{id}/cancel returns cancelled status."""
     server = _make_tracing_server_with_get_cancel()
     client = TestClient(server)
     resp = client.post("/invocations", content=b"data")
     inv_id = resp.headers["x-agent-invocation-id"]
-    client.post(f"/invocations/{inv_id}/cancel")
-
-    spans = _get_spans()
-    cancel_spans = [s for s in spans if "cancel_invocation" in s.name]
-    assert len(cancel_spans) >= 1
+    cancel_resp = client.post(f"/invocations/{inv_id}/cancel")
+    assert cancel_resp.status_code == 200
 
 
 # ---------------------------------------------------------------------------
@@ -254,9 +238,10 @@ def test_tracing_via_appinsights_env_var():
     client = TestClient(app)
     client.post("/invocations", content=b"test")
 
+    # No invoke_agent span (context-only propagation)
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
+    assert len(invoke_spans) == 0
 
 
 # ---------------------------------------------------------------------------
@@ -282,25 +267,40 @@ def test_no_tracing_when_no_endpoints():
     client = TestClient(app)
     client.post("/invocations", content=b"test")
 
-    # Spans are still created via the global tracer — the difference
-    # is no exporters are configured to send them anywhere.
+    # No invoke_agent span
     spans = _get_spans()
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
+    assert len(invoke_spans) == 0
 
 
 # ---------------------------------------------------------------------------
-# Traceparent propagation
+# Traceparent propagation — context is set even without a span
 # ---------------------------------------------------------------------------
 
 def test_traceparent_propagation():
-    """Server propagates traceparent header into span context."""
-    server = _make_tracing_server()
+    """Server propagates traceparent header into OTel context for framework spans."""
+    from opentelemetry import trace as _trace
 
-    # Create a traceparent
     trace_id_hex = uuid.uuid4().hex
     span_id_hex = uuid.uuid4().hex[:16]
     traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+
+    captured_trace_id = None
+    captured_parent_id = None
+
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            server = InvocationAgentServerHost()
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
+        nonlocal captured_trace_id, captured_parent_id
+        # Create a framework span — it should inherit the incoming traceparent
+        tracer = _trace.get_tracer("test-framework")
+        with tracer.start_as_current_span("framework_op") as span:
+            captured_trace_id = format(span.context.trace_id, "032x")
+            captured_parent_id = format(span.parent.span_id, "016x") if span.parent else None
+        return Response(content=b"ok")
 
     client = TestClient(server)
     client.post(
@@ -309,147 +309,20 @@ def test_traceparent_propagation():
         headers={"traceparent": traceparent},
     )
 
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    span = invoke_spans[0]
-    # The span should have the same trace ID as the traceparent
-    actual_trace_id = format(span.context.trace_id, "032x")
-    assert actual_trace_id == trace_id_hex
+    assert captured_trace_id == trace_id_hex
+    assert captured_parent_id == span_id_hex
 
 
 # ---------------------------------------------------------------------------
-# Streaming spans
+# Streaming responses still work
 # ---------------------------------------------------------------------------
 
-def test_streaming_creates_span():
-    """Streaming response creates and completes a span."""
+def test_streaming_returns_response():
+    """Streaming response is returned successfully."""
     server = _make_streaming_tracing_server()
     client = TestClient(server)
     resp = client.post("/invocations", content=b"test")
     assert resp.status_code == 200
-
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-
-
-# ---------------------------------------------------------------------------
-# GenAI attributes on invoke span
-# ---------------------------------------------------------------------------
-
-def test_genai_attributes_on_invoke_span():
-    """Invoke span has GenAI semantic convention attributes."""
-    server = _make_tracing_server()
-    client = TestClient(server)
-    client.post("/invocations", content=b"test")
-
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    attrs = dict(invoke_spans[0].attributes)
-
-    assert attrs.get("gen_ai.provider.name") == "AzureAI Hosted Agents"
-    assert attrs.get("gen_ai.system") == "azure.ai.agentserver"
-    assert attrs.get("service.name") == "azure.ai.agentserver"
-
-
-# ---------------------------------------------------------------------------
-# Session ID in microsoft.session.id
-# ---------------------------------------------------------------------------
-
-def test_session_id_in_conversation_id():
-    """Session ID is set as microsoft.session.id on invoke span."""
-    server = _make_tracing_server()
-    client = TestClient(server)
-    client.post(
-        "/invocations?agent_session_id=test-session",
-        content=b"test",
-    )
-
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    attrs = dict(invoke_spans[0].attributes)
-    assert attrs.get("microsoft.session.id") == "test-session"
-
-
-# ---------------------------------------------------------------------------
-# GenAI attributes on get_invocation span
-# ---------------------------------------------------------------------------
-
-def test_genai_attributes_on_get_span():
-    """GET invocation span has GenAI attributes."""
-    server = _make_tracing_server_with_get_cancel()
-    client = TestClient(server)
-    resp = client.post("/invocations", content=b"data")
-    inv_id = resp.headers["x-agent-invocation-id"]
-    client.get(f"/invocations/{inv_id}")
-
-    spans = _get_spans()
-    get_spans = [s for s in spans if "get_invocation" in s.name]
-    assert len(get_spans) >= 1
-    attrs = dict(get_spans[0].attributes)
-    assert attrs.get("gen_ai.system") == "azure.ai.agentserver"
-    assert attrs.get("gen_ai.provider.name") == "AzureAI Hosted Agents"
-
-
-# ---------------------------------------------------------------------------
-# Namespaced invocation_id attribute
-# ---------------------------------------------------------------------------
-
-def test_namespaced_invocation_id_attribute():
-    """Invoke span has azure.ai.agentserver.invocations.invocation_id."""
-    server = _make_tracing_server()
-    client = TestClient(server)
-    resp = client.post("/invocations", content=b"test")
-    inv_id = resp.headers["x-agent-invocation-id"]
-
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    attrs = dict(invoke_spans[0].attributes)
-    assert attrs.get("azure.ai.agentserver.invocations.invocation_id") == inv_id
-
-
-# ---------------------------------------------------------------------------
-# Agent name/version in span names
-# ---------------------------------------------------------------------------
-
-def test_agent_name_in_span_name():
-    """Agent name from env var appears in span name."""
-    with patch.dict(os.environ, {
-        "FOUNDRY_AGENT_NAME": "my-agent",
-        "FOUNDRY_AGENT_VERSION": "2.0",
-    }):
-        server = _make_tracing_server()
-
-    client = TestClient(server)
-    client.post("/invocations", content=b"test")
-
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    assert "my-agent" in invoke_spans[0].name
-    assert "2.0" in invoke_spans[0].name
-
-
-def test_agent_name_only_in_span_name():
-    """Agent name without version in span name."""
-    env_override = {"FOUNDRY_AGENT_NAME": "solo-agent"}
-    env_copy = os.environ.copy()
-    env_copy.pop("FOUNDRY_AGENT_VERSION", None)
-    env_copy.update(env_override)
-    with patch.dict(os.environ, env_copy, clear=True):
-        server = _make_tracing_server()
-
-    client = TestClient(server)
-    client.post("/invocations", content=b"test")
-
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    assert "solo-agent" in invoke_spans[0].name
 
 
 # ---------------------------------------------------------------------------
@@ -458,21 +331,19 @@ def test_agent_name_only_in_span_name():
 
 def test_incoming_baggage_merged_into_context():
     """Incoming W3C baggage header entries are merged into OTel context."""
-    from opentelemetry import baggage as _otel_baggage, context as _otel_context
-    from opentelemetry.sdk.trace import SpanProcessor
+    from opentelemetry import baggage as _otel_baggage
 
     captured_baggage = {}
 
-    class BaggageCaptureProcessor(SpanProcessor):
-        """Captures baggage visible when span starts."""
-        def on_start(self, span, parent_context=None):
-            ctx = parent_context or _otel_context.get_current()
-            captured_baggage.update(_otel_baggage.get_all(context=ctx))
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            server = InvocationAgentServerHost()
 
-    # Add our capture processor to the module provider
-    _MODULE_PROVIDER.add_span_processor(BaggageCaptureProcessor())
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
+        captured_baggage.update(_otel_baggage.get_all())
+        return Response(content=b"ok")
 
-    server = _make_tracing_server()
     client = TestClient(server)
     client.post(
         "/invocations",
@@ -486,13 +357,30 @@ def test_incoming_baggage_merged_into_context():
 
 
 def test_incoming_baggage_does_not_break_span_parenting():
-    """Incoming baggage header does not break parent-child span relationships."""
-    server = _make_tracing_server()
+    """Incoming baggage header does not break parent-child span relationships.
+    Framework spans created inside the handler should be parented under the
+    incoming traceparent (no intermediate invoke_agent span)."""
+    from opentelemetry import trace as _trace
 
-    # Create a traceparent to verify parenting is preserved
     trace_id_hex = uuid.uuid4().hex
     span_id_hex = uuid.uuid4().hex[:16]
     traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+
+    captured_trace_id = None
+    captured_parent_id = None
+
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            server = InvocationAgentServerHost()
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
+        nonlocal captured_trace_id, captured_parent_id
+        tracer = _trace.get_tracer("test-framework")
+        with tracer.start_as_current_span("framework_op") as span:
+            captured_trace_id = format(span.context.trace_id, "032x")
+            captured_parent_id = format(span.parent.span_id, "016x") if span.parent else None
+        return Response(content=b"ok")
 
     client = TestClient(server)
     client.post(
@@ -504,16 +392,9 @@ def test_incoming_baggage_does_not_break_span_parenting():
         },
     )
 
-    spans = _get_spans()
-    invoke_spans = [s for s in spans if "invoke_agent" in s.name]
-    assert len(invoke_spans) >= 1
-    span = invoke_spans[0]
-    # The span should still have the same trace ID (parent-child preserved)
-    actual_trace_id = format(span.context.trace_id, "032x")
-    assert actual_trace_id == trace_id_hex
-    # And the parent span ID should match the traceparent
-    actual_parent_id = format(span.parent.span_id, "016x")
-    assert actual_parent_id == span_id_hex
+    # Framework span inherits trace ID and parents directly under incoming span
+    assert captured_trace_id == trace_id_hex
+    assert captured_parent_id == span_id_hex
 
 
 def test_incoming_baggage_empty_header():

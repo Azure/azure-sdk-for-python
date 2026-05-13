@@ -1,14 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests that the invoke_agent span is set as the current span in context,
-so that child spans created by framework handlers are correctly parented.
+"""Tests that incoming W3C trace context is propagated correctly so that
+child spans created by framework handlers are properly parented under the
+caller's traceparent (no intermediate invoke_agent span).
 
 These tests call the endpoint handler directly (bypassing ASGI transport)
 because HTTPX's ASGITransport runs the app in a different async context,
 which prevents OTel ContextVar propagation from working correctly.
 """
 import os
+import uuid
 from unittest.mock import patch
 
 import pytest
@@ -57,10 +59,6 @@ def _clear():
         _EXPORTER.clear()
 
 
-def _get_spans():
-    return list(_EXPORTER.get_finished_spans()) if _EXPORTER else []
-
-
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
@@ -93,44 +91,66 @@ def _make_streaming_server_with_child_span():
     return app
 
 
-def _assert_child_parented(spans, streaming: bool = False):
-    """Assert the framework span is a child of the invoke_agent span."""
-    parent_spans = [s for s in spans if "invoke_agent" in s.name and s.name != "framework_invoke_agent"]
-    child_spans = [s for s in spans if s.name == "framework_invoke_agent"]
+def test_framework_span_parented_under_incoming_traceparent():
+    """A span created inside the handler should be parented under the incoming
+    traceparent — there is no intermediate invoke_agent span."""
+    trace_id_hex = uuid.uuid4().hex
+    span_id_hex = uuid.uuid4().hex[:16]
+    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
 
-    assert len(parent_spans) >= 1, f"Expected invoke_agent span, got: {[s.name for s in spans]}"
-    assert len(child_spans) == 1, f"Expected framework span, got: {[s.name for s in spans]}"
-
-    parent = parent_spans[0]
-    child = child_spans[0]
-
-    label = "streaming" if streaming else "non-streaming"
-    assert child.parent is not None, f"Framework span has no parent in {label} case"
-    assert child.parent.span_id == parent.context.span_id, (
-        f"Framework span parent ({format(child.parent.span_id, '016x')}) "
-        f"!= invoke_agent span ({format(parent.context.span_id, '016x')}). "
-        f"Spans are siblings, not parent-child ({label})."
-    )
-
-
-def test_framework_span_is_child_of_invoke_span():
-    """A span created inside the handler should be a child of the
-    agentserver invoke_agent span, not a sibling."""
     server = _make_server_with_child_span()
-    # TestClient runs synchronously in the same thread context,
-    # so OTel ContextVar propagation works correctly.
     client = TestClient(server)
-    resp = client.post("/invocations", content=b"test")
+    resp = client.post(
+        "/invocations",
+        content=b"test",
+        headers={"traceparent": traceparent},
+    )
     assert resp.status_code == 200
 
-    _assert_child_parented(_get_spans(), streaming=False)
+    spans = _EXPORTER.get_finished_spans()
+    fw_spans = [s for s in spans if s.name == "framework_invoke_agent"]
+    assert len(fw_spans) == 1, f"Expected framework span, got: {[s.name for s in spans]}"
+
+    fw = fw_spans[0]
+    # Framework span should share the same trace ID
+    assert format(fw.context.trace_id, "032x") == trace_id_hex
+    # Framework span should be parented directly under the incoming span
+    assert fw.parent is not None, "Framework span has no parent"
+    assert format(fw.parent.span_id, "016x") == span_id_hex
 
 
-def test_framework_span_is_child_streaming():
+def test_framework_span_parented_under_incoming_traceparent_streaming():
     """Same parent-child relationship holds for streaming responses."""
+    trace_id_hex = uuid.uuid4().hex
+    span_id_hex = uuid.uuid4().hex[:16]
+    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+
     server = _make_streaming_server_with_child_span()
     client = TestClient(server)
-    resp = client.post("/invocations", content=b"test")
+    resp = client.post(
+        "/invocations",
+        content=b"test",
+        headers={"traceparent": traceparent},
+    )
     assert resp.status_code == 200
 
-    _assert_child_parented(_get_spans(), streaming=True)
+    spans = _EXPORTER.get_finished_spans()
+    fw_spans = [s for s in spans if s.name == "framework_invoke_agent"]
+    assert len(fw_spans) == 1, f"Expected framework span, got: {[s.name for s in spans]}"
+
+    fw = fw_spans[0]
+    assert format(fw.context.trace_id, "032x") == trace_id_hex
+    assert fw.parent is not None, "Framework span has no parent (streaming)"
+    assert format(fw.parent.span_id, "016x") == span_id_hex
+
+
+def test_no_invoke_agent_span_created():
+    """Verify no invoke_agent span is created by the server — only framework spans."""
+    server = _make_server_with_child_span()
+    client = TestClient(server)
+    client.post("/invocations", content=b"test")
+
+    spans = _EXPORTER.get_finished_spans()
+    # Only the framework span should exist, not an invoke_agent server span
+    invoke_spans = [s for s in spans if "invoke_agent" in s.name and s.name != "framework_invoke_agent"]
+    assert len(invoke_spans) == 0, f"Unexpected invoke_agent spans: {[s.name for s in invoke_spans]}"

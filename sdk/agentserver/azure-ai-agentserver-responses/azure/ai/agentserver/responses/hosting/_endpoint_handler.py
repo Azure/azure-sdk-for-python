@@ -23,9 +23,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
-    end_span,
     flush_spans,
-    trace_stream,
 )
 from azure.ai.agentserver.responses.models._generated import (
     AgentReference,
@@ -97,25 +95,6 @@ if TYPE_CHECKING:
     from ._routing import ResponsesAgentServerHost
 
 logger = logging.getLogger("azure.ai.agentserver")
-
-# OTel span attribute keys for error tagging (§7.2)
-_ATTR_ERROR_CODE = "azure.ai.agentserver.responses.error.code"
-_ATTR_ERROR_MESSAGE = "azure.ai.agentserver.responses.error.message"
-
-
-def _classify_error_code(exc: BaseException) -> str:
-    """Return an error code string for an exception, matching API error classification.
-
-    :param exc: The exception to classify.
-    :type exc: BaseException
-    :return: An error code string.
-    :rtype: str
-    """
-    if isinstance(exc, RequestValidationError):
-        return exc.code
-    if isinstance(exc, ValueError):
-        return "invalid_request"
-    return "internal_error"
 
 
 def _extract_isolation(request: Request) -> IsolationContext:
@@ -289,7 +268,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type response_headers: dict[str, str]
         :param sse_headers: SSE-specific headers (e.g. connection, cache-control).
         :type sse_headers: dict[str, str]
-        :param host: The ``ResponsesAgentServerHost`` instance (provides ``request_span``).
+        :param host: The ``ResponsesAgentServerHost`` instance (provides ``request_context``).
         :type host: ResponsesAgentServerHost
         :param provider: Persistence provider for response envelopes and input items.
         :type provider: ResponseProviderProtocol
@@ -316,27 +295,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 {"type": ResponseStreamEventType.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
             ],
         )
-
-    # ------------------------------------------------------------------
-    # Span attribute helper
-    # ------------------------------------------------------------------
-
-    @staticmethod
-    def _safe_set_attrs(span: Any, attrs: dict[str, str]) -> None:
-        """Safely set attributes on an OTel span.
-
-        :param span: The OTel span, or *None*.
-        :type span: Any
-        :param attrs: Key-value attributes to set.
-        :type attrs: dict[str, str]
-        """
-        if span is None:
-            return
-        try:
-            for key, value in attrs.items():
-                span.set_attribute(key, value)
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug("Failed to set span attributes: %s", list(attrs.keys()), exc_info=True)
 
     # ------------------------------------------------------------------
     # §8: Session ID response header helper
@@ -384,53 +342,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 cancellation_signal.set()
                 return
             await asyncio.sleep(0.5)
-
-    def _wrap_streaming_response(
-        self,
-        response: StreamingResponse,
-        otel_span: Any,
-    ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with span lifecycle and context.
-
-        Two layers of wrapping are applied:
-
-        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
-           the OTel span covers the full streaming duration and is ended
-           when iteration completes.
-        2. **Outer (context):** A second async generator re-attaches the span
-           as the current context for the duration of streaming, so that
-           child spans created by user handler code (e.g. Agent Framework)
-           are correctly parented under this span.
-
-        :param response: The ``StreamingResponse`` to wrap.
-        :type response: StreamingResponse
-        :param otel_span: The OTel span (or *None* when tracing is disabled).
-        :type otel_span: Any
-        :return: The same response object, with its body_iterator replaced.
-        :rtype: StreamingResponse
-        """
-        if otel_span is None:
-            return response
-
-        # Inner wrap: trace_stream ends the span when iteration completes.
-        traced = trace_stream(response.body_iterator, otel_span)
-
-        # Outer wrap: re-attach the full context (span + baggage) during streaming
-        # so child spans are correctly parented and baggage is visible to processors.
-        # We capture the context now (while baggage is still attached) rather than
-        # relying on get_current() later when the iterator actually runs.
-        _captured_ctx = _otel_context.get_current()
-
-        async def _iter_with_context():  # type: ignore[return]
-            token = _otel_context.attach(_captured_ctx)
-            try:
-                async for chunk in traced:
-                    yield chunk
-            finally:
-                _otel_context.detach(token)
-
-        response.body_iterator = _iter_with_context()
-        return response
 
     # ------------------------------------------------------------------
     # ResponseContext factory
@@ -707,17 +618,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=_project_id))
 
-        # Start OTel request span using host's request_span context manager.
-        with self._host.request_span(
-            request.headers,
-            response_id,
-            "invoke_agent",
-            operation_name="invoke_agent",
-            session_id=agent_session_id or "",
-            end_on_exit=False,
-        ) as otel_span:
-            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id, project_id=_project_id))
-
+        # Attach incoming W3C trace context (no span created).
+        with self._host.request_context(request.headers):
             # Set W3C baggage per spec §7.3
             # Extract incoming baggage from request headers (only baggage, not traceparent)
             # to preserve parent-child span relationships while inheriting caller's baggage entries.
@@ -771,8 +673,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         media_type="text/event-stream",
                         headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                     )
-                    wrapped = self._wrap_streaming_response(sse_response, otel_span)
-                    return wrapped
+                    return sse_response
 
                 if not ctx.background:
                     disconnect_task = asyncio.create_task(self._monitor_disconnect(request, ctx.cancellation_signal))
@@ -784,7 +685,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             snapshot.get("status"),
                             len(snapshot.get("output", [])),
                         )
-                        end_span(otel_span)
                         return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
                     except _HandlerError as exc:
                         logger.error(
@@ -792,14 +692,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             ctx.response_id,
                             exc_info=exc.original,
                         )
-                        self._safe_set_attrs(
-                            otel_span,
-                            {
-                                _ATTR_ERROR_CODE: _classify_error_code(exc.original),
-                                _ATTR_ERROR_MESSAGE: str(exc.original),
-                            },
-                        )
-                        end_span(otel_span, exc=exc.original)
                         # Handler errors are server-side faults, not client errors
                         err_body = {
                             "error": {
@@ -819,18 +711,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     ctx.response_id,
                     snapshot.get("status"),
                 )
-                end_span(otel_span)
                 return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
             except _HandlerError as exc:
                 logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
-                self._safe_set_attrs(
-                    otel_span,
-                    {
-                        _ATTR_ERROR_CODE: _classify_error_code(exc.original),
-                        _ATTR_ERROR_MESSAGE: str(exc.original),
-                    },
-                )
-                end_span(otel_span, exc=exc)
                 # Handler errors are server-side faults, not client errors
                 err_body = {
                     "error": {
@@ -847,14 +730,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
-                self._safe_set_attrs(
-                    otel_span,
-                    {
-                        _ATTR_ERROR_CODE: _classify_error_code(exc),
-                        _ATTR_ERROR_MESSAGE: str(exc),
-                    },
-                )
-                end_span(otel_span, exc=exc)
                 raise
             finally:
                 _response_id_var.reset(rid_token)

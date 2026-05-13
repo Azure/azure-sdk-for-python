@@ -24,7 +24,8 @@ tracing exporters, and span operations:
 
 **Span operations:**
 
-- :func:`request_span` — create a request-scoped span with GenAI attributes
+- :func:`request_context` — extract W3C trace context from headers and attach
+  as the current OTel context (no span is created)
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
 - :func:`set_current_span` / :func:`detach_context` — explicit context management
@@ -55,7 +56,6 @@ _ATTR_GEN_AI_PROVIDER_NAME = "gen_ai.provider.name"
 _ATTR_GEN_AI_AGENT_ID = "gen_ai.agent.id"
 _ATTR_GEN_AI_AGENT_BLUEPRINT_ID = "gen_ai.agent.blueprint.id"
 _ATTR_GEN_AI_AGENT_TENANT_ID = "microsoft.tenant.id"
-_ATTR_FOUNDRY_AGENT_TYPE = "microsoft.foundry.agent.type"
 _ATTR_GEN_AI_AGENT_NAME = "gen_ai.agent.name"
 _ATTR_GEN_AI_AGENT_VERSION = "gen_ai.agent.version"
 _ATTR_GEN_AI_RESPONSE_ID = "gen_ai.response.id"
@@ -177,7 +177,6 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_id=agent_id, project_id=project_id,
             agent_blueprint_id=agent_blueprint_id,
             agent_tenant_id=agent_tenant_id,
-            agent_type="hosted" if os.environ.get("FOUNDRY_HOSTING_ENVIRONMENT", "") else None,
         ),
     ]
     log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
@@ -251,98 +250,41 @@ def _setup_distro_export(
 
 
 @contextmanager
-def request_span(
+def request_context(
     headers: Mapping[str, str],
-    request_id: str,
-    operation: str,
-    *,
-    agent_id: str = "",
-    agent_name: str = "",
-    agent_version: str = "",
-    project_id: str = "",
-    operation_name: Optional[str] = None,
-    session_id: str = "",
-    end_on_exit: bool = True,
-    instrumentation_scope: str = "Azure.AI.AgentServer",
-) -> Iterator[Any]:
-    """Create a request-scoped span with GenAI semantic convention attributes.
+) -> Iterator[None]:
+    """Extract W3C trace context from *headers* and attach as the current context.
 
-    Extracts W3C trace context from *headers* and creates a span set as
-    current in context (child spans are correctly parented).
+    No span is created — this only propagates the incoming ``traceparent``,
+    ``tracestate``, and ``baggage`` so that spans created by downstream
+    frameworks (e.g. LangChain, Semantic Kernel) are correctly parented
+    under the caller's span.
 
-    For **non-streaming** requests use ``end_on_exit=True`` (default).
-    For **streaming** use ``end_on_exit=False`` and end via :func:`trace_stream`.
+    Also propagates ``x-request-id`` as baggage for downstream services.
 
     :param headers: HTTP request headers.
     :type headers: Mapping[str, str]
-    :param request_id: The request/invocation ID.
-    :type request_id: str
-    :param operation: Span operation (e.g. ``"invoke_agent"``).
-    :type operation: str
-    :keyword agent_id: Agent identifier (``"name:version"`` or ``"name"``).
-    :paramtype agent_id: str
-    :keyword agent_name: Agent name from FOUNDRY_AGENT_NAME.
-    :paramtype agent_name: str
-    :keyword agent_version: Agent version from FOUNDRY_AGENT_VERSION.
-    :paramtype agent_version: str
-    :keyword project_id: Foundry project ARM resource ID.
-    :paramtype project_id: str
-    :keyword operation_name: Optional ``gen_ai.operation.name`` value.
-    :paramtype operation_name: str or None
-    :keyword session_id: Session ID (empty string if absent).
-    :paramtype session_id: str
-    :keyword end_on_exit: Whether to end the span when the context exits.
-    :paramtype end_on_exit: bool
-    :keyword instrumentation_scope: OpenTelemetry instrumentation scope name.
-    :paramtype instrumentation_scope: str
-    :return: Context manager yielding the OTel span.
-    :rtype: Iterator[any]
+    :return: Context manager (yields nothing).
+    :rtype: Iterator[None]
     """
-    tracer = trace.get_tracer(instrumentation_scope)
-
-    # Build span name
-    name = f"{operation} {agent_id}" if agent_id else operation
-
-    # Build attributes
-    attrs: dict[str, str] = {
-        _ATTR_SERVICE_NAME: agent_name or _SERVICE_NAME_VALUE,
-        _ATTR_GEN_AI_SYSTEM: _GEN_AI_SYSTEM_VALUE,
-        _ATTR_GEN_AI_PROVIDER_NAME: _GEN_AI_PROVIDER_NAME_VALUE,
-        _ATTR_GEN_AI_RESPONSE_ID: request_id,
-        _ATTR_GEN_AI_AGENT_ID: agent_id,
-    }
-    if agent_name:
-        attrs[_ATTR_GEN_AI_AGENT_NAME] = agent_name
-    if agent_version:
-        attrs[_ATTR_GEN_AI_AGENT_VERSION] = agent_version
-    if operation_name:
-        attrs[_ATTR_GEN_AI_OPERATION_NAME] = operation_name
-    if session_id:
-        attrs[_ATTR_SESSION_ID] = session_id
-    if project_id:
-        attrs[_ATTR_FOUNDRY_PROJECT_ID] = project_id
-
-    # Propagate platform request correlation ID as span attribute AND baggage
-    x_request_id = headers.get("x-request-id")
-    if x_request_id:
-        attrs["x_request_id"] = x_request_id
-
     # Extract W3C trace context (traceparent + tracestate + baggage)
     carrier = _extract_w3c_carrier(headers)
     ctx = _propagator.extract(carrier=carrier) if carrier else None
 
     # Add x-request-id to baggage for downstream propagation
+    x_request_id = headers.get("x-request-id")
     if x_request_id:
         ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
 
-    with tracer.start_as_current_span(  # type: ignore[reportGeneralTypeIssues]
-        name=name,
-        attributes=attrs,
-        kind=trace.SpanKind.SERVER,
-        context=ctx,
-        end_on_exit=end_on_exit,
-    ) as otel_span:
-        yield otel_span
+    token = _otel_context.attach(ctx) if ctx else None
+    try:
+        yield
+    finally:
+        if token is not None:
+            try:
+                _otel_context.detach(token)
+            except ValueError:
+                pass
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
@@ -492,7 +434,6 @@ class _FoundryEnrichmentSpanProcessor:
         project_id: Optional[str] = None,
         agent_blueprint_id: Optional[str] = None,
         agent_tenant_id: Optional[str] = None,
-        agent_type: Optional[str] = None,
     ) -> None:
         self.agent_name = agent_name
         self.agent_version = agent_version
@@ -500,7 +441,6 @@ class _FoundryEnrichmentSpanProcessor:
         self.project_id = project_id
         self.agent_blueprint_id = agent_blueprint_id
         self.agent_tenant_id = agent_tenant_id
-        self.agent_type = agent_type
 
     def on_start(self, span: Any, parent_context: Any = None) -> None:
         if self.project_id:
@@ -540,8 +480,6 @@ class _FoundryEnrichmentSpanProcessor:
                 attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
             if self.agent_tenant_id:
                 attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
-            if self.agent_type and attrs.get(_ATTR_GEN_AI_OPERATION_NAME) == "invoke_agent":
-                attrs[_ATTR_FOUNDRY_AGENT_TYPE] = self.agent_type
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 

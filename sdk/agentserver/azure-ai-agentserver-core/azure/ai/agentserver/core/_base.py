@@ -328,55 +328,24 @@ class AgentServerHost(Starlette):
     # Tracing (for protocol subclasses)
     # ------------------------------------------------------------------
 
-    #: Default instrumentation scope for tracing spans.
-    #: Protocol subclasses should override this per the spec.
-    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer"
-
     @contextlib.contextmanager
-    def request_span(
+    def request_context(
         self,
         headers: Any,
-        request_id: str,
-        operation: str,
-        *,
-        operation_name: Optional[str] = None,
-        session_id: str = "",
-        end_on_exit: bool = True,
     ) -> Any:
-        """Create a request-scoped span with this host's identity attributes.
+        """Extract W3C trace context and attach as the current OTel context.
 
-        Delegates to :func:`_tracing.request_span` with pre-populated
-        agent identity from environment variables.
+        Delegates to :func:`_tracing.request_context`.  No span is created —
+        this only ensures downstream framework spans are correctly parented
+        under the caller's trace context.
 
         :param headers: HTTP request headers.
         :type headers: any
-        :param request_id: The request/invocation ID.
-        :type request_id: str
-        :param operation: Span operation (e.g. ``"invoke_agent"``).
-        :type operation: str
-        :keyword operation_name: Optional ``gen_ai.operation.name`` value.
-        :paramtype operation_name: str or None
-        :keyword session_id: Session ID.
-        :paramtype session_id: str
-        :keyword end_on_exit: Whether to end the span when the context exits.
-        :paramtype end_on_exit: bool
-        :return: Context manager yielding the OTel span.
+        :return: Context manager (yields nothing).
         :rtype: any
         """
-        with _tracing.request_span(
-            headers,
-            request_id,
-            operation,
-            agent_id=self.config.agent_id,
-            agent_name=self.config.agent_name,
-            agent_version=self.config.agent_version,
-            project_id=self.config.project_id,
-            operation_name=operation_name,
-            session_id=session_id,
-            end_on_exit=end_on_exit,
-            instrumentation_scope=self._INSTRUMENTATION_SCOPE,
-        ) as span:
-            yield span
+        with _tracing.request_context(headers):
+            yield
 
     # ------------------------------------------------------------------
     # Shutdown handler (server-level lifecycle)

@@ -24,11 +24,6 @@ from starlette.routing import Route
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
     create_error_response,
-    detach_context,
-    end_span,
-    record_error,
-    set_current_span,
-    trace_stream,
 )
 
 from ._constants import InvocationConstants
@@ -270,63 +265,6 @@ class InvocationAgentServerHost(AgentServerHost):
     # Span attribute helper
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _safe_set_attrs(span: Any, attrs: dict[str, str]) -> None:
-        if span is None:
-            return
-        try:
-            for key, value in attrs.items():
-                span.set_attribute(key, value)
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug("Failed to set span attributes: %s", list(attrs.keys()), exc_info=True)
-
-    # ------------------------------------------------------------------
-    # Streaming response helpers
-    # ------------------------------------------------------------------
-
-    def _wrap_streaming_response(
-        self,
-        response: StreamingResponse,
-        otel_span: Any,
-    ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with span lifecycle and context.
-
-        Two layers of wrapping are applied:
-
-        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
-           the OTel span covers the full streaming duration and is ended
-           when iteration completes.
-        2. **Outer (context):** A second async generator re-attaches the span
-           as the current context for the duration of streaming, so that
-           child spans created by user handler code (e.g. Agent Framework)
-           are correctly parented under this span.
-
-        :param response: The ``StreamingResponse`` returned by the user handler.
-        :type response: ~starlette.responses.StreamingResponse
-        :param otel_span: The OTel span (or *None* when tracing is disabled).
-        :type otel_span: any
-        :return: The same response object, with its body_iterator replaced.
-        :rtype: ~starlette.responses.StreamingResponse
-        """
-        if otel_span is None:
-            return response
-
-        # Inner wrap: trace_stream ends the span when iteration completes.
-        traced = trace_stream(response.body_iterator, otel_span)
-
-        # Outer wrap: re-attach span as current context during streaming
-        # so child spans are correctly parented.
-        async def _iter_with_context():  # type: ignore[return-value]
-            token = set_current_span(otel_span)
-            try:
-                async for chunk in traced:
-                    yield chunk
-            finally:
-                detach_context(token)
-
-        response.body_iterator = _iter_with_context()
-        return response
-
     # ------------------------------------------------------------------
     # Endpoint handlers
     # ------------------------------------------------------------------
@@ -356,16 +294,7 @@ class InvocationAgentServerHost(AgentServerHost):
         request.state.user_isolation_key = request.headers.get("x-agent-user-isolation-key", "")
         request.state.chat_isolation_key = request.headers.get("x-agent-chat-isolation-key", "")
 
-        with self.request_span(
-            request.headers, invocation_id, "invoke_agent",
-            operation_name="invoke_agent", session_id=session_id,
-            end_on_exit=False,
-        ) as otel_span:
-            self._safe_set_attrs(otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-            })
-
+        with self.request_context(request.headers):
             # Propagate invocation/session IDs as W3C baggage so downstream
             # services receive them automatically via the baggage header.
             # Extract incoming baggage from request headers (only baggage, not traceparent)
@@ -393,11 +322,6 @@ class InvocationAgentServerHost(AgentServerHost):
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
                 response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
             except NotImplementedError as exc:
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "not_implemented",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
-                end_span(otel_span, exc=exc)
                 logger.error("Invocation %s failed: %s", invocation_id, exc)
                 return create_error_response(
                     "not_implemented",
@@ -409,11 +333,6 @@ class InvocationAgentServerHost(AgentServerHost):
                     },
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
-                end_span(otel_span, exc=exc)
                 logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
                 return create_error_response(
                     "internal_error",
@@ -432,10 +351,6 @@ class InvocationAgentServerHost(AgentServerHost):
                 except ValueError:
                     pass
 
-            if isinstance(response, StreamingResponse):
-                return self._wrap_streaming_response(response, otel_span)
-
-            end_span(otel_span)
             return response
 
     async def _traced_invocation_endpoint(
@@ -451,14 +366,7 @@ class InvocationAgentServerHost(AgentServerHost):
         raw_session_id = request.query_params.get("agent_session_id", "")
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
 
-        with self.request_span(
-            request.headers, invocation_id, span_operation,
-            operation_name=span_operation, session_id=session_id,
-        ) as _otel_span:
-            self._safe_set_attrs(_otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-            })
+        with self.request_context(request.headers):
             _ensure_log_filter()
             inv_token = _invocation_id_var.set(invocation_id)
             session_token = _session_id_var.set(session_id)
@@ -467,11 +375,6 @@ class InvocationAgentServerHost(AgentServerHost):
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
                 return response
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                self._safe_set_attrs(_otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
-                record_error(_otel_span, exc)
                 logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
                 return create_error_response(
                     "internal_error",
