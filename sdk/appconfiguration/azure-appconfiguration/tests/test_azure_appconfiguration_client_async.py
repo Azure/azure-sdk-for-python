@@ -1232,6 +1232,80 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
 
     @AppConfigPreparer()
     @recorded_by_proxy_async
+    async def test_check_configuration_settings_by_page_etag(self, appconfiguration_endpoint_string):
+        # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
+        set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
+        await self.set_up(appconfiguration_endpoint_string)
+        # prepare 200 configuration settings
+        for i in range(200):
+            await self.client.set_configuration_setting(
+                ConfigurationSetting(
+                    key=f"async_sample_key_{str(i)}",
+                    label=f"async_sample_label_{str(i)}",
+                )
+            )
+        # there will have 2 pages while listing, there are 100 configuration settings per page.
+
+        # get page etags using check (HEAD request)
+        match_conditions = []
+        items = self.client.check_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page()
+        async for _ in iterator:
+            etag = iterator.etag
+            match_conditions.append(etag)
+
+        # monitor page updates without changes - only changed pages will be yielded
+        items = self.client.check_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page(match_conditions=match_conditions)
+        changed_pages = [page async for page in iterator]
+        # No pages should be yielded since nothing changed
+        assert len(changed_pages) == 0
+
+        # do some changes
+        await self.client.set_configuration_setting(
+            ConfigurationSetting(
+                key="async_sample_key_201",
+                label="async_sample_label_202",
+            )
+        )
+        # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+
+        # get page etags after updates using check (HEAD request)
+        new_match_conditions = []
+        items = self.client.check_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page()
+        async for _ in iterator:
+            etag = iterator.etag
+            new_match_conditions.append(etag)
+
+        before_len = len(match_conditions)
+        after_len = len(new_match_conditions)
+        # the number of pages should not decrease after adding a configuration setting
+        assert after_len >= before_len
+
+        # At least one of the existing pages' ETags should differ after the update.
+        assert any(old != new for old, new in zip(match_conditions, new_match_conditions))
+
+        # monitor pages after updates - only changed pages will be yielded
+        items = self.client.check_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page(match_conditions=new_match_conditions)
+        changed_pages = [page async for page in iterator]
+        # Should yield 0 pages
+        assert len(changed_pages) == 0
+
+        # clean up
+        await self.tear_down()
+
+    @AppConfigPreparer()
+    @recorded_by_proxy_async
     async def test_list_labels(self, appconfiguration_endpoint_string):
         await self.set_up(appconfiguration_endpoint_string)
 
