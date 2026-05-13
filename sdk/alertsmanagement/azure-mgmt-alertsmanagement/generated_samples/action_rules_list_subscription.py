@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.alertsmanagement import AlertsManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.alertsmanagement import AlertsManagementClient
     pip install azure-identity
     pip install azure-mgmt-alertsmanagement
 # USAGE
-    python alert_processing_rules_delete.py
+    python action_rules_list_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +31,11 @@ def main():
         subscription_id="1e3ff1c0-771a-4119-a03b-be82a51e232d",
     )
 
-    response = client.alert_processing_rules.delete(
-        resource_group_name="alertscorrelationrg",
-        alert_processing_rule_name="DailySuppression",
-    )
-    print(response)
+    response = client.action_rules.list_by_subscription()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/stable/2021-08-08/examples/AlertProcessingRules_Delete.json
+# x-ms-original-file: specification/alertsmanagement/resource-manager/Microsoft.AlertsManagement/AlertsManagement/preview/2019-05-05-preview/examples/ActionRules_List_Subscription.json
 if __name__ == "__main__":
     main()
