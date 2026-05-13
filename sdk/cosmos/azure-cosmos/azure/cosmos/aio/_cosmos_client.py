@@ -23,6 +23,7 @@
 """
 
 import warnings
+import logging
 from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
 
 from azure.core.async_paging import AsyncItemPaged
@@ -33,6 +34,9 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from azure.cosmos.offer import ThroughputProperties
+from ._backend.factory import make_async_backend
+from ._backend.core_python import AsyncCorePythonBackend
+from ._backend.rust import AsyncRustBackend
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from ._database import DatabaseProxy, _get_database_link
 from ._retry_utility_async import _ConnectionRetryPolicy
@@ -215,6 +219,26 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
+        # Pick which backends this client will hold. Two attributes, named
+        # after the two backend types:
+        #   - _core_python_backend: always present. The default, and the
+        #     always-available path for any request whose kwargs the Rust
+        #     backend doesn't support yet.
+        #   - _rust_backend: present only when Rust is selected as default.
+        #     Its presence (vs None) is the "Rust is default" signal.
+        backend_choice = kwargs.pop("_backend", None)
+        chosen = make_async_backend(backend_choice)
+        self._core_python_backend: AsyncCorePythonBackend = (
+            chosen if isinstance(chosen, AsyncCorePythonBackend) else AsyncCorePythonBackend()
+        )
+        self._rust_backend: Optional[AsyncRustBackend] = (
+            chosen if isinstance(chosen, AsyncRustBackend) else None
+        )
+        logging.getLogger(__name__).info(
+            "Cosmos client constructed with default backend=%s",
+            chosen.name,
+        )
+
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
@@ -226,6 +250,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy_max_concurrency=availability_strategy_max_concurrency,
             **kwargs
         )
+        # Expose both backends on client_connection so async Container
+        # methods (which only see client_connection) can dispatch.
+        self.client_connection._core_python_backend = self._core_python_backend  # pylint: disable=protected-access
+        self.client_connection._rust_backend = self._rust_backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]

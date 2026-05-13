@@ -34,6 +34,7 @@ from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, vali
 
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
+from ._backend.constants import REQUEST_OPTION_BACKEND_KEY
 from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
                     GenerateGuidId, validate_cache_staleness_value)
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
@@ -1431,6 +1432,26 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
+
+        # Pick the backend that will handle this call. Two attributes on
+        # client_connection name the two backend types directly:
+        #   - _rust_backend: present iff Rust is configured as default
+        #   - _core_python_backend: always present
+        # Two kwargs always force the core-python path (Rust doesn't yet
+        # support multi-region hedging or non-idempotent write retries).
+        rust_backend = getattr(self.client_connection, "_rust_backend", None)
+        core_python_backend = getattr(self.client_connection, "_core_python_backend", None)
+        if rust_backend is not None and availability_strategy is None and retry_write is None:
+            backend = rust_backend
+        else:
+            backend = core_python_backend
+        if backend is not None:
+            # Stamp the backend that actually handled this call so the
+            # user-agent policy can append `; backend=<name>` per request.
+            kwargs[REQUEST_OPTION_BACKEND_KEY] = backend.name
+            backend_response = backend.create_item(prepared=None)
+            if backend_response is not None:
+                return backend_response  # pragma: no cover
 
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include

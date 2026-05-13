@@ -23,6 +23,7 @@
 """
 
 import warnings
+import logging
 from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal, TYPE_CHECKING
 
 from azure.core.credentials import TokenCredential
@@ -30,6 +31,9 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 
+from ._backend.factory import make_backend
+from ._backend.core_python import CorePythonBackend
+from ._backend.rust import RustBackend
 from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
@@ -235,6 +239,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> None:
         """Instantiate a new CosmosClient.
         """
+        # Pick which backends this client will hold. Two attributes, named
+        # after the two backend types:
+        #   - _core_python_backend: always present. The default, and the
+        #     always-available path for any request whose kwargs the Rust
+        #     backend doesn't support yet.
+        #   - _rust_backend: present only when Rust is selected as default.
+        #     Its presence (vs None) is the "Rust is default" signal — no
+        #     extra attribute needed.
+        # Precedence for selection: kwarg `_backend=` > COSMOS_BACKEND env
+        # var > "core-python".
+        backend_choice = kwargs.pop("_backend", None)
+        chosen = make_backend(backend_choice)
+        self._core_python_backend: CorePythonBackend = (
+            chosen if isinstance(chosen, CorePythonBackend) else CorePythonBackend()
+        )
+        self._rust_backend: Optional[RustBackend] = (
+            chosen if isinstance(chosen, RustBackend) else None
+        )
+        logging.getLogger(__name__).info(
+            "Cosmos client constructed with default backend=%s",
+            chosen.name,
+        )
 
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
@@ -247,6 +273,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
             **kwargs
         )
+        # Expose both backends on client_connection so Container methods,
+        # which only see client_connection (not the client), can dispatch.
+        self.client_connection._core_python_backend = self._core_python_backend  # pylint: disable=protected-access
+        self.client_connection._rust_backend = self._rust_backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
