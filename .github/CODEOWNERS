@@ -837,6 +837,7 @@
 /eng/common/                                                         @Azure/azure-sdk-eng
 /eng/tools/                                                          @scbedd @danieljurek @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
+/.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /.github/prompts/                                                    @mccoyp @l0lawrence @benbp
