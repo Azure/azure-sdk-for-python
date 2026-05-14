@@ -353,8 +353,10 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             ndcg_score = 0.0
             ndcg_passed = ndcg_score >= self._threshold
             return {
+                "document_retrieval": ndcg_score,
                 "document_retrieval_score": ndcg_score,
                 "document_retrieval_passed": ndcg_passed,
+                "document_retrieval_result": EVALUATION_PASS_FAIL_MAPPING[ndcg_passed],
                 "document_retrieval_reason": None,
                 "document_retrieval_status": "completed",
                 "document_retrieval_threshold": self._threshold,
@@ -399,8 +401,10 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
             ndcg_score = float(metrics.get(f"ndcg@{self.k}", 0.0))
             ndcg_passed = ndcg_score >= self._threshold
             return {
+                "document_retrieval": ndcg_score,
                 "document_retrieval_score": ndcg_score,
                 "document_retrieval_passed": ndcg_passed,
+                "document_retrieval_result": EVALUATION_PASS_FAIL_MAPPING[ndcg_passed],
                 "document_retrieval_reason": None,
                 "document_retrieval_status": "completed",
                 "document_retrieval_threshold": self._threshold,
@@ -429,6 +433,7 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         ndcg_score = float(metrics.get(f"ndcg@{self.k}", 0.0))
         ndcg_passed = ndcg_score >= self._threshold
         return {
+            "document_retrieval": ndcg_score,
             "document_retrieval_score": ndcg_score,
             "document_retrieval_passed": ndcg_passed,
             "document_retrieval_result": EVALUATION_PASS_FAIL_MAPPING[ndcg_passed],
