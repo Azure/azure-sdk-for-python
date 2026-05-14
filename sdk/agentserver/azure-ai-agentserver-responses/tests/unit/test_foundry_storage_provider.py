@@ -12,8 +12,6 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from azure.ai.agentserver.core._platform_headers import (
     CHAT_ISOLATION_KEY as _CHAT_ISOLATION_HEADER,
-)
-from azure.ai.agentserver.core._platform_headers import (
     USER_ISOLATION_KEY as _USER_ISOLATION_HEADER,
 )
 
@@ -651,7 +649,8 @@ async def test_error_mapping__error_message_falls_back_for_binary_body(
 # ===========================================================================
 
 
-def test_pipeline__does_not_include_content_decode_policy(credential: Any) -> None:
+@pytest.mark.asyncio
+async def test_pipeline__does_not_include_content_decode_policy(credential: Any) -> None:
     """``ContentDecodePolicy`` is intentionally excluded from the pipeline.
 
     Regression test for a production crash where ``ContentDecodePolicy``
@@ -663,7 +662,6 @@ def test_pipeline__does_not_include_content_decode_policy(credential: Any) -> No
     """
     from azure.core.pipeline.policies import ContentDecodePolicy
 
-    # Patch from_env so the constructor is happy without env vars.
     provider = FoundryStorageProvider(credential=credential, settings=_SETTINGS)
     try:
         # Walk the policy chain attached to the pipeline client.
@@ -676,7 +674,11 @@ def test_pipeline__does_not_include_content_decode_policy(credential: Any) -> No
                 policies_in_chain = list(chain)
                 break
 
-        # Each chain entry wraps a policy via ``.policy`` or is the policy itself.
+        assert policies_in_chain, (
+            "Could not find policy list on the pipeline; azure-core internals may have changed."
+        )
+
+        # Each chain entry wraps a policy via ``._policy`` or is the policy itself.
         policy_classes = []
         for entry in policies_in_chain:
             policy = getattr(entry, "_policy", entry)
@@ -687,13 +689,7 @@ def test_pipeline__does_not_include_content_decode_policy(credential: Any) -> No
             "it crashes on binary response bodies."
         )
     finally:
-        # Explicit cleanup — we constructed a real client.
-        import asyncio
-        try:
-            loop = asyncio.get_event_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-        loop.run_until_complete(provider.aclose())
+        await provider.aclose()
 
 
 @pytest.mark.asyncio

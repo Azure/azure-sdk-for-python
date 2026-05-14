@@ -11,6 +11,8 @@ from starlette.responses import JSONResponse
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     ERROR_DETAIL,
     ERROR_SOURCE,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
@@ -275,8 +277,6 @@ def to_api_error_response(error: Exception) -> ApiErrorResponse:
 ERROR_SOURCE_USER: str = "user"
 ERROR_SOURCE_PLATFORM: str = "platform"
 ERROR_SOURCE_UPSTREAM: str = "upstream"
-PLATFORM_ERROR_TAG: str = "Azure.AI.AgentServer.PlatformError"
-MAX_ERROR_DETAIL_LENGTH: int = 2048
 
 
 def is_platform_error(exc: BaseException) -> bool:
@@ -302,14 +302,16 @@ def tag_platform_error(exc: BaseException) -> None:
 def format_error_detail(exc: BaseException) -> str:
     """Format an exception for the ``x-platform-error-detail`` header.
 
-    Uses ``repr(exc)`` and truncates to :data:`MAX_ERROR_DETAIL_LENGTH`.
+    Uses ``type(exc).__name__: str(exc)`` to avoid leaking sensitive
+    material (URLs with query parameters, internal hostnames, etc.)
+    that ``repr()`` may include.  Truncates to :data:`MAX_ERROR_DETAIL_LENGTH`.
 
     :param exc: The exception to format.
     :type exc: BaseException
     :return: The formatted error detail string.
     :rtype: str
     """
-    detail = repr(exc)
+    detail = f"{type(exc).__name__}: {exc}"
     if len(detail) > MAX_ERROR_DETAIL_LENGTH:
         suffix = "...[truncated]"
         detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
@@ -423,12 +425,13 @@ def error_response(
     if request_id and isinstance(payload, dict):
         _enrich_error_payload(payload, request_id)
 
-    # Classify error source
+    # Classify error source — check platform tag first so that a ValueError
+    # propagated from storage with PLATFORM_ERROR_TAG is not misclassified.
     if error_source is None:
-        if isinstance(error, (RequestValidationError, ValueError)):
-            error_source = ERROR_SOURCE_USER
-        elif is_platform_error(error):
+        if is_platform_error(error):
             error_source = ERROR_SOURCE_PLATFORM
+        elif isinstance(error, (RequestValidationError, ValueError)):
+            error_source = ERROR_SOURCE_USER
         else:
             error_source = ERROR_SOURCE_UPSTREAM
 

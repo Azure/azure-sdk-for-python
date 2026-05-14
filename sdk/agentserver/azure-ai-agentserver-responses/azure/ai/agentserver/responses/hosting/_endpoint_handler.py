@@ -76,6 +76,7 @@ from ._validation import (
     ERROR_SOURCE_UPSTREAM,
     ERROR_SOURCE_USER,
     _apply_error_source_headers,
+    format_error_detail,
     parse_and_validate_create_response,
 )
 from ._validation import (
@@ -620,7 +621,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     exc.response_body,
                     status_code=500,
-                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_PLATFORM),
+                    headers=_apply_error_source_headers(
+                        _hdrs, ERROR_SOURCE_PLATFORM, format_error_detail(exc)
+                    ),
                 )
             return _error_response(exc, _hdrs)
         except Exception as exc:  # pylint: disable=broad-exception-caught

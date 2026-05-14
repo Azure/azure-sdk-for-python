@@ -33,6 +33,8 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     CHAT_ISOLATION_KEY,
     ERROR_DETAIL,
     ERROR_SOURCE,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
     USER_ISOLATION_KEY,
 )
 
@@ -46,8 +48,6 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 _ERROR_SOURCE_UPSTREAM: str = "upstream"
 _ERROR_SOURCE_PLATFORM: str = "platform"
-_PLATFORM_ERROR_TAG: str = "Azure.AI.AgentServer.PlatformError"
-_MAX_ERROR_DETAIL_LENGTH: int = 2048
 
 
 def _apply_error_source_headers(
@@ -80,11 +80,11 @@ def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
     :return: A tuple of (error_source, error_detail).
     :rtype: tuple[str, str or None]
     """
-    if getattr(exc, _PLATFORM_ERROR_TAG, False) is True:
-        detail = repr(exc)
-        if len(detail) > _MAX_ERROR_DETAIL_LENGTH:
+    if getattr(exc, PLATFORM_ERROR_TAG, False) is True:
+        detail = f"{type(exc).__name__}: {exc}"
+        if len(detail) > MAX_ERROR_DETAIL_LENGTH:
             suffix = "...[truncated]"
-            detail = detail[: _MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
+            detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
         return _ERROR_SOURCE_PLATFORM, detail
     return _ERROR_SOURCE_UPSTREAM, None
 

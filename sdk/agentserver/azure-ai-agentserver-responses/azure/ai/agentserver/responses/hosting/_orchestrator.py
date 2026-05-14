@@ -44,7 +44,7 @@ from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
 from ._runtime_state import _RuntimeState
-from ._validation import PLATFORM_ERROR_TAG
+from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext

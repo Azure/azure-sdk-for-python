@@ -9,22 +9,24 @@ or ``upstream``) and optionally ``x-platform-error-detail``.
 """
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
 import pytest
 from azure.ai.agentserver.core._platform_headers import (
     ERROR_DETAIL,
     ERROR_SOURCE,
+    PLATFORM_ERROR_TAG,
 )
 from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
 from starlette.responses import Response
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-
-# Error-source values and platform error tag are internal to each protocol
-# package.  Duplicate the string literals here for test assertions.
-ERROR_SOURCE_UPSTREAM = "upstream"
-ERROR_SOURCE_PLATFORM = "platform"
-PLATFORM_ERROR_TAG = "Azure.AI.AgentServer.PlatformError"
+from azure.ai.agentserver.invocations._invocation import (
+    _ERROR_SOURCE_PLATFORM as ERROR_SOURCE_PLATFORM,
+    _ERROR_SOURCE_UPSTREAM as ERROR_SOURCE_UPSTREAM,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -32,11 +34,13 @@ PLATFORM_ERROR_TAG = "Azure.AI.AgentServer.PlatformError"
 # ---------------------------------------------------------------------------
 
 
-def _make_client(app: InvocationAgentServerHost) -> AsyncClient:
-    return AsyncClient(
+@asynccontextmanager
+async def _make_client(app: InvocationAgentServerHost) -> AsyncIterator[AsyncClient]:
+    async with AsyncClient(
         transport=ASGITransport(app=app),
         base_url="http://testserver",
-    )
+    ) as client:
+        yield client
 
 
 def _make_no_handler_app() -> InvocationAgentServerHost:
@@ -90,11 +94,11 @@ class TestSuccessNoErrorHeaders:
 
     @pytest.mark.asyncio
     async def test_success_has_no_error_source(self) -> None:
-        client = _make_client(_make_echo_app())
-        resp = await client.post("/invocations", content=b"hello")
-        assert resp.status_code == 200
-        assert ERROR_SOURCE not in resp.headers
-        assert ERROR_DETAIL not in resp.headers
+        async with _make_client(_make_echo_app()) as client:
+            resp = await client.post("/invocations", content=b"hello")
+            assert resp.status_code == 200
+            assert ERROR_SOURCE not in resp.headers
+            assert ERROR_DETAIL not in resp.headers
 
 
 # ---------------------------------------------------------------------------
@@ -107,23 +111,23 @@ class TestNotImplementedUpstream:
 
     @pytest.mark.asyncio
     async def test_not_implemented_classified_upstream(self) -> None:
-        client = _make_client(_make_no_handler_app())
-        resp = await client.post("/invocations", content=b"test")
-        assert resp.status_code == 501
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
+        async with _make_client(_make_no_handler_app()) as client:
+            resp = await client.post("/invocations", content=b"test")
+            assert resp.status_code == 501
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
 
     @pytest.mark.asyncio
     async def test_not_implemented_has_invocation_id(self) -> None:
-        client = _make_client(_make_no_handler_app())
-        resp = await client.post("/invocations", content=b"test")
-        assert "x-agent-invocation-id" in resp.headers
+        async with _make_client(_make_no_handler_app()) as client:
+            resp = await client.post("/invocations", content=b"test")
+            assert "x-agent-invocation-id" in resp.headers
 
     @pytest.mark.asyncio
     async def test_not_implemented_no_error_detail(self) -> None:
         """upstream errors should NOT have x-platform-error-detail."""
-        client = _make_client(_make_no_handler_app())
-        resp = await client.post("/invocations", content=b"test")
-        assert ERROR_DETAIL not in resp.headers
+        async with _make_client(_make_no_handler_app()) as client:
+            resp = await client.post("/invocations", content=b"test")
+            assert ERROR_DETAIL not in resp.headers
 
 
 # ---------------------------------------------------------------------------
@@ -136,17 +140,17 @@ class TestHandlerExceptionUpstream:
 
     @pytest.mark.asyncio
     async def test_handler_exception_classified_upstream(self) -> None:
-        client = _make_client(_make_upstream_error_app())
-        resp = await client.post("/invocations", content=b"test")
-        assert resp.status_code == 500
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
+        async with _make_client(_make_upstream_error_app()) as client:
+            resp = await client.post("/invocations", content=b"test")
+            assert resp.status_code == 500
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
 
     @pytest.mark.asyncio
     async def test_handler_exception_no_error_detail(self) -> None:
         """upstream errors should NOT have x-platform-error-detail."""
-        client = _make_client(_make_upstream_error_app())
-        resp = await client.post("/invocations", content=b"test")
-        assert ERROR_DETAIL not in resp.headers
+        async with _make_client(_make_upstream_error_app()) as client:
+            resp = await client.post("/invocations", content=b"test")
+            assert ERROR_DETAIL not in resp.headers
 
 
 # ---------------------------------------------------------------------------
@@ -159,18 +163,18 @@ class TestPlatformTaggedError:
 
     @pytest.mark.asyncio
     async def test_platform_tagged_classified_platform(self) -> None:
-        client = _make_client(_make_platform_error_app())
-        resp = await client.post("/invocations", content=b"test")
-        assert resp.status_code == 500
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_PLATFORM
+        async with _make_client(_make_platform_error_app()) as client:
+            resp = await client.post("/invocations", content=b"test")
+            assert resp.status_code == 500
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_PLATFORM
 
     @pytest.mark.asyncio
     async def test_platform_tagged_has_error_detail(self) -> None:
         """platform errors MUST include x-platform-error-detail."""
-        client = _make_client(_make_platform_error_app())
-        resp = await client.post("/invocations", content=b"test")
-        assert ERROR_DETAIL in resp.headers
-        assert "storage transport failure" in resp.headers[ERROR_DETAIL]
+        async with _make_client(_make_platform_error_app()) as client:
+            resp = await client.post("/invocations", content=b"test")
+            assert ERROR_DETAIL in resp.headers
+            assert "storage transport failure" in resp.headers[ERROR_DETAIL]
 
 
 # ---------------------------------------------------------------------------
@@ -183,10 +187,10 @@ class TestGetDispatchNotImplemented:
 
     @pytest.mark.asyncio
     async def test_get_not_implemented_upstream(self) -> None:
-        client = _make_client(_make_echo_app())  # no get_invocation_handler
-        resp = await client.get("/invocations/inv-123")
-        assert resp.status_code == 404
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
+        async with _make_client(_make_echo_app()) as client:  # no get_invocation_handler
+            resp = await client.get("/invocations/inv-123")
+            assert resp.status_code == 404
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
 
 
 # ---------------------------------------------------------------------------
@@ -199,10 +203,10 @@ class TestCancelDispatchNotImplemented:
 
     @pytest.mark.asyncio
     async def test_cancel_not_implemented_upstream(self) -> None:
-        client = _make_client(_make_echo_app())  # no cancel_invocation_handler
-        resp = await client.post("/invocations/inv-123/cancel")
-        assert resp.status_code == 404
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
+        async with _make_client(_make_echo_app()) as client:  # no cancel_invocation_handler
+            resp = await client.post("/invocations/inv-123/cancel")
+            assert resp.status_code == 404
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
 
 
 # ---------------------------------------------------------------------------
@@ -215,10 +219,10 @@ class TestOpenApiNotRegistered:
 
     @pytest.mark.asyncio
     async def test_no_spec_upstream(self) -> None:
-        client = _make_client(_make_echo_app())  # no openapi_spec
-        resp = await client.get("/invocations/docs/openapi.json")
-        assert resp.status_code == 404
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
+        async with _make_client(_make_echo_app()) as client:  # no openapi_spec
+            resp = await client.get("/invocations/docs/openapi.json")
+            assert resp.status_code == 404
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
 
 
 # ---------------------------------------------------------------------------
@@ -241,11 +245,11 @@ class TestGetHandlerException:
         async def get_inv(request: Request) -> Response:
             raise RuntimeError("oops")
 
-        client = _make_client(app)
-        resp = await client.get("/invocations/inv-123")
-        assert resp.status_code == 500
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
-        assert ERROR_DETAIL not in resp.headers
+        async with _make_client(app) as client:
+            resp = await client.get("/invocations/inv-123")
+            assert resp.status_code == 500
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
+            assert ERROR_DETAIL not in resp.headers
 
     @pytest.mark.asyncio
     async def test_get_handler_platform_error(self) -> None:
@@ -261,11 +265,11 @@ class TestGetHandlerException:
             setattr(exc, PLATFORM_ERROR_TAG, True)
             raise exc
 
-        client = _make_client(app)
-        resp = await client.get("/invocations/inv-123")
-        assert resp.status_code == 500
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_PLATFORM
-        assert "infra failure" in resp.headers[ERROR_DETAIL]
+        async with _make_client(app) as client:
+            resp = await client.get("/invocations/inv-123")
+            assert resp.status_code == 500
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_PLATFORM
+            assert "infra failure" in resp.headers[ERROR_DETAIL]
 
 
 # ---------------------------------------------------------------------------
@@ -288,10 +292,10 @@ class TestCancelHandlerException:
         async def cancel_inv(request: Request) -> Response:
             raise ValueError("bad cancel")
 
-        client = _make_client(app)
-        resp = await client.post("/invocations/inv-123/cancel")
-        assert resp.status_code == 500
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
+        async with _make_client(app) as client:
+            resp = await client.post("/invocations/inv-123/cancel")
+            assert resp.status_code == 500
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_UPSTREAM
 
     @pytest.mark.asyncio
     async def test_cancel_handler_platform_error(self) -> None:
@@ -307,8 +311,8 @@ class TestCancelHandlerException:
             setattr(exc, PLATFORM_ERROR_TAG, True)
             raise exc
 
-        client = _make_client(app)
-        resp = await client.post("/invocations/inv-123/cancel")
-        assert resp.status_code == 500
-        assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_PLATFORM
-        assert "platform cancel failure" in resp.headers[ERROR_DETAIL]
+        async with _make_client(app) as client:
+            resp = await client.post("/invocations/inv-123/cancel")
+            assert resp.status_code == 500
+            assert resp.headers[ERROR_SOURCE] == ERROR_SOURCE_PLATFORM
+            assert "platform cancel failure" in resp.headers[ERROR_DETAIL]

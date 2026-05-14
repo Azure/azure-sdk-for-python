@@ -69,7 +69,7 @@ class TestFormatErrorDetail:
     def test_short_detail_not_truncated(self) -> None:
         exc = ValueError("short message")
         detail = format_error_detail(exc)
-        assert detail == repr(exc)
+        assert detail == "ValueError: short message"
         assert len(detail) <= MAX_ERROR_DETAIL_LENGTH
 
     def test_long_detail_truncated_to_max_length(self) -> None:
@@ -82,8 +82,8 @@ class TestFormatErrorDetail:
         msg = "A" * 5000
         exc = RuntimeError(msg)
         detail = format_error_detail(exc)
-        # Must start with the repr prefix
-        assert detail.startswith("RuntimeError(")
+        # Must start with the type name prefix
+        assert detail.startswith("RuntimeError: ")
 
 
 # ---------------------------------------------------------------------------

@@ -102,3 +102,16 @@ ERROR_DETAIL: str = "x-platform-error-detail"
 for platform telemetry.  Not intended for end-user display.
 Present on error responses when additional diagnostic context is available.
 """
+
+# -- Error tagging ----------------------------------------------------------
+
+PLATFORM_ERROR_TAG: str = "Azure.AI.AgentServer.PlatformError"
+"""Dynamic attribute name set on exceptions to mark them as platform
+infrastructure errors (as opposed to user or upstream errors).  Used by
+the error source classification logic in the protocol packages.
+"""
+
+MAX_ERROR_DETAIL_LENGTH: int = 2048
+"""Maximum character length for the ``x-platform-error-detail`` header value.
+Values longer than this are truncated with a ``...[truncated]`` suffix.
+"""
