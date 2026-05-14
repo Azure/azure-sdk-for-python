@@ -16,6 +16,8 @@ class BaseClientPreparer(AzureRecordedTestCase):
         hsm_playback_url = "https://managedhsmvaultname.managedhsm.azure.net"
         container_playback_uri = "https://storagename.blob.core.windows.net/container"
         playback_sas_token = "fake-sas"
+        playback_ekm_host = "fake-ekm-host"
+        playback_server_ca_certificate = "fake-server-ca-certificate"
 
         if self.is_live:
             hsm = os.environ.get("AZURE_MANAGEDHSM_URL")
@@ -25,11 +27,15 @@ class BaseClientPreparer(AzureRecordedTestCase):
             self.container_uri = f"{storage_url.rstrip('/')}/{container_name}"
 
             self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
+            self.ekm_host = os.environ.get("EKM_PROXY_HOST")
+            self.ekm_certificate = os.environ.get("EKM_SERVER_CA_CERTIFICATE")
 
         else:
             self.managed_hsm_url = hsm_playback_url
             self.container_uri = container_playback_uri
             self.sas_token = playback_sas_token
+            self.ekm_host = playback_ekm_host
+            self.ekm_certificate = playback_server_ca_certificate
 
         use_pwsh = os.environ.get("AZURE_TEST_USE_PWSH_AUTH", "false")
         use_cli = os.environ.get("AZURE_TEST_USE_CLI_AUTH", "false")
@@ -156,6 +162,8 @@ class KeyVaultEkmClientPreparer(BaseClientPreparer):
     def __call__(self, fn):
         def _preparer(test_class, api_version, **kwargs):
             self._skip_if_not_configured(api_version)
+            kwargs["ekm_host"] = self.ekm_host
+            kwargs["ekm_certificate"] = self.ekm_certificate
             client = self.create_ekm_client(api_version=api_version, **kwargs)
 
             with client:
