@@ -167,15 +167,29 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         # Check that computed properties were properly sent to replaced container
         self.assertListEqual(new_computed_properties, replaced_collection.read()["computedProperties"])
 
-        # Test 1: Test first computed property
-        queried_items = list(
-            replaced_collection.query_items(query='Select * from c Where c.cp_upper = "GROUP2"',
-                                            partition_key="test"))
+        # Test 1: Test first computed property. Allow brief settle time after replace
+        # for the new computed-property index to be ready.
+        queried_items = []
+        for _ in range(10):
+            queried_items = list(
+                replaced_collection.query_items(query='Select * from c Where c.cp_upper = "GROUP2"',
+                                                partition_key="test"))
+            if len(queried_items) == 3:
+                break
+            time.sleep(1)
         self.assertEqual(len(queried_items), 3)
 
-        # Test 1 Negative: Test if using non-existent computed property name returns nothing
-        queried_items = list(
-            replaced_collection.query_items(query='Select * from c Where c.cp_lower = "group1"', partition_key="test"))
+        # Test 1 Negative: Test if using non-existent computed property name returns nothing.
+        # After a container replace the backend may take a moment to drop the old
+        # computed property index ("cp_lower" from before the replace), so retry briefly.
+        queried_items = []
+        for _ in range(10):
+            queried_items = list(
+                replaced_collection.query_items(query='Select * from c Where c.cp_lower = "group1"',
+                                                partition_key="test"))
+            if len(queried_items) == 0:
+                break
+            time.sleep(1)
         self.assertEqual(len(queried_items), 0)
 
         # Test 2: Test Second Computed Property
@@ -184,8 +198,14 @@ class TestComputedPropertiesQuery(unittest.TestCase):
         self.assertEqual(len(queried_items), 2)
 
         # Test 2 Negative: Test Str length using old computed properties name
-        queried_items = list(
-            replaced_collection.query_items(query='Select * from c Where c.cp_str_len = 9', partition_key="test"))
+        queried_items = []
+        for _ in range(10):
+            queried_items = list(
+                replaced_collection.query_items(query='Select * from c Where c.cp_str_len = 9',
+                                                partition_key="test"))
+            if len(queried_items) == 0:
+                break
+            time.sleep(1)
         self.assertEqual(len(queried_items), 0)
         self.created_db.delete_container(created_collection.id)
 

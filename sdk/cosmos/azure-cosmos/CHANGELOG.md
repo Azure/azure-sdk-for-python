@@ -1,5 +1,12 @@
 ## Release History
 
+### 4.14.7 (Unreleased)
+
+#### Bugs Fixed
+* Fixed `SELECT VALUE` aggregation classification across partitions: booleans are no longer treated as numeric aggregates, non-aggregate numeric projections are no longer merged, and `MIN`/`MAX` detection is now correct. See [PR 46692](https://github.com/Azure/azure-sdk-for-python/pull/46692)
+* Fixed a bug in `query_items(feed_range=...)` where pagination could return incorrect results after a partition split caused the supplied feed range to overlap multiple physical partitions. See [PR 46692](https://github.com/Azure/azure-sdk-for-python/pull/46692)
+* Fixed bug where unavailable regional endpoints were dropped from the routing list instead of being kept as fallback options. See [PR 45200](https://github.com/Azure/azure-sdk-for-python/pull/45200)
+
 ### 4.14.6 (2026-02-02)
 
 #### Bugs Fixed

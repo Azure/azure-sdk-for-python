@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
 import unittest
 import uuid
 import pytest
@@ -181,16 +182,30 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         container = await replaced_collection.read()
         assert new_computed_properties == container["computedProperties"]
 
+        # Give the backend a brief chance to complete computed-property indexing after replace.
+        queried_items = []
+        for _ in range(10):
+            queried_items = [q async for q in
+                             replaced_collection.query_items(query='Select * from c Where c.cp_upper = "GROUP2"',
+                                                            partition_key="test")]
+            if len(queried_items) == 3:
+                break
+            await asyncio.sleep(1)
+
         # Test 1: Test first computed property
-        queried_items = [q async for q in
-                         replaced_collection.query_items(query='Select * from c Where c.cp_upper = "GROUP2"',
-                                                        partition_key="test")]
         self.assertEqual(len(queried_items), 3)
 
-        # Test 1 Negative: Test if using non-existent computed property name returns nothing
-        queried_items = [q async for q in
-                         replaced_collection.query_items(query='Select * from c Where c.cp_lower = "group1"',
-                                                         partition_key="test")]
+        # Test 1 Negative: Test if using non-existent computed property name returns nothing.
+        # After a container replace the backend may take a moment to drop the old
+        # computed property index ("cp_lower" from before the replace), so retry briefly.
+        queried_items = []
+        for _ in range(10):
+            queried_items = [q async for q in
+                             replaced_collection.query_items(query='Select * from c Where c.cp_lower = "group1"',
+                                                             partition_key="test")]
+            if len(queried_items) == 0:
+                break
+            await asyncio.sleep(1)
         self.assertEqual(len(queried_items), 0)
 
         # Test 2: Test Second Computed Property
@@ -200,9 +215,14 @@ class TestComputedPropertiesQueryAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(queried_items), 2)
 
         # Test 2 Negative: Test Str length using old computed properties name
-        queried_items = [q async for q in
-                         replaced_collection.query_items(query='Select * from c Where c.cp_str_len = 9',
-                                                         partition_key="test")]
+        queried_items = []
+        for _ in range(10):
+            queried_items = [q async for q in
+                             replaced_collection.query_items(query='Select * from c Where c.cp_str_len = 9',
+                                                             partition_key="test")]
+            if len(queried_items) == 0:
+                break
+            await asyncio.sleep(1)
         self.assertEqual(len(queried_items), 0)
         await self.created_db.delete_container(created_collection.id)
 

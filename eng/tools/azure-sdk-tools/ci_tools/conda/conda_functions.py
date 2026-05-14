@@ -37,7 +37,7 @@ CONDA_ENV_NAME = "azure-build-env"
 
 CONDA_ENV_FILE = """name: azure-build-env
 channels:
-  - conda-forge
+  - https://prefix.dev/conda-forge
   - defaults
 dependencies:
   - python=3.10
@@ -294,7 +294,7 @@ def create_combined_sdist(
             [
                 os.path.join(config_assembled_folder, a)
                 for a in os.listdir(config_assembled_folder)
-                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
+                if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name.replace("-", "_") in a
             ]
         )
     )

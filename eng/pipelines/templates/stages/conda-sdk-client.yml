@@ -256,7 +256,7 @@ extends:
                       service: ml
                       in_batch: ${{ parameters.release_azure_ai_ml }}
                       channels:
-                        - conda-forge
+                        - https://prefix.dev/conda-forge
                       checkout:
                         - package: azure-ai-ml
                           version: 1.28.1

@@ -553,6 +553,115 @@ class TestSubpartitionCrud(unittest.TestCase):
             self.assertTrue("Cross partition query is required but disabled"
                             in error.message)
 
+    def test_partitioned_collection_full_partition_key_pagination_resume_subpartition(self):
+        created_db = self.databaseForTest
+        collection_id = 'test_partitioned_collection_full_partition_key_resume_MH ' + str(uuid.uuid4())
+        created_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
+        )
+
+        partition_key = ['CA', 'Oxnard', '93033']
+        total_items = 35
+        for i in range(total_items):
+            created_collection.create_item(
+                body={
+                    'id': 'full-pk-doc-{0:03d}'.format(i),
+                    'state': partition_key[0],
+                    'city': partition_key[1],
+                    'zipcode': partition_key[2]
+                }
+            )
+
+        query = 'SELECT c.id FROM c ORDER BY c.id'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key=partition_key,
+            max_item_count=10
+        )
+        pager = query_iterable.by_page()
+        first_page = list(pager.next())
+        self.assertGreater(len(first_page), 0)
+        token = pager.continuation_token
+        self.assertIsNotNone(token)
+
+        expected_remaining_ids = []
+        for page in pager:
+            expected_remaining_ids.extend(item['id'] for item in page)
+
+        resume_pager = query_iterable.by_page(token)
+        resumed_remaining_ids = []
+        for page in resume_pager:
+            resumed_remaining_ids.extend(item['id'] for item in page)
+
+        self.assertListEqual(expected_remaining_ids, resumed_remaining_ids)
+
+        baseline_ids = [
+            item['id'] for item in created_collection.query_items(query=query, partition_key=partition_key)
+        ]
+        fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
+        self.assertListEqual(baseline_ids, fetched_ids)
+
+        created_db.delete_container(created_collection.id)
+
+    def test_partitioned_collection_prefix_partition_key_pagination_resume_subpartition(self):
+        created_db = self.databaseForTest
+        collection_id = 'test_partitioned_collection_prefix_partition_key_resume_MH ' + str(uuid.uuid4())
+        created_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
+        )
+
+        for i in range(30):
+            created_collection.create_item(
+                body={
+                    'id': 'ca-doc-{0:03d}'.format(i),
+                    'state': 'CA',
+                    'city': 'city-{0}'.format(i % 5),
+                    'zipcode': 'zip-{0:03d}'.format(i)
+                }
+            )
+        for i in range(5):
+            created_collection.create_item(
+                body={
+                    'id': 'wa-doc-{0:03d}'.format(i),
+                    'state': 'WA',
+                    'city': 'city-{0}'.format(i),
+                    'zipcode': 'zip-{0:03d}'.format(i)
+                }
+            )
+
+        query = 'SELECT c.id FROM c ORDER BY c.id'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key=['CA'],
+            max_item_count=7
+        )
+        pager = query_iterable.by_page()
+        first_page = list(pager.next())
+        self.assertGreater(len(first_page), 0)
+        token = pager.continuation_token
+        self.assertIsNotNone(token)
+
+        expected_remaining_ids = []
+        for page in pager:
+            expected_remaining_ids.extend(item['id'] for item in page)
+
+        resume_pager = query_iterable.by_page(token)
+        resumed_remaining_ids = []
+        for page in resume_pager:
+            resumed_remaining_ids.extend(item['id'] for item in page)
+
+        self.assertListEqual(expected_remaining_ids, resumed_remaining_ids)
+
+        baseline_ids = [
+            item['id'] for item in created_collection.query_items(query=query, partition_key=['CA'])
+        ]
+        fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
+        self.assertListEqual(baseline_ids, fetched_ids)
+
+        created_db.delete_container(created_collection.id)
+
     def test_partition_key_range_overlap_subpartition(self):
         Id = 'id'
         MinInclusive = 'minInclusive'

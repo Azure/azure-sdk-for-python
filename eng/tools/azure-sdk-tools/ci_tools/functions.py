@@ -260,8 +260,12 @@ def discover_targeted_packages(
     for pkg in collected_packages:
         try:
             parsed_packages.append(ParsedSetup.from_path(pkg))
-        except RuntimeError as e:
-            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
+        except Exception as e:
+            # Some packages have setup.py files that import modules unavailable in the
+            # current environment (e.g. pkg_resources removed by setuptools>=80). Such
+            # packages should be omitted from the build/regression set rather than
+            # aborting discovery for the entire repo.
+            logging.error(f"Unable to parse metadata for package {pkg}, omitting from build. Reason: {e}")
             continue
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable

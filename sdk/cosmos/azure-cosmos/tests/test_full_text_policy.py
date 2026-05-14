@@ -11,6 +11,26 @@ import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
 
+def _assert_full_text_policy_matches(returned, expected):
+    """Service may augment the returned policy with extra fields (e.g. ``defaultSpec``).
+    Only assert the fields the caller actually specified are present and equal.
+    """
+    for key, value in expected.items():
+        assert returned.get(key) == value, (
+            f"fullTextPolicy field {key!r} mismatch: expected {value!r}, got {returned.get(key)!r}"
+        )
+
+
+def _assert_message_contains(message, *needles):
+    """Case-insensitive substring check tolerant of minor service message wording
+    changes (e.g. ``"Full Text Policy"`` -> ``"full-text policy"``,
+    ``abstract`` -> ``'abstract'``)."""
+    haystack = message.lower().replace("'", "").replace("-", " ")
+    for needle in needles:
+        n = needle.lower().replace("'", "").replace("-", " ")
+        assert n in haystack, f"expected {needle!r} in error message, got: {message!r}"
+
+
 @pytest.mark.cosmosSearchQuery
 class TestFullTextPolicy(unittest.TestCase):
     client: CosmosClient = None
@@ -54,8 +74,8 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
+        _assert_full_text_policy_matches(properties["fullTextPolicy"], full_text_policy)
         self.test_db.delete_container(created_container.id)
 
         # Create a container with a full text policy containing only default language
@@ -68,7 +88,7 @@ class TestFullTextPolicy(unittest.TestCase):
             full_text_policy=full_text_policy_no_paths,
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_paths
+        _assert_full_text_policy_matches(properties["fullTextPolicy"], full_text_policy_no_paths)
         self.test_db.delete_container(created_container.id)
 
         # Create a container with a full text policy with a given path containing only default language
@@ -86,7 +106,7 @@ class TestFullTextPolicy(unittest.TestCase):
             full_text_policy=full_text_policy_no_langs,
         )
         properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy_no_langs
+        _assert_full_text_policy_matches(properties["fullTextPolicy"], full_text_policy_no_langs)
         self.test_db.delete_container(created_container.id)
 
     def test_replace_full_text_container(self):
@@ -120,7 +140,7 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        _assert_full_text_policy_matches(properties["fullTextPolicy"], full_text_policy)
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['indexingPolicy'] != properties['indexingPolicy']
         self.test_db.delete_container(created_container.id)
@@ -133,7 +153,7 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         created_container_properties = created_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        _assert_full_text_policy_matches(properties["fullTextPolicy"], full_text_policy)
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
 
         # Replace the container with new policies
@@ -146,7 +166,7 @@ class TestFullTextPolicy(unittest.TestCase):
             indexing_policy=indexing_policy
         )
         properties = replaced_container.read()
-        assert properties["fullTextPolicy"] == full_text_policy
+        _assert_full_text_policy_matches(properties["fullTextPolicy"], full_text_policy)
         assert properties["indexingPolicy"]['fullTextIndexes'] == indexing_policy['fullTextIndexes']
         assert created_container_properties['fullTextPolicy'] != properties['fullTextPolicy']
         assert created_container_properties["indexingPolicy"] != properties["indexingPolicy"]
@@ -172,7 +192,7 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an invalid Path: abstract" in e.http_error_message
+            _assert_message_contains(e.http_error_message, "full text policy", "invalid path", "abstract")
 
         # Pass a full text policy with an unsupported default language
         full_text_policy_wrong_default = {
@@ -193,8 +213,7 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
-                   in e.http_error_message
+            _assert_message_contains(e.http_error_message, "full text policy", "unsupported language", "spa-SPA")
 
         # Pass a full text policy with an unsupported path language
         full_text_policy_wrong_default = {
@@ -215,8 +234,7 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for wrong supported language.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The Full Text Policy contains an unsupported language spa-SPA. Supported languages are:"\
-                   in e.http_error_message
+            _assert_message_contains(e.http_error_message, "full text policy", "unsupported language", "spa-SPA")
 
     def test_fail_create_full_text_indexing_policy(self):
         full_text_policy = {
@@ -245,8 +263,9 @@ class TestFullTextPolicy(unittest.TestCase):
             # pytest.fail("Container creation should have failed for lack of embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "The path of the Full Text Index /path does not match the path specified in the Full Text Policy"\
-                   in e.http_error_message
+            _assert_message_contains(
+                e.http_error_message, "full text index", "/path", "does not match", "full text policy"
+            )
 
         # Pass a full text indexing policy with a wrongly formatted path
         indexing_policy_wrong_path = {
@@ -264,7 +283,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for invalid path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Full-text index specification at index (0) contains invalid path" in e.http_error_message
+            _assert_message_contains(
+                e.http_error_message, "full text index", "invalid path"
+            )
 
         # Pass a full text indexing policy without a path field
         indexing_policy_no_path = {
@@ -282,7 +303,9 @@ class TestFullTextPolicy(unittest.TestCase):
             pytest.fail("Container creation should have failed for missing path.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Missing path in full-text index specification at index (0)" in e.http_error_message
+            _assert_message_contains(
+                e.http_error_message, "missing path", "full text index"
+            )
 
 
 if __name__ == '__main__':
