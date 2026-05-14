@@ -32,9 +32,6 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
-* TODO: Hosted Agents:
-  * Added Hosted Agent creation sample `sample_hosted_agent_create.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`. The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
-  * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
 * ADDED. NEED TO TES: Agent tools:
   * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
 

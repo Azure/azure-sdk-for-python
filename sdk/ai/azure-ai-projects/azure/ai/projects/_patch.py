@@ -102,7 +102,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
-    def get_openai_client(self, *, agent_name: Optional[str] = None, **kwargs: Any) -> OpenAI:
+    def get_openai_client(self, *, agent_name: Optional[str] = None, **kwargs: Any) -> OpenAI:  # pylint: disable=too-many-branches
         """Get an authenticated OpenAI client from the `openai` package.
 
         Keyword arguments are passed to the OpenAI client constructor.
