@@ -10,18 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AnalyzeDocumentsLROResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the response object returned by the analyze-documents long running task."""
-
-    PII_ENTITY_RECOGNITION_LRO_RESULTS = "PiiEntityRecognitionLROResults"
-    """PII entity recognition LRO results."""
-    EXTRACTIVE_SUMMARIZATION_LRO_RESULTS = "ExtractiveSummarizationLROResults"
-    """Extractive summarization LRO results."""
-    ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS = "AbstractiveSummarizationLROResults"
-    """Abstractive summarization LRO results."""
-
-
-class AnalyzeDocumentsLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AnalyzeDocumentsOperationActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of the long running analyze documents tasks supported."""
 
     PII_ENTITY_RECOGNITION = "PiiEntityRecognition"
@@ -30,6 +19,17 @@ class AnalyzeDocumentsLROTaskKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Extractive summarization task."""
     ABSTRACTIVE_SUMMARIZATION = "AbstractiveSummarization"
     """Abstractive summarization task."""
+
+
+class AnalyzeDocumentsOperationResultsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the response object returned by the analyze-documents long running task."""
+
+    PII_ENTITY_RECOGNITION_LRO_RESULTS = "PiiEntityRecognitionLROResults"
+    """PII entity recognition LRO results."""
+    EXTRACTIVE_SUMMARIZATION_LRO_RESULTS = "ExtractiveSummarizationLROResults"
+    """Extractive summarization LRO results."""
+    ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS = "AbstractiveSummarizationLROResults"
+    """Abstractive summarization LRO results."""
 
 
 class DocumentLocationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):

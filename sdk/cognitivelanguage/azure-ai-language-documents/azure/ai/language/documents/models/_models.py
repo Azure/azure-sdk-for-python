@@ -13,8 +13,8 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
-    AnalyzeDocumentsLROResultsKind,
-    AnalyzeDocumentsLROTaskKind,
+    AnalyzeDocumentsOperationActionKind,
+    AnalyzeDocumentsOperationResultsKind,
     DocumentLocationKind,
     RedactionPolicyKind,
 )
@@ -23,12 +23,94 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AnalyzeDocumentsLROResult(_Model):
+class AnalyzeDocumentsOperationAction(_Model):
+    """The long running task to be performed by the service on the input documents.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AbstractiveSummarizationOperationAction, ExtractiveSummarizationOperationAction,
+    PiiEntityRecognitionAction
+
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: The kind of task to perform. Required. Known values are: "PiiEntityRecognition",
+     "ExtractiveSummarization", and "AbstractiveSummarization".
+    :vartype kind: str or ~azure.ai.language.documents.models.AnalyzeDocumentsOperationActionKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """task name."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of task to perform. Required. Known values are: \"PiiEntityRecognition\",
+     \"ExtractiveSummarization\", and \"AbstractiveSummarization\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AbstractiveSummarizationOperationAction(
+    AnalyzeDocumentsOperationAction, discriminator="AbstractiveSummarization"
+):
+    """An object representing the task definition for an Abstractive Summarization task.
+
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: The Abstractive Summarization kind of the long running task. Required. Abstractive
+     summarization task.
+    :vartype kind: str or ~azure.ai.language.documents.models.ABSTRACTIVE_SUMMARIZATION
+    :ivar parameters: Parameters for the Abstractive Summarization task. Required.
+    :vartype parameters: ~azure.ai.language.documents.models.AbstractiveSummarizationTaskParameters
+    """
+
+    kind: Literal[AnalyzeDocumentsOperationActionKind.ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Abstractive Summarization kind of the long running task. Required. Abstractive
+     summarization task."""
+    parameters: "_models.AbstractiveSummarizationTaskParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters for the Abstractive Summarization task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.AbstractiveSummarizationTaskParameters",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeDocumentsOperationActionKind.ABSTRACTIVE_SUMMARIZATION  # type: ignore
+
+
+class AnalyzeDocumentsOperationResult(_Model):
     """Contains the AnalyzeDocuments long running operation result object.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AbstractiveSummarizationLROResult, ExtractiveSummarizationLROResult,
-    PiiEntityRecognitionLROResult
+    AbstractiveSummarizationOperationResult, ExtractiveSummarizationOperationResult,
+    PiiEntityRecognitionOperationResult
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
     :vartype last_update_date_time: ~datetime.datetime
@@ -40,7 +122,7 @@ class AnalyzeDocumentsLROResult(_Model):
     :vartype task_name: str
     :ivar kind: Kind of the task. Required. Known values are: "PiiEntityRecognitionLROResults",
      "ExtractiveSummarizationLROResults", and "AbstractiveSummarizationLROResults".
-    :vartype kind: str or ~azure.ai.language.documents.models.AnalyzeDocumentsLROResultsKind
+    :vartype kind: str or ~azure.ai.language.documents.models.AnalyzeDocumentsOperationResultsKind
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -79,7 +161,9 @@ class AnalyzeDocumentsLROResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AbstractiveSummarizationLROResult(AnalyzeDocumentsLROResult, discriminator="AbstractiveSummarizationLROResults"):
+class AbstractiveSummarizationOperationResult(
+    AnalyzeDocumentsOperationResult, discriminator="AbstractiveSummarizationLROResults"
+):
     """An object representing the results for an Abstractive Summarization task.
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
@@ -96,7 +180,7 @@ class AbstractiveSummarizationLROResult(AnalyzeDocumentsLROResult, discriminator
     :vartype results: ~azure.ai.language.documents.models.AnalyzeDocumentsResult
     """
 
-    kind: Literal[AnalyzeDocumentsLROResultsKind.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeDocumentsOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. Abstractive summarization LRO results."""
     results: "_models.AnalyzeDocumentsResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Results of the task. Required."""
@@ -120,86 +204,7 @@ class AbstractiveSummarizationLROResult(AnalyzeDocumentsLROResult, discriminator
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = AnalyzeDocumentsLROResultsKind.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS  # type: ignore
-
-
-class AnalyzeDocumentsLROTask(_Model):
-    """The long running task to be performed by the service on the input documents.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AbstractiveSummarizationLROTask, ExtractiveSummarizationLROTask, PiiLROTask
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The kind of task to perform. Required. Known values are: "PiiEntityRecognition",
-     "ExtractiveSummarization", and "AbstractiveSummarization".
-    :vartype kind: str or ~azure.ai.language.documents.models.AnalyzeDocumentsLROTaskKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
-    """task name."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of task to perform. Required. Known values are: \"PiiEntityRecognition\",
-     \"ExtractiveSummarization\", and \"AbstractiveSummarization\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AbstractiveSummarizationLROTask(AnalyzeDocumentsLROTask, discriminator="AbstractiveSummarization"):
-    """An object representing the task definition for an Abstractive Summarization task.
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task.
-    :vartype kind: str or ~azure.ai.language.documents.models.ABSTRACTIVE_SUMMARIZATION
-    :ivar parameters: Parameters for the Abstractive Summarization task. Required.
-    :vartype parameters: ~azure.ai.language.documents.models.AbstractiveSummarizationTaskParameters
-    """
-
-    kind: Literal[AnalyzeDocumentsLROTaskKind.ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The Abstractive Summarization kind of the long running task. Required. Abstractive
-     summarization task."""
-    parameters: "_models.AbstractiveSummarizationTaskParameters" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Parameters for the Abstractive Summarization task. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        parameters: "_models.AbstractiveSummarizationTaskParameters",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = AnalyzeDocumentsLROTaskKind.ABSTRACTIVE_SUMMARIZATION  # type: ignore
+        self.kind = AnalyzeDocumentsOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS  # type: ignore
 
 
 class AbstractiveSummarizationTaskParameters(_Model):
@@ -278,7 +283,7 @@ class AnalyzeDocumentJobsInput(_Model):
     :ivar analysis_input: Contains the input to be analyzed. Required.
     :vartype analysis_input: ~azure.ai.language.documents.models.MultiLanguageAnalysisInput
     :ivar tasks: List of tasks to be performed as part of the LRO. Required.
-    :vartype tasks: list[~azure.ai.language.documents.models.AnalyzeDocumentsLROTask]
+    :vartype tasks: list[~azure.ai.language.documents.models.AnalyzeDocumentsOperationAction]
     :ivar default_language: Default language to use for records.
     :vartype default_language: str
     """
@@ -291,7 +296,7 @@ class AnalyzeDocumentJobsInput(_Model):
         name="analysisInput", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the input to be analyzed. Required."""
-    tasks: list["_models.AnalyzeDocumentsLROTask"] = rest_field(
+    tasks: list["_models.AnalyzeDocumentsOperationAction"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of tasks to be performed as part of the LRO. Required."""
@@ -305,7 +310,7 @@ class AnalyzeDocumentJobsInput(_Model):
         self,
         *,
         analysis_input: "_models.MultiLanguageAnalysisInput",
-        tasks: list["_models.AnalyzeDocumentsLROTask"],
+        tasks: list["_models.AnalyzeDocumentsOperationAction"],
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
     ) -> None: ...
@@ -1388,51 +1393,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtractiveSummarizationLROResult(AnalyzeDocumentsLROResult, discriminator="ExtractiveSummarizationLROResults"):
-    """An object representing the results for an Extractive Summarization task.
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.documents.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: Kind of the task. Required. Extractive summarization LRO results.
-    :vartype kind: str or ~azure.ai.language.documents.models.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS
-    :ivar results: Results of the document task. Required.
-    :vartype results: ~azure.ai.language.documents.models.AnalyzeDocumentsResult
-    """
-
-    kind: Literal[AnalyzeDocumentsLROResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Kind of the task. Required. Extractive summarization LRO results."""
-    results: "_models.AnalyzeDocumentsResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Results of the document task. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.AnalyzeDocumentsResult",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = AnalyzeDocumentsLROResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS  # type: ignore
-
-
-class ExtractiveSummarizationLROTask(AnalyzeDocumentsLROTask, discriminator="ExtractiveSummarization"):
+class ExtractiveSummarizationOperationAction(AnalyzeDocumentsOperationAction, discriminator="ExtractiveSummarization"):
     """An object representing the task definition for an Extractive Summarization task.
 
     :ivar task_name: task name.
@@ -1444,7 +1405,7 @@ class ExtractiveSummarizationLROTask(AnalyzeDocumentsLROTask, discriminator="Ext
     :vartype parameters: ~azure.ai.language.documents.models.ExtractiveSummarizationTaskParameters
     """
 
-    kind: Literal[AnalyzeDocumentsLROTaskKind.EXTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeDocumentsOperationActionKind.EXTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Extractive Summarization kind of the long running task. Required. Extractive summarization
      task."""
     parameters: Optional["_models.ExtractiveSummarizationTaskParameters"] = rest_field(
@@ -1469,7 +1430,53 @@ class ExtractiveSummarizationLROTask(AnalyzeDocumentsLROTask, discriminator="Ext
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = AnalyzeDocumentsLROTaskKind.EXTRACTIVE_SUMMARIZATION  # type: ignore
+        self.kind = AnalyzeDocumentsOperationActionKind.EXTRACTIVE_SUMMARIZATION  # type: ignore
+
+
+class ExtractiveSummarizationOperationResult(
+    AnalyzeDocumentsOperationResult, discriminator="ExtractiveSummarizationLROResults"
+):
+    """An object representing the results for an Extractive Summarization task.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.documents.models.State
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: Kind of the task. Required. Extractive summarization LRO results.
+    :vartype kind: str or ~azure.ai.language.documents.models.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS
+    :ivar results: Results of the document task. Required.
+    :vartype results: ~azure.ai.language.documents.models.AnalyzeDocumentsResult
+    """
+
+    kind: Literal[AnalyzeDocumentsOperationResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Extractive summarization LRO results."""
+    results: "_models.AnalyzeDocumentsResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Results of the document task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.State"],
+        results: "_models.AnalyzeDocumentsResult",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeDocumentsOperationResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS  # type: ignore
 
 
 class ExtractiveSummarizationTaskParameters(_Model):
@@ -1764,51 +1771,7 @@ class NoMaskPolicy(BaseRedactionPolicy, discriminator="noMask"):
         self.policy_kind = RedactionPolicyKind.NO_MASK  # type: ignore
 
 
-class PiiEntityRecognitionLROResult(AnalyzeDocumentsLROResult, discriminator="PiiEntityRecognitionLROResults"):
-    """Contains the PII LRO results.
-
-    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
-    :vartype last_update_date_time: ~datetime.datetime
-    :ivar status: The status of the task at the mentioned last update time. Required. Known values
-     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
-     "cancelling".
-    :vartype status: str or ~azure.ai.language.documents.models.State
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The kind of the task. Required. PII entity recognition LRO results.
-    :vartype kind: str or ~azure.ai.language.documents.models.PII_ENTITY_RECOGNITION_LRO_RESULTS
-    :ivar results: The list of pii document results. Required.
-    :vartype results: ~azure.ai.language.documents.models.AnalyzeDocumentsResult
-    """
-
-    kind: Literal[AnalyzeDocumentsLROResultsKind.PII_ENTITY_RECOGNITION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind of the task. Required. PII entity recognition LRO results."""
-    results: "_models.AnalyzeDocumentsResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of pii document results. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        last_update_date_time: datetime.datetime,
-        status: Union[str, "_models.State"],
-        results: "_models.AnalyzeDocumentsResult",
-        task_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = AnalyzeDocumentsLROResultsKind.PII_ENTITY_RECOGNITION_LRO_RESULTS  # type: ignore
-
-
-class PiiLROTask(AnalyzeDocumentsLROTask, discriminator="PiiEntityRecognition"):
+class PiiEntityRecognitionAction(AnalyzeDocumentsOperationAction, discriminator="PiiEntityRecognition"):
     """Contains the analyze text PIIEntityRecognition LRO task.
 
     :ivar task_name: task name.
@@ -1819,7 +1782,7 @@ class PiiLROTask(AnalyzeDocumentsLROTask, discriminator="PiiEntityRecognition"):
     :vartype parameters: ~azure.ai.language.documents.models.PiiTaskParameters
     """
 
-    kind: Literal[AnalyzeDocumentsLROTaskKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalyzeDocumentsOperationActionKind.PII_ENTITY_RECOGNITION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Kind of the task. Required. PII entity recognition task."""
     parameters: Optional["_models.PiiTaskParameters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1843,7 +1806,53 @@ class PiiLROTask(AnalyzeDocumentsLROTask, discriminator="PiiEntityRecognition"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = AnalyzeDocumentsLROTaskKind.PII_ENTITY_RECOGNITION  # type: ignore
+        self.kind = AnalyzeDocumentsOperationActionKind.PII_ENTITY_RECOGNITION  # type: ignore
+
+
+class PiiEntityRecognitionOperationResult(
+    AnalyzeDocumentsOperationResult, discriminator="PiiEntityRecognitionLROResults"
+):
+    """Contains the PII LRO results.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.documents.models.State
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: The kind of the task. Required. PII entity recognition LRO results.
+    :vartype kind: str or ~azure.ai.language.documents.models.PII_ENTITY_RECOGNITION_LRO_RESULTS
+    :ivar results: The list of pii document results. Required.
+    :vartype results: ~azure.ai.language.documents.models.AnalyzeDocumentsResult
+    """
+
+    kind: Literal[AnalyzeDocumentsOperationResultsKind.PII_ENTITY_RECOGNITION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The kind of the task. Required. PII entity recognition LRO results."""
+    results: "_models.AnalyzeDocumentsResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The list of pii document results. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.State"],
+        results: "_models.AnalyzeDocumentsResult",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeDocumentsOperationResultsKind.PII_ENTITY_RECOGNITION_LRO_RESULTS  # type: ignore
 
 
 class PiiTaskParameters(_Model):
@@ -2071,7 +2080,8 @@ class Tasks(_Model):
     :ivar total: Count of total tasks. Required.
     :vartype total: int
     :ivar items_property: Enumerable of Analyze documents job results.
-    :vartype items_property: list[~azure.ai.language.documents.models.AnalyzeDocumentsLROResult]
+    :vartype items_property:
+     list[~azure.ai.language.documents.models.AnalyzeDocumentsOperationResult]
     """
 
     completed: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2082,7 +2092,7 @@ class Tasks(_Model):
     """Count of inprogress tasks. Required."""
     total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Count of total tasks. Required."""
-    items_property: Optional[list["_models.AnalyzeDocumentsLROResult"]] = rest_field(
+    items_property: Optional[list["_models.AnalyzeDocumentsOperationResult"]] = rest_field(
         name="items", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="items"
     )
     """Enumerable of Analyze documents job results."""
@@ -2095,7 +2105,7 @@ class Tasks(_Model):
         failed: int,
         in_progress: int,
         total: int,
-        items_property: Optional[list["_models.AnalyzeDocumentsLROResult"]] = None,
+        items_property: Optional[list["_models.AnalyzeDocumentsOperationResult"]] = None,
     ) -> None: ...
 
     @overload

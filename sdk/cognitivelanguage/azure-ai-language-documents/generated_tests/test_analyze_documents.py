@@ -34,7 +34,7 @@ class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
                         {"id": "str", "source": "document_location", "target": "document_location", "language": "str"}
                     ]
                 },
-                "tasks": ["analyze_documents_lro_task"],
+                "tasks": ["analyze_documents_operation_action"],
                 "defaultLanguage": "str",
                 "displayName": "str",
             },
