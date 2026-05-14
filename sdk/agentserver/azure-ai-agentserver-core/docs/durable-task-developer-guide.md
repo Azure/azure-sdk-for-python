@@ -13,7 +13,7 @@
 - [Lifecycle Automation](#lifecycle-automation)
   - [State Diagram](#state-diagram)
   - [Entry Mode Decision Table](#entry-mode-decision-table)
-  - [.run() vs .start() vs .get() vs .list()](#run-vs-start-vs-get-vs-list)
+  - [.run() vs .start() vs .get() vs .list() vs .get_active_run()](#run-vs-start-vs-get-vs-list-vs-get_active_run)
 - [TaskContext](#taskcontext)
   - [Properties Reference](#properties-reference)
   - [Branching on Entry Mode](#branching-on-entry-mode)
@@ -212,7 +212,7 @@ the pending queue, re-entering the function with `entry_mode="resumed"` and
 A task is considered **stale** when its last update is older than `stale_timeout`
 (default: 300 seconds). This means the previous execution likely crashed.
 
-### .run() vs .start() vs .get() vs .list()
+### .run() vs .start() vs .get() vs .list() vs .get_active_run()
 
 | Method | Blocks? | Returns | Use When |
 |--------|---------|---------|----------|
@@ -220,6 +220,7 @@ A task is considered **stale** when its last update is older than `stale_timeout
 | `.start()` | No — returns immediately | `TaskRun[Output]` | You want a handle for polling/streaming |
 | `.get()` | No — reads from store | `TaskInfo \| None` | You want to query task state without executing |
 | `.list()` | No — reads from store | `list[TaskInfo]` | You want all tasks for this function |
+| `.get_active_run()` | No — in-memory lookup | `TaskRun[Output] \| None` | You want a stream handle for a task already running in this process |
 
 `.run()` and `.start()` follow the same lifecycle rules. The only difference is
 whether you wait for the result or get a handle back.
@@ -261,6 +262,17 @@ all_tasks = await greet.list()
 > `.list()` is automatically scoped — each decorated function only sees tasks it
 > created. The `name` option on `@durable_task` is the key that determines which
 > tasks belong to this function.
+
+`.get_active_run()` is an in-memory lookup — it returns a `TaskRun` handle for
+a task that is currently executing in this process. Unlike `.get()`, it does not
+read from the store and only works for tasks active in the current process:
+
+```python
+run = greet.get_active_run("greet-bob")
+if run is not None:
+    async for chunk in run:
+        print(chunk, end="")
+```
 
 ---
 
