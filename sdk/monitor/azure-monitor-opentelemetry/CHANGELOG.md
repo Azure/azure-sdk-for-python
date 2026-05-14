@@ -1,6 +1,16 @@
 # Release History
 
-## 1.8.8 (Unreleased)
+## 1.8.9 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.8.8 (2026-05-14)
 
 ### Features Added
 - Move `AZURE_MONITOR_DISTRO_VERSION` env var assignment before exporter imports
@@ -14,8 +24,6 @@
 ### Breaking Changes
 - Dropped support for Python 3.9. This package now supports Python 3.10+. [Follows upstream otel dropping support](https://github.com/open-telemetry/opentelemetry-python/pull/5076)
   ([#46695](https://github.com/Azure/azure-sdk-for-python/pull/46695))
-
-### Bugs Fixed
 
 ### Other Changes
 - Remove deprecated events packages.
