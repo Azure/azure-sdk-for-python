@@ -3,6 +3,7 @@
 ### 4.16.0b3 (Unreleased)
 
 #### Features Added
+* Added the hedging-detection API: three accessor methods (`is_hedging_started()`, `get_requested_regions()`, `get_responded_regions()`) on `CosmosDict`, `CosmosList`, `CosmosItemPaged`, `CosmosAsyncItemPaged`, `CosmosHttpResponseError`, `CosmosBatchOperationError`, and `CosmosClientTimeoutError`, plus the new public types `RequestedRegion` and `RequestedRegionReason`. Lets callers detect post-hoc whether a cross-region hedge was dispatched, which regions were dispatched to (with reason), and which regions responded. `RequestedRegionReason` is a non-exhaustive enum — unknown values map to `UNKNOWN` via `_missing_` for forward compatibility. Cross-SDK; matches the same shape shipped by the .NET / Java SDKs. See [issue 46899](https://github.com/Azure/azure-sdk-for-python/issues/46899).
 
 #### Breaking Changes
 
