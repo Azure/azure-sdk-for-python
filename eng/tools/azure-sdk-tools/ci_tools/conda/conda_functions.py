@@ -37,7 +37,7 @@ CONDA_ENV_NAME = "azure-build-env"
 
 CONDA_ENV_FILE = """name: azure-build-env
 channels:
-  - conda-forge
+  - https://prefix.dev/conda-forge
   - defaults
 dependencies:
   - python=3.10
