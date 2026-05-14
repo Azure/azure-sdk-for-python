@@ -151,6 +151,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # First, check whether regenerated content actually differs from what
+          # is already on disk (relative to the workflow's HEAD).
           git add eng/tools/emitter/gen/
           if git diff --cached --quiet; then
             echo "No changes to commit"
@@ -158,7 +160,27 @@ jobs:
             exit 0
           fi
 
-          git checkout -B "$BRANCH"
+          # Branch off origin/main (NOT the current HEAD) so the auto branch
+          # never contains unrelated commits from the branch that triggered
+          # the workflow. In particular this avoids carrying changes to
+          # .github/workflows/*, which GITHUB_TOKEN is not allowed to push
+          # (missing `workflows` permission).
+          git fetch --no-tags --depth=1 origin main
+          git checkout -B "$BRANCH" origin/main
+
+          # Re-apply just the regenerated gen/ tree on top of origin/main.
+          # HEAD@{1} is the workflow's original HEAD before the checkout above.
+          git checkout HEAD@{1} -- eng/tools/emitter/gen
+          git add eng/tools/emitter/gen/
+
+          # If origin/main already matches the regenerated output, there is
+          # nothing to push.
+          if git diff --cached --quiet; then
+            echo "No changes vs origin/main"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           git commit -m "[typespec-python] Regenerate tests from ${SOURCE_LABEL}"
           git push origin "$BRANCH" --force
           echo "has_changes=true" >> $GITHUB_OUTPUT
