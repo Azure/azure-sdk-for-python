@@ -30,9 +30,7 @@ USAGE:
 import os
 import time
 from pprint import pprint
-
 from dotenv import load_dotenv
-
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
@@ -213,7 +211,7 @@ def main() -> None:  # pylint: disable=too-many-locals
         )
 
         print("Eval Run created")
-        # pprint(eval_run_object)
+        pprint(eval_run_object)
 
         print("Get Eval Run by Id")
         eval_run_response = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
