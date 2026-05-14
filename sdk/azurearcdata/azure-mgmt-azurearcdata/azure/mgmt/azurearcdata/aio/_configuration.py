@@ -31,8 +31,8 @@ class AzureArcDataManagementClientConfiguration:  # pylint: disable=too-many-ins
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2021-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -43,7 +43,7 @@ class AzureArcDataManagementClientConfiguration:  # pylint: disable=too-many-ins
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2021-11-01")
+        api_version: str = kwargs.pop("api_version", "2022-03-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

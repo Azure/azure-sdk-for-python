@@ -47,7 +47,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +73,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +103,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,7 +134,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -168,7 +168,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -199,7 +199,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -553,7 +553,7 @@ class SqlServerInstancesOperations:
 
         :param resource_group_name: The name of the Azure resource group. Required.
         :type resource_group_name: str
-        :param sql_server_instance_name: The name of SQL Server Instance. Required.
+        :param sql_server_instance_name: Name of SQL Server Instance. Required.
         :type sql_server_instance_name: str
         :param sql_server_instance: The SQL Server Instance to be created or updated. Required.
         :type sql_server_instance: ~azure.mgmt.azurearcdata.models.SqlServerInstance
@@ -580,7 +580,7 @@ class SqlServerInstancesOperations:
 
         :param resource_group_name: The name of the Azure resource group. Required.
         :type resource_group_name: str
-        :param sql_server_instance_name: The name of SQL Server Instance. Required.
+        :param sql_server_instance_name: Name of SQL Server Instance. Required.
         :type sql_server_instance_name: str
         :param sql_server_instance: The SQL Server Instance to be created or updated. Required.
         :type sql_server_instance: IO[bytes]
@@ -605,7 +605,7 @@ class SqlServerInstancesOperations:
 
         :param resource_group_name: The name of the Azure resource group. Required.
         :type resource_group_name: str
-        :param sql_server_instance_name: The name of SQL Server Instance. Required.
+        :param sql_server_instance_name: Name of SQL Server Instance. Required.
         :type sql_server_instance_name: str
         :param sql_server_instance: The SQL Server Instance to be created or updated. Is either a
          SqlServerInstance type or a IO[bytes] type. Required.
@@ -724,7 +724,7 @@ class SqlServerInstancesOperations:
 
         :param resource_group_name: The name of the Azure resource group. Required.
         :type resource_group_name: str
-        :param sql_server_instance_name: The name of SQL Server Instance. Required.
+        :param sql_server_instance_name: Name of SQL Server Instance. Required.
         :type sql_server_instance_name: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -784,7 +784,7 @@ class SqlServerInstancesOperations:
 
         :param resource_group_name: The name of the Azure resource group. Required.
         :type resource_group_name: str
-        :param sql_server_instance_name: Name of sqlServerInstance. Required.
+        :param sql_server_instance_name: Name of SQL Server Instance. Required.
         :type sql_server_instance_name: str
         :param parameters: The SQL Server Instance. Required.
         :type parameters: ~azure.mgmt.azurearcdata.models.SqlServerInstanceUpdate
@@ -810,7 +810,7 @@ class SqlServerInstancesOperations:
 
         :param resource_group_name: The name of the Azure resource group. Required.
         :type resource_group_name: str
-        :param sql_server_instance_name: Name of sqlServerInstance. Required.
+        :param sql_server_instance_name: Name of SQL Server Instance. Required.
         :type sql_server_instance_name: str
         :param parameters: The SQL Server Instance. Required.
         :type parameters: IO[bytes]
@@ -834,7 +834,7 @@ class SqlServerInstancesOperations:
 
         :param resource_group_name: The name of the Azure resource group. Required.
         :type resource_group_name: str
-        :param sql_server_instance_name: Name of sqlServerInstance. Required.
+        :param sql_server_instance_name: Name of SQL Server Instance. Required.
         :type sql_server_instance_name: str
         :param parameters: The SQL Server Instance. Is either a SqlServerInstanceUpdate type or a
          IO[bytes] type. Required.

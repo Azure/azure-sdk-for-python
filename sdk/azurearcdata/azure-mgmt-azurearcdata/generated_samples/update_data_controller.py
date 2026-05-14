@@ -31,14 +31,14 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.data_controllers.patch_data_controller(
+    response = client.data_controllers.begin_patch_data_controller(
         resource_group_name="testrg",
         data_controller_name="testdataController1",
         data_controller_resource={"tags": {"mytag": "myval"}},
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/stable/2021-11-01/examples/UpdateDataController.json
+# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/preview/2022-03-01-preview/examples/UpdateDataController.json
 if __name__ == "__main__":
     main()

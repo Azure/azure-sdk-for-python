@@ -14,14 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureArcDataManagementSqlServerInstancesOperations(AzureMgmtRecordedTestCase):
+class TestAzureArcDataManagementActiveDirectoryConnectorsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(AzureArcDataManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sql_server_instances_list(self, resource_group):
-        response = self.client.sql_server_instances.list(
+    def test_active_directory_connectors_list(self, resource_group):
+        response = self.client.active_directory_connectors.list(
+            resource_group_name=resource_group.name,
+            data_controller_name="str",
             api_version="2022-03-01-preview",
         )
         result = [r for r in response]
@@ -30,57 +32,37 @@ class TestAzureArcDataManagementSqlServerInstancesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sql_server_instances_list_by_resource_group(self, resource_group):
-        response = self.client.sql_server_instances.list_by_resource_group(
+    def test_active_directory_connectors_begin_create(self, resource_group):
+        response = self.client.active_directory_connectors.begin_create(
             resource_group_name=resource_group.name,
-            api_version="2022-03-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_instances_get(self, resource_group):
-        response = self.client.sql_server_instances.get(
-            resource_group_name=resource_group.name,
-            sql_server_instance_name="str",
-            api_version="2022-03-01-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sql_server_instances_begin_create(self, resource_group):
-        response = self.client.sql_server_instances.begin_create(
-            resource_group_name=resource_group.name,
-            sql_server_instance_name="str",
-            sql_server_instance={
-                "location": "str",
+            data_controller_name="str",
+            active_directory_connector_name="str",
+            active_directory_connector_resource={
+                "properties": {
+                    "spec": {
+                        "activeDirectory": {
+                            "domainControllers": {
+                                "primaryDomainController": {"hostname": "str"},
+                                "secondaryDomainControllers": [{"hostname": "str"}],
+                            },
+                            "realm": "str",
+                            "netbiosDomainName": "str",
+                            "ouDistinguishedName": "str",
+                            "serviceAccountProvisioning": "manual",
+                        },
+                        "dns": {
+                            "nameserverIPAddresses": ["str"],
+                            "domainName": "str",
+                            "preferK8sDnsForPtrLookups": True,
+                            "replicas": 1,
+                        },
+                    },
+                    "domainServiceAccountLoginInformation": {"password": "str", "username": "str"},
+                    "provisioningState": "str",
+                    "status": {"lastUpdateTime": "str", "observedGeneration": 0, "state": "str"},
+                },
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "containerResourceId": "str",
-                    "status": "str",
-                    "azureDefenderStatus": "str",
-                    "azureDefenderStatusLastUpdated": "2020-02-20 00:00:00",
-                    "collation": "str",
-                    "createTime": "str",
-                    "currentVersion": "str",
-                    "edition": "str",
-                    "hostType": "str",
-                    "instanceName": "str",
-                    "licenseType": "str",
-                    "patchLevel": "str",
-                    "productId": "str",
-                    "provisioningState": "str",
-                    "tcpDynamicPorts": "str",
-                    "tcpStaticPorts": "str",
-                    "vCore": "str",
-                    "version": "str",
-                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -89,7 +71,6 @@ class TestAzureArcDataManagementSqlServerInstancesOperations(AzureMgmtRecordedTe
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
-                "tags": {"str": "str"},
                 "type": "str",
             },
             api_version="2022-03-01-preview",
@@ -100,10 +81,11 @@ class TestAzureArcDataManagementSqlServerInstancesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sql_server_instances_begin_delete(self, resource_group):
-        response = self.client.sql_server_instances.begin_delete(
+    def test_active_directory_connectors_begin_delete(self, resource_group):
+        response = self.client.active_directory_connectors.begin_delete(
             resource_group_name=resource_group.name,
-            sql_server_instance_name="str",
+            data_controller_name="str",
+            active_directory_connector_name="str",
             api_version="2022-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
@@ -112,11 +94,11 @@ class TestAzureArcDataManagementSqlServerInstancesOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_sql_server_instances_update(self, resource_group):
-        response = self.client.sql_server_instances.update(
+    def test_active_directory_connectors_get(self, resource_group):
+        response = self.client.active_directory_connectors.get(
             resource_group_name=resource_group.name,
-            sql_server_instance_name="str",
-            parameters={"tags": {"str": "str"}},
+            data_controller_name="str",
+            active_directory_connector_name="str",
             api_version="2022-03-01-preview",
         )
 
