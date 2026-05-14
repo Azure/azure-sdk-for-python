@@ -32,6 +32,8 @@ def add_sanitizers(test_proxy):
     storage_url = os.environ.get("BLOB_STORAGE_URL", "https://Sanitized.blob.core.windows.net")
     client_id = os.environ.get("KEYVAULT_CLIENT_ID", "service-principal-id")
     sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN", "fake-sas")
+    ekm_host = os.environ.get("EKM_PROXY_HOST", "fake-ekm-host")
+    ekm_certificate = os.environ.get("EKM_SERVER_CA_CERTIFICATE", "fake-server-ca-certificate")
 
     add_general_string_sanitizer(target=azure_keyvault_url, value="https://Sanitized.vault.azure.net")
     add_general_string_sanitizer(target=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
@@ -40,6 +42,8 @@ def add_sanitizers(test_proxy):
     add_general_string_sanitizer(target=azure_attestation_uri, value="https://Sanitized.azurewebsites.net")
     add_general_string_sanitizer(target=storage_url, value="https://Sanitized.blob.core.windows.net")
     add_general_string_sanitizer(target=sas_token, value="fake-sas")
+    add_general_string_sanitizer(target=ekm_host, value="fake-ekm-host")
+    add_general_string_sanitizer(target=ekm_certificate, value="fake-server-ca-certificate")
     add_general_string_sanitizer(target=client_id, value="service-principal-id")
     # Sanitize API versions of `azure-keyvault-keys` requests
     add_uri_regex_sanitizer(
