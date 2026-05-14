@@ -42,13 +42,13 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_analyze_documents_analyze_documents_job_status_request(  # pylint: disable=name-too-long
+def build_analyze_documents_get_job_state_request(  # pylint: disable=name-too-long
     job_id: str,
     *,
     show_stats: Optional[bool] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
-    **kwargs: Any,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -79,9 +79,7 @@ def build_analyze_documents_analyze_documents_job_status_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_analyze_documents_analyze_documents_submit_job_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_analyze_documents_submit_job_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -100,7 +98,7 @@ def build_analyze_documents_analyze_documents_submit_job_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_analyze_documents_analyze_documents_cancel_job_request(  # pylint: disable=name-too-long
+def build_analyze_documents_cancel_job_request(  # pylint: disable=name-too-long
     job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -125,14 +123,14 @@ class _AnalyzeDocumentsClientOperationsMixin(
 ):
 
     @distributed_trace
-    def analyze_documents_job_status(
+    def get_job_state(
         self,
         job_id: str,
         *,
         show_stats: Optional[bool] = None,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.AnalyzeDocumentsJobState:
         """Get analysis status and results.
 
@@ -169,7 +167,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
         cls: ClsType[_models.AnalyzeDocumentsJobState] = kwargs.pop("cls", None)
 
-        _request = build_analyze_documents_analyze_documents_job_status_request(
+        _request = build_analyze_documents_get_job_state_request(
             job_id=job_id,
             show_stats=show_stats,
             top=top,
@@ -214,7 +212,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    def _analyze_documents_submit_job_initial(
+    def _submit_job_initial(
         self, body: Union[_models.AnalyzeDocumentJobsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -238,7 +236,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_analyze_documents_analyze_documents_submit_job_request(
+        _request = build_analyze_documents_submit_job_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -281,7 +279,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    def begin_analyze_documents_submit_job(
+    def begin_submit_job(
         self, body: _models.AnalyzeDocumentJobsInput, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -298,9 +296,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_documents_submit_job(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_submit_job(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
 
@@ -315,7 +311,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         """
 
     @overload
-    def begin_analyze_documents_submit_job(
+    def begin_submit_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -332,7 +328,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         """
 
     @distributed_trace
-    def begin_analyze_documents_submit_job(
+    def begin_submit_job(
         self, body: Union[_models.AnalyzeDocumentJobsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -354,7 +350,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._analyze_documents_submit_job_initial(
+            raw_result = self._submit_job_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore
@@ -385,7 +381,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _analyze_documents_cancel_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
+    def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -399,7 +395,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_analyze_documents_analyze_documents_cancel_job_request(
+        _request = build_analyze_documents_cancel_job_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -441,7 +437,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def begin_analyze_documents_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_cancel_job(self, job_id: str, **kwargs: Any) -> LROPoller[None]:
         """Cancel a long-running Text Analysis job.
 
         Cancel a long-running Text Analysis job.
@@ -460,7 +456,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._analyze_documents_cancel_job_initial(
+            raw_result = self._cancel_job_initial(
                 job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore

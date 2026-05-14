@@ -27,7 +27,8 @@ class AnalyzeDocumentsLROResult(_Model):
     """Contains the AnalyzeDocuments long running operation result object.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AbstractiveSummarizationLROResult, PiiEntityRecognitionLROResult
+    AbstractiveSummarizationLROResult, ExtractiveSummarizationLROResult,
+    PiiEntityRecognitionLROResult
 
     :ivar last_update_date_time: The last updated time in UTC for the task. Required.
     :vartype last_update_date_time: ~datetime.datetime
@@ -120,6 +121,153 @@ class AbstractiveSummarizationLROResult(AnalyzeDocumentsLROResult, discriminator
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = AnalyzeDocumentsLROResultsKind.ABSTRACTIVE_SUMMARIZATION_LRO_RESULTS  # type: ignore
+
+
+class AnalyzeDocumentsLROTask(_Model):
+    """The long running task to be performed by the service on the input documents.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AbstractiveSummarizationLROTask, ExtractiveSummarizationLROTask, PiiLROTask
+
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: The kind of task to perform. Required. Known values are: "PiiEntityRecognition",
+     "ExtractiveSummarization", and "AbstractiveSummarization".
+    :vartype kind: str or ~azure.ai.language.documents.models.AnalyzeDocumentsLROTaskKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
+    """task name."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of task to perform. Required. Known values are: \"PiiEntityRecognition\",
+     \"ExtractiveSummarization\", and \"AbstractiveSummarization\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AbstractiveSummarizationLROTask(AnalyzeDocumentsLROTask, discriminator="AbstractiveSummarization"):
+    """An object representing the task definition for an Abstractive Summarization task.
+
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: The Abstractive Summarization kind of the long running task. Required. Abstractive
+     summarization task.
+    :vartype kind: str or ~azure.ai.language.documents.models.ABSTRACTIVE_SUMMARIZATION
+    :ivar parameters: Parameters for the Abstractive Summarization task. Required.
+    :vartype parameters: ~azure.ai.language.documents.models.AbstractiveSummarizationTaskParameters
+    """
+
+    kind: Literal[AnalyzeDocumentsLROTaskKind.ABSTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Abstractive Summarization kind of the long running task. Required. Abstractive
+     summarization task."""
+    parameters: "_models.AbstractiveSummarizationTaskParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters for the Abstractive Summarization task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.AbstractiveSummarizationTaskParameters",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeDocumentsLROTaskKind.ABSTRACTIVE_SUMMARIZATION  # type: ignore
+
+
+class AbstractiveSummarizationTaskParameters(_Model):
+    """Supported parameters for the pre-built Abstractive Summarization task.
+
+    :ivar logging_opt_out: logging opt out.
+    :vartype logging_opt_out: bool
+    :ivar model_version: model version.
+    :vartype model_version: str
+    :ivar sentence_count: Controls the approximate number of sentences in the output summaries.
+    :vartype sentence_count: int
+    :ivar string_index_type: String index type. Known values are: "TextElements_v8",
+     "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.documents.models.StringIndexType
+    :ivar summary_length: (NOTE: Recommended to use summaryLength over sentenceCount) Controls the
+     approximate length of the output summaries. Known values are: "short", "medium", and "long".
+    :vartype summary_length: str or ~azure.ai.language.documents.models.SummaryLengthBucket
+    :ivar instruction: (Optional) If provided, the instruction will be used to generate the
+     summary.
+    :vartype instruction: str
+    """
+
+    logging_opt_out: Optional[bool] = rest_field(
+        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """logging opt out."""
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """model version."""
+    sentence_count: Optional[int] = rest_field(
+        name="sentenceCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the approximate number of sentences in the output summaries."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """String index type. Known values are: \"TextElements_v8\", \"UnicodeCodePoint\", and
+     \"Utf16CodeUnit\"."""
+    summary_length: Optional[Union[str, "_models.SummaryLengthBucket"]] = rest_field(
+        name="summaryLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(NOTE: Recommended to use summaryLength over sentenceCount) Controls the approximate length of
+     the output summaries. Known values are: \"short\", \"medium\", and \"long\"."""
+    instruction: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) If provided, the instruction will be used to generate the summary."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        logging_opt_out: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        sentence_count: Optional[int] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        summary_length: Optional[Union[str, "_models.SummaryLengthBucket"]] = None,
+        instruction: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AnalyzeDocumentJobsInput(_Model):
@@ -279,45 +427,6 @@ class AnalyzeDocumentsJobState(_Model):
         errors: Optional[list["_models.Error"]] = None,
         next_link: Optional[str] = None,
         statistics: Optional["_models.RequestStatistics"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AnalyzeDocumentsLROTask(_Model):
-    """The long running task to be performed by the service on the input documents.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    PiiLROTask
-
-    :ivar task_name: task name.
-    :vartype task_name: str
-    :ivar kind: The kind of task to perform. Required. Known values are: "PiiEntityRecognition",
-     "ExtractiveSummarization", and "AbstractiveSummarization".
-    :vartype kind: str or ~azure.ai.language.documents.models.AnalyzeDocumentsLROTaskKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    task_name: Optional[str] = rest_field(name="taskName", visibility=["read", "create", "update", "delete", "query"])
-    """task name."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The kind of task to perform. Required. Known values are: \"PiiEntityRecognition\",
-     \"ExtractiveSummarization\", and \"AbstractiveSummarization\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-        task_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -616,7 +725,7 @@ class CharacterMaskPolicy(BaseRedactionPolicy, discriminator="characterMask"):
      policy to be applied when no specific policy is defined for a PII category. Only one policy can
      be marked as default.
     :vartype is_default: bool
-    :ivar policy_kind: The entity RedactionPolicy object kind. Required. React detected entities
+    :ivar policy_kind: The entity RedactionPolicy object kind. Required. Redact detected entities
      with redaction character.
     :vartype policy_kind: str or ~azure.ai.language.documents.models.CHARACTER_MASK
     :ivar redaction_character: Optional parameter to use a Custom Character to be used for
@@ -627,7 +736,7 @@ class CharacterMaskPolicy(BaseRedactionPolicy, discriminator="characterMask"):
     """
 
     policy_kind: Literal[RedactionPolicyKind.CHARACTER_MASK] = rest_discriminator(name="policyKind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The entity RedactionPolicy object kind. Required. React detected entities with redaction
+    """The entity RedactionPolicy object kind. Required. Redact detected entities with redaction
      character."""
     redaction_character: Optional[Union[str, "_models.RedactionCharacter"]] = rest_field(
         name="redactionCharacter", visibility=["read", "create", "update", "delete", "query"]
@@ -1279,6 +1388,159 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ExtractiveSummarizationLROResult(AnalyzeDocumentsLROResult, discriminator="ExtractiveSummarizationLROResults"):
+    """An object representing the results for an Extractive Summarization task.
+
+    :ivar last_update_date_time: The last updated time in UTC for the task. Required.
+    :vartype last_update_date_time: ~datetime.datetime
+    :ivar status: The status of the task at the mentioned last update time. Required. Known values
+     are: "notStarted", "running", "succeeded", "partiallyCompleted", "failed", "cancelled", and
+     "cancelling".
+    :vartype status: str or ~azure.ai.language.documents.models.State
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: Kind of the task. Required. Extractive summarization LRO results.
+    :vartype kind: str or ~azure.ai.language.documents.models.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS
+    :ivar results: Results of the document task. Required.
+    :vartype results: ~azure.ai.language.documents.models.AnalyzeDocumentsResult
+    """
+
+    kind: Literal[AnalyzeDocumentsLROResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Kind of the task. Required. Extractive summarization LRO results."""
+    results: "_models.AnalyzeDocumentsResult" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Results of the document task. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_update_date_time: datetime.datetime,
+        status: Union[str, "_models.State"],
+        results: "_models.AnalyzeDocumentsResult",
+        task_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeDocumentsLROResultsKind.EXTRACTIVE_SUMMARIZATION_LRO_RESULTS  # type: ignore
+
+
+class ExtractiveSummarizationLROTask(AnalyzeDocumentsLROTask, discriminator="ExtractiveSummarization"):
+    """An object representing the task definition for an Extractive Summarization task.
+
+    :ivar task_name: task name.
+    :vartype task_name: str
+    :ivar kind: The Extractive Summarization kind of the long running task. Required. Extractive
+     summarization task.
+    :vartype kind: str or ~azure.ai.language.documents.models.EXTRACTIVE_SUMMARIZATION
+    :ivar parameters: Parameters for the Extractive Summarization task.
+    :vartype parameters: ~azure.ai.language.documents.models.ExtractiveSummarizationTaskParameters
+    """
+
+    kind: Literal[AnalyzeDocumentsLROTaskKind.EXTRACTIVE_SUMMARIZATION] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Extractive Summarization kind of the long running task. Required. Extractive summarization
+     task."""
+    parameters: Optional["_models.ExtractiveSummarizationTaskParameters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters for the Extractive Summarization task."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        task_name: Optional[str] = None,
+        parameters: Optional["_models.ExtractiveSummarizationTaskParameters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeDocumentsLROTaskKind.EXTRACTIVE_SUMMARIZATION  # type: ignore
+
+
+class ExtractiveSummarizationTaskParameters(_Model):
+    """Supported parameters for an Extractive Summarization task.
+
+    :ivar logging_opt_out: logging opt out.
+    :vartype logging_opt_out: bool
+    :ivar model_version: model version.
+    :vartype model_version: str
+    :ivar sentence_count: Specifies the number of sentences in the extracted summary.
+    :vartype sentence_count: int
+    :ivar sort_by: Specifies how to sort the extracted summaries. Known values are: "Offset" and
+     "Rank".
+    :vartype sort_by: str or
+     ~azure.ai.language.documents.models.ExtractiveSummarizationSortingCriteria
+    :ivar string_index_type: Specifies the method used to interpret string offsets. Known values
+     are: "TextElements_v8", "UnicodeCodePoint", and "Utf16CodeUnit".
+    :vartype string_index_type: str or ~azure.ai.language.documents.models.StringIndexType
+    :ivar query: (Optional) If provided, the query will be used to extract most relevant sentences
+     from the document.
+    :vartype query: str
+    """
+
+    logging_opt_out: Optional[bool] = rest_field(
+        name="loggingOptOut", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """logging opt out."""
+    model_version: Optional[str] = rest_field(
+        name="modelVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """model version."""
+    sentence_count: Optional[int] = rest_field(
+        name="sentenceCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the number of sentences in the extracted summary."""
+    sort_by: Optional[Union[str, "_models.ExtractiveSummarizationSortingCriteria"]] = rest_field(
+        name="sortBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies how to sort the extracted summaries. Known values are: \"Offset\" and \"Rank\"."""
+    string_index_type: Optional[Union[str, "_models.StringIndexType"]] = rest_field(
+        name="stringIndexType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the method used to interpret string offsets. Known values are: \"TextElements_v8\",
+     \"UnicodeCodePoint\", and \"Utf16CodeUnit\"."""
+    query: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) If provided, the query will be used to extract most relevant sentences from the
+     document."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        logging_opt_out: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        sentence_count: Optional[int] = None,
+        sort_by: Optional[Union[str, "_models.ExtractiveSummarizationSortingCriteria"]] = None,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        query: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class InnerErrorModel(_Model):
     """An object containing more specific information about the error. As per Microsoft One API
     guidelines -
@@ -1704,7 +1966,7 @@ class RequestStatistics(_Model):
     :ivar erroneous_documents_count: Number of invalid documents. This includes empty, over-size
      limit or non-supported languages documents. Required.
     :vartype erroneous_documents_count: int
-    :ivar transactions_count: Number of transactions for the request. Required.
+    :ivar transactions_count: Number of billing or usage transactions for the request. Required.
     :vartype transactions_count: int
     """
 
@@ -1723,7 +1985,7 @@ class RequestStatistics(_Model):
     transactions_count: int = rest_field(
         name="transactionsCount", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Number of transactions for the request. Required."""
+    """Number of billing or usage transactions for the request. Required."""
 
     @overload
     def __init__(

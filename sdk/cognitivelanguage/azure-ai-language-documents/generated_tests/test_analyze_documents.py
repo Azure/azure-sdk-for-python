@@ -14,9 +14,9 @@ from testpreparer import AnalyzeDocumentsClientTestBase, AnalyzeDocumentsPrepare
 class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy
-    def test_analyze_documents_job_status(self, analyzedocuments_endpoint):
+    def test_get_job_state(self, analyzedocuments_endpoint):
         client = self.create_client(endpoint=analyzedocuments_endpoint)
-        response = client.analyze_documents_job_status(
+        response = client.get_job_state(
             job_id="str",
         )
 
@@ -25,9 +25,9 @@ class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
 
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy
-    def test_begin_analyze_documents_submit_job(self, analyzedocuments_endpoint):
+    def test_begin_submit_job(self, analyzedocuments_endpoint):
         client = self.create_client(endpoint=analyzedocuments_endpoint)
-        response = client.begin_analyze_documents_submit_job(
+        response = client.begin_submit_job(
             body={
                 "analysisInput": {
                     "documents": [
@@ -45,9 +45,9 @@ class TestAnalyzeDocuments(AnalyzeDocumentsClientTestBase):
 
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy
-    def test_begin_analyze_documents_cancel_job(self, analyzedocuments_endpoint):
+    def test_begin_cancel_job(self, analyzedocuments_endpoint):
         client = self.create_client(endpoint=analyzedocuments_endpoint)
-        response = client.begin_analyze_documents_cancel_job(
+        response = client.begin_cancel_job(
             job_id="str",
         ).result()  # call '.result()' to poll until service return final result
 

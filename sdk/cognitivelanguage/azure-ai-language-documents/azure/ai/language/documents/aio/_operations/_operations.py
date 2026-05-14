@@ -31,9 +31,9 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._operations._operations import (
-    build_analyze_documents_analyze_documents_cancel_job_request,
-    build_analyze_documents_analyze_documents_job_status_request,
-    build_analyze_documents_analyze_documents_submit_job_request,
+    build_analyze_documents_cancel_job_request,
+    build_analyze_documents_get_job_state_request,
+    build_analyze_documents_submit_job_request,
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
@@ -49,7 +49,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
 ):
 
     @distributed_trace_async
-    async def analyze_documents_job_status(
+    async def get_job_state(
         self,
         job_id: str,
         *,
@@ -93,7 +93,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
         cls: ClsType[_models.AnalyzeDocumentsJobState] = kwargs.pop("cls", None)
 
-        _request = build_analyze_documents_analyze_documents_job_status_request(
+        _request = build_analyze_documents_get_job_state_request(
             job_id=job_id,
             show_stats=show_stats,
             top=top,
@@ -138,7 +138,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    async def _analyze_documents_submit_job_initial(
+    async def _submit_job_initial(
         self, body: Union[_models.AnalyzeDocumentJobsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -162,7 +162,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_analyze_documents_analyze_documents_submit_job_request(
+        _request = build_analyze_documents_submit_job_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -205,7 +205,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         return deserialized  # type: ignore
 
     @overload
-    async def begin_analyze_documents_submit_job(
+    async def begin_submit_job(
         self, body: _models.AnalyzeDocumentJobsInput, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -222,7 +222,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         """
 
     @overload
-    async def begin_analyze_documents_submit_job(
+    async def begin_submit_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -239,7 +239,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         """
 
     @overload
-    async def begin_analyze_documents_submit_job(
+    async def begin_submit_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -256,7 +256,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def begin_analyze_documents_submit_job(
+    async def begin_submit_job(
         self, body: Union[_models.AnalyzeDocumentJobsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -278,7 +278,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._analyze_documents_submit_job_initial(
+            raw_result = await self._submit_job_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
@@ -310,7 +310,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _analyze_documents_cancel_job_initial(self, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -324,7 +324,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_analyze_documents_analyze_documents_cancel_job_request(
+        _request = build_analyze_documents_cancel_job_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -366,7 +366,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_analyze_documents_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Cancel a long-running Text Analysis job.
 
         Cancel a long-running Text Analysis job.
@@ -385,7 +385,7 @@ class _AnalyzeDocumentsClientOperationsMixin(
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._analyze_documents_cancel_job_initial(
+            raw_result = await self._cancel_job_initial(
                 job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore

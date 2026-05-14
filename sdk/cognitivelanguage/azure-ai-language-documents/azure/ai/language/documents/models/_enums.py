@@ -84,6 +84,16 @@ class ErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Warning error."""
 
 
+class ExtractiveSummarizationSortingCriteria(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sorting criteria to use for the results of Extractive Summarization."""
+
+    OFFSET = "Offset"
+    """Indicates that results should be sorted in order of appearance in the text."""
+    RANK = "Rank"
+    """Indicates that results should be sorted in order of importance (i.e. rank score) according to
+    the model."""
+
+
 class InnerErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Human-readable error code."""
 
@@ -161,7 +171,8 @@ class PiiCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_STORAGE_ACCOUNT_KEY = "AzureStorageAccountKey"
     """Azure Storage Account Key."""
     AZURE_STORAGE_ACCOUNT_GENERIC = "AzureStorageAccountGeneric"
-    """Azure Storage Account Generic."""
+    """Azure Storage account-related secrets or credentials that do not match a more specific Azure
+    Storage category."""
     BE_NATIONAL_NUMBER = "BENationalNumber"
     """BE National Number."""
     BE_NATIONAL_NUMBER_V2 = "BENationalNumberV2"
@@ -508,7 +519,8 @@ class PiiCategoriesExtended(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_STORAGE_ACCOUNT_KEY = "AzureStorageAccountKey"
     """Azure Storage Account Key."""
     AZURE_STORAGE_ACCOUNT_GENERIC = "AzureStorageAccountGeneric"
-    """Azure Storage Account Generic."""
+    """Azure Storage account-related secrets or credentials that do not match a more specific Azure
+    Storage category."""
     BE_NATIONAL_NUMBER = "BENationalNumber"
     """BE National Number."""
     BE_NATIONAL_NUMBER_V2 = "BENationalNumberV2"
@@ -865,7 +877,7 @@ class RedactionPolicyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NO_MASK = "noMask"
     """Do not redact detected entities."""
     CHARACTER_MASK = "characterMask"
-    """React detected entities with redaction character."""
+    """Redact detected entities with redaction character."""
     ENTITY_MASK = "entityMask"
     """Redact detected entities with entity type."""
     MARKER_MASK = "markerMask"
@@ -901,14 +913,25 @@ class StringIndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TEXT_ELEMENTS_V8 = "TextElements_v8"
     """Returned offset and length values will correspond to textElements (Graphemes and Grapheme
-    clusters) confirming to the Unicode 8.0.0 standard. Use this option if your application is
-    written in .Net Framework or .Net Core and you will be using StringInfo."""
+    clusters) conforming to the Unicode 8.0.0 standard. Use this option if your application is
+    written in .NET Framework or .NET Core and you will be using StringInfo."""
     UNICODE_CODE_POINT = "UnicodeCodePoint"
     """Returned offset and length values will correspond to Unicode code points. Use this option if
-    your application is written in a language that support Unicode, for example Python."""
+    your application is written in a language that supports Unicode, for example Python."""
     UTF16_CODE_UNIT = "Utf16CodeUnit"
     """Returned offset and length values will correspond to UTF-16 code units. Use this option if your
-    application is written in a language that support Unicode, for example Java, JavaScript."""
+    application is written in a language that supports Unicode, for example Java, JavaScript."""
+
+
+class SummaryLengthBucket(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum that defines the length of the output summaries."""
+
+    SHORT = "short"
+    """Instructs model to generate shorter length summaries."""
+    MEDIUM = "medium"
+    """Instructs model to generate medium length summaries."""
+    LONG = "long"
+    """Instructs model to generate longer length summaries."""
 
 
 class WarningCodeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):

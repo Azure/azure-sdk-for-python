@@ -28,10 +28,9 @@ class AnalyzeDocumentsClient(_AnalyzeDocumentsClientOperationsMixin):
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
-    detection and question answering.
-
-    Further documentation:
-    https://learn.microsoft.com/azure/cognitive-services/language-service/overview
+    detection and question answering. Further documentation can be found in <a
+    href=\\"`https://learn.microsoft.com/azure/cognitive-services/language-service/overview\\">https://learn.microsoft.com/azure/cognitive-services/language-service/overview
+    <https://learn.microsoft.com/azure/cognitive-services/language-service/overview\\">https://learn.microsoft.com/azure/cognitive-services/language-service/overview>`_</a>.0.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://<resource-name>.api.cognitiveservices.azure.com). Required.

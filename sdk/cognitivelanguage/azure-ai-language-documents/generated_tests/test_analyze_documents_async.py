@@ -15,9 +15,9 @@ from testpreparer_async import AnalyzeDocumentsClientTestBaseAsync
 class TestAnalyzeDocumentsAsync(AnalyzeDocumentsClientTestBaseAsync):
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy_async
-    async def test_analyze_documents_job_status(self, analyzedocuments_endpoint):
+    async def test_get_job_state(self, analyzedocuments_endpoint):
         client = self.create_async_client(endpoint=analyzedocuments_endpoint)
-        response = await client.analyze_documents_job_status(
+        response = await client.get_job_state(
             job_id="str",
         )
 
@@ -26,10 +26,10 @@ class TestAnalyzeDocumentsAsync(AnalyzeDocumentsClientTestBaseAsync):
 
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy_async
-    async def test_begin_analyze_documents_submit_job(self, analyzedocuments_endpoint):
+    async def test_begin_submit_job(self, analyzedocuments_endpoint):
         client = self.create_async_client(endpoint=analyzedocuments_endpoint)
         response = await (
-            await client.begin_analyze_documents_submit_job(
+            await client.begin_submit_job(
                 body={
                     "analysisInput": {
                         "documents": [
@@ -53,10 +53,10 @@ class TestAnalyzeDocumentsAsync(AnalyzeDocumentsClientTestBaseAsync):
 
     @AnalyzeDocumentsPreparer()
     @recorded_by_proxy_async
-    async def test_begin_analyze_documents_cancel_job(self, analyzedocuments_endpoint):
+    async def test_begin_cancel_job(self, analyzedocuments_endpoint):
         client = self.create_async_client(endpoint=analyzedocuments_endpoint)
         response = await (
-            await client.begin_analyze_documents_cancel_job(
+            await client.begin_cancel_job(
                 job_id="str",
             )
         ).result()  # call '.result()' to poll until service return final result
