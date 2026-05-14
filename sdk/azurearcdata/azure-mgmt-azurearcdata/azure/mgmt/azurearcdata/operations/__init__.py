@@ -16,6 +16,8 @@ from ._operations import Operations  # type: ignore
 from ._sql_managed_instances_operations import SqlManagedInstancesOperations  # type: ignore
 from ._sql_server_instances_operations import SqlServerInstancesOperations  # type: ignore
 from ._data_controllers_operations import DataControllersOperations  # type: ignore
+from ._active_directory_connectors_operations import ActiveDirectoryConnectorsOperations  # type: ignore
+from ._postgres_instances_operations import PostgresInstancesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -26,6 +28,8 @@ __all__ = [
     "SqlManagedInstancesOperations",
     "SqlServerInstancesOperations",
     "DataControllersOperations",
+    "ActiveDirectoryConnectorsOperations",
+    "PostgresInstancesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

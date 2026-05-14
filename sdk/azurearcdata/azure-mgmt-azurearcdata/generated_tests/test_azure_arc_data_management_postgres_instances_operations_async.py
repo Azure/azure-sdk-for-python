@@ -15,14 +15,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureArcDataManagementSqlManagedInstancesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestAzureArcDataManagementPostgresInstancesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(AzureArcDataManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_list(self, resource_group):
-        response = self.client.sql_managed_instances.list(
+    async def test_postgres_instances_list(self, resource_group):
+        response = self.client.postgres_instances.list(
             api_version="2022-03-01-preview",
         )
         result = [r async for r in response]
@@ -31,8 +31,8 @@ class TestAzureArcDataManagementSqlManagedInstancesOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_list_by_resource_group(self, resource_group):
-        response = self.client.sql_managed_instances.list_by_resource_group(
+    async def test_postgres_instances_list_by_resource_group(self, resource_group):
+        response = self.client.postgres_instances.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2022-03-01-preview",
         )
@@ -42,10 +42,10 @@ class TestAzureArcDataManagementSqlManagedInstancesOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_get(self, resource_group):
-        response = await self.client.sql_managed_instances.get(
+    async def test_postgres_instances_get(self, resource_group):
+        response = await self.client.postgres_instances.get(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
+            postgres_instance_name="str",
             api_version="2022-03-01-preview",
         )
 
@@ -54,44 +54,31 @@ class TestAzureArcDataManagementSqlManagedInstancesOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_begin_create(self, resource_group):
+    async def test_postgres_instances_begin_create(self, resource_group):
         response = await (
-            await self.client.sql_managed_instances.begin_create(
+            await self.client.postgres_instances.begin_create(
                 resource_group_name=resource_group.name,
-                sql_managed_instance_name="str",
-                sql_managed_instance={
+                postgres_instance_name="str",
+                resource={
                     "location": "str",
                     "properties": {
-                        "activeDirectoryInformation": {"keytabInformation": {"keytab": "str"}},
                         "admin": "str",
                         "basicLoginInformation": {"password": "str", "username": "str"},
-                        "clusterId": "str",
                         "dataControllerId": "str",
-                        "endTime": "str",
-                        "extensionId": "str",
-                        "k8sRaw": {
-                            "spec": {
-                                "replicas": 0,
-                                "scheduling": {
-                                    "default": {"resources": {"limits": {"str": "str"}, "requests": {"str": "str"}}}
-                                },
-                            }
-                        },
+                        "k8sRaw": {},
                         "lastUploadedDate": "2020-02-20 00:00:00",
-                        "licenseType": "BasePrice",
                         "provisioningState": "str",
-                        "startTime": "str",
                     },
                     "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
                     "name": "str",
                     "sku": {
-                        "name": "vCore",
+                        "name": "str",
                         "capacity": 0,
                         "dev": True,
                         "family": "str",
                         "size": "str",
-                        "tier": "GeneralPurpose",
+                        "tier": "Hyperscale",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -113,11 +100,11 @@ class TestAzureArcDataManagementSqlManagedInstancesOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_begin_delete(self, resource_group):
+    async def test_postgres_instances_begin_delete(self, resource_group):
         response = await (
-            await self.client.sql_managed_instances.begin_delete(
+            await self.client.postgres_instances.begin_delete(
                 resource_group_name=resource_group.name,
-                sql_managed_instance_name="str",
+                postgres_instance_name="str",
                 api_version="2022-03-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
@@ -127,11 +114,21 @@ class TestAzureArcDataManagementSqlManagedInstancesOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_sql_managed_instances_update(self, resource_group):
-        response = await self.client.sql_managed_instances.update(
+    async def test_postgres_instances_update(self, resource_group):
+        response = await self.client.postgres_instances.update(
             resource_group_name=resource_group.name,
-            sql_managed_instance_name="str",
-            parameters={"tags": {"str": "str"}},
+            postgres_instance_name="str",
+            parameters={
+                "properties": {
+                    "admin": "str",
+                    "basicLoginInformation": {"password": "str", "username": "str"},
+                    "dataControllerId": "str",
+                    "k8sRaw": {},
+                    "lastUploadedDate": "2020-02-20 00:00:00",
+                    "provisioningState": "str",
+                },
+                "tags": {"str": "str"},
+            },
             api_version="2022-03-01-preview",
         )
 
