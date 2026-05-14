@@ -158,6 +158,9 @@ IGNORED_SAMPLES = {
         "blob_samples_container_access_policy_async.py",
         "blob_samples_client_side_encryption_keyvault.py",
     ],
+    "azure-messaging-webpubsubservice": [
+        "integration_sample.py",
+    ],
 }
 
 
