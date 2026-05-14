@@ -10,13 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       typespec_ref:
-        description: "Git ref (branch, tag, or SHA) of typespec repo to build regeneration infrastructure from"
+        description: "Either 'main' (microsoft/typespec@main) or a microsoft/typespec pull request URL (e.g. https://github.com/microsoft/typespec/pull/1234). The PR's head repo + SHA will be checked out."
         required: false
         default: "main"
-      typespec_repo:
-        description: "TypeSpec repository (owner/repo) to checkout from (default: microsoft/typespec)"
-        required: false
-        default: "microsoft/typespec"
 
 permissions:
   contents: write
@@ -40,13 +36,49 @@ jobs:
 
       - name: Resolve TypeSpec repo/ref
         id: typespec-info
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          REPO="${{ github.event.inputs.typespec_repo || 'microsoft/typespec' }}"
-          REF="${{ github.event.inputs.typespec_ref || 'main' }}"
+          INPUT="${{ github.event.inputs.typespec_ref || 'main' }}"
+          # Default: microsoft/typespec @ main
+          REPO="microsoft/typespec"
+          REF="main"
+          DISPLAY_REF="main"
+          REF_URL="https://github.com/${REPO}/tree/main"
+          PR_NUMBER=""
+
+          # Accept a microsoft/typespec PR URL and resolve it to head repo + SHA.
+          # Example: https://github.com/microsoft/typespec/pull/1234
+          if [[ "$INPUT" =~ ^https://github\.com/([^/]+)/([^/]+)/pull/([0-9]+)/?$ ]]; then
+            PR_OWNER="${BASH_REMATCH[1]}"
+            PR_REPO_NAME="${BASH_REMATCH[2]}"
+            PR_NUMBER="${BASH_REMATCH[3]}"
+            if [ "$PR_OWNER/$PR_REPO_NAME" != "microsoft/typespec" ]; then
+              echo "::error::Only pull request URLs from microsoft/typespec are accepted (got ${PR_OWNER}/${PR_REPO_NAME})."
+              exit 1
+            fi
+            echo "Resolving PR #${PR_NUMBER} from ${PR_OWNER}/${PR_REPO_NAME}..."
+            PR_JSON=$(gh pr view "$PR_NUMBER" --repo "${PR_OWNER}/${PR_REPO_NAME}" \
+              --json headRefOid,headRepositoryOwner,headRepository)
+            HEAD_SHA=$(echo "$PR_JSON" | jq -r '.headRefOid')
+            HEAD_OWNER=$(echo "$PR_JSON" | jq -r '.headRepositoryOwner.login')
+            HEAD_REPO_NAME=$(echo "$PR_JSON" | jq -r '.headRepository.name')
+            REPO="${HEAD_OWNER}/${HEAD_REPO_NAME}"
+            REF="${HEAD_SHA}"
+            DISPLAY_REF="PR #${PR_NUMBER} @ ${HEAD_SHA:0:7}"
+            REF_URL="${INPUT}"
+          elif [ "$INPUT" != "main" ]; then
+            echo "::error::typespec_ref must be 'main' or a microsoft/typespec pull request URL (got: ${INPUT})."
+            exit 1
+          fi
+
           echo "typespec_repo=$REPO" >> $GITHUB_OUTPUT
           echo "typespec_ref=$REF" >> $GITHUB_OUTPUT
-          echo "::notice::Regenerating from ${REPO}@${REF}"
+          echo "typespec_display_ref=$DISPLAY_REF" >> $GITHUB_OUTPUT
+          echo "typespec_ref_url=$REF_URL" >> $GITHUB_OUTPUT
+          echo "typespec_pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          echo "::notice::Regenerating from ${REPO}@${DISPLAY_REF}"
 
       - name: Checkout microsoft/typespec
         # SHA corresponds to actions/checkout@v6
@@ -105,8 +137,14 @@ jobs:
         id: push-changes
         run: |
           set -euo pipefail
-          REPO_REF="${{ steps.typespec-info.outputs.typespec_repo }}@${{ steps.typespec-info.outputs.typespec_ref }}"
-          BRANCH="auto/typespec-python-regenerate"
+          PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          if [ -n "$PR_NUMBER" ]; then
+            SOURCE_LABEL="microsoft/typespec PR #${PR_NUMBER}"
+            BRANCH="auto/typespec-python-regenerate-${PR_NUMBER}"
+          else
+            SOURCE_LABEL="microsoft/typespec@main"
+            BRANCH="auto/typespec-python-regenerate"
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
@@ -118,7 +156,7 @@ jobs:
           fi
 
           git checkout -B "$BRANCH"
-          git commit -m "[typespec-python] Regenerate tests from ${REPO_REF}"
+          git commit -m "[typespec-python] Regenerate tests from ${SOURCE_LABEL}"
           git push origin "$BRANCH" --force
           echo "has_changes=true" >> $GITHUB_OUTPUT
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
@@ -130,23 +168,32 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TS_REPO="${{ steps.typespec-info.outputs.typespec_repo }}"
-          TS_REF="${{ steps.typespec-info.outputs.typespec_ref }}"
+          TS_REF_URL="${{ steps.typespec-info.outputs.typespec_ref_url }}"
+          PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
           BRANCH="${{ steps.push-changes.outputs.branch }}"
           REPO="${{ github.repository }}"
           SERVER="${{ github.server_url }}"
           RUN_URL="${SERVER}/${REPO}/actions/runs/${{ github.run_id }}"
-          TS_REF_URL="${SERVER}/${TS_REPO}/tree/${TS_REF}"
 
-          TITLE="[typespec-python] Regenerate tests from ${TS_REPO}@${TS_REF}"
+          # Use a stable source identifier so retriggering from the same `main`
+          # or the same PR reuses the existing tracking issue instead of
+          # creating a duplicate.
+          if [ -n "$PR_NUMBER" ]; then
+            SOURCE_LABEL="microsoft/typespec PR #${PR_NUMBER}"
+          else
+            SOURCE_LABEL="microsoft/typespec@main"
+          fi
+
+          TITLE="[typespec-python] Regenerate tests from ${SOURCE_LABEL}"
 
           # Build a "compare" URL that opens the PR creation page pre-filled.
           # GitHub Actions cannot create PRs directly (org policy), so the
           # reviewer just needs to click the link to open the PR.
           PR_TITLE_ENC=$(jq -rn --arg t "$TITLE" '$t|@uri')
-          PR_BODY_RAW="Automated regeneration of TypeSpec Python generated tests.
+          PR_BODY_RAW="Source: ${TS_REF_URL}
 
-          - Source: \`${TS_REPO}@${TS_REF}\` (${TS_REF_URL})
+          Automated regeneration of TypeSpec Python generated tests from ${SOURCE_LABEL}.
+
           - Workflow run: ${RUN_URL}
 
           This PR was auto-generated."
@@ -160,9 +207,9 @@ jobs:
           👉 [Create pull request from \`${BRANCH}\`](${COMPARE_URL})
 
           Details:
-          - Source: [\`${TS_REPO}@${TS_REF}\`](${TS_REF_URL})
+          - Source: [${SOURCE_LABEL}](${TS_REF_URL})
           - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
-          - Workflow run: ${RUN_URL}
+          - Latest workflow run: ${RUN_URL}
 
           cc @iscai-msft @msyyc"
 
