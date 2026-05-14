@@ -1,0 +1,4 @@
+../azure-cosmos
+../../core/azure-core
+openai>=1.0.0
+-e ../../../eng/tools/azure-sdk-tools
