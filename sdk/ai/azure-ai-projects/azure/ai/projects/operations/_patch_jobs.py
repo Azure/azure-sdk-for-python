@@ -5,10 +5,12 @@
 # ------------------------------------
 """Customized jobs operations — flat CommandJob UX, no envelope required."""
 
-import hashlib
+import json
 import logging
 import os
-from fnmatch import fnmatch
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -18,6 +20,9 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from azure.core.paging import ItemPaged
 
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
+
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.storage.blob import ContainerClient
@@ -26,14 +31,30 @@ from ._operations import BetaJobsOperations as _GeneratedJobsOps
 from ._patch_datasets import DatasetsOperations
 from ._job_helper import (
     _TERMINAL_JOB_STATUSES,
+    _IN_PROGRESS_JOB_STATUSES,
+    _FINALIZING_JOB_STATUS,
+    _FAILED_JOB_STATUS,
+    _FINALIZING_RUN_MARKER,
     _MAX_CONCURRENCY,
     _NAMED_OUTPUTS_DIR,
-    _DEFAULT_OUTPUT_NOT_SUPPORTED_MSG,
+    _ARTIFACTS_DIR,
+    _DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
     _blob_uri_to_prefix,
     _is_folder_marker,
     _ensure_dir,
     _validate_output_for_download,
     _validate_command_job,
+    _content_hash,
+    _get_sorted_streamable_logs,
+    _incremental_print,
+    _wait_before_polling,
+    _download_log_text,
+    _safe_join,
+    _sweep_tmp_files,
+    _collect_artifact_paths,
+    _group_paths_by_prefix,
+    _resolve_artifact_uris,
+    _download_artifact_to_path,
 )
 from ..models._models import BlobReference
 from ..models._models import Job as _RestJob
@@ -44,89 +65,6 @@ from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_inse
 from ..models._enums import _FoundryFeaturesOptInKeys
 
 _logger = logging.getLogger(__name__)
-
-
-def _resolve_symlink(path: Path) -> Path:
-    """Follow symlink chains until the real target is reached."""
-    while path.is_symlink():
-        link_path = path.resolve()
-        if not link_path.is_absolute():
-            link_path = path.parent.joinpath(link_path).resolve()
-        path = link_path
-    return path
-
-
-def _load_gitignore_patterns(directory: Path) -> List[str]:
-    """Load patterns from a .gitignore file in the given directory."""
-    gitignore_file = ".gitignore"
-    gitignore = directory / gitignore_file
-    if not gitignore.is_file():
-        return []
-    patterns = []
-    with open(gitignore, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.rstrip()
-            if line and not line.startswith("#"):
-                patterns.append(line)
-    return patterns
-
-
-def _is_excluded(rel_path: str, patterns: List[str]) -> bool:
-    """Check if a relative path matches any gitignore-style pattern."""
-    rel_path = rel_path.replace("\\", "/")
-    parts = rel_path.split("/")
-    for pattern in patterns:
-        stripped = pattern.rstrip("/")
-        for part in parts:
-            if fnmatch(part, stripped):
-                return True
-        if fnmatch(rel_path, pattern):
-            return True
-    return False
-
-
-def _update_hash(path: Path, sha: "hashlib._Hash") -> None:
-    """Read file at *path* in chunks and feed each chunk into *sha*."""
-    chunk_size = 1024
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(chunk_size), b""):
-            sha.update(chunk)
-
-
-def _collect_files(directory: Path, ignore_patterns: List[str]) -> List[Tuple[Path, str]]:
-    """Collect all files in a directory, respecting gitignore patterns and resolving symlinks.
-
-    Returns a sorted list of (resolved_path, relative_posix_path) tuples.
-    """
-    files: List[Tuple[Path, str]] = []
-    for root, _, filenames in os.walk(directory, followlinks=True):
-        for filename in filenames:
-            abs_path = Path(root, filename)
-            rel_path = abs_path.relative_to(directory).as_posix()
-            if not _is_excluded(rel_path, ignore_patterns):
-                files.append((_resolve_symlink(abs_path), rel_path))
-    return sorted(files, key=lambda x: x[1].lower())
-
-
-def _content_hash(path: Path) -> str:
-    """Compute a truncated SHA-256 content hash for a file or directory.
-
-    Respects ``.gitignore`` when hashing directories.
-    """
-    path = _resolve_symlink(path)
-    sha = hashlib.sha256()
-    if path.is_file():
-        file_list = [(path, path.name)]
-    else:
-        ignore_patterns = _load_gitignore_patterns(path)
-        file_list = _collect_files(path, ignore_patterns)
-    sha.update(str(len(file_list)).encode())
-    for abs_path, rel_path in file_list:
-        sha.update(("#" + rel_path + "#").encode())
-        sha.update(str(os.path.getsize(abs_path)).encode())
-    for abs_path, _ in file_list:
-        _update_hash(abs_path, sha)
-    return sha.hexdigest()[:8]
 
 
 class JobsOperations(_GeneratedJobsOps):
@@ -375,8 +313,13 @@ class JobsOperations(_GeneratedJobsOps):
         rest_result = super().create_or_update(name=name, job=rest_body, **kwargs)
         return CommandJob._from_rest_object(rest_result)
 
+    # LRO is implemented here rather than via TypeSpec @pollingOperation because the backend
+    # uses pure HTTP-status-code Location polling (202=in-progress, 200/204=done) with no
+    # JSON status body. TypeSpec requires a status field in the polling response model, which
+    # this API does not have. azure-core's built-in LocationPolling (part of LROBasePolling)
+    # handles this pattern natively, so we wire it up here directly.
     @distributed_trace
-    def begin_delete(self, name: str, **kwargs: Any) -> None:  # type: ignore[override]
+    def begin_delete(self, name: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
         """Delete a training job by name.
 
         Returns 202 Accepted with a Location header to poll for completion,
@@ -384,13 +327,46 @@ class JobsOperations(_GeneratedJobsOps):
 
         :param name: The name of the job. Required.
         :type name: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        return super().begin_delete(name=name, **kwargs)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        raw_result = super().begin_delete(  # type: ignore[func-returns-value]
+            name=name,
+            cls=lambda x, y, z: x,
+            **kwargs,
+        )
+        kwargs.pop("error_map", None)
+        lro_headers = kwargs.pop("headers", {})
+        lro_headers[_FOUNDRY_FEATURES_HEADER_NAME] = self._JOBS_PREVIEW_HEADER
 
+        if polling is True:
+            polling_method: PollingMethod = LROBasePolling(
+                lro_delay,
+                path_format_arguments=path_format_arguments,
+                headers=lro_headers,
+                **kwargs,
+            )
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
+
+        return LROPoller[None](self._client, raw_result, lambda _: None, polling_method)
+
+    # LRO is implemented here rather than via TypeSpec @pollingOperation because the backend
+    # uses pure HTTP-status-code Location polling (202=in-progress, 200/204=done) with no
+    # JSON status body. TypeSpec requires a status field in the polling response model, which
+    # this API does not have. azure-core's built-in LocationPolling (part of LROBasePolling)
+    # handles this pattern natively, so we wire it up here directly.
     @distributed_trace
-    def begin_cancel(self, name: str, **kwargs: Any) -> None:  # type: ignore[override]
+    def begin_cancel(self, name: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
         """Cancel a training job by name.
 
         Returns 200 if cancelled immediately, or 202 Accepted with a Location header
@@ -398,10 +374,38 @@ class JobsOperations(_GeneratedJobsOps):
 
         :param name: The name of the job. Required.
         :type name: str
+        :return: An instance of LROPoller that returns None.
+        :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        return super().begin_cancel(name=name, **kwargs)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        raw_result = super().begin_cancel(  # type: ignore[func-returns-value]
+            name=name,
+            cls=lambda x, y, z: x,
+            **kwargs,
+        )
+        kwargs.pop("error_map", None)
+        lro_headers = kwargs.pop("headers", {})
+        lro_headers[_FOUNDRY_FEATURES_HEADER_NAME] = self._JOBS_PREVIEW_HEADER
+
+        if polling is True:
+            polling_method: PollingMethod = LROBasePolling(
+                lro_delay,
+                path_format_arguments=path_format_arguments,
+                headers=lro_headers,
+                **kwargs,
+            )
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
+
+        return LROPoller[None](self._client, raw_result, lambda _: None, polling_method)
 
     @distributed_trace
     def show_services(  # type: ignore[override]
@@ -428,6 +432,91 @@ class JobsOperations(_GeneratedJobsOps):
         if not result or not result.instances:
             return None
         return {k: ServiceInstance._from_rest_object(v, node_index) for k, v in result.instances.items()}
+
+    @distributed_trace
+    def stream(self, name: str, **kwargs: Any) -> None:  # type: ignore[override]
+        """Stream the logs of a running CommandJob to ``sys.stdout`` until the job reaches
+        a terminal state.
+
+        Polls the run details endpoint and incrementally prints any new content from the
+        job's streamable log files. Raises an exception if the job ends in a failed state.
+
+        :param name: The name of the job. Required.
+        :type name: str
+        :raises TypeError: If the job is not a CommandJob.
+        :raises RuntimeError: If the job ends in a failed state.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        self._inject_preview_header(kwargs)
+        job = self.get(name=name, **kwargs)
+        studio_endpoint: Optional[str] = None
+        if job.services:
+            studio = job.services.get("Studio")
+            if studio is not None:
+                studio_endpoint = studio.endpoint
+
+        fileout = sys.stdout
+        fileout.write("RunId: {}\n".format(name))
+        if studio_endpoint:
+            fileout.write("Web View: {}\n".format(studio_endpoint))
+
+        processed_logs: Dict[str, int] = {}
+        poll_start_time = time.time()
+        details = super()._get_run_details(name=name, run_id=name, **kwargs)
+        last_content = ""
+
+        while True:
+            status = (details.status or "").lower()
+            in_progress = status in _IN_PROGRESS_JOB_STATUSES
+            finalizing = status == _FINALIZING_JOB_STATUS
+            if not in_progress and not finalizing:
+                break
+
+            fileout.flush()
+            log_files: Dict[str, str] = details.log_files or {}
+            available_logs = _get_sorted_streamable_logs(log_files.keys(), processed_logs)
+            last_content = ""
+            for current_log in available_logs:
+                last_content = _download_log_text(log_files[current_log])
+                _incremental_print(last_content, processed_logs, current_log, fileout)
+
+            if finalizing and _FINALIZING_RUN_MARKER in last_content:
+                break
+
+            time.sleep(_wait_before_polling(time.time() - poll_start_time))
+            details = super()._get_run_details(name=name, run_id=name, **kwargs)
+
+        # Final flush: capture any log lines written between the last poll and the
+        # job reaching a terminal state (e.g. on cancel or quick completion).
+        final_log_files: Dict[str, str] = details.log_files or {}
+        for current_log in _get_sorted_streamable_logs(final_log_files.keys(), processed_logs):
+            final_content = _download_log_text(final_log_files[current_log])
+            _incremental_print(final_content, processed_logs, current_log, fileout)
+
+        fileout.write("\n")
+        fileout.write("Execution Summary\n")
+        fileout.write("=================\n")
+        fileout.write("RunId: {}\n".format(name))
+        if studio_endpoint:
+            fileout.write("Web View: {}\n".format(studio_endpoint))
+
+        warnings = details.warnings
+        if warnings:
+            messages: List[str] = [w.message for w in warnings if w.message]
+            if messages:
+                fileout.write("\nWarnings:\n")
+                for message in messages:
+                    fileout.write(message + "\n")
+                fileout.write("\n")
+
+        if (details.status or "").lower() == _FAILED_JOB_STATUS:
+            error_payload: Any = (
+                details.error.as_dict()
+                if details.error is not None
+                else "Detailed error not set on the run. Please check the logs for details."
+            )
+            error_text = json.dumps(error_payload, indent=4) if isinstance(error_payload, dict) else error_payload
+            raise RuntimeError("Exception : \n {} ".format(error_text))
 
     def _resolve_output_to_blob_ref(self, output_name: str, output: _Output) -> BlobReference:
         """Resolve a job ``Output`` to a :class:`~azure.ai.projects.models.BlobReference`.
@@ -505,24 +594,21 @@ class JobsOperations(_GeneratedJobsOps):
         all: bool = False,  # pylint: disable=redefined-builtin
         **kwargs: Any,
     ) -> None:
-        """Download outputs of a completed training job to a local directory.
+        """Download the logs and outputs of a job.
 
         :param name: The name of the job. Required.
         :type name: str
         :keyword download_path: The local path to be used as the download destination.
-            Defaults to ``"."`` (the current working directory). Created if it does not exist.
+            Defaults to ``"."``.
         :paramtype download_path: Union[PathLike, str]
-        :keyword output_name: Name of a single named output to download.
-            Mutually exclusive with ``all``.
-        :paramtype output_name: str
-        :keyword all: If True, download every named output, each into its own
-            ``<download_path>/named-outputs/<output_name>/`` subfolder. Mutually
-            exclusive with ``output_name``.
+        :keyword output_name: The name of the output to download. Defaults to None.
+        :paramtype output_name: Optional[str]
+        :keyword all: Specifies if all logs and named outputs should be downloaded.
+            Defaults to False.
         :paramtype all: bool
-        :raises ValueError: If both ``output_name`` and ``all`` are provided,
-            if the job has no outputs, or if ``output_name`` does not exist.
-        :raises NotImplementedError: If the user requests the default-output
-            download (no ``output_name`` and ``all`` is False).
+        :raises ValueError: If both ``output_name`` and ``all`` are provided, if
+            ``output_name`` does not exist on the job, or if the job is not in a
+            terminal state.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if output_name is not None and all:
@@ -538,39 +624,29 @@ class JobsOperations(_GeneratedJobsOps):
                 f"a terminal state: {sorted(_TERMINAL_JOB_STATUSES)}."
             )
 
-        outputs: dict = job.outputs or {}
-        if not outputs:
-            raise ValueError(f"Job '{name}' has no outputs to download.")
-
         dest_root = Path(download_path)
+        outputs: dict = job.outputs or {}
+
+        # "default" is the special name for the job's default artifact store;
+        # route it to the default-artifacts download path.
+        if output_name == _DEFAULT_ARTIFACT_STORE_OUTPUT_NAME:
+            output_name = None
 
         if output_name is not None:
-            if output_name not in outputs:
+            if not outputs or output_name not in outputs:
                 raise ValueError(
                     f"Job '{name}' has no output named '{output_name}'. "
                     f"Available outputs: {sorted(outputs.keys())}."
                 )
-            blob_ref = self._resolve_output_to_blob_ref(output_name, outputs[output_name])
-            destination = dest_root / _NAMED_OUTPUTS_DIR / output_name
-            _logger.info(
-                "[JobsOperations] Downloading output '%s' from '%s' to '%s'.",
-                output_name,
-                blob_ref.blob_uri,
-                destination,
-            )
-            file_count, total_bytes = self._download_blob_reference(blob_ref, destination)
-            _logger.info(
-                "[JobsOperations] Downloaded %d file(s) (%.2f MB) for output '%s'.",
-                file_count,
-                total_bytes / (1024 * 1024),
-                output_name,
-            )
+            self._download_named_output(name, output_name, outputs[output_name], dest_root)
             return
 
         if all:
             for out_name, out in outputs.items():
+                if out_name == _DEFAULT_ARTIFACT_STORE_OUTPUT_NAME:
+                    continue
                 try:
-                    blob_ref = self._resolve_output_to_blob_ref(out_name, out)
+                    self._download_named_output(name, out_name, out, dest_root)
                 except ValueError as exc:
                     _logger.warning(
                         "[JobsOperations] Skipping output '%s' for job '%s': %s",
@@ -578,21 +654,127 @@ class JobsOperations(_GeneratedJobsOps):
                         name,
                         exc,
                     )
-                    continue
-                destination = dest_root / _NAMED_OUTPUTS_DIR / out_name
-                _logger.info(
-                    "[JobsOperations] Downloading output '%s' from '%s' to '%s'.",
-                    out_name,
-                    blob_ref.blob_uri,
-                    destination,
-                )
-                file_count, total_bytes = self._download_blob_reference(blob_ref, destination)
-                _logger.info(
-                    "[JobsOperations] Downloaded %d file(s) (%.2f MB) for output '%s'.",
-                    file_count,
-                    total_bytes / (1024 * 1024),
-                    out_name,
-                )
+            self._download_default_artifacts(name, dest_root, **kwargs)
             return
 
-        raise NotImplementedError(_DEFAULT_OUTPUT_NOT_SUPPORTED_MSG)
+        self._download_default_artifacts(name, dest_root, **kwargs)
+
+    def _download_named_output(
+        self,
+        job_name: str,
+        output_name: str,
+        output: _Output,
+        dest_root: Path,
+    ) -> None:
+        """Resolve and download a single named output into ``<dest_root>/named-outputs/<output_name>/``.
+
+        :param job_name: The name of the job that owns the output.
+        :type job_name: str
+        :param output_name: The output name to download.
+        :type output_name: str
+        :param output: The job output object from the Get Job response.
+        :type output: ~azure.ai.projects.models.Output
+        :param dest_root: The base local directory; the output is written into
+            ``<dest_root>/named-outputs/<output_name>/``.
+        :type dest_root: ~pathlib.Path
+        :raises ValueError: If the output cannot be resolved to a blob reference, or
+            if the resolved blob reference is missing the SAS URI / blob URI.
+        :raises NotImplementedError: If the output type requires Models operations
+            not yet generated in this SDK build.
+        """
+        blob_ref = self._resolve_output_to_blob_ref(output_name, output)
+        destination = dest_root / _NAMED_OUTPUTS_DIR / output_name
+        _logger.info(
+            "[JobsOperations] Downloading output '%s' for job '%s' to '%s'.",
+            output_name,
+            job_name,
+            destination,
+        )
+        file_count, total_bytes = self._download_blob_reference(blob_ref, destination)
+        _logger.info(
+            "[JobsOperations] Downloaded %d file(s) (%.2f MB) for output '%s'.",
+            file_count,
+            total_bytes / (1024 * 1024),
+            output_name,
+        )
+
+    def _download_default_artifacts(
+        self,
+        name: str,
+        dest_root: Path,
+        **kwargs: Any,
+    ) -> None:
+        """Download the run's default artifacts to ``<dest_root>/artifacts/``.
+
+        :param name: Job name (also used as the run id).
+        :type name: str
+        :param dest_root: Destination root directory; files are written under ``<dest_root>/artifacts/``.
+        :type dest_root: ~pathlib.Path
+        :raises ValueError: If the run has no ``experimentId``.
+        """
+        run = super()._get_run(name=name, run_id=name, **kwargs)
+        experiment_id = run.experiment_id
+        if not experiment_id:
+            raise ValueError(f"Job '{name}' run is missing 'experimentId'; cannot list artifacts.")
+
+        paths = _collect_artifact_paths(super()._list_artifacts, name, experiment_id)
+        if not paths:
+            _logger.info("[JobsOperations] Job '%s' has no default artifacts to download.", name)
+            return
+
+        prefixes = _group_paths_by_prefix(paths)
+        uri_map = _resolve_artifact_uris(super()._get_artifact_content_information, name, experiment_id, prefixes)
+
+        artifacts_root = dest_root / _ARTIFACTS_DIR
+        artifacts_root.mkdir(parents=True, exist_ok=True)
+        _sweep_tmp_files(artifacts_root)
+
+        # Dedup by destination path before launching workers.
+        work: Dict[Path, str] = {}
+        for path in paths:
+            entry = uri_map.get(path)
+            if entry is None:
+                _logger.warning(
+                    "[JobsOperations] Artifact '%s' was listed but no contentUri was returned; skipping.",
+                    path,
+                )
+                continue
+            content_uri, _ = entry
+            try:
+                local_path = _safe_join(artifacts_root, path)
+            except ValueError as exc:
+                _logger.warning("[JobsOperations] Skipping unsafe artifact path '%s': %s", path, exc)
+                continue
+            work.setdefault(local_path, content_uri)
+
+        if not work:
+            return
+
+        _logger.info(
+            "[JobsOperations] Downloading %d default artifact file(s) for job '%s' to '%s'.",
+            len(work),
+            name,
+            artifacts_root,
+        )
+
+        workers = max(1, min(_MAX_CONCURRENCY, len(work)))
+        total_bytes = 0
+        with ThreadPoolExecutor(max_workers=workers) as executor:
+            futures = {
+                executor.submit(_download_artifact_to_path, uri, local_path, _MAX_CONCURRENCY): local_path
+                for local_path, uri in work.items()
+            }
+            for future in as_completed(futures):
+                local_path = futures[future]
+                try:
+                    total_bytes += future.result()
+                except Exception:
+                    _logger.error("[JobsOperations] Failed to download artifact to '%s'.", local_path)
+                    raise
+
+        _logger.info(
+            "[JobsOperations] Downloaded %d default artifact file(s) (%.2f MB) for job '%s'.",
+            len(work),
+            total_bytes / (1024 * 1024),
+            name,
+        )
