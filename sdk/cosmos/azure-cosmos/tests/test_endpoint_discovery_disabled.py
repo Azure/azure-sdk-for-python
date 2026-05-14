@@ -24,7 +24,7 @@ from azure.cosmos._global_endpoint_manager import _GlobalEndpointManager
 from azure.cosmos.http_constants import StatusCodes
 
 
-_DEFAULT_ENDPOINT = "https://myaccount.documents.azure.com:443/"
+_DEFAULT_ENDPOINT = "https://contoso.documents.azure.com:443/"
 
 
 class _FakeClient:
@@ -98,8 +98,8 @@ class TestEndpointDiscoveryDisabled(unittest.TestCase):
         self.assertEqual(stub.call_count, 1 + 2)
         called_endpoints = [c.args[0] for c in stub.call_args_list]
         self.assertEqual(called_endpoints[0], _DEFAULT_ENDPOINT)
-        self.assertIn("myaccount-northeurope", called_endpoints[1])
-        self.assertIn("myaccount-westus", called_endpoints[2])
+        self.assertIn("contoso-northeurope", called_endpoints[1])
+        self.assertIn("contoso-westus", called_endpoints[2])
 
 
 if __name__ == "__main__":

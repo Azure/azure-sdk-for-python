@@ -17,7 +17,7 @@ from azure.cosmos.aio._global_endpoint_manager_async import _GlobalEndpointManag
 from azure.cosmos.http_constants import StatusCodes
 
 
-_DEFAULT_ENDPOINT = "https://myaccount.documents.azure.com:443/"
+_DEFAULT_ENDPOINT = "https://contoso.documents.azure.com:443/"
 
 
 class _FakeAsyncClient:
@@ -86,5 +86,5 @@ class TestEndpointDiscoveryDisabledAsync:
         assert stub.call_count == 1 + 2
         called_endpoints = [c.args[0] for c in stub.call_args_list]
         assert called_endpoints[0] == _DEFAULT_ENDPOINT
-        assert "myaccount-northeurope" in called_endpoints[1]
-        assert "myaccount-westus" in called_endpoints[2]
+        assert "contoso-northeurope" in called_endpoints[1]
+        assert "contoso-westus" in called_endpoints[2]
