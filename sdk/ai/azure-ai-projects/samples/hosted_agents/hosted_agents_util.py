@@ -86,7 +86,6 @@ def create_agent_and_session(
     project_client: AIProjectClient,
     agent_name: str,
     image: str,
-    isolation_key: str = "sample-isolation-key",
 ):
     agent = project_client.agents.create_version(
         agent_name=agent_name,
@@ -110,7 +109,6 @@ def create_agent_and_session(
 
     session = project_client.beta.agents.create_session(
         agent_name=agent_name,
-        isolation_key=isolation_key,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
@@ -121,7 +119,6 @@ def create_agent_and_session(
         project_client.beta.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
-            isolation_key=isolation_key,
         )
         print(f"Session with id: {session.agent_session_id} deleted.")
 
@@ -134,7 +131,6 @@ async def create_agent_and_session_async(
     project_client: AsyncAIProjectClient,
     agent_name: str,
     image: str,
-    isolation_key: str = "sample-isolation-key",
 ) -> AsyncGenerator[tuple[str, str], None]:
     agent = await project_client.agents.create_version(
         agent_name=agent_name,
@@ -158,7 +154,6 @@ async def create_agent_and_session_async(
 
     session = await project_client.beta.agents.create_session(
         agent_name=agent_name,
-        isolation_key=isolation_key,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
@@ -169,7 +164,6 @@ async def create_agent_and_session_async(
         await project_client.beta.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
-            isolation_key=isolation_key,
         )
         print(f"Session with id: {session.agent_session_id} deleted.")
 

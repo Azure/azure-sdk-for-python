@@ -1,5 +1,32 @@
 # Release History
 
+## 2.2.0 (Unreleased)
+
+### Features Added
+
+* New model `AgentEndpointConfig` (replaces `AgentEndpoint`) with support for `version_selector`, `protocols`, and `authorization_schemes`.
+* New model `EvaluationTarget` (replaces `Target`) for evaluation run configurations.
+* New model `RedTeamTargetConfig` (replaces `TargetConfig`) for red team configurations.
+* New model `FabricIQPreviewTool` for FabricIQ server-side tool support.
+* New model `ToolboxSearchPreviewTool` for searching over an agent's toolbox with deferred tool discovery.
+* New enum `CodeDependencyResolution` with values `BUNDLED` and `REMOTE_BUILD`.
+* New enum value `MCP` added to `ToolType` for MCP tool support.
+* New enum value `TEMPORARY_BLOB_REFERENCE` added to `PendingUploadType`.
+
+### Breaking Changes
+
+* Model `AgentEndpoint` renamed to `AgentEndpointConfig`.
+* Model `Target` renamed to `EvaluationTarget`.
+* Model `TargetConfig` renamed to `RedTeamTargetConfig`.
+* Model `DeleteSkillResponse` renamed to `DeleteSkillResult`.
+* Model `PendingUploadResponse` renamed to `PendingUploadResult`.
+* Model `SessionDirectoryListResponse` renamed to `SessionDirectoryListResult`.
+* Model `SessionFileWriteResponse` renamed to `SessionFileWriteResult`.
+* Model `SkillObject` renamed to `SkillDetails`.
+* Removed models: `IsolationKeySourceKind`, `IsolationKeySource`, `EntraIsolationKeySource`, `HeaderIsolationKeySource`, `WorkIQPreviewToolParameters`.
+* Parameter `isolation_key` removed from `create_session()` and `delete_session()` methods on `.beta.agents` sub-client.
+* Parameter `body` renamed to `taxonomy` in `evaluation_taxonomies.create()` method.
+
 ## 2.1.0 (2026-04-20)
 
 ### Features Added

@@ -21,13 +21,13 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CONTAINER_AGENTS_V1_PREVIEW."""
     AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
     """AGENT_ENDPOINT_V1_PREVIEW."""
+    CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
+    """CODE_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of _FoundryFeaturesOptInKeys."""
 
-    SKILLS_V1_PREVIEW = "Skills=V1Preview"
-    """SKILLS_V1_PREVIEW."""
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""
     SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
@@ -40,6 +40,12 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
     """TOOLBOXES_V1_PREVIEW."""
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
+    DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
+    """DATA_GENERATION_JOBS_V1_PREVIEW."""
+    MODELS_V1_PREVIEW = "Models=V1Preview"
+    """MODELS_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,6 +75,8 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSES."""
     A2A = "a2a"
     """A2A."""
+    MCP = "mcp"
+    """MCP."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
 
@@ -106,6 +114,8 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
+    MCP = "mcp"
+    """MCP."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
 
@@ -230,6 +240,16 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_simple_hybrid``."""
     VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
     """Query type ``vector_semantic_hybrid``."""
+
+
+class CodeDependencyResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How package dependencies are resolved at deployment time for a code-based hosted agent."""
+
+    BUNDLED = "bundled"
+    """The caller has bundled all dependencies into the uploaded zip; the service performs no remote
+    build."""
+    REMOTE_BUILD = "remote_build"
+    """The service builds dependencies remotely from the manifest included in the uploaded zip."""
 
 
 class ComputerEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -516,15 +536,6 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
-class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of IsolationKeySourceKind."""
-
-    ENTRA = "Entra"
-    """ENTRA."""
-    HEADER = "Header"
-    """HEADER."""
-
-
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Memory item kind."""
 
@@ -624,7 +635,10 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     """No pending upload."""
     BLOB_REFERENCE = "BlobReference"
-    """Blob Reference is the only supported type."""
+    """Deprecated: the service never read this value and silently ignored it. Use
+    TemporaryBlobReference instead."""
+    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+    """Temporary blob reference."""
 
 
 class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -840,6 +854,10 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_SEARCH_PREVIEW."""
     WORK_IQ_PREVIEW = "work_iq_preview"
     """WORK_IQ_PREVIEW."""
+    FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+    """FABRIC_IQ_PREVIEW."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """TOOLBOX_SEARCH_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
