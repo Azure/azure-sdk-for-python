@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.automation import AutomationClient
     pip install azure-identity
     pip install azure-mgmt-automation
 # USAGE
-    python private_link_resource_list_get.py
+    python hybrid_runbook_worker_group_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,17 +28,17 @@ from azure.mgmt.automation import AutomationClient
 def main():
     client = AutomationClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="subid",
     )
 
-    response = client.private_link_resources.automation(
-        resource_group_name="rg1",
-        automation_account_name="ddb1",
+    response = client.hybrid_runbook_worker_group.list_by_automation_account(
+        resource_group_name="udtest",
+        automation_account_name="testaccount",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2020-01-13-preview/examples/PrivateLinkResourceListGet.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2015-10-31/examples/hybridRunbookWorkerGroupList.json
 if __name__ == "__main__":
     main()

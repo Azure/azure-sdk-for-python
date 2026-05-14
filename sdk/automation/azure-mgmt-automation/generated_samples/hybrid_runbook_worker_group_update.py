@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.automation import AutomationClient
     pip install azure-identity
     pip install azure-mgmt-automation
 # USAGE
-    python get_hybrid_runbook_worker_group.py
+    python hybrid_runbook_worker_group_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,15 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.hybrid_runbook_worker_group.get(
+    response = client.hybrid_runbook_worker_group.update(
         resource_group_name="rg",
         automation_account_name="testaccount",
         hybrid_runbook_worker_group_name="TestHybridGroup",
+        parameters={"credential": {"name": "myRunAsCredentialName"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2022-08-08/examples/getHybridRunbookWorkerGroup.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2015-10-31/examples/hybridRunbookWorkerGroupUpdate.json
 if __name__ == "__main__":
     main()

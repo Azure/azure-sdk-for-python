@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.automation import AutomationClient
     pip install azure-identity
     pip install azure-mgmt-automation
 # USAGE
-    python list_rest_api_operations.py
+    python hybrid_runbook_worker_group_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,14 +28,17 @@ from azure.mgmt.automation import AutomationClient
 def main():
     client = AutomationClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="subid",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.hybrid_runbook_worker_group.get(
+        resource_group_name="rg",
+        automation_account_name="testaccount",
+        hybrid_runbook_worker_group_name="TestHybridGroup",
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2022-08-08/examples/listRestAPIOperations.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2015-10-31/examples/hybridRunbookWorkerGroupGet.json
 if __name__ == "__main__":
     main()
