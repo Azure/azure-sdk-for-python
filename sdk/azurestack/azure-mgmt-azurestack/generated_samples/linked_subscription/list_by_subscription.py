@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.azurestack import AzureStackManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.azurestack import AzureStackManagementClient
     pip install azure-identity
     pip install azure-mgmt-azurestack
 # USAGE
-    python get.py
+    python list_by_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,15 +28,14 @@ from azure.mgmt.azurestack import AzureStackManagementClient
 def main():
     client = AzureStackManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="dd8597b4-8739-4467-8b10-f8679f62bfbf",
     )
 
-    response = client.cloud_manifest_file.get(
-        verification_version="latest",
-    )
-    print(response)
+    response = client.linked_subscriptions.list_by_subscription()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2022-06-01/examples/CloudManifestFile/Get.json
+# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/AzureStack/preview/2020-06-01-preview/examples/LinkedSubscription/ListBySubscription.json
 if __name__ == "__main__":
     main()

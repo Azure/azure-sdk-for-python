@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.azurestack import AzureStackManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.azurestack import AzureStackManagementClient
     pip install azure-identity
     pip install azure-mgmt-azurestack
 # USAGE
-    python upload_log.py
+    python get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +31,14 @@ def main():
         subscription_id="dd8597b4-8739-4467-8b10-f8679f62bfbf",
     )
 
-    response = client.products.upload_log(
+    response = client.customer_subscriptions.get(
         resource_group="azurestack",
         registration_name="testregistration",
-        product_name="Microsoft.OSTCExtensions.VMAccessForLinux.1.4.7.1",
+        customer_subscription_name="E09A4E93-29A7-4EBA-A6D4-76202383F07F",
     )
     print(response)
 
 
-# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2022-06-01/examples/Product/UploadLog.json
+# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/AzureStack/preview/2020-06-01-preview/examples/CustomerSubscription/Get.json
 if __name__ == "__main__":
     main()

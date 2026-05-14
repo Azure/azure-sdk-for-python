@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.azurestack import AzureStackManagementClient
 
 """
@@ -29,12 +31,12 @@ def main():
         subscription_id="dd8597b4-8739-4467-8b10-f8679f62bfbf",
     )
 
-    response = client.deployment_license.create(
-        deployment_license_request={"verificationVersion": "1"},
+    client.registrations.enable_remote_management(
+        resource_group="azurestack",
+        registration_name="testregistration",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/stable/2022-06-01/examples/DeploymentLicense/Post.json
+# x-ms-original-file: specification/azurestack/resource-manager/Microsoft.AzureStack/AzureStack/preview/2020-06-01-preview/examples/RemoteManagement/Post.json
 if __name__ == "__main__":
     main()
