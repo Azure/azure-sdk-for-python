@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -6,17 +7,14 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from datetime import datetime
-from typing import (
-    Any, Awaitable, Callable, cast, Dict, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Awaitable, Callable, cast, Dict, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
 from .._deserialize import process_storage_error
-from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._generated.aio import DataLakeClient as AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -34,7 +32,7 @@ from .._path_client_helpers import (
     _parse_url,
     _rename_path_options,
     _set_access_control_options,
-    _set_access_control_recursive_options
+    _set_access_control_recursive_options,
 )
 from .._serialize import compare_api_versions, convert_dfs_url_to_blob_url, get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
@@ -79,21 +77,25 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
+
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         file_system_name: str,
         path_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
 
         # remove the preceding/trailing delimiter from the path components
-        file_system_name = file_system_name.strip('/')
+        file_system_name = file_system_name.strip("/")
 
         # the name of root directory is /
-        if path_name != '/':
-            path_name = path_name.strip('/')
+        if path_name != "/":
+            path_name = path_name.strip("/")
 
         if not (file_system_name and path_name):
             raise ValueError("Please specify a file system name and file path.")
@@ -102,14 +104,11 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
 
-        datalake_hosts = kwargs.pop('_hosts', None)
+        datalake_hosts = kwargs.pop("_hosts", None)
         blob_hosts = None
         if datalake_hosts:
             blob_primary_account_url = convert_dfs_url_to_blob_url(datalake_hosts[LocationMode.PRIMARY])
-            blob_hosts = {
-                LocationMode.PRIMARY: blob_primary_account_url,
-                LocationMode.SECONDARY: ""
-            }
+            blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url, LocationMode.SECONDARY: ""}
         self._blob_client = BlobClient(
             account_url=blob_account_url,
             container_name=file_system_name,
@@ -126,11 +125,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
         super(PathClient, self).__init__(
-            parsed_url,
-            service='dfs',
-            credential=self._raw_credential,
-            _hosts=datalake_hosts,
-            **kwargs
+            parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs
         )
 
         # ADLS doesn't support secondary endpoint, make sure it's empty
@@ -138,7 +133,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client(self.url)
         self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
-        self._loop = kwargs.get('loop', None)
+        self._loop = kwargs.get("loop", None)
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
@@ -166,11 +161,11 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
-            version=self._api_version,
             base_url=url,
             file_system=self.file_system_name,
             path=self.path_name,
-            pipeline=self._pipeline
+            version=self._api_version,
+            pipeline=self._pipeline,
         )
         return client
 
@@ -178,7 +173,8 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         return _format_url(self.scheme, hostname, self.file_system_name, self.path_name, self._query_str)
 
     async def _create(
-        self, resource_type: str,
+        self,
+        resource_type: str,
         content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -272,8 +268,8 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         :return: A dictionary of response headers.
         :rtype: Dict[str, Union[str, ~datetime.datetime]]
         """
-        lease_id = kwargs.get('lease_id', None)
-        lease_duration = kwargs.get('lease_duration', None)
+        lease_id = kwargs.get("lease_id", None)
+        lease_duration = kwargs.get("lease_duration", None)
         if lease_id and not lease_duration:
             raise ValueError("Please specify a lease_id and a lease_duration.")
         if lease_duration and not lease_id:
@@ -321,19 +317,21 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
         # The pagination is only for ACL checks, the final request remains the atomic delete operation
         paginated = None
-        if (compare_api_versions(self.api_version, '2023-08-03') >= 0 and
-            hasattr(self.credential, 'get_token') and
-            kwargs.get('recursive')):  # Directory delete will always specify recursive
+        if (
+            compare_api_versions(self.api_version, "2023-08-03") >= 0
+            and hasattr(self.credential, "get_token")
+            and kwargs.get("recursive")
+        ):  # Directory delete will always specify recursive
             paginated = True
 
         options = _delete_path_options(paginated, **kwargs)
         try:
             response_headers = await self._client.path.delete(**options)
             # Loop until continuation token is None for paginated delete
-            while response_headers['continuation']:
+            while response_headers["continuation"]:
                 response_headers = await self._client.path.delete(
-                    continuation=response_headers['continuation'],
-                    **options)
+                    continuation=response_headers["continuation"], **options
+                )
 
             return response_headers
         except HttpResponseError as error:
@@ -341,7 +339,8 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
 
     @distributed_trace_async
     async def set_access_control(
-        self, owner: Optional[str] = None,
+        self,
+        owner: Optional[str] = None,
         group: Optional[str] = None,
         permissions: Optional[str] = None,
         acl: Optional[str] = None,
@@ -509,11 +508,12 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
 
-        progress_hook = kwargs.pop('progress_hook', None)
-        max_batches = kwargs.pop('max_batches', None)
-        options = _set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
-                                                       max_batches=max_batches)
+        progress_hook = kwargs.pop("progress_hook", None)
+        max_batches = kwargs.pop("max_batches", None)
+        options = _set_access_control_recursive_options(mode="set", acl=acl, **kwargs)
+        return await self._set_access_control_internal(
+            options=options, progress_hook=progress_hook, max_batches=max_batches
+        )
 
     @distributed_trace_async
     async def update_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
@@ -563,11 +563,12 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
 
-        progress_hook = kwargs.pop('progress_hook', None)
-        max_batches = kwargs.pop('max_batches', None)
-        options = _set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
-                                                       max_batches=max_batches)
+        progress_hook = kwargs.pop("progress_hook", None)
+        max_batches = kwargs.pop("max_batches", None)
+        options = _set_access_control_recursive_options(mode="modify", acl=acl, **kwargs)
+        return await self._set_access_control_internal(
+            options=options, progress_hook=progress_hook, max_batches=max_batches
+        )
 
     @distributed_trace_async
     async def remove_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
@@ -615,19 +616,21 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         if not acl:
             raise ValueError("The Access Control List must be set for this operation")
 
-        progress_hook = kwargs.pop('progress_hook', None)
-        max_batches = kwargs.pop('max_batches', None)
-        options = _set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
-        return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
-                                                       max_batches=max_batches)
+        progress_hook = kwargs.pop("progress_hook", None)
+        max_batches = kwargs.pop("max_batches", None)
+        options = _set_access_control_recursive_options(mode="remove", acl=acl, **kwargs)
+        return await self._set_access_control_internal(
+            options=options, progress_hook=progress_hook, max_batches=max_batches
+        )
 
     async def _set_access_control_internal(
-        self, options: Dict[str, Any],
+        self,
+        options: Dict[str, Any],
         progress_hook: Optional[Callable[[AccessControlChanges], Awaitable[Any]]],
-        max_batches: Optional[int] = None
+        max_batches: Optional[int] = None,
     ) -> AccessControlChangeResult:
         try:
-            continue_on_failure = options.get('force_flag')
+            continue_on_failure = options.get("force_flag")
             total_directories_successful = 0
             total_files_success = 0
             total_failure_count = 0
@@ -643,44 +646,56 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
                 total_files_success += resp.files_successful
                 total_failure_count += resp.failure_count
                 batch_count += 1
-                current_continuation_token = headers['continuation']
+                current_continuation_token = headers["continuation"]
 
                 if current_continuation_token is not None:
                     last_continuation_token = current_continuation_token
 
                 if progress_hook is not None:
-                    await progress_hook(AccessControlChanges(
-                        batch_counters=AccessControlChangeCounters(
-                            directories_successful=resp.directories_successful,
-                            files_successful=resp.files_successful,
-                            failure_count=resp.failure_count,
-                        ),
-                        aggregate_counters=AccessControlChangeCounters(
-                            directories_successful=total_directories_successful,
-                            files_successful=total_files_success,
-                            failure_count=total_failure_count,
-                        ),
-                        batch_failures=[AccessControlChangeFailure(
-                            name=failure.name,
-                            is_directory=failure.type == 'DIRECTORY',
-                            error_message=failure.error_message) for failure in resp.failed_entries],
-                        continuation=last_continuation_token
-                    ))
+                    await progress_hook(
+                        AccessControlChanges(
+                            batch_counters=AccessControlChangeCounters(
+                                directories_successful=resp.directories_successful,
+                                files_successful=resp.files_successful,
+                                failure_count=resp.failure_count,
+                            ),
+                            aggregate_counters=AccessControlChangeCounters(
+                                directories_successful=total_directories_successful,
+                                files_successful=total_files_success,
+                                failure_count=total_failure_count,
+                            ),
+                            batch_failures=[
+                                AccessControlChangeFailure(
+                                    name=failure.name,
+                                    is_directory=failure.type == "DIRECTORY",
+                                    error_message=failure.error_message,
+                                )
+                                for failure in resp.failed_entries
+                            ],
+                            continuation=last_continuation_token,
+                        )
+                    )
 
                 # update the continuation token, if there are more operations that cannot be completed in a single call
-                max_batches_satisfied = (max_batches is not None and batch_count == max_batches)
+                max_batches_satisfied = max_batches is not None and batch_count == max_batches
                 continue_operation = bool(current_continuation_token) and not max_batches_satisfied
-                options['continuation'] = current_continuation_token
+                options["continuation"] = current_continuation_token
 
             # currently the service stops on any failure, so we should send back the last continuation token
             # for the user to retry the failed updates
             # otherwise we should just return what the service gave us
-            return AccessControlChangeResult(counters=AccessControlChangeCounters(
-                directories_successful=total_directories_successful,
-                files_successful=total_files_success,
-                failure_count=total_failure_count),
-                continuation=last_continuation_token
-                if total_failure_count > 0 and not continue_on_failure else current_continuation_token)
+            return AccessControlChangeResult(
+                counters=AccessControlChangeCounters(
+                    directories_successful=total_directories_successful,
+                    files_successful=total_files_success,
+                    failure_count=total_failure_count,
+                ),
+                continuation=(
+                    last_continuation_token
+                    if total_failure_count > 0 and not continue_on_failure
+                    else current_continuation_token
+                ),
+            )
         except HttpResponseError as error:
             error.continuation_token = last_continuation_token
             process_storage_error(error)
@@ -800,11 +815,11 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             and system properties for the file or directory.
         :rtype: DirectoryProperties or FileProperties
         """
-        upn = kwargs.pop('upn', None)
+        upn = kwargs.pop("upn", None)
         if upn:
-            headers = kwargs.pop('headers', {})
-            headers['x-ms-upn'] = str(upn)
-            kwargs['headers'] = headers
+            headers = kwargs.pop("headers", {})
+            headers["x-ms-upn"] = str(upn)
+            kwargs["headers"] = headers
         path_properties = await self._blob_client.get_blob_properties(**kwargs)
         return cast(Union[DirectoryProperties, FileProperties], path_properties)
 
@@ -871,8 +886,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
 
     @distributed_trace_async
     async def set_http_headers(
-        self, content_settings: Optional["ContentSettings"] = None,
-        **kwargs: Any
+        self, content_settings: Optional["ContentSettings"] = None, **kwargs: Any
     ) -> Dict[str, Any]:
         """Sets system properties on the file or directory.
 
@@ -914,9 +928,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
 
     @distributed_trace_async
     async def acquire_lease(
-        self, lease_duration: int = -1,
-        lease_id: Optional[str] = None,
-        **kwargs: Any
+        self, lease_duration: int = -1, lease_id: Optional[str] = None, **kwargs: Any
     ) -> DataLakeLeaseClient:
         """
         Requests a new lease. If the file or directory does not have an active lease,

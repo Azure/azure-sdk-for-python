@@ -6,8 +6,16 @@
 
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
-    Dict, IO, Iterable, Optional, Union,
+    Any,
+    AnyStr,
+    AsyncGenerator,
+    AsyncIterable,
+    cast,
+    Dict,
+    IO,
+    Iterable,
+    Optional,
+    Union,
     TYPE_CHECKING,
 )
 
@@ -17,7 +25,7 @@ from ._serialize import (
     get_cpk_info,
     get_lease_action_properties,
     get_mod_conditions,
-    get_path_http_headers
+    get_path_http_headers,
 )
 from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._shared.request_handlers import get_length, read_length
@@ -36,10 +44,10 @@ def _append_data_options(
     offset: int,
     scheme: str,
     length: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     if isinstance(data, str):
-        data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
+        data = data.encode(kwargs.pop("encoding", "UTF-8"))  # type: ignore
     if length is None:
         length = get_length(data)
         if length is None:
@@ -51,14 +59,15 @@ def _append_data_options(
     kwargs.update(get_lease_action_properties(kwargs))
 
     options = {
-        'body': data,
-        'position': offset,
-        'content_length': length,
-        'validate_content': kwargs.pop('validate_content', False),
-        'cpk_info': cpk_info,
-        'timeout': kwargs.pop('timeout', None),
-        'cls': return_response_headers
+        "body": data,
+        "position": offset,
+        "content_length": length,
+        "validate_content": kwargs.pop("validate_content", False),
+        "timeout": kwargs.pop("timeout", None),
+        "cls": return_response_headers,
     }
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -68,11 +77,11 @@ def _flush_data_options(
     scheme: str,
     content_settings: Optional["ContentSettings"] = None,
     retain_uncommitted_data: Optional[bool] = False,
-    **kwargs
+    **kwargs,
 ) -> Dict[str, Any]:
     mod_conditions = get_mod_conditions(kwargs)
 
-    path_http_headers = None
+    path_http_headers = {}
     if content_settings:
         path_http_headers = get_path_http_headers(content_settings)
 
@@ -80,16 +89,17 @@ def _flush_data_options(
     kwargs.update(get_lease_action_properties(kwargs))
 
     options = {
-        'position': offset,
-        'content_length': 0,
-        'path_http_headers': path_http_headers,
-        'retain_uncommitted_data': retain_uncommitted_data,
-        'close': kwargs.pop('close', False),
-        'modified_access_conditions': mod_conditions,
-        'cpk_info': cpk_info,
-        'timeout': kwargs.pop('timeout', None),
-        'cls': return_response_headers
+        "position": offset,
+        "content_length": 0,
+        "retain_uncommitted_data": retain_uncommitted_data,
+        "close": kwargs.pop("close", False),
+        "timeout": kwargs.pop("timeout", None),
+        "cls": return_response_headers,
     }
+    options.update(path_http_headers)
+    options.update(mod_conditions)
+    if cpk_info:
+        options.update(cpk_info)
     options.update(kwargs)
     return options
 
@@ -100,9 +110,9 @@ def _upload_options(
     config: "StorageConfiguration",
     path: "PathOperations",
     length: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Dict[str, Any]:
-    encoding = kwargs.pop('encoding', 'UTF-8')
+    encoding = kwargs.pop("encoding", "UTF-8")
     if isinstance(data, str):
         data = data.encode(encoding)
     if length is None:
@@ -113,35 +123,40 @@ def _upload_options(
     stream: Optional[Any] = None
     if isinstance(data, bytes):
         stream = BytesIO(data)
-    elif hasattr(data, 'read'):
+    elif hasattr(data, "read"):
         stream = data
-    elif hasattr(data, '__iter__'):
+    elif hasattr(data, "__iter__"):
         stream = IterStreamer(data, encoding=encoding)
-    elif hasattr(data, '__aiter__'):
+    elif hasattr(data, "__aiter__"):
         stream = AsyncIterStreamer(cast(AsyncGenerator, data), encoding=encoding)
     else:
         raise TypeError(f"Unsupported data type: {type(data)}")
 
-    validate_content = kwargs.pop('validate_content', False)
-    content_settings = kwargs.pop('content_settings', None)
-    metadata = kwargs.pop('metadata', None)
-    max_concurrency = kwargs.pop('max_concurrency', None)
+    validate_content = kwargs.pop("validate_content", False)
+    content_settings = kwargs.pop("content_settings", None)
+    metadata = kwargs.pop("metadata", None)
+    max_concurrency = kwargs.pop("max_concurrency", None)
     if max_concurrency is None:
         max_concurrency = DEFAULT_MAX_CONCURRENCY
 
-    kwargs['properties'] = add_metadata_headers(metadata)
-    kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
-    kwargs['modified_access_conditions'] = get_mod_conditions(kwargs)
-    kwargs['cpk_info'] = get_cpk_info(scheme, kwargs)
+    kwargs["properties"] = add_metadata_headers(metadata)
+    lease_id = get_access_conditions(kwargs.pop("lease", None))
+    if lease_id:
+        kwargs["lease_id"] = lease_id
+    mod_conditions = get_mod_conditions(kwargs)
+    kwargs.update(mod_conditions)
+    cpk_info = get_cpk_info(scheme, kwargs)
+    if cpk_info:
+        kwargs.update(cpk_info)
 
     if content_settings:
-        kwargs['path_http_headers'] = get_path_http_headers(content_settings)
+        kwargs.update(get_path_http_headers(content_settings))
 
-    kwargs['stream'] = stream
-    kwargs['length'] = length
-    kwargs['validate_content'] = validate_content
-    kwargs['max_concurrency'] = max_concurrency
-    kwargs['client'] = path
-    kwargs['file_settings'] = config
+    kwargs["stream"] = stream
+    kwargs["length"] = length
+    kwargs["validate_content"] = validate_content
+    kwargs["max_concurrency"] = max_concurrency
+    kwargs["client"] = path
+    kwargs["file_settings"] = config
 
     return kwargs

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -6,10 +7,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes, super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import (
-    Any, Dict, List, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
@@ -24,12 +22,12 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
-from azure.storage.blob._generated.models import (
+from azure.storage.blob import (
     CorsRule as GenCorsRule,
-    Logging as GenLogging,
+    BlobAnalyticsLogging as GenLogging,
     Metrics as GenMetrics,
     RetentionPolicy as GenRetentionPolicy,
-    StaticWebsite as GenStaticWebsite
+    StaticWebsite as GenStaticWebsite,
 )
 from azure.storage.blob._models import ContainerPropertiesPaged
 
@@ -60,7 +58,7 @@ class RetentionPolicy(GenRetentionPolicy):
         All data older than this value will be deleted."""
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days)
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -91,7 +89,7 @@ class Metrics(GenMetrics):
         policy will be disabled by default.
     """
 
-    version: str = '1.0'
+    version: str = "1.0"
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the Datalake service."""
@@ -101,10 +99,10 @@ class Metrics(GenMetrics):
     """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get('version', '1.0')
-        self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", "1.0")
+        self.enabled = kwargs.get("enabled", False)
+        self.include_apis = kwargs.get("include_apis")
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -114,7 +112,9 @@ class Metrics(GenMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+                generated.retention_policy
+            ),
         )
 
 
@@ -164,11 +164,11 @@ class CorsRule(GenCorsRule):
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        self.allowed_origins = ','.join(allowed_origins)
-        self.allowed_methods = ','.join(allowed_methods)
-        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
-        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+        self.allowed_origins = ",".join(allowed_origins)
+        self.allowed_methods = ",".join(allowed_methods)
+        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
+        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
+        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GenCorsRule]]:
@@ -224,16 +224,14 @@ class AccountSasPermissions(BlobAccountSasPermissions):
     """
 
     def __init__(
-        self, read: bool = False,
+        self,
+        read: bool = False,
         write: bool = False,
         delete: bool = False,
         list: bool = False,  # pylint: disable=redefined-builtin
-        create: bool = False
+        create: bool = False,
     ) -> None:
-        super(AccountSasPermissions, self).__init__(
-            read=read, create=create, write=write, list=list,
-            delete=delete
-        )
+        super(AccountSasPermissions, self).__init__(read=read, create=create, write=write, list=list, delete=delete)
 
 
 class FileSystemSasPermissions:
@@ -296,7 +294,8 @@ class FileSystemSasPermissions:
     """Allows the user to set permissions and POSIX ACLs on files and directories."""
 
     def __init__(
-        self, read: bool = False,
+        self,
+        read: bool = False,
         write: bool = False,
         delete: bool = False,
         list: bool = False,  # pylint: disable=redefined-builtin
@@ -306,24 +305,24 @@ class FileSystemSasPermissions:
         self.write = write
         self.delete = delete
         self.list = list
-        self.add = kwargs.pop('add', None)
-        self.create = kwargs.pop('create', None)
-        self.tags = kwargs.pop('tags', None)
-        self.move = kwargs.pop('move', None)
-        self.execute = kwargs.pop('execute', None)
-        self.manage_ownership = kwargs.pop('manage_ownership', None)
-        self.manage_access_control = kwargs.pop('manage_access_control', None)
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('l' if self.list else '') +
-                     ('t' if self.tags else '') +
-                     ('m' if self.move else '') +
-                     ('e' if self.execute else '') +
-                     ('o' if self.manage_ownership else '') +
-                     ('p' if self.manage_access_control else ''))
+        self.add = kwargs.pop("add", None)
+        self.create = kwargs.pop("create", None)
+        self.move = kwargs.pop("move", None)
+        self.execute = kwargs.pop("execute", None)
+        self.manage_ownership = kwargs.pop("manage_ownership", None)
+        self.manage_access_control = kwargs.pop("manage_access_control", None)
+        self._str = (
+            ("r" if self.read else "")
+            + ("a" if self.add else "")
+            + ("c" if self.create else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("l" if self.list else "")
+            + ("m" if self.move else "")
+            + ("e" if self.execute else "")
+            + ("o" if self.manage_ownership else "")
+            + ("p" if self.manage_access_control else "")
+        )
 
     def __str__(self):
         return self._str
@@ -341,22 +340,29 @@ class FileSystemSasPermissions:
         :return: A FileSystemSasPermissions object
         :rtype: ~azure.storage.filedatalake.FileSystemSasPermissions
         """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_list = 'l' in permission
-        p_tags = 't' in permission
-        p_move = 'm' in permission
-        p_execute = 'e' in permission
-        p_manage_ownership = 'o' in permission
-        p_manage_access_control = 'p' in permission
+        p_read = "r" in permission
+        p_add = "a" in permission
+        p_create = "c" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_list = "l" in permission
+        p_move = "m" in permission
+        p_execute = "e" in permission
+        p_manage_ownership = "o" in permission
+        p_manage_access_control = "p" in permission
 
-        parsed = cls(read=p_read, write=p_write, delete=p_delete, list=p_list,
-                     tags=p_tags, add=p_add, create=p_create, move=p_move,
-                     execute=p_execute, manage_ownership=p_manage_ownership,
-                     manage_access_control=p_manage_access_control)
+        parsed = cls(
+            read=p_read,
+            write=p_write,
+            delete=p_delete,
+            list=p_list,
+            add=p_add,
+            create=p_create,
+            move=p_move,
+            execute=p_execute,
+            manage_ownership=p_manage_ownership,
+            manage_access_control=p_manage_access_control,
+        )
         return parsed
 
 
@@ -420,34 +426,30 @@ class DirectorySasPermissions:
     """Allows the user to set permissions and POSIX ACLs on files and directories."""
 
     def __init__(
-        self, read: bool = False,
-        create: bool = False,
-        write: bool = False,
-        delete: bool = False,
-        **kwargs: Any
+        self, read: bool = False, create: bool = False, write: bool = False, delete: bool = False, **kwargs: Any
     ) -> None:
         self.read = read
         self.create = create
         self.write = write
         self.delete = delete
-        self.add = kwargs.pop('add', None)
-        self.list = kwargs.pop('list', None)
-        self.tags = kwargs.pop('tags', None)
-        self.move = kwargs.pop('move', None)
-        self.execute = kwargs.pop('execute', None)
-        self.manage_ownership = kwargs.pop('manage_ownership', None)
-        self.manage_access_control = kwargs.pop('manage_access_control', None)
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('l' if self.list else '') +
-                     ('t' if self.tags else '') +
-                     ('m' if self.move else '') +
-                     ('e' if self.execute else '') +
-                     ('o' if self.manage_ownership else '') +
-                     ('p' if self.manage_access_control else ''))
+        self.add = kwargs.pop("add", None)
+        self.list = kwargs.pop("list", None)
+        self.move = kwargs.pop("move", None)
+        self.execute = kwargs.pop("execute", None)
+        self.manage_ownership = kwargs.pop("manage_ownership", None)
+        self.manage_access_control = kwargs.pop("manage_access_control", None)
+        self._str = (
+            ("r" if self.read else "")
+            + ("a" if self.add else "")
+            + ("c" if self.create else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("l" if self.list else "")
+            + ("m" if self.move else "")
+            + ("e" if self.execute else "")
+            + ("o" if self.manage_ownership else "")
+            + ("p" if self.manage_access_control else "")
+        )
 
     def __str__(self):
         return self._str
@@ -465,21 +467,29 @@ class DirectorySasPermissions:
         :return: A DirectorySasPermissions object
         :rtype: ~azure.storage.filedatalake.DirectorySasPermissions
         """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_list = 'l' in permission
-        p_tags = 't' in permission
-        p_move = 'm' in permission
-        p_execute = 'e' in permission
-        p_manage_ownership = 'o' in permission
-        p_manage_access_control = 'p' in permission
+        p_read = "r" in permission
+        p_add = "a" in permission
+        p_create = "c" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_list = "l" in permission
+        p_move = "m" in permission
+        p_execute = "e" in permission
+        p_manage_ownership = "o" in permission
+        p_manage_access_control = "p" in permission
 
-        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete, add=p_add, list=p_list,
-                     tags=p_tags, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
-                     manage_access_control=p_manage_access_control)
+        parsed = cls(
+            read=p_read,
+            create=p_create,
+            write=p_write,
+            delete=p_delete,
+            add=p_add,
+            list=p_list,
+            move=p_move,
+            execute=p_execute,
+            manage_ownership=p_manage_ownership,
+            manage_access_control=p_manage_access_control,
+        )
         return parsed
 
 
@@ -539,32 +549,28 @@ class FileSasPermissions:
     """Allows the user to set permissions and POSIX ACLs on files and directories."""
 
     def __init__(
-        self, read: bool = False,
-        create: bool = False,
-        write: bool = False,
-        delete: bool = False,
-        **kwargs: Any
+        self, read: bool = False, create: bool = False, write: bool = False, delete: bool = False, **kwargs: Any
     ) -> None:
         self.read = read
         self.create = create
         self.write = write
         self.delete = delete
-        self.add = kwargs.pop('add', None)
-        self.tags = kwargs.pop('tags', None)
-        self.move = kwargs.pop('move', None)
-        self.execute = kwargs.pop('execute', None)
-        self.manage_ownership = kwargs.pop('manage_ownership', None)
-        self.manage_access_control = kwargs.pop('manage_access_control', None)
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('c' if self.create else '') +
-                     ('w' if self.write else '') +
-                     ('d' if self.delete else '') +
-                     ('t' if self.tags else '') +
-                     ('m' if self.move else '') +
-                     ('e' if self.execute else '') +
-                     ('o' if self.manage_ownership else '') +
-                     ('p' if self.manage_access_control else ''))
+        self.add = kwargs.pop("add", None)
+        self.move = kwargs.pop("move", None)
+        self.execute = kwargs.pop("execute", None)
+        self.manage_ownership = kwargs.pop("manage_ownership", None)
+        self.manage_access_control = kwargs.pop("manage_access_control", None)
+        self._str = (
+            ("r" if self.read else "")
+            + ("a" if self.add else "")
+            + ("c" if self.create else "")
+            + ("w" if self.write else "")
+            + ("d" if self.delete else "")
+            + ("m" if self.move else "")
+            + ("e" if self.execute else "")
+            + ("o" if self.manage_ownership else "")
+            + ("p" if self.manage_access_control else "")
+        )
 
     def __str__(self):
         return self._str
@@ -582,20 +588,27 @@ class FileSasPermissions:
         :return: A FileSasPermissions object
         :rtype: ~azure.storage.filedatalake.FileSasPermissions
         """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_create = 'c' in permission
-        p_write = 'w' in permission
-        p_delete = 'd' in permission
-        p_tags = 't' in permission
-        p_move = 'm' in permission
-        p_execute = 'e' in permission
-        p_manage_ownership = 'o' in permission
-        p_manage_access_control = 'p' in permission
+        p_read = "r" in permission
+        p_add = "a" in permission
+        p_create = "c" in permission
+        p_write = "w" in permission
+        p_delete = "d" in permission
+        p_move = "m" in permission
+        p_execute = "e" in permission
+        p_manage_ownership = "o" in permission
+        p_manage_access_control = "p" in permission
 
-        parsed = cls(read=p_read, create=p_create, write=p_write, delete=p_delete, add=p_add,
-                     tags=p_tags, move=p_move, execute=p_execute, manage_ownership=p_manage_ownership,
-                     manage_access_control=p_manage_access_control)
+        parsed = cls(
+            read=p_read,
+            create=p_create,
+            write=p_write,
+            delete=p_delete,
+            add=p_add,
+            move=p_move,
+            execute=p_execute,
+            manage_ownership=p_manage_ownership,
+            manage_access_control=p_manage_access_control,
+        )
         return parsed
 
 
@@ -643,12 +656,13 @@ class AccessPolicy(BlobAccessPolicy):
     """
 
     def __init__(
-        self, permission: Optional[Union[FileSystemSasPermissions, str]] = None,
+        self,
+        permission: Optional[Union[FileSystemSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         **kwargs: Any
     ) -> None:
         super(AccessPolicy, self).__init__(
-            permission=permission, expiry=expiry, start=kwargs.pop('start', None)  # type: ignore [arg-type]
+            permission=permission, expiry=expiry, start=kwargs.pop("start", None)  # type: ignore [arg-type]
         )
 
 
@@ -740,11 +754,11 @@ class FileSystemProperties(DictMixin):
         self.metadata = None  # type: ignore [assignment]
         self.deleted = None
         self.deleted_version = None
-        default_encryption_scope = kwargs.get('x-ms-default-encryption-scope')
+        default_encryption_scope = kwargs.get("x-ms-default-encryption-scope")
         if default_encryption_scope:
             self.encryption_scope = EncryptionScopeOptions(
                 default_encryption_scope=default_encryption_scope,
-                prevent_encryption_scope_override=kwargs.get('x-ms-deny-encryption-scope-override', False)
+                prevent_encryption_scope_override=kwargs.get("x-ms-deny-encryption-scope-override", False),
             )
 
     @classmethod
@@ -757,7 +771,8 @@ class FileSystemProperties(DictMixin):
         props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
-            generated.properties.public_access)
+            generated.properties.public_access
+        )
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
@@ -768,7 +783,8 @@ class FileSystemProperties(DictMixin):
     def _convert_from_container_props(cls, container_properties):
         container_properties.__class__ = cls
         container_properties.public_access = PublicAccess._from_generated(  # pylint: disable=protected-access
-            container_properties.public_access)
+            container_properties.public_access
+        )
         container_properties.lease.__class__ = LeaseProperties
         return container_properties
 
@@ -829,22 +845,22 @@ class DirectoryProperties(DictMixin):
     """The POSIX ACL permissions of the file or directory."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name')  # type: ignore [assignment]
-        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
+        self.name = kwargs.get("name")  # type: ignore [assignment]
+        self.etag = kwargs.get("ETag")  # type: ignore [assignment]
         self.deleted = False
-        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
+        self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
         self.lease = LeaseProperties(**kwargs)
-        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
-        self.creation_time = kwargs.get('x-ms-creation-time')  # type: ignore [assignment]
+        self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
+        self.creation_time = kwargs.get("x-ms-creation-time")  # type: ignore [assignment]
         self.deleted_time = None
         self.remaining_retention_days = None
-        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
+        self.encryption_scope = kwargs.get("x-ms-encryption-scope")
 
         # This is being passed directly not coming from headers
-        self.owner = kwargs.get('owner', None)
-        self.group = kwargs.get('group', None)
-        self.permissions = kwargs.get('permissions', None)
-        self.acl = kwargs.get('acl', None)
+        self.owner = kwargs.get("owner", None)
+        self.group = kwargs.get("group", None)
+        self.permissions = kwargs.get("permissions", None)
+        self.acl = kwargs.get("acl", None)
 
 
 class FileProperties(DictMixin):
@@ -892,26 +908,26 @@ class FileProperties(DictMixin):
     """The POSIX ACL permissions of the file or directory."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name')  # type: ignore [assignment]
-        self.etag = kwargs.get('ETag')  # type: ignore [assignment]
+        self.name = kwargs.get("name")  # type: ignore [assignment]
+        self.etag = kwargs.get("ETag")  # type: ignore [assignment]
         self.deleted = False
-        self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
+        self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
         self.lease = LeaseProperties(**kwargs)
-        self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]
-        self.creation_time = kwargs.get('x-ms-creation-time')  # type: ignore [assignment]
-        self.size = kwargs.get('Content-Length')  # type: ignore [assignment]
+        self.last_modified = kwargs.get("Last-Modified")  # type: ignore [assignment]
+        self.creation_time = kwargs.get("x-ms-creation-time")  # type: ignore [assignment]
+        self.size = kwargs.get("Content-Length")  # type: ignore [assignment]
         self.deleted_time = None
         self.expiry_time = kwargs.get("x-ms-expiry-time")
         self.remaining_retention_days = None
         self.content_settings = ContentSettings(**kwargs)
-        self.encryption_scope = kwargs.get('x-ms-encryption-scope')
+        self.encryption_scope = kwargs.get("x-ms-encryption-scope")
 
         # This is being passed directly not coming from headers
-        self.encryption_context = kwargs.get('encryption_context')
-        self.owner = kwargs.get('owner', None)
-        self.group = kwargs.get('group', None)
-        self.permissions = kwargs.get('permissions', None)
-        self.acl = kwargs.get('acl', None)
+        self.encryption_context = kwargs.get("encryption_context")
+        self.owner = kwargs.get("owner", None)
+        self.group = kwargs.get("group", None)
+        self.permissions = kwargs.get("permissions", None)
+        self.acl = kwargs.get("acl", None)
 
 
 class PathProperties(DictMixin):
@@ -955,18 +971,18 @@ class PathProperties(DictMixin):
     """Specifies the encryption context to set on the file."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.pop('name', None)  # type: ignore [assignment]
-        self.owner = kwargs.get('owner', None)  # type: ignore [assignment]
-        self.group = kwargs.get('group', None)  # type: ignore [assignment]
-        self.permissions = kwargs.get('permissions', None)  # type: ignore [assignment]
-        self.last_modified = kwargs.get('last_modified', None)  # type: ignore [assignment]
-        self.is_directory = kwargs.get('is_directory', False)  # type: ignore [assignment]
-        self.etag = kwargs.get('etag', None)  # type: ignore [assignment]
-        self.content_length = kwargs.get('content_length', None)  # type: ignore [assignment]
-        self.creation_time = kwargs.get('creation_time', None)  # type: ignore [assignment]
-        self.expiry_time = kwargs.get('expiry_time', None)
-        self.encryption_scope = kwargs.get('x-ms-encryption-scope', None)
-        self.encryption_context = kwargs.get('x-ms-encryption-context', None)
+        self.name = kwargs.pop("name", None)  # type: ignore [assignment]
+        self.owner = kwargs.get("owner", None)  # type: ignore [assignment]
+        self.group = kwargs.get("group", None)  # type: ignore [assignment]
+        self.permissions = kwargs.get("permissions", None)  # type: ignore [assignment]
+        self.last_modified = kwargs.get("last_modified", None)  # type: ignore [assignment]
+        self.is_directory = kwargs.get("is_directory", False)  # type: ignore [assignment]
+        self.etag = kwargs.get("etag", None)  # type: ignore [assignment]
+        self.content_length = kwargs.get("content_length", None)  # type: ignore [assignment]
+        self.creation_time = kwargs.get("creation_time", None)  # type: ignore [assignment]
+        self.expiry_time = kwargs.get("expiry_time", None)
+        self.encryption_scope = kwargs.get("x-ms-encryption-scope", None)
+        self.encryption_context = kwargs.get("x-ms-encryption-context", None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -977,7 +993,7 @@ class PathProperties(DictMixin):
         path_prop.permissions = generated.permissions
         path_prop.last_modified = _rfc_1123_to_datetime(generated.last_modified)
         path_prop.is_directory = bool(generated.is_directory)
-        path_prop.etag = generated.additional_properties.get('etag')
+        path_prop.etag = generated.etag
         path_prop.content_length = generated.content_length
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
@@ -999,9 +1015,10 @@ class ResourceTypes(BlobResourceTypes):
     """
 
     def __init__(
-        self, service: bool = False,
+        self,
+        service: bool = False,
         file_system: bool = False,
-        object: bool = False  # pylint: disable=redefined-builtin
+        object: bool = False,  # pylint: disable=redefined-builtin
     ) -> None:
         super(ResourceTypes, self).__init__(service=service, container=file_system, object=object)
 
@@ -1034,14 +1051,14 @@ class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Specifies whether data in the file system may be accessed publicly and the level of access.
     """
 
-    FILE = 'blob'
+    FILE = "blob"
     """
     Specifies public read access for files. file data within this file system can be read
     via anonymous request, but file system data is not available. Clients cannot enumerate
     files within the container via anonymous request.
     """
 
-    FILESYSTEM = 'container'
+    FILESYSTEM = "container"
     """
     Specifies full public read access for file system and file data. Clients can enumerate
     files within the file system via anonymous request, but cannot enumerate file systems
@@ -1065,8 +1082,8 @@ class LocationMode:
     must use PRIMARY.
     """
 
-    PRIMARY = 'primary'  #: Requests should be sent to the primary location.
-    SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+    PRIMARY = "primary"  #: Requests should be sent to the primary location.
+    SECONDARY = "secondary"  #: Requests should be sent to the secondary location, if possible.
 
 
 class DelimitedJsonDialect(BlobDelimitedJSON):
@@ -1131,9 +1148,9 @@ class CustomerProvidedEncryptionKey(BlobCustomerProvidedEncryptionKey):
 class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the quick query input/output dialect."""
 
-    DELIMITEDTEXT = 'DelimitedTextDialect'
-    DELIMITEDJSON = 'DelimitedJsonDialect'
-    PARQUET = 'ParquetDialect'
+    DELIMITEDTEXT = "DelimitedTextDialect"
+    DELIMITEDJSON = "DelimitedJsonDialect"
+    PARQUET = "ParquetDialect"
 
 
 class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1143,7 +1160,7 @@ class ArrowType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TIMESTAMP_MS = "timestamp[ms]"
     STRING = "string"
     DOUBLE = "double"
-    DECIMAL = 'decimal'
+    DECIMAL = "decimal"
 
 
 class DataLakeFileQueryError:
@@ -1161,10 +1178,11 @@ class DataLakeFileQueryError:
     """The blob offset at which the error occurred."""
 
     def __init__(
-        self, error: Optional[str] = None,
+        self,
+        error: Optional[str] = None,
         is_fatal: bool = False,
         description: Optional[str] = None,
-        position: Optional[int] = None
+        position: Optional[int] = None,
     ) -> None:
         self.error = error
         self.is_fatal = is_fatal
@@ -1235,10 +1253,11 @@ class AccessControlChanges(DictMixin):
     """An opaque continuation token that may be used to resume the operations in case of failures."""
 
     def __init__(
-        self, batch_counters: AccessControlChangeCounters,
+        self,
+        batch_counters: AccessControlChangeCounters,
         aggregate_counters: AccessControlChangeCounters,
         batch_failures: List[AccessControlChangeFailure],
-        continuation: Optional[str]
+        continuation: Optional[str],
     ) -> None:
         self.batch_counters = batch_counters
         self.aggregate_counters = aggregate_counters
@@ -1261,7 +1280,7 @@ class DeletedPathProperties(DictMixin):
     """The filesystem associated with the deleted path."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = kwargs.get('name')  # type: ignore [assignment]
+        self.name = kwargs.get("name")  # type: ignore [assignment]
         self.deleted_time = None
         self.remaining_retention_days = None
         self.deletion_id = None
@@ -1284,11 +1303,11 @@ class AnalyticsLogging(GenLogging):
         policy will be disabled by default."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get('version', '1.0')
-        self.delete = kwargs.get('delete', False)
-        self.read = kwargs.get('read', False)
-        self.write = kwargs.get('write', False)
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+        self.version = kwargs.get("version", "1.0")
+        self.delete = kwargs.get("delete", False)
+        self.read = kwargs.get("read", False)
+        self.write = kwargs.get("write", False)
+        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1299,7 +1318,9 @@ class AnalyticsLogging(GenLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
+                generated.retention_policy
+            ),
         )
 
 
@@ -1327,11 +1348,11 @@ class StaticWebsite(GenStaticWebsite):
     """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.enabled = kwargs.get('enabled', False)
+        self.enabled = kwargs.get("enabled", False)
         if self.enabled:
-            self.index_document = kwargs.get('index_document')
-            self.error_document404_path = kwargs.get('error_document404_path')
-            self.default_index_document_path = kwargs.get('default_index_document_path')
+            self.index_document = kwargs.get("index_document")
+            self.error_document404_path = kwargs.get("error_document404_path")
+            self.default_index_document_path = kwargs.get("default_index_document_path")
         else:
             self.index_document = None
             self.error_document404_path = None
@@ -1345,5 +1366,5 @@ class StaticWebsite(GenStaticWebsite):
             enabled=generated.enabled,
             index_document=generated.index_document,
             error_document404_path=generated.error_document404_path,
-            default_index_document_path=generated.default_index_document_path
+            default_index_document_path=generated.default_index_document_path,
         )

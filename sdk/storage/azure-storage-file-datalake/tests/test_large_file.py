@@ -3,46 +3,42 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import platform
 import re
 import unittest
 from os import urandom
 
 import pytest
-
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import DataLakePreparer
-
 from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.storage.blob._shared.base_client import _format_shared_key_credential
 from azure.storage.filedatalake import DataLakeServiceClient
 
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-TEST_DIRECTORY_PREFIX = 'directory'
-TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
+TEST_DIRECTORY_PREFIX = "directory"
+TEST_FILE_PREFIX = "file"
+FILE_PATH = "file_output.temp.dat"
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 # ------------------------------------------------------------------------------
 
 
 class TestLargeFile(StorageRecordedTestCase):
     def _setUp(self, account_name, account_key):
-        url = self.account_url(account_name, 'dfs')
+        url = self.account_url(account_name, "dfs")
         self.payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(account_name,
-                                                          account_key.secret)
+        credential_policy = _format_shared_key_credential(account_name, account_key.secret)
         self.dsc = DataLakeServiceClient(
             url,
             credential=account_key.secret,
             logging_enable=True,
-            _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy]
+            _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy],
         )
         self.config = self.dsc._config
 
-        self.file_system_name = self.get_resource_name('filesystem')
+        self.file_system_name = self.get_resource_name("filesystem")
 
         if not self.is_playback():
             file_system = self.dsc.get_file_system_client(self.file_system_name)
@@ -50,6 +46,15 @@ class TestLargeFile(StorageRecordedTestCase):
                 file_system.create_file_system(timeout=5)
             except ResourceExistsError:
                 pass
+
+    def tearDown(self):
+        if not self.is_playback():
+            try:
+                self.dsc.delete_file_system(self.file_system_name)
+            except:
+                pass
+
+        return super(TestLargeFile, self).tearDown()
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
@@ -64,7 +69,7 @@ class TestLargeFile(StorageRecordedTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
 
-        file_client = directory_client.get_file_client('filename')
+        file_client = directory_client.get_file_client("filename")
         file_client.create_file()
 
         data = LargeStream(LARGEST_BLOCK_SIZE)
@@ -77,8 +82,7 @@ class TestLargeFile(StorageRecordedTestCase):
         assert self.payload_dropping_policy.append_sizes[0] == LARGEST_BLOCK_SIZE
 
     @pytest.mark.skipif(
-        platform.python_implementation() == "PyPy",
-        reason="Test failing on Pypy3 Linux, skip to investigate"
+        platform.python_implementation() == "PyPy", reason="Test failing on Pypy3 Linux, skip to investigate"
     )
     @pytest.mark.live_test_only
     @DataLakePreparer()
@@ -94,10 +98,10 @@ class TestLargeFile(StorageRecordedTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
 
-        file_client = directory_client.get_file_client('filename')
+        file_client = directory_client.get_file_client("filename")
         file_client.create_file()
 
-        length = 2*LARGEST_BLOCK_SIZE
+        length = 2 * LARGEST_BLOCK_SIZE
         data = LargeStream(length)
 
         # Act
@@ -110,7 +114,7 @@ class TestLargeFile(StorageRecordedTestCase):
 
 
 class LargeStream:
-    def __init__(self, length, initial_buffer_length=1024*1024):
+    def __init__(self, length, initial_buffer_length=1024 * 1024):
         self._base_data = urandom(initial_buffer_length)
         self._base_data_length = initial_buffer_length
         self._position = 0
@@ -144,9 +148,10 @@ class PayloadDroppingPolicy(HTTPPolicy):
     def send(self, request):  # type: (PipelineRequest) -> PipelineResponse
         if _is_append_request(request):
             if request.http_request.body:
-                position = self.append_counter*len(self.dummy_body)
+                position = self.append_counter * len(self.dummy_body)
                 request.http_request.url = re.sub(
-                    r'position=\d+', "position=" + str(position), request.http_request.url)
+                    r"position=\d+", "position=" + str(position), request.http_request.url
+                )
                 self.append_sizes.append(_get_body_length(request))
                 replacement = self.dummy_body
                 request.http_request.body = replacement
@@ -154,8 +159,7 @@ class PayloadDroppingPolicy(HTTPPolicy):
                 self.append_counter = self.append_counter + 1
         if _is_flush_request(request):
             position = self.append_counter * len(self.dummy_body)
-            request.http_request.url = re.sub(
-                r'position=\d+', "position=" + str(position), request.http_request.url)
+            request.http_request.url = re.sub(r"position=\d+", "position=" + str(position), request.http_request.url)
         return self.next.send(request)
 
 
@@ -173,7 +177,7 @@ def _get_body_length(request):
     body = request.http_request.body
     length = 0
     if hasattr(body, "read"):
-        chunk = body.read(10*1024*1024)
+        chunk = body.read(10 * 1024 * 1024)
         while chunk:
             length = length + len(chunk)
             chunk = body.read(10 * 1024 * 1024)
@@ -183,5 +187,5 @@ def _get_body_length(request):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

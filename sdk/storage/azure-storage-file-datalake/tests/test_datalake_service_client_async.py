@@ -4,24 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
 import sys
 from typing import NamedTuple
 
-import pytest
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import DataLakePreparer
-
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import HttpResponseError
-from azure.storage.filedatalake import (
-    AnalyticsLogging,
-    CorsRule,
-    Metrics,
-    RetentionPolicy,
-    StaticWebsite,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+
+from azure.storage.filedatalake import AnalyticsLogging, CorsRule, Metrics, RetentionPolicy, StaticWebsite
 from azure.storage.filedatalake._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.filedatalake.aio import (
     DataLakeDirectoryClient,
@@ -30,28 +20,31 @@ from azure.storage.filedatalake.aio import (
     FileSystemClient,
 )
 
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import DataLakePreparer
 
 if sys.version_info >= (3, 8):
     from unittest.mock import AsyncMock
 
 # ------------------------------------------------------------------------------
-TEST_FILE_SYSTEM_PREFIX = 'filesystem'
+TEST_FILE_SYSTEM_PREFIX = "filesystem"
 # ------------------------------------------------------------------------------
 
 
 class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
     def _setup(self, account_name, account_key):
-        url = self.account_url(account_name, 'dfs')
+        url = self.account_url(account_name, "dfs")
         self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
 
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         assert prop is not None
-        self._assert_logging_equal(prop['analytics_logging'], AnalyticsLogging())
-        self._assert_metrics_equal(prop['hour_metrics'], Metrics())
-        self._assert_metrics_equal(prop['minute_metrics'], Metrics())
-        self._assert_cors_equal(prop['cors'], [])
+        self._assert_logging_equal(prop["analytics_logging"], AnalyticsLogging())
+        self._assert_metrics_equal(prop["hour_metrics"], Metrics())
+        self._assert_metrics_equal(prop["minute_metrics"], Metrics())
+        self._assert_cors_equal(prop["cors"], [])
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -106,7 +99,9 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for rule1, rule2 in zip(cors1, cors2):
+        for i in range(0, len(cors1)):
+            rule1 = cors1[i]
+            rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
             assert rule1.max_age_in_seconds == rule2.max_age_in_seconds
@@ -139,13 +134,13 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
             hour_metrics=Metrics(),
             minute_metrics=Metrics(),
             cors=[],
-            target_version='2014-02-14'
+            target_version="2014-02-14",
         )
 
         # Assert
         props = await self.dsc.get_service_properties()
         self._assert_properties_default(props)
-        assert '2014-02-14' == props['target_version']
+        assert "2014-02-14" == props["target_version"]
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -165,11 +160,11 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
         # Act
-        await self.dsc.set_service_properties(target_version='2014-02-14')
+        await self.dsc.set_service_properties(target_version="2014-02-14")
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        assert received_props['target_version'] == '2014-02-14'
+        assert received_props["target_version"] == "2014-02-14"
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -185,7 +180,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props["delete_retention_policy"], delete_retention_policy)
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -199,7 +194,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props["delete_retention_policy"], delete_retention_policy)
 
         # Should work with maximum settings
         delete_retention_policy = RetentionPolicy(enabled=True, days=365)
@@ -207,7 +202,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_delete_retention_policy_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_equal(received_props["delete_retention_policy"], delete_retention_policy)
 
         # Should not work with 0 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=0)
@@ -218,8 +213,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         # Assert
         received_props = await self.dsc.get_service_properties()
         self._assert_delete_retention_policy_not_equal(
-            received_props['delete_retention_policy'],
-            delete_retention_policy
+            received_props["delete_retention_policy"], delete_retention_policy
         )
 
         # Should not work with 366 days
@@ -231,8 +225,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         # Assert
         received_props = await self.dsc.get_service_properties()
         self._assert_delete_retention_policy_not_equal(
-            received_props['delete_retention_policy'],
-            delete_retention_policy
+            received_props["delete_retention_policy"], delete_retention_policy
         )
 
     @DataLakePreparer()
@@ -243,16 +236,15 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
         static_website = StaticWebsite(
-            enabled=True,
-            index_document="index.html",
-            error_document404_path="errors/error/404error.html")
+            enabled=True, index_document="index.html", error_document404_path="errors/error/404error.html"
+        )
 
         # Act
         await self.dsc.set_service_properties(static_website=static_website)
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -261,15 +253,16 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        static_website = StaticWebsite(enabled=False, index_document="index.html",
-                                       error_document404_path="errors/error/404error.html")
+        static_website = StaticWebsite(
+            enabled=False, index_document="index.html", error_document404_path="errors/error/404error.html"
+        )
 
         # Act
         await self.dsc.set_service_properties(static_website=static_website)
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], StaticWebsite(enabled=False))
+        self._assert_static_website_equal(received_props["static_website"], StaticWebsite(enabled=False))
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -278,10 +271,10 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
 
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -290,7 +283,8 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers,
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -299,19 +293,20 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert cors is updated
         received_props = await self.dsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_cors_equal(received_props["cors"], cors)
 
         # Arrange to set static website properties
-        static_website = StaticWebsite(enabled=True, index_document="index.html",
-                                       error_document404_path="errors/error/404error.html")
+        static_website = StaticWebsite(
+            enabled=True, index_document="index.html", error_document404_path="errors/error/404error.html"
+        )
 
         # Act to set static website
         await self.dsc.set_service_properties(static_website=static_website)
 
         # Assert static website was updated was cors was unchanged
         received_props = await self.dsc.get_service_properties()
-        self._assert_static_website_equal(received_props['static_website'], static_website)
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_static_website_equal(received_props["static_website"], static_website)
+        self._assert_cors_equal(received_props["cors"], cors)
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -321,10 +316,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
         logging = AnalyticsLogging(
-            read=True,
-            write=True,
-            delete=True,
-            retention_policy=RetentionPolicy(enabled=True, days=5)
+            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
         )
 
         # Act
@@ -332,7 +324,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_logging_equal(received_props['analytics_logging'], logging)
+        self._assert_logging_equal(received_props["analytics_logging"], logging)
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -341,15 +333,14 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        hour_metrics = Metrics(
-            include_apis=False, enabled=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        hour_metrics = Metrics(include_apis=False, enabled=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         await self.dsc.set_service_properties(hour_metrics=hour_metrics)
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
+        self._assert_metrics_equal(received_props["hour_metrics"], hour_metrics)
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -359,14 +350,15 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         await self.dsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
+        self._assert_metrics_equal(received_props["minute_metrics"], minute_metrics)
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -375,10 +367,10 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
 
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -387,7 +379,8 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers,
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -396,29 +389,29 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await self.dsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_cors_equal(received_props["cors"], cors)
 
     @DataLakePreparer()
     async def test_connectionstring_without_secondary(self):
         test_conn_str = "DefaultEndpointsProtocol=https;AccountName=foo;AccountKey=bar"
         client = DataLakeServiceClient.from_connection_string(test_conn_str)
-        assert client.url == 'https://foo.dfs.core.windows.net/'
-        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert client.url == "https://foo.dfs.core.windows.net/"
+        assert client.primary_hostname == "foo.dfs.core.windows.net"
         assert not client.secondary_hostname
 
         client = FileSystemClient.from_connection_string(test_conn_str, "fsname")
-        assert client.url == 'https://foo.dfs.core.windows.net/fsname'
-        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert client.url == "https://foo.dfs.core.windows.net/fsname"
+        assert client.primary_hostname == "foo.dfs.core.windows.net"
         assert not client.secondary_hostname
 
         client = DataLakeFileClient.from_connection_string(test_conn_str, "fsname", "fpath")
-        assert client.url == 'https://foo.dfs.core.windows.net/fsname/fpath'
-        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert client.url == "https://foo.dfs.core.windows.net/fsname/fpath"
+        assert client.primary_hostname == "foo.dfs.core.windows.net"
         assert not client.secondary_hostname
 
         client = DataLakeDirectoryClient.from_connection_string(test_conn_str, "fsname", "dname")
-        assert client.url == 'https://foo.dfs.core.windows.net/fsname/dname'
-        assert client.primary_hostname == 'foo.dfs.core.windows.net'
+        assert client.url == "https://foo.dfs.core.windows.net/fsname/dname"
+        assert client.primary_hostname == "foo.dfs.core.windows.net"
         assert not client.secondary_hostname
 
     @DataLakePreparer()
@@ -454,15 +447,15 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="AsyncMock not introduced until 3.8")
     @DataLakePreparer()
-    async def test_datalake_clients_properly_close(self):
+    async def test_datalake_clients_properly_close(self, **kwargs):
         account_name = "adlsstorage"
         # secret attribute necessary for credential parameter because of hidden environment variables from loader
         account_key = NamedTuple("StorageAccountKey", [("secret", str)])("adlskey")
 
         self._setup(account_name, account_key)
-        file_system_client = self.dsc.get_file_system_client(file_system='testfs')
-        dir_client = self.dsc.get_directory_client(file_system='testfs', directory='testdir')
-        file_client = dir_client.get_file_client(file='testfile')
+        file_system_client = self.dsc.get_file_system_client(file_system="testfs")
+        dir_client = self.dsc.get_directory_client(file_system="testfs", directory="testdir")
+        file_client = dir_client.get_file_client(file="testfile")
 
         # Mocks
         self.dsc._blob_service_client.__aexit__ = AsyncMock()
@@ -476,13 +469,13 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Act
         async with self.dsc as dsc:
-            pass  # pylint: disable=unnecessary-pass
+            pass
             async with file_system_client as fsc:
-                pass  # pylint: disable=unnecessary-pass
+                pass
                 async with dir_client as dc:
-                    pass  # pylint: disable=unnecessary-pass
+                    pass
                     async with file_client as fc:
-                        pass  # pylint: disable=unnecessary-pass
+                        pass
 
         # Assert
         self.dsc._blob_service_client.__aexit__.assert_called_once()
@@ -501,7 +494,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        file_system_name = self.get_resource_name('filesystem')
+        file_system_name = self.get_resource_name("filesystem")
         await self.dsc.create_file_system(file_system_name)
 
         # Act
@@ -509,12 +502,12 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
-            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+            audience=f"https://{datalake_storage_account_name}.blob.core.windows.net/",
         )
 
         # Assert
         response1 = dsc.list_file_systems()
-        response2 = dsc.create_file_system(file_system_name + '1')
+        response2 = dsc.create_file_system(file_system_name + "1")
         assert response1 is not None
         assert response2 is not None
 
@@ -525,7 +518,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        file_system_name = self.get_resource_name('filesystem')
+        file_system_name = self.get_resource_name("filesystem")
         await self.dsc.create_file_system(file_system_name)
 
         # Act
@@ -533,9 +526,9 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
-            audience='https://badaudience.blob.core.windows.net/'
+            audience=f"https://badaudience.blob.core.windows.net/",
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         dsc.list_file_systems()
-        await dsc.create_file_system(file_system_name + '1')
+        await dsc.create_file_system(file_system_name + "1")

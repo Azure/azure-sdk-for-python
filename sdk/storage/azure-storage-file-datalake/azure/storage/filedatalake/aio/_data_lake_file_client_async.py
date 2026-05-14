@@ -6,10 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 from datetime import datetime
-from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union, TYPE_CHECKING
 from urllib.parse import quote, unquote
 
 from typing_extensions import Self
@@ -87,22 +84,29 @@ class DataLakeFileClient(PathClient):
     """The hostname of the primary endpoint."""
 
     def __init__(
-        self, account_url: str,
+        self,
+        account_url: str,
         file_system_name: str,
         file_path: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> None:
-        super(DataLakeFileClient, self).__init__(account_url, file_system_name, path_name=file_path,
-                                                 credential=credential, **kwargs)
+        super(DataLakeFileClient, self).__init__(
+            account_url, file_system_name, path_name=file_path, credential=credential, **kwargs
+        )
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str,
+        cls,
+        conn_str: str,
         file_system_name: str,
         file_path: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-        **kwargs: Any
+        credential: Optional[
+            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
     ) -> Self:
         """
         Create DataLakeFileClient from a Connection String.
@@ -137,16 +141,15 @@ class DataLakeFileClient(PathClient):
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
         """
-        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
-        return cls(
-            account_url, file_system_name=file_system_name, file_path=file_path,
-            credential=credential, **kwargs)
+        account_url, _, credential = parse_connection_str(conn_str, credential, "dfs")
+        return cls(account_url, file_system_name=file_system_name, file_path=file_path, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def create_file(
-        self, content_settings: Optional["ContentSettings"] = None,
+        self,
+        content_settings: Optional["ContentSettings"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Union[str, datetime]]:
         """
         Create a new file.
@@ -240,7 +243,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Create file.
         """
-        return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
+        return await self._create("file", content_settings=content_settings, metadata=metadata, **kwargs)
 
     @distributed_trace_async
     async def exists(self, **kwargs: Any) -> bool:
@@ -359,19 +362,17 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        upn = kwargs.pop('upn', None)
+        upn = kwargs.pop("upn", None)
         if upn:
-            headers = kwargs.pop('headers', {})
-            headers['x-ms-upn'] = str(upn)
-            kwargs['headers'] = headers
+            headers = kwargs.pop("headers", {})
+            headers["x-ms-upn"] = str(upn)
+            kwargs["headers"] = headers
         props = await self._get_path_properties(cls=deserialize_file_properties, **kwargs)
         return cast(FileProperties, props)
 
     @distributed_trace_async
     async def set_file_expiry(
-        self, expiry_options: str,
-        expires_on: Optional[Union[datetime, int]] = None,
-        **kwargs: Any
+        self, expiry_options: str, expires_on: Optional[Union[datetime, int]] = None, **kwargs: Any
     ) -> None:
         """Sets the time a file will expire and be deleted.
 
@@ -394,14 +395,17 @@ class DataLakeFileClient(PathClient):
             expiry_time = convert_datetime_to_rfc1123(expires_on)
         elif expires_on is not None:
             expiry_time = str(expires_on)
-        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expiry_time, **kwargs)
+        await self._datalake_client_for_blob_operation.path.set_expiry(
+            expiry_options=expiry_options, expires_on=expiry_time, **kwargs
+        )
 
     @distributed_trace_async
     async def upload_data(
-        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
+        self,
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """
         Upload data to a file.
@@ -485,29 +489,24 @@ class DataLakeFileClient(PathClient):
         :rtype: Dict[str, Any]
         """
         options = _upload_options(
-            data,
-            self.scheme,
-            self._config,
-            self._client.path,
-            length=length,
-            overwrite=overwrite,
-            **kwargs
+            data, self.scheme, self._config, self._client.path, length=length, overwrite=overwrite, **kwargs
         )
         return await upload_datalake_file(**options)
 
     @distributed_trace_async
     async def append_data(
-        self, data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
+        self,
+        data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
         offset: int,
         length: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Append data to the file.
 
         :param data: Content to be appended to file
         :type data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]]
         :param int offset: start position of the data to be appended to.
-        :param length: 
+        :param length:
             Size of the data to append. Optional if the length of data can be determined. For Iterable and IO,
             if the length is not provided and cannot be determined, all data will be read into memory.
         :type length: int or None
@@ -563,12 +562,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Append data to the file.
         """
-        options = _append_data_options(
-            data=data,
-            offset=offset,
-            scheme=self.scheme,
-            length=length,
-            **kwargs)
+        options = _append_data_options(data=data, offset=offset, scheme=self.scheme, length=length, **kwargs)
         try:
             return await self._client.path.append_data(**options)
         except HttpResponseError as error:
@@ -576,9 +570,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def flush_data(
-        self, offset: int,
-        retain_uncommitted_data: Optional[bool] = False,
-        **kwargs: Any
+        self, offset: int, retain_uncommitted_data: Optional[bool] = False, **kwargs: Any
     ) -> Dict[str, Any]:
         """Commit the previous appended data.
 
@@ -667,12 +659,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 12
                 :caption: Commit the previous appended data.
         """
-        options = _flush_data_options(
-            offset,
-            self.scheme,
-            retain_uncommitted_data=retain_uncommitted_data,
-            **kwargs
-        )
+        options = _flush_data_options(offset, self.scheme, retain_uncommitted_data=retain_uncommitted_data, **kwargs)
         try:
             return await self._client.path.flush_data(**options)
         except HttpResponseError as error:
@@ -680,9 +667,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def download_file(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        **kwargs: Any
+        self, offset: Optional[int] = None, length: Optional[int] = None, **kwargs: Any
     ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content, or readinto() must be used to download the file into
@@ -821,13 +806,20 @@ class DataLakeFileClient(PathClient):
                 :caption: Rename the source file.
         """
         new_file_system, new_path, new_file_sas = _parse_rename_path(
-            new_name, self.file_system_name, self._query_str, self._raw_credential)
+            new_name, self.file_system_name, self._query_str, self._raw_credential
+        )
 
         new_file_client = DataLakeFileClient(
-            f"{self.scheme}://{self.primary_hostname}", new_file_system, file_path=new_path,
+            f"{self.scheme}://{self.primary_hostname}",
+            new_file_system,
+            file_path=new_path,
             credential=self._raw_credential or new_file_sas,
-            _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode)
+            _hosts=self._hosts,
+            _configuration=self._config,
+            _pipeline=self._pipeline,
+            _location_mode=self._location_mode,
+        )
         await new_file_client._rename_path(  # pylint: disable=protected-access
-            f'/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}', **kwargs)
+            f"/{quote(unquote(self.file_system_name))}/{quote(unquote(self.path_name))}{self._query_str}", **kwargs
+        )
         return new_file_client

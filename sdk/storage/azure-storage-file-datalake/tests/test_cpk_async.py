@@ -14,19 +14,19 @@ from azure.storage.filedatalake.aio import DataLakeServiceClient
 
 
 # ------------------------------------------------------------------------------
-TEST_DIRECTORY_PREFIX = 'directory'
-TEST_FILE_PREFIX = 'file'
+TEST_DIRECTORY_PREFIX = "directory"
+TEST_FILE_PREFIX = "file"
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(
-    key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-    key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+    key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=", key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE="
+)
 # ------------------------------------------------------------------------------
 
 
 class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, account_name, account_key):
-        url = self.account_url(account_name, 'dfs')
+        url = self.account_url(account_name, "dfs")
         self.dsc = DataLakeServiceClient(url, credential=account_key.secret)
-        self.file_system_name = self.get_resource_name('utfilesystem')
+        self.file_system_name = self.get_resource_name("utfilesystem")
 
         if self.is_live:
             file_system = self.dsc.get_file_system_client(self.file_system_name)
@@ -66,12 +66,13 @@ class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
             await self._create_directory(directory_name, cpk)
         if not file_name:
             file_name = self._get_file_reference()
-        file_client = self.dsc.get_file_client(self.file_system_name, directory_name + '/' + file_name)
+        file_client = self.dsc.get_file_client(self.file_system_name, directory_name + "/" + file_name)
         try:
             await file_client.create_file(cpk=cpk)
         except ResourceExistsError:
             pass
         return file_client
+
     # ---------------------------------------------------------------------------
 
     @DataLakePreparer()
@@ -84,12 +85,12 @@ class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
 
         # Act
-        directory_client = self.dsc.get_directory_client(self.file_system_name, 'cpkdirectory')
+        directory_client = self.dsc.get_directory_client(self.file_system_name, "cpkdirectory")
         response = await directory_client.create_directory(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
         assert response is not None
-        assert response['request_server_encrypted']
+        assert response["request_server_encrypted"]
         # assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
@@ -103,7 +104,7 @@ class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
         directory_client = await self._create_directory(cpk=TEST_ENCRYPTION_KEY)
 
         # Act
-        sub_directory_client = await directory_client.create_sub_directory('cpksubdirectory', cpk=TEST_ENCRYPTION_KEY)
+        sub_directory_client = await directory_client.create_sub_directory("cpksubdirectory", cpk=TEST_ENCRYPTION_KEY)
         props = await sub_directory_client.get_directory_properties(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
@@ -118,14 +119,14 @@ class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_client = await self._create_directory(cpk=TEST_ENCRYPTION_KEY)
-        file_client = directory_client.get_file_client('cpkfile')
+        file_client = directory_client.get_file_client("cpkfile")
 
         # Act
         response = await file_client.create_file(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
         assert response is not None
-        assert response['request_server_encrypted']
+        assert response["request_server_encrypted"]
         # assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
@@ -211,7 +212,7 @@ class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert response is not None
-        assert response['request_server_encrypted']
+        assert response["request_server_encrypted"]
         # assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
@@ -232,7 +233,7 @@ class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert response is not None
-        assert response['request_server_encrypted']
+        assert response["request_server_encrypted"]
         # assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
@@ -268,7 +269,7 @@ class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
         file_client = await self._create_file(directory_name=directory_name, cpk=TEST_ENCRYPTION_KEY)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
 
         # Act
         await file_client.set_metadata(metadata, cpk=TEST_ENCRYPTION_KEY)
