@@ -116,9 +116,9 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -212,7 +212,7 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     enabled: bool
     """If SMB Multichannel is enabled."""
 
-    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.enabled = enabled
 
 
@@ -225,7 +225,7 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
 
@@ -241,7 +241,7 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     encryption_in_transit: Optional[SmbEncryptionInTransit]
     """Sets the encryption in transit settings."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
@@ -263,7 +263,7 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     required: bool
     """If encryption in transit is enabled."""
 
-    def __init__(self, *, required: bool, **kwargs: Any) -> None:
+    def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.required = required
 
 
@@ -276,7 +276,9 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     encryption_in_transit: NfsEncryptionInTransit
     """Sets the encryption in transit settings."""
 
-    def __init__(self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any) -> None:
+    def __init__(  # pylint: disable=unused-argument
+        self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any
+    ) -> None:
         self.encryption_in_transit = encryption_in_transit
 
 
@@ -294,7 +296,7 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     nfs: Optional[ShareNfsSettings]
     """Sets the NFS settings."""
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self, *, smb: Optional[ShareSmbSettings] = None, nfs: Optional[ShareNfsSettings] = None, **kwargs: Any
     ) -> None:
         self.smb = smb
@@ -737,8 +739,8 @@ class SharePropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [
-            ShareProperties._from_generated(i) for i in self._response.share_items
-        ]  # pylint: disable=protected-access
+            ShareProperties._from_generated(i) for i in self._response.share_items  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, self.current_page
 
 
@@ -854,8 +856,8 @@ class HandlesPaged(PageIterator):
     def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
         self.current_page = [
-            Handle._from_generated(h) for h in self._response.handle_list
-        ]  # pylint: disable=protected-access
+            Handle._from_generated(h) for h in self._response.handle_list  # pylint: disable=protected-access
+        ]
         return self._response.next_marker or None, self.current_page
 
 
@@ -1103,16 +1105,14 @@ class DirectoryPropertiesPaged(PageIterator):
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
+        # pylint: disable=protected-access
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [
-            DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items
-        ]  # pylint: disable = protected-access
-        self.current_page.extend(
-            [FileProperties._from_generated(i) for i in self._response.segment.file_items]
-        )  # pylint: disable = protected-access
+        self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items]
+        self.current_page.extend([FileProperties._from_generated(i) for i in self._response.segment.file_items])
+        # pylint: enable=protected-access
         return self._response.next_marker or None, self.current_page
 
 
