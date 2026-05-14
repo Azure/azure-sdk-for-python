@@ -95,7 +95,10 @@ def get_changelog_content(
         )
 
         try:
-            if enable_changelog:
+            # after we release beta and stable version of azure-mgmt-azurearcdata from typespec in the future,
+            # we could remove the skip logic for changelog generation for azure-mgmt-azurearcdata package.
+            # Before that, we need to skip changelog generation for azure-mgmt-azurearcdata package because:
+            if enable_changelog and package_name != "azure-mgmt-azurearcdata":
                 md_output = execute_func_with_timeout(change_log_func, timeout)
             else:
                 md_output = "skip changelog generation"
