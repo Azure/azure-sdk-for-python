@@ -28,9 +28,10 @@ from azure.core.exceptions import (
     ResourceNotFoundError
 )
 from . import http_constants
+from ._diagnostics import _HedgingDetectionAccessorsMixin
 from .http_constants import StatusCodes as _StatusCode, SubStatusCodes as _SubStatusCodes
 
-class CosmosHttpResponseError(HttpResponseError):
+class CosmosHttpResponseError(_HedgingDetectionAccessorsMixin, HttpResponseError):
     """An HTTP request to the Azure Cosmos database service has failed."""
 
     def __init__(self, status_code=None, message=None, response=None, **kwargs):
@@ -42,6 +43,7 @@ class CosmosHttpResponseError(HttpResponseError):
         self.sub_status = kwargs.pop('sub_status', None)
         self.endpoint = kwargs.pop('endpoint', None)
         self.http_error_message = message
+        self._hedging_state = None
         status = status_code or (int(response.status_code) if response else 0)
 
         if http_constants.HttpHeaders.SubStatus in self.headers:
@@ -74,7 +76,7 @@ class CosmosAccessConditionFailedError(CosmosHttpResponseError):
     """An HTTP error response with status code 412."""
 
 
-class CosmosBatchOperationError(HttpResponseError):
+class CosmosBatchOperationError(_HedgingDetectionAccessorsMixin, HttpResponseError):
     """A transactional batch request to the Azure Cosmos database service has failed.
 
     :ivar int error_index: Index of operation within the batch that caused the error.
@@ -111,6 +113,7 @@ class CosmosBatchOperationError(HttpResponseError):
         self.sub_status = None
         self.http_error_message = message
         self.operation_responses = operation_responses
+        self._hedging_state = None
         status = status_code
 
         if http_constants.HttpHeaders.SubStatus in self.headers:
@@ -123,7 +126,7 @@ class CosmosBatchOperationError(HttpResponseError):
         self.status_code = status
 
 
-class CosmosClientTimeoutError(AzureError):
+class CosmosClientTimeoutError(_HedgingDetectionAccessorsMixin, AzureError):
     """An operation failed to complete within the specified timeout."""
 
     def __init__(self, message=None, **kwargs):
@@ -131,6 +134,7 @@ class CosmosClientTimeoutError(AzureError):
             message = "The request failed to complete within the given timeout."
         self.response = None
         self.history = None
+        self._hedging_state = None
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
 
 class _InternalCosmosException:

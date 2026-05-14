@@ -34,8 +34,14 @@ from .. import exceptions
 from .. import http_constants
 from .._availability_strategy_config import CrossRegionHedgingStrategy
 from .._constants import _Constants
+from .._diagnostics import _HedgingDetectionState, _attach_state_to_headers
+from .._diagnostics_types import RequestedRegionReason
 from .._request_object import RequestObject
-from .._synchronized_request import _request_body_from_data, _replace_url_prefix
+from .._synchronized_request import (
+    _request_body_from_data,
+    _replace_url_prefix,
+    _resolve_region_name,
+)
 from ..documents import _OperationType
 
 # cspell:ignore ppaf
@@ -58,6 +64,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     kwargs.pop(_Constants.OperationStartTime, None)
     # Pop internal flags that should not be passed to the HTTP layer
     kwargs.pop("_internal_pk_range_fetch", None)
+    # Hedging-detection state is consumed by the orchestrator + retry layer
+    # only; never forward to the HTTP pipeline.
+    kwargs.pop("_hedging_state", None)
     connection_timeout = connection_policy.RequestTimeout
     read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
@@ -219,9 +228,17 @@ async def AsynchronousRequest(
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
             request_params.availability_strategy = CrossRegionHedgingStrategy()
 
+    # Hedging-detection state (closure-argument pattern; see SE-002 / public
+    # spec §5.4). Sync↔async parity: this mirrors ``_synchronized_request``.
+    hedging_state = kwargs.get("_hedging_state")
+    is_top_level = hedging_state is None and not request_params.is_hedging_request
+    if is_top_level:
+        hedging_state = _HedgingDetectionState()
+        kwargs["_hedging_state"] = hedging_state
+
     # Handle hedging if strategy is configured
     if _is_availability_strategy_applicable(request_params):
-        return await execute_with_availability_strategy(
+        result, headers = await execute_with_availability_strategy(
             request_params,
             global_endpoint_manager,
             request,
@@ -234,11 +251,22 @@ async def AsynchronousRequest(
                 pipeline_client,
                 r,
                 **kwargs
-            )
+            ),
+            hedging_state=hedging_state,
+        )
+        if is_top_level:
+            _attach_state_to_headers(headers, hedging_state)
+        return result, headers
+
+    # Non-hedged path: record INITIAL once at orchestrator entry.
+    if is_top_level and hedging_state is not None:
+        region_name = _resolve_region_name(global_endpoint_manager, request_params)
+        hedging_state._record_request(  # pylint: disable=protected-access
+            region_name, RequestedRegionReason.INITIAL
         )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
-    return await _retry_utility_async.ExecuteAsync(
+    result, headers = await _retry_utility_async.ExecuteAsync(
         client,
         global_endpoint_manager,
         _Request,
@@ -248,3 +276,8 @@ async def AsynchronousRequest(
         request,
         **kwargs
     )
+    if is_top_level and hedging_state is not None:
+        region_name = _resolve_region_name(global_endpoint_manager, request_params)
+        hedging_state._record_response(region_name)  # pylint: disable=protected-access
+        _attach_state_to_headers(headers, hedging_state)
+    return result, headers

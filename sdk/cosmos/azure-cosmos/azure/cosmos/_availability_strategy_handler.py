@@ -31,6 +31,8 @@ from typing import List, Dict, Any, Tuple, Callable, Optional, cast
 from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import
 
 from ._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
+from ._diagnostics import _HedgingDetectionState
+from ._diagnostics_types import RequestedRegionReason
 from ._global_partition_endpoint_manager_circuit_breaker import _GlobalPartitionEndpointManagerForCircuitBreaker
 from ._request_object import RequestObject
 
@@ -50,7 +52,8 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         location_index: int,
         available_locations: List[str],
         complete_status: Event,
-        first_request_params_holder: SimpleNamespace
+        first_request_params_holder: SimpleNamespace,
+        hedging_state: Optional[_HedgingDetectionState] = None,
     ) -> ResponseType:
         """Execute a single request.
 
@@ -68,6 +71,10 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         :type complete_status: threading.Event
         :param first_request_params_holder: A value holder for request object for first/initial request
         :type first_request_params_holder: SimpleNamespace
+        :param hedging_state: Per-operation hedging detection state, passed as a
+            closure argument (NOT on ``request_params`` — see SE-002; the
+            deepcopy at line 96 below would silently swallow child appends).
+        :type hedging_state: Optional[_HedgingDetectionState]
         :returns: Response tuple
         :rtype: ResponseType
         """
@@ -92,6 +99,16 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         if delay > 0:
             time.sleep(delay / 1000)
 
+        # ---- Hedging-detection recording (Option B) --------------------- #
+        # IMPORTANT: this append happens AFTER the threshold delay sleep AND
+        # AFTER the cancellation check below. The contract is "dispatched, not
+        # necessarily wire-issued" — see SE-013 and public spec §5.3 docstring
+        # on ``get_requested_regions``. A hedge-arm task that is cancelled
+        # before its delay elapses unwinds out of ``time.sleep`` (or the
+        # subsequent cancellation check) before reaching this line, so no
+        # phantom HEDGING entry is recorded (AC10).
+        # ----------------------------------------------------------------- #
+
         # Create request parameters for this location
         params = copy.deepcopy(request_params)
         params.is_hedging_request = location_index > 0
@@ -111,14 +128,36 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         if complete_status.is_set():
             raise CancelledError("The request has been cancelled")
 
-        return execute_request_fn(params, req)
+        # Record dispatch intent now that we have committed to issuing
+        # (post-delay, post-cancellation-check). ``INITIAL`` for index 0,
+        # ``HEDGING`` for hedge arms (index > 0).
+        if hedging_state is not None and 0 <= location_index < len(available_locations):
+            region_name = available_locations[location_index]
+            reason = (
+                RequestedRegionReason.INITIAL if location_index == 0
+                else RequestedRegionReason.HEDGING
+            )
+            hedging_state._record_request(region_name, reason)  # pylint: disable=protected-access
+
+        try:
+            result = execute_request_fn(params, req)
+        except Exception:
+            raise
+        # Record responding region on success. Exceptions still reach the
+        # parent ``execute_request`` which decides which arm wins; per-arm
+        # error responses are recorded by the retry utility before the
+        # exception propagates here.
+        if hedging_state is not None and 0 <= location_index < len(available_locations):
+            hedging_state._record_response(available_locations[location_index])  # pylint: disable=protected-access
+        return result
 
     def execute_request(
         self,
         request_params: RequestObject,
         global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
         request: HttpRequest,
-        execute_request_fn: Callable[..., ResponseType]
+        execute_request_fn: Callable[..., ResponseType],
+        hedging_state: Optional[_HedgingDetectionState] = None,
     ) -> ResponseType:
         """Execute request with cross-region hedging strategy.
 
@@ -130,6 +169,9 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         :type request: HttpRequest
         :param execute_request_fn: Function to execute the actual request
         :type execute_request_fn: Callable[..., ResponseType]
+        :param hedging_state: Per-operation hedging detection state, passed as a
+            closure argument (NOT on ``request_params`` — see SE-002).
+        :type hedging_state: Optional[_HedgingDetectionState]
         :returns: A tuple containing the response data and headers
         :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
         :raises: Exception from first request if all requests fail with transient errors
@@ -155,7 +197,8 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
                 location_index=i,
                 available_locations=available_locations,
                 complete_status=completion_status,
-                first_request_params_holder=first_request_params_holder
+                first_request_params_holder=first_request_params_holder,
+                hedging_state=hedging_state,
             )
             futures.append(future)
             if i == 0:
@@ -211,7 +254,8 @@ def execute_with_hedging(
     request_params: RequestObject,
     global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreaker,
     request: HttpRequest,
-    execute_request_fn: Callable[..., ResponseType]
+    execute_request_fn: Callable[..., ResponseType],
+    hedging_state: Optional[_HedgingDetectionState] = None,
 ) -> ResponseType:
     """Execute a request with hedging based on the availability strategy.
 
@@ -223,6 +267,11 @@ def execute_with_hedging(
     :type request: HttpRequest
     :param execute_request_fn: Function to execute the actual request
     :type execute_request_fn: Callable[..., ResponseType]
+    :param hedging_state: Per-operation hedging detection state, passed as a
+        closure argument (NOT on ``request_params`` — see SE-002). When ``None``
+        no diagnostics are recorded; the hot path is unchanged for the
+        diagnostics-disabled case.
+    :type hedging_state: Optional[_HedgingDetectionState]
     :returns: A tuple containing the response data and headers
     :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
     :raises: Any exceptions raised by the hedging handler's execute_request method
@@ -231,5 +280,6 @@ def execute_with_hedging(
         request_params,
         global_endpoint_manager,
         request,
-        execute_request_fn
+        execute_request_fn,
+        hedging_state=hedging_state,
     )

@@ -21,6 +21,7 @@
 
 from ._version import VERSION
 from ._cosmos_responses import CosmosDict, CosmosList
+from ._diagnostics_types import RequestedRegion, RequestedRegionReason
 from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
@@ -66,6 +67,8 @@ __all__ = (
     "ConnectionRetryPolicy",
     "ThroughputProperties",
     "CosmosDict",
-    "CosmosList"
+    "CosmosList",
+    "RequestedRegion",
+    "RequestedRegionReason",
 )
 __version__ = VERSION

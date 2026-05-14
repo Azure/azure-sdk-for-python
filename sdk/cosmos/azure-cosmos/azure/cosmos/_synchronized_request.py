@@ -33,6 +33,8 @@ from . import exceptions, http_constants, _retry_utility
 from ._availability_strategy_config import CrossRegionHedgingStrategy
 from ._availability_strategy_handler import execute_with_hedging
 from ._constants import _Constants
+from ._diagnostics import _HedgingDetectionState, _attach_state_to_headers
+from ._diagnostics_types import RequestedRegionReason
 from ._request_object import RequestObject
 from .documents import _OperationType
 
@@ -88,6 +90,9 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     kwargs.pop(_Constants.OperationStartTime, None)
     # Pop internal flags that should not be passed to the HTTP layer
     kwargs.pop("_internal_pk_range_fetch", None)
+    # Hedging-detection state is consumed by the orchestrator + retry layer
+    # only; never forward to the HTTP pipeline.
+    kwargs.pop("_hedging_state", None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
     read_timeout = connection_policy.ReadTimeout
@@ -266,9 +271,28 @@ def SynchronizedRequest(
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
             request_params.availability_strategy = CrossRegionHedgingStrategy()
 
+    # ----- Hedging-detection: per-operation state -------------------------- #
+    # Construct a state holder for this operation. Threaded through:
+    #   * the hedging handler via the ``hedging_state`` closure argument
+    #     (NOT on ``request_params`` — SE-002 / public-spec §5.4 / AC8).
+    #   * ``_retry_utility.Execute`` via the ``_hedging_state`` kwarg.
+    #   * back up to the wrapper-construction site (``CosmosDict``/``CosmosList``
+    #     in ``_cosmos_client_connection``) by stashing on the response-headers
+    #     dict under a private sentinel key (popped in each wrapper's
+    #     ``__init__``).
+    # Hedge-arm subtasks recursively re-enter ``SynchronizedRequest`` with
+    # ``is_hedging_request=True``; they should reuse the parent state via the
+    # kwarg rather than create a new one. We thus only create state for the
+    # top-level dispatch.
+    hedging_state: "Optional[_HedgingDetectionState]" = kwargs.get("_hedging_state")
+    is_top_level = hedging_state is None and not request_params.is_hedging_request
+    if is_top_level:
+        hedging_state = _HedgingDetectionState()
+        kwargs["_hedging_state"] = hedging_state
+
     # Handle hedging if availability strategy is applicable
     if _is_availability_strategy_applicable(request_params):
-        return execute_with_hedging(
+        result, headers = execute_with_hedging(
             request_params,
             global_endpoint_manager,
             request,
@@ -281,11 +305,24 @@ def SynchronizedRequest(
                 pipeline_client,
                 r,
                 **kwargs
-            )
+            ),
+            hedging_state=hedging_state,
+        )
+        if is_top_level:
+            _attach_state_to_headers(headers, hedging_state)
+        return result, headers
+
+    # Non-hedged path: record INITIAL once at orchestrator entry.
+    if is_top_level and hedging_state is not None:
+        # Best-effort region name from the resolved endpoint; falls back to
+        # empty string when the endpoint cannot be resolved to a friendly name.
+        region_name = _resolve_region_name(global_endpoint_manager, request_params)
+        hedging_state._record_request(  # pylint: disable=protected-access
+            region_name, RequestedRegionReason.INITIAL
         )
 
     # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
-    return _retry_utility.Execute(
+    result, headers = _retry_utility.Execute(
         client,
         global_endpoint_manager,
         _Request,
@@ -295,3 +332,35 @@ def SynchronizedRequest(
         request,
         **kwargs
     )
+    if is_top_level and hedging_state is not None:
+        # Best-effort: the responding region is the resolved endpoint for the
+        # final attempt (post-retry). Same resolver as INITIAL above.
+        region_name = _resolve_region_name(global_endpoint_manager, request_params)
+        hedging_state._record_response(region_name)  # pylint: disable=protected-access
+        _attach_state_to_headers(headers, hedging_state)
+    return result, headers
+
+
+def _resolve_region_name(global_endpoint_manager, request_params) -> str:
+    """Best-effort resolution of the human-readable region name for the
+    endpoint currently selected on ``request_params``. Returns an empty string
+    if the name cannot be resolved (e.g., emulator, missing routing context).
+    Never raises — the hot path must not break for diagnostics."""
+    try:
+        endpoint = getattr(request_params, "location_endpoint_to_route", None)
+        if endpoint and hasattr(global_endpoint_manager, "get_region_name"):
+            is_write = _OperationType.IsWriteOperation(request_params.operation_type)
+            name = global_endpoint_manager.get_region_name(endpoint, is_write)
+            if name:
+                return name
+        # Fall back to the global endpoint manager's preferred read/write region.
+        if hasattr(global_endpoint_manager, "get_write_endpoint_region"):
+            try:
+                name = global_endpoint_manager.get_write_endpoint_region()
+                if name:
+                    return name
+            except Exception:  # pylint: disable=broad-except
+                pass
+    except Exception:  # pylint: disable=broad-except
+        return ""
+    return ""

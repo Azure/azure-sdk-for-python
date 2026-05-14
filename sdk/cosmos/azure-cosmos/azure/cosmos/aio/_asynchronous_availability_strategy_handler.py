@@ -32,6 +32,8 @@ from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-lega
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
 from .._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
+from .._diagnostics import _HedgingDetectionState
+from .._diagnostics_types import RequestedRegionReason
 from .._request_object import RequestObject
 
 ResponseType = Tuple[Dict[str, Any], Dict[str, Any]]
@@ -48,7 +50,8 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         location_index: int,
         available_locations: List[str],
         complete_status: Event,
-        first_request_params_holder: SimpleNamespace
+        first_request_params_holder: SimpleNamespace,
+        hedging_state: Optional[_HedgingDetectionState] = None,
     ) -> ResponseType:
         """Execute a single request with appropriate delay based on location index.
 
@@ -76,6 +79,9 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         :type complete_status: asyncio.Event
         :param first_request_params_holder: Namespace object storing request parameters for the initial request
         :type first_request_params_holder: SimpleNamespace
+        :param hedging_state: Per-operation hedging detection state, passed as a
+            closure argument (NOT on ``request_params`` — see SE-002).
+        :type hedging_state: Optional[_HedgingDetectionState]
         :returns: Tuple containing response data and headers from the request
         :rtype: ResponseType
         :raises: CancelledError if request is cancelled due to completion status
@@ -101,6 +107,16 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         if delay > 0:
             await asyncio.sleep(delay / 1000)
 
+        # ---- Hedging-detection recording (Option B) --------------------- #
+        # IMPORTANT: this append happens AFTER ``await asyncio.sleep`` AND
+        # AFTER the cancellation check below. The contract is "dispatched, not
+        # necessarily wire-issued" — see SE-013 and public spec §5.3 docstring
+        # on ``get_requested_regions``. A hedge-arm task cancelled before its
+        # sleep completes raises ``CancelledError`` *inside* the sleep, which
+        # unwinds the coroutine before reaching this line — guaranteeing no
+        # phantom HEDGING entry on cancel-before-delay-elapsed (AC10).
+        # ----------------------------------------------------------------- #
+
         # Create request parameters for this location
         params = copy.deepcopy(request_params)
         params.is_hedging_request = location_index > 0
@@ -121,14 +137,30 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         if complete_status is not None and complete_status.is_set():
             raise CancelledError("The request has been cancelled")
 
-        return await execute_request_fn(params, req)
+        # Record dispatch intent now (post-delay, post-cancellation-check).
+        if hedging_state is not None and 0 <= location_index < len(available_locations):
+            region_name = available_locations[location_index]
+            reason = (
+                RequestedRegionReason.INITIAL if location_index == 0
+                else RequestedRegionReason.HEDGING
+            )
+            hedging_state._record_request(region_name, reason)  # pylint: disable=protected-access
+
+        try:
+            result = await execute_request_fn(params, req)
+        except Exception:
+            raise
+        if hedging_state is not None and 0 <= location_index < len(available_locations):
+            hedging_state._record_response(available_locations[location_index])  # pylint: disable=protected-access
+        return result
 
     async def execute_request(
         self,
         request_params: RequestObject,
         global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
         request: HttpRequest,
-        execute_request_fn: Callable[..., Awaitable[ResponseType]]
+        execute_request_fn: Callable[..., Awaitable[ResponseType]],
+        hedging_state: Optional[_HedgingDetectionState] = None,
     ) -> ResponseType:
         """Execute request with cross-region hedging strategy.
 
@@ -146,6 +178,9 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         :type request: HttpRequest
         :param execute_request_fn: Async function to execute the actual request
         :type execute_request_fn: Callable[..., Awaitable[ResponseType]]
+        :param hedging_state: Per-operation hedging detection state, passed as a
+            closure argument (NOT on ``request_params`` — see SE-002).
+        :type hedging_state: Optional[_HedgingDetectionState]
         :returns: A tuple containing the response data and headers from the successful request
         :rtype: ResponseType
         :raises: Exception from the first request if all requests fail with transient errors
@@ -174,7 +209,8 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                         i,
                         available_locations,
                         completion_status,
-                        first_request_params_holder
+                        first_request_params_holder,
+                        hedging_state=hedging_state,
                     ))
                 active_tasks.append(task)
                 if i == 0:
@@ -223,7 +259,8 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                                 next_index,
                                 available_locations,
                                 completion_status,
-                                first_request_params_holder
+                                first_request_params_holder,
+                                hedging_state=hedging_state,
                             ))
                         active_tasks.append(task)
 
@@ -258,7 +295,8 @@ async def execute_with_availability_strategy(
     request_params: RequestObject,
     global_endpoint_manager: _GlobalPartitionEndpointManagerForCircuitBreakerAsync,
     request: HttpRequest,
-    execute_request_fn: Callable[..., Awaitable[ResponseType]]
+    execute_request_fn: Callable[..., Awaitable[ResponseType]],
+    hedging_state: Optional[_HedgingDetectionState] = None,
 ) -> ResponseType:
     """Execute a request with hedging based on the availability strategy.
 
@@ -278,6 +316,9 @@ async def execute_with_availability_strategy(
     :type request: HttpRequest
     :param execute_request_fn: Async function to execute the actual request
     :type execute_request_fn: Callable[..., Awaitable[ResponseType]]
+    :param hedging_state: Per-operation hedging detection state, passed as a
+        closure argument (NOT on ``request_params`` — see SE-002).
+    :type hedging_state: Optional[_HedgingDetectionState]
     :returns: Tuple containing response data and headers from the successful request
     :rtype: ResponseType
     :raises: CosmosClientError if all hedged requests fail
@@ -287,5 +328,6 @@ async def execute_with_availability_strategy(
         request_params,
         global_endpoint_manager,
         request,
-        execute_request_fn
+        execute_request_fn,
+        hedging_state=hedging_state,
     )
