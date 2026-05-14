@@ -101,6 +101,10 @@ def test_ws_clean_return_uses_close_code_1000():
         await websocket.receive_text()
 
     client = TestClient(app)
+    # Starlette TestClient surfaces *any* close (including a clean 1000) via
+    # ``WebSocketDisconnect`` when ``receive_text()`` is called after the
+    # server sends a close frame — this is the documented client API for
+    # observing the close, not an indication of error.
     with pytest.raises(WebSocketDisconnect) as excinfo:
         with client.websocket_connect("/invocations_ws") as ws:
             ws.send_text("done")

@@ -16,6 +16,7 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+    config.addinivalue_line("markers", "slow: tests that send large payloads or otherwise take noticeable time in CI")
 
 
 # ---------------------------------------------------------------------------
@@ -236,7 +237,7 @@ def _records_with_ws_extras(records):
     """Filter log records that carry the close-event ``ws.*`` extras."""
     return [
         r for r in records
-        if hasattr(r, "ws.session_id") and hasattr(r, "ws.close_code")
+        if hasattr(r, "azure.ai.agentserver.invocations_ws.session_id") and hasattr(r, "azure.ai.agentserver.invocations_ws.close_code")
     ]
 
 

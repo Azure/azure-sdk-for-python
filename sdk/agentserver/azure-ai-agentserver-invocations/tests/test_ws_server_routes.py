@@ -21,13 +21,22 @@ from conftest import _make_echo_ws_app
 # Route registration
 # ---------------------------------------------------------------------------
 
-def test_ws_route_is_registered():
-    """The /invocations_ws route exists alongside the HTTP routes."""
-    app = InvocationAgentServerHost()
+def test_ws_route_is_registered_when_handler_is_set():
+    """The /invocations_ws route is registered lazily on @ws_handler."""
+    app = _make_echo_ws_app()
     paths = [getattr(r, "path", None) for r in app.routes]
     assert "/invocations_ws" in paths
     assert "/invocations" in paths
     assert "/readiness" in paths
+
+
+def test_ws_route_is_not_registered_without_handler():
+    """Without @ws_handler the WS route is absent (upgrades return 404)."""
+    app = InvocationAgentServerHost()
+    paths = [getattr(r, "path", None) for r in app.routes]
+    assert "/invocations_ws" not in paths
+    # HTTP routes still registered.
+    assert "/invocations" in paths
 
 
 def test_readiness_still_works_with_ws_registered():
@@ -81,7 +90,7 @@ def test_ws_upgrade_on_http_path_fails():
     client = TestClient(app)
     # /invocations is a Route, not a WebSocketRoute — TestClient surfaces
     # this as an immediate WebSocketDisconnect rather than a connect.
-    with pytest.raises((WebSocketDisconnect, Exception)):  # noqa: PT011
+    with pytest.raises(WebSocketDisconnect):
         with client.websocket_connect("/invocations"):
             pass
 
@@ -90,6 +99,6 @@ def test_ws_unknown_path_fails():
     """An unknown WS path is rejected."""
     app = _make_echo_ws_app()
     client = TestClient(app)
-    with pytest.raises((WebSocketDisconnect, Exception)):  # noqa: PT011
+    with pytest.raises(WebSocketDisconnect):
         with client.websocket_connect("/nonexistent"):
             pass

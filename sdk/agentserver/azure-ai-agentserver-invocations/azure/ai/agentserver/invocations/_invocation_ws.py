@@ -8,33 +8,46 @@ route described in the ``invocations_ws`` protocol spec.  The SDK wraps
 the user handler with:
 
 * ``await websocket.accept()`` before the handler runs;
-* WebSocket protocol-level Ping/Pong keep-alive (default 30 s) so idle
-  connections survive Azure APIM / Azure Load Balancer's ~4-minute idle
-  timeout;
+* WebSocket protocol-level Ping/Pong keep-alive (disabled by default;
+  enable via the ``WS_KEEPALIVE_INTERVAL`` env var or the
+  ``ws_ping_interval=`` constructor argument) so idle connections can
+  survive Azure APIM / Azure Load Balancer's ~4-minute idle timeout;
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
   handler exceptions;
 * a structured close-event log line and OTel span attributes carrying
-  ``ws.session_id``, ``ws.close_code``, and ``ws.duration_ms``.
+  ``azure.ai.agentserver.invocations_ws.session_id``,
+  ``azure.ai.agentserver.invocations_ws.close_code``, and
+  ``azure.ai.agentserver.invocations_ws.duration_ms``.
 """
-from __future__ import annotations
 
 import inspect
 import logging
 import math
+import os
 import time
 import uuid
 from collections.abc import Awaitable, Callable
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
     end_span,
-    record_error,
 )
 
 from ._constants import InvocationsWSConstants
+
+# Type-checking only base so the mixin reads as an ``AgentServerHost`` to
+# mypy / pyright (resolves ``self.config``, ``self.request_span``,
+# ``self.router``) without coupling the runtime hierarchy.  At runtime the
+# mixin is a plain ``object`` subclass — only the concrete
+# ``InvocationAgentServerHost`` MRO actually inherits ``AgentServerHost``,
+# which keeps the diamond out of the runtime class graph.
+if TYPE_CHECKING:
+    _MixinBase = AgentServerHost
+else:
+    _MixinBase = object
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -59,18 +72,17 @@ def _safe_set_attrs(span: Any, attrs: dict[str, Any]) -> None:
         logger.debug("Failed to set WS span attributes: %s", list(attrs.keys()), exc_info=True)
 
 
-class _WSHandlerMixin(AgentServerHost):
-    """Trait class that adds the ``@app.ws_handler`` decorator and ``/invocations_ws`` route.
+class _WSHandlerMixin(_MixinBase):
+    """Pure mixin that adds the ``@app.ws_handler`` decorator and ``/invocations_ws`` route.
 
-    Inherits from :class:`~azure.ai.agentserver.core.AgentServerHost` so that
-    cooperative ``super().__init__`` calls and host attribute access
-    (``self.config``, ``self.request_span``) are resolved statically as well
-    as at runtime.  Designed to be mixed into :class:`InvocationAgentServerHost`
-    so the same host object exposes both ``POST /invocations`` (HTTP) and
-    ``/invocations_ws`` (WebSocket) on the same Starlette application.
-
-    Subclasses must append the route returned by :meth:`_build_ws_route` to
-    their ``routes`` list before calling ``super().__init__``.
+    Designed to be mixed into a concrete
+    :class:`~azure.ai.agentserver.core.AgentServerHost` subclass (e.g.
+    :class:`InvocationAgentServerHost`) so the same host object exposes
+    both ``POST /invocations`` (HTTP) and ``/invocations_ws`` (WebSocket)
+    on the same Starlette application.  At runtime the mixin is a plain
+    ``object`` subclass — host attributes (``self.config``,
+    ``self.request_span``, ``self.router``) are accessed via duck typing
+    and are typed only for the static checkers (see ``_MixinBase``).
     """
 
     # Slots populated by __init__.
@@ -80,14 +92,41 @@ class _WSHandlerMixin(AgentServerHost):
     def _init_ws_state(self, ws_ping_interval: Optional[float]) -> None:
         """Initialize WS handler slots.
 
+        Resolution order for the keep-alive interval:
+
+        1. Explicit *ws_ping_interval* constructor argument (when not ``None``).
+        2. ``WS_KEEPALIVE_INTERVAL`` environment variable (auto-injected by
+           AgentService into every hosted-agent container).
+        3. Disabled (``0``) — no Ping/Pong frames are sent.
+
+        ``0`` (from any source) disables keep-alive entirely.
+
         :param ws_ping_interval: Seconds between WS protocol Ping frames.
-            ``None`` selects the default (30 s); ``0`` disables keep-alive.
+            ``None`` selects the env var or the default.
         :type ws_ping_interval: Optional[float]
-        :raises ValueError: If *ws_ping_interval* is negative or non-finite.
+        :raises ValueError: If the resolved value is negative, non-finite,
+            or (for the env var) not parseable as a number.
         """
         self._ws_fn = None
         if ws_ping_interval is None:
-            resolved = InvocationsWSConstants.DEFAULT_PING_INTERVAL_S
+            env_raw = os.environ.get(InvocationsWSConstants.ENV_WS_KEEPALIVE_INTERVAL)
+            if env_raw is None or env_raw == "":
+                resolved = 0.0
+            else:
+                try:
+                    resolved = float(env_raw)
+                except ValueError as exc:
+                    raise ValueError(
+                        f"Invalid value for "
+                        f"{InvocationsWSConstants.ENV_WS_KEEPALIVE_INTERVAL}: "
+                        f"{env_raw!r} (expected a non-negative number)"
+                    ) from exc
+                if math.isnan(resolved) or math.isinf(resolved) or resolved < 0.0:
+                    raise ValueError(
+                        f"Invalid value for "
+                        f"{InvocationsWSConstants.ENV_WS_KEEPALIVE_INTERVAL}: "
+                        f"{env_raw!r} (expected a non-negative finite number)"
+                    )
         else:
             try:
                 resolved = float(ws_ping_interval)
@@ -142,39 +181,58 @@ class _WSHandlerMixin(AgentServerHost):
         :type fn: Callable[[WebSocket], Awaitable[None]]
         :return: The original function (unmodified).
         :rtype: Callable[[WebSocket], Awaitable[None]]
-        :raises TypeError: If *fn* is not an ``async def`` function.
+        :raises TypeError: If *fn* is not an ``async def`` function, or its
+            signature is not callable with exactly one positional argument.
         """
         if not inspect.iscoroutinefunction(fn):
             raise TypeError(
                 f"ws_handler expects an async function, got {type(fn).__name__}. "
                 "Use 'async def' to define your handler."
             )
+        # Validate signature at registration time (not at first request) so
+        # 0-arg / 2-required-arg coroutine mistakes surface at import.
+        try:
+            sig = inspect.signature(fn)
+            sig.bind(None)  # one positional placeholder for the WebSocket
+        except TypeError as exc:
+            raise TypeError(
+                f"ws_handler must accept exactly one positional argument "
+                f"(the WebSocket); got {fn.__qualname__}{inspect.signature(fn)}"
+            ) from exc
+        if self._ws_fn is not None:
+            # Match the HTTP decorator's last-write-wins semantics, but log
+            # so misconfigured apps that double-register a handler aren't
+            # silently downgraded.
+            logger.warning(
+                "ws_handler overwriting previously registered handler %s with %s",
+                getattr(self._ws_fn, "__qualname__", repr(self._ws_fn)),
+                getattr(fn, "__qualname__", repr(fn)),
+            )
         self._ws_fn = fn
+        # Register the route lazily on first decoration so hosts without a
+        # registered handler return HTTP 404 to a WebSocket upgrade rather than
+        # accepting and immediately closing with code 1011.
+        self._ensure_ws_route_registered()
         return fn
 
-    # ------------------------------------------------------------------
-    # Route factory (for cooperative __init__)
-    # ------------------------------------------------------------------
+    def _ensure_ws_route_registered(self) -> None:
+        """Append the ``/invocations_ws`` WebSocketRoute to the router (idempotent).
 
-    @staticmethod
-    def _build_ws_route(endpoint: Callable[[WebSocket], Awaitable[None]]) -> Any:
-        """Return a :class:`~starlette.routing.WebSocketRoute` for ``/invocations_ws``.
-
-        Imported lazily to avoid hard-coding the route type in the public
-        module body and keep the import surface symmetric with the HTTP
-        ``Route`` import in :mod:`._invocation`.
-
-        :param endpoint: The async endpoint to wire to the route.
-        :type endpoint: Callable[[WebSocket], Awaitable[None]]
-        :return: A configured ``WebSocketRoute`` instance.
-        :rtype: ~starlette.routing.WebSocketRoute
+        Starlette's ``router.routes`` is a plain list and may be mutated
+        between construction and first request, so deferring registration
+        until ``@ws_handler`` is called is safe.
         """
         from starlette.routing import WebSocketRoute  # pylint: disable=import-outside-toplevel
 
-        return WebSocketRoute(
-            InvocationsWSConstants.ROUTE_PATH,
-            endpoint,
-            name="invocations_ws",
+        for route in self.router.routes:
+            if isinstance(route, WebSocketRoute) and getattr(route, "path", None) == InvocationsWSConstants.ROUTE_PATH:
+                return
+        self.router.routes.append(
+            WebSocketRoute(
+                InvocationsWSConstants.ROUTE_PATH,
+                self._ws_endpoint,
+                name="invocations_ws",
+            )
         )
 
     # ------------------------------------------------------------------
@@ -191,10 +249,14 @@ class _WSHandlerMixin(AgentServerHost):
         :param websocket: The incoming Starlette WebSocket.
         :type websocket: ~starlette.websockets.WebSocket
         """
-        # Per-connection identifiers.  Session ID is generated server-side;
-        # the spec carries it in the close-event metric so an operator can
-        # correlate logs/metrics for a given long-lived connection.
-        session_id = str(uuid.uuid4())
+        # Per-connection identifiers.  Honour the platform-injected
+        # ``FOUNDRY_AGENT_SESSION_ID`` (surfaced via ``self.config.session_id``)
+        # so HTTP and WebSocket transports on the same container report the
+        # same session ID; fall back to a fresh UUID when the platform does
+        # not inject one.  Matches the precedence used by the HTTP
+        # ``POST /invocations`` endpoint (minus the query-param override,
+        # which has no equivalent ergonomic on a long-lived WS connection).
+        session_id = self.config.session_id or str(uuid.uuid4())
         start_ns = time.monotonic_ns()
 
         # Open the OTel span before accepting so any tracecontext header
@@ -212,9 +274,9 @@ class _WSHandlerMixin(AgentServerHost):
         otel_span = span_ctx.__enter__()
         _safe_set_attrs(otel_span, {InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id})
 
-        if self._ws_fn is None:
-            await self._reject_no_handler(websocket, span_ctx, otel_span, session_id, start_ns)
-            return
+        # NOTE: when no ``@ws_handler`` is registered, the route itself is
+        # not registered (see ``_ensure_ws_route_registered``), so this
+        # endpoint is unreachable in that state — Starlette returns 404.
 
         # Accept the upgrade *before* invoking the user handler — per spec.
         try:
@@ -262,10 +324,14 @@ class _WSHandlerMixin(AgentServerHost):
             is set only for an *unhandled* exception (so the caller can map
             it to span error events and a 1011 close).
         :rtype: tuple[int, Optional[BaseException]]
+        :raises RuntimeError: If no handler is registered (programmer error;
+            the public ``_ws_endpoint`` checks ``_ws_fn`` before calling).
         """
-        assert self._ws_fn is not None  # checked by caller
+        ws_fn = self._ws_fn
+        if ws_fn is None:
+            raise RuntimeError("_invoke_user_handler called with no registered ws_handler")
         try:
-            await self._ws_fn(websocket)
+            await ws_fn(websocket)
             return InvocationsWSConstants.CLOSE_NORMAL, None
         except WebSocketDisconnect as exc:
             # Client (or proxy) closed first — surface their code, not 1011.
@@ -279,49 +345,6 @@ class _WSHandlerMixin(AgentServerHost):
                 session_id, exc, exc_info=True,
             )
             return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
-
-    async def _reject_no_handler(
-        self,
-        websocket: WebSocket,
-        span_ctx: Any,
-        otel_span: Any,
-        session_id: str,
-        start_ns: int,
-    ) -> None:
-        """Refuse a WS upgrade when no ``@ws_handler`` is registered.
-
-        :param websocket: The pending WebSocket awaiting upgrade.
-        :type websocket: ~starlette.websockets.WebSocket
-        :param span_ctx: The active ``request_span`` context manager.
-        :type span_ctx: any
-        :param otel_span: The current OTel span (or ``None``).
-        :type otel_span: any
-        :param session_id: Per-connection session ID.
-        :type session_id: str
-        :param start_ns: ``time.monotonic_ns()`` at connection start.
-        :type start_ns: int
-        """
-        logger.error(
-            "WebSocket connection on %s rejected: no @ws_handler registered",
-            InvocationsWSConstants.ROUTE_PATH,
-        )
-        duration_ms = (time.monotonic_ns() - start_ns) // 1_000_000
-        self._emit_close_event(
-            otel_span,
-            session_id,
-            InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
-            duration_ms,
-            error_code="not_implemented",
-            error_message="No ws_handler registered.",
-        )
-        try:
-            span_ctx.__exit__(None, None, None)
-        finally:
-            end_span(otel_span)
-        await websocket.close(
-            code=InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
-            reason="No ws_handler registered",
-        )
 
     async def _finalize_session(
         self,
@@ -390,21 +413,16 @@ class _WSHandlerMixin(AgentServerHost):
             error_message=str(handler_exc) if handler_exc is not None else None,
         )
 
-        if handler_exc is not None:
-            try:
-                record_error(otel_span, handler_exc)
-            finally:
-                try:
-                    span_ctx.__exit__(
-                        type(handler_exc), handler_exc, handler_exc.__traceback__,
-                    )
-                finally:
-                    end_span(otel_span)
-        else:
-            try:
-                span_ctx.__exit__(None, None, None)
-            finally:
-                end_span(otel_span)
+        # Always exit the context manager with ``(None, None, None)``:
+        # OpenTelemetry's ``start_as_current_span`` records an exception
+        # event whenever ``__exit__`` is given exception info, so passing
+        # the user exception there *and* calling ``end_span(span, exc=...)``
+        # would double-record.  We take ownership of error recording and
+        # ending via ``end_span`` instead.
+        try:
+            span_ctx.__exit__(None, None, None)
+        finally:
+            end_span(otel_span, exc=handler_exc)
 
     # ------------------------------------------------------------------
     # Close event
@@ -422,8 +440,9 @@ class _WSHandlerMixin(AgentServerHost):
     ) -> None:
         """Record close-event span attributes and emit a structured log line.
 
-        The log record carries the ``ws.session_id``, ``ws.close_code``,
-        and ``ws.duration_ms`` fields listed in the spec via the standard
+        The log record carries the ``azure.ai.agentserver.invocations_ws.session_id``,
+        ``azure.ai.agentserver.invocations_ws.close_code``, and
+        ``azure.ai.agentserver.invocations_ws.duration_ms`` fields listed in the spec via the standard
         ``logging`` ``extra`` dict — a structured-logging formatter or an
         OTel logging bridge can pick them up directly without having to
         parse the message.
@@ -454,14 +473,22 @@ class _WSHandlerMixin(AgentServerHost):
             attrs[InvocationsWSConstants.ATTR_SPAN_ERROR_MESSAGE] = error_message
         _safe_set_attrs(otel_span, attrs)
 
+        # NOTE: ``extra`` keys deliberately use dotted names (``azure.ai.agentserver.invocations_ws.session_id``
+        # etc.) so they line up 1:1 with the OTel span-attribute keys defined
+        # in :class:`InvocationsWSConstants`.  This makes log<->trace
+        # correlation trivial in OTel logging bridges.  The trade-off is that
+        # ``%(azure.ai.agentserver.invocations_ws.session_id)s`` printf-style formatters can't address them
+        # directly — use a structured formatter (JSON, OTel) or access via
+        # ``LogRecord.__dict__["azure.ai.agentserver.invocations_ws.session_id"]`` if you need them in plain
+        # ``logging`` output.
         logger.info(
             "invocations_ws connection closed: session_id=%s code=%s duration_ms=%s",
             session_id,
             close_code,
             duration_ms,
             extra={
-                "ws.session_id": session_id,
-                "ws.close_code": close_code,
-                "ws.duration_ms": duration_ms,
+                InvocationsWSConstants.ATTR_SPAN_SESSION_ID: session_id,
+                InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE: close_code,
+                InvocationsWSConstants.ATTR_SPAN_DURATION_MS: duration_ms,
             },
         )

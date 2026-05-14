@@ -64,7 +64,7 @@ def test_ws_client_initiated_close_with_custom_code_is_reported(caplog):
     matches = _records_with_ws_extras(caplog.records)
     assert matches
     rec = matches[-1]
-    close_code = getattr(rec, "ws.close_code")
+    close_code = getattr(rec, "azure.ai.agentserver.invocations_ws.close_code")
     # Server surfaces the client's code — NOT 1011.
     assert close_code == 4001
     # No ERROR-level records — a client disconnect is normal.
@@ -75,10 +75,19 @@ def test_ws_client_initiated_close_with_custom_code_is_reported(caplog):
 # Handler-managed close
 # ---------------------------------------------------------------------------
 
-def test_ws_handler_explicit_close_does_not_double_close(caplog):
+def test_ws_handler_explicit_close_does_not_double_close(caplog, monkeypatch):
     """If the handler closes the WS itself, the SDK does NOT attempt a second close."""
     app = InvocationAgentServerHost()
     closes_observed: list[int] = []
+    close_calls: list[tuple[int, str]] = []
+
+    real_close = WebSocket.close
+
+    async def _counting_close(self, code=1000, reason=""):
+        close_calls.append((code, reason))
+        return await real_close(self, code=code, reason=reason)
+
+    monkeypatch.setattr(WebSocket, "close", _counting_close, raising=True)
 
     async def handler(websocket: WebSocket) -> None:
         # Hand-roll close so we can verify the SDK skips re-closing.
@@ -97,10 +106,12 @@ def test_ws_handler_explicit_close_does_not_double_close(caplog):
 
     # Handler ran to completion.
     assert closes_observed == [1]
+    # Exactly ONE close — the handler's. The SDK must not re-close.
+    assert len(close_calls) == 1, f"expected one close, got {close_calls}"
     # Close-event log line still emitted (with the handler's code).
     matches = _records_with_ws_extras(caplog.records)
     assert matches
-    assert getattr(matches[-1], "ws.close_code") == InvocationsWSConstants.CLOSE_NORMAL
+    assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == InvocationsWSConstants.CLOSE_NORMAL
 
 
 # ---------------------------------------------------------------------------
@@ -118,4 +129,4 @@ def test_ws_empty_connection_closes_normally(caplog):
 
     matches = _records_with_ws_extras(caplog.records)
     assert matches
-    assert getattr(matches[-1], "ws.close_code") == InvocationsWSConstants.CLOSE_NORMAL
+    assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == InvocationsWSConstants.CLOSE_NORMAL

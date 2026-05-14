@@ -200,7 +200,7 @@ def test_ws_session_id_attribute_set_on_span():
     spans = _ws_session_spans(_get_spans())
     attrs = dict(spans[0].attributes)
     # WS-specific key
-    ws_session = attrs.get("ws.session_id")
+    ws_session = attrs.get("azure.ai.agentserver.invocations_ws.session_id")
     # General session key (shared with HTTP)
     ms_session = attrs.get("microsoft.session.id")
     assert ws_session and isinstance(ws_session, str)
@@ -219,7 +219,7 @@ def test_ws_session_id_is_unique_per_span():
 
     spans = _ws_session_spans(_get_spans())
     assert len(spans) == 2
-    session_ids = {dict(s.attributes).get("ws.session_id") for s in spans}
+    session_ids = {dict(s.attributes).get("azure.ai.agentserver.invocations_ws.session_id") for s in spans}
     assert len(session_ids) == 2
 
 
@@ -237,7 +237,7 @@ def test_ws_span_records_close_code_1000_on_clean_return():
 
     spans = _ws_session_spans(_get_spans())
     attrs = dict(spans[0].attributes)
-    assert attrs.get("ws.close_code") == 1000
+    assert attrs.get("azure.ai.agentserver.invocations_ws.close_code") == 1000
 
 
 def test_ws_span_records_close_code_1011_on_handler_exception():
@@ -251,11 +251,11 @@ def test_ws_span_records_close_code_1011_on_handler_exception():
 
     spans = _ws_session_spans(_get_spans())
     attrs = dict(spans[0].attributes)
-    assert attrs.get("ws.close_code") == 1011
+    assert attrs.get("azure.ai.agentserver.invocations_ws.close_code") == 1011
 
 
 def test_ws_span_records_duration_ms():
-    """``ws.duration_ms`` is set as a non-negative integer."""
+    """``azure.ai.agentserver.invocations_ws.duration_ms`` is set as a non-negative integer."""
     server = _make_tracing_ws_server()
     client = TestClient(server)
     with client.websocket_connect("/invocations_ws") as ws:
@@ -264,7 +264,7 @@ def test_ws_span_records_duration_ms():
 
     spans = _ws_session_spans(_get_spans())
     attrs = dict(spans[0].attributes)
-    duration_ms = attrs.get("ws.duration_ms")
+    duration_ms = attrs.get("azure.ai.agentserver.invocations_ws.duration_ms")
     assert isinstance(duration_ms, int)
     assert duration_ms >= 0
 
@@ -287,7 +287,7 @@ def test_ws_span_records_client_close_code():
 
     spans = _ws_session_spans(_get_spans())
     attrs = dict(spans[0].attributes)
-    assert attrs.get("ws.close_code") == 4010
+    assert attrs.get("azure.ai.agentserver.invocations_ws.close_code") == 4010
 
 
 # ---------------------------------------------------------------------------
@@ -310,10 +310,13 @@ def test_ws_handler_exception_records_exception_on_span():
     # Exception is recorded as an event by record_error.
     event_names = [e.name for e in span.events]
     assert "exception" in event_names
+    # Exactly one exception event — belt-and-suspenders against future
+    # double-recording on the same span.
+    assert event_names.count("exception") == 1
 
 
-def test_ws_no_handler_records_error_on_span():
-    """A connection refused for lack of @ws_handler still produces an error-tagged span."""
+def test_ws_no_handler_produces_no_span():
+    """Without @ws_handler the route is absent, so no WS span is created."""
     app = _make_tracing_ws_no_handler()
     client = TestClient(app)
     with pytest.raises(WebSocketDisconnect):
@@ -321,14 +324,7 @@ def test_ws_no_handler_records_error_on_span():
             pass
 
     spans = _ws_session_spans(_get_spans())
-    assert spans
-    attrs = dict(spans[0].attributes)
-    # Close code is 1011 and the error_code/message attrs are populated.
-    assert attrs.get("ws.close_code") == 1011
-    assert attrs.get("azure.ai.agentserver.invocations_ws.error.code") == "not_implemented"
-    assert "ws_handler" in str(
-        attrs.get("azure.ai.agentserver.invocations_ws.error.message", "")
-    )
+    assert spans == []
 
 
 # ---------------------------------------------------------------------------
@@ -383,14 +379,11 @@ def test_ws_agent_name_and_version_in_span_name():
     assert "3.1" in name
 
 
-def test_ws_agent_name_only_in_span_name():
+def test_ws_agent_name_only_in_span_name(monkeypatch):
     """Agent name without version still appears in span name."""
-    env_override = {"FOUNDRY_AGENT_NAME": "ws-solo"}
-    env_copy = os.environ.copy()
-    env_copy.pop("FOUNDRY_AGENT_VERSION", None)
-    env_copy.update(env_override)
-    with patch.dict(os.environ, env_copy, clear=True):
-        server = _make_tracing_ws_server()
+    monkeypatch.setenv("FOUNDRY_AGENT_NAME", "ws-solo")
+    monkeypatch.delenv("FOUNDRY_AGENT_VERSION", raising=False)
+    server = _make_tracing_ws_server()
 
     client = TestClient(server)
     with client.websocket_connect("/invocations_ws") as ws:

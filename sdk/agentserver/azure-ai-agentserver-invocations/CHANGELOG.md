@@ -4,19 +4,10 @@
 
 ### Features Added
 
-- `invocations_ws` (WebSocket) protocol support on `InvocationAgentServerHost`.
-  Register a handler with the new `@app.ws_handler` decorator to host a
-  full-duplex WebSocket endpoint at `/invocations_ws` on the same host that
-  serves `POST /invocations`. The SDK calls `await websocket.accept()` before
-  invoking the handler, runs WebSocket Ping/Pong keep-alive in the background
-  (default 30 s; configurable via the new `ws_ping_interval` constructor
-  argument), closes the connection cleanly on handler return, and maps
-  uncaught exceptions to RFC 6455 close code `1011`. Each connection emits a
-  structured close-event log line carrying `ws.session_id`, `ws.close_code`,
-  and `ws.duration_ms`, and the same fields are recorded as OpenTelemetry
-  span attributes. `/readiness`, OTEL export, graceful shutdown, and the
-  `x-platform-server` identity header continue to be inherited from
-  `azure-ai-agentserver-core`.
+- WebSocket protocol support — `InvocationAgentServerHost` now hosts `/invocations_ws` alongside `POST /invocations`. Register the handler with the new `@app.ws_handler` decorator. The route is registered lazily on first decoration, so hosts without a registered handler return HTTP 404.
+- WebSocket Ping/Pong keep-alive — disabled by default; enable by passing `InvocationAgentServerHost(ws_ping_interval=<seconds>)` or by setting the `WS_KEEPALIVE_INTERVAL` env var (auto-injected by AgentService into hosted-agent containers). The constructor argument takes precedence; `0` (or unset) disables keep-alive. Wired through to Hypercorn's `websocket_ping_interval`.
+- WebSocket telemetry — structured close-event log line and OpenTelemetry span attributes `azure.ai.agentserver.invocations_ws.{session_id,close_code,duration_ms}`. Session ID honours the `FOUNDRY_AGENT_SESSION_ID` env var for HTTP/WS correlation.
+- New samples: `samples/ws_invoke_agent/` (echo) and `samples/ws_bidirectional_streaming_agent/` (concurrent token streaming with cancel/bye control messages).
 
 ### Breaking Changes
 

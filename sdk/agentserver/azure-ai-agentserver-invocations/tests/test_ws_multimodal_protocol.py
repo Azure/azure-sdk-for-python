@@ -9,6 +9,8 @@ text frames (unicode + large), and JSON frames over WebSocket.
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket
 
+import pytest
+
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 from conftest import _make_echo_ws_app
@@ -48,6 +50,7 @@ def test_ws_unicode_text_round_trip():
         assert ws.receive_text() == text
 
 
+@pytest.mark.slow
 def test_ws_large_text_frame_round_trip():
     """A ~1 MB text frame round-trips successfully (parity with test_large_payload)."""
     app = _make_echo_ws_app()

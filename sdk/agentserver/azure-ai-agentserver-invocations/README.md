@@ -221,9 +221,9 @@ app.run()
 
 - Registers `/invocations_ws` on the same Starlette host as `/invocations` and `/readiness`.
 - Calls `await websocket.accept()` before invoking your handler.
-- Runs WebSocket Ping/Pong keep-alive in the background — default 30 s, configurable via `InvocationAgentServerHost(ws_ping_interval=...)`. Set `ws_ping_interval=0` to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across Azure APIM and Azure Load Balancer's ~4 minute idle timeout without any extra application traffic.
+- Runs WebSocket Ping/Pong keep-alive in the background — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers) or by passing `InvocationAgentServerHost(ws_ping_interval=...)`. Set the value to `0` (in any source) to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across Azure APIM and Azure Load Balancer's ~4 minute idle timeout without any extra application traffic.
 - Closes the connection cleanly on handler return (close code `1000`) or maps an uncaught handler exception to close code `1011`.
-- Emits a structured close-event log line carrying `ws.session_id`, `ws.close_code`, and `ws.duration_ms`. The same fields are recorded as OpenTelemetry span attributes so the connection lifetime is visible end-to-end.
+- Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`. The same fields are recorded as OpenTelemetry span attributes so the connection lifetime is visible end-to-end.
 - Inherits `/readiness`, OpenTelemetry export, graceful shutdown, and the `x-platform-server` identity header from `azure-ai-agentserver-core`.
 
 ### Handler signature
@@ -236,7 +236,19 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 
 | Constructor argument | Default | Description |
 |---|---|---|
-| `ws_ping_interval` | `30.0` (seconds) | WebSocket protocol Ping interval. `0` disables keep-alive. Negative or non-finite values are rejected. |
+| `ws_ping_interval` | `0` (disabled) | WebSocket protocol Ping interval in seconds. `0` disables keep-alive. Negative or non-finite values are rejected. When `None`, the SDK reads the `WS_KEEPALIVE_INTERVAL` env var before falling back to disabled. |
+
+| Environment variable | Default | Description |
+|---|---|---|
+| `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected override for the WebSocket Ping interval (seconds). `0` disables keep-alive. Ignored when `ws_ping_interval=` is set explicitly. |
+
+### Reference: close codes
+
+| Close code | Meaning |
+|---|---|
+| `1000` | Handler returned cleanly (normal close). |
+| `1011` | Handler raised an unhandled exception (mapped by the SDK). |
+| `4000`-`4999` | Application-defined codes (set by the handler via `await websocket.close(code=...)` — surfaced unchanged to the client). |
 
 ## Troubleshooting
 

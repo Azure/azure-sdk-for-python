@@ -19,6 +19,7 @@ Usage::
     # -> {"echo": {"name": "Alice"}}
 
     # WebSocket turn (with the `websockets` client library)
+    pip install websockets
     python -m websockets ws://localhost:8088/invocations_ws
     # > hello
     # < hello
@@ -45,10 +46,11 @@ async def handle_ws(websocket: WebSocket) -> None:
     """Echo every text frame back over the WebSocket connection.
 
     The SDK has already accepted the connection by the time this function
-    runs, sends WebSocket Ping frames every 30 s in the background to keep
-    Azure APIM / Azure Load Balancer from idling the socket out, and will
-    close the connection cleanly on return.  An uncaught exception here
-    is mapped to RFC 6455 close code 1011.
+    runs and will close it cleanly on return.  An uncaught exception is
+    mapped to RFC 6455 close code 1011.  WebSocket protocol-level Ping/Pong
+    keep-alive is disabled by default; enable it by setting the
+    ``WS_KEEPALIVE_INTERVAL`` environment variable or by passing
+    ``InvocationAgentServerHost(ws_ping_interval=<seconds>)``.
     """
     async for message in websocket.iter_text():
         await websocket.send_text(message)
