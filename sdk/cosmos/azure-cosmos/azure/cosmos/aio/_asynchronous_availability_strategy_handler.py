@@ -146,10 +146,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             )
             hedging_state._record_request(region_name, reason)  # pylint: disable=protected-access
 
-        try:
-            result = await execute_request_fn(params, req)
-        except Exception:
-            raise
+        result = await execute_request_fn(params, req)
         if hedging_state is not None and 0 <= location_index < len(available_locations):
             hedging_state._record_response(available_locations[location_index])  # pylint: disable=protected-access
         return result

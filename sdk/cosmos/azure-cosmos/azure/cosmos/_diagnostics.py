@@ -82,6 +82,14 @@ class _HedgingDetectionState:
     def _record_request(self, region_name: str, reason: RequestedRegionReason) -> None:
         """Append a dispatched-region entry. Sets the hedging-started flag
         atomically when reason is ``HEDGING`` (compound update guarded by lock).
+
+        :param region_name: Human-readable name of the region the request was
+            dispatched to. Empty string when the endpoint cannot be resolved
+            to a friendly region name (e.g., the emulator).
+        :type region_name: str
+        :param reason: Why the region was dispatched (initial attempt,
+            hedge arm, region failover retry, same-region retry, etc.).
+        :type reason: ~azure.cosmos._diagnostics_types.RequestedRegionReason
         """
         if region_name is None:
             region_name = ""
@@ -94,7 +102,13 @@ class _HedgingDetectionState:
     def _record_response(self, region_name: str) -> None:
         """Append a responding-region entry. Duplicates are intentional —
         the same region may produce multiple responses (e.g., a late response
-        after a hedge winner)."""
+        after a hedge winner).
+
+        :param region_name: Human-readable name of the region that produced
+            a response. Empty string when the endpoint cannot be resolved to a
+            friendly region name (e.g., the emulator).
+        :type region_name: str
+        """
         if region_name is None:
             region_name = ""
         with self._lock:
@@ -146,6 +160,10 @@ class _HedgingDetectionAccessorsMixin:
         ``False`` does NOT mean hedging is disabled or misconfigured. To check
         whether hedging is configured on the client, inspect the client-level
         ``availability_strategy`` configuration.
+
+        :returns: ``True`` if at least one hedge-arm dispatch fired for this
+            operation; ``False`` otherwise.
+        :rtype: bool
         """
         state = self._hedging_state
         if state is None:
@@ -178,6 +196,10 @@ class _HedgingDetectionAccessorsMixin:
         :attr:`~RequestedRegionReason.UNKNOWN` and unknown values defensively
         (``_missing_`` returns :attr:`~RequestedRegionReason.UNKNOWN` for
         future enum members).
+
+        :returns: A tuple of :class:`RequestedRegion` entries in dispatch
+            order. Empty when no state was attached to the operation.
+        :rtype: Tuple[~azure.cosmos.RequestedRegion, ...]
         """
         state = self._hedging_state
         if state is None:
@@ -194,6 +216,10 @@ class _HedgingDetectionAccessorsMixin:
         imply that more than one distinct region responded. For unique regions
         in arrival order use ``tuple(dict.fromkeys(resp.get_responded_regions()))``;
         for an unordered set use ``set(resp.get_responded_regions())``.
+
+        :returns: A tuple of region-name strings in arrival order; may contain
+            duplicates. Empty when no state was attached to the operation.
+        :rtype: Tuple[str, ...]
         """
         state = self._hedging_state
         if state is None:
@@ -206,7 +232,14 @@ def _attach_state_to_headers(headers, state):
     under the module-private sentinel key. The wrapper-type ``__init__`` pops
     this key so customers never see it on ``get_response_headers()``.
 
-    No-op if either argument is falsy."""
+    No-op if either argument is falsy.
+
+    :param headers: Response-headers dict to mutate in place. Typically a
+        ``CaseInsensitiveDict`` produced by the synchronized request layer.
+    :type headers: Optional[MutableMapping[str, Any]]
+    :param state: Per-operation hedging-detection state to attach.
+    :type state: Optional[_HedgingDetectionState]
+    """
     if headers is None or state is None:
         return
     try:
@@ -220,7 +253,15 @@ def _attach_state_to_headers(headers, state):
 def _pop_state_from_headers(headers):
     """Helper used by every wrapper type's ``__init__``: pop and return the
     private state sentinel from a response-headers dict. Returns ``None`` if
-    no state is attached. Also accepts ``None`` headers safely."""
+    no state is attached. Also accepts ``None`` headers safely.
+
+    :param headers: Response-headers dict to pop the sentinel from. May be
+        ``None``, in which case ``None`` is returned without raising.
+    :type headers: Optional[MutableMapping[str, Any]]
+    :returns: The previously attached :class:`_HedgingDetectionState`, or
+        ``None`` if none was attached.
+    :rtype: Optional[_HedgingDetectionState]
+    """
     if headers is None:
         return None
     try:

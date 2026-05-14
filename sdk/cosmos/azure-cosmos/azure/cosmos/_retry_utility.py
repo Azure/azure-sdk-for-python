@@ -333,6 +333,30 @@ def _record_retry_diagnostics_and_attach(
     be empty when the endpoint cannot be resolved to a friendly name.
 
     Never raises — diagnostics must not break the hot path.
+
+    :param hedging_state: Per-operation hedging-detection state. ``None`` for
+        callers that have not opted into hedging-detection, in which case this
+        function is a no-op.
+    :type hedging_state: Optional[_HedgingDetectionState]
+    :param retry_policy: The retry policy instance that produced the decision
+        being recorded. Its class name selects the reason mapping above.
+    :type retry_policy: object
+    :param exception: The :class:`CosmosHttpResponseError` (or other
+        AzureError) that triggered the retry decision. When
+        ``attached_on_raise`` is ``True``, the hedging state is attached to
+        this exception so error-path consumers can surface it.
+    :type exception: BaseException
+    :param args: Positional arguments forwarded to
+        :func:`_retry_utility.Execute`. ``args[0]`` is the
+        :class:`~azure.cosmos._request_object.RequestObject` whose
+        post-``ShouldRetry`` endpoint is read for region resolution.
+    :type args: tuple
+    :param attached_on_raise: When ``True``, the retry utility is re-raising
+        the exception, so the state is attached to it for surfacing to error
+        consumers (``CosmosHttpResponseError.get_requested_regions()``).
+        When ``False``, the retry utility is looping, so a new
+        :class:`RequestedRegion` entry is appended to the state.
+    :type attached_on_raise: bool
     """
     if hedging_state is None:
         return

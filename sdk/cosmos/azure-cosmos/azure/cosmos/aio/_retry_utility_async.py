@@ -43,7 +43,6 @@ from .. import _timeout_failover_retry_policy
 from .. import exceptions
 from .._constants import _Constants
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
-from .._diagnostics_types import RequestedRegionReason
 from .._request_object import RequestObject
 from .._retry_utility import (_configure_timeout, _has_read_retryable_headers,
                               _handle_service_response_retries, _handle_service_request_retries,

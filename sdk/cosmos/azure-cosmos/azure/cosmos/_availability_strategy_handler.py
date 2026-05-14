@@ -139,10 +139,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
             )
             hedging_state._record_request(region_name, reason)  # pylint: disable=protected-access
 
-        try:
-            result = execute_request_fn(params, req)
-        except Exception:
-            raise
+        result = execute_request_fn(params, req)
         # Record responding region on success. Exceptions still reach the
         # parent ``execute_request`` which decides which arm wins; per-arm
         # error responses are recorded by the retry utility before the

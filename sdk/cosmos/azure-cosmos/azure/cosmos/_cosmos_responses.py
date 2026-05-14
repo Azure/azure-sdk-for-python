@@ -87,7 +87,16 @@ class CosmosItemPaged(_HedgingDetectionAccessorsMixin, ItemPaged[dict[str, Any]]
     @staticmethod
     def _copy_headers_stripped(headers: Optional[CaseInsensitiveDict]) -> CaseInsensitiveDict:
         """Return a copy of ``headers`` with the private hedging-state sentinel
-        key removed so customer code never sees it."""
+        key removed so customer code never sees it.
+
+        :param headers: Original response-headers dict (or ``None``).
+        :type headers: Optional[~azure.core.CaseInsensitiveDict]
+        :returns: A new :class:`~azure.core.CaseInsensitiveDict` containing the
+            same entries as ``headers`` minus the private hedging-state
+            sentinel key. An empty dict is returned when ``headers`` is
+            ``None``.
+        :rtype: ~azure.core.CaseInsensitiveDict
+        """
         if headers is None:
             return CaseInsensitiveDict()
         from ._diagnostics import HEDGING_STATE_HEADER_KEY
@@ -163,6 +172,17 @@ class CosmosAsyncItemPaged(_HedgingDetectionAccessorsMixin, AsyncItemPaged[dict[
 
     @staticmethod
     def _copy_headers_stripped(headers: Optional[CaseInsensitiveDict]) -> CaseInsensitiveDict:
+        """Return a copy of ``headers`` with the private hedging-state sentinel
+        key removed so customer code never sees it.
+
+        :param headers: Original response-headers dict (or ``None``).
+        :type headers: Optional[~azure.core.CaseInsensitiveDict]
+        :returns: A new :class:`~azure.core.CaseInsensitiveDict` containing the
+            same entries as ``headers`` minus the private hedging-state
+            sentinel key. An empty dict is returned when ``headers`` is
+            ``None``.
+        :rtype: ~azure.core.CaseInsensitiveDict
+        """
         if headers is None:
             return CaseInsensitiveDict()
         from ._diagnostics import HEDGING_STATE_HEADER_KEY

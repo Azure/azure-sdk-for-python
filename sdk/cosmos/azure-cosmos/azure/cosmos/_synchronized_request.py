@@ -345,7 +345,18 @@ def _resolve_region_name(global_endpoint_manager, request_params) -> str:
     """Best-effort resolution of the human-readable region name for the
     endpoint currently selected on ``request_params``. Returns an empty string
     if the name cannot be resolved (e.g., emulator, missing routing context).
-    Never raises — the hot path must not break for diagnostics."""
+    Never raises — the hot path must not break for diagnostics.
+
+    :param global_endpoint_manager: The client's global endpoint manager.
+        Used to map the resolved endpoint URL to a friendly region name.
+    :type global_endpoint_manager: object
+    :param request_params: The per-request :class:`RequestObject` whose
+        currently selected endpoint should be resolved.
+    :type request_params: ~azure.cosmos._request_object.RequestObject
+    :returns: The friendly region name (e.g., ``"East US"``) for the endpoint
+        currently routed to, or an empty string when no mapping is available.
+    :rtype: str
+    """
     try:
         endpoint = getattr(request_params, "location_endpoint_to_route", None)
         if endpoint and hasattr(global_endpoint_manager, "get_region_name"):
