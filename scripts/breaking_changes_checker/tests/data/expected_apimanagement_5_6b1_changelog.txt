@@ -1,6 +1,6 @@
 ### Features Added
 
-  - Model `ApiManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ApiManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `ApiManagementClient` added method `send_request`
   - Client `ApiManagementClient` added operation group `api_tool`
   - Client `ApiManagementClient` added operation group `api_gateway_hostname_binding`

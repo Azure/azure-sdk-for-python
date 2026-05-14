@@ -11,6 +11,7 @@
         "azure.mgmt.containerservice.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.containerservice.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
         "azure.mgmt.containerservice.models.AgentPool": "Microsoft.ContainerService.AgentPoolCustomize",
+        "azure.mgmt.containerservice.models.AgentPoolArtifactStreamingProfile": "Microsoft.ContainerService.AgentPoolArtifactStreamingProfile",
         "azure.mgmt.containerservice.models.AgentPoolAvailableVersions": "Microsoft.ContainerService.AgentPoolAvailableVersions",
         "azure.mgmt.containerservice.models.AgentPoolAvailableVersionsProperties": "Microsoft.ContainerService.AgentPoolAvailableVersionsProperties",
         "azure.mgmt.containerservice.models.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem": "Microsoft.ContainerService.AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem",

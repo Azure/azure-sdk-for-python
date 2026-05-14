@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -672,6 +672,13 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use Ubuntu2404 as the OS for node images, however, Ubuntu 24.04 may not be supported for all
     nodepools. For limitations and supported kubernetes versions, see see
     `https://aka.ms/aks/supported-ubuntu-versions <https://aka.ms/aks/supported-ubuntu-versions>`_."""
+    AZURE_CONTAINER_LINUX = "AzureContainerLinux"
+    """Use Azure Container Linux as the OS for node images. Azure Container Linux is a
+    container-optimized, security-focused Linux OS built on Azure Linux, with an immutable
+    filesystem. ACL is derived from the Flatcar Container Linux project, building on Flatcar's
+    proven container-first, immutable design, while adding Azure Linux packages, servicing, and
+    deep integration with the Azure and AKS lifecycle. For more information, see
+    `https://aka.ms/azurecontainerlinux <https://aka.ms/azurecontainerlinux>`_."""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

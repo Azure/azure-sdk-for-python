@@ -53,6 +53,8 @@ if TYPE_CHECKING:
 ValidInputType = TypeVar("ValidInputType")
 ValueType = TypeVar("ValueType")
 
+_LOGGER = logging.getLogger(__name__)
+
 
 __all__ = ("settings", "Settings")
 
@@ -94,11 +96,14 @@ def convert_bool(value: Union[str, bool]) -> bool:
 def convert_tracing_enabled(value: Optional[Union[str, bool]]) -> bool:
     """Convert tracing value to bool with regard to tracing implementation.
 
+    If the value cannot be converted to a bool, a warning is logged and the
+    default behavior is used (auto-detect based on whether a tracing
+    implementation is configured).
+
     :param value: the value to convert
     :type value: str or bool or None
     :returns: A boolean value matching the intent of the input
     :rtype: bool
-    :raises ValueError: If conversion to bool fails
     """
     if value is None:
         # If tracing_enabled was not explicitly set to a boolean, determine tracing enablement
@@ -106,7 +111,17 @@ def convert_tracing_enabled(value: Optional[Union[str, bool]]) -> bool:
         if settings.tracing_implementation():
             return True
         return False
-    return convert_bool(value)
+    try:
+        return convert_bool(value)
+    except ValueError:
+        _LOGGER.warning(
+            "Invalid value %r for AZURE_TRACING_ENABLED; falling back to default behavior. "
+            "Valid values are: 'true'/'false', 'yes'/'no', '1'/'0', 'on'/'off' (case-insensitive).",
+            value,
+        )
+        if settings.tracing_implementation():
+            return True
+        return False
 
 
 _levels = {
@@ -129,12 +144,15 @@ def convert_logging(value: Union[str, int]) -> int:
     * "warning"
     * "info"
     * "debug"
+    * "verbose" (treated as "debug")
+
+    If the value cannot be converted, a warning is logged and ``logging.INFO``
+    is returned.
 
     :param value: the value to convert
     :type value: str or int
     :returns: A log level as an int. See the logging module for details.
     :rtype: int
-    :raises ValueError: If conversion to log level fails
 
     """
     if isinstance(value, int):
@@ -142,9 +160,16 @@ def convert_logging(value: Union[str, int]) -> int:
         # https://docs.python.org/3/library/logging.html#levels
         return value
     val = value.upper()
+    if val == "VERBOSE":
+        val = "DEBUG"
     level = _levels.get(val)
-    if not level:
-        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
+    if level is None:
+        _LOGGER.warning(
+            "Invalid log level %r for AZURE_LOG_LEVEL; falling back to INFO. Valid values are: %s.",
+            value,
+            ", ".join(_levels),
+        )
+        return logging.INFO
     return level
 
 
@@ -218,10 +243,11 @@ def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Opt
     * "opencensus"
     * "opentelemetry"
 
+    If the value cannot be converted, a warning is logged and ``None`` is returned.
+
     :param value: the value to convert
     :type value: string
     :returns: AbstractSpan
-    :raises ValueError: If conversion to AbstractSpan fails
 
     """
     if value is None:
@@ -234,11 +260,13 @@ def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Opt
     get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
     wrapper_class: Optional[Union[_Unset, Type[AbstractSpan]]] = get_wrapper_class()
     if wrapper_class is _unset:
-        raise ValueError(
-            "Cannot convert {} to AbstractSpan, valid values are: {}".format(
-                value, ", ".join(_tracing_implementation_dict)
-            )
+        _LOGGER.warning(
+            "Invalid tracing implementation %r for AZURE_SDK_TRACING_IMPLEMENTATION; falling back to default (None). "
+            "Valid values are: %s.",
+            value,
+            ", ".join(_tracing_implementation_dict),
         )
+        return None
     return wrapper_class
 
 
@@ -433,12 +461,15 @@ class Settings:
     The following environment variables are used by the settings:
 
     * ``AZURE_LOG_LEVEL`` - Logging level. Accepted values: ``CRITICAL``, ``ERROR``, ``WARNING``,
-      ``INFO``, ``DEBUG`` (case-insensitive). Default: ``INFO``.
+      ``INFO``, ``DEBUG``, ``VERBOSE`` (case-insensitive). ``VERBOSE`` is treated as ``DEBUG``.
+      If the value is invalid, a warning is logged and ``INFO`` is used. Default: ``INFO``.
     * ``AZURE_TRACING_ENABLED`` - Enable/disable tracing. Accepted values: ``true``/``false``,
-      ``yes``/``no``, ``1``/``0``, ``on``/``off`` (case-insensitive). Default: auto-detected
-      based on whether a tracing implementation is configured.
+      ``yes``/``no``, ``1``/``0``, ``on``/``off`` (case-insensitive). If the value is invalid,
+      a warning is logged and the default is used. Default: auto-detected based on whether a
+      tracing implementation is configured.
     * ``AZURE_SDK_TRACING_IMPLEMENTATION`` - Tracing implementation. Accepted values:
-      ``opentelemetry``. Default: None.
+      ``opentelemetry``. If the value is invalid, a warning is logged and the default is used.
+      Default: None.
     * ``AZURE_SDK_CLOUD_CONF`` - Azure cloud environment. Accepted values:
       ``AZURE_PUBLIC_CLOUD``, ``AZURE_CHINA_CLOUD``, ``AZURE_US_GOVERNMENT``.
       Default: ``AZURE_PUBLIC_CLOUD``.
