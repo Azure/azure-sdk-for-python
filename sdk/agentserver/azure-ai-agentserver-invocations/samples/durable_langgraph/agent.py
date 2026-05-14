@@ -202,6 +202,7 @@ def _invoke_cancellable(
     graph_input: Any,
     config: dict[str, Any],
     cancel_event: asyncio.Event,
+    on_node: Any = None,
 ) -> bool:
     """Run the graph using ``stream()`` with inter-node cancellation.
 
@@ -213,7 +214,9 @@ def _invoke_cancellable(
     Returns ``True`` if the graph ran to completion (or interrupt),
     ``False`` if cancelled mid-graph.
     """
-    for _chunk in graph.stream(graph_input, config):
+    for chunk in graph.stream(graph_input, config):
+        if on_node is not None:
+            on_node(chunk)
         if cancel_event.is_set():
             return False
     return True
@@ -316,6 +319,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     invocation_id: str = ctx.input["invocation_id"]
 
     invocation_store.save(invocation_id, {"status": "running"})
+    await ctx.stream({"type": "lifecycle", "status": "running"})
 
     thread_config: dict[str, Any] = {"configurable": {"thread_id": session_id}}
 
@@ -360,9 +364,7 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                         )
                         return await ctx.suspend(reason="steered")
 
-                    return await _finalize_invocation(
-                        ctx, thread_config, invocation_id
-                    )
+                    return await _finalize_invocation(ctx, thread_config, invocation_id)
 
     # ── Phase 1: Pre-entry cancel ───────────────────────────────────
     if ctx.cancel.is_set():
@@ -382,8 +384,32 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
             "is_complete": False,
         }
 
+    loop = asyncio.get_event_loop()
+
+    def _on_node(chunk: dict) -> None:
+        """Stream node progress events from the sync graph thread."""
+        node_names = list(chunk.keys())
+        for name in node_names:
+            if ctx._stream_queue is not None:  # pylint: disable=protected-access
+                loop.call_soon_threadsafe(
+                    ctx._stream_queue.put_nowait,  # pylint: disable=protected-access
+                    {"type": "node_progress", "node": name},
+                )
+        invocation_store.save(
+            invocation_id,
+            {
+                "status": "streaming",
+                "last_node": node_names[-1] if node_names else None,
+            },
+        )
+
     completed = await asyncio.to_thread(
-        _invoke_cancellable, _graph, graph_input, thread_config, ctx.cancel
+        _invoke_cancellable,
+        _graph,
+        graph_input,
+        thread_config,
+        ctx.cancel,
+        _on_node,
     )
 
     # ── Phase 3: Post-completion cancel check ───────────────────────

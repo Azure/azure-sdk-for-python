@@ -23,7 +23,9 @@ try:
     from opentelemetry import trace
     from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
     from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-    from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
+        InMemorySpanExporter,
+    )
 
     _HAS_OTEL = True
 except ImportError:
@@ -63,8 +65,15 @@ def _get_spans():
 
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    with patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+        },
+    ):
+        with patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export", create=True
+        ):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
@@ -78,16 +87,25 @@ def _make_server_with_child_span():
 
 def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    with patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+        },
+    ):
+        with patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export", create=True
+        ):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
     @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         with child_tracer.start_as_current_span("framework_invoke_agent"):
+
             async def generate():
                 yield b"chunk\n"
+
             return StreamingResponse(generate(), media_type="text/plain")
 
     return app
@@ -95,11 +113,19 @@ def _make_streaming_server_with_child_span():
 
 def _assert_child_parented(spans, streaming: bool = False):
     """Assert the framework span is a child of the invoke_agent span."""
-    parent_spans = [s for s in spans if "invoke_agent" in s.name and s.name != "framework_invoke_agent"]
+    parent_spans = [
+        s
+        for s in spans
+        if "invoke_agent" in s.name and s.name != "framework_invoke_agent"
+    ]
     child_spans = [s for s in spans if s.name == "framework_invoke_agent"]
 
-    assert len(parent_spans) >= 1, f"Expected invoke_agent span, got: {[s.name for s in spans]}"
-    assert len(child_spans) == 1, f"Expected framework span, got: {[s.name for s in spans]}"
+    assert (
+        len(parent_spans) >= 1
+    ), f"Expected invoke_agent span, got: {[s.name for s in spans]}"
+    assert (
+        len(child_spans) == 1
+    ), f"Expected framework span, got: {[s.name for s in spans]}"
 
     parent = parent_spans[0]
     child = child_spans[0]

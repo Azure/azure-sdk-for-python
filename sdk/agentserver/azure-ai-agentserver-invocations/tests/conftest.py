@@ -15,12 +15,16 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+    config.addinivalue_line(
+        "markers",
+        "tracing_e2e: end-to-end tracing tests against live Application Insights",
+    )
 
 
 # ---------------------------------------------------------------------------
 # E2E tracing fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture()
 def appinsights_connection_string():

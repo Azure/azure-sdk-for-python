@@ -38,7 +38,9 @@ def _flush_provider():
         provider.force_flush()
 
 
-def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_POLL_TIMEOUT):
+def _poll_appinsights(
+    logs_client, resource_id, query, *, timeout=_APPINSIGHTS_POLL_TIMEOUT
+):
     """Poll Application Insights until the KQL query returns >= 1 row or timeout."""
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
@@ -56,6 +58,7 @@ def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_P
 # ---------------------------------------------------------------------------
 # E2E test
 # ---------------------------------------------------------------------------
+
 
 class TestInvocationTracingE2E:
     """Verify InvocationAgentServerHost auto-creates traced spans that land in App Insights."""
@@ -76,7 +79,9 @@ class TestInvocationTracingE2E:
             return Response(content=body, media_type="application/octet-stream")
 
         transport = ASGITransport(app=app)
-        async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        async with AsyncClient(
+            transport=transport, base_url="http://testserver"
+        ) as client:
             resp = await client.post("/invocations", content=b"hello e2e")
 
         assert resp.status_code == 200

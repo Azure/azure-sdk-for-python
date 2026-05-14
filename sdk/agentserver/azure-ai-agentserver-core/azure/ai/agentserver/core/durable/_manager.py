@@ -28,6 +28,7 @@ from ._provider import DurableTaskProvider
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
+from ._stream import QueueStreamHandler, StreamHandler
 from .._version import VERSION as _CORE_VERSION
 from .._server_version import build_server_version as _build_server_version
 
@@ -455,6 +456,7 @@ class DurableTaskManager:
         opts: DurableTaskOptions,
         retry: RetryPolicy | None = None,
         entry_mode: EntryMode = "fresh",
+        stream_handler: StreamHandler | None = None,
     ) -> TaskRun[Any]:
         """Create a task, start the function, and return a handle.
 
@@ -485,6 +487,9 @@ class DurableTaskManager:
         :paramtype retry: RetryPolicy | None
         :keyword entry_mode: Why this execution is starting.
         :paramtype entry_mode: EntryMode
+        :keyword stream_handler: Custom stream handler. If ``None``,
+            a default :class:`QueueStreamHandler` is created.
+        :paramtype stream_handler: StreamHandler | None
         :return: A ``TaskRun`` handle.
         :rtype: TaskRun
         """
@@ -530,7 +535,7 @@ class DurableTaskManager:
 
         # Build context
         cancel_event = asyncio.Event()
-        stream_queue: asyncio.Queue[Any] = asyncio.Queue()
+        handler = stream_handler or QueueStreamHandler()
         metadata = TaskMetadata(
             flush_callback=self._make_metadata_flush(task_id),
             flush_interval=5.0,
@@ -551,7 +556,7 @@ class DurableTaskManager:
             lease_generation=lease_gen,
             cancel=cancel_event,
             shutdown=self._shutdown_event,
-            stream_queue=stream_queue,
+            stream_handler=handler,
             entry_mode=entry_mode,
             generation=0,
         )
@@ -634,7 +639,7 @@ class DurableTaskManager:
             result_future=result_future,
             metadata=metadata,
             cancel_event=cancel_event,
-            stream_queue=stream_queue,
+            stream_handler=handler,
             terminate_event=terminate_event,
             execution_task=execution_task,
             terminate_reason_ref=terminate_reason_ref,
@@ -742,7 +747,7 @@ class DurableTaskManager:
 
         # Build context for execution
         cancel_event = asyncio.Event()
-        stream_queue: asyncio.Queue[Any] = asyncio.Queue()
+        handler = QueueStreamHandler()
         existing_metadata = (
             task_info.payload.get("metadata", {}) if task_info.payload else {}
         )
@@ -801,10 +806,9 @@ class DurableTaskManager:
             lease_generation=lease_gen,
             cancel=cancel_event,
             shutdown=self._shutdown_event,
-            stream_queue=stream_queue,
+            stream_handler=handler,
             entry_mode=entry_mode,
             was_steered=was_steered,
-            previous_input=previous_input,
             pending_inputs=pending_snapshot,
             generation=generation,
         )
@@ -884,7 +888,7 @@ class DurableTaskManager:
             result_future=result_future,
             metadata=metadata,
             cancel_event=cancel_event,
-            stream_queue=stream_queue,
+            stream_handler=handler,
             terminate_event=terminate_event,
             execution_task=execution_task,
             terminate_reason_ref=terminate_reason_ref,
@@ -1233,15 +1237,16 @@ class DurableTaskManager:
                 break
 
         self._active_tasks.pop(task_id, None)
-        # Signal end of streaming to any async-for consumers
-        if ctx._stream_queue is not None:  # pylint: disable=protected-access
-            from ._run import (
-                _STREAM_SENTINEL,
-            )  # pylint: disable=import-outside-toplevel
-
-            await ctx._stream_queue.put(
-                _STREAM_SENTINEL
-            )  # pylint: disable=protected-access
+        # Signal end of streaming via handler.close()
+        if ctx._stream_handler is not None:  # pylint: disable=protected-access
+            try:
+                await ctx._stream_handler.close()  # pylint: disable=protected-access
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning(
+                    "Stream handler close() failed for task %s",
+                    task_id,
+                    exc_info=True,
+                )
 
     async def _try_drain_steering(  # pylint: disable=too-many-branches
         self,
@@ -1368,7 +1373,7 @@ class DurableTaskManager:
             lease_generation=ctx.lease_generation,
             cancel=cancel_event,
             shutdown=ctx.shutdown,
-            stream_queue=ctx._stream_queue,  # pylint: disable=protected-access
+            stream_handler=ctx._stream_handler,  # pylint: disable=protected-access
             entry_mode="resumed",
             was_steered=True,
             previous_input=previous_input,

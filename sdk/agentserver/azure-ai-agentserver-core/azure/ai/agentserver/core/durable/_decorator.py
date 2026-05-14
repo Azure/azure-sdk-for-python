@@ -38,6 +38,7 @@ from ._context import TaskContext
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import TaskRun
+from ._stream import StreamHandler
 
 if TYPE_CHECKING:
     from ._models import TaskStatus
@@ -370,6 +371,7 @@ class DurableTask(Generic[Input, Output]):
         tags: dict[str, str] | None = None,
         retry: RetryPolicy | None = None,
         stale_timeout: float = 300.0,
+        stream_handler: StreamHandler | None = None,
     ) -> TaskResult[Output]:
         """Run a lifecycle-aware durable task and return the result.
 
@@ -397,6 +399,9 @@ class DurableTask(Generic[Input, Output]):
         :keyword stale_timeout: Seconds before an in-progress task is considered
             stale and eligible for recovery. Default 300 (5 minutes).
         :paramtype stale_timeout: float
+        :keyword stream_handler: Custom stream handler for pluggable streaming.
+            If ``None``, a default :class:`QueueStreamHandler` is used.
+        :paramtype stream_handler: ~azure.ai.agentserver.core.durable.StreamHandler | None
         :return: The task result wrapper with output, status, and suspension info.
         :rtype: ~azure.ai.agentserver.core.durable.TaskResult[Output]
         :raises TaskFailed: On unhandled exception.
@@ -412,6 +417,7 @@ class DurableTask(Generic[Input, Output]):
             tags=tags,
             retry=retry,
             stale_timeout=stale_timeout,
+            stream_handler=stream_handler,
         )
         return await handle.result()
 
@@ -425,6 +431,7 @@ class DurableTask(Generic[Input, Output]):
         tags: dict[str, str] | None = None,
         retry: RetryPolicy | None = None,
         stale_timeout: float = 300.0,
+        stream_handler: StreamHandler | None = None,
     ) -> TaskRun[Output]:
         """Start a lifecycle-aware durable task and return a handle.
 
@@ -446,6 +453,9 @@ class DurableTask(Generic[Input, Output]):
         :keyword stale_timeout: Seconds before an in-progress task is considered
             stale and eligible for recovery. Default 300 (5 minutes).
         :paramtype stale_timeout: float
+        :keyword stream_handler: Custom stream handler for pluggable streaming.
+            If ``None``, a default :class:`QueueStreamHandler` is used.
+        :paramtype stream_handler: ~azure.ai.agentserver.core.durable.StreamHandler | None
         :return: A handle to the running task.
         :rtype: TaskRun[Output]
         :raises ~azure.ai.agentserver.core.durable.TaskConflictError: If the
@@ -460,6 +470,7 @@ class DurableTask(Generic[Input, Output]):
             tags=tags,
             retry=retry,
             stale_timeout=stale_timeout,
+            stream_handler=stream_handler,
         )
 
     async def get(self, task_id: str) -> Any:
@@ -604,6 +615,7 @@ class DurableTask(Generic[Input, Output]):
         tags: dict[str, str] | None,
         retry: RetryPolicy | None,
         stale_timeout: float,
+        stream_handler: StreamHandler | None = None,
     ) -> TaskRun[Output]:
         """Resolve lifecycle state and start/resume/recover accordingly.
 
@@ -621,6 +633,9 @@ class DurableTask(Generic[Input, Output]):
         :paramtype retry: RetryPolicy | None
         :keyword stale_timeout: Stale timeout in seconds.
         :paramtype stale_timeout: float
+        :keyword stream_handler: Custom stream handler. Defaults to
+            :class:`QueueStreamHandler` when ``None``.
+        :paramtype stream_handler: StreamHandler | None
         :return: A handle to the running task.
         :rtype: TaskRun[Output]
         """
@@ -664,6 +679,7 @@ class DurableTask(Generic[Input, Output]):
                 opts=self._opts,
                 retry=resolved_retry,
                 entry_mode="fresh",
+                stream_handler=stream_handler,
             )
 
         if existing.status == "suspended":

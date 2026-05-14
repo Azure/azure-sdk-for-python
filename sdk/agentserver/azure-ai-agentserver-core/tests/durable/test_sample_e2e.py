@@ -25,7 +25,6 @@ from azure.ai.agentserver.core.durable import (
     TaskConflictError,
     durable_task,
 )
-from azure.ai.agentserver.core.durable._run import _STREAM_SENTINEL
 
 
 class _ManagerFixture:
@@ -1688,6 +1687,170 @@ class TestLangGraphSteeringSampleE2E:
             assert "Turn3" in result3.output["reply"]
             assert store["mt-2"]["status"] == "cancelled"
             assert store["mt-3"]["status"] == "completed"
+
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+
+# ---------------------------------------------------------------------------
+# SSE Streaming: lifecycle events, text deltas, steering supersession
+# ---------------------------------------------------------------------------
+
+
+class TestSSEStreamingE2E:
+    """E2E tests for the SSE streaming pattern used by all samples."""
+
+    @pytest.mark.asyncio
+    async def test_lifecycle_and_text_deltas_streamed(self, tmp_path):
+        """ctx.stream() emits lifecycle:running then text_delta events."""
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+
+            @durable_task(name="e2e_sse_stream")
+            async def sse_stream(ctx: TaskContext[dict]) -> dict[str, Any]:
+                invocation_id = ctx.input["invocation_id"]
+                await ctx.stream({"type": "lifecycle", "status": "running"})
+                reply = ""
+                for token in ["Hello", " ", "world"]:
+                    reply += token
+                    await ctx.stream({"type": "text_delta", "delta": token})
+                return {
+                    "invocation_id": invocation_id,
+                    "reply": reply,
+                }
+
+            run = await sse_stream.start(
+                task_id="sse-1",
+                input={"invocation_id": "inv-sse-1"},
+            )
+
+            chunks: list[dict[str, Any]] = []
+            async for chunk in run:
+                chunks.append(chunk)
+
+            result = await asyncio.wait_for(run.result(), timeout=5.0)
+
+            # First chunk: lifecycle running
+            assert chunks[0] == {"type": "lifecycle", "status": "running"}
+            # Then three text deltas
+            assert chunks[1] == {"type": "text_delta", "delta": "Hello"}
+            assert chunks[2] == {"type": "text_delta", "delta": " "}
+            assert chunks[3] == {"type": "text_delta", "delta": "world"}
+            assert len(chunks) == 4
+            assert result.output["reply"] == "Hello world"
+
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_steering_produces_superseded_stream(self, tmp_path):
+        """When steering cancels a running task, the stream ends after cancel."""
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+            store: dict[str, dict[str, Any]] = {}
+
+            @durable_task(name="e2e_sse_steer", steerable=True)
+            async def sse_steer(ctx: TaskContext[dict]) -> dict[str, Any]:
+                invocation_id = ctx.input["invocation_id"]
+                store[invocation_id] = {"status": "running"}
+                await ctx.stream({"type": "lifecycle", "status": "running"})
+
+                if ctx.cancel.is_set():
+                    store[invocation_id] = {"status": "cancelled", "reason": "steered"}
+                    return await ctx.suspend(reason="steered")
+
+                # Simulate slow generation that gets interrupted
+                reply = ""
+                for token in ["Slow", " ", "reply", " ", "here"]:
+                    reply += token
+                    await ctx.stream({"type": "text_delta", "delta": token})
+                    await asyncio.sleep(0.05)
+                    if ctx.cancel.is_set():
+                        store[invocation_id] = {
+                            "status": "superseded",
+                            "partial_reply": reply,
+                        }
+                        return await ctx.suspend(reason="steered")
+
+                store[invocation_id] = {"status": "completed", "reply": reply}
+                return await ctx.suspend(
+                    reason="awaiting_user_input",
+                    output={"invocation_id": invocation_id, "reply": reply},
+                )
+
+            # Start turn 1
+            run1 = await sse_steer.start(
+                task_id="sse-steer-1",
+                input={"invocation_id": "inv-s1"},
+            )
+
+            # Collect some chunks from turn 1
+            chunks1: list[dict[str, Any]] = []
+            async for chunk in run1:
+                chunks1.append(chunk)
+                if len(chunks1) >= 2:
+                    # Steer with turn 2 while turn 1 is streaming
+                    await sse_steer.start(
+                        task_id="sse-steer-1",
+                        input={"invocation_id": "inv-s2"},
+                    )
+                    break
+
+            # Turn 1 should have been superseded
+            result1 = await asyncio.wait_for(run1.result(), timeout=5.0)
+            assert result1.is_superseded
+            assert store["inv-s1"]["status"] in ("superseded", "cancelled")
+
+            # First chunk was lifecycle:running
+            assert chunks1[0] == {"type": "lifecycle", "status": "running"}
+
+        finally:
+            await _ManagerFixture.teardown(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_stream_with_invocation_store_snapshots(self, tmp_path):
+        """Dual-write: ctx.stream() for live SSE + store for GET snapshots."""
+        manager, mgr_mod = await _ManagerFixture.setup(tmp_path)
+        try:
+            store: dict[str, dict[str, Any]] = {}
+
+            @durable_task(name="e2e_sse_snapshot")
+            async def sse_snapshot(ctx: TaskContext[dict]) -> dict[str, Any]:
+                invocation_id = ctx.input["invocation_id"]
+                store[invocation_id] = {"status": "running"}
+                await ctx.stream({"type": "lifecycle", "status": "running"})
+
+                reply = ""
+                for token in ["A", "B", "C"]:
+                    reply += token
+                    await ctx.stream({"type": "text_delta", "delta": token})
+                    store[invocation_id] = {"status": "streaming", "text": reply}
+
+                store[invocation_id] = {
+                    "status": "completed",
+                    "reply": reply,
+                }
+                return {"invocation_id": invocation_id, "reply": reply}
+
+            run = await sse_snapshot.start(
+                task_id="sse-snap-1",
+                input={"invocation_id": "inv-snap-1"},
+            )
+
+            chunks: list[dict[str, Any]] = []
+            async for chunk in run:
+                chunks.append(chunk)
+
+            result = await asyncio.wait_for(run.result(), timeout=5.0)
+
+            # Stream had lifecycle + 3 deltas
+            assert len(chunks) == 4
+            assert chunks[0]["type"] == "lifecycle"
+
+            # Store has final snapshot
+            assert store["inv-snap-1"]["status"] == "completed"
+            assert store["inv-snap-1"]["reply"] == "ABC"
+            assert result.output["reply"] == "ABC"
 
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)

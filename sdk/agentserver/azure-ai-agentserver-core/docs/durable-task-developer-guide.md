@@ -31,6 +31,7 @@
   - [Steering Recovery](#steering-recovery)
   - [Complete Steering Example](#complete-steering-example)
 - [Streaming](#streaming)
+  - [Custom Stream Handlers](#custom-stream-handlers)
 - [Persistence](#persistence)
   - [Responsibility Matrix](#responsibility-matrix)
   - [The Durable Boundary Rule](#the-durable-boundary-rule)
@@ -774,10 +775,67 @@ async for chunk in task_run:
 final = await task_run.result()
 ```
 
-> **Important**: Streaming items are held in an in-memory `asyncio.Queue`. They are
-> **not persisted** and are **lost on crash**. If the process restarts mid-stream,
-> the recovered task starts from scratch. For durable incremental output, write
-> to your own store inside the task function.
+`ctx.stream()` accepts any Python object — the framework simply passes it
+through the stream handler with no serialization or transformation.
+
+> **Important**: The default `QueueStreamHandler` holds items in an in-memory
+> `asyncio.Queue`. They are **not persisted** and are **lost on crash**. If the
+> process restarts mid-stream, the recovered task starts from scratch. If you
+> need durable incremental output, implement a custom `StreamHandler` or write
+> to your own store inside the task function alongside `ctx.stream()`.
+
+### Custom Stream Handlers
+
+The streaming path is pluggable via the `StreamHandler` protocol. Implement
+`put()`, `get()`, and `close()` to control how stream items are buffered,
+transported, or persisted:
+
+```python
+from azure.ai.agentserver.core.durable import StreamHandler
+
+class RedisStreamHandler:
+    """Example: fan-out streams via Redis."""
+
+    def __init__(self, redis_client, channel: str):
+        self._redis = redis_client
+        self._channel = channel
+
+    async def put(self, item):
+        await self._redis.publish(self._channel, serialize(item))
+
+    async def get(self):
+        msg = await self._redis.subscribe_next(self._channel)
+        if msg is None:
+            raise StopAsyncIteration
+        return deserialize(msg)
+
+    async def close(self):
+        await self._redis.publish(self._channel, "__CLOSED__")
+```
+
+Pass the handler at the call site — no decorator changes needed:
+
+```python
+handler = RedisStreamHandler(redis, channel="report-1")
+task_run = await generate_report.start(
+    task_id="report-1",
+    input="Q3 Results",
+    stream_handler=handler,
+)
+async for chunk in task_run:
+    print(chunk, end="")
+```
+
+**Key rules:**
+
+- `get()` must raise `StopAsyncIteration` after `close()` is called and all
+  buffered items are drained. This is Python's native iterator exhaustion signal.
+- `close()` is always called by the framework when the task finishes — whether
+  it succeeds, fails, or is cancelled.
+- If no `stream_handler` is provided, the framework uses `QueueStreamHandler`
+  (in-memory `asyncio.Queue`) as the default.
+- The handler instance survives steering restarts — items streamed before and
+  after a steering cycle flow through the same handler.
 
 ---
 
@@ -797,7 +855,7 @@ guide.
 | Task error (on failure) | **Framework** | Task store |
 | Invocation results (what your API returns to callers) | **You** | Your store |
 | Conversation history / checkpoints | **You** | Your store |
-| Streaming items | **Nobody** | In-memory only |
+| Streaming items | **Nobody** (default) | In-memory; pluggable via `StreamHandler` |
 
 The task store powers lifecycle and recovery. **It is NOT your application
 database.** You read from it via `.get()` to inspect task state, but you should
@@ -1229,7 +1287,7 @@ return JSONResponse({"invocation_id": invocation_id}, status_code=202)
 ### ❌ Assuming streaming survives crashes
 
 ```python
-# ❌ BAD — streaming items are in-memory only
+# ❌ BAD — default QueueStreamHandler is in-memory only
 @durable_task(name="stream_report")
 async def stream_report(ctx: TaskContext[str]) -> str:
     for chunk in generate_chunks():
@@ -1243,6 +1301,12 @@ async def stream_report(ctx: TaskContext[str]) -> str:
         await ctx.stream(chunk)
         append_to_store(ctx.task_id, chunk)  # Durable fallback
     return "done"
+
+# ✅ ALSO GOOD — use a custom StreamHandler that persists
+handler = DurableStreamHandler(store, ctx.task_id)
+run = await stream_report.start(
+    task_id="r1", input="...", stream_handler=handler,
+)
 ```
 
 ### ❌ Storing conversation history in task metadata

@@ -10,10 +10,10 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-
 # ---------------------------------------------------------------------------
 # invoke_handler stores function
 # ---------------------------------------------------------------------------
+
 
 def test_invoke_handler_stores_function():
     """@app.invoke_handler stores the function on the protocol object."""
@@ -30,6 +30,7 @@ def test_invoke_handler_stores_function():
 # invoke_handler returns original function
 # ---------------------------------------------------------------------------
 
+
 def test_invoke_handler_returns_original_function():
     """@app.invoke_handler returns the original function."""
     app = InvocationAgentServerHost()
@@ -44,6 +45,7 @@ def test_invoke_handler_returns_original_function():
 # ---------------------------------------------------------------------------
 # get_invocation_handler stores function
 # ---------------------------------------------------------------------------
+
 
 def test_get_invocation_handler_stores_function():
     """@app.get_invocation_handler stores the function."""
@@ -60,6 +62,7 @@ def test_get_invocation_handler_stores_function():
 # cancel_invocation_handler stores function
 # ---------------------------------------------------------------------------
 
+
 def test_cancel_invocation_handler_stores_function():
     """@app.cancel_invocation_handler stores the function."""
     app = InvocationAgentServerHost()
@@ -75,6 +78,7 @@ def test_cancel_invocation_handler_stores_function():
 # shutdown_handler stores function
 # ---------------------------------------------------------------------------
 
+
 def test_shutdown_handler_stores_function():
     """@server.shutdown_handler stores the function on the server."""
     app = InvocationAgentServerHost()
@@ -89,6 +93,7 @@ def test_shutdown_handler_stores_function():
 # ---------------------------------------------------------------------------
 # Full request flow
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_full_request_flow():
@@ -107,7 +112,9 @@ async def test_full_request_flow():
         inv_id = request.path_params["invocation_id"]
         if inv_id in store:
             return Response(content=store[inv_id])
-        return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
+        return JSONResponse(
+            {"error": {"code": "not_found", "message": "Not found"}}, status_code=404
+        )
 
     @app.cancel_invocation_handler
     async def cancel_handler(request: Request) -> Response:
@@ -115,7 +122,9 @@ async def test_full_request_flow():
         if inv_id in store:
             del store[inv_id]
             return JSONResponse({"status": "cancelled"})
-        return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
+        return JSONResponse(
+            {"error": {"code": "not_found", "message": "Not found"}}, status_code=404
+        )
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -141,6 +150,7 @@ async def test_full_request_flow():
 # ---------------------------------------------------------------------------
 # Missing optional handlers return 404
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_missing_invoke_handler_returns_501():
@@ -186,6 +196,7 @@ async def test_missing_cancel_handler_returns_404():
 # Optional handler defaults and overrides
 # ---------------------------------------------------------------------------
 
+
 def test_optional_handlers_default_none():
     """Get and cancel handlers default to None."""
     app = InvocationAgentServerHost()
@@ -207,6 +218,7 @@ def test_optional_handler_override():
 # ---------------------------------------------------------------------------
 # Shutdown handler called during lifespan
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_shutdown_handler_called_during_lifespan():
@@ -234,6 +246,7 @@ async def test_shutdown_handler_called_during_lifespan():
 # ---------------------------------------------------------------------------
 # Config passthrough
 # ---------------------------------------------------------------------------
+
 
 def test_graceful_shutdown_timeout_passthrough():
     """graceful_shutdown_timeout is passed through to the base class."""

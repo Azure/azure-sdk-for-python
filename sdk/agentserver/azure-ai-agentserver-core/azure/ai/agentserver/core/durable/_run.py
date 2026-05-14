@@ -15,11 +15,9 @@ from ._metadata import TaskMetadata
 from ._models import TaskInfo, TaskStatus
 from ._provider import DurableTaskProvider
 from ._result import TaskResult
+from ._stream import StreamHandler
 
 Output = TypeVar("Output")
-
-_STREAM_SENTINEL = object()
-"""Internal sentinel put on the stream queue to signal end of iteration."""
 
 
 class Suspended(Generic[Output]):
@@ -77,7 +75,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         "_terminate_event",
         "_terminate_reason_ref",
         "_status",
-        "_stream_queue",
+        "_stream_handler",
         "_execution_task",
         "_lease_expiry_count",
     )
@@ -91,7 +89,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         metadata: TaskMetadata | None = None,
         cancel_event: asyncio.Event | None = None,
         status: TaskStatus = "in_progress",
-        stream_queue: asyncio.Queue[Any] | None = None,
+        stream_handler: StreamHandler | None = None,
         terminate_event: asyncio.Event | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         terminate_reason_ref: list[str | None] | None = None,
@@ -107,7 +105,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
             terminate_reason_ref if terminate_reason_ref is not None else [None]
         )
         self._status = status
-        self._stream_queue: asyncio.Queue[Any] | None = stream_queue
+        self._stream_handler: StreamHandler | None = stream_handler
         self._execution_task: asyncio.Task[Any] | None = execution_task
         self._lease_expiry_count = lease_expiry_count
 
@@ -230,16 +228,15 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
     async def __anext__(self) -> Any:
         """Yield the next streamed item, or raise ``StopAsyncIteration``.
 
-        If no stream queue was provided, raises ``StopAsyncIteration``
-        immediately (the task does not stream).
+        If no stream handler was provided, raises ``StopAsyncIteration``
+        immediately (the task does not stream). When the stream is
+        closed, ``handler.get()`` raises ``StopAsyncIteration`` which
+        propagates naturally.
 
         :return: The next streamed item.
         :rtype: Any
         :raises StopAsyncIteration: When streaming ends.
         """
-        if self._stream_queue is None:
+        if self._stream_handler is None:
             raise StopAsyncIteration
-        item = await self._stream_queue.get()
-        if item is _STREAM_SENTINEL:
-            raise StopAsyncIteration
-        return item
+        return await self._stream_handler.get()

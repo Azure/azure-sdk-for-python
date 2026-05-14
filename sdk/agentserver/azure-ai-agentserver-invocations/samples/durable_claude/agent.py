@@ -54,10 +54,14 @@ async def claude_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     invocation_id: str = ctx.input["invocation_id"]
 
     invocation_store.save(invocation_id, {"status": "running"})
+    await ctx.stream({"type": "lifecycle", "status": "running"})
 
     logger.info(
         "Claude session %s gen=%d invocation=%s entry=%s",
-        session_id, ctx.generation, invocation_id, ctx.entry_mode,
+        session_id,
+        ctx.generation,
+        invocation_id,
+        ctx.entry_mode,
     )
 
     # Load history from external store (not task metadata)
@@ -68,11 +72,14 @@ async def claude_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     if ctx.cancel.is_set():
         logger.info("Skipping gen=%d — cancel pre-set", ctx.generation)
         _save_history(session_id, history)
-        invocation_store.save(invocation_id, {
-            "status": "cancelled",
-            "reason": "steered",
-            "message_preserved": True,
-        })
+        invocation_store.save(
+            invocation_id,
+            {
+                "status": "cancelled",
+                "reason": "steered",
+                "message_preserved": True,
+            },
+        )
         return await ctx.suspend(reason="steered")
 
     # ── Phase 2: Stream Claude response, checking cancel ────────────
@@ -89,6 +96,16 @@ async def claude_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     ) as stream:
         async for text in stream.text_stream:
             reply += text
+            # Live stream: push delta to any SSE subscriber on the POST response
+            await ctx.stream({"type": "text_delta", "delta": text})
+            # Durable snapshot: GET polling always returns the full text so far
+            invocation_store.save(
+                invocation_id,
+                {
+                    "status": "streaming",
+                    "text": reply,
+                },
+            )
             if ctx.cancel.is_set():
                 was_aborted = True
                 logger.info("Stream aborted mid-generation at %d chars", len(reply))
@@ -109,19 +126,25 @@ async def claude_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     }
 
     if was_aborted:
-        invocation_store.save(invocation_id, {
-            "status": "superseded",
-            "reason": "steered_mid_stream",
-            "output": output,
-        })
+        invocation_store.save(
+            invocation_id,
+            {
+                "status": "superseded",
+                "reason": "steered_mid_stream",
+                "output": output,
+            },
+        )
         return await ctx.suspend(reason="steered")
 
     if ctx.cancel.is_set():
-        invocation_store.save(invocation_id, {
-            "status": "superseded",
-            "reason": "steered_post_completion",
-            "output": output,
-        })
+        invocation_store.save(
+            invocation_id,
+            {
+                "status": "superseded",
+                "reason": "steered_post_completion",
+                "output": output,
+            },
+        )
         return await ctx.suspend(reason="steered")
 
     # Normal completion

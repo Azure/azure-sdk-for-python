@@ -13,6 +13,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Generic, Literal, Sequence, TypeVar
 
 from ._metadata import TaskMetadata
+from ._stream import StreamHandler
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
@@ -94,7 +95,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         "cancel",
         "shutdown",
         "_suspend_callback",
-        "_stream_queue",
+        "_stream_handler",
         "entry_mode",
         "was_steered",
         "previous_input",
@@ -117,7 +118,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         lease_generation: int = 0,
         cancel: asyncio.Event | None = None,
         shutdown: asyncio.Event | None = None,
-        stream_queue: asyncio.Queue[Any] | None = None,
+        stream_handler: StreamHandler | None = None,
         entry_mode: EntryMode = "fresh",
         was_steered: bool = False,
         previous_input: Input | None = None,
@@ -137,7 +138,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
         self.cancel = cancel or asyncio.Event()
         self.shutdown = shutdown or asyncio.Event()
         self._suspend_callback: Any = None
-        self._stream_queue: asyncio.Queue[Any] | None = stream_queue
+        self._stream_handler: StreamHandler | None = stream_handler
         self.entry_mode: EntryMode = entry_mode
         self.was_steered: bool = was_steered
         self.previous_input: Input | None = previous_input
@@ -172,12 +173,12 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
     async def stream(self, item: Any) -> None:
         """Emit a streaming item to observers iterating this task's output.
 
-        Items are buffered in an in-memory :class:`asyncio.Queue` and are
-        **not** persisted. Each call unblocks the next ``async for`` iteration
-        on the corresponding :class:`TaskRun`.
+        When a :class:`~azure.ai.agentserver.core.durable.StreamHandler`
+        is configured, the item is routed through ``handler.put(item)``.
+        Otherwise the call is a no-op.
 
         :param item: The value to stream.
         :type item: Any
         """
-        if self._stream_queue is not None:
-            await self._stream_queue.put(item)
+        if self._stream_handler is not None:
+            await self._stream_handler.put(item)

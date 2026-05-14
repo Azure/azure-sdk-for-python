@@ -10,10 +10,10 @@ from starlette.responses import Response
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-
 # ---------------------------------------------------------------------------
 # InvocationAgentServerHost no longer accepts request_timeout
 # ---------------------------------------------------------------------------
+
 
 def test_no_request_timeout_parameter():
     """InvocationAgentServerHost no longer accepts request_timeout."""
@@ -24,6 +24,7 @@ def test_no_request_timeout_parameter():
 # ---------------------------------------------------------------------------
 # Slow invoke completes without timeout
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_slow_invoke_completes():

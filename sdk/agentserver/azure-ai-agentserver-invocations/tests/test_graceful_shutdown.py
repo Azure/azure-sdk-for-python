@@ -13,10 +13,10 @@ from starlette.responses import Response
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_server_with_shutdown(**kwargs) -> tuple[InvocationAgentServerHost, list]:
     """Create InvocationAgentServerHost with a tracked shutdown handler."""
@@ -38,6 +38,7 @@ def _make_server_with_shutdown(**kwargs) -> tuple[InvocationAgentServerHost, lis
 # Shutdown handler registration
 # ---------------------------------------------------------------------------
 
+
 def test_shutdown_handler_registered():
     """Shutdown handler is stored on the server."""
     server, _ = _make_server_with_shutdown()
@@ -58,6 +59,7 @@ def test_shutdown_handler_not_registered():
 # ---------------------------------------------------------------------------
 # ASGI lifespan helper
 # ---------------------------------------------------------------------------
+
 
 async def _drive_lifespan(app):
     """Drive a full ASGI lifespan startup+shutdown cycle."""
@@ -84,6 +86,7 @@ async def _drive_lifespan(app):
 # Shutdown handler called during lifespan
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_shutdown_handler_called_on_lifespan_exit():
     """Shutdown handler runs when the ASGI lifespan exits."""
@@ -98,6 +101,7 @@ async def test_shutdown_handler_called_on_lifespan_exit():
 # ---------------------------------------------------------------------------
 # Shutdown handler timeout
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_shutdown_handler_timeout(caplog):
@@ -120,12 +124,16 @@ async def test_shutdown_handler_timeout(caplog):
     # Shutdown should have been interrupted
     assert "completed" not in calls
     # Logger should have warned about timeout
-    assert any("did not complete" in r.message.lower() or "timeout" in r.message.lower() for r in caplog.records)
+    assert any(
+        "did not complete" in r.message.lower() or "timeout" in r.message.lower()
+        for r in caplog.records
+    )
 
 
 # ---------------------------------------------------------------------------
 # Shutdown handler exception
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_shutdown_handler_exception(caplog):
@@ -144,12 +152,16 @@ async def test_shutdown_handler_exception(caplog):
         await _drive_lifespan(app)
 
     # Should have logged the exception
-    assert any("on_shutdown" in r.message.lower() or "error" in r.message.lower() for r in caplog.records)
+    assert any(
+        "on_shutdown" in r.message.lower() or "error" in r.message.lower()
+        for r in caplog.records
+    )
 
 
 # ---------------------------------------------------------------------------
 # Graceful shutdown timeout config
 # ---------------------------------------------------------------------------
+
 
 def test_default_graceful_shutdown_timeout():
     """Default graceful shutdown timeout is 30 seconds."""
@@ -173,6 +185,7 @@ def test_zero_graceful_shutdown_timeout():
 # Health endpoint accessible during normal operation
 # ---------------------------------------------------------------------------
 
+
 @pytest.mark.asyncio
 async def test_health_endpoint_during_operation():
     """GET /readiness returns 200 during normal operation."""
@@ -187,6 +200,7 @@ async def test_health_endpoint_during_operation():
 # ---------------------------------------------------------------------------
 # No shutdown handler is no-op
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_no_shutdown_handler_is_noop():
@@ -207,6 +221,7 @@ async def test_no_shutdown_handler_is_noop():
 # ---------------------------------------------------------------------------
 # Multiple requests before shutdown
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.asyncio
 async def test_multiple_requests_before_shutdown():

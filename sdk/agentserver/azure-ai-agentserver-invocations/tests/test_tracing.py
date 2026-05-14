@@ -28,7 +28,9 @@ try:
     from opentelemetry import trace
     from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
     from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-    from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
+        InMemorySpanExporter,
+    )
 
     _HAS_OTEL = True
 except ImportError:
@@ -70,10 +72,18 @@ def _get_spans():
 # Helper: create tracing-enabled server
 # ---------------------------------------------------------------------------
 
+
 def _make_tracing_server(**kwargs):
     """Create an InvocationAgentServerHost with tracing enabled."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    with patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+        },
+    ):
+        with patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export", create=True
+        ):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
@@ -86,8 +96,15 @@ def _make_tracing_server(**kwargs):
 
 def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    with patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+        },
+    ):
+        with patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export", create=True
+        ):
             server = InvocationAgentServerHost(**kwargs)
 
     store: dict[str, bytes] = {}
@@ -103,7 +120,9 @@ def _make_tracing_server_with_get_cancel(**kwargs):
         inv_id = request.path_params["invocation_id"]
         if inv_id in store:
             return Response(content=store[inv_id])
-        return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
+        return JSONResponse(
+            {"error": {"code": "not_found", "message": "Not found"}}, status_code=404
+        )
 
     @server.cancel_invocation_handler
     async def cancel_handler(request: Request) -> Response:
@@ -111,15 +130,24 @@ def _make_tracing_server_with_get_cancel(**kwargs):
         if inv_id in store:
             del store[inv_id]
             return JSONResponse({"status": "cancelled"})
-        return JSONResponse({"error": {"code": "not_found", "message": "Not found"}}, status_code=404)
+        return JSONResponse(
+            {"error": {"code": "not_found", "message": "Not found"}}, status_code=404
+        )
 
     return server
 
 
 def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    with patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+        },
+    ):
+        with patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export", create=True
+        ):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
@@ -131,8 +159,15 @@ def _make_failing_tracing_server(**kwargs):
 
 def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    with patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+        },
+    ):
+        with patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export", create=True
+        ):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
@@ -149,6 +184,7 @@ def _make_streaming_tracing_server(**kwargs):
 # ---------------------------------------------------------------------------
 # Tracing disabled by default
 # ---------------------------------------------------------------------------
+
 
 def test_tracing_disabled_by_default():
     """Invoke spans are still created by the global tracer when tracing is not explicitly configured."""
@@ -176,6 +212,7 @@ def test_tracing_disabled_by_default():
 # Tracing enabled creates invoke span with correct name
 # ---------------------------------------------------------------------------
 
+
 def test_tracing_enabled_creates_invoke_span():
     """Tracing enabled creates a span named 'invoke_agent'."""
     server = _make_tracing_server()
@@ -191,6 +228,7 @@ def test_tracing_enabled_creates_invoke_span():
 # ---------------------------------------------------------------------------
 # Invoke error records exception
 # ---------------------------------------------------------------------------
+
 
 def test_invoke_error_records_exception():
     """When handler raises, the span records the exception."""
@@ -210,6 +248,7 @@ def test_invoke_error_records_exception():
 # ---------------------------------------------------------------------------
 # GET/cancel create spans
 # ---------------------------------------------------------------------------
+
 
 def test_get_invocation_creates_span():
     """GET /invocations/{id} creates a span."""
@@ -241,10 +280,18 @@ def test_cancel_invocation_creates_span():
 # Tracing via env var
 # ---------------------------------------------------------------------------
 
+
 def test_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
-    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+    with patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+        },
+    ):
+        with patch(
+            "azure.ai.agentserver.core._tracing._setup_distro_export", create=True
+        ):
             app = InvocationAgentServerHost()
 
     @app.invoke_handler
@@ -262,6 +309,7 @@ def test_tracing_via_appinsights_env_var():
 # ---------------------------------------------------------------------------
 # No tracing when no endpoints configured
 # ---------------------------------------------------------------------------
+
 
 def test_no_tracing_when_no_endpoints():
     """When no connection string or OTLP endpoint is set, configure_observability
@@ -293,6 +341,7 @@ def test_no_tracing_when_no_endpoints():
 # Traceparent propagation
 # ---------------------------------------------------------------------------
 
+
 def test_traceparent_propagation():
     """Server propagates traceparent header into span context."""
     server = _make_tracing_server()
@@ -322,6 +371,7 @@ def test_traceparent_propagation():
 # Streaming spans
 # ---------------------------------------------------------------------------
 
+
 def test_streaming_creates_span():
     """Streaming response creates and completes a span."""
     server = _make_streaming_tracing_server()
@@ -337,6 +387,7 @@ def test_streaming_creates_span():
 # ---------------------------------------------------------------------------
 # GenAI attributes on invoke span
 # ---------------------------------------------------------------------------
+
 
 def test_genai_attributes_on_invoke_span():
     """Invoke span has GenAI semantic convention attributes."""
@@ -358,6 +409,7 @@ def test_genai_attributes_on_invoke_span():
 # Session ID in microsoft.session.id
 # ---------------------------------------------------------------------------
 
+
 def test_session_id_in_conversation_id():
     """Session ID is set as microsoft.session.id on invoke span."""
     server = _make_tracing_server()
@@ -377,6 +429,7 @@ def test_session_id_in_conversation_id():
 # ---------------------------------------------------------------------------
 # GenAI attributes on get_invocation span
 # ---------------------------------------------------------------------------
+
 
 def test_genai_attributes_on_get_span():
     """GET invocation span has GenAI attributes."""
@@ -398,6 +451,7 @@ def test_genai_attributes_on_get_span():
 # Namespaced invocation_id attribute
 # ---------------------------------------------------------------------------
 
+
 def test_namespaced_invocation_id_attribute():
     """Invoke span has azure.ai.agentserver.invocations.invocation_id."""
     server = _make_tracing_server()
@@ -416,12 +470,16 @@ def test_namespaced_invocation_id_attribute():
 # Agent name/version in span names
 # ---------------------------------------------------------------------------
 
+
 def test_agent_name_in_span_name():
     """Agent name from env var appears in span name."""
-    with patch.dict(os.environ, {
-        "FOUNDRY_AGENT_NAME": "my-agent",
-        "FOUNDRY_AGENT_VERSION": "2.0",
-    }):
+    with patch.dict(
+        os.environ,
+        {
+            "FOUNDRY_AGENT_NAME": "my-agent",
+            "FOUNDRY_AGENT_VERSION": "2.0",
+        },
+    ):
         server = _make_tracing_server()
 
     client = TestClient(server)
@@ -456,6 +514,6 @@ def test_agent_name_only_in_span_name():
 # Project endpoint attribute
 # ---------------------------------------------------------------------------
 
+
 def test_project_endpoint_env_var():
     """FOUNDRY_PROJECT_ENDPOINT constant matches the expected env var name."""
-

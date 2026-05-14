@@ -40,8 +40,12 @@ _VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 
 
 # Context variables for structured logging — concurrency-safe alternative to logger filters.
-_invocation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("invocation_id", default="")
-_session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("session_id", default="")
+_invocation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "invocation_id", default=""
+)
+_session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "session_id", default=""
+)
 
 
 class _InvocationLogFilter(logging.Filter):
@@ -254,12 +258,16 @@ class InvocationAgentServerHost(AgentServerHost):
     async def _dispatch_get_invocation(self, request: Request) -> Response:
         if self._get_invocation_fn is not None:
             return await self._get_invocation_fn(request)
-        return create_error_response("not_found", "get_invocation not implemented", status_code=404)
+        return create_error_response(
+            "not_found", "get_invocation not implemented", status_code=404
+        )
 
     async def _dispatch_cancel_invocation(self, request: Request) -> Response:
         if self._cancel_invocation_fn is not None:
             return await self._cancel_invocation_fn(request)
-        return create_error_response("not_found", "cancel_invocation not implemented", status_code=404)
+        return create_error_response(
+            "not_found", "cancel_invocation not implemented", status_code=404
+        )
 
     def get_openapi_spec(self) -> Optional[dict[str, Any]]:
         """Return the stored OpenAPI spec, or None."""
@@ -277,7 +285,9 @@ class InvocationAgentServerHost(AgentServerHost):
             for key, value in attrs.items():
                 span.set_attribute(key, value)
         except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug("Failed to set span attributes: %s", list(attrs.keys()), exc_info=True)
+            logger.debug(
+                "Failed to set span attributes: %s", list(attrs.keys()), exc_info=True
+            )
 
     # ------------------------------------------------------------------
     # Streaming response helpers
@@ -330,49 +340,67 @@ class InvocationAgentServerHost(AgentServerHost):
     # Endpoint handlers
     # ------------------------------------------------------------------
 
-    async def _get_openapi_spec_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+    async def _get_openapi_spec_endpoint(
+        self, request: Request
+    ) -> Response:  # pylint: disable=unused-argument
         spec = self.get_openapi_spec()
         if spec is None:
-            return create_error_response("not_found", "No OpenAPI spec registered", status_code=404)
+            return create_error_response(
+                "not_found", "No OpenAPI spec registered", status_code=404
+            )
         return JSONResponse(spec)
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
         generated_id = str(uuid.uuid4())
-        raw_invocation_id = request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or ""
+        raw_invocation_id = (
+            request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or ""
+        )
         invocation_id = _sanitize_id(raw_invocation_id, generated_id)
         request.state.invocation_id = invocation_id
 
         # Session ID: query param overrides env var / generated UUID
         raw_session_id = (
-            request.query_params.get("agent_session_id")
-            or self.config.session_id
-            or ""
+            request.query_params.get("agent_session_id") or self.config.session_id or ""
         )
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
 
         # Platform isolation headers — expose to handlers
-        request.state.user_isolation_key = request.headers.get("x-agent-user-isolation-key", "")
-        request.state.chat_isolation_key = request.headers.get("x-agent-chat-isolation-key", "")
+        request.state.user_isolation_key = request.headers.get(
+            "x-agent-user-isolation-key", ""
+        )
+        request.state.chat_isolation_key = request.headers.get(
+            "x-agent-chat-isolation-key", ""
+        )
 
         with self.request_span(
-            request.headers, invocation_id, "invoke_agent",
-            operation_name="invoke_agent", session_id=session_id,
+            request.headers,
+            invocation_id,
+            "invoke_agent",
+            operation_name="invoke_agent",
+            session_id=session_id,
             end_on_exit=False,
         ) as otel_span:
-            self._safe_set_attrs(otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-            })
+            self._safe_set_attrs(
+                otel_span,
+                {
+                    InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
+                    InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
+                },
+            )
 
             # Propagate invocation/session IDs as W3C baggage so downstream
             # services receive them automatically via the baggage header.
             ctx = _otel_context.get_current()
             ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
+                "azure.ai.agentserver.invocation_id",
+                invocation_id,
+                context=ctx,
             )
             ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.session_id", session_id, context=ctx,
+                "azure.ai.agentserver.session_id",
+                session_id,
+                context=ctx,
             )
             baggage_token = _otel_context.attach(ctx)
 
@@ -382,13 +410,18 @@ class InvocationAgentServerHost(AgentServerHost):
             session_token = _session_id_var.set(session_id)
             try:
                 response = await self._dispatch_invoke(request)
-                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
+                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = (
+                    invocation_id
+                )
                 response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
             except NotImplementedError as exc:
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "not_implemented",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
+                self._safe_set_attrs(
+                    otel_span,
+                    {
+                        InvocationConstants.ATTR_SPAN_ERROR_CODE: "not_implemented",
+                        InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
+                    },
+                )
                 end_span(otel_span, exc=exc)
                 logger.error("Invocation %s failed: %s", invocation_id, exc)
                 return create_error_response(
@@ -401,12 +434,20 @@ class InvocationAgentServerHost(AgentServerHost):
                     },
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
+                self._safe_set_attrs(
+                    otel_span,
+                    {
+                        InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
+                        InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
+                    },
+                )
                 end_span(otel_span, exc=exc)
-                logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
+                logger.error(
+                    "Error processing invocation %s: %s",
+                    invocation_id,
+                    exc,
+                    exc_info=True,
+                )
                 return create_error_response(
                     "internal_error",
                     "Internal server error",
@@ -444,27 +485,44 @@ class InvocationAgentServerHost(AgentServerHost):
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
 
         with self.request_span(
-            request.headers, invocation_id, span_operation,
-            operation_name=span_operation, session_id=session_id,
+            request.headers,
+            invocation_id,
+            span_operation,
+            operation_name=span_operation,
+            session_id=session_id,
         ) as _otel_span:
-            self._safe_set_attrs(_otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
-            })
+            self._safe_set_attrs(
+                _otel_span,
+                {
+                    InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
+                    InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
+                },
+            )
             _ensure_log_filter()
             inv_token = _invocation_id_var.set(invocation_id)
             session_token = _session_id_var.set(session_id)
             try:
                 response = await dispatch(request)
-                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
+                response.headers[InvocationConstants.INVOCATION_ID_HEADER] = (
+                    invocation_id
+                )
                 return response
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                self._safe_set_attrs(_otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
-                })
+                self._safe_set_attrs(
+                    _otel_span,
+                    {
+                        InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
+                        InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
+                    },
+                )
                 record_error(_otel_span, exc)
-                logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
+                logger.error(
+                    "Error in %s %s: %s",
+                    span_operation,
+                    invocation_id,
+                    exc,
+                    exc_info=True,
+                )
                 return create_error_response(
                     "internal_error",
                     "Internal server error",

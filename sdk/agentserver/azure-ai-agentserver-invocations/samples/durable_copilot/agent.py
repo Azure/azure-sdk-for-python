@@ -38,17 +38,23 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         AssistantMessageData,
         IdleData,
     )
-    from copilot.session import PermissionHandler  # pylint: disable=import-outside-toplevel
+    from copilot.session import (
+        PermissionHandler,
+    )  # pylint: disable=import-outside-toplevel
 
     session_id: str = ctx.input["session_id"]
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
 
     invocation_store.save(invocation_id, {"status": "running"})
+    await ctx.stream({"type": "lifecycle", "status": "running"})
 
     logger.info(
         "Copilot session %s gen=%d invocation=%s entry=%s",
-        session_id, ctx.generation, invocation_id, ctx.entry_mode,
+        session_id,
+        ctx.generation,
+        invocation_id,
+        ctx.entry_mode,
     )
 
     # ── Phase 1: Pre-entry cancel (rapid-fire steering) ─────────────
@@ -63,11 +69,14 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
             )
             await session.send(message)
             await session.abort()
-        invocation_store.save(invocation_id, {
-            "status": "cancelled",
-            "reason": "steered",
-            "message_preserved": True,
-        })
+        invocation_store.save(
+            invocation_id,
+            {
+                "status": "cancelled",
+                "reason": "steered",
+                "message_preserved": True,
+            },
+        )
         return await ctx.suspend(reason="steered")
 
     # ── Phase 2: Stream the Copilot turn, checking cancel ───────────
@@ -93,7 +102,13 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         def on_event(event: Any) -> None:
             nonlocal reply_parts
             if isinstance(event.data, AssistantMessageData):
-                reply_parts.append(event.data.content or "")
+                content = event.data.content or ""
+                reply_parts.append(content)
+                # Schedule streaming — push delta to SSE subscriber and
+                # persist snapshot for GET polling
+                asyncio.get_event_loop().create_task(
+                    _stream_and_persist(ctx, invocation_id, content, reply_parts)
+                )
             elif isinstance(event.data, IdleData):
                 idle_event.set()
 
@@ -130,19 +145,25 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     }
 
     if was_aborted:
-        invocation_store.save(invocation_id, {
-            "status": "superseded",
-            "reason": "steered_mid_stream",
-            "output": output,
-        })
+        invocation_store.save(
+            invocation_id,
+            {
+                "status": "superseded",
+                "reason": "steered_mid_stream",
+                "output": output,
+            },
+        )
         return await ctx.suspend(reason="steered")
 
     if ctx.cancel.is_set():
-        invocation_store.save(invocation_id, {
-            "status": "superseded",
-            "reason": "steered_post_completion",
-            "output": output,
-        })
+        invocation_store.save(
+            invocation_id,
+            {
+                "status": "superseded",
+                "reason": "steered_post_completion",
+                "output": output,
+            },
+        )
         return await ctx.suspend(reason="steered")
 
     invocation_store.save(invocation_id, {"status": "completed", "output": output})
@@ -152,3 +173,20 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
 async def _wait_for_cancel(cancel: asyncio.Event) -> None:
     """Await the cancel event.  Extracted for use with ``asyncio.wait``."""
     await cancel.wait()
+
+
+async def _stream_and_persist(
+    ctx: TaskContext[dict],
+    invocation_id: str,
+    delta: str,
+    parts: list[str],
+) -> None:
+    """Push a streaming delta and persist the text snapshot."""
+    await ctx.stream({"type": "text_delta", "delta": delta})
+    invocation_store.save(
+        invocation_id,
+        {
+            "status": "streaming",
+            "text": "".join(parts),
+        },
+    )
