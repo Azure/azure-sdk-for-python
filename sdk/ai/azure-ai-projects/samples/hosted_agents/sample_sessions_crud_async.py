@@ -80,10 +80,8 @@ async def main() -> None:
             agent_version=agent.version,
         )
 
-        isolation_key = "sample-isolation-key"
         session = await project_client.beta.agents.create_session(
             agent_name=agent_name,
-            isolation_key=isolation_key,
             version_indicator=VersionRefIndicator(agent_version=agent.version),
         )
         print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
@@ -107,7 +105,6 @@ async def main() -> None:
             await project_client.beta.agents.delete_session(
                 agent_name=agent_name,
                 session_id=session.agent_session_id,
-                isolation_key=isolation_key,
             )
             print(f"Session with id: {session.agent_session_id} deleted.")
 

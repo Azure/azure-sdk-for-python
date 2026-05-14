@@ -34,7 +34,7 @@ class BetaAgentsOperations(GeneratedBetaAgentsOperations):
         *,
         path: str,
         **kwargs: Any,
-    ) -> _models.SessionFileWriteResponse:
+    ) -> _models.SessionFileWriteResult:
         """Upload a file to the session sandbox.
 
         Accepts either a ``bytes`` buffer or a local file path (``str``).
@@ -52,9 +52,9 @@ class BetaAgentsOperations(GeneratedBetaAgentsOperations):
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
-        :return: SessionFileWriteResponse. The SessionFileWriteResponse is compatible with
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with
          MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResponse
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises FileNotFoundError: If *content_or_file_path* is a ``str`` and the file does not exist.
         """
