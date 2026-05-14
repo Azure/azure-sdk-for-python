@@ -71,6 +71,9 @@ _ATTR_SESSION_ID = "microsoft.session.id"
 # the calling service may carry either key as W3C baggage.
 _BAGGAGE_SESSION_ID = "azure.ai.agentserver.session_id"
 _BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
+_BAGGAGE_INVOCATION_ID = "azure.ai.agentserver.invocation_id"
+
+_ATTR_INVOCATION_ID = "azure.ai.agentserver.invocations.invocation_id"
 
 _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
@@ -455,6 +458,9 @@ class _FoundryEnrichmentSpanProcessor:
         conversation_id = _otel_baggage.get_baggage(_BAGGAGE_CONVERSATION_ID, context=ctx)
         if conversation_id:
             span.set_attribute(_ATTR_GEN_AI_CONVERSATION_ID, conversation_id)
+        invocation_id = _otel_baggage.get_baggage(_BAGGAGE_INVOCATION_ID, context=ctx)
+        if invocation_id:
+            span.set_attribute(_ATTR_INVOCATION_ID, invocation_id)
 
     def _on_ending(self, span: Any) -> None:
         # Set agent identity attributes at span end so they cannot be

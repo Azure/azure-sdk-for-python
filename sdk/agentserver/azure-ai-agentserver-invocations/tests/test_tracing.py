@@ -356,6 +356,38 @@ def test_incoming_baggage_merged_into_context():
     assert captured_baggage.get("custom.key") == "custom-value"
 
 
+def test_sdk_set_baggage_available_in_handler():
+    """SDK-set baggage entries (invocation_id, session_id) are available in handler context."""
+    from opentelemetry import baggage as _otel_baggage
+
+    captured_baggage = {}
+
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            server = InvocationAgentServerHost()
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
+        captured_baggage.update(_otel_baggage.get_all())
+        return Response(content=b"ok")
+
+    client = TestClient(server)
+    client.post(
+        "/invocations",
+        content=b"test",
+        headers={
+            "x-agent-invocation-id": "inv-test-42",
+            "baggage": "caller.key=caller-value",
+        },
+    )
+
+    # SDK-set baggage entries
+    assert captured_baggage.get("azure.ai.agentserver.invocation_id") == "inv-test-42"
+    assert "azure.ai.agentserver.session_id" in captured_baggage
+    # Incoming caller baggage is also preserved
+    assert captured_baggage.get("caller.key") == "caller-value"
+
+
 def test_incoming_baggage_does_not_break_span_parenting():
     """Incoming baggage header does not break parent-child span relationships.
     Framework spans created inside the handler should be parented under the
@@ -407,6 +439,53 @@ def test_incoming_baggage_empty_header():
         headers={"baggage": ""},
     )
     assert resp.status_code == 200
+
+
+def test_incoming_baggage_stamped_on_handler_spans():
+    """Incoming W3C baggage entries (including invocation_id) are stamped
+    as span attributes on spans created inside the handler via the
+    FoundryEnrichmentSpanProcessor."""
+    from opentelemetry import trace as _trace
+    from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+
+    # Add the enrichment processor to the test provider so baggage → span attrs works
+    proc = _FoundryEnrichmentSpanProcessor()
+    _MODULE_PROVIDER.add_span_processor(proc)
+
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+            server = InvocationAgentServerHost()
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
+        tracer = _trace.get_tracer("test-handler")
+        with tracer.start_as_current_span("handler_work"):
+            body = await request.body()
+        return Response(content=body, media_type="application/octet-stream")
+
+    trace_id_hex = uuid.uuid4().hex
+    span_id_hex = uuid.uuid4().hex[:16]
+    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+
+    client = TestClient(server)
+    client.post(
+        "/invocations",
+        content=b"test",
+        headers={
+            "traceparent": traceparent,
+            "baggage": "user.id=test-user-789,custom.key=custom-value",
+        },
+    )
+
+    spans = _get_spans()
+    handler_spans = [s for s in spans if s.name == "handler_work"]
+    assert handler_spans, f"Expected handler_work span, found: {[s.name for s in spans]}"
+
+    attrs = dict(handler_spans[0].attributes)
+    # invocation_id is set by the invocations package and stamped by the enricher
+    assert "azure.ai.agentserver.invocations.invocation_id" in attrs
+    # session_id is also set as baggage and stamped by the enricher
+    assert "microsoft.session.id" in attrs
 
 
 # ---------------------------------------------------------------------------

@@ -338,3 +338,41 @@ def test_tracing__incoming_baggage_empty_header_no_error() -> None:
         headers={"baggage": ""},
     )
     assert resp.status_code == 200
+
+
+def test_tracing__sdk_set_baggage_available_in_handler() -> None:
+    """SDK-set baggage entries (response_id, conversation_id, streaming)
+    and incoming caller baggage are available inside the response handler."""
+    try:
+        from opentelemetry import baggage as _otel_baggage
+    except ImportError:
+        pytest.skip("opentelemetry SDK not installed")
+
+    captured_baggage: dict = {}
+
+    def _baggage_capture_handler(request, context, cancellation_signal):
+        captured_baggage.update(_otel_baggage.get_all())
+
+        async def _events():
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    options = ResponsesServerOptions()
+    app = ResponsesAgentServerHost(options=options)
+    app.response_handler(_baggage_capture_handler)
+    client = TestClient(app)
+
+    client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hi", "stream": False},
+        headers={"baggage": "caller.key=caller-value"},
+    )
+
+    # SDK-set baggage entries
+    assert "azure.ai.agentserver.response_id" in captured_baggage
+    assert "azure.ai.agentserver.conversation_id" in captured_baggage
+    assert "azure.ai.agentserver.streaming" in captured_baggage
+    # Incoming caller baggage is also preserved
+    assert captured_baggage.get("caller.key") == "caller-value"

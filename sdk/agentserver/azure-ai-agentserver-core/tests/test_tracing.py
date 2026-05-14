@@ -338,6 +338,54 @@ class TestFoundryEnrichmentSpanProcessor:
         assert spans_by_name["parent"]["microsoft.session.id"] == "session-456"
         assert spans_by_name["parent"]["gen_ai.conversation.id"] == "conv-789"
 
+    def test_invocation_id_from_baggage(self) -> None:
+        """invocation_id baggage is stamped as azure.ai.agentserver.invocations.invocation_id."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.invocation_id", "inv-abc-123",
+        )
+        with tracer.start_as_current_span("span", context=ctx):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["azure.ai.agentserver.invocations.invocation_id"] == "inv-abc-123"
+
+    def test_invocation_id_not_set_when_no_baggage(self) -> None:
+        """invocation_id attr is not set when no invocation_id baggage is present."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("span"):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert "azure.ai.agentserver.invocations.invocation_id" not in attrs
+
+    def test_invocation_id_propagates_to_child_spans(self) -> None:
+        """Child spans inherit invocation_id from baggage."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.invocation_id", "inv-xyz-789",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            with tracer.start_as_current_span("parent"):
+                with tracer.start_as_current_span("child"):
+                    pass
+        finally:
+            _otel_context.detach(token)
+
+        spans_by_name = {s.name: dict(s.attributes) for s in collector.spans}
+        assert spans_by_name["child"]["azure.ai.agentserver.invocations.invocation_id"] == "inv-xyz-789"
+        assert spans_by_name["parent"]["azure.ai.agentserver.invocations.invocation_id"] == "inv-xyz-789"
+
 
 # ------------------------------------------------------------------ #
 # Agent name / version resolution with new env vars
