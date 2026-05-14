@@ -3,6 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
+import base64
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -38,15 +40,10 @@
 # Instantiate an EKM client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 # [START create_a_ekm_client]
-import os
-import base64
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultEkmClient, KeyVaultEkmConnection
+from azure.keyvault.administration import KeyVaultEkmClient
 
 MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
-EKM_PROXY_HOST = os.environ["EKM_PROXY_HOST"]
-CA_CERTIFICATE = os.environ["CA_CERTIFICATE"]
-CA_CERTIFICATES = [CA_CERTIFICATE]
 credential = DefaultAzureCredential()
 client = KeyVaultEkmClient(vault_url=MANAGED_HSM_URL, credential=credential)
 # [END create_a_ekm_client]
@@ -54,6 +51,11 @@ client = KeyVaultEkmClient(vault_url=MANAGED_HSM_URL, credential=credential)
 # First, let's create an EKM connection
 print("\n.. Create EKM connection")
 # [START create_ekm_connection]
+from azure.keyvault.administration import KeyVaultEkmConnection
+
+EKM_PROXY_HOST = os.environ["EKM_PROXY_HOST"]
+CA_CERTIFICATE = os.environ["CA_CERTIFICATE"]
+CA_CERTIFICATES = [CA_CERTIFICATE]
 ekm_connection = KeyVaultEkmConnection(
     host=EKM_PROXY_HOST,
     server_ca_certificates=[base64.b64decode(cert) for cert in CA_CERTIFICATES],
@@ -70,9 +72,7 @@ retrieved_ekm_connection = client.get_ekm_connection()
 print("Retrieved EKM connection with:")
 print(f"\tHost: {retrieved_ekm_connection.host}")
 print(f"\tPath prefix: {retrieved_ekm_connection.path_prefix}")
-print(
-    f"\tServer subject common name: {retrieved_ekm_connection.server_subject_common_name}"
-)
+print(f"\tServer subject common name: {retrieved_ekm_connection.server_subject_common_name}")
 # [END get_ekm_connection]
 
 # Get the EKM certificate
