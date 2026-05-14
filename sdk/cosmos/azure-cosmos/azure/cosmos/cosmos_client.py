@@ -194,7 +194,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         even if the operation is not guaranteed to be idempotent. This should only be enabled if the application can
         tolerate such risks or has logic to safely detect and handle duplicate operations.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
-        geo-replicated database accounts. (Default: True)
+        geo-replicated database accounts. (Default: True) When set to False, the
+        client only contacts the URL supplied at construction time and will not
+        fall back to synthesized regional endpoints; useful for private-endpoint
+        deployments.
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.

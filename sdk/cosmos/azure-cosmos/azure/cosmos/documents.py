@@ -302,6 +302,12 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         automatically discover the current write and read locations and direct
         the requests to the correct location taking into consideration of the
         user's preference(if provided) as PreferredLocations.
+        When EnableEndpointDiscovery is false, the client will only send
+        requests to the endpoint supplied at construction time. No
+        synthesized regional/locational endpoints will be tried, even on
+        transient failures of the initial database account read. Set this to
+        false when the account is reachable only via a private endpoint and
+        regional FQDNs are not present in the private DNS zone.
     :ivar PreferredLocations:
         Gets or sets the preferred locations for geo-replicated database
         accounts. When EnableEndpointDiscovery is true and PreferredLocations is
