@@ -32,13 +32,13 @@ def main():
 
     response = client.avs_vms.begin_update(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
-        avs_vm_id="cbdec-ddbb",
+        storage_pool_name="storagepool-01",
+        avs_vm_id="abc123def456",
         properties={"properties": {"softDeletion": {"destroyed": True}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/AvsVms_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/AvsVms_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

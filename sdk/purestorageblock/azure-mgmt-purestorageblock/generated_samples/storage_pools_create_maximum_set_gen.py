@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,23 +33,29 @@ def main():
 
     response = client.storage_pools.begin_create(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
+        storage_pool_name="storagepool-01",
         resource={
-            "identity": {"type": "None", "userAssignedIdentities": {"key4211": {}}},
-            "location": "lonlc",
+            "identity": {"type": "None", "userAssignedIdentities": {"identity-01": {}}},
+            "location": "eastus",
             "properties": {
-                "availabilityZone": "vknyl",
-                "avs": {"avsEnabled": True, "sddcResourceId": "zekrdsarbkwcbvpzhmuwoazogziwms"},
+                "availabilityZone": "1",
+                "avs": {
+                    "avsEnabled": True,
+                    "sddcResourceId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/rgpurestorage/providers/Microsoft.AVS/privateClouds/avs-cloud-01",
+                },
                 "provisionedBandwidthMbPerSec": 17,
-                "reservationResourceId": "xiowoxnbtcotutcmmrofvgdi",
-                "vnetInjection": {"subnetId": "tnlctolrxdvnkjiphlrdxq", "vnetId": "zbumtytyqwewjcyckwqchiypshv"},
+                "reservationResourceId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/rgpurestorage/providers/PureStorage.Block/reservations/reservation-01",
+                "vnetInjection": {
+                    "subnetId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/rgpurestorage/providers/Microsoft.Network/virtualNetworks/vnet-01/subnets/subnet-01",
+                    "vnetId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/rgpurestorage/providers/Microsoft.Network/virtualNetworks/vnet-01",
+                },
             },
-            "tags": {"key7593": "vsyiygyurvwlfaezpuqu"},
+            "tags": {"environment": "production"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/StoragePools_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/StoragePools_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

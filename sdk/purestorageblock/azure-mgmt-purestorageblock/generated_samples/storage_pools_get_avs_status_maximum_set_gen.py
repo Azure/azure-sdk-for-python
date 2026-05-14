@@ -32,11 +32,11 @@ def main():
 
     response = client.storage_pools.get_avs_status(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolname",
+        storage_pool_name="storagepool-01",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-11-01/StoragePools_GetAvsStatus_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/StoragePools_GetAvsStatus_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

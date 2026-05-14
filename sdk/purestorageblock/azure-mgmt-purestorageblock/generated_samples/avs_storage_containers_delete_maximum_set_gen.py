@@ -32,11 +32,11 @@ def main():
 
     client.avs_storage_containers.begin_delete(
         resource_group_name="rgpurestorage",
-        storage_pool_name="storagePoolName",
-        storage_container_name="storageContainerName",
+        storage_pool_name="storagepool-01",
+        storage_container_name="container-01",
     ).result()
 
 
-# x-ms-original-file: 2024-11-01/AvsStorageContainers_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-01-01-preview/AvsStorageContainers_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
