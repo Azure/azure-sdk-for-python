@@ -1,5 +1,31 @@
 # Release History
 
+## 2.2.0 (Unreleased)
+
+### Features Added
+
+* Added new model `FabricIQPreviewTool`.
+* Added new model `ToolboxSearchPreviewTool`.
+
+### Breaking Changes
+
+* Renamed model `AgentEndpoint` to `AgentEndpointConfig`.
+* Renamed model `DeleteSkillResponse` to `DeleteSkillResult`.
+* Renamed model `PendingUploadResponse` to `PendingUploadResult`.
+* Renamed model `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
+* Renamed model `SessionFileWriteResponse` to `SessionFileWriteResult`.
+* Renamed model `SkillObject` to `SkillDetails`.
+* Renamed model `Target` to `EvaluationTarget`.
+* Renamed model `TargetConfig` to `RedTeamTargetConfig`.
+* Removed model `CodeConfiguration`.
+* Removed model `EntraIsolationKeySource`.
+* Removed model `HeaderIsolationKeySource`.
+* Removed model `IsolationKeySource`.
+* Removed model `WorkIQPreviewToolParameters`.
+* Removed enum `IsolationKeySourceKind`.
+* Removed `isolation_key` parameter from `create_session()` and `delete_session()` methods on `.beta.agents` sub-client.
+* Renamed `body` parameter to `content` in `.beta.skills.create_from_package()` method.
+
 ## 2.1.0 (2026-04-20)
 
 ### Features Added

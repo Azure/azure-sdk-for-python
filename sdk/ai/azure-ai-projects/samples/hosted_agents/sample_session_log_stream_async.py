@@ -42,7 +42,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentEndpoint,
+    AgentEndpointConfig,
     AgentEndpointProtocol,
     FixedRatioVersionSelectionRule,
     VersionSelector,
@@ -95,7 +95,7 @@ async def main() -> None:
         ) as project_client,
         create_agent_and_session_async(project_client, agent_name, image) as (agent_version, session_id),
     ):
-        endpoint_config = AgentEndpoint(
+        endpoint_config = AgentEndpointConfig(
             version_selector=VersionSelector(
                 version_selection_rules=[
                     FixedRatioVersionSelectionRule(agent_version=agent_version, traffic_percentage=100),

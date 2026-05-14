@@ -26,8 +26,6 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of _FoundryFeaturesOptInKeys."""
 
-    SKILLS_V1_PREVIEW = "Skills=V1Preview"
-    """SKILLS_V1_PREVIEW."""
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""
     SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
@@ -40,6 +38,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
     """TOOLBOXES_V1_PREVIEW."""
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
 
 
 class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,6 +69,8 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSES."""
     A2A = "a2a"
     """A2A."""
+    MCP = "mcp"
+    """MCP."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
 
@@ -106,6 +108,8 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
+    MCP = "mcp"
+    """MCP."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
 
@@ -516,15 +520,6 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
-class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of IsolationKeySourceKind."""
-
-    ENTRA = "Entra"
-    """ENTRA."""
-    HEADER = "Header"
-    """HEADER."""
-
-
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Memory item kind."""
 
@@ -840,6 +835,10 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_SEARCH_PREVIEW."""
     WORK_IQ_PREVIEW = "work_iq_preview"
     """WORK_IQ_PREVIEW."""
+    FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+    """FABRIC_IQ_PREVIEW."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """TOOLBOX_SEARCH_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
