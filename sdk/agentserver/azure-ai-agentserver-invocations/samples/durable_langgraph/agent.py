@@ -390,10 +390,10 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         """Stream node progress events from the sync graph thread."""
         node_names = list(chunk.keys())
         for name in node_names:
-            if ctx._stream_queue is not None:  # pylint: disable=protected-access
-                loop.call_soon_threadsafe(
-                    ctx._stream_queue.put_nowait,  # pylint: disable=protected-access
-                    {"type": "node_progress", "node": name},
+            if ctx._stream_handler is not None:  # pylint: disable=protected-access
+                asyncio.run_coroutine_threadsafe(
+                    ctx.stream({"type": "node_progress", "node": name}),
+                    loop,
                 )
         invocation_store.save(
             invocation_id,

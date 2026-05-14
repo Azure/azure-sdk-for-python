@@ -32,6 +32,7 @@
   - [Complete Steering Example](#complete-steering-example)
 - [Streaming](#streaming)
   - [Custom Stream Handlers](#custom-stream-handlers)
+  - [Late-Join Consumers](#late-join-consumers)
 - [Persistence](#persistence)
   - [Responsibility Matrix](#responsibility-matrix)
   - [The Durable Boundary Rule](#the-durable-boundary-rule)
@@ -836,6 +837,22 @@ async for chunk in task_run:
   (in-memory `asyncio.Queue`) as the default.
 - The handler instance survives steering restarts — items streamed before and
   after a steering cycle flow through the same handler.
+
+### Late-Join Consumers
+
+Any code in the same process can get a `TaskRun` handle for an active task
+using `get_active_run()`, even if it wasn't the original caller of `start()`:
+
+```python
+# In another coroutine or request handler:
+run = generate_report.get_active_run("report-1")
+if run is not None:
+    async for chunk in run:
+        print(chunk, end="")
+    result = await run.result()
+```
+
+Returns `None` if the task is not currently active in this process.
 
 ---
 

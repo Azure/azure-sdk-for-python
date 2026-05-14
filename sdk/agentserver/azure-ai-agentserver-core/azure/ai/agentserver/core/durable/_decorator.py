@@ -491,6 +491,34 @@ class DurableTask(Generic[Input, Output]):
         manager = get_task_manager()
         return await manager.provider.get(task_id)
 
+    def get_active_run(self, task_id: str) -> TaskRun[Output] | None:
+        """Return a TaskRun handle for an active (in-progress) task.
+
+        Enables late-join consumers to iterate a running task's stream
+        without being the original caller of ``start()``/``run()``.
+        Returns ``None`` if the task is not currently active in this process.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: A TaskRun bound to the active task's stream handler,
+            or ``None`` if not active.
+        :rtype: TaskRun[Output] | None
+
+        Example::
+
+            # In another coroutine or request handler:
+            run = my_task.get_active_run("task-123")
+            if run is not None:
+                async for chunk in run:
+                    print(chunk, end="")
+        """
+        from ._manager import (  # pylint: disable=import-outside-toplevel
+            get_task_manager,
+        )
+
+        manager = get_task_manager()
+        return manager.get_active_run(task_id)
+
     async def list(
         self,
         *,

@@ -676,6 +676,33 @@ class DurableTaskManager:
 
         logger.info("Resumed task %s", task_id)
 
+    def get_active_run(self, task_id: str) -> TaskRun[Any] | None:
+        """Return a TaskRun handle for an active (in-progress) task.
+
+        Enables late-join consumers to get a handle to a running task's
+        stream without being the original caller of ``start()``/``run()``.
+        Returns ``None`` if the task is not currently active in this process.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: A TaskRun bound to the active task's stream handler,
+            or ``None`` if not active.
+        :rtype: TaskRun[Any] | None
+        """
+        active = self._active_tasks.get(task_id)
+        if active is None:
+            return None
+        return TaskRun(
+            task_id=task_id,
+            provider=self._provider,
+            result_future=active.result_future,
+            metadata=active.context.metadata,
+            cancel_event=active.context.cancel,
+            stream_handler=active.context._stream_handler,  # pylint: disable=protected-access
+            terminate_event=active.terminate_event,
+            execution_task=active.execution_task,
+        )
+
     async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements
         self,
         *,
