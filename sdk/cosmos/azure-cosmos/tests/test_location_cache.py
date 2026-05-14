@@ -743,6 +743,28 @@ class TestEmulatorEndpointRewrite:
         write_contexts = lc.get_write_regional_routing_contexts()
         assert write_contexts[0].get_primary() == user_endpoint
 
+    def test_endpoint_discovery_disabled_skips_rewrite(self):
+        # When endpoint discovery is disabled, update_location_cache short-circuits
+        # before populating the per-region routing contexts at all, so the rewrite
+        # path is never reached and the SDK falls back to the user-supplied
+        # default endpoint for every request.
+        user_endpoint = "http://localhost:8888/"
+        advertised_endpoint = "https://127.0.0.1:8081/"
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.EnableEndpointDiscovery = False
+        lc = LocationCache(default_endpoint=user_endpoint, connection_policy=connection_policy)
+        db_acc = self._make_db_account(advertised_endpoint)
+
+        lc.perform_on_database_account_read(db_acc)
+
+        # No per-region contexts are populated when endpoint discovery is off.
+        assert lc.account_write_regional_routing_contexts_by_location == {}
+        assert lc.account_read_regional_routing_contexts_by_location == {}
+        # Routing falls back to the user-supplied default endpoint, not the
+        # gateway-advertised 127.0.0.1:8081.
+        assert lc.get_write_regional_routing_context() == user_endpoint
+        assert lc.get_read_regional_routing_context() == user_endpoint
+
 
 if __name__ == "__main__":
     unittest.main()
