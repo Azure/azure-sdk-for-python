@@ -38,11 +38,13 @@ The [`typespec-python-regenerate`](../../../.github/workflows/typespec-python-re
      - `[typespec-python] Regenerate tests from microsoft/typespec@main`
      - `[typespec-python] Regenerate tests from microsoft/typespec PR #<N>`
    - **Body** behavior:
-     - If no open PR exists from the branch to `main`, the body contains a prefilled compare URL ("Create pull request from `<branch>`") that opens a PR with the title and body already populated.
+     - If no open PR exists from the branch to `main`, the body contains a prefilled compare URL ("Create pull request from `<branch>`") that opens a PR with the title and body already populated. The prefilled PR body starts with `Fixes <issue URL>` so the tracking issue is closed automatically when the PR is merged.
      - If an open PR already exists from the branch to `main`, the body links directly to that PR and notes that the existing PR has been updated with the new commit (a force-push does not close the PR).
    - **Assignees / cc**:
      - Manual (`workflow_dispatch`) runs are assigned to the user who triggered the run (`github.actor`).
      - Automatic (`push`) runs are assigned to the default maintainers (`@iscai-msft`, `@msyyc`).
+
+> **Note:** The auto branch is **force-pushed** on every run. If a reviewer has the compare link open and no PR has been created yet, the diff under that link will change when the next run pushes — they should reopen the link from the tracking issue to see the latest diff. If a PR already exists, the force-push updates the PR in place (it does not close it; review comments on lines that no longer exist become "outdated").
 
 
 ### Failure notifications

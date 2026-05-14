@@ -22,6 +22,10 @@ permissions:
   pull-requests: write
   issues: write
 
+# Note: with cancel-in-progress, a newer run can cancel an older one after it
+# has force-pushed the branch but before it finishes updating the tracking
+# issue. The newer run will redo the issue update, so the worst case is a
+# brief stale issue body that is immediately refreshed.
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -147,10 +151,11 @@ jobs:
           fi
           # Replace every README.md under gen/ with the template, except:
           #   - the top-level gen/README.md
-          #   - the template itself (gen/template/README.md)
+          #   - anything under gen/template/ (the template itself and any
+          #     future siblings)
           find "$TARGET" -type f -name README.md \
             ! -path "$TARGET/README.md" \
-            ! -path "$TEMPLATE" \
+            ! -path "$TARGET/template/*" \
             -print -exec cp -f "$TEMPLATE" {} \;
 
       - name: Commit and push changes
@@ -242,11 +247,19 @@ jobs:
           TITLE="[typespec-python] Regenerate tests from ${SOURCE_LABEL}"
 
           # Reuse an existing open tracking issue if one exists (matched by
-          # title). We resolve the issue number BEFORE building the PR compare
-          # URL so we can inject "Fixes #<N>" into the prefilled PR body — this
-          # way the issue is closed automatically when the PR is merged.
-          EXISTING_ISSUE=$(gh issue list --state open --search "\"$TITLE\" in:title" \
-            --json number,title | jq -r --arg title "$TITLE" '.[] | select(.title == $title) | .number' | head -n1 || echo "")
+          # exact title). We resolve the issue number BEFORE building the PR
+          # compare URL so we can inject "Fixes #<N>" into the prefilled PR
+          # body — this way the issue is closed automatically when the PR is
+          # merged.
+          #
+          # We list by label rather than `--search`, because GitHub's search
+          # tokenizer strips characters like `[`, `]`, `@`, `#` and `/`, so a
+          # search query over our title can be ambiguous. Listing by label
+          # plus an exact jq match is both faster and unambiguous.
+          EXISTING_ISSUE=$(gh issue list --state open --label typespec-python \
+            --limit 100 --json number,title \
+            | jq -r --arg title "$TITLE" '.[] | select(.title == $title) | .number' \
+            | head -n1 || echo "")
 
           if [ -n "$EXISTING_ISSUE" ]; then
             ISSUE_NUMBER="$EXISTING_ISSUE"
@@ -276,16 +289,16 @@ jobs:
           if [ -n "$EXISTING_PR_URL" ]; then
             ISSUE_BODY="A pull request already exists for this regeneration.
 
-            👉 [View pull request #${EXISTING_PR_NUMBER}](${EXISTING_PR_URL})
+          👉 [View pull request #${EXISTING_PR_NUMBER}](${EXISTING_PR_URL})
 
-            The branch \`${BRANCH}\` was just updated with the latest regenerated tests; the existing PR will reflect those changes automatically.
+          The branch \`${BRANCH}\` was just updated with the latest regenerated tests; the existing PR will reflect those changes automatically.
 
-            Details:
-            - Source: [${SOURCE_LABEL}](${TS_REF_URL})
-            - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
-            - Latest workflow run: ${RUN_URL}
+          Details:
+          - Source: [${SOURCE_LABEL}](${TS_REF_URL})
+          - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
+          - Latest workflow run: ${RUN_URL}
 
-            ${CC_LINE}"
+          ${CC_LINE}"
           else
             # Build a "compare" URL that opens the PR creation page pre-filled.
             # GitHub Actions cannot create PRs directly (org policy), so the
@@ -294,28 +307,28 @@ jobs:
             PR_TITLE_ENC=$(jq -rn --arg t "$TITLE" '$t|@uri')
             PR_BODY_RAW="Fixes ${ISSUE_LINK}
 
-            Source: ${TS_REF_URL}
+          Source: ${TS_REF_URL}
 
-            Automated regeneration of TypeSpec Python generated tests from ${SOURCE_LABEL}.
+          Automated regeneration of TypeSpec Python generated tests from ${SOURCE_LABEL}.
 
-            - Workflow run: ${RUN_URL}
+          - Workflow run: ${RUN_URL}
 
-            This PR was auto-generated."
+          This PR was auto-generated."
             PR_BODY_ENC=$(jq -rn --arg b "$PR_BODY_RAW" '$b|@uri')
             COMPARE_URL="${SERVER}/${REPO}/compare/main...${BRANCH}?quick_pull=1&title=${PR_TITLE_ENC}&body=${PR_BODY_ENC}"
 
             ISSUE_BODY="GitHub Actions is not permitted to create pull requests in this repository, so this issue tracks the regeneration instead.
 
-            **Click the link below to open a pre-filled PR:**
+          **Click the link below to open a pre-filled PR:**
 
-            👉 [Create pull request from \`${BRANCH}\`](${COMPARE_URL})
+          👉 [Create pull request from \`${BRANCH}\`](${COMPARE_URL})
 
-            Details:
-            - Source: [${SOURCE_LABEL}](${TS_REF_URL})
-            - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
-            - Latest workflow run: ${RUN_URL}
+          Details:
+          - Source: [${SOURCE_LABEL}](${TS_REF_URL})
+          - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
+          - Latest workflow run: ${RUN_URL}
 
-            ${CC_LINE}"
+          ${CC_LINE}"
           fi
 
           # Write the final body onto the tracking issue (whether reused or
