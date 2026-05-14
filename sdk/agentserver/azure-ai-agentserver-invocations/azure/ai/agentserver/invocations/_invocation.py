@@ -6,6 +6,7 @@
 Provides the invocation protocol endpoints and handler decorators
 as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
+import contextlib
 import contextvars
 import inspect
 import logging
@@ -294,7 +295,7 @@ class InvocationAgentServerHost(AgentServerHost):
         request.state.user_isolation_key = request.headers.get("x-agent-user-isolation-key", "")
         request.state.chat_isolation_key = request.headers.get("x-agent-chat-isolation-key", "")
 
-        with self.request_context(request.headers):
+        with self.request_context(request.headers) if hasattr(self, "request_context") else contextlib.nullcontext():
             # Propagate invocation/session IDs as W3C baggage so downstream
             # services receive them automatically via the baggage header.
             # Extract incoming baggage from request headers (only baggage, not traceparent)
@@ -366,7 +367,7 @@ class InvocationAgentServerHost(AgentServerHost):
         raw_session_id = request.query_params.get("agent_session_id", "")
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
 
-        with self.request_context(request.headers):
+        with self.request_context(request.headers) if hasattr(self, "request_context") else contextlib.nullcontext():
             _ensure_log_filter()
             inv_token = _invocation_id_var.set(invocation_id)
             session_token = _session_id_var.set(session_id)

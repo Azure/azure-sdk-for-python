@@ -11,6 +11,7 @@ logic lives in :class:`_ResponseOrchestrator`.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import contextlib
 import contextvars
 import logging
 import threading
@@ -619,7 +620,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=_project_id))
 
         # Attach incoming W3C trace context (no span created).
-        with self._host.request_context(request.headers):
+        with self._host.request_context(request.headers) if hasattr(self._host, "request_context") else contextlib.nullcontext():
             # Set W3C baggage per spec §7.3
             # Extract incoming baggage from request headers (only baggage, not traceparent)
             # to preserve parent-child span relationships while inheriting caller's baggage entries.
