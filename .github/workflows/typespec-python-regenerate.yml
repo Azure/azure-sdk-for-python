@@ -1,25 +1,14 @@
 name: TypeSpec Python Regenerate Tests
 
 on:
-  # Trigger when eng/emitter-package.json is updated on main (branded emitter version bump)
+  # Trigger when eng/emitter-package.json is updated on main (uses default microsoft/typespec@main)
   push:
     branches: [main]
     paths:
       - "eng/emitter-package.json"
-  # Allow manual triggering with emitter choice
+  # Allow manual triggering
   workflow_dispatch:
     inputs:
-      emitter:
-        description: "Which emitter to regenerate with"
-        required: true
-        type: choice
-        options:
-          - "branded (@azure-tools/typespec-python)"
-          - "unbranded (@typespec/http-client-python)"
-        default: "branded (@azure-tools/typespec-python)"
-      version:
-        description: "Emitter version (leave empty to use version from emitter-package.json for branded, or latest for unbranded)"
-        required: false
       typespec_ref:
         description: "Git ref (branch, tag, or SHA) of typespec repo to build regeneration infrastructure from"
         required: false
@@ -49,33 +38,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Determine emitter to use
-        id: emitter-info
+      - name: Resolve TypeSpec repo/ref
+        id: typespec-info
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "push" ]; then
-            # Push trigger: always use branded emitter at version from emitter-package.json
-            EMITTER_NAME="@azure-tools/typespec-python"
-            VERSION=$(jq -r '.dependencies["@azure-tools/typespec-python"]' eng/emitter-package.json)
-            echo "Push trigger: using branded emitter @ $VERSION"
-          elif [[ "${{ github.event.inputs.emitter }}" == branded* ]]; then
-            EMITTER_NAME="@azure-tools/typespec-python"
-            VERSION="${{ github.event.inputs.version }}"
-            if [ -z "$VERSION" ]; then
-              VERSION=$(jq -r '.dependencies["@azure-tools/typespec-python"]' eng/emitter-package.json)
-              echo "No version specified, using emitter-package.json version: $VERSION"
-            fi
-          else
-            EMITTER_NAME="@typespec/http-client-python"
-            VERSION="${{ github.event.inputs.version }}"
-            if [ -z "$VERSION" ]; then
-              VERSION=$(npm view @typespec/http-client-python version 2>/dev/null)
-              echo "No version specified, using latest npm version: $VERSION"
-            fi
-          fi
-          echo "emitter_name=$EMITTER_NAME" >> $GITHUB_OUTPUT
-          echo "emitter_version=$VERSION" >> $GITHUB_OUTPUT
-          echo "::notice::Regenerating with $EMITTER_NAME@$VERSION"
+          REPO="${{ github.event.inputs.typespec_repo || 'microsoft/typespec' }}"
+          REF="${{ github.event.inputs.typespec_ref || 'main' }}"
+          echo "typespec_repo=$REPO" >> $GITHUB_OUTPUT
+          echo "typespec_ref=$REF" >> $GITHUB_OUTPUT
+          echo "::notice::Regenerating from ${REPO}@${REF}"
 
       - name: Checkout microsoft/typespec
         # SHA corresponds to actions/checkout@v6
@@ -84,8 +55,8 @@ jobs:
         # in regenerate.ts, which breaks unbranded package name detection
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          repository: ${{ github.event.inputs.typespec_repo || 'microsoft/typespec' }}
-          ref: ${{ github.event.inputs.typespec_ref || 'main' }}
+          repository: ${{ steps.typespec-info.outputs.typespec_repo }}
+          ref: ${{ steps.typespec-info.outputs.typespec_ref }}
           path: _typespec
           fetch-depth: 0
 
@@ -107,14 +78,6 @@ jobs:
           npm install --ignore-scripts
           npm run build
 
-      - name: Install target emitter
-        working-directory: _typespec/packages/http-client-python
-        run: |
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
-          echo "Installing $EMITTER@$VERSION"
-          npm install "${EMITTER}@${VERSION}"
-
       - name: Prepare Python environment
         working-directory: _typespec/packages/http-client-python
         run: |
@@ -124,7 +87,6 @@ jobs:
       - name: Regenerate tests
         working-directory: _typespec/packages/http-client-python
         run: |
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
           npm run regenerate
 
       - name: Copy regenerated tests
@@ -143,8 +105,7 @@ jobs:
         id: push-changes
         run: |
           set -euo pipefail
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
+          REPO_REF="${{ steps.typespec-info.outputs.typespec_repo }}@${{ steps.typespec-info.outputs.typespec_ref }}"
           BRANCH="auto/typespec-python-regenerate"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -157,7 +118,7 @@ jobs:
           fi
 
           git checkout -B "$BRANCH"
-          git commit -m "[typespec-python] Regenerate tests with ${EMITTER}@${VERSION}"
+          git commit -m "[typespec-python] Regenerate tests from ${REPO_REF}"
           git push origin "$BRANCH" --force
           echo "has_changes=true" >> $GITHUB_OUTPUT
           echo "branch=$BRANCH" >> $GITHUB_OUTPUT
@@ -169,14 +130,15 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          EMITTER="${{ steps.emitter-info.outputs.emitter_name }}"
-          VERSION="${{ steps.emitter-info.outputs.emitter_version }}"
+          TS_REPO="${{ steps.typespec-info.outputs.typespec_repo }}"
+          TS_REF="${{ steps.typespec-info.outputs.typespec_ref }}"
           BRANCH="${{ steps.push-changes.outputs.branch }}"
           REPO="${{ github.repository }}"
           SERVER="${{ github.server_url }}"
           RUN_URL="${SERVER}/${REPO}/actions/runs/${{ github.run_id }}"
+          TS_REF_URL="${SERVER}/${TS_REPO}/tree/${TS_REF}"
 
-          TITLE="[typespec-python] Regenerate tests with ${EMITTER}@${VERSION}"
+          TITLE="[typespec-python] Regenerate tests from ${TS_REPO}@${TS_REF}"
 
           # Build a "compare" URL that opens the PR creation page pre-filled.
           # GitHub Actions cannot create PRs directly (org policy), so the
@@ -184,7 +146,7 @@ jobs:
           PR_TITLE_ENC=$(jq -rn --arg t "$TITLE" '$t|@uri')
           PR_BODY_RAW="Automated regeneration of TypeSpec Python generated tests.
 
-          - Emitter: \`${EMITTER}@${VERSION}\`
+          - Source: \`${TS_REPO}@${TS_REF}\` (${TS_REF_URL})
           - Workflow run: ${RUN_URL}
 
           This PR was auto-generated."
@@ -198,7 +160,7 @@ jobs:
           👉 [Create pull request from \`${BRANCH}\`](${COMPARE_URL})
 
           Details:
-          - Emitter: \`${EMITTER}@${VERSION}\`
+          - Source: [\`${TS_REPO}@${TS_REF}\`](${TS_REF_URL})
           - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
           - Workflow run: ${RUN_URL}
 
