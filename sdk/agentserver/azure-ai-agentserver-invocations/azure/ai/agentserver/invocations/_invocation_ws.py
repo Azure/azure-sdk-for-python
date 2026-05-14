@@ -182,7 +182,8 @@ class _WSHandlerMixin(_MixinBase):
         :return: The original function (unmodified).
         :rtype: Callable[[WebSocket], Awaitable[None]]
         :raises TypeError: If *fn* is not an ``async def`` function, or its
-            signature is not callable with exactly one positional argument.
+            signature cannot be invoked with a single positional argument
+            (the WebSocket).
         """
         if not inspect.iscoroutinefunction(fn):
             raise TypeError(
@@ -196,8 +197,9 @@ class _WSHandlerMixin(_MixinBase):
             sig.bind(None)  # one positional placeholder for the WebSocket
         except TypeError as exc:
             raise TypeError(
-                f"ws_handler must accept exactly one positional argument "
-                f"(the WebSocket); got {fn.__qualname__}{inspect.signature(fn)}"
+                f"ws_handler signature must be invocable with a single "
+                f"positional argument (the WebSocket); got "
+                f"{fn.__qualname__}{inspect.signature(fn)}"
             ) from exc
         if self._ws_fn is not None:
             # Match the HTTP decorator's last-write-wins semantics, but log
@@ -298,17 +300,40 @@ class _WSHandlerMixin(_MixinBase):
             )
             return
 
-        close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
-        await self._finalize_session(
-            websocket=websocket,
-            span_ctx=span_ctx,
-            otel_span=otel_span,
-            session_id=session_id,
-            start_ns=start_ns,
-            close_code=close_code,
-            handler_exc=handler_exc,
-            error_code="internal_error" if handler_exc is not None else None,
-        )
+        close_code: int = InvocationsWSConstants.CLOSE_NORMAL
+        handler_exc: Optional[BaseException] = None
+        try:
+            close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
+        except BaseException as exc:  # pylint: disable=broad-exception-caught
+            # ``_invoke_user_handler`` catches ``Exception`` but not
+            # ``BaseException`` (notably ``asyncio.CancelledError``).  Capture
+            # the exception so the ``finally`` block below can record it on
+            # the span, then re-raise via ``finally`` so cancellation is
+            # never swallowed.
+            close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+            handler_exc = exc
+            raise
+        finally:
+            # Always finalize \u2014 emits the close-event log line, ends the
+            # span, and best-effort closes the socket \u2014 even when the
+            # handler raised a ``BaseException`` like ``CancelledError``.
+            error_code: Optional[str]
+            if handler_exc is None:
+                error_code = None
+            elif isinstance(handler_exc, Exception):
+                error_code = "internal_error"
+            else:
+                error_code = "cancelled"
+            await self._finalize_session(
+                websocket=websocket,
+                span_ctx=span_ctx,
+                otel_span=otel_span,
+                session_id=session_id,
+                start_ns=start_ns,
+                close_code=close_code,
+                handler_exc=handler_exc,
+                error_code=error_code,
+            )
 
     async def _invoke_user_handler(
         self, websocket: WebSocket, session_id: str,
@@ -324,8 +349,10 @@ class _WSHandlerMixin(_MixinBase):
             is set only for an *unhandled* exception (so the caller can map
             it to span error events and a 1011 close).
         :rtype: tuple[int, Optional[BaseException]]
-        :raises RuntimeError: If no handler is registered (programmer error;
-            the public ``_ws_endpoint`` checks ``_ws_fn`` before calling).
+        :raises RuntimeError: If no handler is registered. The route is only
+            registered after ``ws_handler`` is decorated, so reaching this
+            method without a handler indicates a programming error in the
+            SDK itself rather than a user misconfiguration.
         """
         ws_fn = self._ws_fn
         if ws_fn is None:

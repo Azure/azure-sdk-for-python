@@ -142,14 +142,12 @@ async def _stream_tokens(
         await websocket.send_json({"type": "done", "id": prompt_id})
     except asyncio.CancelledError:
         # Best-effort: tell the client we honoured their cancel.  Suppress
-        # any send error (the socket may already be closed) and re-raise
-        # so the caller observes the cancellation.  ``BaseException``
-        # rather than ``Exception`` so we don't accidentally swallow a
-        # nested cancellation while emitting the courtesy frame.
-        try:
+        # ordinary send errors (the socket may already be closed) and re-raise
+        # so the caller observes the cancellation.  We deliberately do NOT
+        # catch ``BaseException`` here so process-level signals
+        # (``KeyboardInterrupt`` / ``SystemExit``) propagate normally.
+        with contextlib.suppress(Exception):
             await websocket.send_json({"type": "cancelled", "id": prompt_id})
-        except BaseException:  # pylint: disable=broad-exception-caught
-            pass
         raise
     except Exception as exc:  # pylint: disable=broad-exception-caught
         # Surface generation errors to the client as a structured frame so

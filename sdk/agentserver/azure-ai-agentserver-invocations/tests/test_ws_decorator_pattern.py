@@ -83,7 +83,7 @@ def test_ws_handler_rejects_zero_arg_coroutine():
     """A 0-arg coroutine cannot accept the WebSocket — fail at registration."""
     app = InvocationAgentServerHost()
 
-    with pytest.raises(TypeError, match="exactly one positional argument"):
+    with pytest.raises(TypeError, match="single positional argument"):
         @app.ws_handler
         async def bad() -> None:  # type: ignore[misc]
             return
@@ -93,7 +93,7 @@ def test_ws_handler_rejects_two_required_arg_coroutine():
     """A 2-required-arg coroutine cannot be bound with one positional."""
     app = InvocationAgentServerHost()
 
-    with pytest.raises(TypeError, match="exactly one positional argument"):
+    with pytest.raises(TypeError, match="single positional argument"):
         @app.ws_handler
         async def bad(websocket: WebSocket, extra: int) -> None:  # noqa: ARG001
             return

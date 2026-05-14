@@ -6,10 +6,9 @@
 Parity with :mod:`tests.test_multimodal_protocol` — covers binary frames,
 text frames (unicode + large), and JSON frames over WebSocket.
 """
+import pytest
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket
-
-import pytest
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
