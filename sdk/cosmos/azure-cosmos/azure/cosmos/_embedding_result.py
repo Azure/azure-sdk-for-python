@@ -5,11 +5,11 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 
-@dataclass(frozen=True)
+@dataclass
 class EmbeddingResult:
     """Represents the result of an embedding generation call.
 
-    :ivar vectors: The generated ``float32`` embedding vectors, one per input string,
+    :ivar vectors: The generated embedding vectors, one per input string,
         in the same order as the inputs.
     :vartype vectors: List[List[float]]
     :ivar total_tokens: The total number of tokens consumed by the embedding call.
