@@ -15,7 +15,9 @@ the user handler with:
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
   handler exceptions;
 * a structured close-event log line and OTel span attributes carrying
-  ``azure.ai.agentserver.invocations_ws.session_id``, ``azure.ai.agentserver.invocations_ws.close_code``, and ``azure.ai.agentserver.invocations_ws.duration_ms``.
+  ``azure.ai.agentserver.invocations_ws.session_id``,
+  ``azure.ai.agentserver.invocations_ws.close_code``, and
+  ``azure.ai.agentserver.invocations_ws.duration_ms``.
 """
 
 import inspect
@@ -34,6 +36,8 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     end_span,
 )
 
+from ._constants import InvocationsWSConstants
+
 # Type-checking only base so the mixin reads as an ``AgentServerHost`` to
 # mypy / pyright (resolves ``self.config``, ``self.request_span``,
 # ``self.router``) without coupling the runtime hierarchy.  At runtime the
@@ -44,8 +48,6 @@ if TYPE_CHECKING:
     _MixinBase = AgentServerHost
 else:
     _MixinBase = object
-
-from ._constants import InvocationsWSConstants
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -438,8 +440,9 @@ class _WSHandlerMixin(_MixinBase):
     ) -> None:
         """Record close-event span attributes and emit a structured log line.
 
-        The log record carries the ``azure.ai.agentserver.invocations_ws.session_id``, ``azure.ai.agentserver.invocations_ws.close_code``,
-        and ``azure.ai.agentserver.invocations_ws.duration_ms`` fields listed in the spec via the standard
+        The log record carries the ``azure.ai.agentserver.invocations_ws.session_id``,
+        ``azure.ai.agentserver.invocations_ws.close_code``, and
+        ``azure.ai.agentserver.invocations_ws.duration_ms`` fields listed in the spec via the standard
         ``logging`` ``extra`` dict — a structured-logging formatter or an
         OTel logging bridge can pick them up directly without having to
         parse the message.
