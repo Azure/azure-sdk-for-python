@@ -10,13 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccountProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The service account provisioning mode for this Active Directory connector."""
-
-    AUTOMATIC = "automatic"
-    MANUAL = "manual"
-
-
 class ArcSqlManagedInstanceLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The license type to apply for this managed instance."""
 
@@ -28,13 +21,10 @@ class ArcSqlManagedInstanceLicenseType(str, Enum, metaclass=CaseInsensitiveEnumM
 class ArcSqlServerLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SQL Server license type."""
 
-    UNDEFINED = "Undefined"
+    PAID = "Paid"
     FREE = "Free"
     HADR = "HADR"
-    SERVER_CAL = "ServerCAL"
-    LICENSE_ONLY = "LicenseOnly"
-    PAYG = "PAYG"
-    PAID = "Paid"
+    UNDEFINED = "Undefined"
 
 
 class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -42,7 +32,6 @@ class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
-    REGISTERED = "Registered"
     UNKNOWN = "Unknown"
 
 
@@ -80,24 +69,6 @@ class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_LOCATION = "CustomLocation"
 
 
-class HostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of host for Azure Arc SQL Server."""
-
-    AZURE_VIRTUAL_MACHINE = "Azure Virtual Machine"
-    AZURE_VM_WARE_VIRTUAL_MACHINE = "Azure VMWare Virtual Machine"
-    AZURE_KUBERNETES_SERVICE = "Azure Kubernetes Service"
-    AWS_VM_WARE_VIRTUAL_MACHINE = "AWS VMWare Virtual Machine"
-    AWS_KUBERNETES_SERVICE = "AWS Kubernetes Service"
-    GCP_VM_WARE_VIRTUAL_MACHINE = "GCP VMWare Virtual Machine"
-    GCP_KUBERNETES_SERVICE = "GCP Kubernetes Service"
-    CONTAINER = "Container"
-    VIRTUAL_MACHINE = "Virtual Machine"
-    PHYSICAL_SERVER = "Physical Server"
-    AWS_VIRTUAL_MACHINE = "AWS Virtual Machine"
-    GCP_VIRTUAL_MACHINE = "GCP Virtual Machine"
-    OTHER = "Other"
-
-
 class Infrastructure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The infrastructure the data controller is running on."""
 
@@ -116,6 +87,12 @@ class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM = "system"
 
 
+class SqlManagedInstanceSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the SKU."""
+
+    V_CORE = "vCore"
+
+
 class SqlManagedInstanceSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The pricing tier for the instance."""
 
@@ -126,10 +103,6 @@ class SqlManagedInstanceSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SqlVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SQL Server version."""
 
-    SQL_SERVER2012 = "SQL Server 2012"
-    SQL_SERVER2014 = "SQL Server 2014"
-    SQL_SERVER2016 = "SQL Server 2016"
-    SQL_SERVER2017 = "SQL Server 2017"
     SQL_SERVER2019 = "SQL Server 2019"
-    SQL_SERVER2022 = "SQL Server 2022"
-    UNKNOWN = "Unknown"
+    SQL_SERVER2017 = "SQL Server 2017"
+    SQL_SERVER2016 = "SQL Server 2016"
