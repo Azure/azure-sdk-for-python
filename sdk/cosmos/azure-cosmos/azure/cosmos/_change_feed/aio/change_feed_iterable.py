@@ -21,9 +21,10 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Any, Optional, Callable, Tuple, Awaitable, Union
+from typing import Any, List, Optional, Callable, Tuple, Awaitable, Union
 
 from azure.core.async_paging import AsyncPageIterator
+from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._change_feed.aio.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
@@ -44,6 +45,7 @@ class ChangeFeedIterable(AsyncPageIterator):
         fetch_function=Optional[Callable[[dict[str, Any]], Awaitable[Tuple[list[dict[str, Any]], dict[str, Any]]]]],
         collection_link=Optional[str],
         continuation_token=Optional[str],
+        response_headers_list: Optional[List[CaseInsensitiveDict]] = None,
     ) -> None:
         """Instantiates a ChangeFeedIterable for non-client side partitioning queries.
 
@@ -52,6 +54,10 @@ class ChangeFeedIterable(AsyncPageIterator):
              :param fetch_function: The fetch function.
              :param collection_link: The collection resource link.
              :param continuation_token: The continuation token passed in from by_page
+             :param response_headers_list: Optional shared list used to capture per-page response
+                 headers in a thread-safe way. When provided, the iterable's wrapping
+                 ``CosmosAsyncItemPaged`` exposes these headers to callers via
+                 ``get_response_headers()`` / ``get_last_response_headers()``.
         """
 
         self._client = client
@@ -60,6 +66,7 @@ class ChangeFeedIterable(AsyncPageIterator):
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._change_feed_fetcher: Optional[Union[ChangeFeedFetcherV1, ChangeFeedFetcherV2]] = None
+        self._response_headers_list = response_headers_list
 
         if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
@@ -95,7 +102,16 @@ class ChangeFeedIterable(AsyncPageIterator):
             block: list[dict[str, Any]]
     ) -> Tuple[Optional[str], list[dict[str, Any]]]:
         continuation: Optional[str] = None
-        if self._client.last_response_headers:
+        # Prefer the per-iterable captured headers (thread-safe) when a capture list was
+        # provided. Only fall back to the shared client.last_response_headers for backwards
+        # compatibility when no header capture list was provided. If a capture list was
+        # provided but is empty (no fetch yet), keep continuation as None rather than
+        # consulting the shared client headers, which could expose a stale etag from an
+        # unrelated operation.
+        if self._response_headers_list is not None:
+            if self._response_headers_list:
+                continuation = self._response_headers_list[-1].get('etag')
+        elif self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
 
         if block:
@@ -135,14 +151,16 @@ class ChangeFeedIterable(AsyncPageIterator):
                 self._client,
                 self._collection_link,
                 self._options,
-                self._fetch_function
+                self._fetch_function,
+                response_headers_list=self._response_headers_list,
             )
         else:
             self._change_feed_fetcher = ChangeFeedFetcherV2(
                 self._client,
                 self._collection_link,
                 self._options,
-                self._fetch_function
+                self._fetch_function,
+                response_headers_list=self._response_headers_list,
             )
 
     def _validate_change_feed_state_context(self, change_feed_state_context: dict[str, Any]) -> None:

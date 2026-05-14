@@ -3,6 +3,7 @@
 ### 4.16.0b3 (Unreleased)
 
 #### Features Added
+* Added `get_response_headers()` and `get_last_response_headers()` methods to the `CosmosItemPaged` and `CosmosAsyncItemPaged` objects returned by `query_items_change_feed()`, allowing thread-safe access to response headers (including the `etag` continuation token) without relying on internal `client_connection.last_response_headers`.
 
 #### Breaking Changes
 

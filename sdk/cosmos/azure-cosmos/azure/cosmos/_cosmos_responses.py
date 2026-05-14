@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
+import inspect
 from typing import Any, AsyncIterator, Iterator, Iterable, List, Mapping, Optional
 
 from azure.core.async_paging import AsyncItemPaged
@@ -17,6 +18,17 @@ class CosmosItemPaged(ItemPaged[dict[str, Any]]):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
+        # Some page iterators (e.g., ChangeFeedIterable) populate the shared response headers
+        # list themselves rather than relying on __QueryFeed. When the iterator class accepts a
+        # ``response_headers_list`` parameter, forward the same list reference so the iterator
+        # and the wrapping pager observe the same captured headers.
+        page_iterator_class = kwargs.get('page_iterator_class')
+        if (
+            self._response_headers_list is not None
+            and page_iterator_class is not None
+            and _iterator_accepts_response_headers_list(page_iterator_class)
+        ):
+            kwargs['response_headers_list'] = self._response_headers_list
         super().__init__(*args, **kwargs)
         self._query_iterable: Optional[Any] = None
 
@@ -64,6 +76,13 @@ class CosmosAsyncItemPaged(AsyncItemPaged[dict[str, Any]]):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._response_headers_list: Optional[List[CaseInsensitiveDict]] = kwargs.pop('response_headers_list', None)
+        page_iterator_class = kwargs.get('page_iterator_class')
+        if (
+            self._response_headers_list is not None
+            and page_iterator_class is not None
+            and _iterator_accepts_response_headers_list(page_iterator_class)
+        ):
+            kwargs['response_headers_list'] = self._response_headers_list
         super().__init__(*args, **kwargs)
         self._query_iterable: Optional[Any] = None
 
@@ -133,3 +152,16 @@ class CosmosList(list[dict[str, Any]]):
         :rtype: ~azure.core.CaseInsensitiveDict
         """
         return self._response_headers.copy()
+
+
+def _iterator_accepts_response_headers_list(page_iterator_class: Any) -> bool:
+    """Return True if the given page iterator class declares a ``response_headers_list`` parameter.
+
+    Used by ``CosmosItemPaged`` / ``CosmosAsyncItemPaged`` to decide whether to forward the
+    shared header capture list down to the iterator (e.g., ``ChangeFeedIterable``) without
+    breaking iterators that do not accept the kwarg (e.g., ``QueryIterable``).
+    """
+    try:
+        return 'response_headers_list' in inspect.signature(page_iterator_class).parameters
+    except (TypeError, ValueError):
+        return False

@@ -2442,7 +2442,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Optional[Mapping[str, Any]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Queries documents change feed in a collection.
 
         :param str collection_link: The link to the document collection.
@@ -2452,7 +2452,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             Query Iterable of Documents.
         :rtype:
-            query_iterable.QueryIterable
+            CosmosAsyncItemPaged
 
         """
 
@@ -2472,7 +2472,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_range_id: Optional[str] = None,
             response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Queries change feed of a resource in a collection.
 
         :param str collection_link: The link to the document collection.
@@ -2484,7 +2484,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             Query Iterable of Documents.
         :rtype:
-            query_iterable.QueryIterable
+            CosmosAsyncItemPaged
 
         """
         if options is None:
@@ -2501,6 +2501,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         resource_key = resource_key_map[resource_type]
         path = base.GetPathFromLink(collection_link, resource_key)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        # Create shared list for thread-safe header capture
+        response_headers_list: list[CaseInsensitiveDict] = []
 
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             if collection_link in self.__container_properties_cache:
@@ -2523,12 +2526,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.last_response_headers,
             )
 
-        return AsyncItemPaged(
+        return CosmosAsyncItemPaged(
             self,
             options,
             fetch_function=fetch_fn,
             collection_link=collection_link,
-            page_iterator_class=ChangeFeedIterable
+            page_iterator_class=ChangeFeedIterable,
+            response_headers_list=response_headers_list,
         )
 
     def QueryOffers(
