@@ -11,10 +11,7 @@ attributes or events to it. These tests use a mock span whose
 ``AssertionError`` if called, ensuring the guards work correctly.
 """
 
-import os
-import json
-import pytest
-from unittest.mock import MagicMock, PropertyMock
+from unittest.mock import MagicMock
 
 from azure.ai.projects.telemetry._ai_project_instrumentor import (
     _AIAgentsInstrumentorPreview,
