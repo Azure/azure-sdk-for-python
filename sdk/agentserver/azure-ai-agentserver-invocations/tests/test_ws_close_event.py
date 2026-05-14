@@ -4,7 +4,7 @@
 """Tests for the structured close-event log line emitted by ``/invocations_ws``.
 
 Parity with :mod:`tests.test_request_id` — verifies the spec's required
-fields (``ws.session_id``, ``ws.close_code``, ``ws.duration_ms``) appear
+fields (``azure.ai.agentserver.invocations_ws.session_id``, ``azure.ai.agentserver.invocations_ws.close_code``, ``azure.ai.agentserver.invocations_ws.duration_ms``) appear
 on every connection close, and that handler exception details are NOT
 leaked into the structured payload.
 """
@@ -14,6 +14,7 @@ import pytest
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 
 from conftest import (
@@ -41,9 +42,9 @@ def test_ws_close_event_log_contains_required_fields(caplog):
     assert matches, "expected a structured close-event log record"
     rec = matches[-1]
 
-    session_id = getattr(rec, "ws.session_id")
-    close_code = getattr(rec, "ws.close_code")
-    duration_ms = getattr(rec, "ws.duration_ms")
+    session_id = getattr(rec, "azure.ai.agentserver.invocations_ws.session_id")
+    close_code = getattr(rec, "azure.ai.agentserver.invocations_ws.close_code")
+    duration_ms = getattr(rec, "azure.ai.agentserver.invocations_ws.duration_ms")
 
     assert isinstance(session_id, str) and session_id  # generated UUID
     assert close_code == InvocationsWSConstants.CLOSE_NORMAL
@@ -52,7 +53,7 @@ def test_ws_close_event_log_contains_required_fields(caplog):
 
 
 def test_ws_close_event_duration_is_non_negative(caplog):
-    """``ws.duration_ms`` is a non-negative integer derived from a monotonic clock."""
+    """``azure.ai.agentserver.invocations_ws.duration_ms`` is a non-negative integer derived from a monotonic clock."""
     app = _make_echo_ws_app()
     client = TestClient(app)
 
@@ -63,7 +64,7 @@ def test_ws_close_event_duration_is_non_negative(caplog):
 
     matches = _records_with_ws_extras(caplog.records)
     assert matches
-    duration_ms = getattr(matches[-1], "ws.duration_ms")
+    duration_ms = getattr(matches[-1], "azure.ai.agentserver.invocations_ws.duration_ms")
     assert isinstance(duration_ms, int)
     assert duration_ms >= 0
 
@@ -85,7 +86,7 @@ def test_ws_close_event_on_handler_exception_records_1011(caplog):
 
     matches = _records_with_ws_extras(caplog.records)
     assert matches
-    assert getattr(matches[-1], "ws.close_code") == 1011
+    assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == 1011
 
 
 # ---------------------------------------------------------------------------
@@ -108,6 +109,54 @@ def test_ws_close_event_log_does_not_leak_exception_message(caplog):
     assert matches
     rec = matches[-1]
     # The structured close-event log line carries only the safe ws.* fields.
-    assert not hasattr(rec, "ws.error_message")
+    assert not hasattr(rec, "azure.ai.agentserver.invocations_ws.error.message")
     # And the message itself does not embed the raw exception text.
     assert "boom" not in rec.getMessage()
+
+
+def test_ws_disconnect_with_code_zero_falls_back_to_normal_close(caplog):
+    """A ``WebSocketDisconnect(code=0)`` is reported as the normal close code (1000).
+
+    Some clients/proxies surface a falsy ``code`` on the disconnect; the SDK
+    treats it as a clean close rather than as 1011.
+    """
+    app = InvocationAgentServerHost()
+
+    @app.ws_handler
+    async def handler(websocket):  # noqa: ARG001
+        raise WebSocketDisconnect(code=0)
+
+    client = TestClient(app)
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with pytest.raises(WebSocketDisconnect):
+            with client.websocket_connect("/invocations_ws") as ws:
+                ws.receive_text()
+
+    matches = _records_with_ws_extras(caplog.records)
+    assert matches
+    assert (
+        getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code")
+        == InvocationsWSConstants.CLOSE_NORMAL
+    )
+
+
+def test_ws_disconnect_with_code_none_falls_back_to_normal_close(caplog):
+    """A ``WebSocketDisconnect(code=None)`` is reported as 1000."""
+    app = InvocationAgentServerHost()
+
+    @app.ws_handler
+    async def handler(websocket):  # noqa: ARG001
+        raise WebSocketDisconnect(code=None)  # type: ignore[arg-type]
+
+    client = TestClient(app)
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with pytest.raises(WebSocketDisconnect):
+            with client.websocket_connect("/invocations_ws") as ws:
+                ws.receive_text()
+
+    matches = _records_with_ws_extras(caplog.records)
+    assert matches
+    assert (
+        getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code")
+        == InvocationsWSConstants.CLOSE_NORMAL
+    )

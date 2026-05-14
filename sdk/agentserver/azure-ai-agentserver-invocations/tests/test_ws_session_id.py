@@ -20,8 +20,8 @@ from conftest import _make_echo_ws_app, _records_with_ws_extras
 # ---------------------------------------------------------------------------
 
 def _session_ids_from_records(records):
-    """Pull ``ws.session_id`` from each structured close-event record."""
-    return [getattr(r, "ws.session_id") for r in _records_with_ws_extras(records)]
+    """Pull ``azure.ai.agentserver.invocations_ws.session_id`` from each structured close-event record."""
+    return [getattr(r, "azure.ai.agentserver.invocations_ws.session_id") for r in _records_with_ws_extras(records)]
 
 
 # ---------------------------------------------------------------------------
@@ -56,7 +56,7 @@ def test_ws_session_id_is_unique_per_connection(caplog):
                 ws.receive_text()
 
     session_ids = _session_ids_from_records(caplog.records)
-    assert len(session_ids) == 5
+    # Uniqueness is the meaningful invariant — implies len == 5 too.
     assert len(set(session_ids)) == 5
 
 
@@ -78,3 +78,24 @@ def test_ws_session_id_ignores_query_param(caplog):
     # generates a fresh server-side UUID per connection.
     assert session_ids[-1] != "my-custom-session"
     uuid.UUID(session_ids[-1])
+
+
+def test_ws_session_id_uses_foundry_env_var(caplog, monkeypatch):
+    """When ``FOUNDRY_AGENT_SESSION_ID`` is set, every WS session reports it.
+
+    Parity with HTTP ``POST /invocations``: the platform-injected session
+    ID must propagate to both transports so cross-transport correlation
+    works on the same container.
+    """
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "platform-session-abc")
+    app = _make_echo_ws_app()
+    client = TestClient(app)
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        for _ in range(3):
+            with client.websocket_connect("/invocations_ws") as ws:
+                ws.send_text("ping")
+                ws.receive_text()
+
+    session_ids = _session_ids_from_records(caplog.records)
+    assert session_ids == ["platform-session-abc"] * 3

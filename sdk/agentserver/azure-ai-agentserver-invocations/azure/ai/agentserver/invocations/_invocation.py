@@ -133,9 +133,12 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         is served at ``GET /invocations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
     :param ws_ping_interval: Seconds between WebSocket protocol Ping frames
-        on ``/invocations_ws``.  ``None`` (default) selects 30 s; ``0``
-        disables keep-alive.  Configured on the underlying Hypercorn
-        server so the framing is opcode 0x9 / 0xA, not application JSON.
+        on ``/invocations_ws``. ``None`` (default) reads the
+        ``WS_KEEPALIVE_INTERVAL`` environment variable (auto-injected by
+        AgentService into hosted-agent containers); when neither is set,
+        keep-alive is disabled. ``0`` disables keep-alive. Configured on
+        the underlying Hypercorn server so the framing is opcode 0x9 /
+        0xA, not application JSON.
     :type ws_ping_interval: Optional[float]
     """
 
@@ -182,7 +185,6 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 methods=["POST"],
                 name="cancel_invocation",
             ),
-            self._build_ws_route(self._ws_endpoint),
         ]
 
         # Merge with any routes from sibling mixins via cooperative init
@@ -211,8 +213,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         Hypercorn sends WS protocol Ping frames every
         ``websocket_ping_interval`` seconds on every active WebSocket
         connection — exactly the keep-alive the ``invocations_ws`` spec
-        requires.  ``ws_ping_interval=0`` leaves the default
-        ``None`` (disabled).
+        requires.  ``ws_ping_interval=0`` explicitly disables keep-alive
+        by setting the attribute to ``None``.
+
+        ``azure-ai-agentserver-core`` pins ``hypercorn>=0.17.0``, which
+        is guaranteed to expose ``websocket_ping_interval``.
 
         :param host: Network interface to bind.
         :type host: str
@@ -222,20 +227,10 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         :rtype: hypercorn.config.Config
         """
         config = super()._build_hypercorn_config(host, port)
-        if self._ws_ping_interval and self._ws_ping_interval > 0:
-            try:
-                # ``websocket_ping_interval`` is a float-or-None on
-                # Hypercorn ≥0.14; assigning a positive float enables
-                # protocol-level Ping frames.
-                config.websocket_ping_interval = self._ws_ping_interval  # type: ignore[attr-defined]
-            except Exception:  # pylint: disable=broad-exception-caught
-                # Hypercorn <0.14 does not support per-server WS ping —
-                # leave the default and warn so operators can upgrade.
-                logger.warning(
-                    "Hypercorn does not support websocket_ping_interval; "
-                    "WebSocket keep-alive will be best-effort.",
-                    exc_info=True,
-                )
+        # Positive float enables protocol-level Ping; None disables.
+        config.websocket_ping_interval = (  # type: ignore[attr-defined]
+            self._ws_ping_interval if self._ws_ping_interval > 0 else None
+        )
         return config
 
     # ------------------------------------------------------------------

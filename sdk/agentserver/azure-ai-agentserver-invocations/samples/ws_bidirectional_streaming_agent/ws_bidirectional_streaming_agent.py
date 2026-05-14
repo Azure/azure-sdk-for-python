@@ -18,12 +18,14 @@ The handler runs two groups of coroutines in parallel:
 
 .. note::
 
-   Connection keep-alive is **not** an application concern: the SDK
-   configures Hypercorn to send WebSocket protocol-level Ping frames
-   (opcode 0x9) every ``ws_ping_interval`` seconds (default 30 s).  That
-   is enough to survive Azure APIM / Azure Load Balancer's ~4-minute idle
-   timeout without your handler having to push any application-level
-   heartbeat messages of its own.
+   Connection keep-alive is **not** an application concern: the SDK can
+   ask Hypercorn to send WebSocket protocol-level Ping frames
+   (opcode 0x9) every ``ws_ping_interval`` seconds (disabled by default;
+   enable by setting ``WS_KEEPALIVE_INTERVAL`` or by passing
+   ``InvocationAgentServerHost(ws_ping_interval=<seconds>)``).  When
+   enabled, that is enough to survive Azure APIM / Azure Load Balancer's
+   ~4-minute idle timeout without your handler having to push any
+   application-level heartbeat messages of its own.
 
 Wire protocol (JSON over text frames)
 -------------------------------------
@@ -49,14 +51,13 @@ Run it::
 Drive it with the ``websockets`` CLI; the server keeps streaming tokens
 for each prompt while you type the next one::
 
+    pip install websockets
     python -m websockets ws://localhost:8088/invocations_ws
     > {"type": "prompt", "id": "p1", "text": "Tell me a story"}
     > {"type": "prompt", "id": "p2", "text": "And another"}
     > {"type": "cancel", "id": "p1"}
     > {"type": "bye"}
 """
-from __future__ import annotations
-
 import asyncio
 import contextlib
 import json
@@ -70,12 +71,16 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 
-logger = logging.getLogger("ws_bidirectional_streaming_agent")
+logger = logging.getLogger("azure.ai.agentserver")
 
 app = InvocationAgentServerHost()
 
 
 # Simulated tokens — in production these would come from a model.
+# For real-world streaming patterns, see the streaming examples in
+# ``azure-ai-inference`` and ``azure-ai-projects``:
+#   https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples
+#   https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples
 _SIMULATED_TOKENS = [
     "Once", " upon", " a", " time", ",", " in", " a", " land",
     " of", " full", "-", "duplex", " sockets", ",", " a", " server",
@@ -100,18 +105,18 @@ async def handle_invoke(request: Request) -> Response:
 # WebSocket — true bidirectional streaming.
 # ---------------------------------------------------------------------------
 
-async def _generate_tokens(text: str) -> AsyncGenerator[str, None]:
+async def _generate_tokens(_text: str) -> AsyncGenerator[str, None]:
     """Yield simulated tokens with a small per-token delay.
 
     Replace this with a real streaming model call (e.g. Azure OpenAI) in
     production.
 
-    :param text: The user prompt (unused in this demo).
-    :type text: str
+    :param _text: The user prompt (unused in this demo — leading underscore
+        signals "intentionally ignored" to linters).
+    :type _text: str
     :return: An async generator of token strings.
     :rtype: AsyncGenerator[str, None]
     """
-    del text  # demo: ignore prompt content
     for token in _SIMULATED_TOKENS:
         await asyncio.sleep(_TOKEN_DELAY_S)
         yield token
@@ -138,10 +143,23 @@ async def _stream_tokens(
     except asyncio.CancelledError:
         # Best-effort: tell the client we honoured their cancel.  Suppress
         # any send error (the socket may already be closed) and re-raise
-        # so the caller observes the cancellation.
-        with contextlib.suppress(Exception):
+        # so the caller observes the cancellation.  ``BaseException``
+        # rather than ``Exception`` so we don't accidentally swallow a
+        # nested cancellation while emitting the courtesy frame.
+        try:
             await websocket.send_json({"type": "cancelled", "id": prompt_id})
+        except BaseException:  # pylint: disable=broad-exception-caught
+            pass
         raise
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        # Surface generation errors to the client as a structured frame so
+        # the connection survives a single-prompt failure (parity with the
+        # ``error`` reply the reader emits on bad input).
+        with contextlib.suppress(Exception):
+            await websocket.send_json(
+                {"type": "error", "id": prompt_id, "message": str(exc)},
+            )
+        logger.exception("_stream_tokens failed for prompt %s", prompt_id)
 
 
 async def _reader(
@@ -188,6 +206,9 @@ async def _reader(
                     name=f"stream-{prompt_id}",
                 )
                 in_flight[prompt_id] = task
+                # ``k=prompt_id`` captures the current value via a default
+                # argument so the callback removes the right entry even if
+                # ``prompt_id`` is rebound by a later iteration of the loop.
                 task.add_done_callback(
                     lambda _t, k=prompt_id: in_flight.pop(k, None),
                 )
@@ -197,6 +218,13 @@ async def _reader(
                 task = in_flight.get(prompt_id)
                 if task is not None and not task.done():
                     task.cancel()
+                    # Give the task a brief window to finish its courtesy
+                    # ``cancelled`` frame before we move on — prevents the
+                    # next prompt from racing against an in-flight close.
+                    with contextlib.suppress(
+                        asyncio.TimeoutError, asyncio.CancelledError, Exception,
+                    ):
+                        await asyncio.wait_for(task, timeout=1.0)
 
             elif msg_type == "bye":
                 return

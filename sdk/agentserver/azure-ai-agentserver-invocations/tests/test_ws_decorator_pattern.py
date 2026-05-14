@@ -11,7 +11,6 @@ from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 
 
 # ---------------------------------------------------------------------------
@@ -61,32 +60,56 @@ def test_ws_handler_default_is_none():
     assert app._ws_fn is None  # noqa: SLF001
 
 
-def test_ws_handler_last_registration_wins():
-    """Re-applying ``@ws_handler`` replaces the previous function."""
+def test_ws_handler_last_registration_wins(caplog):
+    """Re-applying ``@ws_handler`` replaces the previous function and warns."""
+    import logging
+
     app = InvocationAgentServerHost()
 
     @app.ws_handler
     async def first(websocket: WebSocket) -> None:  # noqa: ARG001
         return
 
-    @app.ws_handler
-    async def second(websocket: WebSocket) -> None:  # noqa: ARG001
-        return
+    with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
+        @app.ws_handler
+        async def second(websocket: WebSocket) -> None:  # noqa: ARG001
+            return
 
     assert app._ws_fn is second  # noqa: SLF001
+    assert any("overwriting previously registered handler" in r.message for r in caplog.records)
+
+
+def test_ws_handler_rejects_zero_arg_coroutine():
+    """A 0-arg coroutine cannot accept the WebSocket — fail at registration."""
+    app = InvocationAgentServerHost()
+
+    with pytest.raises(TypeError, match="exactly one positional argument"):
+        @app.ws_handler
+        async def bad() -> None:  # type: ignore[misc]
+            return
+
+
+def test_ws_handler_rejects_two_required_arg_coroutine():
+    """A 2-required-arg coroutine cannot be bound with one positional."""
+    app = InvocationAgentServerHost()
+
+    with pytest.raises(TypeError, match="exactly one positional argument"):
+        @app.ws_handler
+        async def bad(websocket: WebSocket, extra: int) -> None:  # noqa: ARG001
+            return
 
 
 # ---------------------------------------------------------------------------
 # Missing handler behaviour (parity with test_missing_invoke_handler_returns_501)
 # ---------------------------------------------------------------------------
 
-def test_ws_with_no_handler_registered_closes_with_1011():
-    """If no @ws_handler is registered, the SDK closes with 1011."""
+def test_ws_with_no_handler_registered_rejects_upgrade():
+    """If no @ws_handler is registered the route is absent and the upgrade is rejected."""
     app = InvocationAgentServerHost()
     client = TestClient(app)
 
-    with pytest.raises(WebSocketDisconnect) as excinfo:
+    # Starlette has no WebSocketRoute matching /invocations_ws — the upgrade
+    # is rejected before any handler-level close code can be sent.
+    with pytest.raises(WebSocketDisconnect):
         with client.websocket_connect("/invocations_ws"):
             pass
-
-    assert excinfo.value.code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR
