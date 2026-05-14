@@ -15,7 +15,7 @@ DESCRIPTION:
     When context is provided, it additionally evaluates groundedness and context coverage.
 
 USAGE:
-    python sample_evaluations_quality_grader.py
+    python sample_quality_grader.py
 
     Before running the sample:
 
