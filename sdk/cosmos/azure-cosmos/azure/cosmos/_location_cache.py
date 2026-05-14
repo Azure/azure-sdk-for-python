@@ -58,10 +58,50 @@ class RegionalRoutingContext(object):
     def __str__(self):
         return "Primary: " + self.primary_endpoint
 
-def get_regional_routing_contexts_by_loc(new_locations: list[dict[str, str]]):
+def _is_local_emulator_endpoint(endpoint: Optional[str]) -> bool:
+    """Return True if the endpoint refers to the local Cosmos DB emulator.
+
+    Hosts ``localhost`` and ``127.0.0.1`` are treated as emulator endpoints.
+    """
+    if not endpoint:
+        return False
+    try:
+        hostname = urlparse(endpoint).hostname
+    except ValueError:
+        return False
+    return hostname in ("localhost", "127.0.0.1")
+
+
+def _rewrite_endpoint_with_default(default_endpoint: str, regional_endpoint: str) -> str:
+    """Rewrite ``regional_endpoint``'s scheme/host/port to match ``default_endpoint``.
+
+    The Cosmos DB emulator advertises its internal host/port (for example
+    ``127.0.0.1:8081``) in the database account topology. When the emulator
+    is running in a container with a remapped port, that advertised endpoint
+    is unreachable from the host. Rewriting it to the user-supplied endpoint
+    preserves connectivity while keeping the rest of the URI (path, etc.) intact.
+    """
+    try:
+        default_parsed = urlparse(default_endpoint)
+        regional_parsed = urlparse(regional_endpoint)
+    except ValueError:
+        return regional_endpoint
+    if not default_parsed.netloc:
+        return regional_endpoint
+    return regional_parsed._replace(
+        scheme=default_parsed.scheme or regional_parsed.scheme,
+        netloc=default_parsed.netloc,
+    ).geturl()
+
+
+def get_regional_routing_contexts_by_loc(
+    new_locations: list[dict[str, str]],
+    default_endpoint: Optional[str] = None,
+):
     # construct from previous object
     regional_routing_contexts_by_location: OrderedDict[str, RegionalRoutingContext] = collections.OrderedDict()
     parsed_locations = []
+    rewrite_to_default = _is_local_emulator_endpoint(default_endpoint)
 
     for new_location in new_locations:
         # if name in new_location and same for database account endpoint
@@ -71,6 +111,12 @@ def get_regional_routing_contexts_by_loc(new_locations: list[dict[str, str]]):
                 continue
             try:
                 region_uri = new_location["databaseAccountEndpoint"]
+                if rewrite_to_default and default_endpoint is not None:
+                    # When targeting the local emulator the server can advertise an
+                    # internal host/port (e.g. 127.0.0.1:8081) that is unreachable
+                    # from the caller (common with Docker port remapping). Reuse
+                    # the user-supplied endpoint host/port so connections succeed.
+                    region_uri = _rewrite_endpoint_with_default(default_endpoint, region_uri)
                 parsed_locations.append(new_location["name"])
                 regional_object = RegionalRoutingContext(region_uri)
                 regional_routing_contexts_by_location.update({new_location["name"]: regional_object})
@@ -466,15 +512,18 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             self.enable_multiple_writable_locations = enable_multiple_writable_locations
 
         if self.connection_policy.EnableEndpointDiscovery:
+            default_endpoint = self.default_regional_routing_context.get_primary()
             if read_locations:
                 (self.account_read_regional_routing_contexts_by_location,
                  self.account_locations_by_read_endpoints,
-                 self.account_read_locations) = get_regional_routing_contexts_by_loc(read_locations)
+                 self.account_read_locations) = get_regional_routing_contexts_by_loc(
+                    read_locations, default_endpoint)
 
             if write_locations:
                 (self.account_write_regional_routing_contexts_by_location,
                  self.account_locations_by_write_endpoints,
-                 self.account_write_locations) = get_regional_routing_contexts_by_loc(write_locations)
+                 self.account_write_locations) = get_regional_routing_contexts_by_loc(
+                    write_locations, default_endpoint)
 
         # if preferred locations is empty and the default endpoint is a global endpoint,
         # we should use the read locations from gateway as effective preferred locations
