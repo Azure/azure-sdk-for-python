@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-02-02-preview/ManagedClustersAbortOperation.json
+# x-ms-original-file: 2026-03-01/ManagedClustersAbortOperation.json
 if __name__ == "__main__":
     main()

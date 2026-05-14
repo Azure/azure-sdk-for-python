@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-02-preview/AgentPoolsGetAgentPoolAvailableVersions.json
+# x-ms-original-file: 2026-03-01/AgentPoolsGetAgentPoolAvailableVersions.json
 if __name__ == "__main__":
     main()
