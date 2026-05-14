@@ -8,7 +8,7 @@ from typing import Any, Mapping
 
 from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.core._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     ERROR_DETAIL,
     ERROR_SOURCE,
 )
@@ -280,12 +280,22 @@ MAX_ERROR_DETAIL_LENGTH: int = 2048
 
 
 def is_platform_error(exc: BaseException) -> bool:
-    """Check whether *exc* has been tagged as a platform infrastructure error."""
+    """Check whether *exc* has been tagged as a platform infrastructure error.
+
+    :param exc: The exception to check.
+    :type exc: BaseException
+    :return: True if the exception is tagged as a platform error.
+    :rtype: bool
+    """
     return getattr(exc, PLATFORM_ERROR_TAG, False) is True
 
 
 def tag_platform_error(exc: BaseException) -> None:
-    """Tag *exc* as a platform infrastructure error."""
+    """Tag *exc* as a platform infrastructure error.
+
+    :param exc: The exception to tag.
+    :type exc: BaseException
+    """
     setattr(exc, PLATFORM_ERROR_TAG, True)
 
 
@@ -293,6 +303,11 @@ def format_error_detail(exc: BaseException) -> str:
     """Format an exception for the ``x-platform-error-detail`` header.
 
     Uses ``repr(exc)`` and truncates to :data:`MAX_ERROR_DETAIL_LENGTH`.
+
+    :param exc: The exception to format.
+    :type exc: BaseException
+    :return: The formatted error detail string.
+    :rtype: str
     """
     detail = repr(exc)
     if len(detail) > MAX_ERROR_DETAIL_LENGTH:
@@ -306,7 +321,17 @@ def _apply_error_source_headers(
     error_source: str,
     error_detail: str | None = None,
 ) -> dict[str, str]:
-    """Return a new dict with error source classification headers merged in."""
+    """Return a new dict with error source classification headers merged in.
+
+    :param headers: Base headers to merge into.
+    :type headers: dict[str, str]
+    :param error_source: The error source value (user/platform/upstream).
+    :type error_source: str
+    :param error_detail: Optional detail string for platform errors.
+    :type error_detail: str or None
+    :return: A new dict containing the original headers plus error source headers.
+    :rtype: dict[str, str]
+    """
     merged = {**headers, ERROR_SOURCE: error_source}
     if error_detail:
         merged[ERROR_DETAIL] = error_detail

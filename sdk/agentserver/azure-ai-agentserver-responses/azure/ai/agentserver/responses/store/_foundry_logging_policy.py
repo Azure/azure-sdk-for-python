@@ -15,7 +15,7 @@ import time
 import urllib.parse
 from typing import cast
 
-from azure.ai.agentserver.core._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     APIM_REQUEST_ID,
     CHAT_ISOLATION_KEY,
     CLIENT_REQUEST_ID,

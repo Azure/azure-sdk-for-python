@@ -28,7 +28,7 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     set_current_span,
     trace_stream,
 )
-from azure.ai.agentserver.core._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     CHAT_ISOLATION_KEY,
     CLIENT_HEADER_PREFIX,
     SESSION_ID,

@@ -29,7 +29,7 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     set_current_span,
     trace_stream,
 )
-from azure.ai.agentserver.core._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     CHAT_ISOLATION_KEY,
     ERROR_DETAIL,
     ERROR_SOURCE,
@@ -55,7 +55,17 @@ def _apply_error_source_headers(
     error_source: str,
     error_detail: Optional[str] = None,
 ) -> dict[str, str]:
-    """Return a new dict with error source classification headers merged in."""
+    """Return a new dict with error source classification headers merged in.
+
+    :param headers: Base headers to merge into.
+    :type headers: dict[str, str]
+    :param error_source: The error source value (user/platform/upstream).
+    :type error_source: str
+    :param error_detail: Optional detail string for platform errors.
+    :type error_detail: str or None
+    :return: A new dict containing the original headers plus error source headers.
+    :rtype: dict[str, str]
+    """
     merged = {**headers, ERROR_SOURCE: error_source}
     if error_detail:
         merged[ERROR_DETAIL] = error_detail
@@ -63,7 +73,13 @@ def _apply_error_source_headers(
 
 
 def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
-    """Classify an exception: platform-tagged → (platform, detail), else → (upstream, None)."""
+    """Classify an exception: platform-tagged → (platform, detail), else → (upstream, None).
+
+    :param exc: The exception to classify.
+    :type exc: BaseException
+    :return: A tuple of (error_source, error_detail).
+    :rtype: tuple[str, str or None]
+    """
     if getattr(exc, _PLATFORM_ERROR_TAG, False) is True:
         detail = repr(exc)
         if len(detail) > _MAX_ERROR_DETAIL_LENGTH:

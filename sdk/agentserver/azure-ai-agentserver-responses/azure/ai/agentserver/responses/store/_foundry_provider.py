@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core._platform_headers import CHAT_ISOLATION_KEY, USER_ISOLATION_KEY
+from azure.ai.agentserver.core._platform_headers import CHAT_ISOLATION_KEY, USER_ISOLATION_KEY  # pylint: disable=import-error,no-name-in-module
 from azure.ai.agentserver.responses.hosting._validation import PLATFORM_ERROR_TAG
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
