@@ -59,9 +59,9 @@ class TestWebpubsubReverseProxyAsync(WebpubsubAsyncTest):
     @pytest.mark.asyncio
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_reverse_proxy_call(self, webpubsub_connection_string, webpubsub_reverse_proxy_endpoint):
+    async def test_reverse_proxy_call(self, webpubsub_endpoint, webpubsub_reverse_proxy_endpoint):
         client = self.create_client(
-            connection_string=webpubsub_connection_string,
+            endpoint=webpubsub_endpoint,
             hub="hub",
             logging_enable=True,
             reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint,
