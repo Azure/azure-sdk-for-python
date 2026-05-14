@@ -3,6 +3,7 @@
 ### 4.16.0b3 (Unreleased)
 
 #### Features Added
+* Added the `EmbeddingProvider` Protocol and `EmbeddingResult` dataclass defining the contract the SDK will use to generate vector embeddings for `GenerateEmbeddings(...)` query expressions.
 
 #### Breaking Changes
 
