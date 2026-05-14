@@ -155,7 +155,7 @@ def test_tracing_disabled_by_default():
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
-    app = InvocationAgentServerHost()
+    app = InvocationAgentServerHost(configure_observability=None)
 
     @app.invoke_handler
     async def handle(request: Request) -> Response:
@@ -255,7 +255,7 @@ def test_no_tracing_when_no_endpoints():
     env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
     env.pop("OTEL_EXPORTER_OTLP_ENDPOINT", None)
     with patch.dict(os.environ, env, clear=True):
-        app = InvocationAgentServerHost()
+        app = InvocationAgentServerHost(configure_observability=None)
 
     @app.invoke_handler
     async def handle(request: Request) -> Response:

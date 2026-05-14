@@ -27,7 +27,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _build_client(hook: InMemoryCreateSpanHook | None = None) -> TestClient:
     options = ResponsesServerOptions(create_span_hook=hook)
-    app = ResponsesAgentServerHost(options=options)
+    app = ResponsesAgentServerHost(options=options, configure_observability=None)
     app.response_handler(_noop_handler)
     return TestClient(app)
 
@@ -300,7 +300,7 @@ def test_tracing__framework_span_parented_under_incoming_traceparent() -> None:
         return _events()
 
     options = ResponsesServerOptions()
-    app = ResponsesAgentServerHost(options=options)
+    app = ResponsesAgentServerHost(options=options, configure_observability=None)
     app.response_handler(_span_handler)
     client = TestClient(app)
 

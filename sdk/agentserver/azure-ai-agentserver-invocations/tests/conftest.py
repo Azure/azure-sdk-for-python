@@ -5,6 +5,7 @@
 import json
 import os
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -16,6 +17,18 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+
+
+@pytest.fixture(autouse=True, scope="session")
+def _prevent_distro_setup():
+    """Prevent microsoft-opentelemetry distro from contaminating global OTel
+    state during tests.  Without this, CI environments that have the distro
+    installed and APPLICATIONINSIGHTS_CONNECTION_STRING set would trigger
+    ``use_microsoft_opentelemetry()`` on the first server construction,
+    installing a global TracerProvider that breaks later traceparent-
+    propagation tests."""
+    with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
+        yield
 
 
 # ---------------------------------------------------------------------------
@@ -115,6 +128,7 @@ SAMPLE_OPENAPI_SPEC: dict[str, Any] = {
 
 def _make_echo_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost whose invoke handler echoes the request body."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
 
     @app.invoke_handler
@@ -127,6 +141,7 @@ def _make_echo_agent(**kwargs: Any) -> InvocationAgentServerHost:
 
 def _make_streaming_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost whose invoke handler returns 3 JSON chunks."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
 
     @app.invoke_handler
@@ -142,6 +157,7 @@ def _make_streaming_agent(**kwargs: Any) -> InvocationAgentServerHost:
 
 def _make_async_storage_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost with get/cancel handlers and in-memory store."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
     store: dict[str, Any] = {}
 
@@ -178,7 +194,7 @@ def _make_async_storage_agent(**kwargs: Any) -> InvocationAgentServerHost:
 
 def _make_validated_agent() -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost with OpenAPI spec."""
-    app = InvocationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
+    app = InvocationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC, configure_observability=None)
 
     @app.invoke_handler
     async def handle(request: Request) -> Response:
@@ -190,6 +206,7 @@ def _make_validated_agent() -> InvocationAgentServerHost:
 
 def _make_failing_agent(**kwargs: Any) -> InvocationAgentServerHost:
     """Create an InvocationAgentServerHost whose handler raises ValueError."""
+    kwargs.setdefault("configure_observability", None)
     app = InvocationAgentServerHost(**kwargs)
 
     @app.invoke_handler
