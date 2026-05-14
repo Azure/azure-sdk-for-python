@@ -38,7 +38,7 @@ from ._context import TaskContext
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import TaskRun
-from ._stream import StreamHandler
+from ._stream import StreamHandler, StreamHandlerFactory
 
 if TYPE_CHECKING:
     from ._models import TaskStatus
@@ -223,6 +223,11 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
     :type store_input: bool
     :param ephemeral: Whether to delete on terminal exit.
     :type ephemeral: bool
+    :param stream_handler_factory: Optional factory callable that receives a
+        ``task_id`` and returns a :class:`StreamHandler`.  When set, crash-
+        recovery and resume paths use this factory instead of defaulting to
+        :class:`QueueStreamHandler`.
+    :type stream_handler_factory: Callable[[str], StreamHandler] | None
     """
 
     __slots__ = (
@@ -237,6 +242,7 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
         "retry",
         "steerable",
         "max_pending",
+        "stream_handler_factory",
     )
 
     def __init__(
@@ -252,6 +258,7 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
         retry: RetryPolicy | None = None,
         steerable: bool = False,
         max_pending: int = 10,
+        stream_handler_factory: StreamHandlerFactory | None = None,
     ) -> None:
         self.name = name
         self.title = title
@@ -264,6 +271,7 @@ class DurableTaskOptions:  # pylint: disable=too-many-instance-attributes
         self.retry = retry
         self.steerable = steerable
         self.max_pending = max_pending
+        self.stream_handler_factory = stream_handler_factory
 
     def __repr__(self) -> str:
         return (
@@ -692,6 +700,7 @@ class DurableTask(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
+                    stream_handler=stream_handler,
                 )
             # No task exists — create new
             return await manager.create_and_start(
@@ -735,6 +744,7 @@ class DurableTask(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
+                    stream_handler=stream_handler,
                 )
             )
 
@@ -756,6 +766,7 @@ class DurableTask(Generic[Input, Output]):
                             input_type=self._input_type,
                             opts=self._opts,
                             retry=resolved_retry,
+                            stream_handler=stream_handler,
                         )
                 # Normal stale recovery
                 return await manager._start_existing_task(  # pylint: disable=protected-access
@@ -767,6 +778,7 @@ class DurableTask(Generic[Input, Output]):
                     input_type=self._input_type,
                     opts=self._opts,
                     retry=resolved_retry,
+                    stream_handler=stream_handler,
                 )
             if self._opts.steerable:
                 # Steering path: append input to queue, signal cancel, return ack
@@ -900,6 +912,7 @@ def durable_task(
     retry: RetryPolicy | None = ...,
     steerable: bool = ...,
     max_pending: int = ...,
+    stream_handler_factory: StreamHandlerFactory | None = ...,
 ) -> Callable[
     [Callable[[TaskContext[Input]], Awaitable[Output]]],
     DurableTask[Input, Output],
@@ -920,6 +933,7 @@ def durable_task(
     retry: RetryPolicy | None = None,
     steerable: bool = False,
     max_pending: int = 10,
+    stream_handler_factory: StreamHandlerFactory | None = None,
 ) -> Any:
     """Turn an async function into a crash-resilient durable task.
 
@@ -954,6 +968,11 @@ def durable_task(
         calling ``start()`` on an ``in_progress`` task queues the input and
         signals cancel instead of raising ``TaskConflictError``. Default False.
     :keyword max_pending: Maximum number of queued steering inputs. Default 10.
+    :keyword stream_handler_factory: Optional factory callable that receives a
+        ``task_id`` and returns a :class:`StreamHandler`. When set, crash-recovery
+        and resume paths use this factory instead of defaulting to
+        :class:`QueueStreamHandler`. Call-site ``stream_handler=`` overrides the
+        factory for that specific call.
     :return: A ``DurableTask[Input, Output]`` wrapper.
     :rtype: Any
     """
@@ -994,6 +1013,7 @@ def durable_task(
             retry=retry,
             steerable=steerable,
             max_pending=max_pending,
+            stream_handler_factory=stream_handler_factory,
         )
 
         task = DurableTask(

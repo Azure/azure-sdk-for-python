@@ -839,6 +839,35 @@ async for chunk in task_run:
     print(chunk, end="")
 ```
 
+#### stream_handler_factory (recommended for production)
+
+A call-site `stream_handler=` only covers the call that passed it. If the task
+crashes and is recovered (or resumes from suspension), there is no caller — the
+framework recovers automatically. Without a factory, recovery falls back to the
+default `QueueStreamHandler`, silently losing your custom transport.
+
+Set `stream_handler_factory` on the decorator to ensure recovery and resume
+paths always construct the correct handler:
+
+```python
+@durable_task(
+    name="generate_report",
+    stream_handler_factory=lambda task_id: RedisStreamHandler(
+        redis, channel=f"stream:{task_id}"
+    ),
+)
+async def generate_report(ctx: TaskContext[str]) -> str:
+    ...
+```
+
+The factory receives the `task_id` so it can create a handler scoped to the
+task. Resolution order:
+
+1. **Call-site `stream_handler=`** — highest priority (one-off override)
+2. **Decorator `stream_handler_factory`** — used for fresh starts, recovery,
+   and resume when no call-site handler is provided
+3. **Default `QueueStreamHandler`** — when neither is set
+
 **Key rules:**
 
 - `get()` must raise `StopAsyncIteration` after `close()` is called and all
@@ -1025,6 +1054,7 @@ The `@durable_task` decorator accepts these options (defined in `DurableTaskOpti
 | `timeout` | `timedelta \| None` | `None` | Execution timeout. When elapsed, `ctx.cancel` is set cooperatively. If the function does not exit, the lease eventually expires and the task is recovered. |
 | `steerable` | `bool` | `False` | Enable steering. When True, `.start()` on an `in_progress` task queues the input instead of raising `TaskConflictError`. See [Steering](#steering). |
 | `max_pending` | `int` | `10` | Maximum queued steering inputs. Excess raises `SteeringQueueFull`. |
+| `stream_handler_factory` | `Callable[[str], StreamHandler] \| None` | `None` | Factory that receives `task_id` and returns a `StreamHandler`. Ensures crash-recovery and resume paths use the correct handler instead of defaulting to `QueueStreamHandler`. See [Custom Stream Handlers](#custom-stream-handlers). |
 
 > **Source provenance** is auto-stamped by the framework on every task. It records
 > which function created the task and the SDK version. Source is not user-overridable;

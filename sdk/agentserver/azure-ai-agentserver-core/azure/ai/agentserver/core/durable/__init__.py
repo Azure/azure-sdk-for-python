@@ -60,7 +60,7 @@ from ._models import TaskInfo, TaskStatus
 from ._result import TaskResult
 from ._retry import RetryPolicy
 from ._run import Suspended, TaskRun
-from ._stream import QueueStreamHandler, StreamHandler
+from ._stream import QueueStreamHandler, StreamHandler, StreamHandlerFactory
 
 __all__ = [
     "durable_task",
@@ -69,6 +69,7 @@ __all__ = [
     "QueueStreamHandler",
     "RetryPolicy",
     "StreamHandler",
+    "StreamHandlerFactory",
     "TaskContext",
     "TaskMetadata",
     "TaskResult",

@@ -465,3 +465,150 @@ class TestProtocolConformance:
     def test_failing_put_handler_is_stream_handler(self):
         handler = FailingPutHandler()
         assert isinstance(handler, StreamHandler)
+
+
+# ---------------------------------------------------------------------------
+# stream_handler_factory on decorator (recovery uses factory)
+# ---------------------------------------------------------------------------
+
+
+class TestStreamHandlerFactory:
+    """Verify stream_handler_factory on the decorator is used for recovery."""
+
+    @pytest.mark.asyncio
+    async def test_factory_used_on_fresh_start(self, tmp_path):
+        """When no call-site handler provided, factory creates the handler."""
+        manager, mgr_mod = await _setup_manager(tmp_path)
+        try:
+            created_handlers: list[RecordingHandler] = []
+
+            def _factory(task_id: str) -> RecordingHandler:
+                h = RecordingHandler()
+                created_handlers.append(h)
+                return h
+
+            @durable_task(
+                name="t_factory_fresh",
+                stream_handler_factory=_factory,
+            )
+            async def my_task(ctx: TaskContext[str]) -> str:
+                await ctx.stream("x")
+                return "ok"
+
+            run = await my_task.start(task_id="factory-1", input="hi")
+            collected = []
+            async for chunk in run:
+                collected.append(chunk)
+            result = await run.result()
+
+            assert result.output == "ok"
+            assert collected == ["x"]
+            assert len(created_handlers) == 1
+            assert created_handlers[0].items_put == ["x"]
+            assert created_handlers[0].close_called is True
+        finally:
+            await _teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_call_site_handler_overrides_factory(self, tmp_path):
+        """Call-site stream_handler takes precedence over factory."""
+        manager, mgr_mod = await _setup_manager(tmp_path)
+        try:
+            factory_called = False
+
+            def _factory(task_id: str) -> RecordingHandler:
+                nonlocal factory_called
+                factory_called = True
+                return RecordingHandler()
+
+            @durable_task(
+                name="t_factory_override",
+                stream_handler_factory=_factory,
+            )
+            async def my_task(ctx: TaskContext[str]) -> str:
+                await ctx.stream("y")
+                return "ok"
+
+            call_site_handler = RecordingHandler()
+            run = await my_task.start(
+                task_id="override-1",
+                input="hi",
+                stream_handler=call_site_handler,
+            )
+            collected = []
+            async for chunk in run:
+                collected.append(chunk)
+            await run.result()
+
+            assert collected == ["y"]
+            assert call_site_handler.items_put == ["y"]
+            assert factory_called is False
+        finally:
+            await _teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_factory_used_on_recovery(self, tmp_path):
+        """On crash recovery, factory creates the handler, not QueueStreamHandler."""
+        manager, mgr_mod = await _setup_manager(tmp_path)
+        try:
+            created_handlers: list[RecordingHandler] = []
+
+            def _factory(task_id: str) -> RecordingHandler:
+                h = RecordingHandler()
+                created_handlers.append(h)
+                return h
+
+            @durable_task(
+                name="t_factory_recovery",
+                stream_handler_factory=_factory,
+                ephemeral=False,
+            )
+            async def my_task(ctx: TaskContext[str]) -> str:
+                if ctx.entry_mode == "recovered":
+                    await ctx.stream("recovered-chunk")
+                    return "recovered"
+                await ctx.stream("fresh-chunk")
+                return "fresh"
+
+            # First run — fresh
+            run1 = await my_task.start(task_id="recovery-1", input="hi")
+            collected1 = []
+            async for chunk in run1:
+                collected1.append(chunk)
+            result1 = await run1.result()
+            assert result1.output == "fresh"
+            assert collected1 == ["fresh-chunk"]
+            assert len(created_handlers) == 1
+
+            # Simulate crash: force task back to in_progress + stale
+            # Write directly to the local file store to backdate updated_at
+            import json
+
+            task_file = (
+                Path(str(tmp_path)) / "test-agent" / "test-session" / "recovery-1.json"
+            )
+            with open(task_file, "r") as f:
+                data = json.load(f)
+            data["status"] = "in_progress"
+            data["updated_at"] = "2000-01-01T00:00:00+00:00"
+            with open(task_file, "w") as f:
+                json.dump(data, f)
+
+            # Recovery — should use factory, not QueueStreamHandler
+            run2 = await my_task.start(
+                task_id="recovery-1",
+                input="hi",
+                stale_timeout=1.0,
+            )
+            collected2 = []
+            async for chunk in run2:
+                collected2.append(chunk)
+            result2 = await run2.result()
+
+            assert result2.output == "recovered"
+            assert collected2 == ["recovered-chunk"]
+            # Factory should have been called twice total (fresh + recovery)
+            assert len(created_handlers) == 2
+            assert created_handlers[1].items_put == ["recovered-chunk"]
+        finally:
+            await _teardown_manager(manager, mgr_mod)

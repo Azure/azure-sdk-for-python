@@ -14,6 +14,7 @@ and preserves the existing in-memory, single-consumer behavior.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+from collections.abc import Callable
 from typing import Any, Protocol, runtime_checkable
 
 
@@ -102,3 +103,10 @@ class QueueStreamHandler:
         :class:`StopAsyncIteration`.
         """
         await self._queue.put(self._SENTINEL)
+
+
+#: Type alias for a factory that creates a :class:`StreamHandler` from a
+#: ``task_id``.  Used on the decorator to ensure crash-recovery and resume
+#: paths construct the correct handler instead of defaulting to
+#: :class:`QueueStreamHandler`.
+StreamHandlerFactory = Callable[[str], StreamHandler]

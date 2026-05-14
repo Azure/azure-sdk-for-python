@@ -535,7 +535,13 @@ class DurableTaskManager:
 
         # Build context
         cancel_event = asyncio.Event()
-        handler = stream_handler or QueueStreamHandler()
+        # Resolve handler: call-site > factory > default
+        if stream_handler is not None:
+            handler = stream_handler
+        elif opts.stream_handler_factory is not None:
+            handler = opts.stream_handler_factory(task_id)
+        else:
+            handler = QueueStreamHandler()
         metadata = TaskMetadata(
             flush_callback=self._make_metadata_flush(task_id),
             flush_interval=5.0,
@@ -714,6 +720,7 @@ class DurableTaskManager:
         input_type: type[Any] | None = None,
         opts: DurableTaskOptions | None = None,
         retry: RetryPolicy | None = None,
+        stream_handler: StreamHandler | None = None,
     ) -> TaskRun[Any]:
         """Transition an existing task to in_progress and execute it.
 
@@ -736,6 +743,9 @@ class DurableTaskManager:
         :paramtype opts: DurableTaskOptions | None
         :keyword retry: Retry policy.
         :paramtype retry: RetryPolicy | None
+        :keyword stream_handler: Custom stream handler. If ``None``, falls
+            back to ``opts.stream_handler_factory`` or :class:`QueueStreamHandler`.
+        :paramtype stream_handler: StreamHandler | None
         :return: A TaskRun handle.
         :rtype: TaskRun[Any]
         """
@@ -774,7 +784,13 @@ class DurableTaskManager:
 
         # Build context for execution
         cancel_event = asyncio.Event()
-        handler = QueueStreamHandler()
+        # Resolve handler: call-site > factory > default
+        if stream_handler is not None:
+            handler = stream_handler
+        elif resolved_opts.stream_handler_factory is not None:
+            handler = resolved_opts.stream_handler_factory(task_id)
+        else:
+            handler = QueueStreamHandler()
         existing_metadata = (
             task_info.payload.get("metadata", {}) if task_info.payload else {}
         )
