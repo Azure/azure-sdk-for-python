@@ -2,6 +2,8 @@
 
 ## 2.0.0b2 (2026-05-14)
 
+### Other Changes
+
   - Regenerated with latest code generator tool
 
 ## 1.0.1 (2026-05-14)
