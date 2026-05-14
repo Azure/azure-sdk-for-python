@@ -184,6 +184,19 @@ jobs:
             SOURCE_LABEL="microsoft/typespec@main"
           fi
 
+          # Determine assignees. For manual (workflow_dispatch) triggers,
+          # assign to the user who triggered the run. For automatic triggers
+          # (push), fall back to the default maintainers.
+          EVENT_NAME="${{ github.event_name }}"
+          ACTOR="${{ github.actor }}"
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "$ACTOR" ]; then
+            ASSIGNEES="$ACTOR"
+            CC_LINE="cc @${ACTOR}"
+          else
+            ASSIGNEES="iscai-msft,msyyc"
+            CC_LINE="cc @iscai-msft @msyyc"
+          fi
+
           TITLE="[typespec-python] Regenerate tests from ${SOURCE_LABEL}"
 
           # Check whether an open PR already exists from this branch to main.
@@ -206,7 +219,7 @@ jobs:
             - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
             - Latest workflow run: ${RUN_URL}
 
-            cc @iscai-msft @msyyc"
+            ${CC_LINE}"
           else
             # Build a "compare" URL that opens the PR creation page pre-filled.
             # GitHub Actions cannot create PRs directly (org policy), so the
@@ -233,7 +246,7 @@ jobs:
             - Branch: [\`${BRANCH}\`](${SERVER}/${REPO}/tree/${BRANCH})
             - Latest workflow run: ${RUN_URL}
 
-            cc @iscai-msft @msyyc"
+            ${CC_LINE}"
           fi
 
           # Reuse an existing open tracking issue if one exists (matched by title).
@@ -245,13 +258,13 @@ jobs:
             # Re-apply expected label and assignees in case they were removed from the existing issue.
             gh issue edit "$EXISTING_ISSUE" --body "$ISSUE_BODY" \
               --add-label "typespec-python" \
-              --add-assignee iscai-msft,msyyc
+              --add-assignee "$ASSIGNEES"
             ISSUE_NUMBER="$EXISTING_ISSUE"
           else
             echo "Creating new tracking issue"
             ISSUE_NUMBER=$(gh issue create --title "$TITLE" --body "$ISSUE_BODY" \
               --label "typespec-python" \
-              --assignee iscai-msft,msyyc \
+              --assignee "$ASSIGNEES" \
               --json number --jq '.number')
             echo "Created issue #$ISSUE_NUMBER"
           fi
