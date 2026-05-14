@@ -3,7 +3,7 @@
 ### 4.16.0b3 (Unreleased)
 
 #### Features Added
-* Added the `EmbeddingProvider` Protocol and `EmbeddingResult` dataclass defining the contract the SDK will use to generate vector embeddings for `GenerateEmbeddings(...)` query expressions.
+* Added the `EmbeddingProvider` Protocol and `EmbeddingResult` dataclass defining the contract the SDK will use to generate vector embeddings for `GenerateEmbeddings(...)` query expressions. See [46902](https://github.com/Azure/azure-sdk-for-python/pull/46902)
 
 #### Breaking Changes
 
