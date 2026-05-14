@@ -10,7 +10,7 @@ name = "azure-mgmt-trafficmanager"
 authors = [
     { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Azure Trafficmanager Management Client Library for Python"
+description = "Microsoft Azure Traffic Manager Management Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
