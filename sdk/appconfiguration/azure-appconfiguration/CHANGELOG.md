@@ -1,5 +1,19 @@
 # Release History
 
+## 1.8.2 (Unreleased)
+
+### Features Added
+
+- Added `check_configuration_settings()` method to efficiently check for configuration changes using HEAD requests, returning only headers (ETags) without response bodies.
+- `list_configuration_settings()` and `check_configuration_settings()` now return `ConfigurationSettingPaged` (sync) / `ConfigurationSettingPagedAsync` (async) to expose the `by_page(match_conditions=...)` API and per-page `etag` attribute for change detection.
+- `ConfigurationSettingPaged` and `ConfigurationSettingPagedAsync` are now publicly exported from `azure.appconfiguration`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.8.1 (2026-05-07)
 
 ### Bugs Fixed

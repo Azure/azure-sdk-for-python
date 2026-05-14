@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.filedatalake import CustomerProvidedEncryptionKey, DataLakeServiceClient
-
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 from test_quick_query import DATALAKE_CSV_DATA
+
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.storage.filedatalake import CustomerProvidedEncryptionKey, DataLakeServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_DIRECTORY_PREFIX = 'directory'

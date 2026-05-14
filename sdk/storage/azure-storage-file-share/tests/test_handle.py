@@ -3,14 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import unittest
 
 import pytest
-from azure.storage.fileshare import ShareServiceClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
+
+from azure.storage.fileshare import ShareServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test-share'
@@ -50,7 +53,7 @@ class TestStorageHandle(StorageRecordedTestCase):
 
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-    
+
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
@@ -115,7 +118,7 @@ class TestStorageHandle(StorageRecordedTestCase):
 
         # Make sure the old handle did not appear
         # In other words, the marker worked
-        old_handle_not_present = all([old_handle.id != handle.id for handle in remaining_handles])
+        old_handle_not_present = all(old_handle.id != handle.id for handle in remaining_handles)
         assert old_handle_not_present
 
     @pytest.mark.playback_test_only
