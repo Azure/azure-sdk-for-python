@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/stable/2021-11-01/examples/DeleteDataController.json
+# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/preview/2022-03-01-preview/examples/DeleteDataController.json
 if __name__ == "__main__":
     main()

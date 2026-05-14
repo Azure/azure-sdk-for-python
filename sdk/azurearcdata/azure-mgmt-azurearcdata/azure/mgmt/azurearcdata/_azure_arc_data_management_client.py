@@ -21,8 +21,10 @@ from . import models as _models
 from ._configuration import AzureArcDataManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    ActiveDirectoryConnectorsOperations,
     DataControllersOperations,
     Operations,
+    PostgresInstancesOperations,
     SqlManagedInstancesOperations,
     SqlServerInstancesOperations,
 )
@@ -45,6 +47,11 @@ class AzureArcDataManagementClient:
     :vartype sql_server_instances: azure.mgmt.azurearcdata.operations.SqlServerInstancesOperations
     :ivar data_controllers: DataControllersOperations operations
     :vartype data_controllers: azure.mgmt.azurearcdata.operations.DataControllersOperations
+    :ivar active_directory_connectors: ActiveDirectoryConnectorsOperations operations
+    :vartype active_directory_connectors:
+     azure.mgmt.azurearcdata.operations.ActiveDirectoryConnectorsOperations
+    :ivar postgres_instances: PostgresInstancesOperations operations
+    :vartype postgres_instances: azure.mgmt.azurearcdata.operations.PostgresInstancesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the Azure subscription. Required.
@@ -54,8 +61,8 @@ class AzureArcDataManagementClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2021-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -115,6 +122,12 @@ class AzureArcDataManagementClient:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.data_controllers = DataControllersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.active_directory_connectors = ActiveDirectoryConnectorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.postgres_instances = PostgresInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

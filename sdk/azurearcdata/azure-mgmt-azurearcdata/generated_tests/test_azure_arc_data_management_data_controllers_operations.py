@@ -22,7 +22,7 @@ class TestAzureArcDataManagementDataControllersOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_data_controllers_list_in_subscription(self, resource_group):
         response = self.client.data_controllers.list_in_subscription(
-            api_version="2021-11-01",
+            api_version="2022-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestAzureArcDataManagementDataControllersOperations(AzureMgmtRecordedTestC
     def test_data_controllers_list_in_group(self, resource_group):
         response = self.client.data_controllers.list_in_group(
             resource_group_name=resource_group.name,
-            api_version="2021-11-01",
+            api_version="2022-03-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestAzureArcDataManagementDataControllersOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2021-11-01",
+            api_version="2022-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestAzureArcDataManagementDataControllersOperations(AzureMgmtRecordedTestC
         response = self.client.data_controllers.begin_delete_data_controller(
             resource_group_name=resource_group.name,
             data_controller_name="str",
-            api_version="2021-11-01",
+            api_version="2022-03-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -113,7 +113,7 @@ class TestAzureArcDataManagementDataControllersOperations(AzureMgmtRecordedTestC
         response = self.client.data_controllers.get_data_controller(
             resource_group_name=resource_group.name,
             data_controller_name="str",
-            api_version="2021-11-01",
+            api_version="2022-03-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -121,13 +121,43 @@ class TestAzureArcDataManagementDataControllersOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_data_controllers_patch_data_controller(self, resource_group):
-        response = self.client.data_controllers.patch_data_controller(
+    def test_data_controllers_begin_patch_data_controller(self, resource_group):
+        response = self.client.data_controllers.begin_patch_data_controller(
             resource_group_name=resource_group.name,
             data_controller_name="str",
-            data_controller_resource={"tags": {"str": "str"}},
-            api_version="2021-11-01",
-        )
+            data_controller_resource={
+                "properties": {
+                    "basicLoginInformation": {"password": "str", "username": "str"},
+                    "clusterId": "str",
+                    "extensionId": "str",
+                    "infrastructure": "other",
+                    "k8sRaw": {},
+                    "lastUploadedDate": "2020-02-20 00:00:00",
+                    "logAnalyticsWorkspaceConfig": {"primaryKey": "str", "workspaceId": "str"},
+                    "logsDashboardCredential": {"password": "str", "username": "str"},
+                    "metricsDashboardCredential": {"password": "str", "username": "str"},
+                    "onPremiseProperty": {
+                        "id": "str",
+                        "publicSigningKey": "str",
+                        "signingCertificateThumbprint": "str",
+                    },
+                    "provisioningState": "str",
+                    "uploadServicePrincipal": {
+                        "authority": "str",
+                        "clientId": "str",
+                        "clientSecret": "str",
+                        "tenantId": "str",
+                    },
+                    "uploadWatermark": {
+                        "logs": "2020-02-20 00:00:00",
+                        "metrics": "2020-02-20 00:00:00",
+                        "usages": "2020-02-20 00:00:00",
+                    },
+                },
+                "tags": {"str": "str"},
+            },
+            api_version="2022-03-01-preview",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

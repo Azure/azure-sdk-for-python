@@ -41,6 +41,7 @@ def main():
             },
             "location": "northeurope",
             "properties": {
+                "activeDirectoryInformation": {"keytabInformation": {"keytab": "********"}},
                 "admin": "Admin user",
                 "basicLoginInformation": {"password": "********", "username": "username"},
                 "clusterId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.Kubernetes/connectedClusters/connectedk8s",
@@ -70,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/stable/2021-11-01/examples/CreateOrUpdateSqlManagedInstance.json
+# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/preview/2022-03-01-preview/examples/CreateOrUpdateSqlManagedInstance.json
 if __name__ == "__main__":
     main()

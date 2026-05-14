@@ -40,18 +40,19 @@ def main():
                 "azureDefenderStatus": "Protected",
                 "azureDefenderStatusLastUpdated": "2020-01-02T17:18:19.1234567Z",
                 "collation": "collation",
-                "containerResourceId": "Arc Machine Name",
-                "currentVersion": "2008 R2",
+                "containerResourceId": "Resource id of hosting Arc Machine",
+                "currentVersion": "2012",
                 "edition": "Developer",
+                "hostType": "Physical Server",
                 "instanceName": "name of instance",
                 "licenseType": "Free",
                 "patchLevel": "patchlevel",
                 "productId": "sql id",
-                "status": "Connected",
+                "status": "Registered",
                 "tcpDynamicPorts": "1433",
                 "tcpStaticPorts": "1433",
                 "vCore": "4",
-                "version": "SQL Server 2017",
+                "version": "SQL Server 2012",
             },
             "tags": {"mytag": "myval"},
         },
@@ -59,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/stable/2021-11-01/examples/CreateOrUpdateSqlServerInstance.json
+# x-ms-original-file: specification/azurearcdata/resource-manager/Microsoft.AzureArcData/preview/2022-03-01-preview/examples/CreateOrUpdateSqlServerInstance.json
 if __name__ == "__main__":
     main()
