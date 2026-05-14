@@ -177,7 +177,6 @@ def main(generate_input, generate_output):
                         _LOGGER.info(f"remove additional file when roll back to swagger: {file_path}")
 
             try:
-                is_tsp = "readme.md" not in readme_or_tsp
                 package_total.add(package_name)
                 sdk_code_path = str(Path(sdk_folder, folder_name, package_name))
                 if package_name not in result:
@@ -187,7 +186,7 @@ def main(generate_input, generate_output):
                     package_entry[spec_word] = [readme_or_tsp]
                     package_entry["tagIsStable"] = (
                         sdk_release_type == "stable"
-                        if (is_tsp and sdk_release_type is not None)
+                        if (sdk_release_type is not None)
                         else (not judge_tag_preview(sdk_code_path, package_name))
                     )
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
