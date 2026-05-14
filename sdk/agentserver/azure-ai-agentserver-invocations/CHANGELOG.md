@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- WebSocket protocol support — `InvocationAgentServerHost` now hosts `/invocations_ws` alongside `POST /invocations`. Register the handler with the new `@app.ws_handler` decorator. The route is registered lazily on first decoration, so unconfigured hosts return HTTP 404.
+- WebSocket protocol support — `InvocationAgentServerHost` now hosts `/invocations_ws` alongside `POST /invocations`. Register the handler with the new `@app.ws_handler` decorator. The route is registered lazily on first decoration, so hosts without a registered handler return HTTP 404.
 - WebSocket Ping/Pong keep-alive — disabled by default; enable by passing `InvocationAgentServerHost(ws_ping_interval=<seconds>)` or by setting the `WS_KEEPALIVE_INTERVAL` env var (auto-injected by AgentService into hosted-agent containers). The constructor argument takes precedence; `0` (or unset) disables keep-alive. Wired through to Hypercorn's `websocket_ping_interval`.
 - WebSocket telemetry — structured close-event log line and OpenTelemetry span attributes `azure.ai.agentserver.invocations_ws.{session_id,close_code,duration_ms}`. Session ID honours the `FOUNDRY_AGENT_SESSION_ID` env var for HTTP/WS correlation.
 - New samples: `samples/ws_invoke_agent/` (echo) and `samples/ws_bidirectional_streaming_agent/` (concurrent token streaming with cancel/bye control messages).

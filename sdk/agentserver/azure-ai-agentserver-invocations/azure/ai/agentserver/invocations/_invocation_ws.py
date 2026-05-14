@@ -207,8 +207,8 @@ class _WSHandlerMixin(_MixinBase):
                 getattr(fn, "__qualname__", repr(fn)),
             )
         self._ws_fn = fn
-        # Register the route lazily on first decoration so unconfigured
-        # hosts return HTTP 404 to a WebSocket upgrade rather than
+        # Register the route lazily on first decoration so hosts without a
+        # registered handler return HTTP 404 to a WebSocket upgrade rather than
         # accepting and immediately closing with code 1011.
         self._ensure_ws_route_registered()
         return fn

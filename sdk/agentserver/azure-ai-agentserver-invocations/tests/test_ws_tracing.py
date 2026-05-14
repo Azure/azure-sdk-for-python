@@ -78,7 +78,7 @@ def _make_tracing_ws_server(**kwargs) -> InvocationAgentServerHost:
         os.environ,
         {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
     ):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export"):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.ws_handler
@@ -95,7 +95,7 @@ def _make_failing_tracing_ws_server(**kwargs) -> InvocationAgentServerHost:
         os.environ,
         {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
     ):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export"):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost(**kwargs)
 
     @server.ws_handler
@@ -112,7 +112,7 @@ def _make_tracing_ws_no_handler(**kwargs) -> InvocationAgentServerHost:
         os.environ,
         {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
     ):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export"):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             return InvocationAgentServerHost(**kwargs)
 
 
@@ -439,7 +439,7 @@ def test_ws_and_invoke_spans_coexist():
         os.environ,
         {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"},
     ):
-        with patch("azure.ai.agentserver.core._tracing._setup_distro_export"):
+        with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost()
 
     @server.invoke_handler
