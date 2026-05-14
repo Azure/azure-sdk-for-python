@@ -7,6 +7,7 @@ omitted_paths:
   - sdk/keyvault/azure-keyvault/*
   - doc/*
   - sdk/**/samples/*
+  - sdk/**/.github/skills/*
   - sdk/identity/azure-identity/tests/*
   - sdk/**/tests/perfstress_tests/*
   - sdk/**/tests/perf_tests/*

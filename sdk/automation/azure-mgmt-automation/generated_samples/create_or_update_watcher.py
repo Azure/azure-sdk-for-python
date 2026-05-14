@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,10 +38,13 @@ def main():
         parameters={
             "etag": None,
             "location": None,
+            "name": "MyTestWatcher",
             "properties": {
+                "creationTime": "2016-11-01T04:22:47.7333333-07:00",
                 "description": "This is a test watcher.",
                 "executionFrequencyInSeconds": 60,
                 "lastModifiedBy": None,
+                "lastModifiedTime": "2016-11-01T04:22:47.7333333-07:00",
                 "scriptName": "MyTestWatcherRunbook",
                 "scriptParameters": None,
                 "scriptRunOn": "MyTestHybridWorkerGroup",
@@ -52,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/preview/2020-01-13-preview/examples/createOrUpdateWatcher.json
+# x-ms-original-file: specification/automation/resource-manager/Microsoft.Automation/stable/2015-10-31/examples/createOrUpdateWatcher.json
 if __name__ == "__main__":
     main()

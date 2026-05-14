@@ -158,6 +158,9 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "vally",
+    "regen",
+    "pylintrc",
     "qnas",
     "msedge",
     "spinup",
@@ -295,6 +298,7 @@
     "inotify",
     "ints",
     "iohttp",
+    "iscai",
     "IOHTTP",
     "IOLRO",
     "incompat",
@@ -348,6 +352,7 @@
     "msauth",
     "msrest",
     "msrestazure",
+    "msyyc",
     "MSSQL",
     "MSRC",
     "mutex",
@@ -1971,7 +1976,8 @@
         "wday",
         "mday",
         "deseralize",
-        "astimezone"
+        "astimezone",
+        "Merkle"
       ]
     },
     {
@@ -2203,7 +2209,7 @@
       "words": ["envml", "paginators"]
     },
     {
-      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
+      "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],
