@@ -6,6 +6,9 @@ on:
     branches: [main]
     paths:
       - "eng/emitter-package.json"
+  # Run daily at 22:00 UTC against microsoft/typespec@main
+  schedule:
+    - cron: "0 22 * * *"
   # Allow manual triggering
   workflow_dispatch:
     inputs:
