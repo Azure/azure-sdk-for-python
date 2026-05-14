@@ -21,7 +21,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_generate_uri(self, resource_group):
+    async def test_webhook_generate_uri(self, resource_group):
         response = await self.client.webhook.generate_uri(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -33,7 +33,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_webhook_delete(self, resource_group):
         response = await self.client.webhook.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -46,7 +46,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_webhook_get(self, resource_group):
         response = await self.client.webhook.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -59,7 +59,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_webhook_create_or_update(self, resource_group):
         response = await self.client.webhook.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -81,7 +81,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_webhook_update(self, resource_group):
         response = await self.client.webhook.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -101,7 +101,7 @@ class TestAutomationWebhookOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_webhook_list_by_automation_account(self, resource_group):
         response = self.client.webhook.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",

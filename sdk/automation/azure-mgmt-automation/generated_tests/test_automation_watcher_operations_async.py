@@ -21,7 +21,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_watcher_create_or_update(self, resource_group):
         response = await self.client.watcher.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
@@ -43,7 +43,7 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2020-01-13-preview",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -51,12 +51,12 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_watcher_get(self, resource_group):
         response = await self.client.watcher.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -64,13 +64,13 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_watcher_update(self, resource_group):
         response = await self.client.watcher.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
             parameters={"executionFrequencyInSeconds": 0, "name": "str"},
-            api_version="2020-01-13-preview",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -78,12 +78,12 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_watcher_delete(self, resource_group):
         response = await self.client.watcher.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -91,12 +91,12 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_start(self, resource_group):
+    async def test_watcher_start(self, resource_group):
         response = await self.client.watcher.start(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -104,12 +104,12 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_stop(self, resource_group):
+    async def test_watcher_stop(self, resource_group):
         response = await self.client.watcher.stop(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             watcher_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -117,11 +117,11 @@ class TestAutomationWatcherOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_automation_account(self, resource_group):
+    async def test_watcher_list_by_automation_account(self, resource_group):
         response = self.client.watcher.list_by_automation_account(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2020-01-13-preview",
+            api_version="2015-10-31",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
