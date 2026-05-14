@@ -3,6 +3,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
+import base64
+import asyncio
+
+from azure.identity.aio import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultEkmConnection
+from azure.keyvault.administration.aio import KeyVaultEkmClient
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -37,62 +44,41 @@
 
 # Instantiate an EKM client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
-# [START create_a_ekm_client]
-import os
-import base64
-import asyncio
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.administration import KeyVaultEkmConnection
-from azure.keyvault.administration.aio import KeyVaultEkmClient
 
 
 async def run_sample():
     MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
-    EKM_PROXY_HOST = os.environ["EKM_PROXY_HOST"]
-    CA_CERTIFICATE = os.environ["CA_CERTIFICATE"]
-    CA_CERTIFICATES = [CA_CERTIFICATE]
     credential = DefaultAzureCredential()
     client = KeyVaultEkmClient(vault_url=MANAGED_HSM_URL, credential=credential)
-    # [END create_a_ekm_client]
 
     # First, let's create an EKM connection
     print("\n.. Create EKM connection")
-    # [START create_ekm_connection]
+    EKM_PROXY_HOST = os.environ["EKM_PROXY_HOST"]
+    CA_CERTIFICATE = os.environ["CA_CERTIFICATE"]
+    CA_CERTIFICATES = [CA_CERTIFICATE]
     ekm_connection = KeyVaultEkmConnection(
         host=EKM_PROXY_HOST,
         server_ca_certificates=[base64.b64decode(cert) for cert in CA_CERTIFICATES],
         path_prefix="/api/v1",
     )
-    created_ekm_connection = await client.create_ekm_connection(
-        connection=ekm_connection
-    )
+    created_ekm_connection = await client.create_ekm_connection(connection=ekm_connection)
     print(f"EKM connection created with host: {created_ekm_connection.host}")
-    # [END create_ekm_connection]
 
     # Let's get the EKM connection we just created
     print("\n.. Get EKM connection")
-    # [START get_ekm_connection]
     retrieved_ekm_connection = await client.get_ekm_connection()
     print("Retrieved EKM connection with:")
     print(f"\tHost: {retrieved_ekm_connection.host}")
     print(f"\tPath prefix: {retrieved_ekm_connection.path_prefix}")
-    print(
-        f"\tServer subject common name: {retrieved_ekm_connection.server_subject_common_name}"
-    )
-    # [END get_ekm_connection]
+    print(f"\tServer subject common name: {retrieved_ekm_connection.server_subject_common_name}")
 
     # Get the EKM certificate
     print("\n.. Get EKM certificate")
-    # [START get_ekm_certificate]
     ekm_certificate = await client.get_ekm_certificate()
-    print(
-        f"EKM certificate retrieved with subject: {ekm_certificate.subject_common_name}"
-    )
-    # [END get_ekm_certificate]
+    print(f"EKM certificate retrieved with subject: {ekm_certificate.subject_common_name}")
 
     # Check the EKM connection status
     print("\n.. Check EKM connection")
-    # [START check_ekm_connection]
     connection_status = await client.check_ekm_connection()
     print("EKM connection status:")
     print(f"\tAPI Version: {connection_status.api_version}")
@@ -100,11 +86,9 @@ async def run_sample():
     print(f"\tProxy Name: {connection_status.proxy_name}")
     print(f"\tEKM Vendor: {connection_status.ekm_vendor}")
     print(f"\tEKM Product: {connection_status.ekm_product}")
-    # [END check_ekm_connection]
 
     # Update the EKM connection
     print("\n.. Update EKM connection")
-    # [START update_ekm_connection]
     updated_ekm_connection = KeyVaultEkmConnection(
         host="ekm-proxy-updated.contoso.com",
         server_ca_certificates=[base64.b64decode(cert) for cert in CA_CERTIFICATES],
@@ -112,14 +96,11 @@ async def run_sample():
     )
     result = await client.update_ekm_connection(connection=updated_ekm_connection)
     print(f"EKM connection updated with host: {result.host}")
-    # [END update_ekm_connection]
 
     # Finally, let's delete the EKM connection
     print("\n.. Delete EKM connection")
-    # [START delete_ekm_connection]
     deleted_ekm_connection = await client.delete_ekm_connection()
     print("EKM connection deleted successfully")
-    # [END delete_ekm_connection]
 
     await client.close()
     await credential.close()
