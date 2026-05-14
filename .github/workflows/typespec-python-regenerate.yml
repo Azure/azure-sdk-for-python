@@ -287,11 +287,14 @@ jobs:
             ISSUE_NUMBER="$EXISTING_ISSUE"
           else
             echo "Creating new tracking issue"
-            ISSUE_NUMBER=$(gh issue create --title "$TITLE" --body "$ISSUE_BODY" \
+            # `gh issue create` prints the new issue's URL to stdout; parse the
+            # trailing number out of it. (`--json`/`--jq` are not supported on
+            # `gh issue create`.)
+            ISSUE_URL=$(gh issue create --title "$TITLE" --body "$ISSUE_BODY" \
               --label "typespec-python" \
-              --assignee "$ASSIGNEES" \
-              --json number --jq '.number')
-            echo "Created issue #$ISSUE_NUMBER"
+              --assignee "$ASSIGNEES")
+            ISSUE_NUMBER="${ISSUE_URL##*/}"
+            echo "Created issue #$ISSUE_NUMBER ($ISSUE_URL)"
           fi
           echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
 
