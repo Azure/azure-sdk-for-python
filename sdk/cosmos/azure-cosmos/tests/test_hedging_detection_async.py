@@ -376,15 +376,15 @@ class TestSyncAsyncParity:
         for sn in dir(sync_mod):
             if not sn.startswith("Test"):
                 continue
-            scls = getattr(sync_mod, sn)
-            if not isinstance(scls, type):
+            sync_cls = getattr(sync_mod, sn)
+            if not isinstance(sync_cls, type):
                 continue
-            acls_name = sn + "Async"
-            acls = getattr(async_mod, acls_name, None)
-            if acls is None:
+            async_cls_name = sn + "Async"
+            async_cls = getattr(async_mod, async_cls_name, None)
+            if async_cls is None:
                 continue  # already reported by the class-coverage test
-            sync_tests = {m for m in dir(scls) if m.startswith("test_")}
-            async_tests = {m for m in dir(acls) if m.startswith("test_")}
+            sync_tests = {m for m in dir(sync_cls) if m.startswith("test_")}
+            async_tests = {m for m in dir(async_cls) if m.startswith("test_")}
             for m in sync_tests:
                 if (m + "_async") not in async_tests:
                     missing.append(f"{sn}.{m}")
