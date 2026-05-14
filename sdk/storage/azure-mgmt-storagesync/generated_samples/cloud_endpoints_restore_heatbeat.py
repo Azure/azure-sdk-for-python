@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.storagesync import MicrosoftStorageSync
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.storagesync import MicrosoftStorageSync
     pip install azure-identity
     pip install azure-mgmt-storagesync
 # USAGE
-    python server_endpoints_recall_action.py
+    python cloud_endpoints_restore_heatbeat.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,16 +31,14 @@ def main():
         subscription_id="52b8da2f-61e0-4a1f-8dde-336911f367fb",
     )
 
-    response = client.server_endpoints.begin_recall_action(
+    client.cloud_endpoints.restoreheartbeat(
         resource_group_name="SampleResourceGroup_1",
         storage_sync_service_name="SampleStorageSyncService_1",
         sync_group_name="SampleSyncGroup_1",
-        server_endpoint_name="SampleServerEndpoint_1",
-        parameters={"pattern": "", "recallPath": ""},
-    ).result()
-    print(response)
+        cloud_endpoint_name="SampleCloudEndpoint_1",
+    )
 
 
-# x-ms-original-file: specification/storagesync/resource-manager/Microsoft.StorageSync/stable/2022-06-01/examples/ServerEndpoints_Recall.json
+# x-ms-original-file: specification/storagesync/resource-manager/Microsoft.StorageSync/StorageSync/stable/2020-09-01/examples/CloudEndpoints_RestoreHeatbeat.json
 if __name__ == "__main__":
     main()
