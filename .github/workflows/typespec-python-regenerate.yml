@@ -136,6 +136,23 @@ jobs:
       - name: Clean up typespec checkout
         run: rm -rf "_typespec"
 
+      - name: Apply README template to generated test packages
+        run: |
+          set -euo pipefail
+          TARGET="eng/tools/emitter/gen"
+          TEMPLATE="$TARGET/template/README.md"
+          if [ ! -f "$TEMPLATE" ]; then
+            echo "::error::Template README not found at $TEMPLATE"
+            exit 1
+          fi
+          # Replace every README.md under gen/ with the template, except:
+          #   - the top-level gen/README.md
+          #   - the template itself (gen/template/README.md)
+          find "$TARGET" -type f -name README.md \
+            ! -path "$TARGET/README.md" \
+            ! -path "$TEMPLATE" \
+            -print -exec cp -f "$TEMPLATE" {} \;
+
       - name: Commit and push changes
         id: push-changes
         run: |
