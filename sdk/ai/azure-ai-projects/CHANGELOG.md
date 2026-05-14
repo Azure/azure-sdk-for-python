@@ -4,6 +4,43 @@
 
 ### Features Added
 
+* New Agent tool `FabricIQPreviewTool`.
+* New Agent tool `ToolboxSearchPreviewTool`.
+* New optional string properties `description` and `name` added to Agent tools which did not have them before.
+
+### Breaking Changes
+
+Breaking changes in beta methods:
+* Required keyword `isolation_key` removed from `.beta.agents.create_session()` and `.beta.agents.delete_session()` methods.
+* Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
+* Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
+
+Breaking changes in beta classes:
+* Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
+* Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
+* Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
+* Renamed class `PendingUploadResponse` to `PendingUploadResult`.
+* Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
+* Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
+* Renamed class `SkillObject` to `SkillDetails`.
+* Removed class `FabricIQPreviewToolParameters`.
+* Removed class `WorkIQPreviewToolParameters`.
+
+### Bugs Fixed
+
+* TODO: Fixed telemetry instrumentor to correctly call is_recording() as a method on spans, ensuring non-recording spans are properly skipped (e.g., when sampling is configured) ([GitHub issue 46544](https://github.com/Azure/azure-sdk-for-python/issues/46544)).
+
+### Sample updates
+
+* TODO: Hosted Agents:
+  * Added Hosted Agent creation sample `sample_hosted_agent_create.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+  * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
+  * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
+* TODO: Agent tools:
+  * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
+
+<!-- ### Features Added
+
 * Added new model `FabricIQPreviewTool`.
 * Added new model `ToolboxSearchPreviewTool`.
 
@@ -24,7 +61,7 @@
 * Removed model `WorkIQPreviewToolParameters`.
 * Removed enum `IsolationKeySourceKind`.
 * Removed `isolation_key` parameter from `create_session()` and `delete_session()` methods on `.beta.agents` sub-client.
-* Renamed `body` parameter to `content` in `.beta.skills.create_from_package()` method.
+* Renamed `body` parameter to `content` in `.beta.skills.create_from_package()` method. -->
 
 ## 2.1.0 (2026-04-20)
 
