@@ -29,20 +29,21 @@ import logging
 import os
 
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 try:
-    connection_string = os.environ["WEBPUBSUB_CONNECTION_STRING"]
+    endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example")
+    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set it before running the example")
     exit()
 
-# Build a client from the connection string. And for this example, we have enabled debug
+# Build a client through AAD. And for this example, we have enabled debug
 # tracing. For production code, this should be turned off.
-client = WebPubSubServiceClient.from_connection_string(connection_string, hub="hub", logging_enable=True)
+client = WebPubSubServiceClient(endpoint=endpoint, hub="hub", credential=DefaultAzureCredential(), logging_enable=True)
 
 try:
     # Raise an exception if the service rejected the call

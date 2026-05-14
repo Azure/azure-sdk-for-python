@@ -1,5 +1,7 @@
 # AZURE SDK FOR PYTHON - COPILOT INSTRUCTIONS
 
+> **Note**: For general AI agent guidelines and repository overview, see [AGENTS.md](https://github.com/Azure/azure-sdk-for-python/blob/main/AGENTS.md) at the repository root.
+
 ---
 
 ## CORE PRINCIPLES
@@ -31,14 +33,12 @@
 
 **REFERENCE DOCUMENTATION:**
 - [Official pylint guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
-- [Tox formatting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 
 **COMMAND:**
 ```bash
-tox -e pylint --c <path_to_tox.ini> --root .
+azpysdk pylint .
 ```
-
-**DEFAULT PATH:** `azure-sdk-for-python/eng/tox/tox.ini`
 
 ### FIXING PYLINT WARNINGS
 
@@ -67,13 +67,13 @@ tox -e pylint --c <path_to_tox.ini> --root .
 ### RUNNING AND FIXING MYPY
 
 **REFERENCE DOCUMENTATION:**
-- [Tox guidance](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
-- Use Python 3.9 compatible environment
+- Use Python 3.10 compatible environment
 - Follow official fixing guidelines
-- Use tox mcp tool for running MyPy
+- Run `azpysdk mypy .` from the package directory
 
 ---
 
@@ -118,7 +118,7 @@ This library is failing two release blocking checks - Mypy and Tests - CI. The l
 ## Local SDK Generation and Package Lifecycle (TypeSpec)
 
 ### AUTHORITATIVE REFERENCE
-For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:../eng/common/instructions/azsdk-tools/local-sdk-workflow.instructions.md
+For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:skills/azsdk-common-generate-sdk-locally/SKILL.md
 
 ### DEFAULT BEHAVIORS
 - **Repository:** Use the current workspace as the local SDK repository unless the user specifies a different path.
@@ -169,4 +169,4 @@ These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-
 
 ## SDK release
 
-For detailed workflow instructions, see [SDK Release](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/instructions/copilot/sdk-release.instructions.md).
+For detailed workflow instructions, see [SDK Release](skills/azsdk-common-sdk-release/SKILL.md).
