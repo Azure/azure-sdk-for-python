@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0b4 (2026-05-01)
 
 ### Other Changes
+
+- Updated tracing infrastructure to use `microsoft-opentelemetry` distro (inherited from `azure-ai-agentserver-core>=2.0.0b4`). No changes to public API or behavior.
 
 ## 1.0.0b3 (2026-04-22)
 
