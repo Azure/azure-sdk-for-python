@@ -131,6 +131,15 @@ class QueryStringConstants(object):
     SIGNED_RESOURCE_TYPES = "srt"
     SIGNED_SERVICES = "ss"
     TABLE_NAME = "tn"
+    # User delegation key constants
+    SIGNED_KEY_OBJECT_ID = "skoid"
+    SIGNED_KEY_TENANT_ID = "sktid"
+    SIGNED_KEY_START = "skt"
+    SIGNED_KEY_EXPIRY = "ske"
+    SIGNED_KEY_SERVICE = "sks"
+    SIGNED_KEY_VERSION = "skv"
+    SIGNED_KEY_DELEGATED_USER_TID = "saoid"
+    SIGNED_DELEGATED_USER_OBJECT_ID = "suoid"
 
     @staticmethod
     def to_list():
@@ -156,6 +165,14 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_RESOURCE_TYPES,
             QueryStringConstants.SIGNED_SERVICES,
             QueryStringConstants.TABLE_NAME,
+            QueryStringConstants.SIGNED_KEY_OBJECT_ID,
+            QueryStringConstants.SIGNED_KEY_TENANT_ID,
+            QueryStringConstants.SIGNED_KEY_START,
+            QueryStringConstants.SIGNED_KEY_EXPIRY,
+            QueryStringConstants.SIGNED_KEY_SERVICE,
+            QueryStringConstants.SIGNED_KEY_VERSION,
+            QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
+            QueryStringConstants.SIGNED_DELEGATED_USER_OBJECT_ID,
         ]
 
 

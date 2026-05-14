@@ -14,7 +14,10 @@
 - Link to specific pages when answering guidelines questions
 - Use this as the authoritative source for SDK development guidance
 
-### RULE 3: VERIFY ENVIRONMENT FIRST
+### RULE 3: CHECK PACKAGE SKILLS BEFORE MODIFYING CODE
+**MANDATORY:** Before modifying any package under `sdk/`, consult [`.github/skills/package-domain-knowledge/SKILL.md`](.github/skills/package-domain-knowledge/SKILL.md) to check if a package-specific skill exists. Package skills contain architecture details, data flows, type mappings, and common pitfalls that prevent mistakes. If a skill exists for the target package, read it and all files under its `references/` directory before making any changes. **Do NOT skip this step.**
+
+### RULE 4: VERIFY ENVIRONMENT FIRST
 **REQUIRED CONDITIONS:**
 - To use Azure MCP tool calls, users must have PowerShell installed. Provide [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) if not installed, and recommend restarting the IDE to start the MCP server.
 - When using Copilot from Visual Studio or VS Code (not applicable when using Coding Agent on Github.com):

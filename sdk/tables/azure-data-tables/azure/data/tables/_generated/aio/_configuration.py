@@ -27,13 +27,13 @@ class AzureTableClientConfiguration:  # pylint: disable=too-many-instance-attrib
     :type url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version. Known values are "2019-02-02" and None. Default value is
-     "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version. Known values are "2025-07-05". Default value is
+     "2025-07-05". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, url: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2019-02-02")
+        api_version: str = kwargs.pop("api_version", "2025-07-05")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
