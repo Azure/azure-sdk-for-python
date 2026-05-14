@@ -15,14 +15,22 @@ import time
 import urllib.parse
 from typing import cast
 
-from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
-    APIM_REQUEST_ID,
-    CHAT_ISOLATION_KEY,
-    CLIENT_REQUEST_ID,
-    REQUEST_ID,
-    TRACEPARENT,
-    USER_ISOLATION_KEY,
-)
+try:
+    from azure.ai.agentserver.core._platform_headers import (
+        APIM_REQUEST_ID,
+        CHAT_ISOLATION_KEY,
+        CLIENT_REQUEST_ID,
+        REQUEST_ID,
+        TRACEPARENT,
+        USER_ISOLATION_KEY,
+    )
+except (ImportError, ModuleNotFoundError):
+    APIM_REQUEST_ID = "apim-request-id"
+    CHAT_ISOLATION_KEY = "x-agent-chat-isolation-key"
+    CLIENT_REQUEST_ID = "x-ms-client-request-id"
+    REQUEST_ID = "x-request-id"
+    TRACEPARENT = "traceparent"
+    USER_ISOLATION_KEY = "x-agent-user-isolation-key"
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.rest import HttpResponse

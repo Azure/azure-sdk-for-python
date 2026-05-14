@@ -1,7 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.agentserver.core._platform_headers import SESSION_ID as _SESSION_ID  # pylint: disable=import-error,no-name-in-module
+try:
+    from azure.ai.agentserver.core._platform_headers import SESSION_ID as _SESSION_ID
+except (ImportError, ModuleNotFoundError):
+    _SESSION_ID = "x-agent-session-id"
 
 
 class InvocationConstants:

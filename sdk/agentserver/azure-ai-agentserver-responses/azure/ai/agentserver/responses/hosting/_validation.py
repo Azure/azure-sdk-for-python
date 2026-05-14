@@ -8,12 +8,18 @@ from typing import Any, Mapping
 
 from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
-    ERROR_DETAIL,
-    ERROR_SOURCE,
-    MAX_ERROR_DETAIL_LENGTH,
-    PLATFORM_ERROR_TAG,
-)
+try:
+    from azure.ai.agentserver.core._platform_headers import (
+        ERROR_DETAIL,
+        ERROR_SOURCE,
+        MAX_ERROR_DETAIL_LENGTH,
+        PLATFORM_ERROR_TAG,
+    )
+except (ImportError, ModuleNotFoundError):
+    ERROR_SOURCE = "x-platform-error-source"
+    ERROR_DETAIL = "x-platform-error-detail"
+    PLATFORM_ERROR_TAG = "Azure.AI.AgentServer.PlatformError"
+    MAX_ERROR_DETAIL_LENGTH = 2048
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error

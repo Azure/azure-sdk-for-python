@@ -44,7 +44,10 @@ from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
 from ._runtime_state import _RuntimeState
-from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
+try:
+    from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG
+except (ImportError, ModuleNotFoundError):
+    PLATFORM_ERROR_TAG = "Azure.AI.AgentServer.PlatformError"
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext

@@ -28,12 +28,18 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     set_current_span,
     trace_stream,
 )
-from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
-    CHAT_ISOLATION_KEY,
-    CLIENT_HEADER_PREFIX,
-    SESSION_ID,
-    USER_ISOLATION_KEY,
-)
+try:
+    from azure.ai.agentserver.core._platform_headers import (
+        CHAT_ISOLATION_KEY,
+        CLIENT_HEADER_PREFIX,
+        SESSION_ID,
+        USER_ISOLATION_KEY,
+    )
+except (ImportError, ModuleNotFoundError):
+    CHAT_ISOLATION_KEY = "x-agent-chat-isolation-key"
+    CLIENT_HEADER_PREFIX = "x-client-"
+    SESSION_ID = "x-agent-session-id"
+    USER_ISOLATION_KEY = "x-agent-user-isolation-key"
 from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY
 from azure.ai.agentserver.responses.models._generated import (
     AgentReference,
