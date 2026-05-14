@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- SSE keep-alive comment frames (`: keep-alive`) are now interleaved into `text/event-stream` responses returned by invoke handlers when the `SSE_KEEPALIVE_INTERVAL` environment variable is set to a positive integer (resolved via `AgentConfig.sse_keepalive_interval`). This prevents idle SSE connections from being closed by intermediate proxies and brings the invocations server to parity with the responses server.
+
 ### Breaking Changes
 
 ### Bugs Fixed

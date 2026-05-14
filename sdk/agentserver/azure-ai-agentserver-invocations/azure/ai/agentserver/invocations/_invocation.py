@@ -288,17 +288,25 @@ class InvocationAgentServerHost(AgentServerHost):
         response: StreamingResponse,
         otel_span: Any,
     ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with span lifecycle and context.
+        """Wrap a streaming response's body iterator with span lifecycle, context, and SSE keep-alive.
 
-        Two layers of wrapping are applied:
+        Up to three layers of wrapping are applied (from innermost to
+        outermost):
 
-        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
-           the OTel span covers the full streaming duration and is ended
-           when iteration completes.
-        2. **Outer (context):** A second async generator re-attaches the span
-           as the current context for the duration of streaming, so that
-           child spans created by user handler code (e.g. Agent Framework)
-           are correctly parented under this span.
+        1. **Tracing:** ``trace_stream`` wraps the body iterator so the OTel
+           span covers the full streaming duration and is ended when
+           iteration completes.  Skipped when *otel_span* is ``None``.
+        2. **Context:** An async generator re-attaches the span as the
+           current context for the duration of streaming, so child spans
+           created by user handler code (e.g. Agent Framework) are
+           correctly parented under this span.  Skipped when *otel_span*
+           is ``None``.
+        3. **SSE keep-alive:** When the response media type is
+           ``text/event-stream`` and ``AgentConfig.sse_keepalive_interval``
+           is positive (driven by the ``SSE_KEEPALIVE_INTERVAL`` env var
+           set on the container), :meth:`AgentServerHost.sse_keepalive_stream`
+           interleaves ``: keep-alive`` SSE comment frames into idle
+           streams so intermediaries do not close the connection.
 
         :param response: The ``StreamingResponse`` returned by the user handler.
         :type response: ~starlette.responses.StreamingResponse
@@ -307,23 +315,31 @@ class InvocationAgentServerHost(AgentServerHost):
         :return: The same response object, with its body_iterator replaced.
         :rtype: ~starlette.responses.StreamingResponse
         """
-        if otel_span is None:
-            return response
+        if otel_span is not None:
+            # Inner wrap: trace_stream ends the span when iteration completes.
+            traced = trace_stream(response.body_iterator, otel_span)
 
-        # Inner wrap: trace_stream ends the span when iteration completes.
-        traced = trace_stream(response.body_iterator, otel_span)
+            # Middle wrap: re-attach span as current context during streaming
+            # so child spans are correctly parented.
+            async def _iter_with_context():  # type: ignore[return-value]
+                token = set_current_span(otel_span)
+                try:
+                    async for chunk in traced:
+                        yield chunk
+                finally:
+                    detach_context(token)
 
-        # Outer wrap: re-attach span as current context during streaming
-        # so child spans are correctly parented.
-        async def _iter_with_context():  # type: ignore[return-value]
-            token = set_current_span(otel_span)
-            try:
-                async for chunk in traced:
-                    yield chunk
-            finally:
-                detach_context(token)
+            response.body_iterator = _iter_with_context()
 
-        response.body_iterator = _iter_with_context()
+        # Outer wrap: interleave SSE keep-alive frames for text/event-stream
+        # responses when the platform has configured a positive interval via
+        # the SSE_KEEPALIVE_INTERVAL env var (resolved by AgentConfig).
+        keepalive_interval = self.config.sse_keepalive_interval
+        if keepalive_interval > 0 and response.media_type == "text/event-stream":
+            response.body_iterator = AgentServerHost.sse_keepalive_stream(
+                response.body_iterator, keepalive_interval
+            )
+
         return response
 
     # ------------------------------------------------------------------
