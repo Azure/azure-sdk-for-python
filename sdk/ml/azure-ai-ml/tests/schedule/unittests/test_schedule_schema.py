@@ -158,7 +158,7 @@ class TestScheduleSchema:
             load_schedule(test_path)
         assert "'type' must be specified when scheduling a remote job with updates." in e.value.messages[0]
 
-    def test_load_invalid_schedule_with_missing_job_file(self):
+    def test_load_schedule_with_missing_create_job_file(self):
         test_path = "./tests/test_configs/schedule/invalid/hello_cron_schedule_with_missing_job_file.yml"
         with pytest.raises(ValidationError) as e:
             load_schedule(test_path)
