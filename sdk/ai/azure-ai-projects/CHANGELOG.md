@@ -16,12 +16,15 @@ Breaking changes in beta methods:
 
 Breaking changes classes used by beta features:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
+* Optional property `code_configuration` removed from class `HostedAgentDefinition`.
 * Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
 * Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
 * Renamed class `PendingUploadResponse` to `PendingUploadResult`.
 * Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
 * Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
 * Renamed class `SkillObject` to `SkillDetails`.
+* Renamed class `Target` to `EvaluationTarget`.
+* Renamed class `TargetConfig` to `RedTeamTargetConfig`.
 
 ### Bugs Fixed
 
