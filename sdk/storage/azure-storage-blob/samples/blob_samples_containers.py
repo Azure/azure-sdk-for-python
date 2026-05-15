@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_container.py
@@ -31,7 +30,7 @@ class ContainerSamples(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
-    #--Begin Blob Samples-----------------------------------------------------------------
+    # --Begin Blob Samples-----------------------------------------------------------------
 
     def container_sample(self):
         if self.connection_string is None:
@@ -51,7 +50,17 @@ class ContainerSamples(object):
         # [START create_container_client_sasurl]
         from azure.storage.blob import ContainerClient
 
-        sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+        sas_url = (
+            "https://account.blob.core.windows.net/mycontainer"
+            "?sv=2015-04-05"
+            "&st=2015-04-29T22%3A18%3A26Z"
+            "&se=2015-04-30T02%3A23%3A26Z"
+            "&sr=b"
+            "&sp=rw"
+            "&sip=168.1.5.60-168.1.5.70"
+            "&spr=https"
+            "&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+        )
         container = ContainerClient.from_container_url(sas_url)
         # [END create_container_client_sasurl]
 
@@ -249,27 +258,6 @@ class ContainerSamples(object):
         # Delete container
         container_client.delete_container()
 
-    def get_container_client_from_blob_client(self):
-        if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_container_client_from_blob_client")
-            sys.exit(1)
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-
-        # [START get_container_client_from_blob_client]
-        container_client1 = blob_service_client.get_container_client("blobcontainer1")
-        container_client1.create_container()
-        print(container_client1.get_container_properties())
-        blob_client1 = container_client1.get_blob_client("blob")
-        blob_client1.upload_blob("hello")
-
-        container_client2 = blob_client1._get_container_client()
-        print(container_client2.get_container_properties())
-        container_client2.delete_container()
-        # [END get_container_client_from_blob_client]
-
 
 if __name__ == '__main__':
     sample = ContainerSamples()
@@ -279,4 +267,3 @@ if __name__ == '__main__':
     sample.container_access_policy()
     sample.list_blobs_in_container()
     sample.get_blob_client_from_container()
-    sample.get_container_client_from_blob_client()

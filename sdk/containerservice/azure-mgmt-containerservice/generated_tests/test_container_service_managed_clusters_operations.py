@@ -71,6 +71,7 @@ class TestContainerServiceManagedClustersOperations(AzureMgmtRecordedTestCase):
                     "agentPoolProfiles": [
                         {
                             "name": "str",
+                            "artifactStreamingProfile": {"enabled": bool},
                             "availabilityZones": ["str"],
                             "capacityReservationGroupID": "str",
                             "count": 0,

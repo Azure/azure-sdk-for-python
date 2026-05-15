@@ -20,7 +20,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_service_fabrics_list(self, resource_group):
         response = self.client.service_fabrics.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_service_fabrics_get(self, resource_group):
         response = self.client.service_fabrics.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -47,7 +47,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_service_fabrics_begin_create_or_update(self, resource_group):
         response = self.client.service_fabrics.begin_create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -127,7 +127,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_service_fabrics_begin_delete(self, resource_group):
         response = self.client.service_fabrics.begin_delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -141,7 +141,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_service_fabrics_update(self, resource_group):
         response = self.client.service_fabrics.update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -155,7 +155,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_applicable_schedules(self, resource_group):
+    def test_service_fabrics_list_applicable_schedules(self, resource_group):
         response = self.client.service_fabrics.list_applicable_schedules(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -169,7 +169,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_service_fabrics_begin_start(self, resource_group):
         response = self.client.service_fabrics.begin_start(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -183,7 +183,7 @@ class TestDevTestLabsServiceFabricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_stop(self, resource_group):
+    def test_service_fabrics_begin_stop(self, resource_group):
         response = self.client.service_fabrics.begin_stop(
             resource_group_name=resource_group.name,
             lab_name="str",

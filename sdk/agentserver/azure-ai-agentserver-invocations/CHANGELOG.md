@@ -1,14 +1,24 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (2026-05-15)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Developer handler exceptions and missing handler registrations are classified as `upstream`. Exceptions tagged with the platform error tag are classified as `platform` and additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics.
 
 ### Other Changes
+
+- Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module) instead of being defined locally. Error source classification helpers remain internal to this package.
+
+## 1.0.0b3 (2026-04-22)
+
+### Features Added
+
+- All HTTP responses now include an `x-request-id` header for request correlation, inherited from `RequestIdMiddleware` in `azure-ai-agentserver-core>=2.0.0b3`. The value is resolved from the OpenTelemetry trace ID, an incoming `x-request-id` header, or a generated UUID.
+
+### Other Changes
+
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b3`.
 
 ## 1.0.0b2 (2026-04-17)
 

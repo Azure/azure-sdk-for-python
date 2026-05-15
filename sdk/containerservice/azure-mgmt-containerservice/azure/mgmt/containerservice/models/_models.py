@@ -423,6 +423,7 @@ class AgentPool(ProxyResource):
         "security_profile",
         "gpu_profile",
         "gateway_profile",
+        "artifact_streaming_profile",
         "virtual_machines_profile",
         "virtual_machine_nodes_status",
         "status",
@@ -463,6 +464,38 @@ class AgentPool(ProxyResource):
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class AgentPoolArtifactStreamingProfile(_Model):
+    """Artifact streaming profile for the agent pool.
+
+    :ivar enabled: Artifact streaming speeds up the cold-start of containers on a node through
+     on-demand image loading. To use this feature, container images must also enable artifact
+     streaming on ACR. If not specified, the default is false.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Artifact streaming speeds up the cold-start of containers on a node through on-demand image
+     loading. To use this feature, container images must also enable artifact streaming on ACR. If
+     not specified, the default is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AgentPoolAvailableVersions(_Model):
@@ -732,7 +765,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -866,6 +900,9 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     :ivar gateway_profile: Profile specific to a managed agent pool in Gateway mode. This field
      cannot be set if agent pool mode is not Gateway.
     :vartype gateway_profile: ~azure.mgmt.containerservice.models.AgentPoolGatewayProfile
+    :ivar artifact_streaming_profile: Configuration for using artifact streaming on AKS.
+    :vartype artifact_streaming_profile:
+     ~azure.mgmt.containerservice.models.AgentPoolArtifactStreamingProfile
     :ivar virtual_machines_profile: Specifications on VirtualMachines agent pool.
     :vartype virtual_machines_profile: ~azure.mgmt.containerservice.models.VirtualMachinesProfile
     :ivar virtual_machine_nodes_status: The status of nodes in a VirtualMachines agent pool.
@@ -954,7 +991,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
-     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", and \"Ubuntu2404\"."""
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", \"Ubuntu2404\", and
+     \"AzureContainerLinux\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -1141,6 +1179,10 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     )
     """Profile specific to a managed agent pool in Gateway mode. This field cannot be set if agent
      pool mode is not Gateway."""
+    artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = rest_field(
+        name="artifactStreamingProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for using artifact streaming on AKS."""
     virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = rest_field(
         name="virtualMachinesProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1208,6 +1250,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
         security_profile: Optional["_models.AgentPoolSecurityProfile"] = None,
         gpu_profile: Optional["_models.GPUProfile"] = None,
         gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
+        artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
@@ -4022,7 +4065,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4156,6 +4200,9 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     :ivar gateway_profile: Profile specific to a managed agent pool in Gateway mode. This field
      cannot be set if agent pool mode is not Gateway.
     :vartype gateway_profile: ~azure.mgmt.containerservice.models.AgentPoolGatewayProfile
+    :ivar artifact_streaming_profile: Configuration for using artifact streaming on AKS.
+    :vartype artifact_streaming_profile:
+     ~azure.mgmt.containerservice.models.AgentPoolArtifactStreamingProfile
     :ivar virtual_machines_profile: Specifications on VirtualMachines agent pool.
     :vartype virtual_machines_profile: ~azure.mgmt.containerservice.models.VirtualMachinesProfile
     :ivar virtual_machine_nodes_status: The status of nodes in a VirtualMachines agent pool.
@@ -4244,7 +4291,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
-     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", and \"Ubuntu2404\"."""
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", \"Ubuntu2404\", and
+     \"AzureContainerLinux\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -4431,6 +4479,10 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     )
     """Profile specific to a managed agent pool in Gateway mode. This field cannot be set if agent
      pool mode is not Gateway."""
+    artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = rest_field(
+        name="artifactStreamingProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for using artifact streaming on AKS."""
     virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = rest_field(
         name="virtualMachinesProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4498,6 +4550,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
         security_profile: Optional["_models.AgentPoolSecurityProfile"] = None,
         gpu_profile: Optional["_models.GPUProfile"] = None,
         gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
+        artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
@@ -4577,7 +4630,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4711,6 +4765,9 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar gateway_profile: Profile specific to a managed agent pool in Gateway mode. This field
      cannot be set if agent pool mode is not Gateway.
     :vartype gateway_profile: ~azure.mgmt.containerservice.models.AgentPoolGatewayProfile
+    :ivar artifact_streaming_profile: Configuration for using artifact streaming on AKS.
+    :vartype artifact_streaming_profile:
+     ~azure.mgmt.containerservice.models.AgentPoolArtifactStreamingProfile
     :ivar virtual_machines_profile: Specifications on VirtualMachines agent pool.
     :vartype virtual_machines_profile: ~azure.mgmt.containerservice.models.VirtualMachinesProfile
     :ivar virtual_machine_nodes_status: The status of nodes in a VirtualMachines agent pool.
@@ -4782,6 +4839,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         security_profile: Optional["_models.AgentPoolSecurityProfile"] = None,
         gpu_profile: Optional["_models.GPUProfile"] = None,
         gateway_profile: Optional["_models.AgentPoolGatewayProfile"] = None,
+        artifact_streaming_profile: Optional["_models.AgentPoolArtifactStreamingProfile"] = None,
         virtual_machines_profile: Optional["_models.VirtualMachinesProfile"] = None,
         virtual_machine_nodes_status: Optional[list["_models.VirtualMachineNodes"]] = None,
         status: Optional["_models.AgentPoolStatus"] = None,
@@ -9259,7 +9317,8 @@ class SnapshotProperties(_Model):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str
@@ -9285,7 +9344,8 @@ class SnapshotProperties(_Model):
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
-     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", and \"Ubuntu2404\"."""
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", \"Ubuntu2404\", and
+     \"AzureContainerLinux\"."""
     vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
     """The size of the VM."""
     enable_fips: Optional[bool] = rest_field(name="enableFIPS", visibility=["read"])

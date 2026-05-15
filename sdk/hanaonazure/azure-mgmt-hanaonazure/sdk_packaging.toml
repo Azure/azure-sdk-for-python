@@ -1,8 +1,0 @@
-[packaging]
-package_name = "azure-mgmt-hanaonazure"
-package_pprint_name = "SAP Hana on Azure Management"
-package_doc_id = "hanaonazure"
-is_stable = false
-is_arm = true
-auto_update=false
-title = "HanaManagementClient"

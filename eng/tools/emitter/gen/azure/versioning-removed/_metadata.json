@@ -1,0 +1,6 @@
+{
+  "apiVersion": "v2",
+  "apiVersions": {
+    "Versioning.Removed": "v2"
+  }
+}

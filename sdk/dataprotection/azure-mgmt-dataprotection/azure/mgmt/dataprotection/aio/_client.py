@@ -28,6 +28,7 @@ from .operations import (
     DataProtectionOperations,
     DataProtectionOperationsOperations,
     DeletedBackupInstancesOperations,
+    DeletedBackupVaultsOperations,
     DppResourceGuardProxyOperations,
     ExportJobsOperationResultOperations,
     ExportJobsOperations,
@@ -60,6 +61,9 @@ class DataProtectionMgmtClient:  # pylint: disable=too-many-instance-attributes
     :ivar backup_vault_operation_results: BackupVaultOperationResultsOperations operations
     :vartype backup_vault_operation_results:
      azure.mgmt.dataprotection.aio.operations.BackupVaultOperationResultsOperations
+    :ivar deleted_backup_vaults: DeletedBackupVaultsOperations operations
+    :vartype deleted_backup_vaults:
+     azure.mgmt.dataprotection.aio.operations.DeletedBackupVaultsOperations
     :ivar resource_guards: ResourceGuardsOperations operations
     :vartype resource_guards: azure.mgmt.dataprotection.aio.operations.ResourceGuardsOperations
     :ivar backup_vaults: BackupVaultsOperations operations
@@ -119,8 +123,9 @@ class DataProtectionMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-07-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-03-01".
+     Default value is "2026-03-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -182,6 +187,9 @@ class DataProtectionMgmtClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.backup_vault_operation_results = BackupVaultOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deleted_backup_vaults = DeletedBackupVaultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_guards = ResourceGuardsOperations(self._client, self._config, self._serialize, self._deserialize)

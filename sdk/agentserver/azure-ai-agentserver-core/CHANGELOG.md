@@ -1,14 +1,16 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
+## 2.0.0b4 (2026-05-15)
 
 ### Features Added
 
-### Breaking Changes
+- Added `_platform_headers` module with cross-cutting protocol header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, `x-platform-error-source`, `x-platform-error-detail`, and others). Protocol packages now import shared header name strings from core instead of maintaining their own copies.
 
-### Bugs Fixed
+## 2.0.0b3 (2026-04-22)
 
-### Other Changes
+### Features Added
+
+- `RequestIdMiddleware` — pure-ASGI middleware that sets an `x-request-id` response header on every response. The request ID is resolved from the OpenTelemetry trace ID, an incoming `x-request-id` header, or a generated UUID (in that priority). The resolved value is stored in ASGI scope state under the well-known key `agentserver.request_id` for use by sibling protocol packages. Automatically wired into `AgentServerHost`.
 
 ## 2.0.0b2 (2026-04-17)
 
