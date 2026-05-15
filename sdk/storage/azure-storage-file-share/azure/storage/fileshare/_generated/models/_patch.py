@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+# TODO: Waiting for emitter release with perf improvements before editing the patch
 import xml.etree.ElementTree as ET
 from typing import Any, Callable, List, Optional
 
