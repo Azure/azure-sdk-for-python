@@ -18,6 +18,8 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
+from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
+
 from .._options import ResponsesServerOptions
 from ..models import _generated as generated_models
 from ..models.runtime import (
@@ -44,7 +46,6 @@ from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
 from ._runtime_state import _RuntimeState
-from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext

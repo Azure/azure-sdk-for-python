@@ -34,7 +34,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     SESSION_ID,
     USER_ISOLATION_KEY,
 )
-from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY
+from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY  # pylint: disable=import-error,no-name-in-module
 from azure.ai.agentserver.responses.models._generated import (
     AgentReference,
     CreateResponse,
