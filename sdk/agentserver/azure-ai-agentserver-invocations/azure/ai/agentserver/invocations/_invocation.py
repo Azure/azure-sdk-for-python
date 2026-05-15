@@ -19,7 +19,7 @@ from typing import Any, Optional
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.baggage.propagation import W3CBaggagePropagator
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response, StreamingResponse
+from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module

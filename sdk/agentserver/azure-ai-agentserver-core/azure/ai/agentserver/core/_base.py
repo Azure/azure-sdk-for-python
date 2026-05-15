@@ -188,7 +188,8 @@ class AgentServerHost(Starlette):
 
         # Observability (logging + tracing) --------------------------------
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
-        _sensitive_data = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true").lower() not in ("false", "0")
+        _env_val = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+        _sensitive_data = _env_val.lower() not in ("false", "0")
         if configure_observability is not None:
             try:
                 configure_observability(

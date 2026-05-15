@@ -43,7 +43,6 @@ from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
-from ..models.errors import RequestValidationError
 from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
@@ -54,7 +53,6 @@ from ._execution_context import _ExecutionContext
 from ._observability import (
     CreateSpan,
     _initial_create_span_tags,
-    build_create_otel_attrs,
     build_create_span_tags,
     extract_request_id,
     start_create_span,
@@ -641,7 +639,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=_project_id))
 
         # Attach incoming W3C trace context (no span created).
-        with self._host.request_context(request.headers) if hasattr(self._host, "request_context") else contextlib.nullcontext():
+        _has_req_ctx = hasattr(self._host, "request_context")
+        _ctx_mgr = self._host.request_context(request.headers) if _has_req_ctx else contextlib.nullcontext()
+        with _ctx_mgr:
             # Set W3C baggage per spec §7.3
             # Extract incoming baggage from request headers (only baggage, not traceparent)
             # to preserve parent-child span relationships while inheriting caller's baggage entries.
