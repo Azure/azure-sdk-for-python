@@ -165,12 +165,16 @@ class ServiceInstance:
         :returns: A flat :class:`ServiceInstance`.
         :rtype: ~azure.ai.projects.models.ServiceInstance
         """
+        if isinstance(obj, dict):
+            obj = _RestServiceInstance(obj)
+
+        endpoint = obj.endpoint
         return cls(
             type=obj.type,
             port=obj.port,
             status=obj.status,
             error=(obj.error.error.message if obj.error and obj.error.error else None),
-            endpoint=(obj.endpoint.replace("<nodeIndex>", str(node_index)) if obj.endpoint else obj.endpoint),
+            endpoint=(endpoint.replace("<nodeIndex>", str(node_index)) if endpoint else endpoint),
             properties=obj.properties,
         )
 

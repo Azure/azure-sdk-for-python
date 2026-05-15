@@ -3505,7 +3505,9 @@ class CommandJob(JobProperties, discriminator="Command"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Command Job limit."""
-    services: Optional[dict[str, "_models.JobService"]] = rest_field(visibility=["read"])
+    services: Optional[dict[str, "_models.JobService"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of job services."""
     queue_settings: Optional["_models.QueueSettings"] = rest_field(
         name="queueSettings", visibility=["read", "create", "update", "delete", "query"]
@@ -3542,6 +3544,7 @@ class CommandJob(JobProperties, discriminator="Command"):
         resources: Optional["_models.JobResourceConfiguration"] = None,
         distribution: Optional["_models.DistributionConfiguration"] = None,
         limits: Optional["_models.CommandJobLimits"] = None,
+        services: Optional[dict[str, "_models.JobService"]] = None,
         queue_settings: Optional["_models.QueueSettings"] = None,
         user_assigned_identity_id: Optional[str] = None,
         gpu_count: Optional[int] = None,
