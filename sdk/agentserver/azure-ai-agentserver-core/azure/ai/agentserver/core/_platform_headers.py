@@ -1,17 +1,22 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 """Platform HTTP header name constants used across the AgentServer packages.
 
+Defines the HTTP header names used across the AgentServer platform.
 These headers form the wire contract between the Foundry platform, agent
-containers, and downstream storage services.  All header name constants
-are defined here to eliminate scattered string literals and ensure
-consistency across logging policies, middleware, and endpoint handlers.
+containers, and downstream storage services.
 
 **Response headers** (set by the server on every response):
 
 - :data:`REQUEST_ID` — request correlation ID.
 - :data:`SERVER_VERSION` — server SDK identity.
 - :data:`SESSION_ID` — resolved session ID (when applicable).
+
+**Error response headers** (set on 4xx/5xx responses):
+
+- :data:`ERROR_SOURCE` — classifies error origin (``user``, ``platform``, or ``upstream``).
+- :data:`ERROR_DETAIL` — internal diagnostic detail for platform telemetry.
 
 **Request headers** (set by the platform or client):
 
@@ -78,18 +83,35 @@ CLIENT_REQUEST_ID: str = "x-ms-client-request-id"
 Logged for diagnostic correlation with upstream Azure SDK callers.
 """
 
-# -- Storage diagnostics (response headers from Foundry) --------------------
-
 APIM_REQUEST_ID: str = "apim-request-id"
 """The ``apim-request-id`` header — APIM gateway correlation header.
 Extracted from Foundry storage responses for diagnostic logging.
 """
 
-# -- HttpContext item key ---------------------------------------------------
+# -- Error source classification --------------------------------------------
 
-REQUEST_ID_ITEM_KEY: str = "agentserver.request_id"
-"""Key used to store the resolved request ID in ASGI scope state.
+ERROR_SOURCE: str = "x-platform-error-source"
+"""The ``x-platform-error-source`` header — classifies every error response
+so the platform can route actionable errors to the right team.
+Present on all 4xx/5xx responses from protocol endpoints.
+Values: ``user``, ``platform``, ``upstream``.
+"""
 
-Downstream handlers and middleware can read this value to correlate the
-request ID without re-resolving it.
+ERROR_DETAIL: str = "x-platform-error-detail"
+"""The ``x-platform-error-detail`` header — internal diagnostic detail
+for platform telemetry.  Not intended for end-user display.
+Present on error responses when additional diagnostic context is available.
+"""
+
+# -- Error tagging ----------------------------------------------------------
+
+PLATFORM_ERROR_TAG: str = "Azure.AI.AgentServer.PlatformError"
+"""Dynamic attribute name set on exceptions to mark them as platform
+infrastructure errors (as opposed to user or upstream errors).  Used by
+the error source classification logic in the protocol packages.
+"""
+
+MAX_ERROR_DETAIL_LENGTH: int = 2048
+"""Maximum character length for the ``x-platform-error-detail`` header value.
+Values longer than this are truncated with a ``...[truncated]`` suffix.
 """

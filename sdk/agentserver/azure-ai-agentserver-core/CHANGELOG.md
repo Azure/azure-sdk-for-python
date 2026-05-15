@@ -1,14 +1,10 @@
 # Release History
 
-## 2.0.0b4 (Unreleased)
+## 2.0.0b4 (2026-05-15)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added `_platform_headers` module with cross-cutting protocol header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, `x-platform-error-source`, `x-platform-error-detail`, and others). Protocol packages now import shared header name strings from core instead of maintaining their own copies.
 
 ## 2.0.0b3 (2026-04-22)
 
