@@ -4,28 +4,20 @@
 
 ### Features Added
 
-  - Model `TrafficManagerManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `TrafficManagerManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `TrafficManagerManagementClient` added method `send_request`
-  - Model `HeatMapModel` added property `properties`
-  - Model `TrafficManagerGeographicHierarchy` added property `properties`
-  - Model `UserMetricsModel` added property `properties`
   - Added model `CloudError`
-  - Added model `GeographicHierarchyProperties`
-  - Added model `HeatMapProperties`
   - Added enum `HeatMapType`
   - Added enum `RecordType`
-  - Added model `UserMetricsProperties`
 
 ### Breaking Changes
 
-  - Model `HeatMapModel` deleted or renamed its instance variable `start_time`
-  - Model `HeatMapModel` deleted or renamed its instance variable `end_time`
-  - Model `HeatMapModel` deleted or renamed its instance variable `endpoints`
-  - Model `HeatMapModel` deleted or renamed its instance variable `traffic_flows`
-  - Model `TrafficManagerGeographicHierarchy` deleted or renamed its instance variable `geographic_hierarchy`
-  - Model `UserMetricsModel` deleted or renamed its instance variable `key`
-  - Method `HeatMapOperations.get` changed its parameter `top_left` from `positional_or_keyword` to `keyword_only`
-  - Method `HeatMapOperations.get` changed its parameter `bot_right` from `positional_or_keyword` to `keyword_only`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `HeatMapModel` moved instance variable `start_time`, `end_time`, `endpoints` and `traffic_flows` under property `properties` whose type is `HeatMapProperties`
+  - Model `TrafficManagerGeographicHierarchy` moved instance variable `geographic_hierarchy` under property `properties` whose type is `GeographicHierarchyProperties`
+  - Model `UserMetricsModel` moved instance variable `key` under property `properties` whose type is `UserMetricsProperties`
+  - Method `HeatMapOperations.get` changed its parameter `top_left`/`bot_right` from `positional_or_keyword` to `keyword_only`
   - Method `HeatMapOperations.get` inserted a `positional_or_keyword` parameter `heat_map_type`
 
 ## 1.1.0 (2023-06-16)
