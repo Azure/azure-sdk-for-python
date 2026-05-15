@@ -30,8 +30,8 @@ class QueuesClientConfiguration(QueuesClientConfigurationInternal):
     :param url: The host name of the queue storage account, e.g.
      accountName.queue.core.windows.net. Required.
     :type url: str
-    :param credential: Credential used to authenticate requests to the service. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword version: Specifies the version of the operation to use for this request. Known values
      are "2026-04-06". Default value is "2026-04-06". Note that overriding this default value may
      result in unsupported behavior.
@@ -54,7 +54,22 @@ class QueuesClientConfiguration(QueuesClientConfigurationInternal):
 
 
 class QueuesClient(_QueuesClient):
-    """QueuesClient that supports being instantiated with a pre-built pipeline."""
+    """QueuesClient.
+
+    :ivar service: ServiceOperations operations
+    :vartype service: azure.storage.queue.aio.operations.ServiceOperations
+    :ivar queue: QueueOperations operations
+    :vartype queue: azure.storage.queue.aio.operations.QueueOperations
+    :param url: The host name of the queue storage account, e.g.
+     accountName.queue.core.windows.net. Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
+    :keyword version: Specifies the version of the operation to use for this request. Known values
+     are "2026-04-06". Default value is "2026-04-06". Note that overriding this default value may
+     result in unsupported behavior.
+    :paramtype version: str
+    """
 
     def __init__(self, url: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
         _pipeline = kwargs.pop("pipeline", None)
