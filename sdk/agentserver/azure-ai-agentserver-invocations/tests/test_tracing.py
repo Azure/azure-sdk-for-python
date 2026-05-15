@@ -278,12 +278,13 @@ def test_no_tracing_when_no_endpoints():
 # ---------------------------------------------------------------------------
 
 def test_traceparent_propagation():
-    """Server propagates traceparent header into OTel context for framework spans."""
-    from opentelemetry import trace as _trace
+    """Server propagates traceparent header into OTel context for framework spans.
 
-    trace_id_hex = uuid.uuid4().hex
-    span_id_hex = uuid.uuid4().hex[:16]
-    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+    Uses a real OTel span + ``inject(headers)`` instead of a synthetic
+    traceparent string for CI reliability.
+    """
+    from opentelemetry import trace as _trace
+    from opentelemetry.propagate import inject
 
     captured_trace_id = None
     captured_parent_id = None
@@ -303,14 +304,23 @@ def test_traceparent_propagation():
         return Response(content=b"ok")
 
     client = TestClient(server)
-    client.post(
-        "/invocations",
-        content=b"test",
-        headers={"traceparent": traceparent},
-    )
 
-    assert captured_trace_id == trace_id_hex
-    assert captured_parent_id == span_id_hex
+    caller_tracer = _trace.get_tracer("test.caller")
+    with caller_tracer.start_as_current_span("CallerOp") as caller_span:
+        caller_trace_id = format(caller_span.context.trace_id, "032x")
+        caller_span_id = format(caller_span.context.span_id, "016x")
+
+        headers: dict[str, str] = {}
+        inject(headers)
+
+        client.post(
+            "/invocations",
+            content=b"test",
+            headers=headers,
+        )
+
+    assert captured_trace_id == caller_trace_id
+    assert captured_parent_id == caller_span_id
 
 
 # ---------------------------------------------------------------------------
@@ -391,12 +401,12 @@ def test_sdk_set_baggage_available_in_handler():
 def test_incoming_baggage_does_not_break_span_parenting():
     """Incoming baggage header does not break parent-child span relationships.
     Framework spans created inside the handler should be parented under the
-    incoming traceparent (no intermediate invoke_agent span)."""
-    from opentelemetry import trace as _trace
+    incoming traceparent (no intermediate invoke_agent span).
 
-    trace_id_hex = uuid.uuid4().hex
-    span_id_hex = uuid.uuid4().hex[:16]
-    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+    Uses a real OTel span + ``inject(headers)`` for CI reliability.
+    """
+    from opentelemetry import trace as _trace
+    from opentelemetry.propagate import inject
 
     captured_trace_id = None
     captured_parent_id = None
@@ -415,18 +425,24 @@ def test_incoming_baggage_does_not_break_span_parenting():
         return Response(content=b"ok")
 
     client = TestClient(server)
-    client.post(
-        "/invocations",
-        content=b"test",
-        headers={
-            "traceparent": traceparent,
-            "baggage": "user.id=test-user-456",
-        },
-    )
+
+    caller_tracer = _trace.get_tracer("test.caller")
+    with caller_tracer.start_as_current_span("CallerBaggageOp") as caller_span:
+        caller_trace_id = format(caller_span.context.trace_id, "032x")
+        caller_span_id = format(caller_span.context.span_id, "016x")
+
+        headers: dict[str, str] = {"baggage": "user.id=test-user-456"}
+        inject(headers)
+
+        client.post(
+            "/invocations",
+            content=b"test",
+            headers=headers,
+        )
 
     # Framework span inherits trace ID and parents directly under incoming span
-    assert captured_trace_id == trace_id_hex
-    assert captured_parent_id == span_id_hex
+    assert captured_trace_id == caller_trace_id
+    assert captured_parent_id == caller_span_id
 
 
 def test_incoming_baggage_empty_header():
@@ -444,8 +460,12 @@ def test_incoming_baggage_empty_header():
 def test_incoming_baggage_stamped_on_handler_spans():
     """Incoming W3C baggage entries (including invocation_id) are stamped
     as span attributes on spans created inside the handler via the
-    FoundryEnrichmentSpanProcessor."""
+    FoundryEnrichmentSpanProcessor.
+
+    Uses a real OTel span + ``inject(headers)`` for CI reliability.
+    """
     from opentelemetry import trace as _trace
+    from opentelemetry.propagate import inject
     from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
 
     # Add the enrichment processor to the test provider so baggage → span attrs works
@@ -463,19 +483,18 @@ def test_incoming_baggage_stamped_on_handler_spans():
             body = await request.body()
         return Response(content=body, media_type="application/octet-stream")
 
-    trace_id_hex = uuid.uuid4().hex
-    span_id_hex = uuid.uuid4().hex[:16]
-    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
-
     client = TestClient(server)
-    client.post(
-        "/invocations",
-        content=b"test",
-        headers={
-            "traceparent": traceparent,
-            "baggage": "user.id=test-user-789,custom.key=custom-value",
-        },
-    )
+
+    caller_tracer = _trace.get_tracer("test.caller")
+    with caller_tracer.start_as_current_span("CallerStampOp") as caller_span:
+        headers: dict[str, str] = {"baggage": "user.id=test-user-789,custom.key=custom-value"}
+        inject(headers)
+
+        client.post(
+            "/invocations",
+            content=b"test",
+            headers=headers,
+        )
 
     spans = _get_spans()
     handler_spans = [s for s in spans if s.name == "handler_work"]

@@ -10,7 +10,6 @@ because HTTPX's ASGITransport runs the app in a different async context,
 which prevents OTel ContextVar propagation from working correctly.
 """
 import os
-import uuid
 from unittest.mock import patch
 
 import pytest
@@ -93,18 +92,27 @@ def _make_streaming_server_with_child_span():
 
 def test_framework_span_parented_under_incoming_traceparent():
     """A span created inside the handler should be parented under the incoming
-    traceparent — there is no intermediate invoke_agent span."""
-    trace_id_hex = uuid.uuid4().hex
-    span_id_hex = uuid.uuid4().hex[:16]
-    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+    traceparent — there is no intermediate invoke_agent span.
+
+    Uses a real OTel span + ``inject(headers)`` instead of a synthetic
+    traceparent string so that the trace context is always propagated
+    correctly regardless of which TracerProvider or auto-instrumentation
+    is active in the process (e.g. CI environments).
+    """
+    from opentelemetry.propagate import inject
 
     server = _make_server_with_child_span()
     client = TestClient(server)
-    resp = client.post(
-        "/invocations",
-        content=b"test",
-        headers={"traceparent": traceparent},
-    )
+
+    caller_tracer = trace.get_tracer("test.caller")
+    with caller_tracer.start_as_current_span("CallerOperation") as caller_span:
+        caller_trace_id = format(caller_span.context.trace_id, "032x")
+        caller_span_id = format(caller_span.context.span_id, "016x")
+
+        headers: dict[str, str] = {}
+        inject(headers)
+
+        resp = client.post("/invocations", content=b"test", headers=headers)
     assert resp.status_code == 200
 
     spans = _EXPORTER.get_finished_spans()
@@ -113,25 +121,32 @@ def test_framework_span_parented_under_incoming_traceparent():
 
     fw = fw_spans[0]
     # Framework span should share the same trace ID
-    assert format(fw.context.trace_id, "032x") == trace_id_hex
-    # Framework span should be parented directly under the incoming span
+    assert format(fw.context.trace_id, "032x") == caller_trace_id
+    # Framework span should be parented directly under the caller span
     assert fw.parent is not None, "Framework span has no parent"
-    assert format(fw.parent.span_id, "016x") == span_id_hex
+    assert format(fw.parent.span_id, "016x") == caller_span_id
 
 
 def test_framework_span_parented_under_incoming_traceparent_streaming():
-    """Same parent-child relationship holds for streaming responses."""
-    trace_id_hex = uuid.uuid4().hex
-    span_id_hex = uuid.uuid4().hex[:16]
-    traceparent = f"00-{trace_id_hex}-{span_id_hex}-01"
+    """Same parent-child relationship holds for streaming responses.
+
+    Uses a real OTel span + ``inject(headers)`` instead of a synthetic
+    traceparent string for CI reliability.
+    """
+    from opentelemetry.propagate import inject
 
     server = _make_streaming_server_with_child_span()
     client = TestClient(server)
-    resp = client.post(
-        "/invocations",
-        content=b"test",
-        headers={"traceparent": traceparent},
-    )
+
+    caller_tracer = trace.get_tracer("test.caller")
+    with caller_tracer.start_as_current_span("CallerStreamOp") as caller_span:
+        caller_trace_id = format(caller_span.context.trace_id, "032x")
+        caller_span_id = format(caller_span.context.span_id, "016x")
+
+        headers: dict[str, str] = {}
+        inject(headers)
+
+        resp = client.post("/invocations", content=b"test", headers=headers)
     assert resp.status_code == 200
 
     spans = _EXPORTER.get_finished_spans()
@@ -139,9 +154,9 @@ def test_framework_span_parented_under_incoming_traceparent_streaming():
     assert len(fw_spans) == 1, f"Expected framework span, got: {[s.name for s in spans]}"
 
     fw = fw_spans[0]
-    assert format(fw.context.trace_id, "032x") == trace_id_hex
+    assert format(fw.context.trace_id, "032x") == caller_trace_id
     assert fw.parent is not None, "Framework span has no parent (streaming)"
-    assert format(fw.parent.span_id, "016x") == span_id_hex
+    assert format(fw.parent.span_id, "016x") == caller_span_id
 
 
 def test_no_invoke_agent_span_created():
