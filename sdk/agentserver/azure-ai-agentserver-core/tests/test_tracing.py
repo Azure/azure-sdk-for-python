@@ -5,6 +5,7 @@
 import os
 from unittest import mock
 
+import pytest
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
@@ -15,6 +16,7 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
+    resolve_enable_sensitive_data,
 )
 from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
 
@@ -74,13 +76,61 @@ class TestTracingToggle:
         mock_configure.assert_called_once_with(
             connection_string="InstrumentationKey=ctor",
             log_level=None,
+            enable_sensitive_data=False,
         )
 
     def test_observability_disabled_when_none(self) -> None:
         """Passing configure_observability=None disables all SDK-managed observability."""
-        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
+        with mock.patch.dict(
+            os.environ,
+            {
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000",
+                "FOUNDRY_ENABLE_SENSITIVE_DATA": "no",
+            },
+        ):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_observability=None)
+
+    def test_observability_defaults_sensitive_data_disabled(self) -> None:
+        env = os.environ.copy()
+        env.pop("FOUNDRY_ENABLE_SENSITIVE_DATA", None)
+        with mock.patch.dict(os.environ, env, clear=True):
+            mock_configure = mock.MagicMock()
+            AgentServerHost(configure_observability=mock_configure)
+            assert mock_configure.call_args[1]["enable_sensitive_data"] is False
+
+    @pytest.mark.parametrize("value", ["true", "TRUE", "1"])
+    def test_observability_receives_sensitive_data_enabled_env_var(self, value: str) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_ENABLE_SENSITIVE_DATA": value}):
+            mock_configure = mock.MagicMock()
+            AgentServerHost(configure_observability=mock_configure)
+            assert mock_configure.call_args[1]["enable_sensitive_data"] is True
+
+    @pytest.mark.parametrize("value", ["false", "FALSE", "0", ""])
+    def test_observability_receives_sensitive_data_disabled_env_var(self, value: str) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_ENABLE_SENSITIVE_DATA": value}):
+            mock_configure = mock.MagicMock()
+            AgentServerHost(configure_observability=mock_configure)
+            assert mock_configure.call_args[1]["enable_sensitive_data"] is False
+
+    def test_observability_rejects_invalid_sensitive_data_env_var(self) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_ENABLE_SENSITIVE_DATA": "no"}):
+            with pytest.raises(ValueError, match="FOUNDRY_ENABLE_SENSITIVE_DATA"):
+                AgentServerHost(configure_observability=mock.MagicMock())
+
+    def test_custom_observability_callback_without_sensitive_data_kwarg_still_supported(self) -> None:
+        calls = []
+
+        def configure_observability(*, connection_string=None, log_level=None):
+            calls.append({"connection_string": connection_string, "log_level": log_level})
+
+        with mock.patch.dict(os.environ, {"FOUNDRY_ENABLE_SENSITIVE_DATA": "true"}):
+            AgentServerHost(
+                applicationinsights_connection_string="InstrumentationKey=ctor",
+                configure_observability=configure_observability,
+            )
+
+        assert calls == [{"connection_string": "InstrumentationKey=ctor", "log_level": None}]
 
 
 # ------------------------------------------------------------------ #
@@ -131,6 +181,7 @@ class TestSetupDistroExport:
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
             assert kwargs["connection_string"] == "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+            assert kwargs["enable_sensitive_data"] is False
             assert len(kwargs["span_processors"]) >= 1
             assert len(kwargs["log_record_processors"]) >= 1
 
@@ -141,6 +192,15 @@ class TestSetupDistroExport:
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
             assert kwargs["connection_string"] is None
+            assert kwargs["enable_sensitive_data"] is False
+
+    def test_distro_receives_enable_sensitive_data(self) -> None:
+        with mock.patch("azure.ai.agentserver.core._tracing._setup_distro_export") as mock_distro:
+            from azure.ai.agentserver.core import _tracing
+            _tracing._configure_tracing(connection_string=None, enable_sensitive_data=True)
+            mock_distro.assert_called_once()
+            kwargs = mock_distro.call_args[1]
+            assert kwargs["enable_sensitive_data"] is True
 
 
 # ------------------------------------------------------------------ #
@@ -160,7 +220,33 @@ class TestConstructorConnectionString:
         mock_configure.assert_called_once_with(
             connection_string="InstrumentationKey=ctor",
             log_level=None,
+            enable_sensitive_data=False,
         )
+
+
+class TestSensitiveDataResolution:
+    """Tests for resolve_enable_sensitive_data()."""
+
+    def test_default_false(self) -> None:
+        env = os.environ.copy()
+        env.pop("FOUNDRY_ENABLE_SENSITIVE_DATA", None)
+        with mock.patch.dict(os.environ, env, clear=True):
+            assert resolve_enable_sensitive_data() is False
+
+    @pytest.mark.parametrize("value", ["true", "TRUE", "1"])
+    def test_true_values(self, value: str) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_ENABLE_SENSITIVE_DATA": value}):
+            assert resolve_enable_sensitive_data() is True
+
+    @pytest.mark.parametrize("value", ["false", "FALSE", "0", ""])
+    def test_false_values(self, value: str) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_ENABLE_SENSITIVE_DATA": value}):
+            assert resolve_enable_sensitive_data() is False
+
+    def test_invalid_value_raises(self) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_ENABLE_SENSITIVE_DATA": "no"}):
+            with pytest.raises(ValueError, match="FOUNDRY_ENABLE_SENSITIVE_DATA"):
+                resolve_enable_sensitive_data()
 
 
 # ------------------------------------------------------------------ #
@@ -364,6 +450,4 @@ class TestAgentIdentityResolution:
         env.pop("FOUNDRY_AGENT_VERSION", None)
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
-
-
 

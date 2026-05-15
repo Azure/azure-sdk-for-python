@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
+import inspect
 import logging
 import os
 import signal
@@ -62,6 +63,31 @@ def _mask_uri(uri: str) -> str:
         return "(redacted)"
     except Exception:  # pylint: disable=broad-exception-caught
         return "(redacted)"
+
+
+def _accepts_enable_sensitive_data(configure_observability: Callable[..., None]) -> bool:
+    """Return whether *configure_observability* accepts the new sensitive-data kwarg.
+
+    :param configure_observability: The observability setup callable to inspect.
+    :type configure_observability: Callable[..., None]
+    :return: Whether the callable accepts ``enable_sensitive_data``.
+    :rtype: bool
+    """
+    try:
+        parameters = inspect.signature(configure_observability).parameters
+    except (TypeError, ValueError):
+        return False
+
+    for name, parameter in parameters.items():
+        if parameter.kind == inspect.Parameter.VAR_KEYWORD:
+            return True
+        if (
+            name == "enable_sensitive_data"
+            and parameter.kind
+            in (inspect.Parameter.KEYWORD_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD)
+        ):
+            return True
+    return False
 
 
 class _PlatformHeaderMiddleware:
@@ -190,10 +216,14 @@ class AgentServerHost(Starlette):
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
         if configure_observability is not None:
             try:
-                configure_observability(
-                    connection_string=_conn_str,
-                    log_level=log_level,
-                )
+                _sensitive_data = _config.resolve_enable_sensitive_data()
+                observability_kwargs: dict[str, Any] = {
+                    "connection_string": _conn_str,
+                    "log_level": log_level,
+                }
+                if _accepts_enable_sensitive_data(configure_observability):
+                    observability_kwargs["enable_sensitive_data"] = _sensitive_data
+                configure_observability(**observability_kwargs)
             except ValueError:
                 raise  # invalid log_level etc. — user should fix their config
             except Exception:  # pylint: disable=broad-exception-caught
