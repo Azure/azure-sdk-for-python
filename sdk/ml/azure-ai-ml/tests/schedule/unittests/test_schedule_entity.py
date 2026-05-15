@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytest
+from marshmallow import ValidationError
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml.constants import TimeZone
@@ -189,3 +190,14 @@ class TestScheduleEntity:
         test_path = "./tests/test_configs/schedule/out_of_box_monitoring.yaml"
         schedule = load_schedule(test_path)
         assert "genai_app_monitoring", schedule.name
+
+    def test_load_schedule_with_nonexistent_pipeline_file_reference(self):
+        test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
+        params_override = [{"create_job.job": "../pipeline_jobs/not_exists_pipeline.yml"}]
+
+        with pytest.raises(ValidationError) as e:
+            load_schedule(test_path, params_override=params_override)
+
+        message = str(e.value)
+        assert "No such file or directory" in message
+        assert "In order to specify an existing jobs" not in message
