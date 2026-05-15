@@ -7,10 +7,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
-try:
-    from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG
-except (ImportError, ModuleNotFoundError):
-    PLATFORM_ERROR_TAG = "Azure.AI.AgentServer.PlatformError"
+from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpResponse

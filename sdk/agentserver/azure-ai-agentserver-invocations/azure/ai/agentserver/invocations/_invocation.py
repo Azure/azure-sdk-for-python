@@ -29,22 +29,14 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     set_current_span,
     trace_stream,
 )
-try:
-    from azure.ai.agentserver.core._platform_headers import (
-        CHAT_ISOLATION_KEY,
-        ERROR_DETAIL,
-        ERROR_SOURCE,
-        MAX_ERROR_DETAIL_LENGTH,
-        PLATFORM_ERROR_TAG,
-        USER_ISOLATION_KEY,
-    )
-except (ImportError, ModuleNotFoundError):
-    CHAT_ISOLATION_KEY = "x-agent-chat-isolation-key"
-    ERROR_DETAIL = "x-platform-error-detail"
-    ERROR_SOURCE = "x-platform-error-source"
-    MAX_ERROR_DETAIL_LENGTH = 2048
-    PLATFORM_ERROR_TAG = "Azure.AI.AgentServer.PlatformError"
-    USER_ISOLATION_KEY = "x-agent-user-isolation-key"
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+    CHAT_ISOLATION_KEY,
+    ERROR_DETAIL,
+    ERROR_SOURCE,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
+    USER_ISOLATION_KEY,
+)
 
 from ._constants import InvocationConstants
 
