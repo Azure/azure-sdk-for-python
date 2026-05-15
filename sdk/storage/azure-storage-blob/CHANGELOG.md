@@ -4,6 +4,18 @@
 
 ### Features Added
 
+## 12.29.0 (2026-05-14)
+
+### Features Added
+- Stable release of features from 12.29.0b1
+
+### Bugs Fixed
+- Fixed an issue where `BlobClient`'s `download_blob` did not retry upon 
+`ServiceReponseError` and `ServiceResponseTimeoutError` exceptions
+- Fixed various issues with configuring logging via `logging_enable` and `logging_body` keywords on a per-request
+basis and with retries. Prior to this fix logging may have not behaved as expected, especially on retries.
+- Fix a potential memory leak caused by improper exception handling that could occur under rare circumstances.
+
 ## 12.30.0b1 (2026-04-01)
 
 ### Features Added
