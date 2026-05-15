@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.customproviders import Customproviders
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.customproviders import Customproviders
     pip install azure-identity
     pip install azure-mgmt-customproviders
 # USAGE
-    python list_the_custom_providers_operations.py
+    python list_custom_rps_by_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,14 +28,16 @@ from azure.mgmt.customproviders import Customproviders
 def main():
     client = Customproviders(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.operations.list()
+    response = client.custom_resource_provider.list_by_resource_group(
+        resource_group_name="testRG",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/preview/2018-09-01-preview/examples/operationsList.json
+# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/CustomProviders/preview/2018-09-01-preview/examples/listCustomRPsByResourceGroup.json
 if __name__ == "__main__":
     main()
