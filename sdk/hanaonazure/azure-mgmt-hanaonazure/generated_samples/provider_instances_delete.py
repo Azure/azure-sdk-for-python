@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hanaonazure import HanaManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.hanaonazure import HanaManagementClient
     pip install azure-identity
     pip install azure-mgmt-hanaonazure
 # USAGE
-    python list_all_sap_monitors_in_a_subscription.py
+    python provider_instances_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +31,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.sap_monitors.list()
-    for item in response:
-        print(item)
+    client.provider_instances.begin_delete(
+        resource_group_name="myResourceGroup",
+        sap_monitor_name="mySapMonitor",
+        provider_instance_name="myProviderInstance",
+    ).result()
 
 
-# x-ms-original-file: specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/preview/2020-02-07-preview/examples/SapMonitors_List.json
+# x-ms-original-file: specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/HanaOnAzure/preview/2020-02-07-preview/examples/ProviderInstances_Delete.json
 if __name__ == "__main__":
     main()
