@@ -10,4 +10,3 @@ need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
 title = "PlaywrightTestingMgmtClient"
-auto_update = false

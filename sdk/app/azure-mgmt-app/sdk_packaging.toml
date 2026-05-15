@@ -8,4 +8,3 @@ is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true
 title = "ContainerAppsAPIClient"
-auto_update = false
