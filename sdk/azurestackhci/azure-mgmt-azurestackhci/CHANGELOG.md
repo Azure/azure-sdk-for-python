@@ -1,5 +1,41 @@
 # Release History
 
+## 8.1.0 (2026-05-15)
+
+### Features Added
+
+  - Client `AzureStackHCIClient` added operation group `update_summaries_operation_group`
+  - Model `Cluster` added property `kind`
+  - Model `ClusterProperties` added property `billing_properties`
+  - Model `ClusterProperties` added property `storage_type`
+  - Model `DeploymentSettingHostNetwork` added property `san_networks`
+  - Model `HciReportedProperties` added property `last_sync_timestamp`
+  - Model `HciStorageProfile` added property `disks`
+  - Model `PerNodeRemoteSupportSession` added property `transcript_location`
+  - Model `RemoteSupportProperties` added property `remote_support_provisioning_state`
+  - Model `ReportedProperties` added property `last_sync_timestamp`
+  - Enum `State` added member `HEALTH_CHECK_EXPIRED`
+  - Enum `State` added member `PENDING_OEM_VALIDATION`
+  - Model `Storage` added property `storage_type`
+  - Model `Storage` added property `s2_d`
+  - Model `Storage` added property `san`
+  - Added model `CheckUpdatesRequest`
+  - Added model `ClusterBillingProperties`
+  - Added model `EdgeDeviceDisks`
+  - Added model `NextBillingModel`
+  - Added enum `OverprovisioningRatio`
+  - Added enum `RemoteSupportProvisioningState`
+  - Added model `SanAdapterIPConfig`
+  - Added model `SanAdapterProperties`
+  - Added model `SanClusterNetworkConfig`
+  - Added model `SanNetworks`
+  - Added model `StorageS2dConfig`
+  - Added model `StorageSanConfig`
+  - Added enum `StorageType`
+  - Added enum `VolumeType`
+  - Model `UpdatesOperations` added method `begin_prepare`
+  - Added model `UpdateSummariesOperationGroupOperations`
+
 ## 8.1.0b1 (2026-04-13)
 
 ### Features Added

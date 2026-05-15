@@ -79,6 +79,24 @@ def main():
                                             },
                                         }
                                     ],
+                                    "sanNetworks": {
+                                        "clusterNetworkConfig": {
+                                            "adapterIPConfig": [
+                                                {
+                                                    "addressPrefix": "10.10.30.0/24",
+                                                    "name": "clusterNetwork-A",
+                                                    "networkAdapterName": "ethernet 3",
+                                                    "vlanId": 711,
+                                                }
+                                            ],
+                                            "adapterProperties": {
+                                                "bandwidthPercentageSmb": 50,
+                                                "jumboPacket": 9014,
+                                                "priorityValue8021ActionCluster": 7,
+                                                "priorityValue8021ActionSmb": 3,
+                                            },
+                                        }
+                                    },
                                     "storageConnectivitySwitchless": True,
                                     "storageNetworks": [
                                         {
@@ -148,7 +166,11 @@ def main():
                                     "smbSigningEnforced": True,
                                     "wdacEnforced": True,
                                 },
-                                "storage": {"configurationMode": "Express"},
+                                "storage": {
+                                    "configurationMode": "Express",
+                                    "s2d": {"overprovisioningRatio": "2", "volumeType": "ThinProvisioned"},
+                                    "storageType": "S2D",
+                                },
                             },
                             "sbePartnerInfo": {
                                 "credentialList": [
@@ -183,6 +205,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/PutDeploymentSettings.json
+# x-ms-original-file: 2026-04-30/PutDeploymentSettings.json
 if __name__ == "__main__":
     main()

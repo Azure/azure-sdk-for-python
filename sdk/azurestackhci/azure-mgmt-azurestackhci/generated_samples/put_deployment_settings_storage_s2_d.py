@@ -16,7 +16,7 @@ from azure.mgmt.azurestackhci import AzureStackHCIClient
     pip install azure-identity
     pip install azure-mgmt-azurestackhci
 # USAGE
-    python put_deployment_settings_with_ad_less.py
+    python put_deployment_settings_storage_s2_d.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -79,24 +79,6 @@ def main():
                                             },
                                         }
                                     ],
-                                    "sanNetworks": {
-                                        "clusterNetworkConfig": {
-                                            "adapterIPConfig": [
-                                                {
-                                                    "addressPrefix": "10.10.30.0/24",
-                                                    "name": "clusterNetwork-A",
-                                                    "networkAdapterName": "ethernet 3",
-                                                    "vlanId": 711,
-                                                }
-                                            ],
-                                            "adapterProperties": {
-                                                "bandwidthPercentageSmb": 50,
-                                                "jumboPacket": 9014,
-                                                "priorityValue8021ActionCluster": 7,
-                                                "priorityValue8021ActionSmb": 3,
-                                            },
-                                        }
-                                    },
                                     "storageConnectivitySwitchless": True,
                                     "storageNetworks": [
                                         {
@@ -113,15 +95,16 @@ def main():
                                         }
                                     ],
                                 },
-                                "identityProvider": "LocalIdentity",
                                 "infrastructureNetwork": [
                                     {
-                                        "dnsZones": [{"dnsForwarder": ["192.168.1.1"], "dnsZoneName": "contoso.com"}],
+                                        "dnsServerConfig": "UseDnsServer",
+                                        "dnsServers": ["10.57.50.90"],
                                         "gateway": "255.255.248.0",
                                         "ipPools": [{"endingAddress": "10.57.48.66", "startingAddress": "10.57.48.60"}],
                                         "subnetMask": "255.255.248.0",
                                     }
                                 ],
+                                "isManagementCluster": True,
                                 "namingPrefix": "ms169",
                                 "observability": {
                                     "episodicDataUpload": True,
@@ -133,13 +116,6 @@ def main():
                                     {"ipv4Address": "10.57.51.224", "name": "ms169host"},
                                     {"ipv4Address": "10.57.53.236", "name": "ms154host"},
                                 ],
-                                "sdnIntegration": {
-                                    "networkController": {
-                                        "macAddressPoolStart": "00-0D-3A-1B-C7-21",
-                                        "macAddressPoolStop": "00-0D-3A-1B-C7-29",
-                                        "networkVirtualizationEnabled": True,
-                                    }
-                                },
                                 "secrets": [
                                     {
                                         "eceSecretName": "BMCAdminUserCred",
@@ -204,6 +180,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-30/PutDeploymentSettingsWithADLess.json
+# x-ms-original-file: 2026-04-30/PutDeploymentSettings_StorageS2D.json
 if __name__ == "__main__":
     main()
