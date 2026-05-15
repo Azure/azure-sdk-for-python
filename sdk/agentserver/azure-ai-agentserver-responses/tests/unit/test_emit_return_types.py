@@ -243,18 +243,14 @@ class TestTextContentBuilderReturnTypes:
         _, _, tc = self._setup()
         tc.emit_added()
         event = tc.emit_delta("hello")
-        assert isinstance(event, ResponseTextDeltaEvent), (
-            f"Expected ResponseTextDeltaEvent, got {type(event)}"
-        )
+        assert isinstance(event, ResponseTextDeltaEvent), f"Expected ResponseTextDeltaEvent, got {type(event)}"
 
     def test_emit_text_done(self) -> None:
         _, _, tc = self._setup()
         tc.emit_added()
         tc.emit_delta("hello")
         event = tc.emit_text_done()
-        assert isinstance(event, ResponseTextDoneEvent), (
-            f"Expected ResponseTextDoneEvent, got {type(event)}"
-        )
+        assert isinstance(event, ResponseTextDoneEvent), f"Expected ResponseTextDoneEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         _, _, tc = self._setup()
@@ -308,18 +304,14 @@ class TestRefusalContentBuilderReturnTypes:
         _, _, rc = self._setup()
         rc.emit_added()
         event = rc.emit_delta("I cannot do that")
-        assert isinstance(event, ResponseRefusalDeltaEvent), (
-            f"Expected ResponseRefusalDeltaEvent, got {type(event)}"
-        )
+        assert isinstance(event, ResponseRefusalDeltaEvent), f"Expected ResponseRefusalDeltaEvent, got {type(event)}"
 
     def test_emit_refusal_done(self) -> None:
         _, _, rc = self._setup()
         rc.emit_added()
         rc.emit_delta("I cannot do that")
         event = rc.emit_refusal_done("I cannot do that")
-        assert isinstance(event, ResponseRefusalDoneEvent), (
-            f"Expected ResponseRefusalDoneEvent, got {type(event)}"
-        )
+        assert isinstance(event, ResponseRefusalDoneEvent), f"Expected ResponseRefusalDoneEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         _, _, rc = self._setup()
@@ -784,9 +776,7 @@ class TestMcpCallBuilderReturnTypes:
         mcp = s.add_output_item_mcp_call("server", "tool")
         mcp.emit_added()
         event = mcp.emit_failed()
-        assert isinstance(event, ResponseMCPCallFailedEvent), (
-            f"Expected ResponseMCPCallFailedEvent, got {type(event)}"
-        )
+        assert isinstance(event, ResponseMCPCallFailedEvent), f"Expected ResponseMCPCallFailedEvent, got {type(event)}"
 
     def test_emit_done(self) -> None:
         s = _stream()

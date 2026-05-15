@@ -4,16 +4,21 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
+from azure.ai.agentserver.core._platform_headers import CHAT_ISOLATION_KEY, PLATFORM_ERROR_TAG, USER_ISOLATION_KEY  # pylint: disable=import-error,no-name-in-module
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline import policies
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.pipeline import PipelineRequest, policies
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
+from .._version import VERSION
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
+from ._foundry_logging_policy import FoundryStorageLoggingPolicy
 from ._foundry_serializer import (
     deserialize_history_ids,
     deserialize_items_array,
@@ -30,8 +35,33 @@ if TYPE_CHECKING:
 
 _FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
 _JSON_CONTENT_TYPE = "application/json; charset=utf-8"
-_USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
-_CHAT_ISOLATION_HEADER = "x-agent-chat-isolation-key"
+
+
+class _ServerVersionUserAgentPolicy(SansIOHTTPPolicy):  # type: ignore[type-arg]
+    """Pipeline policy that sets the ``User-Agent`` header lazily from a callback.
+
+    Unlike :class:`~azure.core.pipeline.policies.UserAgentPolicy` which
+    captures the value at construction time, this policy evaluates the
+    callback on each request so it reflects segments registered after the
+    pipeline was built (e.g. by cooperative ``__init__`` in a multi-protocol
+    host).
+
+    :param get_server_version: Callable returning the current server version
+        string (the same value used for the ``x-platform-server`` header).
+    :type get_server_version: Callable[[], str]
+    """
+
+    def __init__(self, get_server_version: Callable[[], str]) -> None:
+        super().__init__()
+        self._get_server_version = get_server_version
+
+    def on_request(self, request: PipelineRequest) -> None:  # type: ignore[type-arg]
+        """Set the ``User-Agent`` header before the request is sent.
+
+        :param request: The pipeline request.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        request.http_request.headers["User-Agent"] = self._get_server_version()
 
 
 def _encode(value: str) -> str:
@@ -49,9 +79,9 @@ def _apply_isolation_headers(request: HttpRequest, isolation: IsolationContext |
     if isolation is None:
         return
     if isolation.user_key is not None:
-        request.headers[_USER_ISOLATION_HEADER] = isolation.user_key
+        request.headers[USER_ISOLATION_KEY] = isolation.user_key
     if isolation.chat_key is not None:
-        request.headers[_CHAT_ISOLATION_HEADER] = isolation.chat_key
+        request.headers[CHAT_ISOLATION_KEY] = isolation.chat_key
 
 
 class FoundryStorageProvider:
@@ -70,6 +100,13 @@ class FoundryStorageProvider:
     :param settings: Storage settings. If omitted,
         :meth:`~FoundryStorageSettings.from_env` is called automatically.
     :type settings: FoundryStorageSettings | None
+    :param get_server_version: Callable returning the server version string
+        to use as the ``User-Agent`` header on outgoing Foundry HTTP requests.
+        Evaluated lazily on each request so that it reflects the final
+        composed ``x-platform-server`` value.  When ``None`` (default),
+        this provider uses Azure Core's default ``UserAgentPolicy`` with the
+        SDK moniker ``ai-agentserver-responses/{VERSION}``.
+    :type get_server_version: Callable[[], str] | None
 
     Example::
 
@@ -81,24 +118,38 @@ class FoundryStorageProvider:
         self,
         credential: AsyncTokenCredential,
         settings: FoundryStorageSettings | None = None,
+        get_server_version: Callable[[], str] | None = None,
     ) -> None:
         self._settings = settings or FoundryStorageSettings.from_env()
+
+        ua_policy: policies.UserAgentPolicy | _ServerVersionUserAgentPolicy
+        if get_server_version is not None:
+            ua_policy = _ServerVersionUserAgentPolicy(get_server_version)
+        else:
+            ua_policy = policies.UserAgentPolicy(sdk_moniker=f"ai-agentserver-responses/{VERSION}")
+
         self._client: AsyncPipelineClient = AsyncPipelineClient(
             base_url=self._settings.storage_base_url,
             policies=[
                 policies.RequestIdPolicy(),
                 policies.HeadersPolicy(),
-                policies.UserAgentPolicy(
-                    sdk_moniker="ai-agentserver-responses",
-                ),
+                ua_policy,
                 policies.AsyncRetryPolicy(),
                 policies.AsyncBearerTokenCredentialPolicy(
                     credential,
                     _FOUNDRY_TOKEN_SCOPE,
                 ),
-                policies.ContentDecodePolicy(),
+                FoundryStorageLoggingPolicy(),
+                # NOTE: ``ContentDecodePolicy`` is intentionally NOT included.
+                # It eagerly decodes every response body as JSON and crashes
+                # with ``UnicodeDecodeError`` when the storage backend (or an
+                # intermediary gateway / load-balancer) returns a non-UTF-8
+                # body — for example a gzip-compressed payload, an HTML error
+                # page, or a transport-corrupted body.  We never read its
+                # output (``response.context['deserialized_data']``); our own
+                # ``_foundry_serializer`` and ``_foundry_errors`` modules call
+                # ``http_resp.text()`` directly with defensive error handling.
                 policies.DistributedTracingPolicy(),
-                policies.HttpLoggingPolicy(),
             ],
         )
 
@@ -115,6 +166,31 @@ class FoundryStorageProvider:
 
     async def __aexit__(self, *args: Any) -> None:
         await self.aclose()
+
+    # ------------------------------------------------------------------
+    # Internal transport helper
+    # ------------------------------------------------------------------
+
+    async def _send_storage_request(self, request: HttpRequest) -> Any:
+        """Send an HTTP request to the Foundry storage API.
+
+        Any transport-level exception (connection failure, timeout, etc.)
+        is tagged as a platform error before re-raising, matching the .NET
+        ``FoundryStorageProvider.SendStorageRequestAsync`` pattern.
+
+        :param request: The HTTP request to send.
+        :type request: ~azure.core.rest.HttpRequest
+        :returns: The HTTP response object.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises FoundryStorageError: When the response status code is non-2xx.
+        """
+        try:
+            http_resp = await self._client.send_request(request)
+        except (ServiceRequestError, ServiceResponseError, OSError) as exc:
+            setattr(exc, PLATFORM_ERROR_TAG, True)
+            raise
+        raise_for_storage_error(http_resp)
+        return http_resp
 
     # ------------------------------------------------------------------
     # ResponseProviderProtocol implementation
@@ -144,8 +220,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url("responses")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        await self._send_storage_request(request)
 
     async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
         """Retrieve a stored response by its ID.
@@ -162,8 +237,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("GET", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_response(http_resp.text())
 
     async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
@@ -181,8 +255,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        await self._send_storage_request(request)
 
     async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
         """Delete a stored response and its associated data.
@@ -197,8 +270,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("DELETE", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        await self._send_storage_request(request)
 
     async def get_input_items(
         self,
@@ -241,8 +313,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}/input_items", **extra)
         request = HttpRequest("GET", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_paged_items(http_resp.text())
 
     async def get_items(
@@ -266,8 +337,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url("items/batch/retrieve")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_items_array(http_resp.text())
 
     async def get_history_item_ids(
@@ -301,6 +371,5 @@ class FoundryStorageProvider:
         url = self._settings.build_url("history/item_ids", **extra)
         request = HttpRequest("GET", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_history_ids(http_resp.text())

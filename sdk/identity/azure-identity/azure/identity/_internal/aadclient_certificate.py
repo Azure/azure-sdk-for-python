@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import base64
-from typing import Optional
+from typing import Optional, Union
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -14,18 +14,26 @@ from cryptography.hazmat.backends import default_backend
 class AadClientCertificate:
     """Wraps 'cryptography' to provide the crypto operations AadClient requires for certificate authentication.
 
-    :param bytes pem_bytes: bytes of a a PEM-encoded certificate including the (RSA) private key
-    :param bytes password: (optional) the certificate's password
+    :param pem_bytes: PEM-encoded certificate including the (RSA) private key. May be ``bytes`` or a ``str``;
+        ``str`` values are encoded as UTF-8 before being handed to ``cryptography``.
+    :paramtype pem_bytes: bytes or str
+    :param password: (optional) the certificate's password. May be ``bytes`` or a ``str``; ``str`` values are
+        encoded as UTF-8.
+    :paramtype password: bytes or str or None
     """
 
-    def __init__(self, pem_bytes: bytes, password: Optional[bytes] = None) -> None:
+    def __init__(self, pem_bytes: Union[bytes, str], password: Optional[Union[bytes, str]] = None) -> None:
+        if isinstance(pem_bytes, str):
+            pem_bytes = pem_bytes.encode("utf-8")
+        if isinstance(password, str):
+            password = password.encode("utf-8")
         private_key = serialization.load_pem_private_key(pem_bytes, password=password, backend=default_backend())
         if not isinstance(private_key, RSAPrivateKey):
             raise ValueError("The certificate must have an RSA private key because RS256 is used for signing")
         self._private_key = private_key
 
         cert = x509.load_pem_x509_certificate(pem_bytes, default_backend())
-        fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
+        fingerprint = cert.fingerprint(hashes.SHA1())  # nosec # CodeQL [SM02167] only used as a thumbprint/identifier
         sha256_fingerprint = cert.fingerprint(hashes.SHA256())
         self._thumbprint = base64.urlsafe_b64encode(fingerprint).decode("utf-8")
         self._sha256_thumbprint = base64.urlsafe_b64encode(sha256_fingerprint).decode("utf-8")

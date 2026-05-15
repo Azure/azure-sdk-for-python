@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core._config import AgentConfig
+from azure.ai.agentserver.core._config import AgentConfig  # pylint: disable=import-error,no-name-in-module
 
 _API_VERSION = "v1"
 

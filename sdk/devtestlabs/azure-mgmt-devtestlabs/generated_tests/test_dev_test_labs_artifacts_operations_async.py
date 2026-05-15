@@ -21,7 +21,7 @@ class TestDevTestLabsArtifactsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_artifacts_list(self, resource_group):
         response = self.client.artifacts.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -34,7 +34,7 @@ class TestDevTestLabsArtifactsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_artifacts_get(self, resource_group):
         response = await self.client.artifacts.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -48,7 +48,7 @@ class TestDevTestLabsArtifactsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_generate_arm_template(self, resource_group):
+    async def test_artifacts_generate_arm_template(self, resource_group):
         response = await self.client.artifacts.generate_arm_template(
             resource_group_name=resource_group.name,
             lab_name="str",

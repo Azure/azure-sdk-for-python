@@ -42,6 +42,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-12-15-preview/Caches_PoolChange.json
+# x-ms-original-file: 2026-01-01/Caches_PoolChange.json
 if __name__ == "__main__":
     main()

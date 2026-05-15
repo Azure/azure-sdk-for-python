@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MonitorQueryLogsClientConfiguration
-from ._operations._operations import _MonitorQueryLogsClientOperationsMixin
+from ._operations import _MonitorQueryLogsClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -30,8 +30,8 @@ class MonitorQueryLogsClient(_MonitorQueryLogsClientOperationsMixin):
     :keyword endpoint: The Log Analytics service endpoint. Default value is
      "https://api.loganalytics.io".
     :paramtype endpoint: str
-    :keyword api_version: The service API version. Known values are "v1" and None. Default value is
-     "v1". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The service API version. Known values are "v1". Default value is "v1".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str or ~azure.monitor.query.models.Versions
     """
 

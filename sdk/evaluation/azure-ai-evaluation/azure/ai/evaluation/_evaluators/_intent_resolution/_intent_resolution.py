@@ -173,7 +173,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -192,6 +192,12 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         score = math.nan
         if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
+
             score = llm_output.get("score", math.nan)
             if not check_score_is_valid(
                 score,
@@ -204,23 +210,21 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
-            reason = llm_output.get("explanation", "")
+            reason = llm_output.get("reason", "")
             score = float(score)
             score_result = "pass" if score >= self._threshold else "fail"
+            llm_properties = llm_output.get("properties", {}) or {}
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             response_dict = {
-                f"{self._result_key}": score,
-                f"gpt_{self._result_key}": score,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
         # If llm_output is not a dictionary, raise exception
