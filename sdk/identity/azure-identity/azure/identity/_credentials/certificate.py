@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import cast, NamedTuple, Union, Dict, Any, Optional
+from typing import NamedTuple, Union, Dict, Any, Optional
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -131,7 +131,7 @@ def get_client_credential(
     certificate_data: Optional[bytes] = None,
     send_certificate_chain: bool = False,
     **_: Any
-) -> Dict:
+) -> Dict[str, Union[str, bytes]]:
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication.
 
     :param str certificate_path: Path to a PEM or PKCS12 certificate file.
@@ -151,22 +151,26 @@ def get_client_credential(
     elif not certificate_data:
         raise ValueError('CertificateCredential requires a value for either "certificate_path" or "certificate_data"')
 
+    password_bytes: Optional[bytes] = None
     if password:
-        # if password is already bytes, no need to encode.
         if isinstance(password, str):
-            password = password.encode("utf-8")
-    password = cast("Optional[bytes]", password)
+            password_bytes = password.encode("utf-8")
+        else:
+            password_bytes = password
 
     if b"-----BEGIN" in certificate_data:
-        cert = load_pem_certificate(certificate_data, password)
+        cert = load_pem_certificate(certificate_data, password_bytes)
     else:
-        cert = load_pkcs12_certificate(certificate_data, password)
+        cert = load_pkcs12_certificate(certificate_data, password_bytes)
         password = None  # load_pkcs12_certificate returns cert.pem_bytes decrypted
 
     if not isinstance(cert.private_key, RSAPrivateKey):
         raise ValueError("The certificate must have an RSA private key because RS256 is used for signing")
 
-    client_credential = {"private_key": cert.pem_bytes, "thumbprint": hexlify(cert.fingerprint).decode("utf-8")}
+    client_credential: Dict[str, Union[str, bytes]] = {
+        "private_key": cert.pem_bytes.decode("utf-8"),
+        "thumbprint": hexlify(cert.fingerprint).decode("utf-8"),
+    }
     if password:
         client_credential["passphrase"] = password
 

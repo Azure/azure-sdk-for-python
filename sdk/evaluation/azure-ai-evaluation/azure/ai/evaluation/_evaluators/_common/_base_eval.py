@@ -619,35 +619,43 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         for eval_input in eval_input_list:
             result = await self._do_eval(eval_input)
             # logic to determine threshold pass/fail
+            # if it wasn't computed in _do_eval
             try:
-                for key in list(result.keys()):
-                    if key.endswith("_score") and "rouge" not in key:
-                        score_value = result[key]
-                        base_key = key[:-6]  # Remove "_score" suffix
-                        result_key = f"{base_key}_result"
-                        threshold_key = f"{base_key}_threshold"
-                        threshold_value = (
-                            self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
-                        )
-                        if not isinstance(threshold_value, (int, float)):
-                            raise EvaluationException(
-                                "Threshold value must be a number.",
-                                internal_message=str(threshold_value),
-                                target=ErrorTarget.EVALUATE,
-                                category=ErrorCategory.INVALID_VALUE,
+                keys = list(result.keys())
+                contains_result_key = any(key.endswith("_result") for key in keys)
+                contains_threshold_key = any(key.endswith("_threshold") for key in keys)
+                if not contains_result_key or not contains_threshold_key:
+                    for key in keys:
+                        if key.endswith("_score"):
+                            score_value = result[key]
+                            base_key = key[:-6]  # Remove "_score" suffix
+                            result_key = f"{base_key}_result"
+                            threshold_key = f"{base_key}_threshold"
+                            threshold_value = (
+                                self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
                             )
+                            if not isinstance(threshold_value, (int, float)):
+                                raise EvaluationException(
+                                    "Threshold value must be a number.",
+                                    internal_message=str(threshold_value),
+                                    target=ErrorTarget.EVALUATE,
+                                    category=ErrorCategory.INVALID_VALUE,
+                                )
 
-                        result[threshold_key] = threshold_value
-                        if self._higher_is_better:
-                            if float(score_value) >= threshold_value:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
-                            else:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
-                        else:
-                            if float(score_value) <= threshold_value:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
-                            else:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                            if not contains_threshold_key:
+                                result[threshold_key] = threshold_value
+
+                            if not contains_result_key:
+                                if self._higher_is_better:
+                                    if float(score_value) >= threshold_value:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                                    else:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                                else:
+                                    if float(score_value) <= threshold_value:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                                    else:
+                                        result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
                 logger.warning(f"Error calculating binary result: {e}")
             per_turn_results.append(result)
