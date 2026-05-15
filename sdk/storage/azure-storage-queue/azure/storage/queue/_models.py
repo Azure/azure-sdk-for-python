@@ -183,7 +183,7 @@ class CorsRule(GeneratedCorsRule):
     """The comma-delimited string representation of the list of origin domains that will be allowed via
         CORS, or "*" to allow all domains."""
     allowed_methods: str
-    """The comma-delimited string representation of the list of HTTP methods that are allowed to be executed
+    """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
         by the origin."""
     allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of
