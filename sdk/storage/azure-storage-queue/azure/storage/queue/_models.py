@@ -183,15 +183,15 @@ class CorsRule(GeneratedCorsRule):
     """The comma-delimited string representation of the list of origin domains that will be allowed via
         CORS, or "*" to allow all domains."""
     allowed_methods: str
-    """The comma-delimited string representation of the list of HTTP methods that are allowed to be executed
+    """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
         by the origin."""
+    max_age_in_seconds: int
+    """The number of seconds that the client/browser should cache a pre-flight response."""
+    exposed_headers: str
+    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
     allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of
         the cross-origin request."""
-    exposed_headers: str
-    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
-    max_age_in_seconds: int
-    """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ",".join(allowed_origins)
