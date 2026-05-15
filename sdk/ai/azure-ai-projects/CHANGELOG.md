@@ -4,6 +4,7 @@
 
 ### Features Added
 
+* New Agent tool `WorkIQPreviewTool`.
 * New Agent tool `FabricIQPreviewTool`.
 * New Agent tool `ToolboxSearchPreviewTool`.
 * New optional string properties `description` and `name` added to Agent tools which did not have them before.
@@ -23,7 +24,6 @@ Breaking changes in beta classes:
 * Renamed class `SessionDirectoryListResponse` to `SessionDirectoryListResult`.
 * Renamed class `SessionFileWriteResponse` to `SessionFileWriteResult`.
 * Renamed class `SkillObject` to `SkillDetails`.
-* Removed class `WorkIQPreviewToolParameters`.
 
 ### Bugs Fixed
 
@@ -31,8 +31,7 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
-* ADDED. NEED TO TES: Agent tools:
-  * Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
+* Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
 
 ## 2.1.0 (2026-04-20)
 
