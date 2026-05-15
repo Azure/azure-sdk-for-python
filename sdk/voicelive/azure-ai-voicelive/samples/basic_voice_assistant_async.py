@@ -13,16 +13,16 @@ FILE: basic_voice_assistant_async.py
 DESCRIPTION:
     This sample demonstrates the fundamental capabilities of the VoiceLive SDK by creating
     a basic voice assistant that can engage in natural conversation with proper interruption
-    handling. This serves as the foundational example that showcases the core value 
+    handling. This serves as the foundational example that showcases the core value
     proposition of unified speech-to-speech interaction.
 
 USAGE:
     python basic_voice_assistant_async.py
-    
+
     Set the environment variables with your own values before running the sample:
     1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
     2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
-    
+
     Or copy .env.template to .env and fill in your values.
 
     To enable OpenTelemetry tracing (optional):

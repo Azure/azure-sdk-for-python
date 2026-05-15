@@ -888,7 +888,7 @@ class TestAudioBytesTracking:
         conn = MagicMock()
         conn._telemetry_audio_bytes_received = 0
 
-        raw_audio = b"\xFF" * 200
+        raw_audio = b"\xff" * 200
         b64_delta = base64.b64encode(raw_audio).decode("utf-8")
 
         audio_bytes = len(base64.b64decode(b64_delta))

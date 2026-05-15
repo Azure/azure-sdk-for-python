@@ -10,7 +10,7 @@
 
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from ...._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
     AzureVoiceType,
     ClientEventType,
@@ -25,8 +25,7 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    from .. import models as _models
-    from .... import _types
+    from .. import _types, models as _models
 
 
 class ActionFind(_Model):
@@ -637,7 +636,7 @@ class AzureAvatarVoiceSyncVoice(AzureVoice, discriminator="avatar-voice-sync"):
     :ivar type: Required. Azure avatar voice sync.
     :vartype type: str or ~azure.ai.voicelive.models.AVATAR_VOICE_SYNC
     :ivar model: Underlying neural model to use. Required. Known values are: "DragonLatestNeural",
-     "PhoenixLatestNeural", "DragonHDOmniLatestNeural", and "MAI-Voice-1".
+     "PhoenixLatestNeural", "PhoenixV2Neural", "DragonHDOmniLatestNeural", and "MAI-Voice-1".
     :vartype model: str or ~azure.ai.voicelive.models.PersonalVoiceModels
     :ivar temperature: Temperature must be between 0.0 and 1.0.
     :vartype temperature: float
@@ -691,7 +690,8 @@ class AzureAvatarVoiceSyncVoice(AzureVoice, discriminator="avatar-voice-sync"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Underlying neural model to use. Required. Known values are: \"DragonLatestNeural\",
-     \"PhoenixLatestNeural\", \"DragonHDOmniLatestNeural\", and \"MAI-Voice-1\"."""
+     \"PhoenixLatestNeural\", \"PhoenixV2Neural\", \"DragonHDOmniLatestNeural\", and
+     \"MAI-Voice-1\"."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Temperature must be between 0.0 and 1.0."""
     custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -914,7 +914,8 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     :ivar temperature: Temperature must be between 0.0 and 1.0.
     :vartype temperature: float
     :ivar model: Underlying neural model to use for personal voice. Required. Known values are:
-     "DragonLatestNeural", "PhoenixLatestNeural", "DragonHDOmniLatestNeural", and "MAI-Voice-1".
+     "DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural", "DragonHDOmniLatestNeural", and
+     "MAI-Voice-1".
     :vartype model: str or ~azure.ai.voicelive.models.PersonalVoiceModels
     :ivar custom_lexicon_url: URL of a custom lexicon file for pronunciation customization.
     :vartype custom_lexicon_url: str
@@ -970,8 +971,8 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Underlying neural model to use for personal voice. Required. Known values are:
-     \"DragonLatestNeural\", \"PhoenixLatestNeural\", \"DragonHDOmniLatestNeural\", and
-     \"MAI-Voice-1\"."""
+     \"DragonLatestNeural\", \"PhoenixLatestNeural\", \"PhoenixV2Neural\",
+     \"DragonHDOmniLatestNeural\", and \"MAI-Voice-1\"."""
     custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL of a custom lexicon file for pronunciation customization."""
     custom_text_normalization_url: Optional[str] = rest_field(
@@ -5065,13 +5066,13 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
     event:
 
     * The server is generating a Response, which if successful will produce
-      either one or two Items, which will be of type `message`
-      (role `assistant`) or type `function_call`.
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
     * The input audio buffer has been committed, either by the client or the
-      server (in `server_vad` mode). The server will take the content of the
-      input audio buffer and add it to a new user message Item.
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
     * The client has sent a `conversation.item.create` event to add a new Item
-      to the Conversation.
+    to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str

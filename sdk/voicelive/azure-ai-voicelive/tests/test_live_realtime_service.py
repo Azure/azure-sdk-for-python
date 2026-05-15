@@ -78,9 +78,7 @@ def _iter_audio_b64_chunks(path: Path, chunk_bytes: int = 10_240) -> Iterator[st
 
 def _get_speech_recognition_setting(model: str) -> AudioInputTranscriptionOptions:
     speech_recognition_model = (
-        "whisper-1"
-        if model.startswith(("gpt-realtime", "gpt-realtime-mini"))
-        else "azure-speech"
+        "whisper-1" if model.startswith(("gpt-realtime", "gpt-realtime-mini")) else "azure-speech"
     )
     return AudioInputTranscriptionOptions(model=speech_recognition_model, language="en-US")
 

@@ -21,13 +21,12 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
@@ -68,6 +67,8 @@ exclude = [
     "samples*",
     "generated_samples*",
     "doc*",
+    "azure",
+    "azure.ai",
 ]
 
 [tool.setuptools.package-data]

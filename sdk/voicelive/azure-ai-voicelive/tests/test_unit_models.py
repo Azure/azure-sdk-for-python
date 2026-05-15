@@ -679,6 +679,7 @@ class TestTranscriptionModels:
         assert phrase.offset_milliseconds == 0
         assert phrase.duration_milliseconds == 1000
 
+
 class TestMCPServerEvents:
     """Test MCP-related server event models."""
 

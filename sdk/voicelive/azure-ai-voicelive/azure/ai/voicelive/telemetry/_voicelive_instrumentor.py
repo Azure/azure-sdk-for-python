@@ -1270,9 +1270,7 @@ class _VoiceLiveInstrumentorPreview:
                     span.add_attribute(GEN_AI_VOICE_MCP_APPROVE, approve)
 
     @staticmethod
-    def _extract_send_event_ids(
-        event: Any, span: "AbstractSpan"
-    ) -> None:
+    def _extract_send_event_ids(event: Any, span: "AbstractSpan") -> None:
         """Extract call_id and response_id from send events.
 
         For ``conversation.item.create`` events, the nested ``item`` may carry

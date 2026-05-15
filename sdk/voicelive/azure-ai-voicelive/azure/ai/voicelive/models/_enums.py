@@ -267,6 +267,8 @@ class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use the latest Dragon model."""
     PHOENIX_LATEST_NEURAL = "PhoenixLatestNeural"
     """Use the latest Phoenix model."""
+    PHOENIX_V2_NEURAL = "PhoenixV2Neural"
+    """Use the Phoenix V2 model."""
     DRAGON_HD_OMNI_LATEST_NEURAL = "DragonHDOmniLatestNeural"
     """Use the latest Dragon HD Omni model."""
     MAI_VOICE1 = "MAI-Voice-1"

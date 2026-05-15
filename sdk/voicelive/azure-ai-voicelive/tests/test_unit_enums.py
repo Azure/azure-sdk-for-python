@@ -279,7 +279,9 @@ class TestServerEventTypeNew:
         assert ServerEventType.OUTPUT_AUDIO_BUFFER_CLEARED == "output_audio_buffer.cleared"
 
     def test_audio_transcript_annotation(self):
-        assert ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_ANNOTATION_ADDED == "response.audio_transcript.annotation.added"
+        assert (
+            ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_ANNOTATION_ADDED == "response.audio_transcript.annotation.added"
+        )
 
 
 class TestSessionIncludeOption:
