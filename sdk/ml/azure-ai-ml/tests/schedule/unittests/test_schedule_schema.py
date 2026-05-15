@@ -157,3 +157,13 @@ class TestScheduleSchema:
         with pytest.raises(ValidationError) as e:
             load_schedule(test_path)
         assert "'type' must be specified when scheduling a remote job with updates." in e.value.messages[0]
+
+    def test_load_invalid_schedule_with_missing_job_file(self):
+        test_path = "./tests/test_configs/schedule/invalid/hello_cron_schedule_with_missing_job_file.yml"
+        with pytest.raises(ValidationError) as e:
+            load_schedule(test_path)
+        error_message = str(e.value)
+        assert "No such file or directory:" in error_message
+        assert "missing_pipeline.yml" in error_message
+        assert "In order to specify an existing jobs" not in error_message
+        assert "Not supporting non file for create_job" not in error_message
