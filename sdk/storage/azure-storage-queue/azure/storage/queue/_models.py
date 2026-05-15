@@ -166,17 +166,17 @@ class CorsRule(GeneratedCorsRule):
         A list of HTTP methods that are allowed to be executed by the origin.
         The list must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    :keyword int max_age_in_seconds:
-        The number of seconds that the client/browser should cache a
-        pre-flight response.
+    :keyword List[str] allowed_headers:
+        Defaults to an empty list. A list of headers allowed to be part of
+        the cross-origin request. Limited to 64 defined headers and 2 prefixed
+        headers. Each header can be up to 256 characters.    
     :keyword List[str] exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
-    :keyword List[str] allowed_headers:
-        Defaults to an empty list. A list of headers allowed to be part of
-        the cross-origin request. Limited to 64 defined headers and 2 prefixed
-        headers. Each header can be up to 256 characters.
+    :keyword int max_age_in_seconds:
+        The number of seconds that the client/browser should cache a
+        pre-flight response.
     """
 
     allowed_origins: str
