@@ -12,6 +12,8 @@
 
 ### Breaking Changes
 
+- Updated `EVALUATOR_NAME_METRICS_MAPPINGS` so `document_retrieval` and `rouge_score` report single primary metrics (`document_retrieval`, `rouge`), with previous sub-metrics now represented in each evaluator's `*_properties` payload.
+
 ### Bugs Fixed
 
 - `_TaskNavigationEfficiencyEvaluator` now accepts JSON-stringified `response` and `ground_truth` inputs (e.g., from data pipelines that serialize list/tuple inputs to strings). String inputs are parsed as JSON; on parse failure the original value is preserved so downstream validation surfaces the error as before.

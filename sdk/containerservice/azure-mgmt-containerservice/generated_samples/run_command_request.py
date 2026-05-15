@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-02-preview/RunCommandRequest.json
+# x-ms-original-file: 2026-03-01/RunCommandRequest.json
 if __name__ == "__main__":
     main()

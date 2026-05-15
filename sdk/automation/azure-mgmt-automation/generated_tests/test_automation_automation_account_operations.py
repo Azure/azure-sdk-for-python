@@ -20,30 +20,17 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_automation_account_update(self, resource_group):
         response = self.client.automation_account.update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             parameters={
-                "disableLocalAuth": bool,
-                "encryption": {
-                    "identity": {"userAssignedIdentity": {}},
-                    "keySource": "str",
-                    "keyVaultProperties": {"keyName": "str", "keyVersion": "str", "keyvaultUri": "str"},
-                },
-                "identity": {
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "type": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
                 "location": "str",
                 "name": "str",
-                "publicNetworkAccess": bool,
                 "sku": {"name": "str", "capacity": 0, "family": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -51,30 +38,17 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_automation_account_create_or_update(self, resource_group):
         response = self.client.automation_account.create_or_update(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             parameters={
-                "disableLocalAuth": bool,
-                "encryption": {
-                    "identity": {"userAssignedIdentity": {}},
-                    "keySource": "str",
-                    "keyVaultProperties": {"keyName": "str", "keyVersion": "str", "keyvaultUri": "str"},
-                },
-                "identity": {
-                    "principalId": "str",
-                    "tenantId": "str",
-                    "type": "str",
-                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                },
                 "location": "str",
                 "name": "str",
-                "publicNetworkAccess": bool,
                 "sku": {"name": "str", "capacity": 0, "family": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2022-08-08",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -82,11 +56,11 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_automation_account_delete(self, resource_group):
         response = self.client.automation_account.delete(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -94,11 +68,11 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_automation_account_get(self, resource_group):
         response = self.client.automation_account.get(
             resource_group_name=resource_group.name,
             automation_account_name="str",
-            api_version="2022-08-08",
+            api_version="2015-10-31",
         )
 
         # please add some check logic here by yourself
@@ -106,10 +80,10 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_automation_account_list_by_resource_group(self, resource_group):
         response = self.client.automation_account.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-08-08",
+            api_version="2015-10-31",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -117,9 +91,9 @@ class TestAutomationAutomationAccountOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_automation_account_list(self, resource_group):
         response = self.client.automation_account.list(
-            api_version="2022-08-08",
+            api_version="2015-10-31",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

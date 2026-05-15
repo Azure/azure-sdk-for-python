@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 from functools import cached_property
 from logging import getLogger, Formatter
 from typing import Any, Dict, List, Optional, cast
@@ -19,6 +20,13 @@ from opentelemetry.util._importlib_metadata import (  # pylint: disable=import-e
     distributions,
     entry_points,
 )
+
+# Populate distro version env var so it flows to the exporter
+AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
+# pylint: disable=wrong-import-position
+from azure.monitor.opentelemetry._version import VERSION
+
+os.environ[AZURE_MONITOR_DISTRO_VERSION] = VERSION
 
 from azure.monitor.opentelemetry._browser_sdk_loader import setup_snippet_injection
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig

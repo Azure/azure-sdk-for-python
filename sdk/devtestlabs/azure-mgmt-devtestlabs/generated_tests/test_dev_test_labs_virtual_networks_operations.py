@@ -20,7 +20,7 @@ class TestDevTestLabsVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -32,7 +32,7 @@ class TestDevTestLabsVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_networks_get(self, resource_group):
         response = self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -45,7 +45,7 @@ class TestDevTestLabsVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_networks_begin_create_or_update(self, resource_group):
         response = self.client.virtual_networks.begin_create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -84,7 +84,7 @@ class TestDevTestLabsVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_networks_begin_delete(self, resource_group):
         response = self.client.virtual_networks.begin_delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -97,7 +97,7 @@ class TestDevTestLabsVirtualNetworksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_virtual_networks_update(self, resource_group):
         response = self.client.virtual_networks.update(
             resource_group_name=resource_group.name,
             lab_name="str",

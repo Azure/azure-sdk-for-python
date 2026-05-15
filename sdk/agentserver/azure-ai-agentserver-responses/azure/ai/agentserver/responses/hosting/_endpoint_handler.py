@@ -28,6 +28,13 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     set_current_span,
     trace_stream,
 )
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+    CHAT_ISOLATION_KEY,
+    CLIENT_HEADER_PREFIX,
+    SESSION_ID,
+    USER_ISOLATION_KEY,
+)
+from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY  # pylint: disable=import-error,no-name-in-module
 from azure.ai.agentserver.responses.models._generated import (
     AgentReference,
     CreateResponse,
@@ -36,13 +43,6 @@ from azure.ai.agentserver.responses.models._generated import (
 
 from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
-from .._platform_headers import (
-    CHAT_ISOLATION_KEY,
-    CLIENT_HEADER_PREFIX,
-    REQUEST_ID_ITEM_KEY,
-    SESSION_ID,
-    USER_ISOLATION_KEY,
-)
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
 from ..models.errors import RequestValidationError
@@ -72,6 +72,14 @@ from ._request_parsing import (
 )
 from ._runtime_state import _RuntimeState
 from ._validation import (
+    ERROR_SOURCE_PLATFORM,
+    ERROR_SOURCE_UPSTREAM,
+    ERROR_SOURCE_USER,
+    _apply_error_source_headers,
+    format_error_detail,
+    parse_and_validate_create_response,
+)
+from ._validation import (
     deleted_response as _deleted_response,
 )
 from ._validation import (
@@ -89,7 +97,6 @@ from ._validation import (
 from ._validation import (
     not_found_response as _not_found,
 )
-from ._validation import parse_and_validate_create_response
 from ._validation import (
     service_unavailable_response as _service_unavailable,
 )
@@ -180,7 +187,7 @@ def _get_scope_request_id(request: Request) -> str | None:
     """
     state = request.scope.get("state")
     if isinstance(state, dict):
-        return state.get(REQUEST_ID_ITEM_KEY)
+        return state.get(REQUEST_ID_STATE_KEY)
     return None
 
 
@@ -593,17 +600,31 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         except FoundryResourceNotFoundError as exc:
             span.end(exc)
             if exc.response_body is not None:
-                return JSONResponse(exc.response_body, status_code=404, headers=_hdrs)
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=404,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_USER),
+                )
             return _not_found(str(ctx.previous_response_id or ctx.conversation_id), _hdrs)
         except FoundryBadRequestError as exc:
             span.end(exc)
             if exc.response_body is not None:
-                return JSONResponse(exc.response_body, status_code=400, headers=_hdrs)
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=400,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_USER),
+                )
             return _invalid_request(str(exc), _hdrs)
         except FoundryApiError as exc:
             span.end(exc)
             if exc.response_body is not None:
-                return JSONResponse(exc.response_body, status_code=500, headers=_hdrs)
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=500,
+                    headers=_apply_error_source_headers(
+                        _hdrs, ERROR_SOURCE_PLATFORM, format_error_detail(exc)
+                    ),
+                )
             return _error_response(exc, _hdrs)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
@@ -797,7 +818,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                                 "param": None,
                             }
                         }
-                        return JSONResponse(err_body, status_code=500, headers=self._session_headers(agent_session_id))
+                        return JSONResponse(
+                            err_body,
+                            status_code=500,
+                            headers=_apply_error_source_headers(
+                                self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
+                            ),
+                        )
                     finally:
                         disconnect_task.cancel()
 
@@ -831,7 +858,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     err_body,
                     status_code=500,
-                    headers=self._session_headers(agent_session_id),
+                    headers=_apply_error_source_headers(
+                        self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
+                    ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
