@@ -122,6 +122,9 @@ async def main() -> None:
 
         print(f"Response: {response.output_text}")
 
+        await project_client.beta.toolboxes.delete_version(name=toolbox_version.name, version=toolbox_version.version)
+        print(f"Toolbox version {toolbox_version.version} deleted.")
+
         await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print(f"Agent version {agent.version} deleted.")
 
