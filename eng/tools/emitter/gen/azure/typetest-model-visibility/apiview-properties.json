@@ -17,5 +17,6 @@
         "typetest.model.visibility.aio.VisibilityClient.delete_model": "Type.Model.Visibility.deleteModel",
         "typetest.model.visibility.VisibilityClient.put_read_only_model": "Type.Model.Visibility.putReadOnlyModel",
         "typetest.model.visibility.aio.VisibilityClient.put_read_only_model": "Type.Model.Visibility.putReadOnlyModel"
-    }
+    },
+    "CrossLanguageVersion": "cb4cd31e1a58"
 }

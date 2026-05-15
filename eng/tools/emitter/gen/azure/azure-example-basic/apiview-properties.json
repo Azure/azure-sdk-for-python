@@ -7,5 +7,6 @@
         "specs.azure.example.basic.models.EnumEnum": "_Specs_.Azure.Example.Basic.Enum",
         "specs.azure.example.basic.AzureExampleClient.basic_action": "AzureExampleBasicClient.AzureExampleClient.basicAction",
         "specs.azure.example.basic.aio.AzureExampleClient.basic_action": "AzureExampleBasicClient.AzureExampleClient.basicAction"
-    }
+    },
+    "CrossLanguageVersion": "b194ef3b7ce4"
 }

@@ -14,5 +14,6 @@
         "client.structure.multiclient.aio.ClientBClient.renamed_four": "Client.Structure.MultiClient.ClientB.renamedFour",
         "client.structure.multiclient.ClientBClient.renamed_six": "Client.Structure.MultiClient.ClientB.renamedSix",
         "client.structure.multiclient.aio.ClientBClient.renamed_six": "Client.Structure.MultiClient.ClientB.renamedSix"
-    }
+    },
+    "CrossLanguageVersion": "1b43e57e73b8"
 }

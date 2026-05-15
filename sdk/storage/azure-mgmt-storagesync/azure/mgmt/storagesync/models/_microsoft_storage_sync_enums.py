@@ -17,25 +17,22 @@ class ChangeDetectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECURSIVE = "Recursive"
 
 
-class CloudEndpointChangeEnumerationActivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CloudEndpointChangeEnumerationActivityState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """State of change enumeration activity."""
 
     INITIAL_ENUMERATION_IN_PROGRESS = "InitialEnumerationInProgress"
     ENUMERATION_IN_PROGRESS = "EnumerationInProgress"
 
 
-class CloudEndpointChangeEnumerationTotalCountsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CloudEndpointChangeEnumerationTotalCountsState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """State of the total counts of change enumeration activity."""
 
     CALCULATING = "Calculating"
     FINAL = "Final"
-
-
-class CloudTieringLowDiskModeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the cloud tiering low disk mode state."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -102,7 +99,9 @@ class OperationDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCEL = "cancel"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"

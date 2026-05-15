@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
-from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,6 +18,11 @@ from .._utils.serialization import Deserializer, Serializer
 from ..optionalexplicit.aio.operations import OptionalExplicitOperations
 from ._configuration import BodyOptionalityClientConfiguration
 from ._operations import _BodyOptionalityClientOperationsMixin
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 
 class BodyOptionalityClient(
