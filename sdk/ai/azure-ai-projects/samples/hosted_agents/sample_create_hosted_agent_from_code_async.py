@@ -21,7 +21,7 @@ DESCRIPTION:
       dependencies remotely from the public package index.
 
     The agent must already exist; create it with
-    `samples/hosted_agents/sample_create_hosted_agent.py`.
+    `samples/hosted_agents/sample_create_hosted_agent_async.py`.
 
 USAGE:
     python sample_create_hosted_agent_from_code_async.py
@@ -48,7 +48,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from azure.identity import DefaultAzureCredential as SyncDefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
@@ -61,7 +60,7 @@ from azure.ai.projects.models import (
 )
 
 from hosted_agents_util import select_echo_agent_code_zip, wait_for_agent_version_active_async
-from rbac_util import ensure_agent_identity_rbac
+from rbac_util import ensure_agent_identity_rbac_async
 
 
 async def main() -> None:
@@ -108,15 +107,14 @@ async def main() -> None:
             agent_version=created.version,
         )
 
-        # ensure_agent_identity_rbac uses ARM management clients which only support
-        # sync TokenCredential, so use a separate sync credential here.
-        with SyncDefaultAzureCredential() as sync_credential:
-            ensure_agent_identity_rbac(
-                agent=created,
-                credential=sync_credential,
-                subscription_id=subscription_id,
-                foundry_project_endpoint=endpoint,
-            )
+        # ensure_agent_identity_rbac_async uses async ARM management clients with the
+        # same async credential.
+        await ensure_agent_identity_rbac_async(
+            agent=created,
+            credential=credential,
+            subscription_id=subscription_id,
+            foundry_project_endpoint=endpoint,
+        )
 
         # Download the zip for the version we just created, streaming to a temp file.
         version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
