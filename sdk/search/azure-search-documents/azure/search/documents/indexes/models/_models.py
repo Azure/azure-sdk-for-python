@@ -7295,7 +7295,7 @@ class McpServerTool(_Model):
     :ivar output_parsing: Optional configuration for parsing the tool's output.
     :vartype output_parsing: ~azure.search.documents.indexes.models.McpServerOutputParsing
     :ivar inclusion_mode: Controls how the parsed results from this tool are integrated into the
-     final result set. Defaults to 'always' when not specified. Known values are: "reranked" and
+     final result set. Defaults to 'reranked' when not specified. Known values are: "reranked" and
      "always".
     :vartype inclusion_mode: str or
      ~azure.search.documents.indexes.models.McpServerToolInclusionMode
@@ -7314,7 +7314,7 @@ class McpServerTool(_Model):
         name="inclusionMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """Controls how the parsed results from this tool are integrated into the final result set.
-     Defaults to 'always' when not specified. Known values are: \"reranked\" and \"always\"."""
+     Defaults to 'reranked' when not specified. Known values are: \"reranked\" and \"always\"."""
     max_output_tokens: Optional[int] = rest_field(
         name="maxOutputTokens", visibility=["read", "create", "update", "delete", "query"]
     )

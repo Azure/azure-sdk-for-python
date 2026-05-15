@@ -1029,10 +1029,9 @@ class McpServerToolInclusionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RERANKED = "reranked"
     """Tool results go through the reranking and aggregation pipeline alongside results from other
-    knowledge sources."""
+    knowledge sources. This is the default behavior."""
     ALWAYS = "always"
-    """Tool results bypass reranking and are always included in the agent context. This is the default
-    behavior."""
+    """Tool results bypass reranking and are always included in the agent context."""
 
 
 class MicrosoftStemmingTokenizerLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):

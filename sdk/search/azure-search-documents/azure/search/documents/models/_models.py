@@ -53,12 +53,10 @@ class DebugInfo(_Model):
     """Contains debugging information that can be used to further explore your search results.
 
     :ivar query_rewrites: Contains debugging information specific to query rewrites.
-    :vartype query_rewrites: ~azure.search.documents.models._models.QueryRewritesDebugInfo
+    :vartype query_rewrites: ~azure.search.documents.models.QueryRewritesDebugInfo
     """
 
-    query_rewrites: Optional["_models._models.QueryRewritesDebugInfo"] = rest_field(
-        name="queryRewrites", visibility=["read"]
-    )
+    query_rewrites: Optional["_models.QueryRewritesDebugInfo"] = rest_field(name="queryRewrites", visibility=["read"])
     """Contains debugging information specific to query rewrites."""
 
 
@@ -225,7 +223,7 @@ class HybridSearch(_Model):
      will allow retrieving and paging through more documents (using the top and skip parameters), at
      the cost of higher resource utilization and higher latency. The value needs to be between 1 and
      10,000. Default is 1000."""
-    count_and_facet_mode: Optional[Union[str, "_models._enums.HybridCountAndFacetMode"]] = rest_field(
+    count_and_facet_mode: Optional[Union[str, "_models.HybridCountAndFacetMode"]] = rest_field(
         name="countAndFacetMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """Determines whether the count and facets should includes all documents that matched the search
@@ -237,7 +235,7 @@ class HybridSearch(_Model):
         self,
         *,
         max_text_recall_size: Optional[int] = None,
-        count_and_facet_mode: Optional[Union[str, "_models._enums.HybridCountAndFacetMode"]] = None,
+        count_and_facet_mode: Optional[Union[str, "_models.HybridCountAndFacetMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -493,14 +491,14 @@ class QueryRewritesDebugInfo(_Model):
     """Contains debugging information specific to query rewrites.
 
     :ivar text: List of query rewrites generated for the text query.
-    :vartype text: ~azure.search.documents.models._models.QueryRewritesValuesDebugInfo
+    :vartype text: ~azure.search.documents.models.QueryRewritesValuesDebugInfo
     :ivar vectors: List of query rewrites generated for the vectorizable text queries.
-    :vartype vectors: list[~azure.search.documents.models._models.QueryRewritesValuesDebugInfo]
+    :vartype vectors: list[~azure.search.documents.models.QueryRewritesValuesDebugInfo]
     """
 
-    text: Optional["_models._models.QueryRewritesValuesDebugInfo"] = rest_field(visibility=["read"])
+    text: Optional["_models.QueryRewritesValuesDebugInfo"] = rest_field(visibility=["read"])
     """List of query rewrites generated for the text query."""
-    vectors: Optional[list["_models._models.QueryRewritesValuesDebugInfo"]] = rest_field(visibility=["read"])
+    vectors: Optional[list["_models.QueryRewritesValuesDebugInfo"]] = rest_field(visibility=["read"])
     """List of query rewrites generated for the vectorizable text queries."""
 
 
@@ -539,7 +537,7 @@ class SearchDocumentsResult(_Model):
      parameter was not specified or set to 'none'.
     :vartype answers: list[~azure.search.documents.models.QueryAnswerResult]
     :ivar debug_info: Debug information that applies to the search results as a whole.
-    :vartype debug_info: ~azure.search.documents.models._models.DebugInfo
+    :vartype debug_info: ~azure.search.documents.models.DebugInfo
     :ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
      the requested results in a single response. You can use this JSON along with.
     :vartype next_page_parameters: ~azure.search.documents.models._models.SearchRequest
@@ -579,7 +577,7 @@ class SearchDocumentsResult(_Model):
     answers: Optional[list["_models.QueryAnswerResult"]] = rest_field(name="@search.answers", visibility=["read"])
     """The answers query results for the search operation; null if the answers query parameter was not
      specified or set to 'none'."""
-    debug_info: Optional["_models._models.DebugInfo"] = rest_field(name="@search.debug", visibility=["read"])
+    debug_info: Optional["_models.DebugInfo"] = rest_field(name="@search.debug", visibility=["read"])
     """Debug information that applies to the search results as a whole."""
     next_page_parameters: Optional["_models._models.SearchRequest"] = rest_field(
         name="@search.nextPageParameters", visibility=["read"]
@@ -740,7 +738,7 @@ class SearchRequest(_Model):
      "postFilter", "preFilter", and "strictPostFilter".
     :vartype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
     :ivar hybrid_search: The query parameters to configure hybrid search behaviors.
-    :vartype hybrid_search: ~azure.search.documents.models._models.HybridSearch
+    :vartype hybrid_search: ~azure.search.documents.models.HybridSearch
     """
 
     include_total_count: Optional[bool] = rest_field(
@@ -835,7 +833,7 @@ class SearchRequest(_Model):
     )
     """A value that specifies whether any or all of the search terms must be matched in order to count
      the document as a match. Known values are: \"any\" and \"all\"."""
-    query_language: Optional[Union[str, "_models._enums.QueryLanguage"]] = rest_field(
+    query_language: Optional[Union[str, "_models.QueryLanguage"]] = rest_field(
         name="queryLanguage", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value that specifies the language of the search query. Known values are: \"none\", \"en-us\",
@@ -848,7 +846,7 @@ class SearchRequest(_Model):
      \"et-ee\", \"ca-es\", \"fi-fi\", \"sr-ba\", \"sr-me\", \"sr-rs\", \"sk-sk\", \"nb-no\",
      \"hy-am\", \"bn-in\", \"eu-es\", \"gl-es\", \"gu-in\", \"he-il\", \"ga-ie\", \"kn-in\",
      \"ml-in\", \"mr-in\", \"fa-ae\", \"pa-in\", \"te-in\", and \"ur-pk\"."""
-    query_speller: Optional[Union[str, "_models._enums.QuerySpellerType"]] = rest_field(
+    query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = rest_field(
         name="speller", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value that specifies the type of the speller to use to spell-correct individual search query
@@ -917,7 +915,7 @@ class SearchRequest(_Model):
     """Determines whether or not filters are applied before or after the vector search is performed.
      Default is 'preFilter' for new indexes. Known values are: \"postFilter\", \"preFilter\", and
      \"strictPostFilter\"."""
-    hybrid_search: Optional["_models._models.HybridSearch"] = rest_field(
+    hybrid_search: Optional["_models.HybridSearch"] = rest_field(
         name="hybridSearch", visibility=["read", "create", "update", "delete", "query"]
     )
     """The query parameters to configure hybrid search behaviors."""
@@ -943,8 +941,8 @@ class SearchRequest(_Model):
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, "_models.SearchMode"]] = None,
-        query_language: Optional[Union[str, "_models._enums.QueryLanguage"]] = None,
-        query_speller: Optional[Union[str, "_models._enums.QuerySpellerType"]] = None,
+        query_language: Optional[Union[str, "_models.QueryLanguage"]] = None,
+        query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -958,7 +956,7 @@ class SearchRequest(_Model):
         semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list["_models.VectorQuery"]] = None,
         vector_filter_mode: Optional[Union[str, "_models.VectorFilterMode"]] = None,
-        hybrid_search: Optional["_models._models.HybridSearch"] = None,
+        hybrid_search: Optional["_models.HybridSearch"] = None,
     ) -> None: ...
 
     @overload

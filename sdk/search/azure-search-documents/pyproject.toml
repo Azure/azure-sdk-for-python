@@ -66,3 +66,6 @@ verifytypes = true
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[packaging]
+auto_update = false

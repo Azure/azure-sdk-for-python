@@ -166,8 +166,8 @@ class _SearchClientOperationsMixin(
         semantic_query: Optional[str] = None,
         query_rewrites: Optional[Union[str, _models2.QueryRewritesType]] = None,
         debug: Optional[Union[str, _models2.QueryDebugMode]] = None,
-        query_language: Optional[Union[str, _models2._enums.QueryLanguage]] = None,
-        speller: Optional[Union[str, _models2._enums.QuerySpellerType]] = None,
+        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
+        speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         semantic_fields: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models2._models.SearchDocumentsResult:
@@ -441,8 +441,8 @@ class _SearchClientOperationsMixin(
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models2.SearchMode]] = None,
-        query_language: Optional[Union[str, _models2._enums.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models2._enums.QuerySpellerType]] = None,
+        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
+        query_speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -456,7 +456,7 @@ class _SearchClientOperationsMixin(
         semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models2.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
-        hybrid_search: Optional[_models2._models.HybridSearch] = None,
+        hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
     ) -> _models2._models.SearchDocumentsResult: ...
     @overload
@@ -508,8 +508,8 @@ class _SearchClientOperationsMixin(
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models2.SearchMode]] = None,
-        query_language: Optional[Union[str, _models2._enums.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models2._enums.QuerySpellerType]] = None,
+        query_language: Optional[Union[str, _models2.QueryLanguage]] = None,
+        query_speller: Optional[Union[str, _models2.QuerySpellerType]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -523,7 +523,7 @@ class _SearchClientOperationsMixin(
         semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models2.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
-        hybrid_search: Optional[_models2._models.HybridSearch] = None,
+        hybrid_search: Optional[_models2.HybridSearch] = None,
         **kwargs: Any
     ) -> _models2._models.SearchDocumentsResult:
         """Searches for documents in the index.
@@ -673,7 +673,7 @@ class _SearchClientOperationsMixin(
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
          value is None.
-        :paramtype hybrid_search: ~azure.search.documents.models._models.HybridSearch
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
