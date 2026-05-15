@@ -79,11 +79,13 @@ stages:
               python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
             displayName: 'Prep Environment'
 
+          - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
           - task: PythonScript@0
             condition: succeededOrFailed()
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
             inputs:
               scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
             displayName: 'Generate Health Status Report'
@@ -95,7 +97,7 @@ stages:
           - task: PythonScript@0
             condition: succeededOrFailed()
             env:
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
             inputs:
               scriptPath: 'scripts/repo_type_completeness/generate_main_typescores.py'
             displayName: 'Update Type Completeness Scores'

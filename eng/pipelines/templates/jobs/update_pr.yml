@@ -23,7 +23,9 @@ steps:
     python3 -m pip install -e $(Build.SourcesDirectory)/eng/tools/azure-sdk-tools[ghtools]
   displayName: 'Install Azure SDK tools'
 
+- template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
 - script: python3 -m packaging_tools.update_pr -v --pr-number $(System.PullRequest.PullRequestNumber) --repo $(Build.Repository.Name)
   displayName: 'Update packaging of PR'
   env:
-    GH_TOKEN: $(azuresdk-github-pat)
+    GH_TOKEN: $(GH_TOKEN)

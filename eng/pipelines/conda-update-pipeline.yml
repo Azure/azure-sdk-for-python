@@ -121,3 +121,4 @@ extends:
                       - [ ] After upload, delete the dummy libraries and make the new packages publicly available in Conda.
                       - [ ] Create an AKA link for new release logs here: http://aka.ms/
                     BaseBranchName: main
+                    AuthToken: ''

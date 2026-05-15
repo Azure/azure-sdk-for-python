@@ -92,3 +92,4 @@ jobs:
         PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
         WorkingDirectory: $(mlrepo)
         PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."
+        AuthToken: ''
