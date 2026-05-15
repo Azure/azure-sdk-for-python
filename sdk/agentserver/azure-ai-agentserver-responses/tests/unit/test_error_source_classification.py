@@ -173,10 +173,10 @@ class TestErrorResponseClassification:
         assert resp.headers[ERROR_SOURCE] == "platform"
 
     def test_preserves_session_headers(self) -> None:
-        headers = {"x-agent-session-id": "sess1", "x-platform-server": "v1"}
+        headers = {"x-agent-session-id": "session1", "x-platform-server": "v1"}
         exc = ValueError("err")
         resp = error_response(exc, headers)
-        assert resp.headers["x-agent-session-id"] == "sess1"
+        assert resp.headers["x-agent-session-id"] == "session1"
         assert resp.headers["x-platform-server"] == "v1"
         assert resp.headers[ERROR_SOURCE] == "user"
 
