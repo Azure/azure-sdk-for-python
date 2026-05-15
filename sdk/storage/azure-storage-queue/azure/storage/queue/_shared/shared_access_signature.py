@@ -117,7 +117,15 @@ class SharedAccessSignature(object):
         self.x_ms_version = x_ms_version
 
     def generate_account(
-        self, services, resource_types, permission, expiry, start=None, ip=None, protocol=None, sts_hook=None, **kwargs
+        self,
+        services,
+        resource_types,
+        permission,
+        expiry,
+        start=None,
+        ip=None,
+        protocol=None,
+        sts_hook=None,
     ) -> str:
         """
         Generates a shared access signature for the account.
@@ -159,9 +167,6 @@ class SharedAccessSignature(object):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
-        :keyword str encryption_scope:
-            Optional. If specified, this is the encryption scope to use when sending requests
-            authorized with this SAS URI.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -172,7 +177,6 @@ class SharedAccessSignature(object):
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
-        sas.add_encryption_scope(**kwargs)
         sas.add_account_signature(self.account_name, self.account_key)
 
         if sts_hook is not None:
@@ -193,9 +197,6 @@ class _SharedAccessHelper(object):
     def _add_query(self, name, val):
         if val:
             self.query_dict[name] = str(val) if val is not None else None
-
-    def add_encryption_scope(self, **kwargs):
-        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop("encryption_scope", None))
 
     def add_base(self, permission, expiry, start, ip, protocol, x_ms_version):
         if isinstance(start, date):
@@ -225,7 +226,12 @@ class _SharedAccessHelper(object):
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
 
     def add_override_response_headers(
-        self, cache_control, content_disposition, content_encoding, content_language, content_type
+        self,
+        cache_control,
+        content_disposition,
+        content_encoding,
+        content_language,
+        content_type,
     ):
         self._add_query(QueryStringConstants.SIGNED_CACHE_CONTROL, cache_control)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition)
@@ -271,10 +277,13 @@ class _SharedAccessHelper(object):
             + get_value_to_append(QueryStringConstants.SIGNED_IP)
             + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
             + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
-            + get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE)
+            + "\n"  # Signed Encryption Scope - always empty for queue
         )
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE, sign_string(account_key, string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
     def get_token(self) -> str:
