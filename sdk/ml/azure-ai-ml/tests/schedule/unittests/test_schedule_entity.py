@@ -4,6 +4,7 @@ import pytest
 from marshmallow import ValidationError
 from test_utilities.utils import verify_entity_load_and_dump
 
+from azure.ai.ml._schema.core.fields import NO_SUCH_FILE_OR_DIRECTORY_ERROR
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities import CronTrigger, JobSchedule, PipelineJob, RecurrencePattern, RecurrenceTrigger
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
@@ -199,6 +200,6 @@ class TestScheduleEntity:
             load_schedule(test_path, params_override=params_override)
 
         message = str(e.value)
-        assert "No such file or directory" in message
-        assert message.count("No such file or directory") == 1
+        assert NO_SUCH_FILE_OR_DIRECTORY_ERROR in message
+        assert message.count(NO_SUCH_FILE_OR_DIRECTORY_ERROR) == 1
         assert "Not supporting non file for create_job" not in message

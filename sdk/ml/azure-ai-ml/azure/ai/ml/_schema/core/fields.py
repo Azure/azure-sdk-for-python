@@ -45,6 +45,7 @@ from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
 T = typing.TypeVar("T")
+NO_SUCH_FILE_OR_DIRECTORY_ERROR = "No such file or directory"
 
 
 class StringTransformedEnum(Field):
@@ -372,7 +373,7 @@ class FileRefField(Field):
             try:
                 data = load_file(path)
             except (FileNotFoundError, OSError) as e:
-                raise ValidationError(f"No such file or directory: {path}") from e
+                raise ValidationError(f"{NO_SUCH_FILE_OR_DIRECTORY_ERROR}: {path}") from e
             return data
         raise ValidationError(f"Not supporting non file for {attr}")
 
@@ -457,7 +458,7 @@ class UnionField(fields.Field):
     @staticmethod
     def _contains_file_not_found_error(error_message):
         if isinstance(error_message, str):
-            return "No such file or directory" in error_message
+            return NO_SUCH_FILE_OR_DIRECTORY_ERROR in error_message
         if isinstance(error_message, dict):
             return any(UnionField._contains_file_not_found_error(value) for value in error_message.values())
         if isinstance(error_message, list):
