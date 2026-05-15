@@ -2,7 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Unit tests for ``SearchIndex`` helper serialization."""
+"""Unit tests for ``SearchIndex`` helper serialization and preview surfaces.
+
+Preview-gated round-trip tests live alongside the GA helper tests and use
+``require_capability`` so the file remains import-safe on GA branches.
+"""
 
 from __future__ import annotations
 
@@ -14,6 +18,7 @@ from azure.search.documents.indexes.models import (
     SearchableField,
     SimpleField,
 )
+
 
 INDEX_NAME = "hotels"
 

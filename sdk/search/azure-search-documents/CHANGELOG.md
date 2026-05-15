@@ -1,14 +1,19 @@
 # Release History
 
-## 12.0.1 (Unreleased)
+## 12.1.0b1
 
 ### Features Added
 
-### Breaking Changes
+- Below enum members are added for API version support
+  - `azure.search.documents.ApiVersion.V2026_05_01_PREVIEW`
 
-### Bugs Fixed
+- Below properties are added for service counters
+  - `azure.search.documents.indexes.models.SearchServiceCounters.knowledge_base_counter`
+  - `azure.search.documents.indexes.models.SearchServiceCounters.knowledge_source_counter`
 
 ### Other Changes
+
+- Updated default API version to `2026-05-01-preview`.
 
 ## 12.0.0 (2026-04-01)
 

@@ -24,9 +24,9 @@ class SearchIndexClient(_SearchIndexClient):
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-01-preview" and None. Default value is "2026-05-01-preview". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
@@ -49,9 +49,9 @@ class SearchIndexerClient(_SearchIndexerClient):
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-01-preview" and None. Default value is "2026-05-01-preview". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud

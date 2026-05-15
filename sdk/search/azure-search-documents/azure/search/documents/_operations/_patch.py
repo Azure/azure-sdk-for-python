@@ -118,6 +118,11 @@ def _build_search_request(
     session_id: Optional[str] = None,
     vector_queries: Optional[List[_models.VectorQuery]] = None,
     vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
+    query_language: Optional[Union[str, _models.QueryLanguage]] = None,
+    speller: Optional[Union[str, _models.QuerySpellerType]] = None,
+    query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
+    semantic_fields: Optional[List[str]] = None,
+    hybrid_search: Optional[_models.HybridSearch] = None,
     semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
     semantic_max_wait_in_milliseconds: Optional[int] = None,
     debug: Optional[Union[str, _models.QueryDebugMode]] = None,
@@ -161,6 +166,11 @@ def _build_search_request(
     :keyword str session_id: The session ID for the search query.
     :keyword list[~azure.search.documents.models.VectorQuery] vector_queries: The list of vector queries to use for the search.
     :keyword vector_filter_mode: The vector filter mode to use for the search query.
+    :keyword query_language: The language of the search query.
+    :keyword speller: The type of the speller to use to spell-correct individual search query terms.
+    :keyword query_rewrites: Whether query rewrites should be generated to augment the search query.
+    :keyword semantic_fields: The list of field names used for semantic ranking.
+    :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
     :keyword semantic_error_mode: The semantic error handling mode to use for the search query.
     :keyword int semantic_max_wait_in_milliseconds: The maximum wait time in milliseconds for semantic search.
     :keyword debug: The debug mode for the search query.
@@ -214,6 +224,11 @@ def _build_search_request(
         scoring_statistics=scoring_statistics,
         vector_queries=vector_queries,
         vector_filter_mode=vector_filter_mode,
+        query_language=query_language,
+        query_speller=speller,
+        query_rewrites=query_rewrites,
+        semantic_fields=semantic_fields,
+        hybrid_search=hybrid_search,
         semantic_error_handling=semantic_error_mode,
         semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
         debug=debug,
@@ -233,7 +248,7 @@ class SearchPageIterator(PageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2026-04-01")
+        self._api_version = kwargs.get("api_version", "2026-05-01-preview")
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -276,6 +291,12 @@ class SearchPageIterator(PageIterator):
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         return cast(Optional[List[_models.QueryAnswerResult]], response.answers)
+
+    @_ensure_response
+    def get_debug_info(self) -> Optional[_models.DebugInfo]:
+        self.continuation_token = None
+        response = cast(SearchDocumentsResult, self._response)
+        return response.debug_info
 
 
 class SearchItemPaged(ItemPaged[ReturnType]):
@@ -330,6 +351,14 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
         """
         return cast(Optional[List[_models.QueryAnswerResult]], self._first_iterator_instance().get_answers())
+
+    def get_debug_info(self) -> _models.DebugInfo:
+        """Return the debug information for the query.
+
+        :return: the debug information for the query
+        :rtype: ~azure.search.documents.models.DebugInfo
+        """
+        return cast(_models.DebugInfo, self._first_iterator_instance().get_debug_info())
 
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
@@ -519,9 +548,16 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         session_id: Optional[str] = None,
         vector_queries: Optional[List[_models.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
+        query_language: Optional[Union[str, _models.QueryLanguage]] = None,
+        speller: Optional[Union[str, _models.QuerySpellerType]] = None,
+        query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
+        semantic_fields: Optional[List[str]] = None,
+        hybrid_search: Optional[_models.HybridSearch] = None,
         semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
+        query_source_authorization: Optional[str] = None,
+        enable_elevated_read: Optional[bool] = None,
         **kwargs: Any,
     ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals
@@ -622,13 +658,31 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
             time it takes for semantic enrichment to finish processing before the request fails.
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
-            results. Known values are: "disabled", "speller", "semantic", and "all".
+            results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits",
+            and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
             vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
+        :keyword query_language: A value that specifies the language of the search query.
+        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
+        :keyword speller: A value that specifies the type of the speller to use to spell-correct
+            individual search query terms.
+        :paramtype speller: str or ~azure.search.documents.models.QuerySpellerType
+        :keyword query_rewrites: A value that specifies whether query rewrites should be generated to
+            augment the search query.
+        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
+        :keyword semantic_fields: The list of field names used for semantic ranking.
+        :paramtype semantic_fields: list[str]
+        :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
+        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword query_source_authorization: Token identifying the user for which the query is being executed.
+        :paramtype query_source_authorization: str
+        :keyword enable_elevated_read: A value that enables elevated read that bypasses document-level
+            permission checks for the query operation.
+        :paramtype enable_elevated_read: bool
         :return: List of search results.
         :rtype: SearchItemPaged[dict]
 
@@ -689,6 +743,11 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             session_id=session_id,
             vector_queries=vector_queries,
             vector_filter_mode=vector_filter_mode,
+            query_language=query_language,
+            speller=speller,
+            query_rewrites=query_rewrites,
+            semantic_fields=semantic_fields,
+            hybrid_search=hybrid_search,
             semantic_error_mode=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
@@ -696,6 +755,16 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         # Create kwargs for the search_post call
         search_kwargs = dict(kwargs)
+        legacy_query_source_authorization = search_kwargs.pop("x_ms_query_source_authorization", None)
+        legacy_enable_elevated_read = search_kwargs.pop("x_ms_enable_elevated_read", None)
+        if query_source_authorization is None:
+            query_source_authorization = legacy_query_source_authorization
+        if enable_elevated_read is None:
+            enable_elevated_read = legacy_enable_elevated_read
+        if query_source_authorization is not None:
+            search_kwargs["query_source_authorization"] = query_source_authorization
+        if enable_elevated_read is not None:
+            search_kwargs["enable_elevated_read"] = enable_elevated_read
 
         return SearchItemPaged(self, search_request, search_kwargs, page_iterator_class=SearchPageIterator)
 

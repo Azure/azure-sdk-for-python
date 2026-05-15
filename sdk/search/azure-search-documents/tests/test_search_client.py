@@ -15,7 +15,8 @@ from azure.core.paging import ItemPaged
 from azure.search.documents import ApiVersion, IndexDocumentsBatch, RequestEntityTooLargeError, SearchClient
 from azure.search.documents._operations._patch import SearchPageIterator
 from azure.search.documents.models import FacetResult, IndexingResult, SearchResult
-from azure.search.documents.models._models import SearchDocumentsResult
+
+from _capabilities import require_capability
 
 SEARCH_ENDPOINT = "https://my-search-service.search.windows.net"
 INDEX_NAME = "hotel-index"
@@ -32,6 +33,19 @@ QUERY_WITHOUT_SUGGESTER = "missing-suggester"
 
 CREDENTIAL = AzureKeyCredential(API_KEY)
 
+
+class SearchDocumentsResultStub:
+    def __init__(self):
+        self.results = []
+        self.facets = None
+        self.count = None
+        self.coverage = None
+        self.answers = None
+        self.debug_info = None
+        self.next_page_parameters = None
+        self.next_link = None
+
+
 DOCUMENT_METHODS = [
     "upload_documents",
     "delete_documents",
@@ -46,7 +60,7 @@ def create_search_client(**kwargs):
 
 
 def create_search_documents_result(*documents):
-    result = SearchDocumentsResult()
+    result = SearchDocumentsResultStub()
     if not documents:
         documents = ({"HotelId": DOCUMENT_KEY, "HotelName": "Northwind Lodge"},)
     result.results = [SearchResult(document) for document in documents]
@@ -118,8 +132,6 @@ class TestSearchRequestBuilding:
             semantic_error_mode="partial",
             semantic_max_wait_in_milliseconds=750,
             debug="semantic",
-            x_ms_enable_elevated_read=True,
-            x_ms_query_source_authorization=SOURCE_AUTHORIZATION,
         )
 
         assert isinstance(result, ItemPaged)
@@ -132,8 +144,6 @@ class TestSearchRequestBuilding:
         assert document["@search.score"] is None
         mock_search_post.assert_called_once()
         assert mock_search_post.call_args.args == ()
-        assert mock_search_post.call_args.kwargs["x_ms_enable_elevated_read"] is True
-        assert mock_search_post.call_args.kwargs["x_ms_query_source_authorization"] == SOURCE_AUTHORIZATION
         search_request = get_search_request(mock_search_post)
         assert search_request.search_text == SEARCH_TEXT
         assert search_request.include_total_count is True
@@ -163,6 +173,61 @@ class TestSearchRequestBuilding:
         assert search_request.semantic_error_handling == "partial"
         assert search_request.semantic_max_wait_in_milliseconds == 750
         assert search_request.debug == "semantic"
+
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_passes_query_language_speller_rewrites_semantic_fields_and_hybrid_search(self, mock_search_post):
+        require_capability(
+            "SearchClient.search.query_language",
+            "SearchClient.search.speller",
+            "SearchClient.search.query_rewrites",
+            "SearchClient.search.semantic_fields",
+            "SearchClient.search.hybrid_search",
+            "azure.search.documents.models.HybridSearch",
+            "azure.search.documents.models.HybridSearch.max_text_recall_size",
+            "azure.search.documents.models.HybridSearch.count_and_facet_mode",
+        )
+        from azure.search.documents.models import HybridSearch
+
+        mock_search_post.return_value = create_search_documents_result()
+        client = create_search_client()
+
+        result = client.search(
+            search_text=SEARCH_TEXT,
+            query_language="en-us",
+            speller="lexicon",
+            query_rewrites="generative",
+            semantic_fields=["HotelName", "Description"],
+            hybrid_search=HybridSearch(max_text_recall_size=100, count_and_facet_mode="countAllResults"),
+        )
+        next(result)
+
+        search_request = get_search_request(mock_search_post)
+        assert search_request.query_language == "en-us"
+        assert search_request.query_speller == "lexicon"
+        assert search_request.query_rewrites == "generative"
+        assert search_request.semantic_fields == ["HotelName", "Description"]
+        assert search_request.hybrid_search.max_text_recall_size == 100
+        assert search_request.hybrid_search.count_and_facet_mode == "countAllResults"
+
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_search_translates_legacy_x_ms_kwargs_to_generated_names(self, mock_search_post):
+        require_capability(
+            "SearchClient.search.enable_elevated_read",
+            "SearchClient.search.query_source_authorization",
+        )
+        mock_search_post.return_value = create_search_documents_result()
+        client = create_search_client()
+
+        next(
+            client.search(
+                search_text=SEARCH_TEXT,
+                x_ms_enable_elevated_read=True,
+                x_ms_query_source_authorization=SOURCE_AUTHORIZATION,
+            )
+        )
+
+        assert mock_search_post.call_args.kwargs["enable_elevated_read"] is True
+        assert mock_search_post.call_args.kwargs["query_source_authorization"] == SOURCE_AUTHORIZATION
 
     @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
     def test_search_accepts_comma_delimited_select(self, mock_search_post):
@@ -205,6 +270,24 @@ class TestSearchRequestBuilding:
         assert result.get_count() is None
         assert result.get_coverage() is None
         assert result.get_facets() is None
+        mock_search_post.assert_called_once()
+
+    @mock.patch("azure.search.documents._operations._operations._SearchClientOperationsMixin._search_post")
+    def test_get_debug_info_returns_response_debug_info(self, mock_search_post):
+        require_capability(
+            "azure.search.documents.models.DebugInfo",
+            "SearchItemPaged.get_debug_info",
+        )
+        from azure.search.documents.models import DebugInfo
+
+        search_result = create_search_documents_result()
+        debug_info = DebugInfo()
+        search_result.debug_info = debug_info
+        mock_search_post.return_value = search_result
+        client = create_search_client()
+        result = client.search(search_text=SEARCH_TEXT)
+
+        assert result.get_debug_info() is debug_info
         mock_search_post.assert_called_once()
 
 

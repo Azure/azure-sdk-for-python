@@ -35,9 +35,9 @@ class SearchClient(_SearchClient):
      ~azure.core.credentials_async.AsyncTokenCredential
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-01-preview" and None. Default value is "2026-05-01-preview". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud
