@@ -1,6 +1,7 @@
 import abc
 import os
 import argparse
+import re
 import traceback
 import sys
 import shutil
@@ -13,11 +14,13 @@ import subprocess
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import (
     discover_targeted_packages,
+    find_whl,
+)
+from ci_tools.venv import (
     get_venv_call,
     install_into_venv,
     get_venv_python,
     get_pip_command,
-    find_whl,
 )
 from ci_tools.variables import discover_repo_root, in_ci
 from ci_tools.logging import logger
@@ -70,10 +73,14 @@ class Check(abc.ABC):
         """
         return 0
 
-    def create_venv(self, isolate: bool, venv_location: str) -> str:
-        """Abstraction for creating a virtual environment."""
+    def create_venv(self, isolate: bool, venv_location: str, python_version: Optional[str] = None) -> str:
+        """Abstraction for creating a virtual environment.
+
+        :param python_version: If provided, passed to ``uv venv --python`` during initial creation only.
+            Has no effect on venv reuse or lookup.
+        """
         if isolate:
-            venv_cmd = get_venv_call(sys.executable)
+            venv_cmd = get_venv_call(sys.executable, python_version=python_version)
             venv_python = get_venv_python(venv_location)
             if os.path.exists(venv_python):
                 logger.info(f"Reusing existing venv at {venv_python}")
@@ -92,7 +99,7 @@ class Check(abc.ABC):
 
                 if prebuilt_whl:
                     install_location = os.path.join(wheel_dir, prebuilt_whl)
-                    install_into_venv(venv_location, [f"{install_location}[build]"], REPO_ROOT)
+                    install_into_venv(venv_location, [install_location], REPO_ROOT)
                 else:
                     logger.error(
                         "Falling back to manual build and install of azure-sdk-tools into isolated env,"
@@ -108,16 +115,30 @@ class Check(abc.ABC):
         # if we don't need to isolate, just return the python executable that we're invoking
         return sys.executable
 
-    def get_executable(self, isolate: bool, check_name: str, executable: str, package_folder: str) -> Tuple[str, str]:
+    def get_executable(
+        self,
+        isolate: bool,
+        check_name: str,
+        executable: str,
+        package_folder: str,
+        python_version: Optional[str] = None,
+    ) -> Tuple[str, str]:
         """Get the Python executable that should be used for this check."""
         # Keep venvs under a shared repo-level folder to prevent nested import errors during pytest collection
         package_name = os.path.basename(os.path.normpath(package_folder))
         shared_venv_root = os.path.join(REPO_ROOT, ".venv", package_name)
         os.makedirs(shared_venv_root, exist_ok=True)
-        venv_location = os.path.join(shared_venv_root, f".venv_{check_name}")
+
+        # version-qualify the venv dir when a specific Python is requested to avoid cache collisions
+        venv_suffix = f".venv_{check_name}"
+        if python_version:
+            sanitized = python_version.replace(".", "").replace("-", "")
+            venv_suffix = f".venv_{check_name}_py{sanitized}"
+        venv_location = os.path.join(shared_venv_root, venv_suffix)
+
         # if isolation is required, the executable we get back will align with the venv
         # otherwise we'll just get sys.executable and install in current
-        executable = self.create_venv(isolate, venv_location)
+        executable = self.create_venv(isolate, venv_location, python_version=python_version)
         staging_directory = os.path.join(venv_location, ".staging")
         os.makedirs(staging_directory, exist_ok=True)
         return executable, staging_directory
@@ -194,6 +215,16 @@ class Check(abc.ABC):
                 logger.error(f"Exception: {e}")
                 return []
         else:
+            # Narrow discovery to a specific service directory when --service is provided.
+            # "auto" is discarded (treated the same as no value), matching dispatch_checks.py behavior.
+            service = getattr(args, "service", None)
+            if service and service != "auto":
+                service_dir = os.path.join(REPO_ROOT, "sdk", service)
+                if os.path.isdir(service_dir):
+                    targeted_dir = service_dir
+                else:
+                    logger.warning(f"Service directory '{service_dir}' does not exist, falling back to cwd.")
+
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
             for pkg in targeted_packages:
                 try:
@@ -313,3 +344,24 @@ class Check(abc.ABC):
     def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
         """Build pytest args for a package directory."""
         return self._build_pytest_args_base(package_dir, args)
+
+    def get_check_version(self, executable: str, module_name: str) -> Optional[str]:
+        """Get the version of a tool installed in the virtual environment.
+
+        Runs ``<executable> -m <module_name> --version`` and extracts the first
+        semver-style version string from the output.
+
+        :param executable: Path to the Python executable in the target venv.
+        :param module_name: The module to query (e.g. "pylint", "mypy").
+        :returns: The version string, or None if it could not be determined.
+        """
+        try:
+            result = subprocess.run(
+                [executable, "-m", module_name, "--version"],
+                capture_output=True,
+            )
+            version_output = result.stdout.rstrip().decode("utf-8")
+            matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
+            return matches[0] if matches else None
+        except Exception:
+            return None

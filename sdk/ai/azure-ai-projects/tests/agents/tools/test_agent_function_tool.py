@@ -6,16 +6,12 @@
 # cSpell:disable
 
 import json
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentFunctionTool(TestBase):
 
     @servicePreparer()
@@ -44,7 +40,7 @@ class TestAgentFunctionTool(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         agent_name = "function-tool-agent"
 
         with (
@@ -165,7 +161,7 @@ class TestAgentFunctionTool(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):
+    def test_agent_function_tool_multi_turn_with_multiple_calls(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test multi-turn conversation where agent calls functions multiple times.
 
@@ -175,7 +171,7 @@ class TestAgentFunctionTool(TestBase):
         - Ability to use previous function results in subsequent queries
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -384,7 +380,7 @@ class TestAgentFunctionTool(TestBase):
         remembering parameters from the first query.
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

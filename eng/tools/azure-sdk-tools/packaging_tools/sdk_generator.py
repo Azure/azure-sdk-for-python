@@ -107,6 +107,7 @@ def main(generate_input, generate_output):
     readme_and_tsp = [("relatedReadmeMdFiles", item) for item in data.get("relatedReadmeMdFiles", [])] + [
         ("relatedTypeSpecProjectFolder", item) for item in data.get("relatedTypeSpecProjectFolder", [])
     ]
+    sdk_release_type = data.get("sdkReleaseType")
     run_in_pipeline = data.get("runMode") is not None
     for input_type, readme_or_tsp in readme_and_tsp:
         _LOGGER.info(f"[CODEGEN]({readme_or_tsp})codegen begin")
@@ -183,7 +184,11 @@ def main(generate_input, generate_output):
                     package_entry["packageName"] = package_name
                     package_entry["path"] = [folder_name]
                     package_entry[spec_word] = [readme_or_tsp]
-                    package_entry["tagIsStable"] = not judge_tag_preview(sdk_code_path, package_name)
+                    package_entry["tagIsStable"] = (
+                        sdk_release_type == "stable"
+                        if (sdk_release_type is not None)
+                        else (not judge_tag_preview(sdk_code_path, package_name))
+                    )
                     package_entry["targetReleaseDate"] = data.get("targetReleaseDate", "")
                     result[package_name] = package_entry
                 else:
@@ -213,6 +218,7 @@ def main(generate_input, generate_output):
                 Path(sdk_code_path).absolute(),
                 enable_changelog=data.get("enableChangelog", True),
                 package_result=result[package_name],
+                timeout=900 if data.get("runMode") in ["spec-pull-request"] else 7200,
             )
 
             # update version in _version.py and CHANGELOG.md

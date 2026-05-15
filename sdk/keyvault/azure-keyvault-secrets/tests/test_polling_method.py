@@ -74,7 +74,9 @@ def test_run_idempotence():
         _command.operation_complete = True
 
     resource = object()
-    polling_method = DeleteRecoverPollingMethod(mock_pipeline_response, command, final_resource=resource, finished=False)
+    polling_method = DeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=resource, finished=False
+    )
     assert not polling_method.finished()
 
     with mock.patch(SLEEP) as sleep:
@@ -102,7 +104,9 @@ def test_final_resource():
     assert final_resource is resource
 
     command = mock.Mock()
-    polling_method = DeleteRecoverPollingMethod(mock_pipeline_response, command, final_resource=resource, finished=False)
+    polling_method = DeleteRecoverPollingMethod(
+        mock_pipeline_response, command, final_resource=resource, finished=False
+    )
 
     assert polling_method.resource() is resource
     polling_method.run()

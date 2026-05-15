@@ -13,9 +13,13 @@ from opentelemetry.environment_variables import (
     OTEL_METRICS_EXPORTER,
     OTEL_TRACES_EXPORTER,
 )
-from opentelemetry.instrumentation.environment_variables import (
-    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
-)
+
+try:
+    from opentelemetry.instrumentation.environment_variables import (  # type: ignore
+        OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
+    )
+except ImportError:  # pragma: no cover
+    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS = ""
 from opentelemetry.sdk.environment_variables import (
     OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
     OTEL_TRACES_SAMPLER_ARG,
@@ -35,6 +39,8 @@ from azure.monitor.opentelemetry._constants import (
     _AZURE_VM_RESOURCE_DETECTOR_NAME,
     _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _PREVIEW_INSTRUMENTED_LIBRARIES,
+    BROWSER_SDK_LOADER_CONFIG_ARG,
+    CONNECTION_STRING_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -90,6 +96,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
+    _default_connection_string(configurations)
     _default_logger_name(configurations)
     _default_logging_formatter(configurations)
     _default_resource(configurations)
@@ -102,6 +109,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_enable_performance_counters(configurations)
     _default_views(configurations)
     _default_enable_trace_based_sampling(configurations)
+    _default_browser_sdk_loader(configurations)
 
     return configurations
 
@@ -128,6 +136,14 @@ def _default_disable_tracing(configurations):
         if environ[OTEL_TRACES_EXPORTER].lower().strip() == "none":
             default = True
     configurations[DISABLE_TRACING_ARG] = default
+
+
+def _default_connection_string(configurations):
+    if CONNECTION_STRING_ARG in configurations:
+        return
+    env_connection_string = environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    if env_connection_string is not None:
+        configurations[CONNECTION_STRING_ARG] = env_connection_string
 
 
 def _default_logger_name(configurations):
@@ -326,6 +342,18 @@ def _default_views(configurations):
     configurations.setdefault(VIEWS_ARG, [])
 
 
+def _default_browser_sdk_loader(configurations):
+    """Set default browser SDK loader configuration.
+
+    :param configurations: Configuration dictionary to update.
+    :type configurations: dict
+    """
+    # Use cast to Dict[str, Any] to avoid MyPy ConfigurationValue Union type issues
+    from typing import cast, Any
+
+    configurations.setdefault(BROWSER_SDK_LOADER_CONFIG_ARG, cast(Dict[str, Any], {}))
+
+
 def _get_otel_disabled_instrumentations():
     disabled_instrumentation = environ.get(OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, "")
     disabled_instrumentation = disabled_instrumentation.split(",")
@@ -338,7 +366,7 @@ def _is_instrumentation_enabled(configurations, lib_name):
     if INSTRUMENTATION_OPTIONS_ARG not in configurations:
         return False
     instrumentation_options = configurations[INSTRUMENTATION_OPTIONS_ARG]
-    if not lib_name in instrumentation_options:
+    if lib_name not in instrumentation_options:
         return False
     library_options = instrumentation_options[lib_name]
     if "enabled" not in library_options:

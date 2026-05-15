@@ -3,18 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the trace_function decorator with synchronous functions."""
+
+# pylint: disable=unused-argument
+
 import pytest
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from gen_ai_trace_verifier import GenAiTraceVerifier  # pylint: disable=import-error
+from memory_trace_exporter import MemoryTraceExporter  # pylint: disable=import-error
 from azure.ai.projects.telemetry._trace_function import trace_function
-from gen_ai_trace_verifier import GenAiTraceVerifier
-from memory_trace_exporter import MemoryTraceExporter
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestTraceFunctionDecorator:
     """Tests for trace_function decorator with synchronous functions."""
 
@@ -23,7 +23,7 @@ class TestTraceFunctionDecorator:
         """Setup telemetry for tests."""
         tracer_provider = TracerProvider()
         trace._TRACER_PROVIDER = tracer_provider
-        self.exporter = MemoryTraceExporter()
+        self.exporter = MemoryTraceExporter()  # pylint: disable=attribute-defined-outside-init
         span_processor = SimpleSpanProcessor(self.exporter)
         tracer_provider.add_span_processor(span_processor)
         yield

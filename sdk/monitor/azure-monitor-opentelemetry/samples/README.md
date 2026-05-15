@@ -29,6 +29,7 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 |[tracing/azure_ai_inference.py][azure_ai_inference] | Instrument an app using Azure AI inference SDK |
 |[tracing/azure_blob_storage.py][azure_blob_storage] | Instrument an app using Azure Blob storage SDK |
 |[tracing/django/sample/manage.py][django] | Instrument a django app |
+|[tracing/http_django_browser_sdk_loader.py][http_django_browser_sdk_loader] | Instrument a Django app and inject Browser SDK snippet |
 |[tracing/db_psycopg2.py][db_psycopg2] | Instrument the PsycoPG2 library |
 |[tracing/http_fastapi.py][http_fastapi] | Instrument a FastAPI app |
 |[tracing/http_flask.py][http_flask] | Instrument a Flask app |
@@ -78,6 +79,7 @@ To learn more, see the [Azure Monitor OpenTelemetry Distro documentation][distro
 [azure_ai_inference]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/azure_ai_inference.py
 [azure_blob_storage]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/azure_blob_storage.py
 [django]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/django/sample/manage.py
+[http_django_browser_sdk_loader]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_django_browser_sdk_loader.py
 [db_psycopg2]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/db_psycopg2.py
 [http_fastapi]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_fastapi.py
 [http_flask]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_flask.py

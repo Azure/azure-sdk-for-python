@@ -52,6 +52,7 @@ opentelemetry-instrumentation
 opentelemetry-instrumentation-django
 opentelemetry-instrumentation-fastapi
 opentelemetry-instrumentation-flask
+opentelemetry-instrumentation-logging
 opentelemetry-instrumentation-psycopg2
 opentelemetry-instrumentation-requests
 opentelemetry-instrumentation-urllib
@@ -77,6 +78,7 @@ httpx
 pandas
 nltk
 azure-monitor-opentelemetry
+microsoft-opentelemetry
 python-dotenv
 pyrit
 prompty
@@ -91,9 +93,12 @@ opentelemetry-exporter-otlp-proto-http
 agent-framework-azure-ai
 langgraph
 azure-ai-agentserver-core
+azure-ai-agentserver-responses
 langchain-azure-ai
 opentelemetry-exporter-otlp-proto-grpc
 agent-framework-core
 langchain
 langchain-openai
 azure-ai-language-questionanswering
+github-copilot-sdk
+hypercorn

@@ -32,17 +32,18 @@ steps:
       Paths:
         - '**'
 
-  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
-  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
-  - template: auth-dev-feed.yml
-    parameters:
-      DevFeedName: ${{ parameters.DevFeedName }}
-
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     inputs:
       versionSpec: $(PythonVersion)
+
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+      EnableTwineAuth: false
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
@@ -118,7 +119,7 @@ steps:
 
   - pwsh: |
       which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
     displayName: 'Generate Packages'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     timeoutInMinutes: 80

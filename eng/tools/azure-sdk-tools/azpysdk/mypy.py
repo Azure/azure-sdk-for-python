@@ -7,21 +7,19 @@ from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import install_into_venv
-from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.10"
-MYPY_VERSION = "1.18.1"
+MYPY_VERSION = "1.19.1"
+NEXT_MYPY_VERSION = "1.19.1"
 ADDITIONAL_LOCKED_DEPENDENCIES = [
     "types-chardet==5.0.4.6",
     "types-requests==2.31.0.6",
     "types-six==1.16.21.9",
     "types-redis==4.6.0.7",
-    "PyGitHub>=1.59.0",
 ]
 
 
@@ -56,7 +54,13 @@ class mypy(Check):
             package_name = parsed.name
             additional_requirements = ADDITIONAL_LOCKED_DEPENDENCIES
 
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for mypy check")
 
             # # need to install dev_requirements to ensure that type-hints properly resolve
@@ -66,7 +70,7 @@ class mypy(Check):
             try:
                 if args.next:
                     # use latest version of mypy
-                    install_into_venv(executable, ["mypy"] + additional_requirements, package_dir)
+                    install_into_venv(executable, [f"mypy=={NEXT_MYPY_VERSION}"] + additional_requirements, package_dir)
                 else:
                     install_into_venv(executable, [f"mypy=={MYPY_VERSION}"] + additional_requirements, package_dir)
             except CalledProcessError as e:
@@ -128,11 +132,14 @@ class mypy(Check):
                         results.append(sample_error.returncode)
 
             if args.next and in_ci() and not is_typing_ignored(package_name):
-                from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
-
                 if src_code_error or sample_code_error:
-                    create_vnext_issue(package_dir, "mypy")
+                    from gh_tools.vnext_issue_creator import create_vnext_issue
+
+                    check_version = self.get_check_version(executable, "mypy")
+                    create_vnext_issue(package_dir, "mypy", check_version)
                 else:
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
+
                     close_vnext_issue(package_name, "mypy")
 
         return max(results) if results else 0

@@ -188,7 +188,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -199,58 +199,54 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
 
+        # If response or tool_definitions are strings, pass directly without reformatting
+        # Process each parameter individually - strings pass through, dicts get reformatted
         tool_definitions = eval_input["tool_definitions"]
-        filtered_tool_definitions = filter_to_used_tools(
-            tool_definitions=tool_definitions,
-            msgs_lists=[eval_input["query"], eval_input["response"]],
-            logger=logger,
-        )
-        eval_input["tool_definitions"] = reformat_tool_definitions(filtered_tool_definitions, logger)
+        if not isinstance(tool_definitions, str):
+            if not isinstance(eval_input.get("query"), str) and not isinstance(eval_input.get("response"), str):
+                filtered_tool_definitions = filter_to_used_tools(
+                    tool_definitions=tool_definitions,
+                    msgs_lists=[eval_input["query"], eval_input["response"]],
+                    logger=logger,
+                )
+            else:
+                filtered_tool_definitions = tool_definitions
+            eval_input["tool_definitions"] = reformat_tool_definitions(filtered_tool_definitions, logger)
 
-        eval_input["query"] = reformat_conversation_history(
-            eval_input["query"],
-            logger,
-            include_system_messages=True,
-            include_tool_messages=True,
-        )
-        eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
+        if not isinstance(eval_input.get("query"), str):
+            eval_input["query"] = reformat_conversation_history(
+                eval_input["query"],
+                logger,
+                include_system_messages=True,
+                include_tool_messages=True,
+            )
+        if not isinstance(eval_input.get("response"), str):
+            eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
-            output_label = llm_output.get("label", None)
-            if output_label is None:
-                if logger:
-                    logger.warning("LLM output does not contain 'label' key, returning NaN for the score.")
-                output_label = "fail"
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
 
-            output_label = output_label.lower()
-            if output_label not in ["pass", "fail"]:
-                if logger:
-                    logger.warning(
-                        f"LLM output label is not 'pass' or 'fail' (got '{output_label}'), returning NaN for the score."
-                    )
-
-            score = 1.0 if output_label == "pass" else 0.0
-            score_result = output_label
+            score = float(llm_output.get("score", 0))
+            score_result = "pass" if score >= 1.0 else "fail"
             reason = llm_output.get("reason", "")
-
-            faulty_details = llm_output.get("faulty_details", [])
-            if faulty_details:
-                reason += " Issues found: " + "; ".join(faulty_details)
+            llm_properties = llm_output.get("properties", {}) or {}
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             return {
-                f"{self._result_key}": score,
-                f"{self._result_key}_reason": reason,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
                 f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_properties": llm_properties,
             }
         raise EvaluationException(
             message="Evaluator returned invalid output.",

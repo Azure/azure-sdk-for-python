@@ -10,6 +10,69 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
+
+    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
+    """HOSTED_AGENTS_V1_PREVIEW."""
+    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
+    """WORKFLOW_AGENTS_V1_PREVIEW."""
+    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
+    """CONTAINER_AGENTS_V1_PREVIEW."""
+    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
+    """AGENT_ENDPOINT_V1_PREVIEW."""
+
+
+class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of _FoundryFeaturesOptInKeys."""
+
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
+    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
+    """EVALUATIONS_V1_PREVIEW."""
+    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
+    """SCHEDULES_V1_PREVIEW."""
+    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
+    """RED_TEAMS_V1_PREVIEW."""
+    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
+    """INSIGHTS_V1_PREVIEW."""
+    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
+    """MEMORY_STORES_V1_PREVIEW."""
+    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
+    """TOOLBOXES_V1_PREVIEW."""
+
+
+class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentBlueprintReferenceType."""
+
+    MANAGED_AGENT_IDENTITY_BLUEPRINT = "ManagedAgentIdentityBlueprint"
+    """MANAGED_AGENT_IDENTITY_BLUEPRINT."""
+
+
+class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentEndpointAuthorizationSchemeType."""
+
+    ENTRA = "Entra"
+    """ENTRA."""
+    BOT_SERVICE = "BotService"
+    """BOT_SERVICE."""
+    BOT_SERVICE_RBAC = "BotServiceRbac"
+    """BOT_SERVICE_RBAC."""
+
+
+class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentEndpointProtocol."""
+
+    ACTIVITY = "activity"
+    """ACTIVITY."""
+    RESPONSES = "responses"
+    """RESPONSES."""
+    A2A = "a2a"
+    """A2A."""
+    INVOCATIONS = "invocations"
+    """INVOCATIONS."""
+
+
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 
@@ -17,8 +80,6 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PROMPT."""
     HOSTED = "hosted"
     """HOSTED."""
-    CONTAINER_APP = "container_app"
-    """CONTAINER_APP."""
     WORKFLOW = "workflow"
     """WORKFLOW."""
 
@@ -45,6 +106,44 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
+    INVOCATIONS = "invocations"
+    """INVOCATIONS."""
+
+
+class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of an agent session."""
+
+    CREATING = "creating"
+    """Session initialization is in progress."""
+    ACTIVE = "active"
+    """Session is running and operational."""
+    IDLE = "idle"
+    """Session sandbox is auto-suspended; resumes on next invocation."""
+    UPDATING = "updating"
+    """Reserved for future session re-parenting flows."""
+    FAILED = "failed"
+    """Session initialization or lifecycle handling failed and requires delete to recover."""
+    DELETING = "deleting"
+    """Session is being deleted (cleanup in progress)."""
+    DELETED = "deleted"
+    """Session has been explicitly deleted."""
+    EXPIRED = "expired"
+    """Session TTL exceeded (30 days from last activity)."""
+
+
+class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning status of an agent version."""
+
+    CREATING = "creating"
+    """The agent version is being provisioned."""
+    ACTIVE = "active"
+    """The agent version is active and ready to serve requests."""
+    FAILED = "failed"
+    """The agent version provisioning failed."""
+    DELETING = "deleting"
+    """The agent version is being deleted."""
+    DELETED = "deleted"
+    """The agent version has been deleted."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -184,6 +283,24 @@ class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_16GB."""
     MEMORY_64GB = "64g"
     """MEMORY_64GB."""
+
+
+class ContainerNetworkPolicyParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerNetworkPolicyParamType."""
+
+    DISABLED = "disabled"
+    """DISABLED."""
+    ALLOWLIST = "allowlist"
+    """ALLOWLIST."""
+
+
+class ContainerSkillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerSkillType."""
+
+    SKILL_REFERENCE = "skill_reference"
+    """SKILL_REFERENCE."""
+    INLINE = "inline"
+    """INLINE."""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -333,25 +450,15 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom evaluator."""
 
 
-class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FoundryFeaturesOptInKeys."""
+class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionShellToolParamEnvironmentType."""
 
-    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
-    """CONTAINER_AGENTS_V1_PREVIEW."""
-    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
-    """HOSTED_AGENTS_V1_PREVIEW."""
-    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
-    """WORKFLOW_AGENTS_V1_PREVIEW."""
-    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
-    """EVALUATIONS_V1_PREVIEW."""
-    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
-    """SCHEDULES_V1_PREVIEW."""
-    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
-    """RED_TEAMS_V1_PREVIEW."""
-    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
-    """INSIGHTS_V1_PREVIEW."""
-    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
-    """MEMORY_STORES_V1_PREVIEW."""
+    CONTAINER_AUTO = "container_auto"
+    """CONTAINER_AUTO."""
+    LOCAL = "local"
+    """LOCAL."""
+    CONTAINER_REFERENCE = "container_reference"
+    """CONTAINER_REFERENCE."""
 
 
 class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -361,6 +468,17 @@ class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LARK."""
     REGEX = "regex"
     """REGEX."""
+
+
+class ImageGenAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageGenAction."""
+
+    GENERATE = "generate"
+    """GENERATE."""
+    EDIT = "edit"
+    """EDIT."""
+    AUTO = "auto"
+    """AUTO."""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -376,8 +494,9 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. This parameter is only supported for ``gpt-image-1``. Unsupported
-    for ``gpt-image-1-mini``. Supports ``high`` and ``low``. Defaults to ``low``.
+    features, of input images. This parameter is only supported for ``gpt-image-1`` and
+    ``gpt-image-1.5`` and later models, unsupported for ``gpt-image-1-mini``. Supports ``high`` and
+    ``low``. Defaults to ``low``.
     """
 
     HIGH = "high"
@@ -395,6 +514,15 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster Insight on an Agent."""
     EVALUATION_COMPARISON = "EvaluationComparison"
     """Evaluation Comparison."""
+
+
+class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of IsolationKeySourceKind."""
+
+    ENTRA = "Entra"
+    """ENTRA."""
+    HEADER = "Header"
+    """HEADER."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -504,8 +632,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT2024_11_15 = "default-2024-11-15"
-    """DEFAULT2024_11_15."""
+    DEFAULT_2024_11_15 = "default-2024-11-15"
+    """DEFAULT_2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -588,6 +716,49 @@ class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
 
 
+class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known SSE event types emitted by the hosted agent session log stream. Additional event types
+    may be introduced in future versions.
+    """
+
+    LOG = "log"
+    """A log line from the agent session container."""
+
+
+class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of telemetry data to export."""
+
+    CONTAINER_STDOUT_STDERR = "ContainerStdoutStderr"
+    """Container stdout and stderr logs."""
+    CONTAINER_OTEL = "ContainerOtel"
+    """Container OpenTelemetry signals."""
+    METRICS = "Metrics"
+    """Container metrics."""
+
+
+class TelemetryEndpointAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of authentication for a telemetry endpoint."""
+
+    HEADER = "header"
+    """Header-based secret authentication."""
+
+
+class TelemetryEndpointKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of telemetry export endpoint."""
+
+    OTLP = "OTLP"
+    """OpenTelemetry Protocol (OTLP) endpoint."""
+
+
+class TelemetryTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport protocol for telemetry export."""
+
+    HTTP = "Http"
+    """HTTP transport protocol."""
+    GRPC = "Grpc"
+    """gRPC transport protocol."""
+
+
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of TextResponseFormatConfigurationType."""
 
@@ -620,8 +791,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
-    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
-    """WEB_SEARCH_PREVIEW2025_03_11."""
+    WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW_2025_03_11."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
@@ -667,6 +838,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHAREPOINT_GROUNDING_PREVIEW."""
     MEMORY_SEARCH_PREVIEW = "memory_search_preview"
     """MEMORY_SEARCH_PREVIEW."""
+    WORK_IQ_PREVIEW = "work_iq_preview"
+    """WORK_IQ_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
@@ -703,3 +876,17 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
+
+
+class VersionIndicatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of version indicator used to determine the agent version backing a session."""
+
+    VERSION_REF = "version_ref"
+    """Direct reference to a specific agent version."""
+
+
+class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of VersionSelectorType."""
+
+    FIXED_RATIO = "FixedRatio"
+    """FIXED_RATIO."""

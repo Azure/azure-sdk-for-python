@@ -48,6 +48,7 @@ class SanitizedValues:
     PROJECT_NAME = "sanitized-project-name"
     COMPONENT_NAME = "sanitized-component-name"
     AGENTS_API_VERSION = "sanitized-api-version"
+    API_KEY = "sanitized-api-key"
 
 
 @pytest.fixture(scope="session")
@@ -59,6 +60,7 @@ def sanitized_values():
         "account_name": f"{SanitizedValues.ACCOUNT_NAME}",
         "component_name": f"{SanitizedValues.COMPONENT_NAME}",
         "agents_api_version": f"{SanitizedValues.AGENTS_API_VERSION}",
+        "api_key": f"{SanitizedValues.API_KEY}",
     }
 
 
@@ -153,6 +155,8 @@ def add_sanitizers(test_proxy, sanitized_values):
         )
         add_body_string_sanitizer(target=image_generation_model, value="sanitized-gpt-image")
 
+    add_header_regex_sanitizer(key="api-key", value=SanitizedValues.API_KEY)
+
     # Deterministic fallback sanitization for image generation deployment/model values.
     # These do not depend on environment variables and ensure recordings are redacted even
     # when runtime values come from unexpected sources.
@@ -167,7 +171,7 @@ def add_sanitizers(test_proxy, sanitized_values):
     )
 
     # Sanitize API key from service response (this includes Application Insights connection string)
-    add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
+    add_body_key_sanitizer(json_path="credentials.key", value=SanitizedValues.API_KEY)
 
     # Sanitize GitHub personal access tokens that may appear in connection credentials
     add_general_regex_sanitizer(regex=r"github_pat_[A-Za-z0-9_]+", value="sanitized-github-pat")
@@ -189,14 +193,6 @@ def add_sanitizers(test_proxy, sanitized_values):
     add_body_key_sanitizer(
         json_path="$..project_connection_id",
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/connector-name",
-    )
-
-    # Sanitize print output from sample validation to prevent replay failures when print statements change
-    # Only targets the validation Responses API call by matching the unique input prefix
-    add_body_key_sanitizer(
-        json_path="$.input",
-        value="sanitized-print-output",
-        regex=r"(?s)print contents array = .*",
     )
 
     # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.

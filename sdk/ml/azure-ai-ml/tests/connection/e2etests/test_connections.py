@@ -256,7 +256,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
         client.connections.delete(name=wps_connection_name)
 
-        assert type(wps_connection) == AzureAISearchConnection
+        assert isinstance(wps_connection, AzureAISearchConnection)
         assert wps_connection.name == wps_connection_name
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         # assert wps_connection.api_key == "3333" # TODO add api key retrieval everywhere

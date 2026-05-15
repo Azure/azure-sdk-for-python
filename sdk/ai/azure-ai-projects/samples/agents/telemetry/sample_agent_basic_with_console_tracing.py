@@ -1,3 +1,4 @@
+# pylint: disable=wrong-import-position,wrong-import-order,docstring-missing-param,ungrouped-imports
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -13,12 +14,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
+    pip install "azure-ai-projects>=2.0.0" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
     3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
        disabled by default.
@@ -47,11 +48,10 @@ from azure.ai.projects.models import PromptAgentDefinition
 from openai.types.responses.response_input_text import ResponseInputText
 from openai.types.responses.response_output_text import ResponseOutputText
 
-
 load_dotenv()
 
 
-def display_conversation_item(item: Any) -> None:
+def display_conversation_item(item: Any) -> None:  # pylint: disable=redefined-outer-name
     """Safely display conversation item information"""
     print(f"Item ID: {getattr(item, 'id', 'N/A')}")
     print(f"Type: {getattr(item, 'type', 'N/A')}")
@@ -91,11 +91,11 @@ with tracer.start_as_current_span(scenario):
     # [END create_span_for_scenario]
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+        AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
         agent_definition = PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that answers general questions",
         )
 
@@ -119,7 +119,7 @@ with tracer.start_as_current_span(scenario):
         )
         print(f"Answer: {response.output}")
 
-        print(f"\n📋 Listing conversation items...")
+        print("\n📋 Listing conversation items...")
         items = openai_client.conversations.items.list(conversation_id=conversation.id)
 
         # Print all the items

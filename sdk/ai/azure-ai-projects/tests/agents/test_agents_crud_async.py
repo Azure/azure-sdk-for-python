@@ -9,12 +9,8 @@ import io
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
-import pytest
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentCrudAsync(TestBase):
 
     @servicePreparer()
@@ -27,7 +23,7 @@ class TestAgentCrudAsync(TestBase):
         It then gets, lists, and deletes them, validating at each step.
         It uses different ways of creating agents: strongly typed, dictionary, and IO[bytes].
         """
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         project_client = self.create_async_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"
@@ -44,9 +40,7 @@ class TestAgentCrudAsync(TestBase):
             self._validate_agent_version(agent1_version1)
 
             # Create another version of the same Agent, using dictionary definition, with different instructions
-            body = {
-                "definition": {"model": "gpt-4o", "kind": "prompt", "instructions": "Second set of instructions here"}
-            }
+            body = {"definition": {"model": model, "kind": "prompt", "instructions": "Second set of instructions here"}}
             agent1_version2: AgentVersionDetails = await project_client.agents.create_version(
                 agent_name=first_agent_name, body=body
             )

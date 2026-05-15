@@ -1,5 +1,124 @@
 # Release History
 
+## 2.1.0 (2026-04-20)
+
+### Features Added
+
+* `get_openai_client()` on `AIProjectClient` now takes an optional input argument `agent_name`. If provided, the returned OpenAI
+client will use a base URL of Agent endpoint instead of Foundry Project endpoint. As Agent endpoints are a preview feature, you
+need to set `allow_preview=True` on the `AIProjectClient` constructor.
+* New `.beta.agents` sub-client added, with Session operations (those only work with Hosted Agents)
+  * `create_session()`
+  * `delete_session()`
+  * `delete_session_file()`
+  * `download_session_file()`
+  * `get_session()`
+  * `get_session_files()`
+  * `list_sessions()`
+  * `upload_session_file()`
+* Also on `.beta.agents` sub-client, a new method `patch_agent_details()`.
+* New `beta.skills` sub-client added, with Skills operations:
+  * `create()`
+  * `create_from_package()`
+  * `delete()`
+  * `download()`
+  * `get()`
+  * `list()`
+  * `update()`
+* New `beta.toolboxes` sub-client added, with Toolboxes operations:
+  * `create_version()`
+  * `delete()`
+  * `delete_version()`
+  * `get()`
+  * `get_version()`
+  * `list()`
+  * `list_versions()`
+  * `update()`
+* Type hinting support for OpenAI client operations `.evals.create()` and `.evals.runs.create()`, when you
+get the OpenAI client using `get_openai_client()` method of `AIProjectClient`. This includes new TypedDicts
+classes to help you author the input to these methods. See new TypedDict classes `ModelSamplingConfigParam`, 
+`ToolDescriptionParam`, `AzureAIAgentTargetParam`, `AzureAIModelTargetParam`,
+`ResponseRetrievalItemGenerationParams`, `AzureAIResponsesEvalRunDataSource`, `AzureAIDataSourceConfig`,
+`TargetCompletionEvalRunDataSource`, `TestingCriterionAzureAIEvaluator`, `AzureAIBenchmarkPreviewEvalRunDataSource`,
+`EvalCsvFileIdSource`, `EvalCsvRunDataSource`, `RedTeamEvalRunDataSource`, `TracesPreviewEvalRunDataSource`.
+
+
+### Breaking Changes
+
+* Tracing: trace context propagation is enabled by default when tracing is enabled.
+
+### Bugs Fixed
+
+* Fix missing type hinting on the returned OpenAI client from method 'get_openai_client()`.
+
+### Sample updates
+
+* Evaluation samples updated to use TypedDicts to specify inputs to `.evals.create()` and `.evals.runs.create()` methods.
+* Renamed environment variable `AZURE_AI_PROJECT_ENDPOINT` to `FOUNDRY_PROJECT_ENDPOINT` in all samples.
+* Renamed environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` to `FOUNDRY_MODEL_NAME` in all samples.
+* Renamed environment variable `AZURE_AI_MODEL_AGENT_NAME` to `FOUNDRY_AGENT_NAME` in all samples.
+* Added Hosted Agents related samples: `sample_agent_endpoint.py`, `sample_agent_endpoint_async.py`, `sample_sessions_crud.py`, `sample_sessions_crud_async.py`, `sample_sessions_files_upload_download.py`, `sample_sessions_files_upload_download_async.py`, `sample_skills_crud.py`, `sample_skills_crud_async.py`, `sample_skills_upload_and_download.py`, `sample_skills_upload_and_download_async.py`, `sample_toolboxes_crud.py`, and `sample_toolboxes_crud_async.py`.
+* Added structured inputs + file upload sample (`sample_agent_structured_inputs_file_upload.py`) demonstrating passing an uploaded file ID to an agent at runtime.
+* Added structured inputs + File Search sample (`sample_agent_file_search_structured_inputs.py`) demonstrating configuring File Search tool resources via structured inputs.
+* Added structured inputs + Code Interpreter sample (`sample_agent_code_interpreter_structured_inputs.py`) demonstrating passing an uploaded file ID to Code Interpreter via structured inputs.
+* Added CSV evaluation sample (`sample_evaluations_builtin_with_csv.py`) demonstrating evaluation with an uploaded CSV dataset.
+* Added synthetic data evaluation samples (`sample_synthetic_data_agent_evaluation.py`) and (`sample_synthetic_data_model_evaluation.py`).
+* Added Chat Completions basic samples (`sample_chat_completions_basic.py`, `sample_chat_completions_basic_async.py`) demonstrating chat completions calls using `AIProjectClient` + the OpenAI-compatible client.
+* Added Toolboxes CRUD samples (`sample_toolboxes_crud.py`, `sample_toolboxes_crud_async.py`) demonstrating `project_client.beta.toolboxes` create/get/update/list/delete.
+* Simplified `sample_memory_basic.py` and `sample_agent_memory_search.py` (and their async equivalent) by removing 
+`options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True)` when constructing `MemoryStoreDefaultDefinition`,
+since this is now redundant (it's the service default).
+
+
+## 2.0.1 (2026-03-12)
+
+### Bugs Fixed
+
+* Fix custom Memory Stores LRO poller operation to add the missing
+  required `"Foundry-Features": "MemoryStores=V1Preview"` HTTP request header.
+
+## 2.0.0 (2026-03-06)
+
+First stable release of the client library that uses the Generally Available (GA) version "v1" of the Foundry REST APIs.
+
+### Features Added
+
+* To enable preview (beta) operations, a new optional boolean input argument named `allow_preview` was added
+to the constructor of `AIProjectClient`. Caller must set it to True to opt-in to preview features.
+This includes creating an Hosted Agent or Workflow Agent. Methods on the `.beta` sub-client (for example
+`.beta.memory_stores.create()`) do not require setting `allow_preview=True` since it's implied by the sub-client name.
+When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
+with the appropriate value in all relevant calls to the service.
+
+### Breaking Changes
+
+* Input argument `foundry_features` was removed from all methods that supported it. Use the new `allow_preview`
+instead on client constructor (see above).
+* Class `TextResponseFormatConfiguration` renamed to `TextResponseFormat`.
+* Class `TextResponseFormatConfigurationResponseFormatText` renamed to `TextResponseFormatTest`.
+* Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.
+* Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`,
+  and has a new optional property `network_policy` of type `ContainerNetworkPolicyParam`.
+* class `ImageGenActionEnum` was renamed to `ImageGenAction`.
+* Rename `ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11` to `ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11`.
+* Rename `RankerVersionType.DEFAULT2024_11_15` to `RankerVersionType.DEFAULT_2024_11_15`.
+* Rename method `.beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
+* Rename property `id` on class `Insight` to `insight_id`.
+* Rename property `id` on class `Schedule` to `schedule_id`.
+* Rename input argument `id` to `insight_id` in `.beta.insights.get()` method.
+* Rename input argument `id` to `schedule_id` in `.beta.schedules` methods.
+* Updated datetime-typed fields (`start_time`, `end_time`, `trigger_at`, `trigger_time`, `created_at`, `modified_at`) 
+across `CronTrigger`, `RecurrenceTrigger`, `OneTimeTrigger`, `ScheduleRun`, and `EvaluatorVersion` classes from `str`
+to `datetime.datetime` with format="rfc3339".
+
+### Other Changes
+
+* The input `items` argument in the methods `.beta.memory_stores.begin_update_memories()` and `.beta.memory_stores.search_memories`
+was changed from type `Optional[List[dict[str, Any]]]` to `Optional[Union[str, ResponseInputParam]]`, where `ResponseInputParam`
+is defined in the openai package. This allows passing in, for example, a list of `EasyInputMessageParam`. Import it using
+`from openai.types.responses import EasyInputMessageParam`. This is not a breaking change, since the caller
+can still pass in `List[dict[str, Any]`.
+
 ## 2.0.0b4 (2026-02-24)
 
 This is the first release that uses the Generally Available (GA) version "v1" of the Foundry REST APIs.

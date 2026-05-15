@@ -15,24 +15,23 @@ from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import (
-    ContextTagKeys,
-    TelemetryItem,
-)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
+    _AZURE_MONITOR_DISTRO_VERSION,
     _DEFAULT_AAD_SCOPE,
     _FUNCTIONS_WORKER_RUNTIME,
     _INSTRUMENTATIONS_BIT_MAP,
     _KUBERNETES_SERVICE_HOST,
+    _MICROSOFT_OPENTELEMETRY_VERSION,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
+    _GEN_AI_ATTRIBUTES,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
@@ -120,8 +119,25 @@ def _get_sdk_version_prefix():
 
 
 def _get_sdk_version():
+    prefix = _get_sdk_version_prefix()
+    distro_version = environ.get(_AZURE_MONITOR_DISTRO_VERSION)
+    ms_otel_version = environ.get(_MICROSOFT_OPENTELEMETRY_VERSION)
+    if ms_otel_version:
+        return "{}py{}:otel{}:mot{}".format(
+            prefix,
+            platform.python_version(),
+            opentelemetry_version,
+            ms_otel_version,
+        )
+    if distro_version:
+        return "{}py{}:otel{}:dst{}".format(
+            prefix,
+            platform.python_version(),
+            opentelemetry_version,
+            distro_version,
+        )
     return "{}py{}:otel{}:ext{}".format(
-        _get_sdk_version_prefix(),
+        prefix,
         platform.python_version(),
         opentelemetry_version,
         ext_version,
@@ -233,11 +249,12 @@ class PeriodicTask(threading.Thread):
 
 
 def _create_telemetry_item(timestamp: int) -> TelemetryItem:
+    ts = datetime.datetime.fromtimestamp(timestamp / 1e9, tz=datetime.timezone.utc)
     return TelemetryItem(
         name="",
         instrumentation_key="",
         tags=dict(azure_monitor_context),  # type: ignore
-        time=ns_to_iso_str(timestamp),  # type: ignore
+        time=ts,
     )
 
 
@@ -299,12 +316,12 @@ def _get_cloud_role(resource: Resource) -> str:
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
-    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-    if service_instance_id:
-        return service_instance_id  # type: ignore
     k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
     if k8s_pod_name:
         return k8s_pod_name  # type: ignore
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
     return platform.node()  # hostname default
 
 
@@ -339,6 +356,18 @@ def _is_synthetic_load(properties: Optional[Any]) -> bool:
     return False
 
 
+def _is_status_code_success(status_code: Optional[int], is_trace: bool = False) -> bool:
+    if status_code is None or status_code == 0:
+        return False
+    try:
+        code = int(status_code)
+        if is_trace:
+            return code not in range(400, 500)
+        return code < 400
+    except ValueError:
+        return False
+
+
 def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
     """
     Check if the telemetry should be marked as synthetic from any source.
@@ -353,20 +382,25 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    filtered_properties: Dict[str, str] = {}
+    max_length = 8 * 1024
+    max_length_for_gen_ai_attributes = 256 * 1024
+    processed_properties: Dict[str, str] = {}
     if not properties:
-        return filtered_properties
+        return processed_properties
     for key, val in properties.items():
         # Apply filter function
         if filter is not None:
             if not filter(key, val):
                 continue
-        # Apply filtering rules
-        # Max key length is 150
+        # Apply truncation rules
+        # Max key length is 150, value is 8 * 1024
         if not key or len(key) > 150 or val is None:
             continue
-        filtered_properties[key] = str(val)
-    return filtered_properties
+        if key in _GEN_AI_ATTRIBUTES:
+            processed_properties[key] = str(val)[:max_length_for_gen_ai_attributes]
+        else:
+            processed_properties[key] = str(val)[:max_length]
+    return processed_properties
 
 
 def _get_auth_policy(credential, default_auth_policy, aad_audience=None):

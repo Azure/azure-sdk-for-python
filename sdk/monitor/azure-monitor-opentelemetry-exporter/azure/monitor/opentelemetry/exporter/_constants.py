@@ -12,6 +12,8 @@ from opentelemetry.semconv.metrics.http_metrics import (
 from azure.core import CaseInsensitiveEnumMeta
 
 
+_EXPORTER_DOMAIN_SCHEMA_VERSION = 2
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
@@ -19,6 +21,11 @@ _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = (
     "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
 )
 _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN = "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN"
+
+# SDK version
+_AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
+_MICROSOFT_OPENTELEMETRY_VERSION = "MICROSOFT_OPENTELEMETRY_VERSION"
+
 _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED = "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED"
 _APPLICATIONINSIGHTS_AUTHENTICATION_STRING = "APPLICATIONINSIGHTS_AUTHENTICATION_STRING"
 
@@ -352,5 +359,39 @@ _DEFAULT_LOG_MESSAGE = "n/a"
 
 # Resource attribute applicationId
 _APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
+
+# Gen AI attributes whose value should be exempt from truncation
+_GEN_AI_ATTRIBUTES = (
+    "gen_ai.input.messages",
+    "gen_ai.output.messages",
+    "gen_ai.system_instructions",
+    "gen_ai.tool.definitions",
+    "gen_ai.tool.call.arguments",
+    "gen_ai.tool.call.result",
+    "gen_ai.evaluation.explanation",
+)
+
+# Gen AI main-agent attribution constants
+# Attribute mapping for main-agent propagation in OnStart
+_MAIN_AGENT_ATTRIBUTES = (
+    ("microsoft.gen_ai.main_agent.name", "microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
+    ("microsoft.gen_ai.main_agent.id", "microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
+    ("microsoft.gen_ai.main_agent.version", "microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
+    (
+        "microsoft.gen_ai.main_agent.conversation_id",
+        "microsoft.gen_ai.main_agent.conversation_id",
+        "gen_ai.conversation.id",
+    ),
+)
+
+# OnEnd self-attribution mapping (for root invoke_agent spans)
+_MAIN_AGENT_SELF_ATTRIBUTES = (
+    ("microsoft.gen_ai.main_agent.name", "gen_ai.agent.name"),
+    ("microsoft.gen_ai.main_agent.id", "gen_ai.agent.id"),
+    ("microsoft.gen_ai.main_agent.version", "gen_ai.agent.version"),
+    ("microsoft.gen_ai.main_agent.conversation_id", "gen_ai.conversation.id"),
+)
+
+_MAIN_AGENT_PREFIX = "microsoft.gen_ai.main_agent."
 
 # cSpell:disable

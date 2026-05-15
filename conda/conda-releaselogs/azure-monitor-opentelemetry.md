@@ -4,4 +4,4 @@
 
 ### Packages included
 
-- azure-monitor-opentelemetry-1.8.4
+- azure-monitor-opentelemetry-1.8.6

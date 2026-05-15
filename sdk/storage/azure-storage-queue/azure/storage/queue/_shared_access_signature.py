@@ -18,7 +18,11 @@ from azure.storage.queue._shared.shared_access_signature import (
 )
 
 if TYPE_CHECKING:
-    from azure.storage.queue import AccountSasPermissions, QueueSasPermissions, ResourceTypes
+    from azure.storage.queue import (
+        AccountSasPermissions,
+        QueueSasPermissions,
+        ResourceTypes,
+    )
     from datetime import datetime
 
 
@@ -116,7 +120,10 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         sas.add_id(policy_id)
         sas.add_user_delegation_oid(user_delegation_oid)
         sas.add_resource_signature(
-            self.account_name, self.account_key, queue_name, user_delegation_key=self.user_delegation_key
+            self.account_name,
+            self.account_key,
+            queue_name,
+            user_delegation_key=self.user_delegation_key,
         )
 
         if sts_hook is not None:
@@ -150,11 +157,21 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
             self._add_query(QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
             self._add_query(QueryStringConstants.SIGNED_TID, user_delegation_key.signed_tid)
             self._add_query(QueryStringConstants.SIGNED_KEY_START, user_delegation_key.signed_start)
-            self._add_query(QueryStringConstants.SIGNED_KEY_EXPIRY, user_delegation_key.signed_expiry)
-            self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
-            self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
             self._add_query(
-                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID, user_delegation_key.signed_delegated_user_tid
+                QueryStringConstants.SIGNED_KEY_EXPIRY,
+                user_delegation_key.signed_expiry,
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_SERVICE,
+                user_delegation_key.signed_service,
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_VERSION,
+                user_delegation_key.signed_version,
+            )
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
+                user_delegation_key.signed_delegated_user_tid,
             )
 
             string_to_sign += (
@@ -182,7 +199,10 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
         self._add_query(
             QueryStringConstants.SIGNED_SIGNATURE,
-            sign_string(account_key if user_delegation_key is None else user_delegation_key.value, string_to_sign),
+            sign_string(
+                (account_key if user_delegation_key is None else user_delegation_key.value),
+                string_to_sign,
+            ),
         )
         self.string_to_sign = string_to_sign
 

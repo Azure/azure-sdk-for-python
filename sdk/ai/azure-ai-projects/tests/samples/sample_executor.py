@@ -1,9 +1,10 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 """Shared base code for sample tests - sync dependencies only."""
+
 import ast
 import os
 import sys
@@ -21,12 +22,13 @@ from contextlib import contextmanager
 
 
 from dataclasses import dataclass, field
-from typing import overload, Union, Optional
+from typing import Callable, overload, Union, Optional
 from pydantic import BaseModel
 
 import json
 import unittest.mock as mock
 from typing import cast
+from io import BytesIO
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -34,12 +36,18 @@ from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils import is_live
 from devtools_testutils import add_general_string_sanitizer
 from azure.ai.projects import AIProjectClient
+from llm_instructions import get_instructions_for_sample_path
 
 # Fixed timestamp for playback mode (Nov 2023).
 # Must match the timestamp sanitizers in conftest.py (e.g., `Evaluation -\d{10}`).
 PLAYBACK_TIMESTAMP = 1700000000
 from pytest import MonkeyPatch
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+
+PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT = (
+    "https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name"
+)
+PLAYBACK_LLM_VALIDATION_MODEL = "sanitized-model-deployment-name"
 
 
 @overload
@@ -183,6 +191,7 @@ class BaseSampleExecutor:
         *,
         env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
+        validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
         **kwargs,
     ):
         self.test_instance = test_instance
@@ -190,6 +199,7 @@ class BaseSampleExecutor:
         self.print_calls: list[str] = []
         self._original_print = print
         self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
+        self._validation_text_preprocessor = validation_text_preprocessor
 
         # Prepare environment variables
         self.env_vars = {}
@@ -223,7 +233,8 @@ class BaseSampleExecutor:
 
     def _capture_print(self, *args, **kwargs):
         """Capture print calls while still outputting to console."""
-        self.print_calls.append(" ".join(str(arg) for arg in args))
+        text = " ".join(str(arg) for arg in args)
+        self.print_calls.append(text)
         self._original_print(*args, **kwargs)
 
     @contextmanager
@@ -410,7 +421,11 @@ class BaseSampleExecutor:
                 f.write(f"{i}. {print_call}\n")
         return log_file
 
-    def _get_validation_request_params(self, instructions: str, model: str = "gpt-4o") -> dict:
+    def _get_validation_request_params(
+        self,
+        instructions: str,
+        model: str = "gpt-4o",
+    ) -> dict:
         """Get common parameters for validation request."""
         return {
             "model": model,
@@ -422,12 +437,46 @@ class BaseSampleExecutor:
                     "schema": self.TestReport.model_json_schema(),
                 }
             },
-            # The input field is sanitized in recordings (see conftest.py) by matching the unique prefix
-            # "print contents array = ". This allows sample print statements to change without breaking playback.
-            # The instructions field is preserved as-is in recordings. If you modify the instructions,
-            # you must re-record the tests.
-            "input": f"print contents array = {self.print_calls}",
+            "input": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "Analyze the attached TXT log file from code interpreter files and return TestReport JSON.",
+                        },
+                    ],
+                }
+            ],
         }
+
+    def _build_validation_text(self) -> str:
+        """Build plain-text validation log content from captured output.
+
+        Applies optional preprocessor for domain-specific entry filtering
+        and text transformations.
+        """
+        if self._validation_text_preprocessor:
+            return self._validation_text_preprocessor(self.print_calls)
+        return "\n".join(self.print_calls)
+
+    def _build_validation_txt_bytes(self, validation_log_text: str) -> bytes:
+        """Build UTF-8 TXT content containing captured print/log output."""
+        if not validation_log_text:
+            validation_log_text = ""
+        return f"print/log contents from sample execution = {validation_log_text}".encode("utf-8")
+
+    def _resolve_validation_instructions(self, instructions: Optional[str] = None) -> str:
+        """Resolve validation instructions from an override or the sample folder."""
+        if instructions is not None:
+            if not instructions.strip():
+                raise ValueError("instructions must be a non-empty string")
+            return instructions
+
+        resolved_instructions = get_instructions_for_sample_path(self.sample_path)
+        if not resolved_instructions.strip():
+            raise ValueError(f"Could not resolve validation instructions for sample_path={self.sample_path!r}")
+        return resolved_instructions
 
     def _assert_validation_result(self, test_report: dict) -> None:
         """Assert validation result and print reason."""
@@ -577,6 +626,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         *,
         env_vars: Optional[dict[str, str]] = None,
         allowed_llm_validation_failures: Optional[set[str]] = None,
+        validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
         **kwargs,
     ):
         if env_vars is None:
@@ -586,6 +636,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
             sample_path,
             env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
+            validation_text_preprocessor=validation_text_preprocessor,
             **kwargs,
         )
         self.tokenCredential: Optional[TokenCredential | FakeTokenCredential] = None
@@ -647,20 +698,15 @@ class SyncSampleExecutor(BaseSampleExecutor):
                         print(f"\nSample execution failed! Print statements logged to: {log_file}")
                     raise
 
-    def validate_print_calls_by_llm(
-        self,
-        *,
-        instructions: str,
-        project_endpoint: str,
-        model: str = "gpt-4o",
-        use_code_interpreter: bool = True,
-    ):
+    def validate_print_calls_by_llm(self, *, instructions: Optional[str] = None):
         """Validate captured print output using synchronous OpenAI client."""
-        if not instructions or not instructions.strip():
-            raise ValueError("instructions must be a non-empty string")
-        if not project_endpoint:
-            raise ValueError("project_endpoint must be provided")
-        endpoint = project_endpoint
+        instructions = self._resolve_validation_instructions(instructions)
+        if is_live():
+            endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
+            model = "gpt-5.2"
+        else:
+            endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
+            model = PLAYBACK_LLM_VALIDATION_MODEL
         print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
         assert isinstance(self.tokenCredential, TokenCredential) or isinstance(
             self.tokenCredential, FakeTokenCredential
@@ -674,58 +720,78 @@ class SyncSampleExecutor(BaseSampleExecutor):
             response = None
             uploaded_file_ids: list[str] = []
             try:
-                request_params = self._get_validation_request_params(instructions, model=model)
 
-                if use_code_interpreter:
-                    sample_code_files = self._collect_sample_code_files_for_code_interpreter()
-                    code_interpreter_file_ids: list[str]
+                def _upload_file_for_validation(file_obj, placeholder_value: str) -> str:
+                    uploaded = openai_client.files.create(
+                        file=file_obj,
+                        purpose="assistants",
+                        extra_headers={"x-recording-skip": "request-response"},
+                    )
+                    uploaded_file_id = getattr(uploaded, "id", None)
+                    if not isinstance(uploaded_file_id, str) or not uploaded_file_id:
+                        raise ValueError("Failed to upload validation input file")
+                    uploaded_file_ids.append(uploaded_file_id)
+                    add_general_string_sanitizer(
+                        function_scoped=True,
+                        target=uploaded_file_id,
+                        value=placeholder_value,
+                    )
+                    return uploaded_file_id
 
-                    if is_live():
-                        # Keep upload/delete out of recordings because multipart payloads contain
-                        # full file bytes and become brittle whenever sample files change.
-                        #
-                        # Since upload calls are skipped from recording, playback cannot discover
-                        # runtime file IDs via `files.create`. To keep `responses.create` replayable,
-                        # sanitize each live file ID to a deterministic placeholder and reuse the
-                        # same placeholders in playback mode below.
-                        for file_path in sample_code_files:
-                            with open(file_path, "rb") as source_file:
-                                uploaded = openai_client.files.create(
-                                    file=source_file,
-                                    purpose="assistants",
-                                    extra_headers={"x-recording-skip": "request-response"},
-                                )
+                validation_log_text = self._build_validation_text()
+                validation_file_id: str
 
-                            uploaded_file_id = getattr(uploaded, "id", None)
-                            if isinstance(uploaded_file_id, str) and uploaded_file_id:
-                                uploaded_file_ids.append(uploaded_file_id)
-                                scrubbed_file_id = f"code_interpreter_file_{len(uploaded_file_ids)}"
-                                add_general_string_sanitizer(
-                                    function_scoped=True,
-                                    target=uploaded_file_id,
-                                    value=scrubbed_file_id,
-                                )
+                if is_live():
+                    validation_text_file = BytesIO(self._build_validation_txt_bytes(validation_log_text))
+                    validation_text_file.name = "sample_validation_log.txt"  # type: ignore[attr-defined]
+                    validation_file_id = _upload_file_for_validation(validation_text_file, "validation_log_file_1")
+                else:
+                    validation_file_id = "validation_log_file_1"
 
-                        code_interpreter_file_ids = uploaded_file_ids
-                    else:
-                        # Playback counterpart of the live sanitization mapping above.
-                        # Must match the same deterministic sequence used during recording.
-                        code_interpreter_file_ids = [
-                            f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)
-                        ]
+                request_params = self._get_validation_request_params(
+                    instructions,
+                    model=model,
+                )
 
-                    code_interpreter_container: dict[str, object] = {
-                        "type": "auto",
-                    }
-                    if code_interpreter_file_ids:
-                        code_interpreter_container["file_ids"] = code_interpreter_file_ids
+                sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                code_interpreter_file_ids: list[str]
 
-                    request_params["tools"] = [
-                        {
-                            "type": "code_interpreter",
-                            "container": code_interpreter_container,
-                        }
+                if is_live():
+                    uploaded_code_interpreter_file_ids: list[str] = []
+                    # Keep upload/delete out of recordings because multipart payloads contain
+                    # full file bytes and become brittle whenever sample files change.
+                    #
+                    # Since upload calls are skipped from recording, playback cannot discover
+                    # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                    # sanitize each live file ID to a deterministic placeholder and reuse the
+                    # same placeholders in playback mode below.
+                    for file_path in sample_code_files:
+                        with open(file_path, "rb") as source_file:
+                            scrubbed_file_id = f"code_interpreter_file_{len(uploaded_code_interpreter_file_ids) + 1}"
+                            uploaded_file_id = _upload_file_for_validation(source_file, scrubbed_file_id)
+                        uploaded_code_interpreter_file_ids.append(uploaded_file_id)
+
+                    code_interpreter_file_ids = [validation_file_id, *uploaded_code_interpreter_file_ids]
+                else:
+                    # Playback counterpart of the live sanitization mapping above.
+                    # Must match the same deterministic sequence used during recording.
+                    code_interpreter_file_ids = [
+                        "validation_log_file_1",
+                        *[f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)],
                     ]
+
+                code_interpreter_container: dict[str, object] = {
+                    "type": "auto",
+                }
+                if code_interpreter_file_ids:
+                    code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                request_params["tools"] = [
+                    {
+                        "type": "code_interpreter",
+                        "container": code_interpreter_container,
+                    }
+                ]
 
                 response = openai_client.responses.create(**request_params)
                 test_report = json.loads(response.output_text)
@@ -742,7 +808,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
 
                 test_report = {"correct": False, "reason": reason}
             finally:
-                if use_code_interpreter and is_live():
+                if is_live():
                     # Skip recording delete operations for the same reason as uploads.
                     for uploaded_file_id in uploaded_file_ids:
                         try:
@@ -766,6 +832,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         *,
         env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
+        validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
         **kwargs,
     ):
         super().__init__(
@@ -773,6 +840,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             sample_path,
             env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
+            validation_text_preprocessor=validation_text_preprocessor,
             **kwargs,
         )
         self.tokenCredential: Optional[AsyncTokenCredential | AsyncFakeCredential] = None
@@ -832,17 +900,16 @@ class AsyncSampleExecutor(BaseSampleExecutor):
     async def validate_print_calls_by_llm_async(
         self,
         *,
-        instructions: str,
-        project_endpoint: str,
-        model: str = "gpt-4o",
-        use_code_interpreter: bool = True,
+        instructions: Optional[str] = None,
     ):
         """Validate captured print output using asynchronous OpenAI client."""
-        if not instructions or not instructions.strip():
-            raise ValueError("instructions must be a non-empty string")
-        if not project_endpoint:
-            raise ValueError("project_endpoint must be provided")
-        endpoint = project_endpoint
+        instructions = self._resolve_validation_instructions(instructions)
+        if is_live():
+            endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
+            model = "gpt-5.2"
+        else:
+            endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
+            model = PLAYBACK_LLM_VALIDATION_MODEL
         print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
         assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(
             self.tokenCredential, AsyncFakeCredential
@@ -856,58 +923,80 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             response = None
             uploaded_file_ids: list[str] = []
             try:
-                request_params = self._get_validation_request_params(instructions, model=model)
 
-                if use_code_interpreter:
-                    sample_code_files = self._collect_sample_code_files_for_code_interpreter()
-                    code_interpreter_file_ids: list[str]
+                async def _upload_file_for_validation_async(file_obj, placeholder_value: str) -> str:
+                    uploaded = await openai_client.files.create(
+                        file=file_obj,
+                        purpose="assistants",
+                        extra_headers={"x-recording-skip": "request-response"},
+                    )
+                    uploaded_file_id = getattr(uploaded, "id", None)
+                    if not isinstance(uploaded_file_id, str) or not uploaded_file_id:
+                        raise ValueError("Failed to upload validation input file")
+                    uploaded_file_ids.append(uploaded_file_id)
+                    add_general_string_sanitizer(
+                        function_scoped=True,
+                        target=uploaded_file_id,
+                        value=placeholder_value,
+                    )
+                    return uploaded_file_id
 
-                    if is_live():
-                        # Keep upload/delete out of recordings because multipart payloads contain
-                        # full file bytes and become brittle whenever sample files change.
-                        #
-                        # Since upload calls are skipped from recording, playback cannot discover
-                        # runtime file IDs via `files.create`. To keep `responses.create` replayable,
-                        # sanitize each live file ID to a deterministic placeholder and reuse the
-                        # same placeholders in playback mode below.
-                        for file_path in sample_code_files:
-                            with open(file_path, "rb") as source_file:
-                                uploaded = await openai_client.files.create(
-                                    file=source_file,
-                                    purpose="assistants",
-                                    extra_headers={"x-recording-skip": "request-response"},
-                                )
+                validation_log_text = self._build_validation_text()
+                validation_file_id: str
 
-                            uploaded_file_id = getattr(uploaded, "id", None)
-                            if isinstance(uploaded_file_id, str) and uploaded_file_id:
-                                uploaded_file_ids.append(uploaded_file_id)
-                                scrubbed_file_id = f"code_interpreter_file_{len(uploaded_file_ids)}"
-                                add_general_string_sanitizer(
-                                    function_scoped=True,
-                                    target=uploaded_file_id,
-                                    value=scrubbed_file_id,
-                                )
+                if is_live():
+                    validation_text_file = BytesIO(self._build_validation_txt_bytes(validation_log_text))
+                    validation_text_file.name = "sample_validation_log.txt"  # type: ignore[attr-defined]
+                    validation_file_id = await _upload_file_for_validation_async(
+                        validation_text_file, "validation_log_file_1"
+                    )
+                else:
+                    validation_file_id = "validation_log_file_1"
 
-                        code_interpreter_file_ids = uploaded_file_ids
-                    else:
-                        # Playback counterpart of the live sanitization mapping above.
-                        # Must match the same deterministic sequence used during recording.
-                        code_interpreter_file_ids = [
-                            f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)
-                        ]
+                request_params = self._get_validation_request_params(
+                    instructions,
+                    model=model,
+                )
 
-                    code_interpreter_container: dict[str, object] = {
-                        "type": "auto",
-                    }
-                    if code_interpreter_file_ids:
-                        code_interpreter_container["file_ids"] = code_interpreter_file_ids
+                sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                code_interpreter_file_ids: list[str]
 
-                    request_params["tools"] = [
-                        {
-                            "type": "code_interpreter",
-                            "container": code_interpreter_container,
-                        }
+                if is_live():
+                    uploaded_code_interpreter_file_ids: list[str] = []
+                    # Keep upload/delete out of recordings because multipart payloads contain
+                    # full file bytes and become brittle whenever sample files change.
+                    #
+                    # Since upload calls are skipped from recording, playback cannot discover
+                    # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                    # sanitize each live file ID to a deterministic placeholder and reuse the
+                    # same placeholders in playback mode below.
+                    for file_path in sample_code_files:
+                        with open(file_path, "rb") as source_file:
+                            scrubbed_file_id = f"code_interpreter_file_{len(uploaded_code_interpreter_file_ids) + 1}"
+                            uploaded_file_id = await _upload_file_for_validation_async(source_file, scrubbed_file_id)
+                        uploaded_code_interpreter_file_ids.append(uploaded_file_id)
+
+                    code_interpreter_file_ids = [validation_file_id, *uploaded_code_interpreter_file_ids]
+                else:
+                    # Playback counterpart of the live sanitization mapping above.
+                    # Must match the same deterministic sequence used during recording.
+                    code_interpreter_file_ids = [
+                        "validation_log_file_1",
+                        *[f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)],
                     ]
+
+                code_interpreter_container: dict[str, object] = {
+                    "type": "auto",
+                }
+                if code_interpreter_file_ids:
+                    code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                request_params["tools"] = [
+                    {
+                        "type": "code_interpreter",
+                        "container": code_interpreter_container,
+                    }
+                ]
 
                 response = await openai_client.responses.create(**request_params)
                 test_report = json.loads(response.output_text)
@@ -924,7 +1013,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
 
                 test_report = {"correct": False, "reason": reason}
             finally:
-                if use_code_interpreter and is_live():
+                if is_live():
                     # Skip recording delete operations for the same reason as uploads.
                     for uploaded_file_id in uploaded_file_ids:
                         try:

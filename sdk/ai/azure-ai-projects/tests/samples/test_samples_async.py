@@ -12,13 +12,7 @@ from sample_executor import (
     SamplePathPasser,
     get_async_sample_paths,
 )
-from test_samples_helpers import (
-    agent_tools_instructions,
-    get_sample_env_vars,
-    memories_instructions,
-    agents_instructions,
-    resource_management_instructions,
-)
+from test_samples_helpers import get_sample_env_vars
 
 
 class TestSamplesAsync(AzureRecordedTestCase):
@@ -31,7 +25,10 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents/tools",
-            samples_to_skip=["sample_agent_computer_use_async.py"],
+            samples_to_skip=[
+                "sample_agent_computer_use_async.py",
+                "sample_agent_memory_search_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @SamplePathPasser()
@@ -45,37 +42,34 @@ class TestSamplesAsync(AzureRecordedTestCase):
             **kwargs,
         )
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 
     @pytest.mark.parametrize(
         "sample_path",
         get_async_sample_paths(
             "memories",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_memory_advanced_async.py",
+                "sample_memory_basic_async.py",
+                "sample_memory_crud_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    # To run this test: pytest tests/samples/test_samples_async.py::TestSamplesAsync::test_memory_samples -s
     async def test_memory_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=memories_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 
     @pytest.mark.parametrize(
         "sample_path",
         get_async_sample_paths(
             "agents",
-            samples_to_skip=[],
+            samples_to_skip=["sample_workflow_multi_agent_async.py"],
         ),
     )
     @servicePreparer()
@@ -85,11 +79,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=agents_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -107,17 +97,15 @@ class TestSamplesAsync(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=resource_management_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 
     @pytest.mark.parametrize(
         "sample_path",
         get_async_sample_paths(
             "files",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_files_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @servicePreparer()
@@ -127,11 +115,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=resource_management_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -147,17 +131,15 @@ class TestSamplesAsync(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=resource_management_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 
     @pytest.mark.parametrize(
         "sample_path",
         get_async_sample_paths(
             "datasets",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_datasets_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @servicePreparer()
@@ -170,8 +152,36 @@ class TestSamplesAsync(AzureRecordedTestCase):
         if self.is_live:
             # Don't replay LLM validation since there probably a defect in proxy server fail to replay
             # Proxy server probably not able to parse the captured print content
-            await executor.validate_print_calls_by_llm_async(
-                instructions=resource_management_instructions,
-                project_endpoint=kwargs["azure_ai_project_endpoint"],
-                model=kwargs["azure_ai_model_deployment_name"],
-            )
+            await executor.validate_print_calls_by_llm_async()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "chat_completions",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_chat_completions_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "hosted_agents",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async()

@@ -4,8 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import DecodeError, HttpResponseError, ResourceExistsError
 from azure.storage.queue import (
     BinaryBase64DecodePolicy,
@@ -15,13 +19,9 @@ from azure.storage.queue import (
 )
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "mytestqueue"
-
 # ------------------------------------------------------------------------------
 
 
@@ -35,7 +35,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
     async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue = self._get_queue_reference(qsc, prefix)
         try:
-            created = await queue.create_queue()
+            await queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
@@ -43,7 +43,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
     async def _validate_encoding(self, queue, message):
         # Arrange
         try:
-            created = await queue.create_queue()
+            await queue.create_queue()
         except ResourceExistsError:
             pass
 
@@ -107,7 +107,6 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -128,7 +127,6 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -151,17 +149,14 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = await self._create_queue(qsc)
-        # Action.
+
+        # Act
         with pytest.raises(TypeError) as e:
             message = b"xyz"
             await queue.send_message(message)
 
-            # Asserts
-            assert str(
-                e.exception.startswith(
-                    "Message content must not be bytes. " "Use the BinaryBase64EncodePolicy to send bytes."
-                )
-            )
+        # Assert
+        assert "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes." in e.value.args[0]
 
     @QueuePreparer()
     async def test_message_text_fails(self, **kwargs):
@@ -169,7 +164,6 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -193,7 +187,6 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),

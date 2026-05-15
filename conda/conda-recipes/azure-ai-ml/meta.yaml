@@ -10,7 +10,12 @@ source:
 build:
   noarch: python
   number: 0
-  script: "{{ PYTHON }} -m pip install . -vv"
+  # TEMP WORKAROUND --no-build-isolation: The published 1.31.0 sdist has a dead `import pkg_resources`
+  # in setup.py. Without this flag, pip's PEP 517 build isolation installs setuptools
+  # 82.0.0 (which removed pkg_resources), causing an ImportError during metadata
+  # preparation. This flag makes pip use the host env's setuptools (<82) instead as a temporary workaround
+  # until a fixed sdist is published.
+  script: "{{ PYTHON }} -m pip install . -vv --no-build-isolation"
 
 requirements:
   host:
@@ -27,9 +32,11 @@ requirements:
     - pyjwt <3.0.0
     - python
     - pyyaml <7.0.0,>=5.1.0
+    - setuptools <82 # temp
     - strictyaml <=1.6.1
     - tqdm <=4.63.0
     - typing-extensions <5.0.0
+    - wheel # temp
     - opencensus >=0.11.0
     - opencensus-context
     - opencensus-ext-azure

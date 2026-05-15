@@ -35,7 +35,7 @@ import pytest
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import SyncSampleExecutor, get_sample_paths, SamplePathPasser
-from test_samples_helpers import agent_tools_instructions, get_sample_env_vars
+from test_samples_helpers import get_sample_env_vars
 
 class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
@@ -65,10 +65,7 @@ class TestSamples(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-        )        
+        executor.validate_print_calls_by_llm()
 ```
 
 ## Async example
@@ -79,7 +76,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import AsyncSampleExecutor, get_async_sample_paths, SamplePathPasser
-from test_samples_helpers import agent_tools_instructions, get_sample_env_vars
+from test_samples_helpers import get_sample_env_vars
 
 class TestSamplesAsync(AzureRecordedTestCase):
 
@@ -104,10 +101,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
             **kwargs,
         )
         await executor.execute_async()
-        await executor.validate_print_calls_by_llm_async(
-            instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-        )
+        await executor.validate_print_calls_by_llm_async()
 ```
 
 ## Key pieces
@@ -122,8 +116,8 @@ from devtools_testutils import EnvironmentVariableLoader
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
         "",
-        azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-        azure_ai_model_deployment_name="gpt-4o",
+        foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+        foundry_model_name="gpt-4o",
     # add other sanitized vars here
 )
 ```
@@ -145,7 +139,7 @@ servicePreparer = functools.partial(
 - `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
 - `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
-- `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Optionally validate captured print output with LLM instructions and an explicit `project_endpoint` (and optional `model`).
+- `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Validate captured print output with LLM instructions resolved automatically from the sample folder. You can still pass an explicit `instructions` override when needed.
 - `kwargs` in the test function: A dictionary with environment variables in key and value pairs.
 
 ## Optional test environment variables mapping
@@ -154,8 +148,8 @@ If you need to remap the values provided by your fixtures to the environment-var
 
 ```python
 env_vars = {
-    "AZURE_AI_PROJECT_ENDPOINT": kwargs["TEST_AZURE_AI_PROJECT_ENDPOINT"],
-    "AZURE_AI_MODEL_DEPLOYMENT_NAME": kwargs["TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+    "FOUNDRY_PROJECT_ENDPOINT": kwargs["TEST_FOUNDRY_PROJECT_ENDPOINT"],
+    "FOUNDRY_MODEL_NAME": kwargs["TEST_FOUNDRY_MODEL_NAME"],
 }
 executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
 ```
@@ -242,3 +236,28 @@ Behavior:
 - **All samples:** Execution errors (exceptions) always fail the test, regardless of the allowlist.
 
 This allows you to dismiss false alarms from LLM validation while keeping the CI pipeline green. Failed reports are still generated for monitoring purposes.
+
+## Preprocessing validation text
+
+Before the captured output is sent to the LLM for validation, you can apply a preprocessor to filter or transform the entries. This is useful when debug log entries contain words (like `error`, `failed`, `timeout`) in innocuous contexts that cause the LLM to produce false positives.
+
+Pass a `validation_text_preprocessor` callback to the executor:
+
+```python
+def _preprocess_validation(entries: list[str]) -> str:
+    """Filter debug log entries and annotate metric counters."""
+    import re
+    # Remove SDK debug log entries (they start with "[module.name]")
+    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx|httpcore|msrest)")
+    kept = [e for e in entries if not _NOISE.match(e.strip())]
+    return "\n".join(kept)
+
+executor = SyncSampleExecutor(
+    self,
+    sample_path,
+    validation_text_preprocessor=_preprocess_validation,
+    **kwargs,
+)
+```
+
+The callback receives the list of captured print/log entries (each entry is one `print()` call or one log record) and returns the final text string that will be uploaded for LLM analysis. This gives you entry-level control to filter, annotate, or restructure the validation text before it reaches the LLM.

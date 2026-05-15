@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.advisor import AdvisorManagementClient
 
 """
@@ -29,14 +31,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.suppressions.delete(
+    client.suppressions.delete(
         resource_uri="resourceUri",
         recommendation_id="recommendationId",
         name="suppressionName1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/advisor/resource-manager/Microsoft.Advisor/stable/2020-01-01/examples/DeleteSuppression.json
+# x-ms-original-file: specification/advisor/resource-manager/Microsoft.Advisor/Advisor/stable/2020-01-01/examples/DeleteSuppression.json
 if __name__ == "__main__":
     main()

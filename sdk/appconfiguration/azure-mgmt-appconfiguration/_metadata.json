@@ -1,7 +1,10 @@
 {
-  "apiVersion": "2025-06-01-preview",
-  "commit": "061d81271653458662f0be74f3fd79eb2b1db60e",
+  "apiVersion": "2025-08-01-preview",
+  "apiVersions": {
+    "Microsoft.AppConfiguration": "2025-08-01-preview"
+  },
+  "commit": "eb3c71aa866459ef5bb53fdcfdd30b482d1f5035",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/appconfiguration/resource-manager/Microsoft.AppConfiguration/AppConfiguration",
-  "emitterVersion": "0.57.1"
+  "emitterVersion": "0.61.3"
 }

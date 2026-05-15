@@ -3,13 +3,10 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, Optional, cast
-
-from opentelemetry.instrumentation.instrumentor import (  # type: ignore
-    BaseInstrumentor,
-)
+from typing import Any, Dict, List, Optional, cast
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, MetricReader
@@ -18,15 +15,25 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
-from opentelemetry.util._importlib_metadata import (
+from opentelemetry.util._importlib_metadata import (  # pylint: disable=import-error
     EntryPoint,
     distributions,
     entry_points,
 )
 
+# Populate distro version env var so it flows to the exporter
+AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
+# pylint: disable=wrong-import-position
+from azure.monitor.opentelemetry._version import VERSION
+
+os.environ[AZURE_MONITOR_DISTRO_VERSION] = VERSION
+
+from azure.monitor.opentelemetry._browser_sdk_loader import setup_snippet_injection
+from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _AZURE_SDK_INSTRUMENTATION_NAME,
+    BROWSER_SDK_LOADER_CONFIG_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -59,6 +66,10 @@ from azure.monitor.opentelemetry.exporter._performance_counters._processor impor
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
     _QuickpulseSpanProcessor,
+)
+from azure.monitor.opentelemetry.exporter._gen_ai._processor import (  # pylint: disable=import-error,no-name-in-module
+    _GenAIMainAgentLogRecordProcessor,
+    _GenAIMainAgentSpanProcessor,
 )
 from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
     ApplicationInsightsSampler,
@@ -121,6 +132,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      metric output.
     :keyword bool enable_trace_based_sampling_for_logs: Boolean value to determine whether to enable trace based
      sampling for logs. Defaults to `False`
+    :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader behavior.
+     Supports keys like 'connection_string' (separate connection string for browser SDK), 'enabled' (boolean),
+     and framework-specific options. Defaults to `{}`.
     :rtype: None
     """
 
@@ -157,6 +171,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # instantiated in the other setup steps
     _setup_instrumentations(configurations)
 
+    # Setup browser SDK loader for supported frameworks
+    _setup_browser_sdk_loader(configurations)
+
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
@@ -177,6 +194,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
             sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
         )
 
+    # GenAI main-agent attribution processor must be registered first
+    tracer_provider.add_span_processor(_GenAIMainAgentSpanProcessor())
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -218,7 +237,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     # Use try catch while signal is experimental
     try:
         from opentelemetry._logs import set_logger_provider
-        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+        from opentelemetry.sdk._logs import LoggerProvider
+        from opentelemetry.instrumentation.logging.handler import LoggingHandler
         from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module
@@ -229,6 +249,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        # GenAI main-agent attribution processor must be registered first
+        logger_provider.add_log_record_processor(_GenAIMainAgentLogRecordProcessor())
         for custom_log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
             logger_provider.add_log_record_processor(custom_log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
@@ -261,21 +283,6 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
                     )
             logger.addHandler(handler)
 
-        # Setup Events
-        try:
-            from opentelemetry._events import _set_event_logger_provider
-            from opentelemetry.sdk._events import EventLoggerProvider
-
-            event_provider = EventLoggerProvider(logger_provider)
-            _set_event_logger_provider(event_provider, False)
-        except ImportError as ex:
-            # If the events is not available, we will not set it up.
-            # This could possibly be due to breaking change in upstream OpenTelemetry
-            # Advise user to upgrade to latest OpenTelemetry version
-            _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
-                "Exception occurred when setting up Events. Please upgrade to the latest OpenTelemetry version: %s.",
-                ex,
-            )
     except ImportError as ex:
         # If the events is not available, we will not set it up.
         # This could possibly be due to breaking change in upstream OpenTelemetry
@@ -346,7 +353,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 )
                 continue
             # Load the instrumentor via entrypoint
-            instrumentor: BaseInstrumentor = entry_point.load()
+            instrumentor: Any = entry_point.load()
             # tell instrumentation to not run dep checks again as we already did it above
             instrumentor().instrument(skip_dep_check=True)
         except Exception as ex:  # pylint: disable=broad-except
@@ -412,3 +419,42 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
                     class_name,
                     exc_info=ex,
                 )
+
+
+def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
+    """Setup browser SDK loader for supported frameworks.
+
+    :param configurations: Configuration dictionary containing browser SDK loader settings.
+    :type configurations: Dict[str, ConfigurationValue]
+    """
+    try:
+        # Get browser SDK loader configuration
+        browser_sdk_loader_config_value = configurations.get(BROWSER_SDK_LOADER_CONFIG_ARG)
+        if isinstance(browser_sdk_loader_config_value, dict):
+            browser_sdk_loader_config = browser_sdk_loader_config_value
+        else:
+            # Create typed empty dict to satisfy mypy
+            browser_sdk_loader_config = cast(Dict[str, Any], {})
+
+        # Check if browser SDK loader should be enabled (default False)
+        enabled = browser_sdk_loader_config.get("enabled", False)
+        if not enabled:
+            _logger.debug("Browser SDK loader disabled via configuration")
+            return
+
+        # Get connection string (use browser SDK config first, then main config)
+        connection_string = browser_sdk_loader_config.get("connection_string") or cast(
+            str, configurations.get("connection_string", "")
+        )
+        if not connection_string or not isinstance(connection_string, str):
+            _logger.debug("No valid connection string - skipping browser SDK loader setup")
+            return
+
+        # Create BrowserSDKConfig object
+        browser_config = BrowserSDKConfig(enabled=enabled, connection_string=connection_string)
+
+        # Setup snippet injection for supported frameworks
+        setup_snippet_injection(browser_config)
+
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.debug("Failed to setup browser SDK loader: %s", ex, exc_info=True)

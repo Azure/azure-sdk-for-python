@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -147,7 +147,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -177,6 +177,57 @@ class OperationDisplay(_Model):
      views."""
 
 
+class OptionalPropertiesUpdateableProperties(_Model):
+    """The template for adding optional properties.
+
+    :ivar private_endpoint: The private endpoint resource.
+    :vartype private_endpoint: ~azure.mgmt.durabletask.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.durabletask.models.PrivateLinkServiceConnectionState
+    """
+
+    private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
+        name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private endpoint resource."""
+    private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = rest_field(
+        name="privateLinkServiceConnectionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A collection of information about the state of the connection between service consumer and
+     provider."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateEndpoint(_Model):
+    """The private endpoint resource.
+
+    :ivar id: The resource identifier of the private endpoint.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """The resource identifier of the private endpoint."""
+
+
 class Resource(_Model):
     """Resource.
 
@@ -203,6 +254,214 @@ class Resource(_Model):
      \"Microsoft.Storage/storageAccounts\"."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class PrivateEndpointConnection(Resource):
+    """A private endpoint connection resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    :ivar properties: The private endpoint connection properties.
+    :vartype properties: ~azure.mgmt.durabletask.models.PrivateEndpointConnectionProperties
+    """
+
+    properties: Optional["_models.PrivateEndpointConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private endpoint connection properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateEndpointConnectionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateEndpointConnectionProperties(_Model):
+    """Properties of the private endpoint connection.
+
+    :ivar group_ids: The group ids for the private endpoint resource.
+    :vartype group_ids: list[str]
+    :ivar private_endpoint: The private endpoint resource.
+    :vartype private_endpoint: ~azure.mgmt.durabletask.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider. Required.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.durabletask.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.durabletask.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
+    """The group ids for the private endpoint resource."""
+    private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
+        name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private endpoint resource."""
+    private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState" = rest_field(
+        name="privateLinkServiceConnectionState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A collection of information about the state of the connection between service consumer and
+     provider. Required."""
+    provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the private endpoint connection resource. Known values are:
+     \"Succeeded\", \"Creating\", \"Deleting\", and \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateEndpointConnectionUpdate(_Model):
+    """PATCH model for private endpoint connections.
+
+    :ivar properties: The private endpoint connection properties.
+    :vartype properties: ~azure.mgmt.durabletask.models.OptionalPropertiesUpdateableProperties
+    """
+
+    properties: Optional["_models.OptionalPropertiesUpdateableProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private endpoint connection properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.OptionalPropertiesUpdateableProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateLinkResourceProperties(_Model):
+    """Properties of a private link resource.
+
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource private link DNS zone name.
+    :vartype required_zone_names: list[str]
+    """
+
+    group_id: Optional[str] = rest_field(name="groupId", visibility=["read"])
+    """The private link resource group id."""
+    required_members: Optional[list[str]] = rest_field(name="requiredMembers", visibility=["read"])
+    """The private link resource required member names."""
+    required_zone_names: Optional[list[str]] = rest_field(
+        name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private link resource private link DNS zone name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        required_zone_names: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrivateLinkServiceConnectionState(_Model):
+    """A collection of information about the state of the connection between service consumer and
+    provider.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype status: str or ~azure.mgmt.durabletask.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the connection has been Approved/Rejected/Removed by the owner of the
+     service. Known values are: \"Pending\", \"Approved\", and \"Rejected\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The reason for approval/rejection of the connection."""
+    actions_required: Optional[str] = rest_field(
+        name="actionsRequired", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A message indicating if changes on the service provider require any updates on the consumer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class ProxyResource(Resource):
@@ -435,6 +694,47 @@ class Scheduler(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
+class SchedulerPrivateLinkResource(Resource):
+    """A private link resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.durabletask.models.SystemData
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.durabletask.models.PrivateLinkResourceProperties
+    """
+
+    properties: Optional["_models.PrivateLinkResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PrivateLinkResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SchedulerProperties(_Model):
     """Details of the Scheduler.
 
@@ -448,6 +748,12 @@ class SchedulerProperties(_Model):
     :vartype ip_allowlist: list[str]
     :ivar sku: SKU of the durable task scheduler. Required.
     :vartype sku: ~azure.mgmt.durabletask.models.SchedulerSku
+    :ivar public_network_access: Allow or disallow public network access to durable task scheduler.
+     Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.durabletask.models.PublicNetworkAccess
+    :ivar private_endpoint_connections: The private endpoints exposed by this resource.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.durabletask.models.PrivateEndpointConnection]
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -461,6 +767,15 @@ class SchedulerProperties(_Model):
     """IP allow list for durable task scheduler. Values can be IPv4, IPv6 or CIDR. Required."""
     sku: "_models.SchedulerSku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SKU of the durable task scheduler. Required."""
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allow or disallow public network access to durable task scheduler. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
+        name="privateEndpointConnections", visibility=["read"]
+    )
+    """The private endpoints exposed by this resource."""
 
     @overload
     def __init__(
@@ -468,6 +783,7 @@ class SchedulerProperties(_Model):
         *,
         ip_allowlist: list[str],
         sku: "_models.SchedulerSku",
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
     ) -> None: ...
 
     @overload
@@ -493,6 +809,9 @@ class SchedulerPropertiesUpdate(_Model):
     :vartype ip_allowlist: list[str]
     :ivar sku: SKU of the durable task scheduler.
     :vartype sku: ~azure.mgmt.durabletask.models.SchedulerSkuUpdate
+    :ivar public_network_access: Allow or disallow public network access to durable task scheduler.
+     Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.durabletask.models.PublicNetworkAccess
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -508,6 +827,11 @@ class SchedulerPropertiesUpdate(_Model):
     """IP allow list for durable task scheduler. Values can be IPv4, IPv6 or CIDR."""
     sku: Optional["_models.SchedulerSkuUpdate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SKU of the durable task scheduler."""
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allow or disallow public network access to durable task scheduler. Known values are:
+     \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -515,6 +839,7 @@ class SchedulerPropertiesUpdate(_Model):
         *,
         ip_allowlist: Optional[list[str]] = None,
         sku: Optional["_models.SchedulerSkuUpdate"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
     ) -> None: ...
 
     @overload

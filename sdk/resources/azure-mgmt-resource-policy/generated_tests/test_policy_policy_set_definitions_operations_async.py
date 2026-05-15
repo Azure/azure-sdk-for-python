@@ -21,87 +21,11 @@ class TestPolicyPolicySetDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_policy_set_definitions_create_or_update(self, resource_group):
-        response = await self.client.policy_set_definitions.create_or_update(
-            policy_set_definition_name="str",
-            parameters={
-                "description": "str",
-                "displayName": "str",
-                "id": "str",
-                "metadata": {},
-                "name": "str",
-                "parameters": {
-                    "str": {
-                        "allowedValues": [{}],
-                        "defaultValue": {},
-                        "metadata": {
-                            "assignPermissions": bool,
-                            "description": "str",
-                            "displayName": "str",
-                            "strongType": "str",
-                        },
-                        "schema": {},
-                        "type": "str",
-                    }
-                },
-                "policyDefinitionGroups": [
-                    {
-                        "name": "str",
-                        "additionalMetadataId": "str",
-                        "category": "str",
-                        "description": "str",
-                        "displayName": "str",
-                    }
-                ],
-                "policyDefinitions": [
-                    {
-                        "policyDefinitionId": "str",
-                        "definitionVersion": "str",
-                        "effectiveDefinitionVersion": "str",
-                        "groupNames": ["str"],
-                        "latestDefinitionVersion": "str",
-                        "parameters": {"str": {"value": {}}},
-                        "policyDefinitionReferenceId": "str",
-                    }
-                ],
-                "policyType": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-                "version": "str",
-                "versions": ["str"],
-            },
-            api_version="2023-04-01",
+    async def test_policy_set_definitions_list_built_in(self, resource_group):
+        response = self.client.policy_set_definitions.list_built_in(
+            api_version="2025-03-01",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_policy_set_definitions_delete(self, resource_group):
-        response = await self.client.policy_set_definitions.delete(
-            policy_set_definition_name="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_policy_set_definitions_get(self, resource_group):
-        response = await self.client.policy_set_definitions.get(
-            policy_set_definition_name="str",
-            api_version="2023-04-01",
-        )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -110,7 +34,7 @@ class TestPolicyPolicySetDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_policy_set_definitions_get_built_in(self, resource_group):
         response = await self.client.policy_set_definitions.get_built_in(
             policy_set_definition_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -118,9 +42,10 @@ class TestPolicyPolicySetDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_policy_set_definitions_list(self, resource_group):
-        response = self.client.policy_set_definitions.list(
-            api_version="2023-04-01",
+    async def test_policy_set_definitions_list_by_management_group(self, resource_group):
+        response = self.client.policy_set_definitions.list_by_management_group(
+            management_group_id="str",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -128,11 +53,13 @@ class TestPolicyPolicySetDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_policy_set_definitions_list_built_in(self, resource_group):
-        response = self.client.policy_set_definitions.list_built_in(
-            api_version="2023-04-01",
+    async def test_policy_set_definitions_get_at_management_group(self, resource_group):
+        response = await self.client.policy_set_definitions.get_at_management_group(
+            management_group_id="str",
+            policy_set_definition_name="str",
+            api_version="2025-03-01",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...
 
@@ -195,7 +122,7 @@ class TestPolicyPolicySetDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
                 "version": "str",
                 "versions": ["str"],
             },
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -207,7 +134,7 @@ class TestPolicyPolicySetDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.policy_set_definitions.delete_at_management_group(
             management_group_id="str",
             policy_set_definition_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -215,23 +142,96 @@ class TestPolicyPolicySetDefinitionsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_policy_set_definitions_get_at_management_group(self, resource_group):
-        response = await self.client.policy_set_definitions.get_at_management_group(
-            management_group_id="str",
-            policy_set_definition_name="str",
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_policy_set_definitions_list_by_management_group(self, resource_group):
-        response = self.client.policy_set_definitions.list_by_management_group(
-            management_group_id="str",
-            api_version="2023-04-01",
+    async def test_policy_set_definitions_list(self, resource_group):
+        response = self.client.policy_set_definitions.list(
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_policy_set_definitions_get(self, resource_group):
+        response = await self.client.policy_set_definitions.get(
+            policy_set_definition_name="str",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_policy_set_definitions_create_or_update(self, resource_group):
+        response = await self.client.policy_set_definitions.create_or_update(
+            policy_set_definition_name="str",
+            parameters={
+                "description": "str",
+                "displayName": "str",
+                "id": "str",
+                "metadata": {},
+                "name": "str",
+                "parameters": {
+                    "str": {
+                        "allowedValues": [{}],
+                        "defaultValue": {},
+                        "metadata": {
+                            "assignPermissions": bool,
+                            "description": "str",
+                            "displayName": "str",
+                            "strongType": "str",
+                        },
+                        "schema": {},
+                        "type": "str",
+                    }
+                },
+                "policyDefinitionGroups": [
+                    {
+                        "name": "str",
+                        "additionalMetadataId": "str",
+                        "category": "str",
+                        "description": "str",
+                        "displayName": "str",
+                    }
+                ],
+                "policyDefinitions": [
+                    {
+                        "policyDefinitionId": "str",
+                        "definitionVersion": "str",
+                        "effectiveDefinitionVersion": "str",
+                        "groupNames": ["str"],
+                        "latestDefinitionVersion": "str",
+                        "parameters": {"str": {"value": {}}},
+                        "policyDefinitionReferenceId": "str",
+                    }
+                ],
+                "policyType": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "type": "str",
+                "version": "str",
+                "versions": ["str"],
+            },
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_policy_set_definitions_delete(self, resource_group):
+        response = await self.client.policy_set_definitions.delete(
+            policy_set_definition_name="str",
+            api_version="2025-03-01",
+        )
+
         # please add some check logic here by yourself
         # ...

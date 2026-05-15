@@ -14,12 +14,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -27,7 +27,6 @@ import os
 import asyncio
 from dotenv import load_dotenv
 
-from azure.ai.projects.models._enums import FoundryFeaturesOptInKeys
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -37,23 +36,23 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
 async def main():
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
 
         teacher_agent = await project_client.agents.create_version(
             agent_name="teacher-agent-async",
             definition=PromptAgentDefinition(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                instructions="""You are a teacher that create pre-school math question for student and check answer. 
-                              If the answer is correct, you stop the conversation by saying [COMPLETE]. 
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="""You are a teacher that create pre-school math question for student and check answer.
+                              If the answer is correct, you stop the conversation by saying [COMPLETE].
                               If the answer is wrong, you ask student to fix it.""",
             ),
         )
@@ -62,14 +61,14 @@ async def main():
         student_agent = await project_client.agents.create_version(
             agent_name="student-agent-async",
             definition=PromptAgentDefinition(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-                instructions="""You are a student who answers questions from the teacher. 
+                model=os.environ["FOUNDRY_MODEL_NAME"],
+                instructions="""You are a student who answers questions from the teacher.
                               When the teacher gives you a question, you answer it.""",
             ),
         )
         print(f"Agent created (id: {student_agent.id}, name: {student_agent.name}, version: {student_agent.version})")
 
-        workflow_yaml = f"""
+        workflow_yaml = """
 kind: workflow
 trigger:
   kind: OnConversationStart
@@ -112,8 +111,8 @@ trigger:
 
     - kind: SendActivity
       id: send_teacher_reply
-      activity: "{{Last(Local.LatestMessage).Text}}"        
-        
+      activity: "{{Last(Local.LatestMessage).Text}}"
+
     - kind: SetVariable
       id: set_variable_turncount
       variable: Local.TurnCount
@@ -144,7 +143,6 @@ trigger:
         workflow = await project_client.agents.create_version(
             agent_name="student-teacher-workflow-async",
             definition=WorkflowAgentDefinition(workflow=workflow_yaml),
-            foundry_features=FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW,
         )
 
         print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")
@@ -157,20 +155,20 @@ trigger:
             extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
-            # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
         )
 
         async for event in stream:
             print(f"Event {event.sequence_number} type '{event.type}'", end="")
             if (
-                event.type == "response.output_item.added" or event.type == "response.output_item.done"
-            ) and event.item.type == "workflow_action":
+                event.type in ("response.output_item.added", "response.output_item.done")
+            ) and event.item.type == "workflow_action":  # pyright: ignore [reportAttributeAccessIssue]
                 print(
-                    f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
+                    f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",  # pyright: ignore [reportAttributeAccessIssue]
                     end="",
                 )
             elif event.type == "response.completed":
-                print(f"\nFinal response output: {event.response.output_text}", flush=True)
+                response = await openai_client.responses.retrieve(event.response.id)
+                print(f": Final Response: {response}", end="")
             print("", flush=True)
 
         await openai_client.conversations.delete(conversation_id=conversation.id)

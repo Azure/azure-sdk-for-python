@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from ._test_base import _BlobTest
-
 from devtools_testutils.perfstress_tests import RandomStream
 from devtools_testutils.perfstress_tests import AsyncRandomStream
+
+from ._test_base import _BlobTest
 
 
 class UploadTest(_BlobTest):

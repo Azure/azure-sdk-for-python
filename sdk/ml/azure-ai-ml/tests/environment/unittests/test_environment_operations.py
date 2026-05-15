@@ -4,11 +4,11 @@ from unittest.mock import Mock, call, patch
 import pytest
 
 from azure.ai.ml import load_environment
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    EnvironmentContainerData,
-    EnvironmentContainerDetails,
-    EnvironmentVersionData,
-    EnvironmentVersionDetails,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    EnvironmentContainer as EnvironmentContainerData,
+    EnvironmentContainerProperties as EnvironmentContainerDetails,
+    EnvironmentVersion as EnvironmentVersionData,
+    EnvironmentVersionProperties as EnvironmentVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import ARM_ID_PREFIX

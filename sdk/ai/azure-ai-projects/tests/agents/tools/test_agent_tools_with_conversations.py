@@ -12,27 +12,23 @@ within the context of conversations, testing conversation state management with 
 """
 
 import json
-import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
+from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from azure.ai.projects.models import (
     FunctionTool,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
     PromptAgentDefinition,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentToolsWithConversations(TestBase):
 
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_function_tool_with_conversation(self, **kwargs):
+    def test_function_tool_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test using FunctionTool within a conversation.
 
@@ -43,7 +39,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Using conversation_id parameter
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -204,7 +200,7 @@ class TestAgentToolsWithConversations(TestBase):
         - Conversation context retention
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -321,7 +317,7 @@ Widget C:
         - Variables/state persistence across turns
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -333,7 +329,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a data analysis assistant. Use Python to perform calculations.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Code interpreter agent for conversation testing.",
             )
@@ -406,7 +402,7 @@ Widget C:
         - Server-side code execution with file access and chart generation
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         import os
 
         with (
@@ -432,7 +428,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[uploaded_file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[uploaded_file.id]))],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )

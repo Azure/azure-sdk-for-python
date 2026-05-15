@@ -6,16 +6,14 @@ from typing import Any, List, Dict, Set
 
 from github.Repository import Repository
 
-from common import IssueProcess, Common, get_origin_link_and_tag, IssuePackage
-from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_python_release_pipeline, run_pipeline
+from common import IssueProcess, Common, IssuePackage
+from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release
 
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'azure-sdk', 'msyyc'}
 _PYTHON_ASSIGNEE = {'ChenxiJiang333'}
 
 # labels
-_CONFIGURED = 'Configured'
-_AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
@@ -26,10 +24,7 @@ class IssueProcessPython(IssueProcess):
     def __init__(self, issue_package: IssuePackage, request_repo: Repository,
                  assignee_candidates: Set[str], language_owner: Set[str]):
         IssueProcess.__init__(self, issue_package, request_repo, assignee_candidates, language_owner)
-        self.output_folder = '' # network of sdk/network/azure-mgmt-XXX
         self.delay_time = self.get_delay_time()
-        self.python_tag = ''
-        self.rest_repo_hash = ''
         self.language_name = 'python'
 
     def get_delay_time(self):
@@ -38,58 +33,8 @@ class IssueProcessPython(IssueProcess):
         q.sort()
         return (datetime.now() - (self.created_time if not q else q[-1])).days
 
-    @staticmethod
-    def get_specefied_param(pattern: str, issue_body_list: List[str]) -> str:
-        for line in issue_body_list:
-            if pattern in line:
-                return line.split(":", 1)[-1].strip()
-        return ""
-
     def get_edit_content(self) -> None:
         self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\nReadme Tag: {self.target_readme_tag}'
-
-    @property
-    def readme_comparison(self) -> bool:
-        # to see whether need change readme
-        if self.has_label(_CONFIGURED):
-            return False
-        if 'package-' not in self.target_readme_tag:
-            return True
-        contents = self.get_local_file_content()
-        pattern_tag = re.compile(r'tag: package-[\w+-.]+')
-        package_tags = pattern_tag.findall(contents)
-        whether_same_tag = self.target_readme_tag in package_tags[0]
-        whether_change_readme = not whether_same_tag
-        return whether_change_readme
-
-    def auto_reply(self) -> None:
-        if not self.has_label(_AUTO_ASK_FOR_CHECK) or self.has_label(_CONFIGURED):
-            issue_number = self.issue_package.issue.number
-            if not self.readme_comparison:
-                try:
-                    spec_readme = self.readme_link + ('' if self.has_typespec_folder else '/readme.md') 
-                    issue_link = self.issue_package.issue.html_url
-                    release_pipeline_url = get_python_release_pipeline(self.output_folder)
-                    res_run = run_pipeline(issue_link=issue_link,
-                                           pipeline_url=release_pipeline_url,
-                                           spec_readme=spec_readme,
-                                           python_tag=self.python_tag,
-                                           rest_repo_hash=self.rest_repo_hash,
-                                           target_date=self.target_date,
-                                           issue_owner=self.owner,
-                                           )
-                    if res_run:
-                        self.log(f'{issue_number} run pipeline successfully')
-                    else:
-                        self.log(f'{issue_number} run pipeline fail')
-                except Exception as e:
-                    self.comment(f'hi @{self.assignee}, please check release-helper: `{e}`')
-                self.add_label(_AUTO_ASK_FOR_CHECK)
-            else:
-                self.log(f'issue {issue_number} need config readme')
-
-            if self.has_label(_CONFIGURED):
-                self.issue_package.issue.remove_from_labels(_CONFIGURED)
 
     def attention_policy(self):
         if self.has_label(_BRANCH_ATTENTION):
@@ -119,9 +64,7 @@ class IssueProcessPython(IssueProcess):
             print(f"fail to read readme.python.md: {e}")
             return
         pattern_package = re.compile(r'package-name: [\w+-.]+')
-        pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
-        self.output_folder = pattern_output.search(contents).group().split('/')[1]
 
     def package_name_output_folder_from_tspconfig(self):
         try:
@@ -131,7 +74,6 @@ class IssueProcessPython(IssueProcess):
             return
         yaml_contents = yaml.safe_load(contents)
         # tspconfig.yaml example: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/contosowidgetmanager/Contoso.WidgetManager/tspconfig.yaml
-        self.output_folder = yaml_contents.get("parameters", {}).get("service-dir", {}).get("default", "").split('/')[-1]
         emitters = yaml_contents.get("options", {})
         for emitter_name in emitters:
             if "/typespec-python" in emitter_name:
@@ -154,14 +96,9 @@ class IssueProcessPython(IssueProcess):
         if not self.package_name:
             raise Exception(f"package name not found in readme.python.md or tspconfig.yaml")
 
-        # Get the specified tag and rest repo hash in issue body
-        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
-        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
-
 
     def run(self) -> None:
         super().run()
-        self.auto_reply()
         self.auto_close()
 
 
