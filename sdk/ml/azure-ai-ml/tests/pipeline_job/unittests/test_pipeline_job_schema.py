@@ -32,6 +32,8 @@ from azure.ai.ml.entities._credentials import UserIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
+    from_rest_inputs_to_dataset_literal,
+    to_rest_dataset_literal,
     validate_pipeline_input_key_characters,
 )
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
@@ -53,6 +55,24 @@ from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CA
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestPipelineJobSchema:
+    def test_hdfs_input_mode_round_trip(self):
+        rest_inputs = to_rest_dataset_literal(
+            {
+                "hdfs_input": Input(
+                    type=AssetTypes.URI_FOLDER,
+                    path="azureml://datastores/workspaceblobstore/paths/data/",
+                    mode=InputOutputModes.HDFS,
+                )
+            },
+            job_type=None,
+        )
+
+        assert rest_inputs["hdfs_input"].mode == "Hdfs"
+
+        sdk_inputs = from_rest_inputs_to_dataset_literal(rest_inputs)
+        assert isinstance(sdk_inputs["hdfs_input"], Input)
+        assert sdk_inputs["hdfs_input"].mode == InputOutputModes.HDFS
+
     def test_validate_pipeline_job_keys(self):
         def validator(key, assert_valid=True):
             if assert_valid:
