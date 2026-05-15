@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.0 (Unreleased)
+## 2.3.0 (Unreleased)
 
 ### Features Added
 
@@ -36,10 +36,11 @@ Breaking changes in beta classes:
 
 ### Sample updates
 
-* Added Hosted Agent creation sample `sample_hosted_agent_create.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+* Added Hosted Agent creation sample `sample_create_hosted_agent.py`, demonstrating hosted agent version creation and retrieval with `AIProjectClient`.
+* Added Hosted Agent code-upload samples `sample_create_hosted_agent_from_code.py` and `sample_create_hosted_agent_from_code_async.py`, demonstrating uploading a code zip as a new hosted agent version.
 * The Hosted Agent creation sample also demonstrates assigning the hosted agent managed identity the Azure AI User RBAC role on the backing Azure AI account.
 * Updated the other Hosted Agent samples to reuse an existing Hosted Agent as a prerequisite, instead of creating a new hosted agent version in each sample.
-* Added Hosted Agent code-upload samples `sample_hosted_agent_create_from_code.py` and `sample_hosted_agent_create_from_code_async.py`, demonstrating uploading a code zip as a new hosted agent version.
+* Added Toolbox tool-search sample `sample_toolboxes_with_search_preview.py` and `sample_toolboxes_with_search_preview_async.py`, demonstrating creating a Toolbox version with `ToolboxSearchPreviewTool` and invoking `MCPTool`.
 
 ## 2.1.0 (2026-04-20)
 

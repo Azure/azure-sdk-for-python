@@ -20,10 +20,10 @@ DESCRIPTION:
       dependencies remotely from the public package index.
 
     The agent must already exist; create it with
-    `samples/hosted_agents/sample_hosted_agent_create.py`.
+    `samples/hosted_agents/sample_create_hosted_agent.py`.
 
 USAGE:
-    python sample_hosted_agent_create_from_code.py
+    python sample_create_hosted_agent_from_code.py
 
     Before running the sample:
 

@@ -185,8 +185,8 @@ class TestSamples(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
-                test_id="sample_hosted_agent_create_from_remote_build",
-                sample_filename="sample_hosted_agent_create_from_code.py",
+                test_id="sample_create_hosted_agent_from_remote_build",
+                sample_filename="sample_create_hosted_agent_from_code.py",
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
                 },
@@ -203,8 +203,8 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
-        if os.path.basename(sample_path) == "sample_hosted_agent_create.py" and not self.is_live:
-            pytest.skip("sample_hosted_agent_create.py is skipped in replay mode due to RBAC complications.")
+        if os.path.basename(sample_path).startswith("sample_create_hosted_agent") and not self.is_live:
+            pytest.skip("sample_create_hosted_agent.py is skipped in replay mode due to RBAC complications.")
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()

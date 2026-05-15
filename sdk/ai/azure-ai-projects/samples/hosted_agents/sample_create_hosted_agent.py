@@ -13,7 +13,7 @@ DESCRIPTION:
     via `ensure_agent_identity_rbac`.
 
 USAGE:
-    python sample_hosted_agent_create.py
+    python sample_create_hosted_agent.py
 
     Before running the sample:
 
