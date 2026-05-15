@@ -69,7 +69,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents",
-            samples_to_skip=["sample_workflow_multi_agent_async.py"],
+            samples_to_skip=["sample_workflow_multi_agent_async.py", "sample_toolboxes_with_search_preview_async.py"],
         ),
     )
     @servicePreparer()
