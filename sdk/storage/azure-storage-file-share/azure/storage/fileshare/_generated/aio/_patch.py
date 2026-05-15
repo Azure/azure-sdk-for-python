@@ -12,7 +12,10 @@ from typing import Any, Optional, TYPE_CHECKING
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import AsyncPipeline, PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline import policies
 
+from .._utils.serialization import Deserializer, Serializer
+from .operations import DirectoryOperations, FileOperations, ServiceOperations, ShareOperations
 from ._client import FileClient as GeneratedFileClient
 from ._configuration import FileClientConfiguration as GeneratedFileClientConfiguration
 
@@ -30,17 +33,19 @@ class RangeHeaderPolicy(SansIOHTTPPolicy):
 
 
 class FileClientConfiguration(GeneratedFileClientConfiguration):
-    """Configuration for FileClient that allows optional credentials.
+    """Configuration for FileClient.
 
-    This class overrides the generated configuration to allow None credentials
-    for anonymous access or when a pre-built pipeline handles auth.
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
 
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation. Required.
     :type url: str
-    :param credential: Credential used to authenticate requests to the service. Can be None.
+    :param credential: Credential used to authenticate requests to the service.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
-    :keyword version: Specifies the version of the operation to use for this request.
+    :keyword version: Specifies the version of the operation to use for this request. Known values
+     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
+     result in unsupported behavior.
     :paramtype version: str
     """
 
@@ -60,29 +65,31 @@ class FileClientConfiguration(GeneratedFileClientConfiguration):
         self._configure(**kwargs)
 
 
-class AzureFileStorage(GeneratedFileClient):
-    """Subclass of the generated FileClient that allows optional credentials,
-    accepts a pre-built pipeline, and injects the RangeHeaderPolicy.
+class FileClient(GeneratedFileClient):
+    """Azure File Storage provides scalable file shares in the cloud using SMB and NFS protocols.
 
-    :param url: The URL of the service account, share, directory or file.
+    :ivar directory: DirectoryOperations operations
+    :vartype directory: azure.storage.fileshare.aio.operations.DirectoryOperations
+    :ivar file: FileOperations operations
+    :vartype file: azure.storage.fileshare.aio.operations.FileOperations
+    :ivar service: ServiceOperations operations
+    :vartype service: azure.storage.fileshare.aio.operations.ServiceOperations
+    :ivar share: ShareOperations operations
+    :vartype share: azure.storage.fileshare.aio.operations.ShareOperations
+    :param url: The URL of the service account, share, directory or file that is the target of the
+     desired operation. Required.
     :type url: str
     :param credential: Credential used to authenticate requests to the service.
-     Can be None when a pre-built pipeline is provided.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
-    :keyword pipeline: A pre-built pipeline to use instead of constructing one.
-    :paramtype pipeline: ~azure.core.pipeline.Pipeline
-    :keyword version: Specifies the version of the operation to use for this request.
+    :keyword version: Specifies the version of the operation to use for this request. Known values
+     are "2026-06-06". Default value is "2026-06-06". Note that overriding this default value may
+     result in unsupported behavior.
     :paramtype version: str
     """
 
     def __init__(
         self, url: str, credential: Optional["AsyncTokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
-        from azure.core.pipeline import policies
-
-        from .._utils.serialization import Deserializer, Serializer
-        from .operations import DirectoryOperations, FileOperations, ServiceOperations, ShareOperations
-
         _endpoint = "{url}"
         self._config = FileClientConfiguration(url=url, credential=credential, **kwargs)
 
@@ -121,10 +128,6 @@ class AzureFileStorage(GeneratedFileClient):
         self.share = ShareOperations(self._client, self._config, self._serialize, self._deserialize)
         self.directory = DirectoryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
-
-
-# Alias so that `from ._patch import *` overrides the generated FileClient
-FileClient = AzureFileStorage
 
 
 __all__: list[str] = ["FileClient"]
