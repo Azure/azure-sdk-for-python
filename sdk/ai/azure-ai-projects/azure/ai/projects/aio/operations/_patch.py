@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, List
 from ._patch_agents_async import AgentsOperations
 from ._patch_datasets_async import DatasetsOperations
+from ._patch_jobs_async import JobsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
@@ -60,6 +61,8 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
     datasets: BetaDatasetsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaDatasetsOperations` operations"""
+    jobs: JobsOperations
+    """:class:`~azure.ai.projects.aio.operations.JobsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -69,6 +72,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that exposes flat CommandJob UX
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -94,6 +99,7 @@ __all__: List[str] = [
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "JobsOperations",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

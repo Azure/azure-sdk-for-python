@@ -3,8 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Customized jobs operations — flat CommandJob UX, no envelope required."""
+"""Async customized jobs operations — flat CommandJob UX, no envelope required."""
 
+import asyncio
 import json
 import logging
 import sys
@@ -12,23 +13,21 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 from urllib.parse import urlparse
 
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError
-
-from azure.core.paging import ItemPaged
-
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import BadStatus, LROBasePolling
-
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.polling.base_polling import BadStatus
 from azure.core.tracing.decorator import distributed_trace
-
-from azure.storage.blob import ContainerClient
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.storage.blob.aio import ContainerClient as AsyncContainerClient
 
 from ._operations import BetaJobsOperations as _GeneratedJobsOps
-from ._patch_datasets import DatasetsOperations
-from ._job_helper import (
+from ._patch_datasets_async import DatasetsOperations
+from ...operations._job_helper import (
     _TERMINAL_JOB_STATUSES,
     _IN_PROGRESS_JOB_STATUSES,
     _FINALIZING_JOB_STATUS,
@@ -50,24 +49,22 @@ from ._job_helper import (
     _download_log_text,
     _safe_join,
     _sweep_tmp_files,
-    _collect_artifact_paths,
     _group_paths_by_prefix,
-    _resolve_artifact_uris,
     _download_artifact_to_path,
 )
-from ..models._models import BlobReference
-from ..models._models import Job as _RestJob
-from ..models._models import Input as _Input
-from ..models._models import Output as _Output
-from ..models._patch_jobs import CommandJob, ServiceInstance, ValidationResult
-from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
-from ..models._enums import _FoundryFeaturesOptInKeys
+from ...models._models import BlobReference
+from ...models._models import Job as _RestJob
+from ...models._models import Input as _Input
+from ...models._models import Output as _Output
+from ...models._patch_jobs import CommandJob, ServiceInstance, ValidationResult
+from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from ...models._enums import _FoundryFeaturesOptInKeys
 
 _logger = logging.getLogger(__name__)
 
 
 class JobsOperations(_GeneratedJobsOps):
-    """Patched Jobs operations that expose a flat :class:`~azure.ai.projects.models.CommandJob`
+    """Async patched Jobs operations that expose a flat :class:`~azure.ai.projects.models.CommandJob`
     interface — no ``Job`` envelope wrapping required by callers.
 
     Also automatically injects the ``Foundry-Features: Jobs=V1Preview`` preview opt-in header
@@ -85,8 +82,8 @@ class JobsOperations(_GeneratedJobsOps):
         super().__init__(*args, **kwargs)
         self._datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    @distributed_trace
-    def validate(
+    @distributed_trace_async
+    async def validate(
         self,
         job: CommandJob,
         *,
@@ -105,7 +102,7 @@ class JobsOperations(_GeneratedJobsOps):
         """
         return _validate_command_job(job).try_raise(raise_on_failure=raise_on_failure)
 
-    def _resolve_asset_uri(
+    async def _resolve_asset_uri(
         self,
         uri: str,
         dataset_name: str,
@@ -133,7 +130,7 @@ class JobsOperations(_GeneratedJobsOps):
             version = _content_hash(local_path)
 
             try:
-                existing = self._datasets.get(name=dataset_name, version=version)
+                existing = await self._datasets.get(name=dataset_name, version=version)
                 if existing and existing.id:
                     _logger.debug("[JobsOperations] Reusing existing dataset '%s' v%s.", dataset_name, version)
                     return existing.id
@@ -147,7 +144,7 @@ class JobsOperations(_GeneratedJobsOps):
                     dataset_name,
                     version,
                 )
-                result = self._datasets.upload_folder(name=dataset_name, version=version, folder=str(local_path))
+                result = await self._datasets.upload_folder(name=dataset_name, version=version, folder=str(local_path))
             else:
                 _logger.debug(
                     "[JobsOperations] Uploading file '%s' as dataset '%s' v%s.",
@@ -155,7 +152,7 @@ class JobsOperations(_GeneratedJobsOps):
                     dataset_name,
                     version,
                 )
-                result = self._datasets.upload_file(name=dataset_name, version=version, file_path=str(local_path))
+                result = await self._datasets.upload_file(name=dataset_name, version=version, file_path=str(local_path))
             if not result.id:
                 raise ValueError(f"Dataset upload succeeded but the service did not return a URI for '{local_path}'.")
             _logger.debug("[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
@@ -166,7 +163,7 @@ class JobsOperations(_GeneratedJobsOps):
             raw = uri[len("azureai:") :] if uri.startswith("azureai:") else uri
             ds_name, ds_version = raw.split(":", 1)
             _logger.debug("[JobsOperations] Resolving name:version '%s' to dataset URI.", uri)
-            result = self._datasets.get(name=ds_name, version=ds_version)
+            result = await self._datasets.get(name=ds_name, version=ds_version)
             if not result.id:
                 raise ValueError(f"Dataset '{uri}' was fetched but the service did not return a URI.")
             _logger.debug("[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
@@ -175,7 +172,7 @@ class JobsOperations(_GeneratedJobsOps):
         # Already a datastore / remote URI — pass through unchanged.
         return uri
 
-    def _resolve_code(self, name: str, job: CommandJob) -> None:
+    async def _resolve_code(self, name: str, job: CommandJob) -> None:
         """Resolve ``code`` on the job body to a datastore URI if it is a local path.
 
         :param name: The job name (used to derive a unique dataset name).
@@ -186,9 +183,9 @@ class JobsOperations(_GeneratedJobsOps):
         if not isinstance(job.code, str):
             return
         dataset_name = f"{name}-code"
-        job.code = self._resolve_asset_uri(job.code, dataset_name, base_path=job._base_path)
+        job.code = await self._resolve_asset_uri(job.code, dataset_name, base_path=job._base_path)
 
-    def _resolve_input_paths(self, name: str, job: CommandJob) -> None:
+    async def _resolve_input_paths(self, name: str, job: CommandJob) -> None:
         """Resolve local paths in ``inputs`` to datastore URIs.
 
         :param name: The job name (used to derive unique dataset names).
@@ -205,9 +202,9 @@ class JobsOperations(_GeneratedJobsOps):
             if not isinstance(job_input.path, str):
                 continue
             dataset_name = f"{name}-{input_key}"
-            job_input.path = self._resolve_asset_uri(job_input.path, dataset_name, base_path=base_path)
+            job_input.path = await self._resolve_asset_uri(job_input.path, dataset_name, base_path=base_path)
 
-    def _resolve_local_paths(self, name: str, job: CommandJob) -> None:
+    async def _resolve_local_paths(self, name: str, job: CommandJob) -> None:
         """Resolve all local paths in the job body to datastore URIs.
 
         :param name: The job name.
@@ -215,8 +212,8 @@ class JobsOperations(_GeneratedJobsOps):
         :param job: The command job job to mutate in-place.
         :type job: ~azure.ai.projects.models.CommandJob
         """
-        self._resolve_code(name, job)
-        self._resolve_input_paths(name, job)
+        await self._resolve_code(name, job)
+        await self._resolve_input_paths(name, job)
 
     def _inject_preview_header(self, kwargs: dict) -> None:
         """Add the Jobs preview feature header if not already present."""
@@ -226,23 +223,18 @@ class JobsOperations(_GeneratedJobsOps):
             kwargs["headers"][_FOUNDRY_FEATURES_HEADER_NAME] = self._JOBS_PREVIEW_HEADER
 
     @staticmethod
-    def _handle_not_found_as_deleted(polling_method: LROBasePolling) -> None:
+    def _handle_not_found_as_deleted(polling_method: AsyncLROBasePolling) -> None:
         """Patch ``polling_method.update_status`` so that a 404 response on the polling
         URL is treated as success.
 
-        When a delete LRO completes, the backend removes the job and the operation record,
-        causing subsequent poll requests to return 404. ``LROBasePolling`` would normally
-        raise ``BadStatus`` for any non-2xx response, so we intercept that here and flip
-        the status to ``"Succeeded"`` when the response code is 404.
-
-        :param polling_method: The ``LROBasePolling`` instance to patch.
-        :type polling_method: ~azure.core.polling.base_polling.LROBasePolling
+        :param polling_method: The ``AsyncLROBasePolling`` instance to patch.
+        :type polling_method: ~azure.core.polling.async_base_polling.AsyncLROBasePolling
         """
         _base_update = polling_method.update_status
 
-        def _update_status(_base=_base_update, _pm=polling_method):
+        async def _update_status(_base=_base_update, _pm=polling_method):
             try:
-                _base()
+                await _base()
             except BadStatus:
                 if _pm._pipeline_response and _pm._pipeline_response.http_response.status_code == 404:
                     _pm._status = "Succeeded"
@@ -260,7 +252,7 @@ class JobsOperations(_GeneratedJobsOps):
         list_view_type: Optional[Union[str, Any]] = None,
         properties: Optional[str] = None,
         **kwargs: Any,
-    ) -> ItemPaged[CommandJob]:
+    ) -> AsyncItemPaged[CommandJob]:
         """List all training jobs as flat :class:`~azure.ai.projects.models.CommandJob`
         objects with ``name`` and ``id`` promoted from the Job resource envelope.
 
@@ -273,7 +265,7 @@ class JobsOperations(_GeneratedJobsOps):
         :keyword properties: Comma-separated user properties filter. Default value is None.
         :paramtype properties: str
         :return: An iterator like instance of :class:`~azure.ai.projects.models.CommandJob`.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.CommandJob]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.CommandJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
@@ -290,8 +282,8 @@ class JobsOperations(_GeneratedJobsOps):
             **kwargs,
         )  # type: ignore[return-value]
 
-    @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> CommandJob:  # type: ignore[override]
+    @distributed_trace_async
+    async def get(self, name: str, **kwargs: Any) -> CommandJob:  # type: ignore[override]
         """Get a training job by name.
 
         :param name: The name of the job. Required.
@@ -302,11 +294,11 @@ class JobsOperations(_GeneratedJobsOps):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        rest_result = super().get(name=name, **kwargs)
+        rest_result = await super().get(name=name, **kwargs)
         return CommandJob._from_rest_object(rest_result)
 
-    @distributed_trace
-    def create_or_update(self, name: str, job: CommandJob, **kwargs: Any) -> CommandJob:  # type: ignore[override]
+    @distributed_trace_async
+    async def create_or_update(self, name: str, job: CommandJob, **kwargs: Any) -> CommandJob:  # type: ignore[override]
         """Create or update a training job.
 
         :param name: The name of the job. Required.
@@ -324,20 +316,14 @@ class JobsOperations(_GeneratedJobsOps):
         skip_validation = kwargs.pop("skip_validation", False)
         if not skip_validation:
             _validate_command_job(job).try_raise(raise_on_failure=True)
-        self._resolve_local_paths(name, job)
+        await self._resolve_local_paths(name, job)
         self._inject_preview_header(kwargs)
-        # Wrap the flat CommandJob inside the Job envelope required by the wire format
         rest_body = _RestJob(properties=job)
-        rest_result = super().create_or_update(name=name, job=rest_body, **kwargs)
+        rest_result = await super().create_or_update(name=name, job=rest_body, **kwargs)
         return CommandJob._from_rest_object(rest_result)
 
-    # LRO is implemented here rather than via TypeSpec @pollingOperation because the backend
-    # uses pure HTTP-status-code Location polling (202=in-progress, 200/204=done) with no
-    # JSON status body. TypeSpec requires a status field in the polling response model, which
-    # this API does not have. azure-core's built-in LocationPolling (part of LROBasePolling)
-    # handles this pattern natively, so we wire it up here directly.
-    @distributed_trace
-    def begin_delete(self, name: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
+    @distributed_trace_async
+    async def begin_delete(self, name: str, **kwargs: Any) -> AsyncLROPoller[None]:  # type: ignore[override]
         """Delete a training job by name.
 
         Returns 202 Accepted with a Location header to poll for completion,
@@ -345,17 +331,17 @@ class JobsOperations(_GeneratedJobsOps):
 
         :param name: The name of the job. Required.
         :type name: str
-        :return: An instance of LROPoller that returns None.
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        raw_result = super().begin_delete(  # type: ignore[func-returns-value]
+        raw_result = await super().begin_delete(  # type: ignore[func-returns-value]
             name=name,
             cls=lambda x, y, z: x,
             **kwargs,
@@ -365,27 +351,25 @@ class JobsOperations(_GeneratedJobsOps):
         lro_headers[_FOUNDRY_FEATURES_HEADER_NAME] = self._JOBS_PREVIEW_HEADER
 
         if polling is True:
-            polling_method: PollingMethod = LROBasePolling(
-                lro_delay,
-                path_format_arguments=path_format_arguments,
-                headers=lro_headers,
-                **kwargs,
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    headers=lro_headers,
+                    **kwargs,
+                ),
             )
             self._handle_not_found_as_deleted(polling_method)  # type: ignore[arg-type]
         elif polling is False:
-            polling_method = NoPolling()
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
 
-        return LROPoller[None](self._client, raw_result, lambda _: None, polling_method)
+        return AsyncLROPoller[None](self._client, raw_result, lambda _: None, polling_method)
 
-    # LRO is implemented here rather than via TypeSpec @pollingOperation because the backend
-    # uses pure HTTP-status-code Location polling (202=in-progress, 200/204=done) with no
-    # JSON status body. TypeSpec requires a status field in the polling response model, which
-    # this API does not have. azure-core's built-in LocationPolling (part of LROBasePolling)
-    # handles this pattern natively, so we wire it up here directly.
-    @distributed_trace
-    def begin_cancel(self, name: str, **kwargs: Any) -> LROPoller[None]:  # type: ignore[override]
+    @distributed_trace_async
+    async def begin_cancel(self, name: str, **kwargs: Any) -> AsyncLROPoller[None]:  # type: ignore[override]
         """Cancel a training job by name.
 
         Returns 200 if cancelled immediately, or 202 Accepted with a Location header
@@ -393,17 +377,17 @@ class JobsOperations(_GeneratedJobsOps):
 
         :param name: The name of the job. Required.
         :type name: str
-        :return: An instance of LROPoller that returns None.
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of AsyncLROPoller that returns None.
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        raw_result = super().begin_cancel(  # type: ignore[func-returns-value]
+        raw_result = await super().begin_cancel(  # type: ignore[func-returns-value]
             name=name,
             cls=lambda x, y, z: x,
             **kwargs,
@@ -413,21 +397,24 @@ class JobsOperations(_GeneratedJobsOps):
         lro_headers[_FOUNDRY_FEATURES_HEADER_NAME] = self._JOBS_PREVIEW_HEADER
 
         if polling is True:
-            polling_method: PollingMethod = LROBasePolling(
-                lro_delay,
-                path_format_arguments=path_format_arguments,
-                headers=lro_headers,
-                **kwargs,
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    headers=lro_headers,
+                    **kwargs,
+                ),
             )
         elif polling is False:
-            polling_method = NoPolling()
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
 
-        return LROPoller[None](self._client, raw_result, lambda _: None, polling_method)
+        return AsyncLROPoller[None](self._client, raw_result, lambda _: None, polling_method)
 
-    @distributed_trace
-    def show_services(  # type: ignore[override]
+    @distributed_trace_async
+    async def show_services(  # type: ignore[override]
         self, name: str, node_index: int = 0, **kwargs: Any
     ) -> Optional[Dict[str, ServiceInstance]]:
         """Get the runtime service instances associated with a job's compute node.
@@ -447,13 +434,13 @@ class JobsOperations(_GeneratedJobsOps):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        result = super().show_services(name=name, run_id=name, node_id=node_index, **kwargs)
+        result = await super().show_services(name=name, run_id=name, node_id=node_index, **kwargs)
         if not result or not result.instances:
             return None
         return {k: ServiceInstance._from_rest_object(v, node_index) for k, v in result.instances.items()}
 
-    @distributed_trace
-    def stream(self, name: str, **kwargs: Any) -> None:  # type: ignore[override]
+    @distributed_trace_async
+    async def stream(self, name: str, **kwargs: Any) -> None:  # type: ignore[override]
         """Stream the logs of a running CommandJob to ``sys.stdout`` until the job reaches
         a terminal state.
 
@@ -467,7 +454,7 @@ class JobsOperations(_GeneratedJobsOps):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
-        job = self.get(name=name, **kwargs)
+        job = await self.get(name=name, **kwargs)
         studio_endpoint: Optional[str] = None
         if job.services:
             studio = job.services.get("Studio")
@@ -481,7 +468,7 @@ class JobsOperations(_GeneratedJobsOps):
 
         processed_logs: Dict[str, int] = {}
         poll_start_time = time.time()
-        details = super()._get_run_details(name=name, run_id=name, **kwargs)
+        details = await super()._get_run_details(name=name, run_id=name, **kwargs)
         last_content = ""
 
         while True:
@@ -502,8 +489,8 @@ class JobsOperations(_GeneratedJobsOps):
             if finalizing and _FINALIZING_RUN_MARKER in last_content:
                 break
 
-            time.sleep(_wait_before_polling(time.time() - poll_start_time))
-            details = super()._get_run_details(name=name, run_id=name, **kwargs)
+            await asyncio.sleep(_wait_before_polling(time.time() - poll_start_time))
+            details = await super()._get_run_details(name=name, run_id=name, **kwargs)
 
         # Final flush: capture any log lines written between the last poll and the
         # job reaching a terminal state (e.g. on cancel or quick completion).
@@ -537,7 +524,7 @@ class JobsOperations(_GeneratedJobsOps):
             error_text = json.dumps(error_payload, indent=4) if isinstance(error_payload, dict) else error_payload
             raise RuntimeError("Exception : \n {} ".format(error_text))
 
-    def _resolve_output_to_blob_ref(self, output_name: str, output: _Output) -> BlobReference:
+    async def _resolve_output_to_blob_ref(self, output_name: str, output: _Output) -> BlobReference:
         """Resolve a job ``Output`` to a :class:`~azure.ai.projects.models.BlobReference`.
 
         :param output_name: The output name.
@@ -551,10 +538,10 @@ class JobsOperations(_GeneratedJobsOps):
         """
         _validate_output_for_download(output_name, output)
         assert output.asset_name is not None and output.asset_version is not None
-        credential = self._datasets.get_credentials(name=output.asset_name, version=output.asset_version)
+        credential = await self._datasets.get_credentials(name=output.asset_name, version=output.asset_version)
         return credential.blob_reference
 
-    def _download_blob_reference(self, blob_ref: BlobReference, destination: Path) -> Tuple[int, int]:
+    async def _download_blob_reference(self, blob_ref: BlobReference, destination: Path) -> Tuple[int, int]:
         """Download every blob under ``blob_ref`` into ``destination``.
 
         :param blob_ref: The blob reference to download.
@@ -575,9 +562,11 @@ class JobsOperations(_GeneratedJobsOps):
 
         destination.mkdir(parents=True, exist_ok=True)
 
-        with ContainerClient.from_container_url(container_url=sas_uri) as container_client:
+        async with AsyncContainerClient.from_container_url(container_url=sas_uri) as container_client:
             list_prefix = (prefix + "/") if prefix else ""
-            blobs = list(container_client.list_blobs(name_starts_with=list_prefix or None, include=["metadata"]))
+            blobs = []
+            async for blob in container_client.list_blobs(name_starts_with=list_prefix or None, include=["metadata"]):
+                blobs.append(blob)
             all_names = {b.name for b in blobs}
 
             file_count = 0
@@ -596,15 +585,15 @@ class JobsOperations(_GeneratedJobsOps):
                     continue
                 _ensure_dir(local_path.parent)
                 _logger.debug("[JobsOperations] Downloading blob '%s' → '%s'.", blob_name, local_path)
-                downloader = container_client.download_blob(blob=blob_name, max_concurrency=_MAX_CONCURRENCY)
+                downloader = await container_client.download_blob(blob=blob_name, max_concurrency=_MAX_CONCURRENCY)
                 with open(local_path, "wb") as fh:
-                    downloader.readinto(fh)
+                    await downloader.readinto(fh)
                 file_count += 1
                 total_bytes += blob.size or 0
             return file_count, total_bytes
 
-    @distributed_trace
-    def download(
+    @distributed_trace_async
+    async def download(
         self,
         name: str,
         *,
@@ -634,7 +623,7 @@ class JobsOperations(_GeneratedJobsOps):
             raise ValueError("Specify either 'output_name' or 'all=True', not both.")
 
         self._inject_preview_header(kwargs)
-        job = self.get(name=name, **kwargs)
+        job = await self.get(name=name, **kwargs)
 
         job_status = (job.status or "").lower()
         if job_status not in _TERMINAL_JOB_STATUSES:
@@ -646,8 +635,6 @@ class JobsOperations(_GeneratedJobsOps):
         dest_root = Path(download_path)
         outputs: dict = job.outputs or {}
 
-        # "default" is the special name for the job's default artifact store;
-        # route it to the default-artifacts download path.
         if output_name == _DEFAULT_ARTIFACT_STORE_OUTPUT_NAME:
             output_name = None
 
@@ -657,7 +644,7 @@ class JobsOperations(_GeneratedJobsOps):
                     f"Job '{name}' has no output named '{output_name}'. "
                     f"Available outputs: {sorted(outputs.keys())}."
                 )
-            self._download_named_output(name, output_name, outputs[output_name], dest_root)
+            await self._download_named_output(name, output_name, outputs[output_name], dest_root)
             return
 
         if all:
@@ -665,7 +652,7 @@ class JobsOperations(_GeneratedJobsOps):
                 if out_name == _DEFAULT_ARTIFACT_STORE_OUTPUT_NAME:
                     continue
                 try:
-                    self._download_named_output(name, out_name, out, dest_root)
+                    await self._download_named_output(name, out_name, out, dest_root)
                 except ValueError as exc:
                     _logger.warning(
                         "[JobsOperations] Skipping output '%s' for job '%s': %s",
@@ -673,12 +660,12 @@ class JobsOperations(_GeneratedJobsOps):
                         name,
                         exc,
                     )
-            self._download_default_artifacts(name, dest_root, **kwargs)
+            await self._download_default_artifacts(name, dest_root, **kwargs)
             return
 
-        self._download_default_artifacts(name, dest_root, **kwargs)
+        await self._download_default_artifacts(name, dest_root, **kwargs)
 
-    def _download_named_output(
+    async def _download_named_output(
         self,
         job_name: str,
         output_name: str,
@@ -701,7 +688,7 @@ class JobsOperations(_GeneratedJobsOps):
         :raises NotImplementedError: If the output type requires Models operations
             not yet generated in this SDK build.
         """
-        blob_ref = self._resolve_output_to_blob_ref(output_name, output)
+        blob_ref = await self._resolve_output_to_blob_ref(output_name, output)
         destination = dest_root / _NAMED_OUTPUTS_DIR / output_name
         _logger.info(
             "[JobsOperations] Downloading output '%s' for job '%s' to '%s'.",
@@ -709,7 +696,7 @@ class JobsOperations(_GeneratedJobsOps):
             job_name,
             destination,
         )
-        file_count, total_bytes = self._download_blob_reference(blob_ref, destination)
+        file_count, total_bytes = await self._download_blob_reference(blob_ref, destination)
         _logger.info(
             "[JobsOperations] Downloaded %d file(s) (%.2f MB) for output '%s'.",
             file_count,
@@ -717,7 +704,7 @@ class JobsOperations(_GeneratedJobsOps):
             output_name,
         )
 
-    def _download_default_artifacts(
+    async def _download_default_artifacts(
         self,
         name: str,
         dest_root: Path,
@@ -731,18 +718,54 @@ class JobsOperations(_GeneratedJobsOps):
         :type dest_root: ~pathlib.Path
         :raises ValueError: If the run has no ``experimentId``.
         """
-        run = super()._get_run(name=name, run_id=name, **kwargs)
+        run = await super()._get_run(name=name, run_id=name, **kwargs)
         experiment_id = run.experiment_id
         if not experiment_id:
             raise ValueError(f"Job '{name}' run is missing 'experimentId'; cannot list artifacts.")
 
-        paths = _collect_artifact_paths(super()._list_artifacts, name, experiment_id)
+        # Async pagination: collect artifact paths
+        paths: List[str] = []
+        continuation: Optional[str] = None
+        while True:
+            page = await super()._list_artifacts(
+                name,
+                experiment_id,
+                name,
+                continuation_token_parameter=continuation,
+            )
+            for artifact in page.value or []:
+                if artifact.path:
+                    paths.append(artifact.path)
+            continuation = page.continuation_token
+            if not continuation:
+                break
+
         if not paths:
             _logger.info("[JobsOperations] Job '%s' has no default artifacts to download.", name)
             return
 
         prefixes = _group_paths_by_prefix(paths)
-        uri_map = _resolve_artifact_uris(super()._get_artifact_content_information, name, experiment_id, prefixes)
+
+        # Async pagination: resolve artifact URIs
+        uri_map: Dict[str, Tuple[str, int]] = {}
+        for prefix in prefixes:
+            if not prefix:
+                continue
+            continuation = None
+            while True:
+                page = await super()._get_artifact_content_information(
+                    name,
+                    experiment_id,
+                    name,
+                    path=prefix,
+                    continuation_token_parameter=continuation,
+                )
+                for item in page.value or []:
+                    if item.path and item.content_uri:
+                        uri_map[item.path] = (item.content_uri, item.content_length or 0)
+                continuation = page.continuation_token
+                if not continuation:
+                    break
 
         artifacts_root = dest_root / _ARTIFACTS_DIR
         artifacts_root.mkdir(parents=True, exist_ok=True)

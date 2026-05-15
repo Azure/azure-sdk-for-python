@@ -20,9 +20,11 @@ from ..models._enums import AssetTypes
 from ..models._models import Output as _Output
 from ..models._patch_jobs import CommandJob, ValidationResult
 
-_TERMINAL_JOB_STATUSES = frozenset({"completed", "failed", "canceled", "notresponding", "paused"})
+_TERMINAL_JOB_STATUSES = frozenset({"completed", "failed", "canceled", "notresponding", "paused", "unknown"})
 
-_IN_PROGRESS_JOB_STATUSES = frozenset({"notstarted", "queued", "preparing", "provisioning", "starting", "running"})
+_IN_PROGRESS_JOB_STATUSES = frozenset(
+    {"notstarted", "queued", "preparing", "provisioning", "starting", "running", "cancelrequested"}
+)
 
 _FINALIZING_JOB_STATUS = "finalizing"
 

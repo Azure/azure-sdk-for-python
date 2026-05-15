@@ -11097,7 +11097,7 @@ class BetaJobsOperations:
                         for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
                     }
                 )
-                _next_request_params["api-version"] = self._config.api_version
+                _next_request_params["api-version"] = "2026-01-15-preview"
                 _request = HttpRequest(
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
