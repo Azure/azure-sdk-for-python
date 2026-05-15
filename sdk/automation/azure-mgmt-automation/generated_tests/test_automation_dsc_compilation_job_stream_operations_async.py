@@ -21,12 +21,12 @@ class TestAutomationDscCompilationJobStreamOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_job(self, resource_group):
+    async def test_dsc_compilation_job_stream_list_by_job(self, resource_group):
         response = await self.client.dsc_compilation_job_stream.list_by_job(
             resource_group_name=resource_group.name,
             automation_account_name="str",
             job_id="str",
-            api_version="2020-01-13-preview",
+            api_version="2018-01-15",
         )
 
         # please add some check logic here by yourself
