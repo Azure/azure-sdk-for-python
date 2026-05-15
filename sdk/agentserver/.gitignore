@@ -1,6 +1,4 @@
 # Speckit / Specify - spec-driven development tooling
 specs/
 .specify/
-.github/prompts/speckit.*.prompt.md
-.github/agents/speckit.*.agent.md
-.github/copilot-instructions.md
+.github/
