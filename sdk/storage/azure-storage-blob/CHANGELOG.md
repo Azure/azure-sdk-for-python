@@ -1,5 +1,15 @@
 # Release History
 
+## 12.29.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.29.0 (2026-05-14)
 
 ### Features Added
