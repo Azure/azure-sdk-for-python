@@ -4,10 +4,8 @@
 
 ### Features Added
 
-* New Agent tool `WorkIQPreviewTool`.
-* New Agent tool `FabricIQPreviewTool`.
-* New Agent tool `ToolboxSearchPreviewTool`.
-* New optional string properties `description` and `name` added to Agent tools which did not have them before.
+* New Agent tools `WorkIQPreviewTool`, `FabricIQPreviewTool` and `ToolboxSearchPreviewTool`.
+* New optional string properties `description` and `name` added to Agent tools which did not have them already.
 
 ### Breaking Changes
 
@@ -16,7 +14,7 @@ Breaking changes in beta methods:
 * Argument `body` in methods `.beta.evaluation_taxonomies.create()` and `.beta.evaluation_taxonomies.update()` renamed to `taxonomy`.
 * Argument `body` in method `.beta.skills.create_from_package()` renamed to `content`.
 
-Breaking changes in beta classes:
+Breaking changes classes used by beta features:
 * Required property `isolation_key_source` removed from class `EntraAuthorizationScheme`.
 * Renamed class `AgentEndpoint` to `AgentEndpointConfig`.
 * Renamed class `DeleteSkillResponse` to `DeleteSkillResult`.
