@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.customproviders import Customproviders
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.customproviders import Customproviders
     pip install azure-identity
     pip install azure-mgmt-customproviders
 # USAGE
-    python update_a_custom_resource_provider.py
+    python list_custom_rps_by_subscription.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +31,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.custom_resource_provider.update(
-        resource_group_name="testRG",
-        resource_provider_name="newrp",
-        patchable_resource={"tags": {}},
-    )
-    print(response)
+    response = client.custom_resource_provider.list_by_subscription()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/preview/2018-09-01-preview/examples/updateCustomRP.json
+# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/CustomProviders/preview/2018-09-01-preview/examples/listCustomRPsBySubscription.json
 if __name__ == "__main__":
     main()

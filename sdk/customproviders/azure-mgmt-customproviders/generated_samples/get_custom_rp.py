@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.customproviders import Customproviders
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.customproviders import Customproviders
     pip install azure-identity
     pip install azure-mgmt-customproviders
 # USAGE
-    python create_or_update_the_custom_resource_provider.py
+    python get_custom_rp.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,22 +31,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.custom_resource_provider.begin_create_or_update(
+    response = client.custom_resource_provider.get(
         resource_group_name="testRG",
         resource_provider_name="newrp",
-        resource_provider={
-            "location": "eastus",
-            "properties": {
-                "actions": [{"endpoint": "https://mytestendpoint/", "name": "TestAction", "routingType": "Proxy"}],
-                "resourceTypes": [
-                    {"endpoint": "https://mytestendpoint2/", "name": "TestResource", "routingType": "Proxy,Cache"}
-                ],
-            },
-        },
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/preview/2018-09-01-preview/examples/createOrUpdateCustomRP.json
+# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/CustomProviders/preview/2018-09-01-preview/examples/getCustomRP.json
 if __name__ == "__main__":
     main()
