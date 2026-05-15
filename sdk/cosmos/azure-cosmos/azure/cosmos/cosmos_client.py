@@ -250,7 +250,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # Precedence for selection: kwarg `_backend=` > COSMOS_BACKEND env
         # var > "core-python".
         backend_choice = kwargs.pop("_backend", None)
-        chosen = make_backend(backend_choice)
+        chosen = make_backend(backend_choice, url=url, credential=credential)
         self._core_python_backend: CorePythonBackend = (
             chosen if isinstance(chosen, CorePythonBackend) else CorePythonBackend()
         )

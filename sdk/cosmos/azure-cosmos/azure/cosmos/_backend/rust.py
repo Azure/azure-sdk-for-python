@@ -6,7 +6,7 @@
 """Sync Rust backend.
 
 This is the only Python module allowed to import the compiled PyO3
-module ``azure.cosmos._azure_cosmos_pyo3``. The import-guard test
+module ``azure.cosmos._rust``. The import-guard test
 (``tests/test_backend_wiring_unit.py``) enforces that rule by walking
 every ``.py`` file under ``azure/cosmos/`` and failing the build if any
 other module reaches across the abstraction.
@@ -22,55 +22,90 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 
-from .base import BackendResponse, CosmosBackend, PreparedRequest
+from azure.core.utils import CaseInsensitiveDict
+
+from .base import OP_CREATE_ITEM, BackendResponse, CosmosBackend, PreparedRequest
 from .constants import BACKEND_NAME_RUST
 
 _LOGGER = logging.getLogger(__name__)
 
 # Module-level reference set once at import time, under the GIL. Read-only
 # afterwards, so it is safe to share across threads and across clients.
-_pyo3_driver: Optional[Any] = None
+_rust_module: Optional[Any] = None
 try:
-    from azure.cosmos import _azure_cosmos_pyo3  # type: ignore[attr-defined]
-    _pyo3_driver = _azure_cosmos_pyo3
+    from azure.cosmos import _rust  # type: ignore[attr-defined]
+    _rust_module = _rust
 except ImportError:
     _LOGGER.debug(
-        "_azure_cosmos_pyo3 module not available; RustBackend operations "
+        "_rust module not available; RustBackend operations "
         "will raise NotImplementedError until the PyO3 wrapper is built."
     )
 
 
 class RustBackend(CosmosBackend):
-    """Routes ``create_item`` calls through the in-tree Rust driver.
+    """Routes Cosmos operations through the in-tree Rust driver.
 
-    Today this class's ``create_item`` raises ``NotImplementedError`` on
-    every call. That is the expected behavior for the dispatch-only
-    slice — a developer who runs the existing test suite with
-    ``COSMOS_BACKEND=rust`` should see every create_item test fail
-    loudly, which proves the dispatch wiring works end-to-end. The real
-    implementation lands once the Rust-side gaps are closed and the
-    helper layer exists.
+    Construction takes the account endpoint and master key. On the
+    first operation the backend calls into the binding's
+    ``init_client`` to set up the per-process Tokio runtime + driver,
+    and stashes the handle the binding hands back. Subsequent calls
+    reuse the cached driver.
+
+    The ``execute`` method dispatches on ``prepared.op`` and forwards
+    to the matching method on the binding. Today only
+    ``OP_CREATE_ITEM`` is supported; other operations land as the
+    binding gains support.
+
+    When the compiled module is *absent* (e.g. fresh clone before
+    ``maturin develop`` ran), every operation raises
+    ``NotImplementedError`` with a clear message pointing the developer
+    at the build step.
     """
 
     name = BACKEND_NAME_RUST
 
-    def __init__(self) -> None:
-        self._driver = _pyo3_driver
+    def __init__(self, endpoint: str, master_key: str) -> None:
+        self._endpoint = endpoint
+        self._master_key = master_key
+        self._handle: Optional[str] = None
 
-    def create_item(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        # Two failure modes for the rust path today, ordered by which
-        # one a developer is more likely to hit. The shared
-        # "not implemented yet" prefix is part of the contract the
-        # dispatch tests assert against.
-        if self._driver is None:
+    def _ensure_handle(self) -> str:
+        if self._handle is not None:
+            return self._handle
+        if _rust_module is None:
             raise NotImplementedError(
-                "RustBackend.create_item not implemented yet "
-                "(also: compiled azure.cosmos._azure_cosmos_pyo3 module "
-                "is not present in this environment; build it with "
-                "`maturin develop` from azure_data_cosmos_driver/, or "
-                "install the package built with the rust extension "
-                "enabled). The adapter that calls into the binary will "
-                "land in a later change."
+                "RustBackend: the compiled azure.cosmos._rust "
+                "module is not present in this environment. Build it with "
+                "`maturin develop` from the repo root."
             )
-        raise NotImplementedError("RustBackend.create_item not implemented yet")
+        self._handle = _rust_module.init_client(self._endpoint, self._master_key)
+        return self._handle
+
+    def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
+        if prepared is None:
+            # Transitional contract: caller still owns request prep.
+            return None
+        if _rust_module is None:
+            raise NotImplementedError(
+                "RustBackend.execute: the compiled "
+                "azure.cosmos._rust module is not present in "
+                "this environment. Build it with `maturin develop` from "
+                "the repo root."
+            )
+
+        handle = self._ensure_handle()
+        if prepared.op == OP_CREATE_ITEM:
+            status_code, sub_status, headers, body = _rust_module.create_item(handle, prepared)
+        else:
+            raise NotImplementedError(
+                "RustBackend.execute does not yet support op={!r}.".format(prepared.op)
+            )
+
+        return BackendResponse(
+            status_code=int(status_code),
+            sub_status=int(sub_status),
+            headers=CaseInsensitiveDict(headers) if headers else None,
+            body=bytes(body) if body else b"",
+            diagnostics=None,
+        )
 

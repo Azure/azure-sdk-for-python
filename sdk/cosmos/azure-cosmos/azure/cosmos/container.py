@@ -43,6 +43,7 @@ from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._helpers._item_dispatch import merge_create_item_explicit_kwargs
 from ._helpers.item_helper import ItemHelper
+from ._helpers._item_dispatch import pick_backend
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -1462,6 +1463,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # ``excluded_locations`` and timeouts flow into the cache
         # refresh exactly the way the legacy code path did.
         return ItemHelper(
+            pick_backend(self.client_connection),
             self.client_connection,
             ensure_container_cached=self._get_properties_with_options,
         ).create_item(

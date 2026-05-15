@@ -29,26 +29,36 @@ from a resolved name to the corresponding async backend class.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
-from azure.cosmos._backend.factory import resolve_backend_name
+from azure.cosmos._backend.factory import _master_key_or_raise, resolve_backend_name
 
 from .base import AsyncCosmosBackend
 from .core_python import AsyncCorePythonBackend
 from .rust import AsyncRustBackend
 
 
-def make_async_backend(explicit: Optional[str]) -> AsyncCosmosBackend:
+def make_async_backend(
+    explicit: Optional[str],
+    *,
+    url: Optional[str] = None,
+    credential: Any = None,
+) -> AsyncCosmosBackend:
     """Build the single backend instance an async ``CosmosClient`` will hold.
 
     ``explicit`` is what the caller passed as ``_backend=`` (or
     ``None`` if they passed nothing — in which case the env var, then
-    the default, are consulted). The returned object is either an
-    ``AsyncCorePythonBackend`` or an ``AsyncRustBackend``.
+    the default, are consulted). ``url`` and ``credential`` come from
+    the same client constructor and are only used when the chosen
+    backend is ``rust``.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
-        return AsyncRustBackend()
+        if not url:
+            raise ValueError(
+                "_backend='rust' requires the account endpoint URL."
+            )
+        return AsyncRustBackend(endpoint=url, master_key=_master_key_or_raise(credential))
     return AsyncCorePythonBackend()
 

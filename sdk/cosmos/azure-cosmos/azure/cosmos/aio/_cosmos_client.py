@@ -227,7 +227,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         #   - _rust_backend: present only when Rust is selected as default.
         #     Its presence (vs None) is the "Rust is default" signal.
         backend_choice = kwargs.pop("_backend", None)
-        chosen = make_async_backend(backend_choice)
+        chosen = make_async_backend(backend_choice, url=url, credential=credential)
         self._core_python_backend: AsyncCorePythonBackend = (
             chosen if isinstance(chosen, AsyncCorePythonBackend) else AsyncCorePythonBackend()
         )

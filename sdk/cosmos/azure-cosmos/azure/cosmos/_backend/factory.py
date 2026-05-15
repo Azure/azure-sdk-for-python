@@ -21,11 +21,17 @@ If a value comes in that is not ``"core-python"`` or ``"rust"``, the
 factory raises ``ValueError`` immediately at client construction time.
 Failing loud is intentional — a typo'd value silently falling back to
 the default would mask configuration drift in production.
+
+When ``rust`` is the chosen backend, the factory also needs the account
+endpoint and a master key — the binding's ``init_client`` requires both
+to construct the underlying ``CosmosDriver``. The factory accepts them
+as keyword arguments and surfaces a clear ``ValueError`` if Rust was
+requested without a master-key credential.
 """
 from __future__ import annotations
 
 import os
-from typing import Optional
+from typing import Any, Optional
 
 from .base import CosmosBackend
 from .constants import (
@@ -59,16 +65,45 @@ def resolve_backend_name(explicit: Optional[str]) -> str:
     return choice
 
 
-def make_backend(explicit: Optional[str]) -> CosmosBackend:
+def _master_key_or_raise(credential: Any) -> str:
+    """Pull a master-key string out of the credential, or fail loud.
+
+    The Rust binding's ``init_client`` only accepts master-key auth
+    today. Other credential shapes (Entra TokenCredential, resource
+    token, AAD) need driver-side support that doesn't exist yet, so we
+    refuse them at construction time rather than letting the failure
+    surface on the first request.
+    """
+    if isinstance(credential, str):
+        return credential
+    if isinstance(credential, dict) and "masterKey" in credential:
+        return credential["masterKey"]
+    raise ValueError(
+        "_backend='rust' requires a master-key credential (a string, or "
+        "a dict with a 'masterKey' entry). The Rust backend does not "
+        "yet support TokenCredential / AAD / resource-token auth."
+    )
+
+
+def make_backend(
+    explicit: Optional[str],
+    *,
+    url: Optional[str] = None,
+    credential: Any = None,
+) -> CosmosBackend:
     """Build the single backend instance a sync ``CosmosClient`` will hold.
 
     ``explicit`` is what the caller passed as ``_backend=`` (or ``None`` if
     they passed nothing — in which case the env var, then the default, are
-    consulted). The returned object is either a ``CorePythonBackend`` or a
-    ``RustBackend``.
+    consulted). ``url`` and ``credential`` come from the same client
+    constructor and are only used when the chosen backend is ``rust``.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
-        return RustBackend()
+        if not url:
+            raise ValueError(
+                "_backend='rust' requires the account endpoint URL."
+            )
+        return RustBackend(endpoint=url, master_key=_master_key_or_raise(credential))
     return CorePythonBackend()
 

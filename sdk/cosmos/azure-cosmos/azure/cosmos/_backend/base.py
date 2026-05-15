@@ -10,6 +10,13 @@ implements the ``CosmosBackend`` ABC defined here. Container methods
 call the backend through this ABC so that the dispatch site never has
 to know which underlying transport actually ran the request.
 
+The backend exposes a single dispatch method, ``execute(prepared)``.
+The operation kind (create_item, read_item, query_items, …) is carried
+on the ``PreparedRequest`` itself as the ``op`` field. Adding a new
+operation is one new value of ``op`` plus one new branch inside each
+backend's ``execute`` — the call sites and the dispatch contract do
+not change.
+
 ``PreparedRequest`` is what the helper hands a backend; ``BackendResponse``
 is what the helper expects back. Both are frozen dataclasses (immutable
 after construction) so a backend cannot accidentally mutate the input it
@@ -24,16 +31,32 @@ from typing import Any, Mapping, Optional
 from azure.core.utils import CaseInsensitiveDict
 
 
+# ---------------------------------------------------------------------------
+# Operation discriminator values
+# ---------------------------------------------------------------------------
+#
+# These are the string values the ``op`` field on ``PreparedRequest``
+# can carry. Backends dispatch on them inside their ``execute`` method.
+# Only ``OP_CREATE_ITEM`` exists today; the other item operations land
+# as the binding gains support.
+
+OP_CREATE_ITEM = "create_item"
+
+
 @dataclass(frozen=True)
 class PreparedRequest:
     """A single Cosmos operation, fully prepared and ready to send.
 
     The helper layer that owns request preparation builds one of these
-    from the user's ``create_item`` arguments. Both backends receive
-    the *same* instance so neither one re-derives the wire format from
-    the original kwargs; that is the only way to guarantee byte-for-byte
+    from the user's call arguments. Both backends receive the *same*
+    instance so neither one re-derives the wire format from the
+    original kwargs; that is the only way to guarantee byte-for-byte
     parity between them.
     """
+
+    #: Which operation this request describes. One of the ``OP_*``
+    #: constants above. Backends dispatch on this inside ``execute``.
+    op: str
 
     #: e.g. ``"dbs/{db}/colls/{coll}"``.
     container_link: str
@@ -84,14 +107,15 @@ class CosmosBackend(abc.ABC):
     """Abstract dispatch target for any Cosmos operation (sync variant).
 
     Every sync backend (``CorePythonBackend``, ``RustBackend``) inherits
-    from this class. The container's dispatch site holds one of these by
-    interface and calls ``create_item`` on it without knowing which
-    concrete backend it has.
+    from this class. The helper holds one of these by interface and
+    calls ``execute`` on it without knowing which concrete backend it
+    has. The operation kind is on ``prepared.op``; the backend is the
+    one place that branches on it.
 
     Today, request preparation and response parsing still live in
     their existing locations (``Container.create_item`` and the
     ``CosmosClientConnection`` helpers), so a backend that returns
-    ``None`` from ``create_item`` is interpreted as "I have nothing to
+    ``None`` from ``execute`` is interpreted as "I have nothing to
     return; the caller should run its existing in-place
     implementation." Once the helper layer takes over request prep and
     response parsing the contract tightens so that every backend
@@ -107,13 +131,14 @@ class CosmosBackend(abc.ABC):
     name: str = "abstract"
 
     @abc.abstractmethod
-    def create_item(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Issue a single ``create_item`` call.
+    def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
+        """Issue a single Cosmos operation.
 
-        Returning ``None`` (the temporary contract until the helper
-        layer lands) tells the caller to use its existing in-place
-        implementation. Returning a ``BackendResponse`` tells the
-        caller to use that response directly. ``prepared`` may be
+        The operation kind is on ``prepared.op``; the backend dispatches
+        on it. Returning ``None`` (the temporary contract until the
+        helper layer lands) tells the caller to use its existing
+        in-place implementation. Returning a ``BackendResponse`` tells
+        the caller to use that response directly. ``prepared`` may be
         ``None`` while the caller still owns request preparation.
         """
         ...

@@ -46,6 +46,7 @@ from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .._helpers._item_dispatch import merge_create_item_explicit_kwargs
 from ._helpers.item_helper import AsyncItemHelper
+from .._helpers._item_dispatch import pick_backend
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -312,6 +313,7 @@ class ContainerProxy:
         # like ``excluded_locations`` and timeouts flow into the cache
         # refresh exactly the way the legacy code path did.
         return await AsyncItemHelper(
+            pick_backend(self.client_connection),
             self.client_connection,
             ensure_container_cached=self._get_properties_with_options,
         ).create_item(

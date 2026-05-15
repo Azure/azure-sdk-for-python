@@ -1,3 +1,27 @@
+# Build system. Maturin reads `[tool.maturin]` below to decide what to
+# compile and where to put the result.
+[build-system]
+requires      = ["maturin>=1.4,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+# Path to the binding crate's Cargo.toml. Maturin invokes `cargo build`
+# from there, locates the produced cdylib, renames it to
+# _rust.{pyd,so} and drops it into azure/cosmos/.
+manifest-path = "azure_cosmos_rust/Cargo.toml"
+
+# Where the Python source tree lives, relative to this pyproject.toml.
+python-source = "."
+
+# The full Python import path of the compiled extension. The last
+# segment (`_rust`) must match the `#[pymodule]` function
+# name in azure_cosmos_rust/src/lib.rs.
+module-name = "azure.cosmos._rust"
+
+# Required for PyO3 to build as a Python extension module (no link to
+# libpython at build time).
+features = ["pyo3/extension-module"]
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false

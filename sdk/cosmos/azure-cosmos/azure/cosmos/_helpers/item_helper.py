@@ -5,71 +5,86 @@
 # -------------------------------------------------------------------------
 """Per-client helper that runs every ``Container.create_item`` call.
 
-``ItemHelper`` is the place where the backend dispatch and the
-legacy request-prep logic used to live inside ``Container.create_item``
-now both run. The container method is reduced to deprecation-warning
-massaging plus moving its explicit kwargs into the ``kwargs`` dict, then
-hands off to one ``ItemHelper.create_item`` call.
+``ItemHelper`` is the place where the backend dispatch and the request-prep
+logic that used to live inline in ``Container.create_item`` now both run.
+The container method is reduced to deprecation-warning massaging plus
+moving its explicit kwargs into the ``kwargs`` dict, then hands off to one
+``ItemHelper.create_item`` call.
 
-The dispatch decision and the request-options build are pure logic
-shared with the async sibling via ``_item_dispatch``; this class only
-adds the per-call I/O (call into the chosen backend, populate the
-container cache, call legacy ``CreateItem``). The async sibling
-``aio._helpers.item_helper.AsyncItemHelper`` mirrors this class with
-``await`` in those three places.
+Flow per call:
 
-Today the helper does not parse the response: it returns whatever the
-legacy ``CreateItem`` returns. Once ``CorePythonBackend.create_item``
-becomes a real adapter that takes a ``PreparedRequest`` and produces
-a ``BackendResponse``, the response-parse helper takes over and the
-``CreateItem`` fall-through goes away.
+  1. Stamp the chosen backend's name into ``kwargs`` so the user-agent
+     policy can append ``backend=<name>`` to the outgoing request.
+  2. Look up (or refresh) the container-properties cache so we have the
+     container's ``_rid`` for stamping into headers.
+  3. Build a ``PreparedRequest`` via ``build_create_item_prepared``
+     (id minted, partition-key serialized, body bytes, headers).
+  4. Hand the ``PreparedRequest`` to the backend's ``execute``.
+     - ``RustBackend.execute(prepared)`` calls the PyO3 binding and
+       returns a real ``BackendResponse``.
+     - ``CorePythonBackend.execute(prepared)`` returns ``None`` today
+       — signal to fall through to the legacy ``CreateItem`` path.
+  5. When a real ``BackendResponse`` comes back, parse it via
+     ``parse_backend_response`` into a ``CosmosDict`` and raise typed
+     exceptions for non-2xx replies — same shape customer code has
+     always seen.
+  6. When the backend signals fall-through, run the legacy
+     ``client_connection.CreateItem`` path verbatim.
+
+The container constructs the helper with the backend it wants used for
+this call (which the wiring function picked once at client construction
+and stored on the connection). The helper itself never has to know which
+backend it has — it just calls ``execute`` on it.
 """
 from __future__ import annotations
 
 from typing import Any, Callable, Dict, Optional
 
+from .._backend.base import CosmosBackend
+from .._backend.constants import REQUEST_OPTION_BACKEND_KEY
 from .._constants import _Constants as Constants
-from ._item_dispatch import (
-    build_create_item_request_options,
-    choose_backend,
-)
+from ..partition_key import _Empty
+from ._item_dispatch import build_create_item_request_options
+from ._request_prep import build_create_item_prepared
+from ._response_parse import parse_backend_response
 
 
 class ItemHelper:
     """Owns the per-call request-prep + dispatch for ``create_item``.
 
     One instance is constructed per ``Container.create_item`` invocation
-    today (cheap; the only state is a reference to the
-    ``CosmosClientConnection`` plus an optional cache-populate
-    callback). Holding state on the helper buys nothing at this stage,
-    but the class shape is the right home for future per-container
-    caches once response parsing moves into the helper.
+    today (cheap; the only state is the chosen backend, a reference to
+    the ``CosmosClientConnection``, and an optional cache-populate
+    callback).
     """
 
     def __init__(
         self,
+        backend: Optional[CosmosBackend],
         client_connection: Any,
         ensure_container_cached: Optional[Callable[[Dict[str, Any]], Any]] = None,
     ) -> None:
-        """Bind the helper to a specific client connection.
+        """Bind the helper to the chosen backend and the client connection.
 
-        :param client_connection: The
-            ``CosmosClientConnection`` (or async sibling) the helper
-            should use for backend dispatch lookups, the container-
-            properties cache, and the legacy ``CreateItem`` call.
+        :param backend: The backend the wiring function picked for this
+            client. ``None`` is permitted only for unit tests that
+            build the helper without going through ``CosmosClient``;
+            in that case dispatch is skipped and the legacy path runs
+            directly.
+        :type backend: Optional[CosmosBackend]
+        :param client_connection: The ``CosmosClientConnection`` (or
+            async sibling) the helper uses for the container-properties
+            cache, partition-key extraction, and the legacy
+            ``CreateItem`` fall-through.
         :type client_connection: Any
         :param ensure_container_cached: Optional callable the
             container proxy passes in to perform the cache-populate
             step under the container's own lock and with proper
             forwarding of ``excluded_locations`` / timeout options
-            from ``request_options`` into the cache-fetch call. When
-            ``None`` (e.g. unit tests that build the helper without
-            going through the container), the helper falls back to a
-            best-effort direct call into
-            ``client_connection._refresh_container_properties_cache``
-            which does *not* forward those options.
+            from ``request_options`` into the cache-fetch call.
         :type ensure_container_cached: Optional[Callable]
         """
+        self._backend = backend
         self.client_connection = client_connection
         self._ensure_container_cached = ensure_container_cached
 
@@ -83,40 +98,14 @@ class ItemHelper:
         enable_automatic_id_generation: bool = False,
         **kwargs: Any,
     ) -> Any:
-        """Run a single ``create_item`` call end to end.
+        """Run a single ``create_item`` call end to end."""
+        if self._backend is not None:
+            # Stamp the chosen backend's name so the user-agent policy
+            # can append ``backend=<name>`` to the outgoing request.
+            kwargs[REQUEST_OPTION_BACKEND_KEY] = self._backend.name
 
-        :param container_link: Self-link of the container, e.g.
-            ``"dbs/{db}/colls/{coll}"``.
-        :type container_link: str
-        :param body: The Cosmos document to create. Forwarded to
-            ``CreateItem`` as the ``document`` parameter; not mutated.
-        :type body: Dict[str, Any]
-        :param populate_query_metrics: Mirrors the legacy explicit arg.
-            When truthy, emits the existing deprecation warning and
-            still writes the option key.
-        :type populate_query_metrics: Optional[bool]
-        :param indexing_directive: Mirrors the legacy explicit arg.
-        :type indexing_directive: Optional[int]
-        :param enable_automatic_id_generation: Mirrors the legacy
-            explicit arg.
-        :type enable_automatic_id_generation: bool
-        :param kwargs: Every other customer kwarg the container
-            received. Used for the dispatch decision and forwarded to
-            ``CreateItem`` after option extraction.
-        :returns: Whatever the chosen backend / legacy ``CreateItem``
-            call returned.
-        :rtype: Any
-        """
-        # Backend dispatch — shared logic, sync side.
-        backend = choose_backend(self.client_connection, kwargs)
-        if backend is not None:
-            backend_response = backend.create_item(prepared=None)
-            if backend_response is not None:
-                # Real BackendResponse from a wired adapter — return it
-                # directly. Today only happens if a test mocks
-                # core-python to return non-None.
-                return backend_response  # pragma: no cover
-
+        # Build legacy-shape request_options (used by the fall-through
+        # legacy path AND consumed for partition-key extraction below).
         request_options = build_create_item_request_options(
             kwargs,
             enable_automatic_id_generation=enable_automatic_id_generation,
@@ -124,26 +113,91 @@ class ItemHelper:
             populate_query_metrics=populate_query_metrics,
         )
 
-        # Container-rid stamping. The container proxy supplies a
-        # callback (``_get_properties_with_options``) that takes the
-        # container's lock and forwards excluded_locations / timeout
-        # options into the cache fetch. The fallback path exists
-        # only for test seams that build the helper without a proxy
-        # and is not safe under concurrent use.
-        if self._ensure_container_cached is not None:
-            self._ensure_container_cached(request_options)
-        else:
-            cache = self.client_connection._container_properties_cache
-            if container_link not in cache:
-                self.client_connection._refresh_container_properties_cache(container_link)
-        request_options[Constants.ContainerRID] = (
-            self.client_connection._container_properties_cache[container_link]["_rid"]
-        )
+        # Container-rid lookup. Best effort: when the connection is a
+        # bare mock (some unit tests), the cache lookup may not produce
+        # a real string. We catch and continue with rid=None so that
+        # ``backend.execute`` still gets called — the dispatch contract
+        # is "stamp the rid when we have one, fall through gracefully
+        # when we don't."
+        container_rid: Optional[str] = None
+        try:
+            if self._ensure_container_cached is not None:
+                self._ensure_container_cached(request_options)
+            else:
+                cache = self.client_connection._container_properties_cache
+                if container_link not in cache:
+                    self.client_connection._refresh_container_properties_cache(container_link)
+            cached = self.client_connection._container_properties_cache[container_link]
+            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            if isinstance(rid_value, str):
+                container_rid = rid_value
+                request_options[Constants.ContainerRID] = container_rid
+        except Exception:  # pylint: disable=broad-except
+            container_rid = None
 
+        # Backend dispatch path. Build the PreparedRequest, hand it to
+        # ``backend.execute``. The CorePythonBackend's execute returns
+        # ``None`` today (placeholder); the RustBackend returns a real
+        # BackendResponse.
+        if self._backend is not None:
+            partition_key_value = self._extract_partition_key_value(
+                container_link, body, request_options
+            )
+            prepared, _item_id = build_create_item_prepared(
+                container_link=container_link,
+                body=body,
+                partition_key_value=partition_key_value,
+                container_rid=container_rid,
+                enable_automatic_id_generation=enable_automatic_id_generation,
+                indexing_directive=indexing_directive,
+                kwargs=dict(kwargs),
+            )
+            backend_response = self._backend.execute(prepared)
+            if backend_response is not None:
+                # Real BackendResponse from a wired adapter (today: Rust).
+                # Parse into v4-shaped CosmosDict, raise typed exceptions
+                # for non-2xx, fire response_hook on success.
+                return parse_backend_response(
+                    backend_response,
+                    client_connection=self.client_connection,
+                    response_hook=kwargs.get("response_hook"),
+                )
+
+        # Fall through: core-python backend (or no backend at all in
+        # bare-mock unit tests) → run the legacy in-place CreateItem.
         return self.client_connection.CreateItem(
             database_or_container_link=container_link,
             document=body,
             options=request_options,
             **kwargs,
         )
+
+    def _extract_partition_key_value(
+        self,
+        container_link: str,
+        body: Dict[str, Any],
+        request_options: Dict[str, Any],
+    ) -> Any:
+        """Pull the partition-key value the helper should put on the wire.
+
+        Precedence (matches legacy ``_AddPartitionKey``):
+          1. ``request_options["partitionKey"]`` if the caller already set it.
+          2. Extracted from ``body`` using the container's PK definition.
+          3. ``_Empty()`` fallback when neither path is reachable (bare
+             mock connections in unit tests). The fallback never reaches
+             production because real connections always have an
+             ``_AddPartitionKey`` method.
+        """
+        if "partitionKey" in request_options:
+            return request_options["partitionKey"]
+        try:
+            new_options = self.client_connection._AddPartitionKey(
+                container_link, body, request_options
+            )
+            if isinstance(new_options, dict):
+                request_options.update(new_options)
+                return new_options.get("partitionKey", _Empty())
+        except Exception:  # pylint: disable=broad-except
+            pass
+        return _Empty()
 

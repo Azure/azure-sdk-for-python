@@ -23,7 +23,6 @@ from typing import Any, Dict, Optional
 
 from .._availability_strategy_config import _validate_request_hedging_strategy
 from .._backend.base import CosmosBackend
-from .._backend.constants import REQUEST_OPTION_BACKEND_KEY
 from .._base import build_options
 from .._constants import _Constants as Constants
 
@@ -80,59 +79,34 @@ def merge_create_item_explicit_kwargs(
         kwargs['response_hook'] = response_hook
 
 
-def choose_backend(client_connection: Any, kwargs: Dict[str, Any]) -> Optional[CosmosBackend]:
-    """Return the backend that should handle this call, stamping kwargs.
+def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
+    """Return the backend the helper should hand operations to.
 
-    The decision rule is the same on sync and async:
+    The decision was made once when the client was constructed and is
+    never reconsidered per call:
 
-    * If a Rust backend is configured **and** the call did not pass
-      ``availability_strategy`` or ``retry_write`` (the two kwargs
-      the Rust driver does not yet support), pick Rust.
-    * Otherwise pick the always-present core-python backend.
+    * If a Rust backend is wired on this connection, use it.
+    * Otherwise use the always-present core-python backend.
 
-    Mutates ``kwargs`` in place to stamp
-    ``REQUEST_OPTION_BACKEND_KEY`` with the chosen backend's name so
-    the user-agent policy can append ``; backend=<name>`` to the
-    ``User-Agent`` header on every request that flows out of this
-    call.
+    The Rust backend's per-feature support level is a property of the
+    backend itself, not of the call. If a kwarg the Rust backend does
+    not honor reaches the wire, that is either a known limitation or
+    a bug to fix in the Rust path; the dispatch site
+    does not silently re-route to a different backend.
 
-    :param client_connection: The connection that owns the two
-        backend attributes (``_rust_backend`` and
-        ``_core_python_backend``). Either may be missing on a
-        connection built outside ``CosmosClient`` (some unit tests);
-        the function tolerates that and returns ``None`` so the
-        caller falls through to the legacy code path.
-    :type client_connection: Any
-    :param kwargs: The per-call kwargs dict. Read for the dispatch
-        decision and mutated to stamp the backend name.
-    :type kwargs: Dict[str, Any]
+    :param client_connection: The connection that owns the two backend
+        attributes (``_rust_backend`` and ``_core_python_backend``).
+        Either may be missing on a connection built outside
+        ``CosmosClient`` (some unit tests); the function tolerates
+        that and returns ``None`` so the caller falls through to the
+        legacy code path.
     :returns: The chosen backend instance, or ``None`` when neither
         backend is wired on the connection.
-    :rtype: Optional[CosmosBackend]
     """
     rust_backend = getattr(client_connection, "_rust_backend", None)
-    core_python_backend = getattr(client_connection, "_core_python_backend", None)
-    # Fast path for the production-default configuration (no Rust
-    # backend wired up): skip the two ``kwargs.get`` lookups that
-    # only matter for the Rust-vs-fallback decision.
-    if rust_backend is None:
-        backend = core_python_backend
-    else:
-        availability_strategy = kwargs.get("availability_strategy")
-        retry_write = kwargs.get(Constants.Kwargs.RETRY_WRITE)
-        # Read with ``.get()`` (not ``.pop()``) on purpose: both kwargs
-        # also have semantic meaning downstream — ``availability_strategy``
-        # is consumed by the legacy CreateItem (and was already validated
-        # at the container layer); ``retry_write`` flows into
-        # ``ConnectionPolicy.RetryNonIdempotentWrites`` via build_options.
-        # Popping them here would silently drop those downstream effects.
-        if availability_strategy is None and retry_write is None:
-            backend = rust_backend
-        else:
-            backend = core_python_backend
-    if backend is not None:
-        kwargs[REQUEST_OPTION_BACKEND_KEY] = backend.name
-    return backend
+    if rust_backend is not None:
+        return rust_backend
+    return getattr(client_connection, "_core_python_backend", None)
 
 
 def build_create_item_request_options(

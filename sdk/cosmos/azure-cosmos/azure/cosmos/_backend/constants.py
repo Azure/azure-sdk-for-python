@@ -75,8 +75,9 @@ BACKEND_ENV_VAR = "COSMOS_BACKEND"
 #: there and appends ``backend=<name>`` to the User-Agent header.
 #:
 #: The value carried under this key is one of ``BACKEND_NAME_CORE_PYTHON``
-#: or ``BACKEND_NAME_RUST``. It is stamped *after* the forced-fallback
-#: decision so a request that fell back to core-python on a Rust-default
-#: client correctly reports ``backend=core-python`` server-side.
+#: or ``BACKEND_NAME_RUST``. It is the name of the backend the client
+#: was configured with at construction time; the dispatch site does not
+#: re-route per call, so the stamped value is stable across every
+#: request a single client makes.
 REQUEST_OPTION_BACKEND_KEY = "cosmos_backend"
 

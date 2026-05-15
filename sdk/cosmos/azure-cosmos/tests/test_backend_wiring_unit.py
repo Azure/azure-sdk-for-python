@@ -34,11 +34,11 @@ What they cover, grouped by responsibility:
   3. Container dispatch.
      The container's ``create_item`` reads the two type-named attributes
      on ``client_connection`` (``_rust_backend``, ``_core_python_backend``)
-     and routes to the right one — including the forced-fallback
-     behavior for ``availability_strategy`` and ``retry_write``. The
-     dispatch site also stamps the chosen backend's name into
-     ``**kwargs`` under ``REQUEST_OPTION_BACKEND_KEY`` so that
-     ``CosmosUserAgentPolicy`` can append it to the User-Agent header.
+     and routes to whichever one is wired (Rust if present, core-python
+     otherwise). The dispatch site also stamps the chosen backend's
+     name into ``**kwargs`` under ``REQUEST_OPTION_BACKEND_KEY`` so
+     that ``CosmosUserAgentPolicy`` can append it to the User-Agent
+     header.
 
   4. User-agent policy.
      Two small tests verify the policy reads the per-request stamp from
@@ -81,7 +81,7 @@ _PKG_ROOT = Path(__file__).resolve().parents[1] / "azure" / "cosmos"
 # to import it. Anything outside the allow-list fails the test.
 _ALLOWED = {
     # The compiled PyO3 module is only allowed inside the Rust backend wrappers.
-    "_azure_cosmos_pyo3": {
+    "_rust": {
         Path("_backend") / "rust.py",
         Path("aio") / "_backend" / "rust.py",
     },
@@ -180,9 +180,14 @@ def test_factory_default_is_core_python(monkeypatch):
 
 
 def test_factory_env_var_picks_rust(monkeypatch):
-    """Setting the env var to ``rust`` must produce a RustBackend."""
+    """Setting the env var to ``rust`` must produce a RustBackend.
+
+    The Rust backend needs an endpoint and a master-key credential at
+    construction time, so those are passed in too — that's the same
+    shape ``CosmosClient.__init__`` calls the factory with.
+    """
     monkeypatch.setenv(BACKEND_ENV_VAR, BACKEND_NAME_RUST)
-    backend = make_backend(None)
+    backend = make_backend(None, url="https://x.documents.azure.com", credential="k")
     assert isinstance(backend, RustBackend)
     assert backend.name == BACKEND_NAME_RUST
 
@@ -208,11 +213,27 @@ def test_factory_invalid_env_var_fails_loud(monkeypatch):
         make_backend(None)
 
 
+def test_factory_rust_without_master_key_fails_loud(monkeypatch):
+    """Rust requires master-key auth today; any other credential shape
+    must surface a clear ValueError at construction time rather than
+    failing later on the first request."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="master-key credential"):
+        make_backend(BACKEND_NAME_RUST, url="https://x.documents.azure.com", credential=None)
+
+
 def test_async_factory_returns_async_backends(monkeypatch):
     """The async factory must return the async backend classes."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
     assert isinstance(make_async_backend(None), AsyncCorePythonBackend)
-    assert isinstance(make_async_backend(BACKEND_NAME_RUST), AsyncRustBackend)
+    assert isinstance(
+        make_async_backend(
+            BACKEND_NAME_RUST,
+            url="https://x.documents.azure.com",
+            credential="k",
+        ),
+        AsyncRustBackend,
+    )
 
 
 def test_async_factory_invalid_value_fails_loud(monkeypatch):
@@ -226,54 +247,178 @@ def test_async_factory_invalid_value_fails_loud(monkeypatch):
 # What each backend's create_item method does today
 # ---------------------------------------------------------------------------
 #
-# The two concrete backends behave very differently right now and these
-# tests pin both behaviors down so a future change cannot quietly flip
-# either one:
+# CorePythonBackend.create_item returns ``None``. That is how it tells
+# the container's dispatch site "I have nothing to return; fall through
+# to the existing in-place create_item code." Once the helper layer
+# takes over request prep and response parsing, this will switch to
+# returning a real ``BackendResponse``; until then ``None`` is the
+# contract.
 #
-#   - CorePythonBackend.create_item returns ``None``. That is how it
-#     tells the container's dispatch site "I have nothing to return;
-#     fall through to the existing in-place create_item code." Once
-#     the helper layer takes over request prep and response parsing,
-#     this will switch to returning a real ``BackendResponse``; until
-#     then ``None`` is the contract.
+# RustBackend.create_item also returns ``None`` for ``prepared=None``
+# (the same transitional contract — caller still owns request prep).
+# When called with a real ``PreparedRequest`` it forwards into the
+# compiled binding. The tests below mock the binding with a
+# ``MagicMock`` so they exercise the dispatch path without needing a
+# real Cosmos account.
 #
-#   - RustBackend.create_item raises ``NotImplementedError`` on every
-#     call. That is the expected behavior for the dispatch-only slice:
-#     a developer who runs the existing test suite with
-#     ``COSMOS_BACKEND=rust`` should see every create_item test fail
-#     loudly. Failing loud proves the dispatch wiring works
-#     end-to-end and prevents anyone from accidentally shipping a
-#     half-implemented Rust path that silently no-ops.
+# When the compiled binding is *not* present in the environment (a fresh
+# clone before ``maturin develop`` ran), ``create_item`` raises
+# ``NotImplementedError`` instead. That's covered by a separate test
+# below using monkeypatch to clear the module-level reference.
 #
 # Both behaviors are duplicated for the async siblings.
 # ---------------------------------------------------------------------------
 
-def test_rust_backend_create_item_raises():
-    """Today, every Rust create_item call must raise loudly so that
-    running the existing test suite with COSMOS_BACKEND=rust fails the
-    create_item tests instead of silently passing."""
-    with pytest.raises(NotImplementedError, match="not implemented yet"):
-        RustBackend().create_item(prepared=None)
+def test_rust_backend_returns_none_for_no_prepared_request():
+    """The transitional contract: no PreparedRequest means the caller
+    still owns request prep, so the backend signals 'fall through' by
+    returning None."""
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    assert backend.execute(prepared=None) is None
 
 
-def test_async_rust_backend_create_item_raises():
-    """Same loud-fail contract on the async side."""
+def test_rust_backend_dispatches_to_binding(monkeypatch):
+    """With a real PreparedRequest and a loaded binding, the backend
+    must call the binding's create_item with the handle and prepared,
+    and wrap the 4-tuple it returns as a BackendResponse."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"x"}')
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key_header='["a"]',
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    fake_module.init_client.assert_called_once_with(
+        "https://x.documents.azure.com", "k"
+    )
+    fake_module.create_item.assert_called_once_with("handle-1", prepared)
+    assert resp.status_code == 201
+    assert resp.body == b'{"id":"x"}'
+
+
+def test_rust_backend_raises_when_binding_not_built(monkeypatch):
+    """A fresh checkout before ``maturin develop`` has no compiled
+    binding. The backend must raise a clear NotImplementedError instead
+    of failing later with a confusing AttributeError."""
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", None)
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key_header='["a"]',
+        headers={},
+    )
+    with pytest.raises(NotImplementedError, match="not present"):
+        backend.execute(prepared)
+
+
+def test_async_rust_backend_returns_none_for_no_prepared_request():
+    """Same transitional contract on the async side."""
     async def _run():
-        with pytest.raises(NotImplementedError, match="not implemented yet"):
-            await AsyncRustBackend().create_item(prepared=None)
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        assert await backend.execute(prepared=None) is None
     asyncio.run(_run())
+
+
+def test_async_rust_backend_dispatches_to_binding(monkeypatch):
+    """The async backend offloads the synchronous binding call to the
+    default executor and wraps the result the same way the sync sibling
+    does."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"x"}')
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key_header='["a"]',
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        fake_module.init_client.assert_called_once()
+        fake_module.create_item.assert_called_once_with("handle-1", prepared)
+        assert resp.status_code == 201
+        assert resp.body == b'{"id":"x"}'
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_raises_when_binding_not_built(monkeypatch):
+    """Fresh-checkout failure mode on the async side."""
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", None)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key_header='["a"]',
+            headers={},
+        )
+        with pytest.raises(NotImplementedError, match="not present"):
+            await backend.execute(prepared)
+    asyncio.run(_run())
+
+
+def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
+    """When the chosen backend returns a real BackendResponse, the
+    helper hands it to the response parser, which produces a CosmosDict
+    customer code can index by key (``result["_etag"]``).
+
+    This is the contract that lets a Rust round-trip return the same
+    shape the legacy CreateItem path always returned. Without this
+    wiring, a successful Rust call would surface a raw BackendResponse
+    to customer code and ``result["_etag"]`` would raise TypeError.
+    """
+    from azure.cosmos._helpers.item_helper import ItemHelper
+
+    backend = MagicMock()
+    backend.name = BACKEND_NAME_RUST
+    backend.execute.return_value = BackendResponse(
+        status_code=201,
+        sub_status=0,
+        headers=None,
+        body=(
+            b'{"id":"order-42","pk":"customerA","_etag":"\\"00000000-0000-0000-1234-567890abcdef\\"",'
+            b'"_rid":"abc==","_self":"dbs/x/colls/y/docs/order-42","_ts":1746700000}'
+        ),
+        diagnostics=None,
+    )
+
+    helper = ItemHelper(backend, client_connection=MagicMock())
+    result = helper.create_item(
+        container_link="dbs/x/colls/y",
+        body={"id": "order-42", "pk": "customerA"},
+    )
+
+    # CosmosDict subclasses dict, so key lookup works the v4 way.
+    assert result["_etag"] == '"00000000-0000-0000-1234-567890abcdef"'
+    assert result["id"] == "order-42"
 
 
 def test_core_python_backend_create_item_returns_none():
     """Today, returning None is how core-python tells the dispatch site
     to fall through to the existing in-place create_item code."""
-    assert CorePythonBackend().create_item(prepared=None) is None
+    assert CorePythonBackend().execute(prepared=None) is None
 
 
 def test_async_core_python_backend_create_item_returns_none():
     """Same fall-through contract on the async side."""
     async def _run():
-        assert await AsyncCorePythonBackend().create_item(prepared=None) is None
+        assert await AsyncCorePythonBackend().execute(prepared=None) is None
     asyncio.run(_run())
 
 
@@ -281,6 +426,7 @@ def test_dataclasses_are_frozen():
     """Both PreparedRequest and BackendResponse are intentionally frozen so
     that backends cannot mutate their inputs or outputs by accident."""
     p = PreparedRequest(
+        op="create_item",
         container_link="dbs/d/colls/c",
         body_bytes=b"{}",
         partition_key_header='["customerA"]',
@@ -301,33 +447,25 @@ def test_dataclasses_are_frozen():
 # The client construction code attaches two attributes onto
 # ``client_connection``, named after the two backend types:
 #
-#   - ``_core_python_backend`` is always present. It is the default and
-#     the always-available fallback.
+#   - ``_core_python_backend`` is always present. It is the default
+#     and the always-available path.
 #   - ``_rust_backend`` is present only when the caller selected Rust
-#     as the default for this client (via the ``_backend="rust"`` kwarg
-#     or the ``COSMOS_BACKEND=rust`` env var). Otherwise it is ``None``.
+#     as the default for this client (via the ``_backend="rust"``
+#     kwarg or the ``COSMOS_BACKEND=rust`` env var). Otherwise it is
+#     ``None``.
 #
-# When a container's ``create_item`` runs, it reads both attributes and
-# then asks two questions:
-#
-#   1. Is a Rust backend even attached to this client?
-#   2. Does the call use a kwarg the Rust path cannot handle yet —
-#      specifically ``availability_strategy`` (multi-region hedging)
-#      or ``retry_write`` (non-idempotent write retries)?
-#
-# It picks Rust only if a Rust backend exists *and* neither of those
-# two kwargs is set. Otherwise the call goes to the core-python
-# backend. After it has decided, the dispatch site stamps the chosen
-# backend's name into ``**kwargs`` under ``REQUEST_OPTION_BACKEND_KEY``
-# so that ``CosmosUserAgentPolicy`` can append ``backend=<name>`` to
-# the User-Agent header for that single request.
+# When a container's ``create_item`` runs, it reads both attributes
+# and picks Rust if it is wired, core-python otherwise. The decision
+# is per-client (made once at construction), not per-call. After
+# deciding, the dispatch site stamps the chosen backend's name into
+# ``**kwargs`` under ``REQUEST_OPTION_BACKEND_KEY`` so that
+# ``CosmosUserAgentPolicy`` can append ``backend=<name>`` to the
+# User-Agent header for that single request.
 #
 # The tests below cover: routing to Rust on a Rust-default client,
-# the two forced-fallback paths (``availability_strategy`` and
-# ``retry_write``), the safety net that lets a ``Container`` whose
-# ``client_connection`` was built outside ``CosmosClient`` skip
-# dispatch silently, and the same Rust-routing contract on the async
-# container.
+# the safety net that lets a ``Container`` whose ``client_connection``
+# was built outside ``CosmosClient`` skip dispatch silently, and the
+# same Rust-routing contract on the async container.
 # ---------------------------------------------------------------------------
 
 def _make_sync_container_with_backends(rust_backend, core_python_backend):
@@ -350,39 +488,35 @@ def _make_sync_container_with_backends(rust_backend, core_python_backend):
     return container
 
 
-def test_container_dispatch_routes_to_rust_backend():
-    """A Rust-default client with an unrestricted call must hit RustBackend."""
-    container = _make_sync_container_with_backends(RustBackend(), CorePythonBackend())
-    with pytest.raises(NotImplementedError, match="not implemented yet"):
+def _new_rust_backend():
+    """Build a RustBackend with throwaway endpoint+key. Tests below mock
+    the binding so no real init_client / network call ever runs."""
+    return RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+
+
+def _new_async_rust_backend():
+    return AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+
+
+def test_container_dispatch_routes_to_rust_backend(monkeypatch):
+    """A Rust-default client with an unrestricted call must hit the
+    RustBackend's create_item — verified by checking the binding mock
+    saw the call."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.create_item.return_value = (201, 0, {}, b"{}")
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    container = _make_sync_container_with_backends(_new_rust_backend(), CorePythonBackend())
+    try:
         container.create_item(body={"id": "x", "pk": "a"})
-
-
-def test_container_dispatch_falls_back_to_core_python_for_availability_strategy():
-    """availability_strategy must force the core-python path on a
-    Rust-default client. We assert only that NotImplementedError is not
-    raised — any later failure is the core-python path tripping on the
-    incomplete mock, which still confirms the dispatch decision."""
-    container = _make_sync_container_with_backends(RustBackend(), CorePythonBackend())
-    try:
-        container.create_item(
-            body={"id": "x", "pk": "a"},
-            availability_strategy={"threshold_ms": 500},
-        )
-    except NotImplementedError:
-        pytest.fail("availability_strategy should have forced the core-python path")
     except Exception:
+        # The dispatch may still raise downstream (mocked client_connection
+        # is missing many things); we only care that the binding mock was
+        # consulted, which proves the dispatch went to the Rust path.
         pass
+    assert fake_module.create_item.called, "Rust path should have been taken"
 
-
-def test_container_dispatch_falls_back_to_core_python_for_retry_write():
-    """retry_write must force the core-python path for the same reason."""
-    container = _make_sync_container_with_backends(RustBackend(), CorePythonBackend())
-    try:
-        container.create_item(body={"id": "x", "pk": "a"}, retry_write=3)
-    except NotImplementedError:
-        pytest.fail("retry_write should have forced the core-python path")
-    except Exception:
-        pass
 
 
 def test_container_dispatch_skipped_when_backend_attrs_absent():
@@ -404,11 +538,16 @@ def test_container_dispatch_skipped_when_backend_attrs_absent():
         pass
 
 
-def test_async_container_dispatch_routes_to_async_rust_backend():
+def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
     """Same Rust-routing contract on the async container."""
     from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "h"
+    fake_module.create_item.return_value = (201, 0, {}, b"{}")
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
     mock_cc = MagicMock()
-    mock_cc._rust_backend = AsyncRustBackend()
+    mock_cc._rust_backend = _new_async_rust_backend()
     mock_cc._core_python_backend = AsyncCorePythonBackend()
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.client_connection = mock_cc
@@ -417,8 +556,11 @@ def test_async_container_dispatch_routes_to_async_rust_backend():
     container.container_link = "dbs/test/colls/test"
 
     async def _run():
-        with pytest.raises(NotImplementedError, match="not implemented yet"):
+        try:
             await container.create_item(body={"id": "x", "pk": "a"})
+        except Exception:
+            pass
+        assert fake_module.create_item.called, "async Rust path should have been taken"
 
     asyncio.run(_run())
 
@@ -434,18 +576,12 @@ def test_async_container_dispatch_routes_to_async_rust_backend():
 # ``backend=<name>`` to the User-Agent header right before the request
 # leaves the SDK.
 #
-# That key is written by the container's dispatch site — *after* it
-# has resolved any forced fallback — so a request that fell back to
-# core-python on a Rust-default client correctly reports
-# ``backend=core-python`` server-side, not ``backend=rust``. Without
-# this round-trip the server-side log would lie about which path
-# actually ran.
-#
-# The tests below cover both halves of that round-trip independently:
-# two tests prove the policy reacts correctly to the presence and
-# absence of the stamp, and two more prove that the dispatch site
-# always sets the stamp to the name of the backend that actually
-# handled the call (including the forced-fallback case).
+# That key is written by the container's dispatch site so the
+# server-side log reflects which backend ran the request. The tests
+# below cover both halves of that round-trip independently: two tests
+# prove the policy reacts correctly to the presence and absence of the
+# stamp, and one more proves that the dispatch site sets the stamp to
+# the name of the backend that actually handled the call.
 # ---------------------------------------------------------------------------
 
 def _make_ua_policy_request(options):
@@ -511,25 +647,4 @@ def test_container_dispatch_stamps_backend_in_kwargs():
         pass
     assert captured.get(REQUEST_OPTION_BACKEND_KEY) == BACKEND_NAME_CORE_PYTHON
 
-
-def test_container_dispatch_stamps_core_python_when_forced_fallback():
-    """A Rust-default client that falls back must stamp ``core-python``
-    so the server-side log reflects the path that actually ran."""
-    container = _make_sync_container_with_backends(RustBackend(), CorePythonBackend())
-    captured = {}
-
-    def fake_create_item(**kwargs):
-        captured.update(kwargs)
-        return MagicMock()
-
-    container.client_connection.CreateItem = fake_create_item
-    container._get_properties_with_options = lambda _opts: None  # type: ignore[attr-defined]
-    container._ContainerProxy__get_client_container_caches = lambda: {  # type: ignore[attr-defined]
-        container.container_link: {"_rid": "rid"}
-    }
-    try:
-        container.create_item(body={"id": "x", "pk": "a"}, retry_write=3)
-    except Exception:
-        pass
-    assert captured.get(REQUEST_OPTION_BACKEND_KEY) == BACKEND_NAME_CORE_PYTHON
 

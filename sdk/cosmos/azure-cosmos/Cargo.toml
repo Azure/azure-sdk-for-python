@@ -1,0 +1,62 @@
+# Cargo workspace root for the azure-cosmos Python SDK.
+#
+# Two member crates live under this root:
+#   - azure_data_cosmos_driver/   the driver (HTTP, routing, retries, session)
+#   - azure_cosmos_rust/          the PyO3 binding compiled into _rust.pyd
+#
+# `maturin develop` (run from the repo root) compiles both into one
+# cdylib that gets dropped into azure/cosmos/ next to the .py files.
+
+[workspace]
+members = [
+    "azure_data_cosmos_driver",
+    "azure_cosmos_rust",
+]
+resolver = "2"
+
+# -----------------------------------------------------------------------------
+# Workspace-level metadata. The driver crate inherits these via `.workspace = true`.
+# -----------------------------------------------------------------------------
+[workspace.package]
+authors      = ["Microsoft <azpysdkhelp@microsoft.com>"]
+edition      = "2021"
+license      = "MIT"
+repository   = "https://github.com/Azure/azure-sdk-for-python"
+rust-version = "1.75"
+
+[workspace.lints.rust]
+# Permit the cfgs the driver's integration tests use without the build warning.
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emulator", "multi_write"))'] }
+
+# -----------------------------------------------------------------------------
+# Workspace-level dependencies. The driver references these via `.workspace = true`
+# in its own Cargo.toml. Versions chosen to match what the driver was developed
+# against; bump in lockstep with the driver if it changes.
+#
+# NOTE on `azure_core` / `azure_identity`: these come from the azure-sdk-for-rust
+# monorepo and are NOT on crates.io as the versions the driver wants. Two options:
+#
+#   (a) git ref (what's set below). Slow first build, no extra setup required.
+#   (b) Local clone of azure-sdk-for-rust. Replace the `git = ...` lines below
+#       with something like:
+#           azure_core = { path = "../../../../../azure-sdk-for-rust/sdk/core/azure_core", features = [...] }
+#       The `path` is relative to THIS Cargo.toml.
+# -----------------------------------------------------------------------------
+[workspace.dependencies]
+# --- azure-sdk-for-rust crates (see NOTE above) ---
+azure_core     = { git = "https://github.com/Azure/azure-sdk-for-rust", branch = "main" }
+azure_identity = { git = "https://github.com/Azure/azure-sdk-for-rust", branch = "main" }
+
+# --- crates.io deps the driver uses ---
+async-lock   = "3"
+async-trait  = "0.1"
+base64       = "0.22"
+futures      = "0.3"
+reqwest      = { version = "0.13", default-features = false }
+serde        = { version = "1", features = ["derive"] }
+serde_json   = "1"
+tracing      = "0.1"
+url          = "2"
+uuid         = "1"
+tokio        = "1"
+

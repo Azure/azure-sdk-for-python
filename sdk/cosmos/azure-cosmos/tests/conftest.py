@@ -13,6 +13,13 @@ def pytest_configure(config):
     This hook is called for every plugin and initial conftest
     file after command line options have been parsed.
     """
+    # Register the xfail_on_backend marker used by the create_item parity
+    # suite so pytest doesn't warn on unknown markers.
+    config.addinivalue_line(
+        "markers",
+        "xfail_on_backend(backend, reason, strict=True): xfail a parity "
+        "test only when the parametrised backend matches.",
+    )
 
 
 def pytest_sessionstart(session):

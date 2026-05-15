@@ -3,23 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Compose the five wire-prep pure helpers into a single ``PreparedRequest``.
-
-.. note::
-    **No production caller today.** This module assembles the
-    ``PreparedRequest`` shape the future Rust adapter will hand to
-    the Rust driver. Today, the production ``CreateItem`` path runs
-    through ``_base.GetHeaders`` / the legacy connection helpers; this
-    module is exercised only by ``tests/test_request_prep_unit.py``.
-    Do **not** delete it as YAGNI — it is the seam the next phase
-    (wiring ``CorePythonBackend.create_item`` as a real adapter)
-    plugs into. When that adapter lands, ``ItemHelper.create_item``
-    will start calling ``build_create_item_prepared`` instead of
-    falling through to the legacy ``CreateItem``, and the five
-    wire-prep helpers will replace ``_base.GetHeaders``'s inline
-    serialisation. Until then the parallel paths are intentional and
-    the redundancy is one-way (no runtime double-execution; the
-    legacy path runs in production, the new path runs only in tests).
+"""Compose the wire-prep pure helpers into a single ``PreparedRequest``.
 
 There are five small helpers that each handle one slice of request
 preparation:
@@ -30,16 +14,15 @@ preparation:
 * ``_pk_wire.serialize_partition_key_to_wire`` — partition key → header string.
 * ``_body_wire.serialize_body_to_bytes`` — document → wire bytes.
 
-This module is the first place all five run together. It is a *pure*
+This module is the place all five run together. It is a *pure*
 function: it takes already-derived inputs (the partition-key value,
 the container rid) and returns a ``PreparedRequest`` plus the
-final document id. The caller — typically an item helper that owns
-the ``CosmosClientConnection`` and the container-properties cache —
-is responsible for the side-effectful inputs (cache lookups, PK
-extraction from the body using the container's PK definition).
+final document id. The caller — ``ItemHelper`` — is responsible for
+the side-effectful inputs (cache lookups, PK extraction from the body
+using the container's PK definition).
 
 Keeping the side-effect-free composition isolated here gives us two
-properties the future response-parse adapter depends on:
+properties:
 
 1. The composition is unit-testable in milliseconds with no
    ``CosmosClientConnection``, no cache, no network. The tests in
@@ -53,7 +36,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional, Tuple
 
-from .._backend.base import PreparedRequest
+from .._backend.base import OP_CREATE_ITEM, PreparedRequest
 from .._constants import _Constants as Constants
 from ._auto_id import ensure_item_id
 from ._body_wire import serialize_body_to_bytes
@@ -201,6 +184,7 @@ def build_create_item_prepared(
         headers[Constants.ContainerRID] = container_rid
 
     prepared = PreparedRequest(
+        op=OP_CREATE_ITEM,
         container_link=container_link,
         body_bytes=body_bytes,
         partition_key_header=partition_key_header,
