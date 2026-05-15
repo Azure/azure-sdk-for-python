@@ -290,32 +290,38 @@ def request_context(
         ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
 
     token = _otel_context.attach(ctx)
-    # Debug: log the span context after attaching remote trace context
-    from opentelemetry.trace import get_current_span as _get_current
-    _attached_span = _get_current()
-    _span_ctx = _attached_span.get_span_context()
-    logger.error(
-        "request_context post-attach: span_type=%s is_recording=%s "
-        "trace_id=%s span_id=%s trace_flags=%02x is_remote=%s is_valid=%s "
-        "has_attributes=%s tracestate=%s",
-        type(_attached_span).__name__,
-        _attached_span.is_recording(),
-        format(_span_ctx.trace_id, '032x') if _span_ctx.trace_id else None,
-        format(_span_ctx.span_id, '016x') if _span_ctx.span_id else None,
-        _span_ctx.trace_flags,
-        _span_ctx.is_remote,
-        _span_ctx.is_valid,
-        hasattr(_attached_span, 'attributes'),
-        str(_span_ctx.trace_state) if _span_ctx.trace_state else None,
-    )
 
-    try:
-        yield
-    finally:
+    # Create a real SERVER span parented under the remote context so that
+    # downstream instrumentors (e.g. azure-ai-projects) get a recording span.
+    tracer = trace.get_tracer("azure.ai.agentserver")
+    with tracer.start_as_current_span(
+        "blah",
+        kind=trace.SpanKind.SERVER,
+        context=ctx,
+    ) as span:
+        # Debug: log the span context after creating the server span
+        _span_ctx = span.get_span_context()
+        logger.error(
+            "request_context server span: span_type=%s is_recording=%s "
+            "trace_id=%s span_id=%s trace_flags=%02x is_remote=%s is_valid=%s "
+            "has_attributes=%s",
+            type(span).__name__,
+            span.is_recording(),
+            format(_span_ctx.trace_id, '032x') if _span_ctx.trace_id else None,
+            format(_span_ctx.span_id, '016x') if _span_ctx.span_id else None,
+            _span_ctx.trace_flags,
+            _span_ctx.is_remote,
+            _span_ctx.is_valid,
+            hasattr(span, 'attributes'),
+        )
+
         try:
-            _otel_context.detach(token)
-        except ValueError:
-            pass
+            yield
+        finally:
+            try:
+                _otel_context.detach(token)
+            except ValueError:
+                pass
 
 
 def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
