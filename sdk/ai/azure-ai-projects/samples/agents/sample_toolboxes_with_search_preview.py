@@ -36,12 +36,8 @@ USAGE:
 """
 
 import os
-
 from dotenv import load_dotenv
-
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     MCPTool,

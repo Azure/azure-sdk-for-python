@@ -37,11 +37,8 @@ USAGE:
 
 import asyncio
 import os
-
 from dotenv import load_dotenv
-
 from azure.identity.aio import DefaultAzureCredential
-
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     MCPTool,
