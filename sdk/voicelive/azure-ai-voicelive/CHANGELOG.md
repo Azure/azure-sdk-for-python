@@ -55,7 +55,6 @@
 
 ### Breaking Changes
 
-- Removed `PersonalVoiceModels.PHOENIX_V2_NEURAL` enum value (replaced by `DRAGON_HD_OMNI_LATEST_NEURAL` and `MAI_VOICE1`)
 - Removed Foundry Agent Tool classes (`FoundryAgentTool`, `ResponseFoundryAgentCallItem`, etc.) —
   use `AgentSessionConfig` with `connect()` instead
 
