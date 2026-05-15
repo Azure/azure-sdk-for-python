@@ -31,8 +31,8 @@ def main():
     )
 
     response = client.diagnostic_settings.get_diagnostic_remote_support_settings(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
+        resource_group_name="GroupForEdgeAutomation",
     )
     print(response)
 

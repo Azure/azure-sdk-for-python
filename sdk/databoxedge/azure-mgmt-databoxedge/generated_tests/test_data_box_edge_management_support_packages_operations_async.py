@@ -24,8 +24,8 @@ class TestDataBoxEdgeManagementSupportPackagesOperationsAsync(AzureMgmtRecordedT
     async def test_support_packages_begin_trigger_support_package(self, resource_group):
         response = await (
             await self.client.support_packages.begin_trigger_support_package(
-                resource_group_name=resource_group.name,
                 device_name="str",
+                resource_group_name=resource_group.name,
                 trigger_support_package_request={
                     "properties": {
                         "include": "str",

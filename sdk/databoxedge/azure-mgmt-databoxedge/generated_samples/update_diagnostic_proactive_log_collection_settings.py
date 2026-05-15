@@ -31,8 +31,8 @@ def main():
     )
 
     response = client.diagnostic_settings.begin_update_diagnostic_proactive_log_collection_settings(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
+        resource_group_name="GroupForEdgeAutomation",
         proactive_log_collection_settings={"properties": {"userConsent": "Enabled"}},
     ).result()
     print(response)

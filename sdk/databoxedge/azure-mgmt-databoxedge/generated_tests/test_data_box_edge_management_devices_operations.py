@@ -44,8 +44,8 @@ class TestDataBoxEdgeManagementDevicesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_devices_create_or_update(self, resource_group):
         response = self.client.devices.create_or_update(
-            resource_group_name=resource_group.name,
             device_name="str",
+            resource_group_name=resource_group.name,
             data_box_edge_device={
                 "location": "str",
                 "etag": "str",

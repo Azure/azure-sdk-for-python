@@ -22,8 +22,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_diagnostic_settings_get_diagnostic_proactive_log_collection_settings(self, resource_group):
         response = self.client.diagnostic_settings.get_diagnostic_proactive_log_collection_settings(
-            resource_group_name=resource_group.name,
             device_name="str",
+            resource_group_name=resource_group.name,
         )
 
         # please add some check logic here by yourself
@@ -33,8 +33,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_diagnostic_settings_begin_update_diagnostic_proactive_log_collection_settings(self, resource_group):
         response = self.client.diagnostic_settings.begin_update_diagnostic_proactive_log_collection_settings(
-            resource_group_name=resource_group.name,
             device_name="str",
+            resource_group_name=resource_group.name,
             proactive_log_collection_settings={
                 "properties": {"userConsent": "str"},
                 "id": "str",
@@ -58,8 +58,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_diagnostic_settings_get_diagnostic_remote_support_settings(self, resource_group):
         response = self.client.diagnostic_settings.get_diagnostic_remote_support_settings(
-            resource_group_name=resource_group.name,
             device_name="str",
+            resource_group_name=resource_group.name,
         )
 
         # please add some check logic here by yourself
@@ -69,8 +69,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_diagnostic_settings_begin_update_diagnostic_remote_support_settings(self, resource_group):
         response = self.client.diagnostic_settings.begin_update_diagnostic_remote_support_settings(
-            resource_group_name=resource_group.name,
             device_name="str",
+            resource_group_name=resource_group.name,
             diagnostic_remote_support_settings={
                 "properties": {
                     "remoteSupportSettingsList": [

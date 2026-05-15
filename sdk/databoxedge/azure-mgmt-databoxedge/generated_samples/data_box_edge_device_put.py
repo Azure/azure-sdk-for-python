@@ -31,8 +31,8 @@ def main():
     )
 
     response = client.devices.create_or_update(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
+        resource_group_name="GroupForEdgeAutomation",
         data_box_edge_device={"location": "WUS", "sku": {"name": "Edge", "tier": "Standard"}, "tags": {}},
     )
     print(response)

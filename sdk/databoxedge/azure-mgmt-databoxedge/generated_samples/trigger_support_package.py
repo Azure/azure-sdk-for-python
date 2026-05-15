@@ -31,8 +31,8 @@ def main():
     )
 
     client.support_packages.begin_trigger_support_package(
-        resource_group_name="GroupForEdgeAutomation",
         device_name="testedgedevice",
+        resource_group_name="GroupForEdgeAutomation",
         trigger_support_package_request={
             "properties": {
                 "include": "DefaultWithDumps",

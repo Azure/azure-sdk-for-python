@@ -382,8 +382,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         data_box_edge_device: _models.DataBoxEdgeDevice,
         *,
         content_type: str = "application/json",
@@ -391,11 +391,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDevice:
         """Creates or updates a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param data_box_edge_device: The resource object. Required.
         :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -409,8 +409,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         data_box_edge_device: JSON,
         *,
         content_type: str = "application/json",
@@ -418,11 +418,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDevice:
         """Creates or updates a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param data_box_edge_device: The resource object. Required.
         :type data_box_edge_device: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -436,8 +436,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @overload
     async def create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         data_box_edge_device: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -445,11 +445,11 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DataBoxEdgeDevice:
         """Creates or updates a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param data_box_edge_device: The resource object. Required.
         :type data_box_edge_device: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -463,18 +463,18 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def create_or_update(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         data_box_edge_device: Union[_models.DataBoxEdgeDevice, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataBoxEdgeDevice:
         """Creates or updates a Data Box Edge/Data Box Gateway resource.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param data_box_edge_device: The resource object. Is one of the following types:
          DataBoxEdgeDevice, JSON, IO[bytes] Required.
         :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice or JSON or
@@ -505,8 +505,8 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(data_box_edge_device, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_devices_create_or_update_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3103,16 +3103,16 @@ class DiagnosticSettingsOperations:
 
     @distributed_trace_async
     async def get_diagnostic_proactive_log_collection_settings(  # pylint: disable=name-too-long
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.DiagnosticProactiveLogCollectionSettings:
         """Gets the proactive log collection settings of the specified Data Box Edge/Data Box Gateway
         device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: DiagnosticProactiveLogCollectionSettings. The DiagnosticProactiveLogCollectionSettings
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DiagnosticProactiveLogCollectionSettings
@@ -3132,8 +3132,8 @@ class DiagnosticSettingsOperations:
         cls: ClsType[_models.DiagnosticProactiveLogCollectionSettings] = kwargs.pop("cls", None)
 
         _request = build_diagnostic_settings_get_diagnostic_proactive_log_collection_settings_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3177,8 +3177,8 @@ class DiagnosticSettingsOperations:
 
     async def _update_diagnostic_proactive_log_collection_settings_initial(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         proactive_log_collection_settings: Union[_models.DiagnosticProactiveLogCollectionSettings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -3204,8 +3204,8 @@ class DiagnosticSettingsOperations:
             _content = json.dumps(proactive_log_collection_settings, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_diagnostic_settings_update_diagnostic_proactive_log_collection_settings_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3253,8 +3253,8 @@ class DiagnosticSettingsOperations:
     @overload
     async def begin_update_diagnostic_proactive_log_collection_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         proactive_log_collection_settings: _models.DiagnosticProactiveLogCollectionSettings,
         *,
         content_type: str = "application/json",
@@ -3262,11 +3262,11 @@ class DiagnosticSettingsOperations:
     ) -> AsyncLROPoller[_models.DiagnosticProactiveLogCollectionSettings]:
         """Updates the proactive log collection settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param proactive_log_collection_settings: The proactive log collection settings. Required.
         :type proactive_log_collection_settings:
          ~azure.mgmt.databoxedge.models.DiagnosticProactiveLogCollectionSettings
@@ -3283,8 +3283,8 @@ class DiagnosticSettingsOperations:
     @overload
     async def begin_update_diagnostic_proactive_log_collection_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         proactive_log_collection_settings: JSON,
         *,
         content_type: str = "application/json",
@@ -3292,11 +3292,11 @@ class DiagnosticSettingsOperations:
     ) -> AsyncLROPoller[_models.DiagnosticProactiveLogCollectionSettings]:
         """Updates the proactive log collection settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param proactive_log_collection_settings: The proactive log collection settings. Required.
         :type proactive_log_collection_settings: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3312,8 +3312,8 @@ class DiagnosticSettingsOperations:
     @overload
     async def begin_update_diagnostic_proactive_log_collection_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         proactive_log_collection_settings: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -3321,11 +3321,11 @@ class DiagnosticSettingsOperations:
     ) -> AsyncLROPoller[_models.DiagnosticProactiveLogCollectionSettings]:
         """Updates the proactive log collection settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param proactive_log_collection_settings: The proactive log collection settings. Required.
         :type proactive_log_collection_settings: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -3341,18 +3341,18 @@ class DiagnosticSettingsOperations:
     @distributed_trace_async
     async def begin_update_diagnostic_proactive_log_collection_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         proactive_log_collection_settings: Union[_models.DiagnosticProactiveLogCollectionSettings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DiagnosticProactiveLogCollectionSettings]:
         """Updates the proactive log collection settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param proactive_log_collection_settings: The proactive log collection settings. Is one of the
          following types: DiagnosticProactiveLogCollectionSettings, JSON, IO[bytes] Required.
         :type proactive_log_collection_settings:
@@ -3373,8 +3373,8 @@ class DiagnosticSettingsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._update_diagnostic_proactive_log_collection_settings_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 proactive_log_collection_settings=proactive_log_collection_settings,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -3417,16 +3417,16 @@ class DiagnosticSettingsOperations:
 
     @distributed_trace_async
     async def get_diagnostic_remote_support_settings(
-        self, resource_group_name: str, device_name: str, **kwargs: Any
+        self, device_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.DiagnosticRemoteSupportSettings:
         """Gets the diagnostic remote support settings of the specified Data Box Edge/Data Box Gateway
         device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :return: DiagnosticRemoteSupportSettings. The DiagnosticRemoteSupportSettings is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DiagnosticRemoteSupportSettings
@@ -3446,8 +3446,8 @@ class DiagnosticSettingsOperations:
         cls: ClsType[_models.DiagnosticRemoteSupportSettings] = kwargs.pop("cls", None)
 
         _request = build_diagnostic_settings_get_diagnostic_remote_support_settings_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3491,8 +3491,8 @@ class DiagnosticSettingsOperations:
 
     async def _update_diagnostic_remote_support_settings_initial(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         diagnostic_remote_support_settings: Union[_models.DiagnosticRemoteSupportSettings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -3518,8 +3518,8 @@ class DiagnosticSettingsOperations:
             _content = json.dumps(diagnostic_remote_support_settings, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_diagnostic_settings_update_diagnostic_remote_support_settings_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3567,8 +3567,8 @@ class DiagnosticSettingsOperations:
     @overload
     async def begin_update_diagnostic_remote_support_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         diagnostic_remote_support_settings: _models.DiagnosticRemoteSupportSettings,
         *,
         content_type: str = "application/json",
@@ -3576,11 +3576,11 @@ class DiagnosticSettingsOperations:
     ) -> AsyncLROPoller[_models.DiagnosticRemoteSupportSettings]:
         """Updates the diagnostic remote support settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param diagnostic_remote_support_settings: The diagnostic remote support settings. Required.
         :type diagnostic_remote_support_settings:
          ~azure.mgmt.databoxedge.models.DiagnosticRemoteSupportSettings
@@ -3597,8 +3597,8 @@ class DiagnosticSettingsOperations:
     @overload
     async def begin_update_diagnostic_remote_support_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         diagnostic_remote_support_settings: JSON,
         *,
         content_type: str = "application/json",
@@ -3606,11 +3606,11 @@ class DiagnosticSettingsOperations:
     ) -> AsyncLROPoller[_models.DiagnosticRemoteSupportSettings]:
         """Updates the diagnostic remote support settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param diagnostic_remote_support_settings: The diagnostic remote support settings. Required.
         :type diagnostic_remote_support_settings: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3626,8 +3626,8 @@ class DiagnosticSettingsOperations:
     @overload
     async def begin_update_diagnostic_remote_support_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         diagnostic_remote_support_settings: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -3635,11 +3635,11 @@ class DiagnosticSettingsOperations:
     ) -> AsyncLROPoller[_models.DiagnosticRemoteSupportSettings]:
         """Updates the diagnostic remote support settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param diagnostic_remote_support_settings: The diagnostic remote support settings. Required.
         :type diagnostic_remote_support_settings: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -3655,18 +3655,18 @@ class DiagnosticSettingsOperations:
     @distributed_trace_async
     async def begin_update_diagnostic_remote_support_settings(  # pylint: disable=name-too-long
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         diagnostic_remote_support_settings: Union[_models.DiagnosticRemoteSupportSettings, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DiagnosticRemoteSupportSettings]:
         """Updates the diagnostic remote support settings on a Data Box Edge/Data Box Gateway device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param diagnostic_remote_support_settings: The diagnostic remote support settings. Is one of
          the following types: DiagnosticRemoteSupportSettings, JSON, IO[bytes] Required.
         :type diagnostic_remote_support_settings:
@@ -3687,8 +3687,8 @@ class DiagnosticSettingsOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._update_diagnostic_remote_support_settings_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 diagnostic_remote_support_settings=diagnostic_remote_support_settings,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -9768,8 +9768,8 @@ class SupportPackagesOperations:
 
     async def _trigger_support_package_initial(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         trigger_support_package_request: Union[_models.TriggerSupportPackageRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -9795,8 +9795,8 @@ class SupportPackagesOperations:
             _content = json.dumps(trigger_support_package_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_support_packages_trigger_support_package_request(
-            resource_group_name=resource_group_name,
             device_name=device_name,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -9844,8 +9844,8 @@ class SupportPackagesOperations:
     @overload
     async def begin_trigger_support_package(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         trigger_support_package_request: _models.TriggerSupportPackageRequest,
         *,
         content_type: str = "application/json",
@@ -9855,11 +9855,11 @@ class SupportPackagesOperations:
 
         Triggers support package on the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param trigger_support_package_request: The trigger support package request object. Required.
         :type trigger_support_package_request:
          ~azure.mgmt.databoxedge.models.TriggerSupportPackageRequest
@@ -9874,8 +9874,8 @@ class SupportPackagesOperations:
     @overload
     async def begin_trigger_support_package(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         trigger_support_package_request: JSON,
         *,
         content_type: str = "application/json",
@@ -9885,11 +9885,11 @@ class SupportPackagesOperations:
 
         Triggers support package on the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param trigger_support_package_request: The trigger support package request object. Required.
         :type trigger_support_package_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -9903,8 +9903,8 @@ class SupportPackagesOperations:
     @overload
     async def begin_trigger_support_package(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         trigger_support_package_request: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -9914,11 +9914,11 @@ class SupportPackagesOperations:
 
         Triggers support package on the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param trigger_support_package_request: The trigger support package request object. Required.
         :type trigger_support_package_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -9932,8 +9932,8 @@ class SupportPackagesOperations:
     @distributed_trace_async
     async def begin_trigger_support_package(
         self,
-        resource_group_name: str,
         device_name: str,
+        resource_group_name: str,
         trigger_support_package_request: Union[_models.TriggerSupportPackageRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -9941,11 +9941,11 @@ class SupportPackagesOperations:
 
         Triggers support package on the device.
 
+        :param device_name: The device name. Required.
+        :type device_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param device_name: The device name. Required.
-        :type device_name: str
         :param trigger_support_package_request: The trigger support package request object. Is one of
          the following types: TriggerSupportPackageRequest, JSON, IO[bytes] Required.
         :type trigger_support_package_request:
@@ -9964,8 +9964,8 @@ class SupportPackagesOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._trigger_support_package_initial(
-                resource_group_name=resource_group_name,
                 device_name=device_name,
+                resource_group_name=resource_group_name,
                 trigger_support_package_request=trigger_support_package_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,

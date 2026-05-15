@@ -23,8 +23,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperationsAsync(AzureMgmtRecord
     @recorded_by_proxy_async
     async def test_diagnostic_settings_get_diagnostic_proactive_log_collection_settings(self, resource_group):
         response = await self.client.diagnostic_settings.get_diagnostic_proactive_log_collection_settings(
-            resource_group_name=resource_group.name,
             device_name="str",
+            resource_group_name=resource_group.name,
         )
 
         # please add some check logic here by yourself
@@ -35,8 +35,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperationsAsync(AzureMgmtRecord
     async def test_diagnostic_settings_begin_update_diagnostic_proactive_log_collection_settings(self, resource_group):
         response = await (
             await self.client.diagnostic_settings.begin_update_diagnostic_proactive_log_collection_settings(
-                resource_group_name=resource_group.name,
                 device_name="str",
+                resource_group_name=resource_group.name,
                 proactive_log_collection_settings={
                     "properties": {"userConsent": "str"},
                     "id": "str",
@@ -61,8 +61,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperationsAsync(AzureMgmtRecord
     @recorded_by_proxy_async
     async def test_diagnostic_settings_get_diagnostic_remote_support_settings(self, resource_group):
         response = await self.client.diagnostic_settings.get_diagnostic_remote_support_settings(
-            resource_group_name=resource_group.name,
             device_name="str",
+            resource_group_name=resource_group.name,
         )
 
         # please add some check logic here by yourself
@@ -73,8 +73,8 @@ class TestDataBoxEdgeManagementDiagnosticSettingsOperationsAsync(AzureMgmtRecord
     async def test_diagnostic_settings_begin_update_diagnostic_remote_support_settings(self, resource_group):
         response = await (
             await self.client.diagnostic_settings.begin_update_diagnostic_remote_support_settings(
-                resource_group_name=resource_group.name,
                 device_name="str",
+                resource_group_name=resource_group.name,
                 diagnostic_remote_support_settings={
                     "properties": {
                         "remoteSupportSettingsList": [
