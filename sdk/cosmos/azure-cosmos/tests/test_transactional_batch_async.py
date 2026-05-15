@@ -43,10 +43,12 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         # Key-auth client for control-plane (container create/delete)
         self.key_client = CosmosClient(self.host, self.masterKey)
+        await self.key_client.__aenter__()
         self.key_database = self.key_client.get_database_client(self.TEST_DATABASE_ID)
 
         # AAD data client for data-plane operations (batch execute, create_item, read, etc.)
         self.client = self.configs.create_data_client_async()
+        await self.client.__aenter__()
         self.test_database = self.client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):

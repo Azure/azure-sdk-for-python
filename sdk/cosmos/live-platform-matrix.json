@@ -163,6 +163,24 @@
     },
     {
       "AADTestConfig": {
+        "Ubuntu2404_310_aad_circuit_breaker_multi_region": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.10",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosAADCircuitBreakerMultiRegion",
+          "COSMOS_TEST_DATA_AUTH_MODE": "aad"
+        }
+      },
+      "ArmConfig": {
+        "MultiRegion": {
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
+        }
+      }
+    },
+    {
+      "AADTestConfig": {
         "Ubuntu2404_312_aad_multiregion": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",

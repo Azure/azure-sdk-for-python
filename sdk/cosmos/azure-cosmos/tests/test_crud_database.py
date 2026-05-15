@@ -58,7 +58,6 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
-    client: cosmos_client.CosmosClient = None
     key_client: cosmos_client.CosmosClient = None
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
@@ -83,8 +82,12 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.client = test_config.TestConfig.create_data_client()
         cls.databaseForTest = cls.key_client.get_database_client(cls.configs.TEST_DATABASE_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.key_client is not None:
+            cls.key_client.close()
 
     def test_database_crud(self):
         database_id = str(uuid.uuid4())

@@ -31,9 +31,11 @@ async def setup():
             "tests.")
     # Key-auth client for control-plane (container create/delete)
     key_client = CosmosClient(config.host, config.masterKey)
+    await key_client.__aenter__()
     key_db = key_client.get_database_client(config.TEST_DATABASE_ID)
     # AAD data client for data-plane operations
     data_client = config.create_data_client_async()
+    await data_client.__aenter__()
     data_db = data_client.get_database_client(config.TEST_DATABASE_ID)
 
     yield {

@@ -13,11 +13,6 @@ import test_config
 
 
 @pytest.mark.semanticReranker
-@pytest.mark.cosmosAADLong
-@pytest.mark.skipif(
-    not os.environ.get("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"),
-    reason="semantic reranker inference endpoint is not configured for this environment",
-)
 class TestSemanticRerankerAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check async semantic reranker behavior."""
     client = None
