@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hanaonazure import HanaManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.hanaonazure import HanaManagementClient
     pip install azure-identity
     pip install azure-mgmt-hanaonazure
 # USAGE
-    python get_properties_of_a_sap_monitor.py
+    python sap_monitors_patch_tags.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +31,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.sap_monitors.get(
+    response = client.sap_monitors.update(
         resource_group_name="myResourceGroup",
         sap_monitor_name="mySapMonitor",
+        tags_parameter={"tags": {"testkey": "testvalue"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/preview/2020-02-07-preview/examples/SapMonitors_Get.json
+# x-ms-original-file: specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/HanaOnAzure/preview/2020-02-07-preview/examples/SapMonitors_PatchTags.json
 if __name__ == "__main__":
     main()
