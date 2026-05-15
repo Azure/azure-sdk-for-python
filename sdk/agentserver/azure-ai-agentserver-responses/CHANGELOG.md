@@ -1,12 +1,10 @@
 # Release History
 
-## 1.0.0b6 (Unreleased)
+## 1.0.0b6 (2026-05-15)
 
 ### Features Added
 
 - Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Client validation errors (400/404) are classified as `user`, Foundry storage infrastructure errors (transport failures, 5xx) as `platform`, and developer handler exceptions as `upstream`. Platform errors additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics. Matches the container image specification §8 error source classification.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
